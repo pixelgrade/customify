@@ -5,12 +5,12 @@
  */
 
 /**
- * @package    pixcustomizer
+ * @package    pixcustomify
  * @category   core
  * @author     Pixel Grade Team
  * @copyright  (c) 2013, Pixel Grade Media
  */
-class PixCustomizerHTMLTagImpl implements PixCustomizerHTMLTag {
+class PixCustomifyHTMLTagImpl implements PixCustomifyHTMLTag {
 
 	/** @var array html attributes */
 	protected $attrs = null;
@@ -28,7 +28,7 @@ class PixCustomizerHTMLTagImpl implements PixCustomizerHTMLTag {
 	 * Apply configuration.
 	 */
 	protected function configure($config = null) {
-		$this->attrs = pixcustomizer::instance('PixCustomizerMeta', $config);
+		$this->attrs = pixcustomify::instance('PixCustomifyMeta', $config);
 	}
 
 	/**
@@ -55,7 +55,7 @@ class PixCustomizerHTMLTagImpl implements PixCustomizerHTMLTag {
 	 */
 	function htmlattributes(array $extra = array()) {
 		$attr_segments = array();
-		$attributes = pixcustomizer::merge($this->attrs->metadata_array(), $extra);
+		$attributes = pixcustomify::merge($this->attrs->metadata_array(), $extra);
 		foreach ($attributes as $key => $value) {
 			if ($value !== false && $value !== null) {
 				if ( ! empty($value)) {

@@ -5,12 +5,12 @@
  */
 
 /**
- * @package    pixcustomizer
+ * @package    pixcustomify
  * @category   core
  * @author     Pixel Grade Team
  * @copyright  (c) 2013, Pixel Grade Media
  */
-class PixCustomizerFormImpl extends PixCustomizerHTMLElementImpl implements PixCustomizerForm {
+class PixCustomifyFormImpl extends PixCustomifyHTMLElementImpl implements PixCustomifyForm {
 
 	/** @var array templates */
 	protected $fields = null;
@@ -36,10 +36,10 @@ class PixCustomizerFormImpl extends PixCustomizerHTMLElementImpl implements PixC
 		$this->errors = array();
 
 		// setup default autocomplete
-		$this->autocomplete = pixcustomizer::instance('PixCustomizerMeta', array());
+		$this->autocomplete = pixcustomify::instance('PixCustomifyMeta', array());
 
 		// setup fields
-		$this->fields = pixcustomizer::instance('PixCustomizerMeta', $config['fields']);
+		$this->fields = pixcustomify::instance('PixCustomifyMeta', $config['fields']);
 		unset($config['fields']);
 
 		// invoke htmltag instance configuration
@@ -79,7 +79,7 @@ class PixCustomizerFormImpl extends PixCustomizerHTMLElementImpl implements PixC
 			$fieldconfig = $this->fields->get($fieldname);
 		}
 
-		return pixcustomizer::instance('PixCustomizerFormField', $fieldconfig)
+		return pixcustomify::instance('PixCustomifyFormField', $fieldconfig)
 			->setmeta('form', $this)
 			->setmeta('name', $fieldname);
 	}
@@ -115,16 +115,16 @@ class PixCustomizerFormImpl extends PixCustomizerHTMLElementImpl implements PixC
 	// Autocomplete
 	// ------------------------------------------------------------------------
 
-	/** @var PixCustomizerMeta autocomplete */
+	/** @var PixCustomifyMeta autocomplete */
 	protected $autocomplete = null;
 
 	/**
 	 * Autocomplete meta object passed on by the processor.
 	 *
-	 * @param PixCustomizerMeta autocomplete values
+	 * @param PixCustomifyMeta autocomplete values
 	 * @return static $this
 	 */
-	function autocomplete(PixCustomizerMeta $autocomplete) {
+	function autocomplete(PixCustomifyMeta $autocomplete) {
 		$this->autocomplete = $autocomplete;
 		return $this;
 	}
@@ -173,16 +173,16 @@ class PixCustomizerFormImpl extends PixCustomizerHTMLElementImpl implements PixC
 	 * @return string
 	 */
 	function fieldtemplate($templatepath, $conf = array()) {
-		$config = pixcustomizer::instance('PixCustomizerMeta', $conf);
+		$config = pixcustomify::instance('PixCustomifyMeta', $conf);
 		return $this->fieldtemplate_render($templatepath, $config);
 	}
 
 	/**
 	 * @param string template path
-	 * @param PixCustomizerMeta configuration
+	 * @param PixCustomifyMeta configuration
 	 * @return string
 	 */
-	protected function fieldtemplate_render($_template_path, PixCustomizerMeta $conf) {
+	protected function fieldtemplate_render($_template_path, PixCustomifyMeta $conf) {
 		// variables which we wish to expose to template
 		$form = $this; # $this will also work
 

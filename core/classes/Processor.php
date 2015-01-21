@@ -5,17 +5,17 @@
  */
 
 /**
- * @package    pixcustomizer
+ * @package    pixcustomify
  * @category   core
  * @author     Pixel Grade Team
  * @copyright  (c) 2013, Pixel Grade Media
  */
-class PixCustomizerProcessorImpl implements PixCustomizerProcessor {
+class PixCustomifyProcessorImpl implements PixCustomifyProcessor {
 
-	/** @var PixCustomizerMeta plugin configuration */
+	/** @var PixCustomifyMeta plugin configuration */
 	protected $meta = null;
 
-	/** @var PixCustomizerMeta field information */
+	/** @var PixCustomifyMeta field information */
 	protected $fields = null;
 
 	/**
@@ -31,11 +31,11 @@ class PixCustomizerProcessorImpl implements PixCustomizerProcessor {
 	 * Apply configuration.
 	 */
 	protected function configure($config = null) {
-		$this->meta = pixcustomizer::instance('PixCustomizerMeta', $config);
+		$this->meta = pixcustomify::instance('PixCustomifyMeta', $config);
 
 		// extract fields from configuration
 		$fields = $this->extract($this->meta->get('fields', array()));
-		$this->fields = pixcustomizer::instance('PixCustomizerMeta', $fields);
+		$this->fields = pixcustomify::instance('PixCustomifyMeta', $fields);
 	}
 
 	/**
@@ -76,7 +76,7 @@ class PixCustomizerProcessorImpl implements PixCustomizerProcessor {
 	/** @var array status */
 	protected $status = null;
 
-	/** @var PixCustomizerMeta current data; including submitted data */
+	/** @var PixCustomifyMeta current data; including submitted data */
 	protected $data = null;
 
 	/**
@@ -112,7 +112,7 @@ class PixCustomizerProcessorImpl implements PixCustomizerProcessor {
 					$current_values = get_option($option_key);
 					$new_option = array_merge($current_values, $input);
 					update_option($option_key, $new_option);
-					$this->data = pixcustomizer::instance('PixCustomizerMeta', $input);
+					$this->data = pixcustomify::instance('PixCustomifyMeta', $input);
 					$this->postupdate($input);
 				}
 				else { // got errors
@@ -147,7 +147,7 @@ class PixCustomizerProcessorImpl implements PixCustomizerProcessor {
 			throw new Exception('Unable to retrieve options.');
 		}
 
-		$this->data = pixcustomizer::instance('PixCustomizerMeta', $dbconfig);
+		$this->data = pixcustomify::instance('PixCustomifyMeta', $dbconfig);
 	}
 
 	/**
@@ -155,7 +155,7 @@ class PixCustomizerProcessorImpl implements PixCustomizerProcessor {
 	 * @return array cleaned up input
 	 */
 	protected function cleanup_input($input) {
-		$defaults = pixcustomizer::defaults();
+		$defaults = pixcustomify::defaults();
 		$plugin_cleanup = $this->meta->get('cleanup', array());
 
 		foreach ($this->fields->metadata_array() as $key => $field) {
@@ -169,7 +169,7 @@ class PixCustomizerProcessorImpl implements PixCustomizerProcessor {
 			// -----------------------
 
 			$cleanup = array();
-			// check pixcustomizer defaults
+			// check pixcustomify defaults
 			if (isset($defaults['cleanup'][$field['type']])) {
 				$cleanup = $defaults['cleanup'][$field['type']];
 			}
@@ -186,7 +186,7 @@ class PixCustomizerProcessorImpl implements PixCustomizerProcessor {
 			// ---------------
 
 			foreach ($cleanup as $rule) {
-				$callback = pixcustomizer::callback($rule, $this->meta);
+				$callback = pixcustomify::callback($rule, $this->meta);
 				$input[$key] = call_user_func($callback, $input[$key], $field, $this);
 			}
 		}
@@ -199,7 +199,7 @@ class PixCustomizerProcessorImpl implements PixCustomizerProcessor {
 	 * @return array
 	 */
 	protected function validate_input($input) {
-		$validator = pixcustomizer::instance('PixCustomizerValidator', $this->meta, $this->fields);
+		$validator = pixcustomify::instance('PixCustomifyValidator', $this->meta, $this->fields);
 		return $validator->validate($input);
 	}
 
@@ -222,7 +222,7 @@ class PixCustomizerProcessorImpl implements PixCustomizerProcessor {
 	}
 
 	/**
-	 * @return PixCustomizerMeta current data (influenced by user submitted data)
+	 * @return PixCustomifyMeta current data (influenced by user submitted data)
 	 */
 	function data() {
 		if ($this->status === null) {
@@ -277,14 +277,14 @@ class PixCustomizerProcessorImpl implements PixCustomizerProcessor {
 	 */
 	protected function preupdate($input)
 	{
-		$defaults = pixcustomizer::defaults();
+		$defaults = pixcustomify::defaults();
 		$plugin_hooks = $this->meta->get('processor', array('preupdate' => array(), 'postupdate' => array()));
 
 		// Calculate hooks
 		// ---------------
 
 		$hooks = array();
-		// check pixcustomizer defaults
+		// check pixcustomify defaults
 		if (isset($defaults['processor']['preupdate'])) {
 			$hooks = $defaults['processor']['preupdate'];
 		}
@@ -297,7 +297,7 @@ class PixCustomizerProcessorImpl implements PixCustomizerProcessor {
 		// -------------
 
 		foreach ($hooks as $rule) {
-			$callback = pixcustomizer::callback($rule, $this->meta);
+			$callback = pixcustomify::callback($rule, $this->meta);
 			call_user_func($callback, $input, $this);
 		}
 	}
@@ -307,14 +307,14 @@ class PixCustomizerProcessorImpl implements PixCustomizerProcessor {
 	 */
 	protected function postupdate($input)
 	{
-		$defaults = pixcustomizer::defaults();
+		$defaults = pixcustomify::defaults();
 		$plugin_hooks = $this->meta->get('processor', array('preupdate' => array(), 'postupdate' => array()));
 
 		// Calculate hooks
 		// ---------------
 
 		$hooks = array();
-		// check pixcustomizer defaults
+		// check pixcustomify defaults
 		if (isset($defaults['processor']['postupdate'])) {
 			$hooks = $defaults['processor']['postupdate'];
 		}
@@ -327,7 +327,7 @@ class PixCustomizerProcessorImpl implements PixCustomizerProcessor {
 		// -------------
 
 		foreach ($hooks as $rule) {
-			$callback = pixcustomizer::callback($rule, $this->meta);
+			$callback = pixcustomify::callback($rule, $this->meta);
 			call_user_func($callback, $input, $this);
 		}
 	}

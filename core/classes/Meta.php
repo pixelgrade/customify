@@ -5,19 +5,19 @@
  */
 
 /**
- * @package    pixcustomizer
+ * @package    pixcustomify
  * @category   core
  * @author     Pixel Grade Team
  * @copyright  (c) 2013, Pixel Grade Media
  */
-class PixCustomizerMetaImpl implements PixCustomizerMeta {
+class PixCustomifyMetaImpl implements PixCustomifyMeta {
 
 	/** @var array metadat */
 	protected $metadata = array();
 
 	/**
 	 * @param  array metadata
-	 * @return PixCustomizerMeta
+	 * @return PixCustomifyMeta
 	 */
 	static function instance($metadata) {
 		$i = new self;

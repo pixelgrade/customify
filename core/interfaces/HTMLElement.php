@@ -5,12 +5,12 @@
  */
 
 /**
- * @package    pixcustomizer
+ * @package    pixcustomify
  * @category   core
  * @author     Pixel Grade Team
  * @copyright  (c) 2013, Pixel Grade Media
  */
-interface PixCustomizerHTMLElement extends PixCustomizerHTMLTag {
+interface PixCustomifyHTMLElement extends PixCustomifyHTMLTag {
 
 	/**
 	 * @param string meta key
@@ -47,7 +47,7 @@ interface PixCustomizerHTMLElement extends PixCustomizerHTMLTag {
 	function addmeta($name, $value);
 
 	/**
-	 * @return PixCustomizerMeta form meta
+	 * @return PixCustomifyMeta form meta
 	 */
 	function meta();
 

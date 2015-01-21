@@ -9,9 +9,9 @@ if ( isset( $_GET['debug'] ) && $_GET['debug'] == 'true' ) {
 $debug   = true;
 
 return array (
-	'plugin-name'    => 'pixcustomizer',
-	'settings-key'   => 'pixcustomizer_settings',
-	'textdomain'     => 'pixcustomizer_txtd',
+	'plugin-name'    => 'pixcustomify',
+	'settings-key'   => 'pixcustomify_settings',
+	'textdomain'     => 'pixcustomify_txtd',
 	'template-paths' => array (
 		$basepath . 'core/views/form-partials/',
 		$basepath . 'views/form-partials/',
@@ -37,7 +37,7 @@ return array (
 		'counter' => array( 'is_numeric', 'not_empty' ),
 	),
 	'errors'         => array (
-		'not_empty' => __( 'Invalid Value.', pixcustomizer::textdomain() ),
+		'not_empty' => __( 'Invalid Value.', pixcustomify::textdomain() ),
 	),
 	'callbacks'      => array (
 		'save_settings' => 'save_customizer_plugin_settings'
@@ -45,7 +45,7 @@ return array (
 	// shows exception traces on error
 	'debug'          => $debug,
 
-	'pixcustomizer_settings' => array(
+	'pixcustomify_settings' => array(
 		'opt-name' => 'customzier_test',
 		'panels' => array(
 			'panel_1' => array(

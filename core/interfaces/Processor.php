@@ -5,12 +5,12 @@
  */
 
 /**
- * @package    pixcustomizer
+ * @package    pixcustomify
  * @category   core
  * @author     Pixel Grade Team
  * @copyright  (c) 2013, Pixel Grade Media
  */
-interface PixCustomizerProcessor {
+interface PixCustomifyProcessor {
 
 	/**
 	 * @return static $this
@@ -23,7 +23,7 @@ interface PixCustomizerProcessor {
 	function status();
 
 	/**
-	 * @return PixCustomizerMeta current data (influenced by user submitted data)
+	 * @return PixCustomifyMeta current data (influenced by user submitted data)
 	 */
 	function data();
 

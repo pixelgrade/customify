@@ -12,7 +12,7 @@
 
 		'processor' => array
 			(
-				// callback signature: (array $input, PixCustomizerProcessor $processor)
+				// callback signature: (array $input, PixCustomifyProcessor $processor)
 
 				'preupdate' => array
 					(
@@ -27,18 +27,18 @@
 
 		'errors' => array
 			(
-				'is_numeric' => __('Numberic value required.', pixcustomizer::textdomain()),
-				'not_empty' => __('Field is required.', pixcustomizer::textdomain()),
+				'is_numeric' => __('Numberic value required.', pixcustomify::textdomain()),
+				'not_empty' => __('Field is required.', pixcustomify::textdomain()),
 			),
 
 		'callbacks' => array
 			(
 			// cleanup callbacks
-				'switch_not_available' => 'pixcustomizer_cleanup_switch_not_available',
+				'switch_not_available' => 'pixcustomify_cleanup_switch_not_available',
 
 			// validation callbacks
-				'is_numeric' => 'pixcustomizer_validate_is_numeric',
-				'not_empty' => 'pixcustomizer_validate_not_empty'
+				'is_numeric' => 'pixcustomify_validate_is_numeric',
+				'not_empty' => 'pixcustomify_validate_not_empty'
 			)
 
 	); # config

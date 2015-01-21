@@ -1,7 +1,7 @@
 <?php
 /**
- * PixCustomizer.
- * @package   PixCustomizer
+ * PixCustomify.
+ * @package   PixCustomify
  * @author    Pixelgrade <contact@pixelgrade.com>
  * @license   GPL-2.0+
  * @link      http://pixelgrade.com
@@ -10,10 +10,10 @@
 
 /**
  * Plugin class.
- * @package   PixCustomizer
+ * @package   PixCustomify
  * @author    Pixelgrade <contact@pixelgrade.com>
  */
-class PixCustomizerPlugin {
+class PixCustomifyPlugin {
 
 	/**
 	 * Plugin version, used for cache-busting of style and script file references.
@@ -28,7 +28,7 @@ class PixCustomizerPlugin {
 	 * @since    1.0.0
 	 * @var      string
 	 */
-	protected $plugin_slug = 'pixcustomizer';
+	protected $plugin_slug = 'pixcustomify';
 
 	/**
 	 * Instance of this class.
@@ -67,7 +67,7 @@ class PixCustomizerPlugin {
 
 		$this->plugin_basepath = plugin_dir_path( __FILE__ );
 		self::$config          = self::get_config();
-		self::$plugin_settings = get_option( 'pixcustomizer_settings' );
+		self::$plugin_settings = get_option( 'pixcustomify_settings' );
 
 		// Load plugin text domain
 		add_action( 'init', array( $this, 'load_plugin_textdomain' ) );
@@ -75,7 +75,7 @@ class PixCustomizerPlugin {
 		add_action( 'admin_menu', array( $this, 'add_plugin_admin_menu' ) );
 
 		// Add an action link pointing to the options page.
-		$plugin_basename = plugin_basename( plugin_dir_path( __FILE__ ) . 'pixcustomizer.php' );
+		$plugin_basename = plugin_basename( plugin_dir_path( __FILE__ ) . 'pixcustomify.php' );
 		add_filter( 'plugin_action_links_' . $plugin_basename, array( $this, 'add_action_links' ) );
 
 
@@ -94,8 +94,8 @@ class PixCustomizerPlugin {
 		/**
 		 * Ajax Callbacks
 		 */
-//		add_action( 'wp_ajax_pixcustomizer_image_click', array( &$this, 'ajax_click_on_photo' ) );
-//		add_action( 'wp_ajax_nopriv_pixcustomizer_image_click', array( &$this, 'ajax_click_on_photo' ) );
+//		add_action( 'wp_ajax_pixcustomify_image_click', array( &$this, 'ajax_click_on_photo' ) );
+//		add_action( 'wp_ajax_nopriv_pixcustomify_image_click', array( &$this, 'ajax_click_on_photo' ) );
 	}
 
 	/**
@@ -207,8 +207,8 @@ class PixCustomizerPlugin {
 	function enqueue_styles() {
 
 		if ( ! wp_style_is( 'wpgrade-main-style' ) ) {
-			wp_enqueue_style( 'pixcustomizer_inuit', plugins_url( 'css/inuit.css', __FILE__ ), array(), $this->version );
-			wp_enqueue_style( 'pixcustomizer_magnific-popup', plugins_url( 'css/mangnific-popup.css', __FILE__ ), array(), $this->version );
+			wp_enqueue_style( 'pixcustomify_inuit', plugins_url( 'css/inuit.css', __FILE__ ), array(), $this->version );
+			wp_enqueue_style( 'pixcustomify_magnific-popup', plugins_url( 'css/mangnific-popup.css', __FILE__ ), array(), $this->version );
 		}
 
 		//		wp_enqueue_style( $this->plugin_slug . '-plugin-styles', plugins_url( 'css/public.css', __FILE__ ), array('wpgrade-main-style'), $this->version );
@@ -227,7 +227,7 @@ class PixCustomizerPlugin {
 	 */
 	function add_plugin_admin_menu() {
 
-		$this->plugin_screen_hook_suffix = add_options_page( __( 'PixCustomizer', $this->plugin_slug ), __( 'PixCustomizer', $this->plugin_slug ), 'edit_plugins', $this->plugin_slug, array(
+		$this->plugin_screen_hook_suffix = add_options_page( __( 'PixCustomify', $this->plugin_slug ), __( 'PixCustomify', $this->plugin_slug ), 'edit_plugins', $this->plugin_slug, array(
 			$this,
 			'display_plugin_admin_page'
 		) );
@@ -245,7 +245,7 @@ class PixCustomizerPlugin {
 	 * Add settings action link to the plugins page.
 	 */
 	function add_action_links( $links ) {
-		return array_merge( array( 'settings' => '<a href="' . admin_url( 'options-general.php?page=pixcustomizer' ) . '">' . __( 'Settings', $this->plugin_slug ) . '</a>' ), $links );
+		return array_merge( array( 'settings' => '<a href="' . admin_url( 'options-general.php?page=pixcustomify' ) . '">' . __( 'Settings', $this->plugin_slug ) . '</a>' ), $links );
 	}
 
 	protected function register_customizer_controls() {
@@ -255,14 +255,14 @@ class PixCustomizerPlugin {
 
 		// now get all the controls
 		$path = self::get_base_path() . '/features/customizer/controls/';
-		pixcustomizer::require_all($path);
+		pixcustomify::require_all($path);
 	}
 
 	function register_customizer( $wp_customize ) {
 
 		$this->register_customizer_controls();
 
-		$customizer_settings = self::config_option( 'pixcustomizer_settings' );
+		$customizer_settings = self::config_option( 'pixcustomify_settings' );
 
 		if ( ! empty ( $customizer_settings ) ) {
 

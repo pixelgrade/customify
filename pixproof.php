@@ -1,20 +1,20 @@
 <?php
 /*
-* @package   PixCustomizer
+* @package   PixCustomify
 * @author    PixelGrade <contact@pixelgrade.com>
 * @license   GPL-2.0+
 * @link      http://pixelgrade.com
 * @copyright 2014 PixelGrade
 *
 * @wordpress-plugin
-Plugin Name: PixCustomizer
+Plugin Name: PixCustomify
 Plugin URI:  http://pixelgrade.com
 Description: WordPress Customizer extender
 Version: 1.0.0
 Author: PixelGrade
 Author URI: http://pixelgrade.com
 Author Email: contact@pixelgrade.com
-Text Domain: pixcustomizer_txtd
+Text Domain: pixcustomify_txtd
 License:     GPL-2.0+
 License URI: http://www.gnu.org/licenses/gpl-2.0.txt
 Domain Path: /lang
@@ -35,7 +35,7 @@ require 'core/bootstrap'.EXT;
 $config = include 'plugin-config'.EXT;
 
 // set textdomain
-pixcustomizer::settextdomain($config['textdomain']);
+pixcustomify::settextdomain($config['textdomain']);
 
 // Ensure Test Data
 // ----------------
@@ -58,13 +58,13 @@ else if (count(array_diff_key($defaults, $current_data)) != 0) {
 
 $basepath = dirname(__FILE__).DIRECTORY_SEPARATOR;
 $callbackpath = $basepath.'callbacks'.DIRECTORY_SEPARATOR;
-pixcustomizer::require_all($callbackpath);
+pixcustomify::require_all($callbackpath);
 
-require_once( plugin_dir_path( __FILE__ ) . 'class-pixcustomizer.php' );
+require_once( plugin_dir_path( __FILE__ ) . 'class-pixcustomify.php' );
 
 // Register hooks that are fired when the plugin is activated, deactivated, and uninstalled, respectively.
-register_activation_hook( __FILE__, array( 'PixCustomizerPlugin', 'activate' ) );
+register_activation_hook( __FILE__, array( 'PixCustomifyPlugin', 'activate' ) );
 //register_deactivation_hook( __FILE__, array( 'PixTypesPlugin', 'deactivate' ) );
 
-global $pixcustomizer_plugin;
-$pixcustomizer_plugin = PixCustomizerPlugin::get_instance();
+global $pixcustomify_plugin;
+$pixcustomify_plugin = PixCustomifyPlugin::get_instance();

@@ -5,12 +5,12 @@
  */
 
 /**
- * @package    pixcustomizer
+ * @package    pixcustomify
  * @category   core
  * @author     Pixel Grade Team
  * @copyright  (c) 2013, Pixel Grade Media
  */
-class pixcustomizer {
+class pixcustomify {
 
 	/** @var array core defaults */
 	protected static $defaults = null;
@@ -64,10 +64,10 @@ class pixcustomizer {
 
 	/**
 	 * @param array configuration
-	 * @return PixCustomizerForm
+	 * @return PixCustomifyForm
 	 */
 	static function form($config, $processor) {
-		$form = self::instance('PixCustomizerForm', $config);
+		$form = self::instance('PixCustomifyForm', $config);
 		$form->autocomplete($processor->data());
 		$form->errors($processor->errors());
 		return $form;
@@ -75,10 +75,10 @@ class pixcustomizer {
 
 	/**
 	 * @param array configuration
-	 * @return PixCustomizerProcessor
+	 * @return PixCustomifyProcessor
 	 */
 	static function processor($config) {
-		return self::instance('PixCustomizerProcessor', $config);
+		return self::instance('PixCustomifyProcessor', $config);
 	}
 
 
@@ -175,8 +175,8 @@ class pixcustomizer {
 	 * @return string callback function name
 	 * @throws Exception
 	 */
-	static function callback($key, PixCustomizerMeta $meta) {
-		$defaults = pixcustomizer::defaults();
+	static function callback($key, PixCustomifyMeta $meta) {
+		$defaults = pixcustomify::defaults();
 		$default_callbacks = $defaults['callbacks'];
 		$plugin_callbacks = $meta->get('callbacks', array());
 
@@ -191,7 +191,7 @@ class pixcustomizer {
 	}
 
 	/** @var string the translation text domain */
-	protected static $textdomain = 'pixcustomizer_txtd';
+	protected static $textdomain = 'pixcustomify_txtd';
 
 	/**
 	 * @return string text domain
@@ -210,7 +210,7 @@ class pixcustomizer {
 		}
 		else { // null or otherwise empty value
 			// revert to default
-			self::$textdomain = 'pixcustomizer_txtd';
+			self::$textdomain = 'pixcustomify_txtd';
 		}
 	}
 

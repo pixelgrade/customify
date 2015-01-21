@@ -1,8 +1,8 @@
 <?php defined('ABSPATH') or die;
-	/* @var $form PixCustomizerForm */
-	/* @var $conf PixCustomizerMeta */
+	/* @var $form PixCustomifyForm */
+	/* @var $conf PixCustomifyMeta */
 
-	/* @var $f PixCustomizerForm */
+	/* @var $f PixCustomifyForm */
 	$f = &$form;
 ?>
 

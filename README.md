@@ -1,4 +1,4 @@
-pixcustomizer
+pixcustomify
 ========
 
 Extend the customizer

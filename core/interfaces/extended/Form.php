@@ -5,12 +5,12 @@
  */
 
 /**
- * @package    pixcustomizer
+ * @package    pixcustomify
  * @category   core
  * @author     Pixel Grade Team
  * @copyright  (c) 2013, Pixel Grade Media
  */
-interface PixCustomizerForm extends PixCustomizerHTMLElement {
+interface PixCustomifyForm extends PixCustomifyHTMLElement {
 
 	/**
 	 * @return static $this
@@ -18,7 +18,7 @@ interface PixCustomizerForm extends PixCustomizerHTMLElement {
 	function addtemplatepath($path);
 
 	/**
-	 * @return PixCustomizerFormField
+	 * @return PixCustomifyFormField
 	 */
 	function field($fieldname);
 
@@ -36,10 +36,10 @@ interface PixCustomizerForm extends PixCustomizerHTMLElement {
 	/**
 	 * Autocomplete meta object passed on by the processor.
 	 *
-	 * @param PixCustomizerMeta autocomplete values
+	 * @param PixCustomifyMeta autocomplete values
 	 * @return static $this
 	 */
-	function autocomplete(PixCustomizerMeta $autocomplete);
+	function autocomplete(PixCustomifyMeta $autocomplete);
 
 	/**
 	 * Retrieves the value registered for auto-complete. This will not fallback

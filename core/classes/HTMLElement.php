@@ -10,12 +10,12 @@
  * specialized tags such as forms or form fields require misc metadata to be
  * attached on the object itself.
  *
- * @package    pixcustomizer
+ * @package    pixcustomify
  * @category   core
  * @author     Pixel Grade Team
  * @copyright  (c) 2013, Pixel Grade Media
  */
-class PixCustomizerHTMLElementImpl extends PixCustomizerHTMLTagImpl implements PixCustomizerHTMLElement {
+class PixCustomifyHTMLElementImpl extends PixCustomifyHTMLTagImpl implements PixCustomifyHTMLElement {
 
 	/** @var array configuration values */
 	protected $meta = null;
@@ -46,7 +46,7 @@ class PixCustomizerHTMLElementImpl extends PixCustomizerHTMLTagImpl implements P
 		}
 
 		// setup meta fields
-		$this->meta = pixcustomizer::instance('PixCustomizerMeta', $config);
+		$this->meta = pixcustomify::instance('PixCustomifyMeta', $config);
 	}
 
 
@@ -101,7 +101,7 @@ class PixCustomizerHTMLElementImpl extends PixCustomizerHTMLTagImpl implements P
 	}
 
 	/**
-	 * @return PixCustomizerMeta
+	 * @return PixCustomifyMeta
 	 */
 	function meta() {
 		return $this->meta;

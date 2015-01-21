@@ -5,17 +5,17 @@
  */
 
 /**
- * @package    pixcustomizer
+ * @package    pixcustomify
  * @category   core
  * @author     Pixel Grade Team
  * @copyright  (c) 2013, Pixel Grade Media
  */
-class PixCustomizerValidatorImpl implements PixCustomizerValidator {
+class PixCustomifyValidatorImpl implements PixCustomifyValidator {
 
-	/** @var PixCustomizerMeta plugin configuration */
+	/** @var PixCustomifyMeta plugin configuration */
 	protected $meta = null;
 
-	/** @var PixCustomizerMeta field information */
+	/** @var PixCustomifyMeta field information */
 	protected $fields = null;
 
 	/**
@@ -38,14 +38,14 @@ class PixCustomizerValidatorImpl implements PixCustomizerValidator {
 		$fields !== null or $fields = array();
 
 		if (is_array($config)) {
-			$this->meta = pixcustomizer::instance('PixCustomizerMeta', $config);
+			$this->meta = pixcustomify::instance('PixCustomifyMeta', $config);
 		}
 		else { // non-array; assume meta object
 			$this->meta = $config;
 		}
 
 		if (is_array($fields)) {
-			$this->fields = pixcustomizer::instance('PixCustomizerMeta', $fields);
+			$this->fields = pixcustomify::instance('PixCustomifyMeta', $fields);
 		}
 		else { // non-array; assume meta object
 			$this->fields = $fields;
@@ -61,7 +61,7 @@ class PixCustomizerValidatorImpl implements PixCustomizerValidator {
 	 */
 	function validate($input) {
 		$errors = array();
-		$defaults = pixcustomizer::defaults();
+		$defaults = pixcustomify::defaults();
 		$plugin_checks = $this->meta->get('checks', array());
 
 		foreach ($input as $key => $value) {
@@ -72,7 +72,7 @@ class PixCustomizerValidatorImpl implements PixCustomizerValidator {
 			// --------------------------
 
 			$rules = array();
-			// check pixcustomizer defaults
+			// check pixcustomify defaults
 			if (isset($defaults['checks'][$field['type']])) {
 				$rules = $defaults['checks'][$field['type']];
 			}
@@ -89,7 +89,7 @@ class PixCustomizerValidatorImpl implements PixCustomizerValidator {
 			// ------------------
 
 			foreach ($rules as $rule) {
-				$callback = pixcustomizer::callback($rule, $this->meta);
+				$callback = pixcustomify::callback($rule, $this->meta);
 				$valid = call_user_func($callback, $input[$key], $field, $this);
 				if ( ! $valid) {
 					isset($errors[$key]) or $errors[$key] = array();
@@ -110,7 +110,7 @@ class PixCustomizerValidatorImpl implements PixCustomizerValidator {
 	 */
 	function error_message($rule) {
 		if (self::$error_message_cache === null) {
-			$defaults = pixcustomizer::defaults();
+			$defaults = pixcustomify::defaults();
 			$default_errors = $defaults['errors'];
 			$plugin_errors = $this->meta->get('errors', array());
 			self::$error_message_cache = array_merge($default_errors, $plugin_errors);

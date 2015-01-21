@@ -11,12 +11,12 @@
 	// load classes
 
 	$interfacepath = $basepath.'interfaces'.DIRECTORY_SEPARATOR;
-	pixcustomizer::require_all($interfacepath);
+	pixcustomify::require_all($interfacepath);
 
 	$classpath = $basepath.'classes'.DIRECTORY_SEPARATOR;
-	pixcustomizer::require_all($classpath);
+	pixcustomify::require_all($classpath);
 
 	// load callbacks
 
 	$callbackpath = $basepath.'callbacks'.DIRECTORY_SEPARATOR;
-	pixcustomizer::require_all($callbackpath);
+	pixcustomify::require_all($callbackpath);

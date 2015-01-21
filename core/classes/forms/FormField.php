@@ -5,12 +5,12 @@
  */
 
 /**
- * @package    pixcustomizer
+ * @package    pixcustomify
  * @category   core
  * @author     Pixel Grade Team
  * @copyright  (c) 2013, Pixel Grade Media
  */
-class PixCustomizerFormFieldImpl extends PixCustomizerHTMLElementImpl implements PixCustomizerFormField {
+class PixCustomifyFormFieldImpl extends PixCustomifyHTMLElementImpl implements PixCustomifyFormField {
 
 	/**
 	 * @param array config
