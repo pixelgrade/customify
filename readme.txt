@@ -1,4 +1,4 @@
-=== PixCustomify ===
+=== Customify ===
 Contributors: euthelup
 Tags: live, preview
 Requires at least: 3.8.0
@@ -7,7 +7,7 @@ Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-PixCustomify is a custom WordPress plugin that extends the customizer
+Customify is a custom WordPress plugin that extends the customizer
 
 == Description ==
 

@@ -286,4 +286,10 @@ class pixcustomify {
 		return strlen($path) + substr_count($path, '/') * 100;
 	}
 
+	static function option( $option, $default = null ) {
+
+		return PixCustomifyPlugin::get_option($option, $default = null);
+
+	}
+
 } # class

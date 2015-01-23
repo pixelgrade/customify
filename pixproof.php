@@ -1,15 +1,15 @@
 <?php
 /*
-* @package   PixCustomify
+* @package   Customify
 * @author    PixelGrade <contact@pixelgrade.com>
 * @license   GPL-2.0+
 * @link      http://pixelgrade.com
 * @copyright 2014 PixelGrade
 *
 * @wordpress-plugin
-Plugin Name: PixCustomify
+Plugin Name: Customify
 Plugin URI:  http://pixelgrade.com
-Description: WordPress Customizer extender
+Description: A Theme Customizer Booster
 Version: 1.0.0
 Author: PixelGrade
 Author URI: http://pixelgrade.com
