@@ -57,11 +57,9 @@ class PixCustomifyPlugin {
 
 	protected static $customizer_config;
 
-	protected $wp_customize = array();
-
 	public static $plugin_settings;
 
-	protected static $localized_shit = array();
+	protected static $localized = array();
 
 	protected static $current_values = array();
 
@@ -107,13 +105,14 @@ class PixCustomifyPlugin {
 //		add_action( 'plugins_loaded', array( $this, 'register_metaboxes' ), 14 );
 		add_action( 'customize_controls_enqueue_scripts', array( $this, 'enqueue_admin_customizer_styles' ), 10);
 		add_action( 'customize_controls_enqueue_scripts', array( $this, 'enqueue_admin_customizer_scripts' ), 10 );
+		add_action( 'customize_preview_init', array( $this, 'customizer_live_preview_enqueue_scripts' ), 99999 );
 
 		add_action( 'wp_footer', array( $this, 'output_dynamic_style' ), 9999999999 );
 
 		// add things to the previewer
 //		add_action( 'customize_preview_init', array( $this, 'customize_preview_js' ) );
 
-		add_action( 'customize_register', array( $this, 'debug_remove_default_sections' ), 11 );
+		add_action( 'customize_register', array( $this, 'remove_default_sections' ), 11 );
 		add_action( 'customize_register', array( $this, 'register_customizer' ), 12 );
 
 		/**
@@ -121,23 +120,6 @@ class PixCustomifyPlugin {
 		 */
 //		add_action( 'wp_ajax_pixcustomify_image_click', array( &$this, 'ajax_click_on_photo' ) );
 //		add_action( 'wp_ajax_nopriv_pixcustomify_image_click', array( &$this, 'ajax_click_on_photo' ) );
-	}
-
-	function init_plugin_configs() {
-		self::$customizer_config = get_option( 'pixcustomify_config' );
-
-		// no option so go for default
-		if ( empty( self::$customizer_config ) ) {
-			self::$customizer_config = self::get_config_option( 'default_settings' );
-		}
-
-		// alllow themes or other plugins to filter the config
-		self::$customizer_config = apply_filters( 'customify_filter_fields', self::$customizer_config);
-
-		self::$opt_name = self::$customizer_config['opt-name'];
-
-		self::get_current_values();
-		self::$settings_list = $this->get_settings();
 	}
 
 	/**
@@ -153,6 +135,23 @@ class PixCustomifyPlugin {
 		}
 
 		return self::$instance;
+	}
+
+	function init_plugin_configs() {
+		self::$customizer_config = get_option( 'pixcustomify_config' );
+
+		// no option so go for default
+		if ( empty( self::$customizer_config ) ) {
+			self::$customizer_config = self::get_config_option( 'default_settings' );
+		}
+
+		// alllow themes or other plugins to filter the config
+		self::$customizer_config = apply_filters( 'customify_filter_fields', self::$customizer_config);
+
+		self::$opt_name = self::$localized['options_name'] = self::$customizer_config['opt-name'];
+
+		self::get_current_values();
+		self::$settings_list = $this->get_settings();
 	}
 
 	protected static function check_for_customizer_values(){
@@ -322,29 +321,44 @@ class PixCustomifyPlugin {
 		load_plugin_textdomain( $domain, false, basename( dirname( __FILE__ ) ) . '/lang/' );
 	}
 
-	/**
-	 * Register and enqueue admin-specific style sheet on settings page.
-	 * @since     1.0.0
-	 * @return    null    Return early if no settings page is registered.
-	 */
-	function enqueue_admin_customizer_styles ( $wp_customize ) {
+	/** === RESOURCES === **/
 
-		wp_enqueue_style( $this->plugin_slug . '-customizer-styles', plugins_url( 'js/select2/select2.css', __FILE__ ), array(), $this->version );
+	/**
+	 * Customizer admin styles
+	 */
+	function enqueue_admin_customizer_styles () {
+		wp_enqueue_style( 'select2', plugins_url( 'js/select2/select2.css', __FILE__ ), array(), $this->version );
 	}
 
 	/**
-	 * Register and enqueue admin-specific JavaScript on settings page.
-	 * @since     1.0.0
-	 * @return    null    Return early if no settings page is registered.
+	 * Customizer admin scripts
 	 */
 	function enqueue_admin_customizer_scripts () {
 
 		wp_enqueue_script( 'select2', plugins_url( 'js/select2/select2.js', __FILE__ ), array( 'jquery' ), $this->version );
 		wp_enqueue_script( $this->plugin_slug . '-customizer-scripts', plugins_url( 'js/customizer.js', __FILE__ ), array( 'jquery', 'select2' ), $this->version );
 
-		wp_localize_script($this->plugin_slug . '-customizer-scripts', 'le_object', self::$localized_shit );
+		wp_localize_script($this->plugin_slug . '-customizer-scripts', 'customify_settings', self::$localized );
 	}
 
+	/** Customizer scripts loaded only on previewer page */
+	function customizer_live_preview_enqueue_scripts() {
+
+		wp_register_script( $this->plugin_slug . 'CSSOM', plugins_url( 'js/CSSOM.js', __FILE__ ), array( 'jquery' ), $this->version, true );
+		wp_register_script( $this->plugin_slug . 'cssUpdate', plugins_url( 'js/jquery.cssUpdate.js', __FILE__ ), array(  ), $this->version, true );
+		wp_enqueue_script( $this->plugin_slug . '-previewer-scripts', plugins_url( 'js/customizer_preview.js', __FILE__ ), array( 'jquery', $this->plugin_slug . 'CSSOM', $this->plugin_slug . 'cssUpdate' ), $this->version, true );
+
+		wp_localize_script( $this->plugin_slug . '-previewer-scripts', 'customify_settings', self::$localized );
+
+	}
+
+	/**
+	 * Add dynamic style only on the previewer page
+	 */
+
+	/**
+	 * Settings page styles
+	 */
 	function enqueue_admin_styles() {
 
 		if ( ! isset( $this->plugin_screen_hook_suffix ) ) {
@@ -355,9 +369,11 @@ class PixCustomifyPlugin {
 		if ( $screen->id == $this->plugin_screen_hook_suffix ) {
 			wp_enqueue_style( $this->plugin_slug . '-admin-styles', plugins_url( 'css/admin.css', __FILE__ ), array(), $this->version );
 		}
-
 	}
 
+	/**
+	 * Settings page scripts
+	 */
 	function enqueue_admin_scripts() {
 
 		if ( ! isset( $this->plugin_screen_hook_suffix ) ) {
@@ -381,6 +397,17 @@ class PixCustomifyPlugin {
 		wp_enqueue_style( $this->plugin_slug . '-plugin-styles', plugins_url( 'css/public.css', __FILE__ ), array(), $this->version );
 	}
 
+	/**
+	 * Register and enqueues public-facing JavaScript files.
+	 * @since    1.0.0
+	 */
+	public function enqueue_scripts() {
+		wp_enqueue_script( $this->plugin_slug . '-plugin-script', plugins_url( 'js/public.js', __FILE__ ), array( 'jquery' ), $this->version, true );
+	}
+
+	/**
+	 * Public style generated by customizer
+	 */
 	function output_dynamic_style() {
 		$custom_css = "\n";
 
@@ -425,9 +452,81 @@ class PixCustomifyPlugin {
 		</style>
 		<?php
 
+
+		/**
+		 * from now on we output only style tags only for the preview purpose
+		 * so don't cry if you see 30+ style tags for each section
+		 */
+		if ( ! isset( $GLOBALS['wp_customize'] ) ) {
+			return;
+		}
+
+		foreach ( self::$settings_list as $setting_id => $settings ) {
+
+			if ( ! isset( $settings['transport'] ) ||  $settings['transport'] !== 'postMessage' ) {
+				continue;
+			}
+			$this_value = self::get_option($setting_id);
+			foreach (  $settings['live_css'] as $key => $rules_set ) { ?>
+				<style id="dynamic_setting_<?php echo $setting_id . '_rule_' . str_replace( '-', '_', $rules_set['rule']); ?>" type="text/css"><?php
+
+					if ( isset( $rules_set['media'] ) && ! empty( $rules_set['media'] ) ) {
+						echo '@media '. $rules_set['media'] . " {\n";
+					}
+
+					if ( isset( $rules_set['selector'] ) && isset( $rules_set['rule'] ) ) {
+						echo self::proccess_css_rule($rules_set, $this_value);
+					}
+
+					if ( isset( $rules_set['media'] ) && ! empty( $rules_set['media'] ) ) {
+						echo "}\n";
+					}
+
+					?></style>
+				<?php
+
+			}
+		}
+
+
+		if ( !empty(self::$media_queries ) ) {
+
+			foreach ( self::$media_queries as $media_query => $rules ) {
+
+				if ( empty( $rules ) ) { continue; }
+
+				$display = false;
+				$media_q = '@media ' . $media_query . " {\n";
+
+				foreach ( $rules as $key => $rule )  {
+
+					if ( ! isset( $settings['transport'] ) ||  $settings['transport'] !== 'postMessage' ) {
+						continue;
+					}
+
+					$display = true;?>
+					<style id="dynamic_setting_<?php echo $key; ?>" type="text/css"><?php
+
+						$rule_settings = $rule['rule'];
+						$rule_value = $rule['value'];
+						$media_q .= "\t" .self::proccess_css_rule($rule_settings, $rule_value);
+
+						?></style>
+					<?php
+
+				}
+
+				$media_q .= "\n}\n";
+
+				if ( $display ) {
+					$custom_css .= $media_q;
+				}
+
+			}
+		}
 	}
 
-	protected function convert_setting_to_css ($setting_id, $live_css = array() ) {
+	protected function convert_setting_to_css ($setting_id, $live_css = array(), $previewer = false ) {
 		$output = '';
 
 		$this_value = self::get_option($setting_id);
@@ -435,6 +534,7 @@ class PixCustomifyPlugin {
 		if ( empty( $live_css ) || empty( $this_value ) ) {
 			return $output;
 		}
+
 
 		foreach ( $live_css as $css_rule ) {
 
@@ -446,6 +546,7 @@ class PixCustomifyPlugin {
 			if ( ! isset( $css_rule['selector'] ) || isset( $css_rule['rule'] ) ) {
 				$output .= self::proccess_css_rule($css_rule, $this_value);
 			}
+
 		}
 
 		return $output;
@@ -466,13 +567,6 @@ class PixCustomifyPlugin {
 		}
 
 		return $this_rule_output;
-	}
-	/**
-	 * Register and enqueues public-facing JavaScript files.
-	 * @since    1.0.0
-	 */
-	public function enqueue_scripts() {
-		wp_enqueue_script( $this->plugin_slug . '-plugin-script', plugins_url( 'js/public.js', __FILE__ ), array( 'jquery' ), $this->version, true );
 	}
 
 	/**
@@ -635,7 +729,7 @@ class PixCustomifyPlugin {
 			'settings' => $setting_id,
 		);
 
-		self::$localized_shit[$setting_id] = $setting_config;
+		self::$localized['settings'][$setting_id] = $setting_config;
 
 		// sanitize settings
 		if ( isset( $setting_config['transport'] ) && ! empty( $setting_config['transport'] ) ) {
@@ -743,21 +837,24 @@ class PixCustomifyPlugin {
 		$wp_customize->add_control( $this_control );
 	}
 
-	function debug_remove_default_sections( $wp_customize ) {
+	function remove_default_sections( $wp_customize ) {
+		global $wp_registered_sidebars;
 
-		$wp_customize->remove_section( 'nav' );
-		$wp_customize->remove_section( 'static_front_page' );
-		$wp_customize->remove_section( 'featured_content' );
-		$wp_customize->remove_section( 'title_tagline' );
+		$to_remove = self::get_plugin_option( 'disable_default_sections');
 
-		$wp_customize->remove_section( 'colors' );
-		$wp_customize->remove_section( 'header_image' );
-		$wp_customize->remove_section( 'background_image' );
-		$wp_customize->remove_section( 'static_front_page' );
-		$wp_customize->remove_section( 'sidebar-widgets-sidebar-3' );
-		$wp_customize->remove_section( 'sidebar-widgets-sidebar-2' );
-		$wp_customize->remove_section( 'sidebar-widgets-sidebar-1' );
+		if ( ! empty( $to_remove ) ) {
+			foreach( $to_remove as $section => $nothing ) {
 
+				if ( $section === 'widgets' ) {
+					foreach ( $wp_registered_sidebars as $widget => $settings ) {
+						$wp_customize->remove_section( 'sidebar-widgets-' . $widget );
+					}
+					continue;
+				}
+
+				$wp_customize->remove_section( $section );
+			}
+		}
 	}
 
 	static function get_base_path() {

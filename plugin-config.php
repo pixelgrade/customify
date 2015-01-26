@@ -188,7 +188,7 @@ return array(
 						'settings' => array(
 							'un_select_coios' => array(
 								'type'       => 'select2',
-								'transpport' => '',
+//								'transport' => '',
 								'label'      => 'Un select coios',
 								'desc'       => 'Asta ii prea smecher',
 								'choices'    => array(

@@ -8,9 +8,9 @@
 			$('.customify_select2' ).select2();
 
 
-			if ( typeof le_object !== "undefined" ) {
+			if ( typeof customify_settings !== "undefined" ) {
 
-				$.each( le_object, function(key, el){
+				$.each( customify_settings, function(key, el){
 
 					if ( typeof el.transport === 'undefined' || typeof el.live_css === "undefined" || el.transport !== 'postMessage' ) {
 						return;

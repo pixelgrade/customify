@@ -1,5 +1,6 @@
 <?php
 //not used yet - moved them to a per gallery option
+
 return array(
 	'type'    => 'postbox',
 	'label'   => 'General Settings',
@@ -14,6 +15,22 @@ return array(
 			'options' => array(
 				'option'    => __( 'Option (global options)', 'pixcustomify_txtd' ),
 				'theme_mod' => __( 'Theme Mod (per theme options)', 'pixcustomify_txtd' ),
+			),
+		),
+
+		'disable_default_sections' => array(
+			'name'    => 'disable_default_sections',
+			'label'   => __( 'Disable sections', 'pixcustomify_txtd' ),
+			'desc'    => __( 'You can disable sections', 'pixcustomify_txtd' ),
+			'type'    => 'multicheckbox',
+			'options' => array(
+				'nav'    => __( 'Navigation', 'pixcustomify_txtd' ),
+				'static_front_page' => __( 'Front Page', 'pixcustomify_txtd' ),
+				'title_tagline'    => __( 'Title', 'pixcustomify_txtd' ),
+				'colors' => __( 'Colors', 'pixcustomify_txtd' ),
+				'background_image'    => __( 'Background', 'pixcustomify_txtd' ),
+				'header_image' => __( 'Header', 'pixcustomify_txtd' ),
+				'widgets' => __( 'Widgets', 'pixcustomify_txtd' ),
 			),
 		),
 
