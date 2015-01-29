@@ -1,4 +1,3 @@
-
 @charset "UTF-8";
 @import "compass";
 /*------------------------------------*\
@@ -912,3 +911,7 @@ h3.accordion-section-title, #customize-info {
 
 
 
+
+.customify_typography .select2-container {
+	min-width: 260px;
+}

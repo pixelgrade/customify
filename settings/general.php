@@ -34,29 +34,46 @@ return array(
 			),
 		),
 
-//		'enable_archive_zip_download'   => array(
-//			'label'          => __( 'Enable Images Download', 'pixcustomify_txtd' ),
-//			'default'        => true,
-//			'type'           => 'switch',
-//			'show_group'     => 'enable_pixcustomify_gallery_group',
-//			'display_option' => true
-//		), /* ALL THESE PREFIXED WITH PORTFOLIO SHOULD BE KIDS!! **/
-//
-//		'enable_pixcustomify_gallery_group' => array(
-//			'type'    => 'group',
-//			'options' => array(
-//				'zip_archive_generation' => array(
-//					'name'    => 'zip_archive_generation',
-//					'label'   => __( 'The ZIP archive should be generated:', 'pixcustomify_txtd' ),
-//					'desc'    => __( 'How the archive file should be generated?', 'pixcustomify_txtd' ),
-//					'default' => 'manual',
-//					'type'    => 'select',
-//					'options' => array(
-//						'manual'    => __( 'Manually (uploaded by the gallery owner)', 'pixcustomify_txtd' ),
-//						'automatic' => __( 'Automatically (from the selected images)', 'pixcustomify_txtd' ),
-//					),
-//				),
-//			)
-//		)
+		'typography'   => array(
+			'label'          => __( 'Typography Options', 'pixcustomify_txtd' ),
+			'default'        => true,
+			'type'           => 'switch',
+			'show_group'     => 'typography_group',
+			'display_option' => true
+		),
+
+		'typography_group' => array(
+			'type'    => 'group',
+			'options' => array(
+				'typography_standard_fonts' => array(
+					'name'    => 'typography_standard_fonts',
+					'label'   => __( 'Standard fonts:', 'pixcustomify_txtd' ),
+					'desc'    => __( 'Would you like them?', 'pixcustomify_txtd' ),
+					'default' => true,
+					'type'    => 'switch',
+				),
+				'typography_google_fonts' => array(
+					'name'    => 'typography_google_fonts',
+					'label'   => __( 'Google fonts:', 'pixcustomify_txtd' ),
+					'desc'    => __( 'Would you like them?', 'pixcustomify_txtd' ),
+					'default' => true,
+					'type'    => 'switch',
+					'show_group'     => 'typography_google_fonts_group',
+					'display_option' => true
+				),
+				'typography_google_fonts_group' => array(
+					'type'    => 'group',
+					'options' => array(
+						'typography_group_google_fonts' => array(
+							'name'    => 'typography_standard_fonts',
+							'label'   => __( 'Group Google fonts:', 'pixcustomify_txtd' ),
+							'desc'    => __( 'Would you like them?', 'pixcustomify_txtd' ),
+							'default' => true,
+							'type'    => 'switch',
+						),
+					)
+				)
+			)
+		)
 	)
 ); # config
