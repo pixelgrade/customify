@@ -92,7 +92,7 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 	 */
 	public function render_content() {
 
-		$values = json_decode( $this->value() ); ?>
+		$values = json_decode( $this->value() );?>
 		<label class="customify_typography">
 			<?php if ( ! empty( $this->label ) ) : ?>
 				<span class="customize-control-title"><?php echo esc_html( $this->label ); ?></span>
