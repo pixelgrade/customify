@@ -13,10 +13,11 @@ class Pix_Customize_Control extends WP_Customize_Control {
 	 * @since 3.4.0
 	 */
 	protected function render() {
+		$group = '';
 		$id    = 'customize-control-' . str_replace( '[', '-', str_replace( ']', '', $this->id ) );
-		$class = '"pix_customizer_setting customize-control customize-control-' . $this->type;
+		$class = 'pix_customizer_setting customize-control customize-control-' . $this->type;
 
-		?><li id="<?php echo esc_attr( $id ); ?>" class=<?php echo esc_attr( $class ); ?>">
+		?><li id="<?php echo esc_attr( $id ); ?>" class="<?php echo esc_attr( $class ); ?>">
 		<?php $this->render_content(); ?>
 		</li><?php
 	}

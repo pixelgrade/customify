@@ -188,7 +188,6 @@ return array(
 						'settings' => array(
 							'un_select_coios' => array(
 								'type'       => 'select2',
-//								'transport' => '',
 								'label'      => 'Un select coios',
 								'desc'       => 'Asta ii prea smecher',
 								'choices'    => array(
@@ -200,8 +199,21 @@ return array(
 							)
 						)
 					),
-
-
+					'section_22' => array(
+						'title'    => 'Fonts',
+						'settings' => array(
+							'menu_font' => array(
+								'type'       => 'typography',
+								'label'      => 'Menu Font',
+								'desc'       => 'Asta ii prea smecher',
+							),
+							'footer_font' => array(
+								'type'       => 'typography',
+								'label'      => 'Menu Font',
+								'desc'       => 'Asta ii prea smecher',
+							)
+						)
+					),
 				)
 			),
 		),

@@ -4,7 +4,16 @@
 	$(document).ready(function(){
 		var api = parent.wp.customize,
 			wp_settings = api.settings.settings;
+		api.previewer.bind('highlight',function(e){
+			$('.customizerHighlight').removeClass('customizerHighlight');
 
+			if ( $(e).length > 0 ) {
+				//console.log(e);
+				$(e).each(function(){
+					$(this).addClass('customizerHighlight');
+				});
+			}
+		});
 		$.each( customify_settings.settings, function( key, el){
 
 			if ( typeof wp_settings[key] !== "undefined" && typeof el.live_css !== "undefined" && typeof el.transport !== 'undefined' && el.transport === 'postMessage' ) {

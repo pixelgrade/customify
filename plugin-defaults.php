@@ -5,4 +5,9 @@
 	# General
 	'values_store_mod'                => 'option',
 
+	'typography' => true,
+	'typography_standard_fonts' => true,
+	'typography_google_fonts' => true,
+	'typography_group_google_fonts' => true
+
 ); # config

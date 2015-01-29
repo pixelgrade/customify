@@ -1,0 +1,7 @@
+{
+"version": 3,
+"mappings": "AAAA,wCAAyC;EACxC,SAAS,EAAE,KAAK",
+"sources": ["../scss/customizer.scss"],
+"names": [],
+"file": "customizer.css"
+}
