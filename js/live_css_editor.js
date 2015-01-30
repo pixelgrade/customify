@@ -17,11 +17,11 @@
 
 		$('#accordion-panel-live_css_edit_panel' ).on('click', function(){
 			$('#accordion-section-live_css_edit_section' ).addClass('open');
-			$('#customize-controls' ).addClass('editor_opened');
+			$('.wp-full-overlay' ).addClass('editor_opened');
 		});
 
 		$('.control-panel-back' ).on('click', function() {
-			$('#customize-controls' ).removeClass('editor_opened');
+			$('.wp-full-overlay' ).removeClass('editor_opened');
 		});
 
 		//css_editor.getSession().on('change', function(e) {

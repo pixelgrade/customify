@@ -139,10 +139,13 @@
   margin-top: 10px;
 }
 
-#customize-controls.editor_opened {
+.wp-full-overlay.editor_opened {
+  margin-left: 500px;
+}
+.wp-full-overlay.editor_opened #customize-controls {
   width: 500px;
 }
-.wp-full-overlay.collapsed #customize-controls.editor_opened {
+.wp-full-overlay.editor_opened.collapsed #customize-controls {
   width: 300px;
 }
 

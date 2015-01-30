@@ -255,11 +255,16 @@ $popup 		: 275px;
 }
 
 // Increase the Customizer width when Editor is opened
-#customize-controls.editor_opened {
-	width: 500px;
+.wp-full-overlay.editor_opened {
+
+	margin-left: 500px;
+	
+	#customize-controls {
+		width: 500px;
+	}
 
 	// Go back when the Customizer is collapsed
-	.wp-full-overlay.collapsed & {
+	&.collapsed #customize-controls {
 		width: 300px;
 	}
 }
