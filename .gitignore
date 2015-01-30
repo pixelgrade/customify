@@ -2,6 +2,7 @@
 .test.path
 nbproject
 .sass-cache
+*.map
 *.sublime-project
 *.sublime-workspace
 codekit-config.json
