@@ -92,11 +92,6 @@ class Customify_CSS_Live_Editor {
 		} ?>
 		<style id="css_editor_output">
 			<?php echo $output; ?>
-			.customizerHighlight {
-				outline: red !important;
-				outline-style: dotted !important;
-				outline-width: 4px !important;
-			}
 		</style>
 	<?php
 	}

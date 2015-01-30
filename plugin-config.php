@@ -44,7 +44,7 @@ return array(
 	),
 	// shows exception traces on error
 	'debug'                 => $debug,
-	'default_settings' => array(
+	'default_options' => array(
 		'opt-name' => 'customzier_test',
 		'panels'   => array(
 			'panel_1' => array(
@@ -52,7 +52,7 @@ return array(
 				'sections' => array(
 					'section_11' => array(
 						'title'    => 'Texts',
-						'settings' => array(
+						'options' => array(
 							'the_text'     => array(
 								'type'  => 'text',
 								'label' => 'The text option',
@@ -67,16 +67,16 @@ return array(
 					),
 					'section_12' => array(
 						'title'    => 'Coolors',
-						'settings' => array(
+						'options' => array(
 							'main_color' => array(
 								'type'  => 'color',
 								'label' => 'Main color',
 								'desc'  => 'ceva ceva pe aici',
-								'live_css' => array(
+								'css' => array(
 									array(
 										'selector' => 'body',
 //										'media_query' => '',
-										'rule' => 'color',
+										'property' => 'color',
 //										'offset' => array(
 //											'from_setting' => 'the_select'
 //										),
@@ -94,7 +94,7 @@ return array(
 					),
 					'section_13' => array(
 						'title'    => 'Selects',
-						'settings' => array(
+						'options' => array(
 							'the_select' => array(
 								'type'    => 'select',
 								'label'   => 'Un select',
@@ -118,7 +118,7 @@ return array(
 					),
 					'section_14' => array(
 						'title'    => 'Uploaders',
-						'settings' => array(
+						'options' => array(
 							'an_upload' => array(
 								'type'  => 'upload',
 								'label' => 'Un upload long',
@@ -133,7 +133,7 @@ return array(
 					),
 					'section_15' => array(
 						'title'    => 'Surpriza',
-						'settings' => array(
+						'options' => array(
 							'the_range_is_mine' => array(
 								'type'        => 'range',
 								'label'       => __( 'Range' ),
@@ -185,7 +185,7 @@ return array(
 				'sections' => array(
 					'section_21' => array(
 						'title'    => 'Selectors',
-						'settings' => array(
+						'options' => array(
 							'un_select_coios' => array(
 								'type'       => 'select2',
 								'label'      => 'Un select coios',
@@ -201,7 +201,7 @@ return array(
 					),
 					'section_22' => array(
 						'title'    => 'Fonts',
-						'settings' => array(
+						'options' => array(
 							'menu_font' => array(
 								'type'       => 'typography',
 								'label'      => 'Menu Font',
@@ -217,7 +217,7 @@ return array(
 				)
 			),
 		),
-		// these settings wont be included inside a panel
+		// these options wont be included inside a panel
 		'sections' => array()
 	)
 

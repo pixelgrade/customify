@@ -92,7 +92,11 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 	 */
 	public function render_content() {
 
-		$values = json_decode( $this->value() );?>
+		$values = json_decode( $this->value() );
+		$font_family = '';
+		if ( isset( $values->font_family ) ) {
+			$font_family = $values->font_family;
+		}?>
 		<label class="customify_typography">
 			<?php if ( ! empty( $this->label ) ) : ?>
 				<span class="customize-control-title"><?php echo esc_html( $this->label ); ?></span>
@@ -102,10 +106,13 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 			<?php endif;
 
 			$this_id = str_replace('[', '_', $this->id );
-			$this_id = str_replace(']', '_', $this_id ); ?>
+			$this_id = str_replace(']', '_', $this_id );
+			/**
+			 * In this input will be saved the value of the typography field
+			 */ ?>
+			<input class="customify_typography_values" id="<?php echo $this_id; ?>" type="text" <?php $this->link(); ?> value='<?php echo $this->value(); ?>'/>
 
-			<input class="customify_typography_values" type="hidden" <?php $this->link(); ?> value='<?php echo $this->value(); ?>'/>
-			<select class="customify_typography_font_family" id="<?php echo $this_id; ?>" data-placeholder="--<?php _e('Select option', 'customify_txtd'); ?>--">
+			<select class="customify_typography_font_family">
 				<?php
 				if ( ! empty( $this->recommended ) ) {
 					echo '<optgroup label="' . __('Recommended', 'customify_txtd') . '">';
@@ -116,7 +123,7 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 						}
 
 						$font = self::$google_fonts[$key];
-						self::output_google_font_option($key, $font);
+						self::output_font_option($key, $font_family, $font);
 					}
 					echo "</optgroup>";
 				}
@@ -125,7 +132,8 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 
 					echo '<optgroup label="' . __('Standard fonts', 'customify_txtd') . '">';
 					foreach ( self::$std_fonts as $key => $font ) {
-						echo '<option value="' . $font . '">' . $font . '</option>';
+						self::output_font_option($key, $font_family, $font, 'std');
+
 					}
 					echo "</optgroup>";
 				}
@@ -144,7 +152,7 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 						foreach ( $grouped_google_fonts as $group_name => $group ) {
 							echo '<optgroup label="' . __('Google fonts', 'customify_txtd') . ' ' . $group_name . '">';
 							foreach ( $group as $key => $font ) {
-								self::output_google_font_option($key, $font);
+								self::output_font_option($key, $font_family, $font);
 							}
 							echo "</optgroup>";
 						}
@@ -152,7 +160,7 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 					} else {
 						echo '<optgroup label="' . __('Google fonts', 'customify_txtd') . '">';
 						foreach ( self::$google_fonts as $key => $font ) {
-							self::output_google_font_option($key, $font);
+							self::output_font_option($key, $font_family, $font);
 						}
 						echo "</optgroup>";
 					}
@@ -161,57 +169,65 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 			<?php
 			if ( $this->font_weight ) { ?>
 				<br/>Font Weight<br/>
-				<span class="customify_typography_font_weight">
+				<select class="customify_typography_font_weight">
 					<?php if ( isset( $values['font_weight'] ) && ! empty( $values['font_weight'] ) ) {
 						foreach ( $values['font_weight'] as $weight ) {
-//							var_dump($weight);
-						}
-					} ?>
-				</span>
-				<br/>
-			<?php
-			}
-
-			if ( $this->subsets ) { ?>
-				<br/>Subsets<br/>
-				<span class="customify_typography_font_subsets">
-					<?php if ( isset( $values['subsets'] ) && ! empty( $values['subsets'] ) ) {
-						foreach ( $values['subsets'] as $subsets ) {
-//							var_dump($subsets);
-						}
-					} ?>
-				</span>
-				<br/>
-			<?php
-			}
-
-			if ( isset( $this->backup ) ) { ?>
-				<br/>
-				<span class="title"><?php _e('Backup Font', 'customify_txtd'); ?></span>
-				<select name="<?php echo str_replace( '_control', '', $this->id ); ?>[backup]" class="customify_typography_backup" data-tags="true" data-placeholder="--<?php _e('Select option', 'customify_txtd'); ?>--">
-					<?php
-					if ( PixCustomifyPlugin::get_plugin_option( 'typography_standard_fonts' ) ) {
-						foreach ( self::$std_fonts as $key => $font ) {
-							echo '<option value="' . $font . '">' . $font . '</option>';
+							echo '<option value="'. $weight . '. "> ' . strtoupper( $weight ) . '</option>';
 						}
 					} ?>
 				</select>
-			<?php } ?>
+				<br/>
+			<?php
+			}
+
+			if ( $this->subsets && ( isset( $values['subsets'] ) && ! empty( $values['subsets'] ) )) { ?>
+				<br/>Subsets<br/>
+				<select class="customify_typography_font_subsets">
+					<?php
+					foreach ( $values['subsets'] as $subset ) {
+						echo '<option value="'. $subset . '. "> ' . $subset . '</option>';
+					}
+					?>
+				</select>
+				<br/>
+			<?php
+			}
+			/*
+						if ( isset( $this->backup ) ) { ?>
+							<br/>
+							<span class="title"><?php _e('Backup Font', 'customify_txtd'); ?></span>
+							<select name="<?php echo str_replace( '_control', '', $this->id ); ?>[backup]" class="customify_typography_backup" data-tags="true" data-placeholder="--<?php _e('Select option', 'customify_txtd'); ?>--">
+								<?php
+								if ( PixCustomifyPlugin::get_plugin_option( 'typography_standard_fonts' ) ) {
+									foreach ( self::$std_fonts as $key => $font ) {
+										echo '<option value="' . $font . '">' . $font . '</option>';
+									}
+								} ?>
+							</select>
+						<?php } */ ?>
 		</label>
 	<?php }
 
-	protected static function output_google_font_option( $key, $font) {
+	protected static function output_font_option( $key, $font_family, $font, $type = 'google' ) {
 		$data = '';
 
-		if ( isset( $font['variants'] ) && ! empty( $font['variants'] ) ) {
+		if ( isset( $font['variants'] ) && ! empty( $font['variants'] ) && $type === 'google' ) {
 			$data .= ' data-variants=\'' . json_encode( $font['variants'], JSON_FORCE_OBJECT ) . '\'';
 		}
 
-		if ( isset( $font['subsets'] ) && ! empty( $font['subsets'] ) ) {
+		if ( isset( $font['subsets'] ) && ! empty( $font['subsets'] ) && $type === 'google' ) {
 			$data .= ' data-subsets=\'' . json_encode( $font['subsets'], JSON_FORCE_OBJECT ) . '\'';
 		}
 
-		echo '<option value="' . $font['family'] . '"'. $data .'>' . $font['family'] . '</option>';
+		$data .= ' data-type="' . $type . '"';
+
+		if ( $type === 'google' ) {
+			$selected = ( $font_family === $font['family'] ) ? ' selected="selected" ' : '';
+			echo '<option value="' . $font['family'] . '"'. $selected . $data .'>' . $font['family'] . '</option>';
+		} else {
+			$selected = ( $font_family === $font) ? ' selected="selected" ' : '';
+			echo '<option class="std_font" value="' . $font . '"'. $selected . $data .'>' . $font . '</option>';
+		}
 	}
 
 	protected function load_google_fonts() {

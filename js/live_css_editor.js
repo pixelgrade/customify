@@ -64,10 +64,6 @@
 		//	//console.log(text);
 		//});
 
-		//api( 'live_css_edit', function( value ) {
-		//	value.bind( function( newval ) {
-		//		console.log(newval);
-		//	} );
-		//} );
+
 	});
 })(jQuery, window);
