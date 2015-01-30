@@ -668,6 +668,9 @@ class PixCustomifyPlugin {
 		// now get all the controls
 		$path = self::get_base_path() . '/features/customizer/controls/';
 		pixcustomify::require_all( $path );
+
+		// load custom modules
+		include_once( self::get_base_path() . '/features/class-CSS_Editor.php' );
 	}
 
 	function register_customizer( $wp_customize ) {
