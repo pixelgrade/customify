@@ -412,7 +412,7 @@ class PixCustomifyPlugin {
 	 * @since    1.0.0
 	 */
 	function enqueue_styles() {
-		wp_enqueue_style( $this->plugin_slug . '-plugin-styles', plugins_url( 'css/public.css', __FILE__ ), array(), $this->version );
+		// wp_enqueue_style( $this->plugin_slug . '-plugin-styles', plugins_url( 'css/public.css', __FILE__ ), array(), $this->version );
 	}
 
 	/**
