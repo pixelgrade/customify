@@ -182,7 +182,7 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 
 			if ( $this->subsets && ( isset( $values['subsets'] ) && ! empty( $values['subsets'] ) )) { ?>
 				<br/>Subsets<br/>
-				<select class="customify_typography_font_subsets">
+				<select multiple class="customify_typography_font_subsets">
 					<?php
 					foreach ( $values['subsets'] as $subset ) {
 						echo '<option value="'. $subset . '. "> ' . $subset . '</option>';

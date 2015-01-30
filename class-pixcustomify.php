@@ -575,6 +575,12 @@ class PixCustomifyPlugin {
 						$families .= ":" . implode(',', $value['variants'][0] );
 					}
 
+					if ( isset( $value['selected_subsets'] ) && ! empty( $value['selected_subsets'] ) ) {
+						$families .= ":" . implode(',', $value['selected_subsets'] );
+					} elseif ( isset( $value['subsets'] ) && ! empty($value['subsets']) ) {
+						$families .= ":" . implode(',', $value['subsets'][0] );
+					}
+
 					$families .= '\',';
 				}
 			}
