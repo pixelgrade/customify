@@ -16,7 +16,7 @@
 		});
 
 		$('#accordion-panel-live_css_edit_panel' ).on('click', function(){
-			api.section('#accordion-section-live_css_edit_section' ).addClass('open');
+			$('#accordion-section-live_css_edit_section' ).addClass('open');
 		});
 
 		//css_editor.getSession().on('change', function(e) {
