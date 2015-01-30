@@ -18,12 +18,12 @@ function add_customify_settings( $settings ) {
 				'type'  => 'color',
 				'label' => 'Body color',
 				'desc'  => 'ceva ceva pe aici',
-//				'transport' => 'postMessage',
-				'live_css' => array(
+//				'live' => true,
+				'css' => array(
 					array(
 						'selector' => 'body',
 //						'media' => 'screen and (min-width: 1600px)',
-						'rule' => 'background-color',
+						'property' => 'background-color',
 //						'offset' => array(
 //							'from_setting' => 'the_select'
 //						),
@@ -38,7 +38,7 @@ function add_customify_settings( $settings ) {
 				'type'  => 'range',
 				'label' => 'left white space',
 				'desc'  => 'ceva ceva pe aici',
-//				'transport' => 'postMessage',
+//				'live' => true,
 				'input_attrs' => array(
 					'min'   => 10,
 					'max'   => 700,
@@ -47,11 +47,11 @@ function add_customify_settings( $settings ) {
 					'style' => 'color: #0a0',
 				),
 				'default' => 430,
-				'live_css' => array(
+				'css' => array(
 					array(
 						'selector' => 'html body:before',
 						'media' => 'screen and (min-width: 700px)',
-						'rule' => 'width',
+						'property' => 'width',
 //						'offset' => array(
 //							'from_setting' => 'the_select'
 //						),
@@ -69,9 +69,9 @@ function add_customify_settings( $settings ) {
 
 add_filter('customify_filter_fields', 'add_customify_settings', 10, 1 );
 
-function this_setting_can_call_this_function( $value, $selector, $rule, $unit ) {
+function this_setting_can_call_this_function( $value, $selector, $property, $unit ) {
 
-	$this_rule_output = $selector . ' { '. $rule .': '. ( $value * 2 ) . $unit . "; } \n";
+	$this_property_output = $selector . ' { '. $property .': '. ( $value * 2 ) . $unit . "; } \n";
 
-	return $this_rule_output;
+	return $this_property_output;
 }

@@ -15,60 +15,60 @@
 		this.settings = $.extend( {}, defaults, options );
 		this._defaults = defaults;
 		this._name = pluginName;
-		this._cssrules = CSSOM.parse($(this.element).html());
+		this._cssproperties = CSSOM.parse($(this.element).html());
 		this.init();
 	}
 
 	Plugin.prototype = {
 		init: function () {
-			this.changeRules();
+			this.changeProperties();
 		},
 
-		changeRules: function () {
+		changeProperties: function () {
 
 			var self = this,
-				css = this._cssrules.cssRules;
+				css = this._cssproperties.cssRules;
 
 			if ( css[0].hasOwnProperty('media') ) {
 
 				// in this case we run a media query object
 				$.each(css, function( key, media_query ){
 
-					// simple object with css rules
+					// simple object with css properties
 					// change them with new ones
-					$.each(media_query.cssRules, function(i, rule){
-						var rule_name = rule.style[0];
-						css[key].cssRules[i].style[rule_name] = self.updateCssRule(rule_name, self.settings, css[key].cssRules[i].selectorText);
+					$.each(media_query.cssRules, function(i, property){
+						var property_name = property.style[0];
+						css[key].cssRules[i].style[property_name] = self.updateCssRule(property_name, self.settings, css[key].cssRules[i].selectorText);
 					});
 
 				});
 
 			} else {
 
-				// simple object with css rules
+				// simple object with css properties
 				// change them with new ones
-				$.each(css, function(i, rule){
-					if ( rule.hasOwnProperty( 'style' ) ) {
-						var rule_name = rule.style[0];
-						css[i].style[rule_name] = self.updateCssRule(rule_name, self.settings, css[i].selectorText);
+				$.each(css, function(i, property){
+					if ( property.hasOwnProperty( 'style' ) ) {
+						var property_name = property.style[0];
+						css[i].style[property_name] = self.updateCssRule(property_name, self.settings, css[i].selectorText);
 					}
 				});
 			}
 
 			$(window).trigger('resize');
 
-			//Insert the new rules into <style> tag
-			$(this.element).html(this._cssrules.toString());
+			//Insert the new properties into <style> tag
+			$(this.element).html(this._cssproperties.toString());
 		},
 
 		/**
-		 * Update one css rules by the given params
-		 * @param rule_name
+		 * Update one css properties by the given params
+		 * @param property_name
 		 * @param settings
 		 * @param selectorText
 		 * @returns {string}
 		 */
-		updateCssRule: function(rule_name, settings, selectorText ){
+		updateCssRule: function(property_name, settings, selectorText ){
 
 			var self = this,
 				properties = settings.properties,
@@ -104,11 +104,11 @@
 					'border-right-width',
 					'border-top-width'
 				],
-			// if there is a negative rule ... keep it negative
-			is_negative = self.is_negative_rule(rule_name, properties, selectorText );
+			// if there is a negative property ... keep it negative
+			is_negative = self.is_negative_property(property_name, properties, selectorText );
 
 			var unit = '';
-			if ( px_dependents.indexOf(rule_name) != -1 ) {
+			if ( px_dependents.indexOf(property_name) != -1 ) {
 				unit = 'px';
 			}
 
@@ -117,19 +117,19 @@
 		},
 
 		/**
-		 * Check is the current rule has a negative selector in our config
+		 * Check is the current property has a negative selector in our config
 		 * if this is true return the sign "-" which will be put in front of the value
-		 * @param rule
+		 * @param property
 		 * @param current_properties
 		 * @param selectorText
 		 * @returns {string}
 		 */
-		is_negative_rule: function(rule, current_properties, selectorText){
-			if ( current_properties.hasOwnProperty(rule) ) {
+		is_negative_property: function(property, current_properties, selectorText){
+			if ( current_properties.hasOwnProperty(property) ) {
 
-				if ( current_properties[rule].hasOwnProperty('negative_selector') )
+				if ( current_properties[property].hasOwnProperty('negative_selector') )
 
-					if ( current_properties[rule].negative_selector == selectorText)
+					if ( current_properties[property].negative_selector == selectorText)
 						return '-';
 			}
 
