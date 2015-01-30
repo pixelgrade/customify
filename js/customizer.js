@@ -72,14 +72,16 @@
 
 		$(document).on('change', '.customify_typography_font_subsets', function(ev){
 
-			console.log( $(this).val() );
-
 			$input = $(this).siblings('.customify_typography_values');
 
 			var current_val =  $input.val();
 
-			console.log( current_val );
+			current_val = JSON.parse(current_val);
+			current_val.selected_subsets = $(this).val();
 
+			$input.val( JSON.stringify( current_val ) );
+
+			$input.trigger('change');
 		});
 
 		var update_siblings_selects = function ( font_select  ) {
