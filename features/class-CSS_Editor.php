@@ -86,7 +86,7 @@ class Customify_CSS_Live_Editor {
 		} elseif ( $store_type === 'theme_mod' ) {
 			$output = get_theme_mod(  'live_css_edit' );
 		}
-var_dump($store_type);
+
 		if ( empty( $output ) ) {
 			return;
 		} ?>
