@@ -1,8 +1,8 @@
 @charset "UTF-8";
 @import "compass";
-/*------------------------------------*\
-    VARIABLES
-\*------------------------------------*/
+//------------------------------------*\
+//  VARIABLES
+//------------------------------------*/
 $accent 	: #3677bd;
 $dark 		: #232527;
 $gray 		: #303235;
@@ -13,13 +13,242 @@ $unit 		: 24px;
 $popup 		: 275px;
 
 
+//------------------------------------*\
+//    RESETS
+//------------------------------------*/
+.wp-full-overlay-sidebar {
+	* {
+		-webkit-box-sizing 	: border-box;
+		-moz-box-sizing 	: border-box;
+		box-sizing 			: border-box;
+	}
+}
+
+// Change sections overflow
+.accordion-section-content {
+	overflow:visible;
+}
+
+.customize-control {
+	float: none;
+	padding: 5px;
+	min-height: 35px;
+}
 
 
 
 
-/*------------------------------------*\
-    RESETS
-\*------------------------------------*/
+//------------------------------------*\
+//    OBJECTS
+//------------------------------------*/
+%top-arrow {
+	&:after {
+        content: "";
+        position: absolute;
+        bottom:100%;
+        right: 19px;
+        border-collapse: separate;
+        width: 0;
+        height: 0;
+
+        border-width: 0 9px 9px 9px;;
+        border-style: solid;
+        border-color: transparent transparent #eee transparent;
+    }
+}
+
+%box-bg {
+	position 	: absolute;
+	top 		: 60px;
+	right 		: -6px;
+	z-index 	: 100000;
+	width 		: $popup !important;
+	padding 	: 12px;
+	display 	: none;
+	background 		: #fff;
+	@include border-radius(3px);
+	@extend %top-arrow;
+
+	&.active {
+		display:block;
+	}
+
+	&:after {
+		right 			: 58px;
+		border-color 	: transparent transparent #fff transparent;
+	}
+}
+
+%icon-btn {
+	position 	: absolute;
+	top 		: -36px;
+	right 		: 45px;
+	display 	: block;
+	height 		: 30px;
+	width 		: 30px;
+	margin 		: 0;
+	padding 	: 0;
+	border 		: none;
+	background 	: #1d1e20;
+	color 		: #5f6369;
+	@include border-radius(100px);
+	@include box-shadow(rgba(0, 0, 0, 0.1) 0 2px 0px inset);
+	line-height : 30px;
+	text-align 	: center;
+	cursor 		: pointer;
+	outline 	: none;
+
+	&:before {
+		font-family: 'Elusive-Icons';
+		content: "\e669";
+	}
+
+	&:hover, &.active {
+		background 	: $lighter;
+	}
+
+	&.active {
+		@include box-shadow(rgba(0, 0, 0, 0.4) 0 1px 1px);
+	}
+}
+
+
+
+
+
+//------------------------------------*\
+//    COMPONENTS
+//------------------------------------*/
+
+/*
+ * Color Picker
+ */
+.customize-control-color {
+	.customize-control-title {
+		float:left;
+	}
+	.customize-control-content {
+
+	}
+
+	.wp-picker-container {
+		position 	: relative;
+		float 		: right;
+		top 		: -3px;
+
+
+		.wp-picker-holder {
+			position: relative;
+		}
+
+		.iris-picker {
+			position 	: absolute;
+			top 		: 54px;
+			right 		: -13px;
+			z-index 	: 1000;
+			width 		: $popup !important;
+			border-top 	: none;
+			border-color: #DFDFDE;
+			@include border-radius(0 0 3px 3px);
+			background: white;
+
+			.iris-picker-inner {
+
+			}
+			.iris-square {
+				width 			: 215px !important;
+				height 			: 173px !important;
+				margin-right 	: 0;
+			}
+			.iris-strip {
+				float 	: right;
+				@include box-shadow(rgba(0,0,0,0.4) 0 1px 1px inset);
+				.ui-slider-handle {
+					border-color 	: #aaa !important;
+					opacity 		: 1;
+					@include box-shadow(none);
+				}
+			}
+			.iris-palette {
+				width : 24px !important;
+				height : 24px !important;
+				@include border-radius(50px);
+				@include box-shadow(rgba(0,0,0,0.4) 0 1px 1px inset);
+			}
+		}
+
+		.wp-picker-open+.wp-picker-input-wrap {
+			position 	: absolute;
+			z-index 	: 1000;
+			top 		: 42px;
+			right 		: -13px;
+			width 		: $popup + 2; // border
+			padding 	: 12px;
+			background 	: #eee;
+			border 		: 1px solid #DFDFDE;
+			@include border-radius(3px 3px 0 0);
+			@extend %top-arrow;
+
+			input {
+
+				&.wp-color-picker {
+					float:left;
+				}
+
+				&.button {
+					float:right;
+				}
+			}
+		}
+	}
+
+	.wp-color-result{
+		top 		: 0;
+		height 		: 30px;
+		width 		: 30px;
+		margin 		: 0;
+		padding 	: 0;
+		border 		: none;
+		@include border-radius(100px);
+		@include box-shadow(rgba(0, 0, 0, 0.4) 0 2px 0px inset);
+
+		&:after {
+			display:none;
+		}
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+%not-used {
+
+//------------------------------------*\
+//    RESETS
+//------------------------------------*/
 .wp-full-overlay-sidebar {
 
 	border-right: 0;
@@ -87,9 +316,9 @@ h3.accordion-section-title, #customize-info {
 
 
 
-/*------------------------------------*\
-    BASE
-\*------------------------------------*/
+//------------------------------------*\
+//    BASE
+//------------------------------------*/
 
 // Inverse the accordion sections colors
 .wp-full-overlay-sidebar {
@@ -108,9 +337,9 @@ h3.accordion-section-title, #customize-info {
 	color: #b1b5b9;
 }
 
-/*------------------------------------*\
-    ACCORDION SECTIONS
-\*------------------------------------*/
+//------------------------------------*\
+//    ACCORDION SECTIONS
+//------------------------------------*/
 
 // Inverse the accordion sections colors
 #customize-info,
@@ -201,9 +430,9 @@ h3.accordion-section-title, #customize-info {
 
 
 
-/*------------------------------------*\
-    HEADER + FOOTER CONTROLS
-\*------------------------------------*/
+//------------------------------------*\
+//    HEADER + FOOTER CONTROLS
+//------------------------------------*/
 
 // Header – Close + Save Controls
 #customize-header-actions {
@@ -346,9 +575,9 @@ h3.accordion-section-title, #customize-info {
 
 
 
-/*------------------------------------*\
-    OBJECTS
-\*------------------------------------*/
+//------------------------------------*\
+//    OBJECTS
+//------------------------------------*/
 %top-arrow {
 	&:after {
         content: "";
@@ -424,9 +653,9 @@ h3.accordion-section-title, #customize-info {
 
 
 
-/*------------------------------------*\
-    COMPONENTS
-\*------------------------------------*/
+//------------------------------------*\
+//    COMPONENTS
+//------------------------------------*/
 /*
  * Info
  */
@@ -909,9 +1138,9 @@ h3.accordion-section-title, #customize-info {
 
 }
 
+} //End of .not-used
 
-
-
+/* Shame */
 .customify_typography .select2-container {
 	min-width: 260px;
 }
