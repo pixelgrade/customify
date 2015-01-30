@@ -101,7 +101,7 @@ class PixCustomifyPlugin {
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_scripts' ) );
 
 		// Load public-facing style sheet and JavaScript.
-		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_styles' ), 99999999999 );
+//		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_styles' ), 99999999999 );
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 
 //		add_action( 'plugins_loaded', array( $this, 'register_metaboxes' ), 14 );
@@ -109,7 +109,7 @@ class PixCustomifyPlugin {
 		add_action( 'customize_controls_enqueue_scripts', array( $this, 'enqueue_admin_customizer_scripts' ), 10 );
 		add_action( 'customize_preview_init', array( $this, 'customizer_live_preview_enqueue_scripts' ), 99999 );
 
-		add_action( 'wp_footer', array( $this, 'output_dynamic_style' ), 9999999999 );
+		add_action( 'wp_footer', array( $this, 'output_dynamic_style' ), 99999 );
 		add_action( 'wp_head', array( $this, 'output_typography_dynamic_style' ), 10 );
 
 		// add things to the previewer
@@ -159,6 +159,9 @@ class PixCustomifyPlugin {
 
 		self::get_current_values();
 		self::$options_list = $this->get_options();
+
+		// load custom modules
+		include_once( self::get_base_path() . '/features/class-CSS_Editor.php' );
 	}
 
 	protected static function check_for_customizer_values() {
@@ -684,9 +687,6 @@ class PixCustomifyPlugin {
 		// now get all the controls
 		$path = self::get_base_path() . '/features/customizer/controls/';
 		pixcustomify::require_all( $path );
-
-		// load custom modules
-		include_once( self::get_base_path() . '/features/class-CSS_Editor.php' );
 	}
 
 	function register_customizer( $wp_customize ) {

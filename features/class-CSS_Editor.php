@@ -15,7 +15,7 @@ class Customify_CSS_Live_Editor {
 
 		add_action( 'customize_controls_enqueue_scripts', array( $this, 'enqueue_admin_customizer_styles' ), 10);
 
-		add_action( 'wp_footer', array( $this, 'output_dynamic_style' ), 999999999999 );
+		add_action( 'wp_footer', array( $this, 'output_dynamic_style' ), 999999999 );
 
 	}
 
