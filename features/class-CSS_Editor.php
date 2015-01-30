@@ -49,7 +49,7 @@ class Customify_CSS_Live_Editor {
 		$wp_customize->add_panel( 'live_css_edit_panel', array(
 			'priority'    => 10,
 			'capability'  => 'edit_theme_options',
-			'title' => 'Live Css Editor'
+			'title' => 'CSS Editor'
 		) );
 
 		$wp_customize->add_section( 'live_css_edit_section', array(

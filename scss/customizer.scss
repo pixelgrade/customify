@@ -35,6 +35,11 @@ $popup 		: 275px;
 	min-height: 35px;
 }
 
+// Header – Close + Save Controls
+#customize-header-actions {
+	border-bottom: 0;
+}
+
 
 
 
@@ -219,8 +224,25 @@ $popup 		: 275px;
 }
 
 
+/**
+ * CSS Customizer
+ */
 
+// Panel
+#accordion-panel-live_css_edit_panel {
 
+}
+	// Section
+	#accordion-section-live_css_edit_section {
+		.accordion-section-title {
+			// display: none;
+		}
+
+		// Ace Editor
+		#css_editor {
+			top: 70px;
+		}
+	}
 
 
 

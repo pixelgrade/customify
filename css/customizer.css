@@ -14,6 +14,10 @@
   min-height: 35px;
 }
 
+#customize-header-actions {
+  border-bottom: 0;
+}
+
 .customize-control-color .wp-picker-container .wp-picker-open + .wp-picker-input-wrap:after {
   content: "";
   position: absolute;
@@ -117,6 +121,16 @@
 }
 .customize-control-color .wp-color-result:after {
   display: none;
+}
+
+/**
+ * CSS Customizer
+ */
+#accordion-section-live_css_edit_section .accordion-section-title {
+  display: none;
+}
+#accordion-section-live_css_edit_section #css_editor {
+  top: 70px;
 }
 
 /* Shame */
