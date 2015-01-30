@@ -232,18 +232,37 @@ $popup 		: 275px;
 #accordion-panel-live_css_edit_panel {
 
 }
-	// Section
-	#accordion-section-live_css_edit_section {
-		.accordion-section-title {
-			// display: none;
-		}
 
-		// Ace Editor
-		#css_editor {
-			top: 70px;
-		}
+// Section
+#accordion-section-live_css_edit_section {
+	// Ace Editor
+	#css_editor {
+		top: 70px;
 	}
 
+	// Add Some Extra Spacing Around the Editor Content
+	.ace_scroller {
+		padding: 10px 0 0 10px;
+	}
+
+	.ace_gutter-layer {
+		padding-top: 10px;
+	}
+
+	.ace_gutter-active-line {
+		margin-top: 10px;
+	}
+}
+
+// Increase the Customizer width when Editor is opened
+#customize-controls.editor_opened {
+	width: 500px;
+
+	// Go back when the Customizer is collapsed
+	.wp-full-overlay.collapsed & {
+		width: 300px;
+	}
+}
 
 
 

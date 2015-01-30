@@ -126,11 +126,24 @@
 /**
  * CSS Customizer
  */
-#accordion-section-live_css_edit_section .accordion-section-title {
-  display: none;
-}
 #accordion-section-live_css_edit_section #css_editor {
   top: 70px;
+}
+#accordion-section-live_css_edit_section .ace_scroller {
+  padding: 10px 0 0 10px;
+}
+#accordion-section-live_css_edit_section .ace_gutter-layer {
+  padding-top: 10px;
+}
+#accordion-section-live_css_edit_section .ace_gutter-active-line {
+  margin-top: 10px;
+}
+
+#customize-controls.editor_opened {
+  width: 500px;
+}
+.wp-full-overlay.collapsed #customize-controls.editor_opened {
+  width: 300px;
 }
 
 /* Shame */
