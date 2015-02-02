@@ -9,7 +9,7 @@ return array(
 		'values_store_mod' => array(
 			'name'    => 'values_store_mod',
 			'label'   => __( 'Store values as:', 'pixcustomify_txtd' ),
-			'desc'    => __( 'You can store the values globally so you can use them with other themes or store the as a "theme_mod" which will make an individual set of options only for the current theme', 'pixcustomify_txtd' ),
+			'desc'    => __( 'You can store the values globally so you can use them with other themes or store them as a "theme_mod" which will make an individual set of options only for the current theme', 'pixcustomify_txtd' ),
 			'default' => 'option',
 			'type'    => 'select',
 			'options' => array(
@@ -34,46 +34,5 @@ return array(
 			),
 		),
 
-		'typography'   => array(
-			'label'          => __( 'Typography Options', 'pixcustomify_txtd' ),
-			'default'        => true,
-			'type'           => 'switch',
-			'show_group'     => 'typography_group',
-			'display_option' => true
-		),
-
-		'typography_group' => array(
-			'type'    => 'group',
-			'options' => array(
-				'typography_standard_fonts' => array(
-					'name'    => 'typography_standard_fonts',
-					'label'   => __( 'Standard fonts:', 'pixcustomify_txtd' ),
-					'desc'    => __( 'Would you like them?', 'pixcustomify_txtd' ),
-					'default' => true,
-					'type'    => 'switch',
-				),
-				'typography_google_fonts' => array(
-					'name'    => 'typography_google_fonts',
-					'label'   => __( 'Google fonts:', 'pixcustomify_txtd' ),
-					'desc'    => __( 'Would you like them?', 'pixcustomify_txtd' ),
-					'default' => true,
-					'type'    => 'switch',
-					'show_group'     => 'typography_google_fonts_group',
-					'display_option' => true
-				),
-				'typography_google_fonts_group' => array(
-					'type'    => 'group',
-					'options' => array(
-						'typography_group_google_fonts' => array(
-							'name'    => 'typography_standard_fonts',
-							'label'   => __( 'Group Google fonts:', 'pixcustomify_txtd' ),
-							'desc'    => __( 'Would you like them?', 'pixcustomify_txtd' ),
-							'default' => true,
-							'type'    => 'switch',
-						),
-					)
-				)
-			)
-		)
 	)
 ); # config

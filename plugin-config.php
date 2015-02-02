@@ -19,6 +19,8 @@ return array(
 	'fields'                => array(
 		'hiddens' => include 'settings/hiddens' . EXT,
 		'general' => include 'settings/general' . EXT,
+		'typography' => include 'settings/typography' . EXT,
+		'css_editor' => include 'settings/css_editor' . EXT,
 	),
 	'processor'             => array(
 		// callback signature: (array $input, PixtypesProcessor $processor)
@@ -49,7 +51,7 @@ return array(
 	 * DEFAULTS - The default plugin options
 	 */
 	'default_options' => array(
-		'opt-name' => 'customify_defaults',		
+		'opt-name' => 'customify_defaults',
 		'sections' => array(
 
 			/**
@@ -132,7 +134,7 @@ return array(
 						'label'   => __( 'Body Text', 'hive_txtd' ),
 						'default' => '"Droid Serif", serif',
 						'selector' => 'html body',
-						'load_all_weigts' => true,
+						'load_all_weights' => true,
 					)
 				)
 			),
