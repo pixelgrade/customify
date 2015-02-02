@@ -620,7 +620,21 @@ class PixCustomifyPlugin {
 					}
 
 					if ( isset( $value['selected_variants'] ) && ! $load_all_weights ) {
-						echo $font['selector'] . " { font-weight: " . $value['selected_variants'][0] . ";\n}\n";
+						$the_weight = $value['selected_variants'][0];
+						$italic_font = false;
+
+						if ( strpos( $the_weight, 'italic' ) !== false ) {
+							$the_weight = str_replace( 'italic', '', $the_weight);
+							$italic_font = true;
+						}
+
+						if ( ! empty( $the_weight ) ) {
+							echo $font['selector'] . " {\nfont-weight: " . $value['selected_variants'][0] . ";\n}\n";
+						}
+
+						if ( $italic_font ) {
+							echo $font['selector'] . " {\nfont-style: italic;\n}\n";
+						}
 					}
 				}
 			} ?>
