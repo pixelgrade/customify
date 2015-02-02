@@ -351,9 +351,9 @@ class PixCustomifyPlugin {
 
 		wp_enqueue_script( 'select2', plugins_url( 'js/select2/select2.js', __FILE__ ), array( 'jquery' ), $this->version );
 		wp_enqueue_script( $this->plugin_slug . '-customizer-scripts', plugins_url( 'js/customizer.js', __FILE__ ), array(
-				'jquery',
-				'select2'
-			), $this->version );
+			'jquery',
+			'select2'
+		), $this->version );
 
 		wp_localize_script( $this->plugin_slug . '-customizer-scripts', 'customify_settings', self::$localized );
 	}
@@ -364,10 +364,10 @@ class PixCustomifyPlugin {
 		wp_register_script( $this->plugin_slug . 'CSSOM', plugins_url( 'js/CSSOM.js', __FILE__ ), array( 'jquery' ), $this->version, true );
 		wp_register_script( $this->plugin_slug . 'cssUpdate', plugins_url( 'js/jquery.cssUpdate.js', __FILE__ ), array(), $this->version, true );
 		wp_enqueue_script( $this->plugin_slug . '-previewer-scripts', plugins_url( 'js/customizer_preview.js', __FILE__ ), array(
-				'jquery',
-				$this->plugin_slug . 'CSSOM',
-				$this->plugin_slug . 'cssUpdate'
-			), $this->version, true );
+			'jquery',
+			$this->plugin_slug . 'CSSOM',
+			$this->plugin_slug . 'cssUpdate'
+		), $this->version, true );
 
 		wp_localize_script( $this->plugin_slug . '-previewer-scripts', 'customify_settings', self::$localized );
 
@@ -567,21 +567,29 @@ class PixCustomifyPlugin {
 		foreach ( self::$typo_settings as $id => $typo ) {
 			if ( isset ( $typo['value'] ) ) {
 
+				$load_all_weights = false;
+
+				if ( isset( $typo['load_all_weights'] ) && $typo['load_all_weights'] == 'true' ) {
+					$load_all_weights = true;
+				}
+
 				$value = json_decode( $typo['value'], true );
 
 				if ( isset( $value['font_family'] ) && isset( $value['type'] ) && $value['type'] == 'google' ) {
 					$families .= "'" . $value['font_family'];
 
-					if ( isset( $value['selected_variants'] ) && ! empty( $value['selected_variants'] ) ) {
-						$families .= ":" . implode(',', $value['selected_variants'] );
-					} elseif ( isset( $value['variants'] ) && ! empty($value['variants']) ) {
-						$families .= ":" . implode(',', $value['variants'][0] );
+					if ( $load_all_weights ){
+						$families .= ":" . implode( ',', $value['variants'] );
+					} elseif ( isset( $value['selected_variants'] ) && ! empty( $value['selected_variants'] ) ) {
+						$families .= ":" . implode( ',', $value['selected_variants'] );
+					} elseif ( isset( $value['variants'] ) && ! empty( $value['variants'] ) ) {
+						$families .= ":" . implode( ',', $value['variants'][0] );
 					}
 
 					if ( isset( $value['selected_subsets'] ) && ! empty( $value['selected_subsets'] ) ) {
-						$families .= ":" . implode(',', $value['selected_subsets'] );
-					} elseif ( isset( $value['subsets'] ) && ! empty($value['subsets']) ) {
-						$families .= ":" . implode(',', $value['subsets'][0] );
+						$families .= ":" . implode( ',', $value['selected_subsets'] );
+					} elseif ( isset( $value['subsets'] ) && ! empty( $value['subsets'] ) ) {
+						$families .= ":" . implode( ',', $value['subsets'][0] );
 					}
 
 					$families .= '\',';
@@ -596,15 +604,19 @@ class PixCustomifyPlugin {
 		<?php } ?>
 
 		<style id="customify_typography_output_style">
-			<?php foreach( self::$typo_settings as $key => $font){
+			<?php foreach ( self::$typo_settings as $key => $font ) {
 				if ( isset( $font['selector'] ) && isset( $font['value'] ) && ! empty( $font['value'] ) ) {
 
-					$value = json_decode($font['value'], true);
+					$value = json_decode( $font['value'], true );
 
-					if ( isset( $value['font_family'] )) {
+					if ( isset( $value['font_family'] ) ) {
 						echo $font['selector'] . ' { font-family: ' . $value['font_family'] . ';}';
 					}
 
+
+					if ( isset( $value['selected_variants'] ) && ! $load_all_weights ) {
+						echo $font['selector'] . ' { font-weight: ' . $value['selected_variants'] . ';}';
+					}
 				}
 			} ?>
 		</style>
@@ -624,8 +636,8 @@ class PixCustomifyPlugin {
 
 			if ( isset( $css_property['media'] ) && ! empty( $css_property['media'] ) ) {
 				self::$media_queries[ $css_property['media'] ][ $option_id ] = array(
-					'property'  => $css_property,
-					'value' => $this_value
+					'property' => $css_property,
+					'value'    => $this_value
 				);
 				continue;
 			}
@@ -858,24 +870,24 @@ class PixCustomifyPlugin {
 
 		// if is a standard wp field type call it here and skip the rest
 		if ( in_array( $setting_config['type'], array(
-				'text',
-				'textarea',
-				'checkbox',
-				'dropdown-pages',
-				'url',
-				'date',
-				'time',
-				'datetime',
-				'week',
-				'search'
-			) ) ) {
+			'text',
+			'textarea',
+			'checkbox',
+			'dropdown-pages',
+			'url',
+			'date',
+			'time',
+			'datetime',
+			'week',
+			'search'
+		) ) ) {
 			$wp_customize->add_control( $setting_id . '_control', $control_args );
 
 			return;
 		} elseif ( in_array( $setting_config['type'], array(
-					'radio',
-					'select'
-				) ) && isset( $setting_config['choices'] ) && ! empty( $setting_config['choices'] )
+				'radio',
+				'select'
+			) ) && isset( $setting_config['choices'] ) && ! empty( $setting_config['choices'] )
 		) {
 			$control_args['choices'] = $setting_config['choices'];
 			$wp_customize->add_control( $setting_id . '_control', $control_args );

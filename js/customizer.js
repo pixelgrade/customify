@@ -1,6 +1,8 @@
 (function($, exports){
 
 	$(document).ready(function(){
+
+
 		// when the customizer is ready prepare our fields events
 		wp.customize.bind('ready', function(){
 			var api = this;
@@ -26,7 +28,6 @@
 			});
 		});
 
-
 		// the typography field holds a hidden input with the serialization of the google font values
 		// @TODO This is wracked .. review
 		var prepare_typography_field = function() {
@@ -37,50 +38,41 @@
 				var font_family_select = this,
 					$input = $(font_family_select).siblings('.customify_typography_values');
 
-				var font_family = get_typography_font_family( $input );
+				//var font_family = get_typography_font_family( $input );
 
 				// on change
-				$(font_family_select)
-					.on('change',function(){
-
-						// update the font family value
-						var current_val = $input.val(),
-							new_val = $( font_family_select ).val(),
-							type = $(font_family ).data('type');
-
-						//if ( typeof current_val !== 'object' ) {
-						//	var new_json = JSON.stringify( { 'type': type, 'font_family': new_val } );
-						//	$input.val( new_json );
-						//} else {
-						//
-						//	var value_to_add = JSON.parse( current_val );
-						//	value_to_add['font_family'] = new_val;
-						//	value_to_add['type'] = type;
-						//	value_to_add = JSON.stringify( value_to_add );
-						//	$input.val( value_to_add );
-						//}
-
+				$(font_family_select).on('change',function(){
 						update_siblings_selects( font_family_select );
-
 						$input.trigger('change');
 					});
-
 				update_siblings_selects( font_family_select );
 			});
-
 		};
 
 		$(document).on('change', '.customify_typography_font_subsets', function(ev){
 
-			$input = $(this).siblings('.customify_typography_values');
+			var $input = $(this).siblings('.customify_typography_values'),
+				current_val =  $input.val();
 
-			var current_val =  $input.val();
-
-			current_val = JSON.parse(current_val);
+			current_val = JSON.parse( current_val );
 			current_val.selected_subsets = $(this).val();
 
 			$input.val( JSON.stringify( current_val ) );
 
+			$input.trigger('change');
+		});
+
+		$(document).on('change', '.customify_typography_font_weight', function(ev){
+
+			var $input = $(this).siblings('.customify_typography_values' ),
+				current_val =  $input.val();
+
+			current_val = JSON.parse( current_val );
+			// @todo currently the font weight selector works for one value only
+			// maybe make this a multiselect
+			current_val.selected_variants = { 0: $(this).val() };
+
+			$input.val(  JSON.stringify( current_val ) );
 			$input.trigger('change');
 		});
 
@@ -89,6 +81,12 @@
 			var selected_font = $(font_select).val(),
 				$input = $(font_select).siblings('.customify_typography_values' ),
 				current_val = $input.val();
+
+			try {
+				current_val = JSON.parse( current_val );
+			} catch (e) {
+				return false;
+			}
 
 			var $font_weight = $(font_select).siblings('.customify_typography_font_weight');
 			var $font_subsets = $(font_select).siblings('.customify_typography_font_subsets');
@@ -103,16 +101,13 @@
 					subsets = null;
 
 				if ( font_type == 'std' ) {
-					variants = {0: '100', 1: '200', 3: '300'};
+					variants = {0: '100', 1: '200', 3: '300', 4: '400', 5: '500'};
 				} else {
 					variants = $( option_data[0] ).data('variants' );
 					subsets = $( option_data[0] ).data('subsets');
 				}
 
-
-				//console.log( 'variants: ' , variants);
-				//console.log( 'subsets: ' , subsets);
-
+				// make the variants selector
 				if ( variants !== null && typeof $font_weight !== "undefined" ) {
 
 					value_to_add['variants'] = variants;
@@ -121,25 +116,40 @@
 
 					var variants_options = '';
 					$.each(variants, function(key, el){
-						variants_options += '<option value="' + el + '">' +el + '</option>';
+						var is_selected = '';
+						if ( typeof current_val.selected_variants === "object" && inObject( el, current_val.selected_variants ) ) {
+							is_selected = ' selected="selected"';
+						}
+
+						variants_options += '<option value="' + el + '"' + is_selected + '>' +el + '</option>';
 					});
 					$font_weight.html(variants_options);
 				}
 
+				// make the subsets selector
 				if ( subsets !== null && typeof $font_subsets !== "undefined" ) {
-
 					value_to_add['subsets'] = subsets;
 					// when a font is selected force the first subset to load
 					value_to_add['selected_subsets'] = { 0: subsets[0] };
 					var subsets_options = '';
 					$.each(subsets, function(key, el){
-						subsets_options += '<option value="' + el + '">' +el + '</option>';
+
+						var is_selected = '';
+						if ( typeof current_val.selected_subsets === "object" && inObject( el, current_val.selected_subsets ) ) {
+							is_selected = ' selected="selected"';
+						}
+
+						subsets_options += '<option value="' + el + '"'+is_selected+'>' +el + '</option>';
 					});
 					$font_subsets.html(subsets_options);
 				}
 
 				$input.val( JSON.stringify( value_to_add ) );
 			}
+		};
+
+		var create_font_weight_selector = function( variants, $font_weight ) {
+
 		};
 
 		var get_typography_font_family = function( $el ) {
@@ -160,4 +170,14 @@
 		};
 
 	});
+
+	var inObject = function( value, obj ) {
+		for (var k in obj) {
+			if (!obj.hasOwnProperty(k)) continue;
+			if (obj[k] === value) {
+				return true;
+			}
+		}
+		return false;
+	};
 })(jQuery, window);

@@ -1,4 +1,7 @@
 (function($, exports){
+
+	var timeout = null;
+
 	$(document).ready(function(){
 		var api = wp.customize;
 		var css_editor = ace.edit("css_editor");
@@ -7,13 +10,13 @@
 		css_editor.setTheme("ace/theme/github");
 		css_editor.getSession().setMode("ace/mode/css");
 
-		var editor = ace.edit("css_editor");
+		var xx  = ace.require('ace/mode/css');
 		var textarea = $('#css_editor_textarea').hide();
-		editor.getSession().setValue(textarea.val());
-		editor.getSession().on('change', function(){
-			textarea.val(editor.getSession().getValue());
-			textarea.trigger('change');
-		});
+		css_editor.getSession().setValue(textarea.val());
+		//editor.getSession().on('change', function(){
+		//	textarea.val(editor.getSession().getValue());
+		//	textarea.trigger('change');
+		//});
 
 		$('#accordion-panel-live_css_edit_panel' ).on('click', function(){
 			$('#accordion-section-live_css_edit_section' ).addClass('open');
@@ -24,7 +27,23 @@
 			$('.wp-full-overlay' ).removeClass('editor_opened');
 		});
 
-		//css_editor.getSession().on('change', function(e) {
+		//debugger;
+
+		css_editor.getSession().on('onChangeAnnotation', function(e) {
+			//console.log( 'an change ');
+			//if ( timeout !== null ){
+			//	clearTimeout(css_editor);
+			//	timeout = null;
+			//} else {
+			//	timeout = setTimeout( function(){
+			//		var state = css_editor.session.getState();
+			//		textarea.val(css_editor.getSession().getValue());
+			//		textarea.trigger('change');
+			//		debugger;
+			//	},1500);
+			//}
+		});
+
 		//
 		//	console.log('change');
 		//

@@ -96,7 +96,7 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 		$font_family = '';
 		if ( isset( $values->font_family ) ) {
 			$font_family = $values->font_family;
-		}?>
+		} ?>
 		<label class="customify_typography">
 			<?php if ( ! empty( $this->label ) ) : ?>
 				<span class="customize-control-title"><?php echo esc_html( $this->label ); ?></span>
@@ -107,12 +107,15 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 
 			$this_id = str_replace('[', '_', $this->id );
 			$this_id = str_replace(']', '_', $this_id );
+			$select_data = '';
+			if ( $this->load_all_weights ) {
+				$select_data .= ' data-load_all_weights="true"';
+			}
 			/**
-			 * In this input will be saved the value of the typography field
+			 * This input will hold the values of this typography field
 			 */ ?>
-			<input class="customify_typography_values" id="<?php echo $this_id; ?>" type="text" <?php $this->link(); ?> value='<?php echo $this->value(); ?>'/>
-
-			<select class="customify_typography_font_family">
+			<input class="customify_typography_values" id="<?php echo $this_id; ?>" type="hidden" <?php $this->link(); ?> value='<?php echo $this->value(); ?>'/>
+			<select class="customify_typography_font_family"<?php echo $select_data;?>>
 				<?php
 				if ( ! empty( $this->recommended ) ) {
 					echo '<optgroup label="' . __('Recommended', 'customify_txtd') . '">';
@@ -143,9 +146,9 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 					if ( PixCustomifyPlugin::get_plugin_option( 'typography_group_google_fonts' ) ) {
 
 						$grouped_google_fonts = array();
-						foreach ( self::$google_fonts as $key => $values ) {
-							if ( isset( $values['category'] ) ) {
-								$grouped_google_fonts[$values['category']][] = $values;
+						foreach ( self::$google_fonts as $key => $font ) {
+							if ( isset( $font['category'] ) ) {
+								$grouped_google_fonts[$font['category']][] = $font;
 							}
 						}
 
@@ -167,25 +170,38 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 				} ?>
 			</select>
 			<?php
-			if ( $this->font_weight ) { ?>
+
+			if ( $this->load_all_weights && $this->font_weight && ( isset( $values->variants ) && ! empty( $values->variants ) ) ) { ?>
 				<br/>Font Weight<br/>
 				<select class="customify_typography_font_weight">
-					<?php if ( isset( $values['font_weight'] ) && ! empty( $values['font_weight'] ) ) {
-						foreach ( $values['font_weight'] as $weight ) {
-							echo '<option value="'. $weight . '. "> ' . strtoupper( $weight ) . '</option>';
+					<?php
+						foreach ( $values->variants as $weight ) {
+							echo '<option value="'. $weight . '. "> ' .  $weight . '</option>';
 						}
-					} ?>
+					?>
 				</select>
 				<br/>
 			<?php
 			}
 
-			if ( $this->subsets && ( isset( $values['subsets'] ) && ! empty( $values['subsets'] ) )) { ?>
+			if ( $this->subsets && ( isset( $values->subsets ) && ! empty( $values->subsets ) ) ) { ?>
 				<br/>Subsets<br/>
 				<select multiple class="customify_typography_font_subsets">
 					<?php
-					foreach ( $values['subsets'] as $subset ) {
-						echo '<option value="'. $subset . '. "> ' . $subset . '</option>';
+
+					$selected = array();
+
+					if ( isset( $values->selected_subsets ) ) {
+						$selected = $values->selected_subsets;
+					}
+
+					foreach ( $values->subsets as $key => $subset ) {
+						$attrs = '';
+						if ( in_array( $subset, (array)$selected ) ) {
+							$attrs .= ' selected="selected"';
+						}
+
+						echo '<option value="'. $subset . '. "'.$attrs.'> ' . $subset . '</option>';
 					}
 					?>
 				</select>
