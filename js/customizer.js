@@ -2,7 +2,6 @@
 
 	$(document).ready(function(){
 
-
 		// when the customizer is ready prepare our fields events
 		wp.customize.bind('ready', function(){
 			var api = this;
@@ -44,7 +43,6 @@
 				$(font_family_select).on('change',function(){
 						update_siblings_selects( font_family_select );
 						$input.trigger('change');
-					console.log($input);
 					});
 				update_siblings_selects( font_family_select );
 			});

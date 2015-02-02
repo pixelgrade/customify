@@ -604,18 +604,23 @@ class PixCustomifyPlugin {
 		<?php } ?>
 
 		<style id="customify_typography_output_style">
-			<?php foreach ( self::$typo_settings as $key => $font ) {
+			<?php
+			foreach ( self::$typo_settings as $key => $font ) {
+				$load_all_weights = false;
+				if ( isset( $font['load_all_weights'] ) && $font['load_all_weights'] == 'true' ) {
+					$load_all_weights = true;
+				}
+
 				if ( isset( $font['selector'] ) && isset( $font['value'] ) && ! empty( $font['value'] ) ) {
 
 					$value = json_decode( $font['value'], true );
 
 					if ( isset( $value['font_family'] ) ) {
-						echo $font['selector'] . ' { font-family: ' . $value['font_family'] . ';}';
+						echo $font['selector'] . " {\n font-family: " . $value['font_family'] . ";\n}\n";
 					}
 
-
 					if ( isset( $value['selected_variants'] ) && ! $load_all_weights ) {
-						echo $font['selector'] . ' { font-weight: ' . $value['selected_variants'] . ';}';
+						echo $font['selector'] . " { font-weight: " . $value['selected_variants'][0] . ";\n}\n";
 					}
 				}
 			} ?>
