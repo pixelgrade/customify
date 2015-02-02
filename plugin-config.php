@@ -44,181 +44,122 @@ return array(
 	),
 	// shows exception traces on error
 	'debug'                 => $debug,
+
+	/**
+	 * DEFAULTS - The default plugin options
+	 */
 	'default_options' => array(
-		'opt-name' => 'customzier_test',
-		'panels'   => array(
-			'panel_1' => array(
-				'title'    => 'Standard Fields',
-				'sections' => array(
-					'section_11' => array(
-						'title'    => 'Texts',
-						'options' => array(
-							'the_text'     => array(
-								'type'  => 'text',
-								'label' => 'The text option',
-								'desc'  => 'ceva ceva pe aici',
+		'opt-name' => 'customify_defaults',		
+		'sections' => array(
+
+			/**
+			 * COLORS - This section will handle different elements colors (eg. links, headings)
+			 */
+			'colors_section' => array(
+				'title'    => __( 'Colors', 'hive_txtd' ),
+				'options' => array(
+					'links_color'   => array(
+						'type'      => 'color',
+						'label'     => __( 'Links Color', 'hive_txtd' ),
+						'live' => true,
+						'default'   => '#6c6e70',
+						'css'  => array(
+							array(
+								'property'     => 'color',
+								'selector' => 'a, .entry-meta a',
+
 							),
-							'the_textarea' => array(
-								'type'  => 'textarea',
-								'label' => 'Text long',
-								'desc'  => 'ceva ceva pe aici'
+						)
+					),
+					'headings_color' => array(
+						'type'      => 'color',
+						'label'     => __( 'Headings Color', 'hive_txtd' ),
+						'live' => true,
+						'default'   => '#0aa0d9',
+						'css'  => array(
+							array(
+								'property'     => 'color',
+								'selector' => '.site-title a, h1, h2, h3, h4, h5, h6,
+												h1 a, h2 a, h3 a, h4 a, h5 a, h6 a,
+												.widget-title,
+												a:hover, .entry-meta a:hover'
 							)
 						)
 					),
-					'section_12' => array(
-						'title'    => 'Coolors',
-						'options' => array(
-							'main_color' => array(
-								'type'  => 'color',
-								'label' => 'Main color',
-								'desc'  => 'ceva ceva pe aici',
-								'css' => array(
-									array(
-										'selector' => 'body',
-//										'media_query' => '',
-										'property' => 'color',
-//										'offset' => array(
-//											'from_setting' => 'the_select'
-//										),
-//										'unit' => 'em',
-//										'opposite' => false,
-//										'value_template' => array(
-//											'webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(50%, ##replace_here##), color-stop(100%, #464a4d))',
-//											'-webkit-linear-gradient(##replace_here## 50%, #464a4d );',
-//										),
-//										'callback' => 'this_setting_can_call_this_function'
-									)
-								)
-							)
-						)
-					),
-					'section_13' => array(
-						'title'    => 'Selects',
-						'options' => array(
-							'the_select' => array(
-								'type'    => 'select',
-								'label'   => 'Un select',
-								'desc'    => 'Un select are nevoie neaparat de choices',
-								'choices' => array(
-									'1' => 'Unu',
-									'2' => 'Doi'
-								)
-							),
-							'the_radio'  => array(
-								'type'    => 'radio',
-								'label'   => 'Un select',
-								'desc'    => 'Un select are nevoie neaparat de choices',
-								'choices' => array(
-									'1' => 'Unu',
-									'2' => 'Doi',
-									'3' => 'Tri'
-								)
-							)
-						)
-					),
-					'section_14' => array(
-						'title'    => 'Uploaders',
-						'options' => array(
-							'an_upload' => array(
-								'type'  => 'upload',
-								'label' => 'Un upload long',
-								'desc'  => 'ceva ceva pe aici'
-							),
-							'an_image'  => array(
-								'type'  => 'image',
-								'label' => 'Imagine',
-								'desc'  => 'ceva ceva pe aici'
-							)
-						)
-					),
-					'section_15' => array(
-						'title'    => 'Surpriza',
-						'options' => array(
-							'the_range_is_mine' => array(
-								'type'        => 'range',
-								'label'       => __( 'Range' ),
-								'description' => __( 'This is the range control description.' ),
-								'input_attrs' => array(
-									'min'   => 1,
-									'max'   => 30,
-									'step'  => 1,
-									'class' => 'my-custom-class',
-									'style' => 'color: #0a0',
-								),
-							),
-							'un_url'            => array(
-								'type'  => 'url',
-								'label' => 'Url',
-								'desc'  => 'ceva ceva pe aici'
-							),
-							'odata'             => array(
-								'type'  => 'date',
-								'label' => 'O data',
-								'desc'  => 'ceva ceva pe aici'
-							),
-							'untimp'            => array(
-								'type'  => 'time',
-								'label' => 'Un timp',
-								'desc'  => 'ceva ceva pe aici'
-							),
-							'odatasiuntimp'     => array(
-								'type'  => 'datetime',
-								'label' => 'Odata si Un timp',
-								'desc'  => 'ceva ceva pe aici'
-							),
-							'o_saptamana'       => array(
-								'type'  => 'week',
-								'label' => 'O saptamana',
-								'desc'  => 'ceva ceva pe aici'
-							),
-							'o_cautare'         => array(
-								'type'  => 'search',
-								'label' => 'O cautare',
-								'desc'  => 'ceva ceva pe aici'
+					'body_color'     => array(
+						'type'      => 'color',
+						'label'     => __( 'Body Color', 'hive_txtd' ),
+						'live' => true,
+						'default'   => '#2d3033',
+						'css'  => array(
+							array(
+								'selector' => 'body',
+								'property'     => 'color'
 							)
 						)
 					)
 				)
 			),
-			'panel_2' => array(
-				'title'    => 'Custom made',
-				'sections' => array(
-					'section_21' => array(
-						'title'    => 'Selectors',
-						'options' => array(
-							'un_select_coios' => array(
-								'type'       => 'select2',
-								'label'      => 'Un select coios',
-								'desc'       => 'Asta ii prea smecher',
-								'choices'    => array(
-									'1' => 'Unu',
-									'2' => 'Doi',
-									'3' => 'Tri'
-								),
-								'js_params'  => array()
-							)
+
+
+
+			/**
+			 * FONTS - This section will handle different elements fonts (eg. headings, body)
+			 */
+
+			'typography_section' => array(
+				'title'    => __( 'Fonts', 'hive_txtd' ),
+				'options' => array(
+					'headings_font' => array(
+						'type'     => 'typography',
+						'label'    => __( 'Headings', 'hive_txtd' ),
+						'default'  => 'Playfair Display", serif',
+						'selector' => '.site-title a, h1, h2, h3, h4, h5, h6,
+										h1 a, h2 a, h3 a, h4 a, h5 a, h6 a,
+										.widget-title',
+						'font_weight' => true,
+						'subsets' => true,
+						'recommended' => array(
+							'ABeeZee',
+							'Quattrocento',
+							'Yellowtail',
+							'Vollkorn',
+							'Unkempt'
 						)
 					),
-					'section_22' => array(
-						'title'    => 'Fonts',
-						'options' => array(
-							'menu_font' => array(
-								'type'       => 'typography',
-								'label'      => 'Menu Font',
-								'desc'       => 'Asta ii prea smecher',
+					'body_font'     => array(
+						'type'    => 'typography',
+						'label'   => __( 'Body Text', 'hive_txtd' ),
+						'default' => '"Droid Serif", serif',
+						'selector' => 'html body',
+						'load_all_weigts' => true,
+					)
+				)
+			),
+
+			/**
+			 * BACKGROUNDS - This section will handle different elements colors (eg. links, headings)
+			 */
+			'backgrounds_section' => array(
+				'title'    => __( 'Backgrounds', 'hive_txtd' ),
+				'options' => array(
+					'page_background'   => array(
+						'type'      => 'color',
+						'label'     => __( 'Page Background', 'hive_txtd' ),
+						'live' => true,
+						'default'   => '#ffffff',
+						'css'  => array(
+							array(
+								'property'     => 'background',
+								'selector' => 'body, .site',
+
 							),
-							'footer_font' => array(
-								'type'       => 'typography',
-								'label'      => 'Menu Font',
-								'desc'       => 'Asta ii prea smecher',
-							)
 						)
 					),
 				)
 			),
-		),
-		// these options wont be included inside a panel
-		'sections' => array()
+
+		)
 	)
 
 ); # config
