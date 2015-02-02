@@ -939,6 +939,10 @@ class PixCustomifyPlugin {
 					$control_args['recommended'] = array_flip( $setting_config['recommended'] );
 				}
 
+				if ( isset( $setting_config['load_all_weights'] ) ) {
+					$control_args['load_all_weights'] = $setting_config['load_all_weights'];
+				}
+
 				break;
 
 			case 'select2' :

@@ -96,7 +96,15 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 		$font_family = '';
 		if ( isset( $values->font_family ) ) {
 			$font_family = $values->font_family;
-		} ?>
+		}
+
+
+		if ( isset( $values->load_all_weights ) ) {
+			$this->load_all_weights = $values->font_load_all_weightsmily;
+		}
+
+
+		?>
 		<label class="customify_typography">
 			<?php if ( ! empty( $this->label ) ) : ?>
 				<span class="customize-control-title"><?php echo esc_html( $this->label ); ?></span>
@@ -114,7 +122,7 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 			/**
 			 * This input will hold the values of this typography field
 			 */ ?>
-			<input class="customify_typography_values" id="<?php echo $this_id; ?>" type="text" <?php $this->link(); ?> value='<?php echo $this->value(); ?>'/>
+			<input class="customify_typography_values" id="<?php echo $this_id; ?>" type="hidden" <?php $this->link(); ?> value='<?php echo $this->value(); ?>'/>
 			<select class="customify_typography_font_family"<?php echo $select_data;?>>
 				<?php
 				if ( ! empty( $this->recommended ) ) {
@@ -170,8 +178,8 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 				} ?>
 			</select>
 			<?php
-//var_dump($this);
-			if ( $this->load_all_weights && $this->font_weight /** &&  ( isset( $values->variants ) && ! empty( $values->variants ) )  **/) { ?>
+
+			if (! $this->load_all_weights && $this->font_weight &&  ( isset( $values->variants ) && ! empty( $values->variants ) ) ) { ?>
 				<br/>Font Weight<br/>
 				<select class="customify_typography_font_weight">
 					<?php
