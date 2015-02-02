@@ -44,6 +44,7 @@
 				$(font_family_select).on('change',function(){
 						update_siblings_selects( font_family_select );
 						$input.trigger('change');
+					console.log($input);
 					});
 				update_siblings_selects( font_family_select );
 			});
@@ -85,7 +86,9 @@
 			try {
 				current_val = JSON.parse( current_val );
 			} catch (e) {
-				return false;
+
+				console.log(e);
+				//return false;
 			}
 
 			var $font_weight = $(font_select).siblings('.customify_typography_font_weight');
@@ -146,10 +149,6 @@
 
 				$input.val( JSON.stringify( value_to_add ) );
 			}
-		};
-
-		var create_font_weight_selector = function( variants, $font_weight ) {
-
 		};
 
 		var get_typography_font_family = function( $el ) {
