@@ -112,7 +112,9 @@
 					// when a font is selected force the first weight to load
 					value_to_add['selected_variants'] = { 0: variants[0] };
 
-					var variants_options = '';
+					var variants_options = '',
+						count_weights = 0;
+
 					$.each(variants, function(key, el){
 						var is_selected = '';
 						if ( typeof current_val.selected_variants === "object" && inObject( el, current_val.selected_variants ) ) {
@@ -120,8 +122,15 @@
 						}
 
 						variants_options += '<option value="' + el + '"' + is_selected + '>' +el + '</option>';
+						count_weights++;
 					});
 					$font_weight.html(variants_options);
+					// if there is no weight or just 1 we hide the weight select ... cuz is useless
+					if ( count_weights <= 1 ) {
+						$font_weight.parent().hide();
+					} else {
+						$font_weight.parent().show();
+					}
 				}
 
 				// make the subsets selector
@@ -129,17 +138,26 @@
 					value_to_add['subsets'] = subsets;
 					// when a font is selected force the first subset to load
 					value_to_add['selected_subsets'] = { 0: subsets[0] };
-					var subsets_options = '';
+					var subsets_options = '',
+						count_subsets = 0;
 					$.each(subsets, function(key, el){
-
 						var is_selected = '';
 						if ( typeof current_val.selected_subsets === "object" && inObject( el, current_val.selected_subsets ) ) {
 							is_selected = ' selected="selected"';
 						}
 
 						subsets_options += '<option value="' + el + '"'+is_selected+'>' +el + '</option>';
+						count_subsets++;
 					});
+
 					$font_subsets.html(subsets_options);
+
+					// if there is no subset or just 1 we hide the subsets select ... cuz is useless
+					if ( count_subsets <= 1 ) {
+						$font_subsets.parent().hide();
+					} else {
+						$font_subsets.parent().show();
+					}
 				}
 
 				$input.val( JSON.stringify( value_to_add ) );
