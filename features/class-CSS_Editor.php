@@ -63,7 +63,27 @@ class Customify_CSS_Live_Editor {
 		$wp_customize->add_setting( 'live_css_edit', array(
 			'type' => $saving_type,
 			'label' => __('CSS Edit', 'customify_txtd'),
-			'default' => __('/** Edit here your css */', 'customify_txtd')
+			'default' => __("/*
+ * Welcome to the Custom CSS Editor
+ * 
+ * CSS (Cascading Style Sheets) is a language that helps 
+ * the browser render your website. You may remove these 
+ * comments and get started with your customizations.
+ *
+ * The generated code will be placed after the theme 
+ * stylesheets, which means that your rules can take 
+ * precedence and override the theme CSS rules. Just 
+ * write here what you want to change, you don't need 
+ * to copy all your theme's stylesheet content.
+ *
+ * Getting started with CSS:
+ * http://bit.ly/css-getting-started
+ */
+
+/* An example of a Custom CSS Snippet */
+selector {
+	color: green;
+}", 'customify_txtd')
 		) );
 
 		$this_control = new Pix_Customize_CSS_Editor_Control(
