@@ -152,6 +152,10 @@ class PixCustomifyPlugin {
 			self::$customizer_config = self::get_config_option( 'default_options' );
 		}
 
+		if ( empty( self::$customizer_config ) ) {
+			self::$customizer_config = array();
+		}
+
 		// alllow themes or other plugins to filter the config
 		self::$customizer_config = apply_filters( 'customify_filter_fields', self::$customizer_config );
 
@@ -941,7 +945,6 @@ class PixCustomifyPlugin {
 				$use_typography = self::get_plugin_option('typography', '1');
 
 				if ( $use_typography === false ) {
-					var_dump( $use_typography );
 					$add_control = false;
 					continue;
 				}

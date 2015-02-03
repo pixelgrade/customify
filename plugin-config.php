@@ -9,7 +9,7 @@ if ( isset( $_GET['debug'] ) && $_GET['debug'] == 'true' ) {
 
 $debug = true;
 
-$config = require $basepath . 'config.php';
+$customify_config = require $basepath . 'customify_config.php';
 
 return array(
 	'plugin-name'           => 'pixcustomify',
@@ -53,6 +53,8 @@ return array(
 	/**
 	 * DEFAULTS - The default plugin options
 	 */
-	'default_options' => $config
+	'default_options' => array(
+
+	)
 
 ); # config
