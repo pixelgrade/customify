@@ -176,8 +176,3 @@
 .customize-control select[multiple].customify_typography_font_subsets {
   height: 28px;
 }
-
-/* Shame */
-.customify_typography .select2-container {
-  min-width: 260px;
-}
