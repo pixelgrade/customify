@@ -938,9 +938,10 @@ class PixCustomifyPlugin {
 			// Custom types
 			case 'typography' :
 
-				$use_typography = self::get_plugin_option('typography');
+				$use_typography = self::get_plugin_option('typography', '1');
 
-				if ( $use_typography !== '1' ) {
+				if ( $use_typography === false ) {
+					var_dump( $use_typography );
 					$add_control = false;
 					continue;
 				}
