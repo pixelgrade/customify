@@ -16,7 +16,6 @@ class Customify_CSS_Live_Editor {
 		add_action( 'customize_controls_enqueue_scripts', array( $this, 'enqueue_admin_customizer_styles' ), 10);
 
 		add_action( 'wp_footer', array( $this, 'output_dynamic_style' ), 999999999 );
-
 	}
 
 	/**
@@ -49,13 +48,13 @@ class Customify_CSS_Live_Editor {
 		$wp_customize->add_panel( 'live_css_edit_panel', array(
 			'priority'    => 10,
 			'capability'  => 'edit_theme_options',
-			'title' => 'CSS Editor'
+			'title' => __('CSS Editor', 'customify_txtd')
 		) );
 
 		$wp_customize->add_section( 'live_css_edit_section', array(
 			'priority'   => 910,
 			'capability' => 'edit_theme_options',
-			'title' => 'CSS Edit',
+			'title' => __('CSS Edit', 'customify_txtd'),
 			'panel' => 'live_css_edit_panel'
 		) );
 
@@ -63,14 +62,15 @@ class Customify_CSS_Live_Editor {
 
 		$wp_customize->add_setting( 'live_css_edit', array(
 			'type' => $saving_type,
-			'label' => 'CSS Edit'
+			'label' => __('CSS Edit', 'customify_txtd'),
+			'default' => __('/** Edit here your css */', 'customify_txtd')
 		) );
 
 		$this_control = new Pix_Customize_CSS_Editor_Control(
 			$wp_customize,
 			'live_css_edit_control',
 			array(
-				'label'    => 'Edit Live Css',
+				'label'    => __('Edit Live Css', 'customify_txtd'),
 				'section'  => 'live_css_edit_section',
 				'settings' => 'live_css_edit',
 			)
