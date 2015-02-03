@@ -177,42 +177,47 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 					}
 				} ?>
 			</select>
+		</label>
+		<ul class="options">
 			<?php
 
 			if (! $this->load_all_weights && $this->font_weight &&  ( isset( $values->variants ) && ! empty( $values->variants ) ) ) { ?>
-				<br/>Font Weight<br/>
-				<select class="customify_typography_font_weight">
-					<?php
-					foreach ( $values->variants as $weight ) {
-						echo '<option value="'. $weight . '. "> ' .  $weight . '</option>';
-					} ?>
-				</select>
-				<br/>
+				<li>
+					<label>Font Weight</label>
+					<select class="customify_typography_font_weight">
+						<?php
+						foreach ( $values->variants as $weight ) {
+							echo '<option value="'. $weight . '. "> ' .  $weight . '</option>';
+						} ?>
+					</select>
+				</li>
 			<?php
 			}
 
 			if ( $this->subsets && ( isset( $values->subsets ) && ! empty( $values->subsets ) ) ) { ?>
-				<br/>Subsets<br/>
-				<select multiple class="customify_typography_font_subsets">
-					<?php
+				<li>
+					<label>Subsets</label>
+					<select multiple class="customify_typography_font_subsets">
+						<?php
 
-					$selected = array();
+						$selected = array();
 
-					if ( isset( $values->selected_subsets ) ) {
-						$selected = $values->selected_subsets;
-					}
-
-					foreach ( $values->subsets as $key => $subset ) {
-						$attrs = '';
-						if ( in_array( $subset, (array)$selected ) ) {
-							$attrs .= ' selected="selected"';
+						if ( isset( $values->selected_subsets ) ) {
+							$selected = $values->selected_subsets;
 						}
 
-						echo '<option value="'. $subset . '. "'.$attrs.'> ' . $subset . '</option>';
-					}
-					?>
-				</select>
-				<br/>
+						foreach ( $values->subsets as $key => $subset ) {
+							$attrs = '';
+							if ( in_array( $subset, (array)$selected ) ) {
+								$attrs .= ' selected="selected"';
+							}
+
+							echo '<option value="'. $subset . '. "'.$attrs.'> ' . $subset . '</option>';
+						}
+						?>
+					</select>
+				</li>
+		</ul>
 			<?php
 			}
 			/*
@@ -228,7 +233,7 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 								} ?>
 							</select>
 						<?php } */ ?>
-		</label>
+		
 	<?php }
 
 	protected static function output_font_option( $key, $font_family, $font, $type = 'google' ) {

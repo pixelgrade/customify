@@ -225,7 +225,7 @@ $popup 		: 275px;
 
 
 /**
- * CSS Customizer
+ * CSS Editor Customizer
  */
 
 // Panel
@@ -271,6 +271,49 @@ $popup 		: 275px;
 
 
 
+/**
+ * Typography
+ */
+.customize-control-typography {
+
+	&:not(:first-child) .customize-control-title {
+		margin-top: 15px;
+	}
+
+	ul li {
+		width: 50%;
+		float: left;
+
+		&:nth-child(2n+1) {
+			width: 45%;
+			margin-right: 5%;
+		}
+
+		label {
+			width: 100%;
+			display: block;
+
+			margin-top: 10px;
+			margin-bottom: 5px;
+		}
+
+		select {
+			width: 100%;
+		}
+	}
+
+	.customify_typography_font_weight {
+
+	}
+
+	.customify_typography_font_subsets {
+		// height: 28px;
+	}
+}
+
+	.customize-control select[multiple].customify_typography_font_subsets {
+		height: 28px;
+	}
 
 
 
