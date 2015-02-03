@@ -46,7 +46,7 @@ class Customify_CSS_Live_Editor {
 	function cle_create_custom_control( $wp_customize ) {
 
 		$wp_customize->add_panel( 'live_css_edit_panel', array(
-			'priority'    => 10,
+			'priority'    => 11,
 			'capability'  => 'edit_theme_options',
 			'title' => __('CSS Editor', 'customify_txtd')
 		) );

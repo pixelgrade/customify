@@ -140,26 +140,33 @@ return array(
 			),
 
 			/**
-			 * BACKGROUNDS - This section will handle different elements colors (eg. links, headings)
+			 * LAYOUTS - This section will handle different elements colors (eg. links, headings)
 			 */
-			'backgrounds_section' => array(
-				'title'    => __( 'Backgrounds', 'hive_txtd' ),
+			'layout_options' => array(
+				'title'    => __( 'LAYOUT', 'hive_txtd' ),
 				'options' => array(
-					'page_background'   => array(
-						'type'      => 'color',
-						'label'     => __( 'Page Background', 'hive_txtd' ),
+					'page_border' => array(
+						'type'  => 'range',
+						'label' => 'Page Border',
+						'desc'  => 'ceva ceva pe aici',
 						'live' => true,
-						'default'   => '#ffffff',
-						'css'  => array(
+						'input_attrs' => array(
+							'min'   => 0,
+							'max'   => 100,
+							'step'  => 1,
+						),
+						'default' => 18,
+						'css' => array(
 							array(
-								'property'     => 'background',
-								'selector' => 'body, .site',
-
-							),
+								'property' => 'padding',
+								'selector' => 'html',
+								'media' => 'screen and (min-width: 1000px)',
+								'unit' => 'px',
+							)
 						)
-					),
+					)
 				)
-			),
+			),			
 
 		)
 	)

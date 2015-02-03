@@ -172,20 +172,25 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 					}
 				} ?>
 			</select>
-			<?php
-			if (! $this->load_all_weights && $this->font_weight &&  ( isset( $values->variants ) && ! empty( $values->variants ) ) ) { ?>
-				<br/>Font Weight<br/>
+		</label>
+		<ul class="options">
+		<?php
+		if (! $this->load_all_weights && $this->font_weight &&  ( isset( $values->variants ) && ! empty( $values->variants ) ) ) { ?>
+			<li>
+				<label>Font Weight</label>
 				<select class="customify_typography_font_weight">
 					<?php
 					foreach ( $values->variants as $weight ) {
 						echo '<option value="'. $weight . '. "> ' .  $weight . '</option>';
 					} ?>
 				</select>
-				<br/>
-			<?php }
+			</li>
+		<?php
+		}
 
-			if ( $this->subsets && ( isset( $values->subsets ) && ! empty( $values->subsets ) ) ) { ?>
-				<br/>Subsets<br/>
+		if ( $this->subsets && ( isset( $values->subsets ) && ! empty( $values->subsets ) ) ) { ?>
+			<li>
+				<label><?php _e('Subsets', 'customify_txtd'); ?></label>
 				<select multiple class="customify_typography_font_subsets">
 					<?php
 
@@ -202,24 +207,12 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 						}
 
 						echo '<option value="'. $subset . '. "'.$attrs.'> ' . $subset . '</option>';
-					} ?>
+					}
+					?>
 				</select>
-				<br/>
-			<?php }
-			/*
-						if ( isset( $this->backup ) ) { ?>
-							<br/>
-							<span class="title"><?php _e('Backup Font', 'customify_txtd'); ?></span>
-							<select name="<?php echo str_replace( '_control', '', $this->id ); ?>[backup]" class="customify_typography_backup" data-tags="true" data-placeholder="--<?php _e('Select option', 'customify_txtd'); ?>--">
-								<?php
-								if ( PixCustomifyPlugin::get_plugin_option( 'typography_standard_fonts' ) ) {
-									foreach ( self::$std_fonts as $key => $font ) {
-										echo '<option value="' . $font . '">' . $font . '</option>';
-									}
-								} ?>
-							</select>
-						<?php } */ ?>
-		</label>
+			</li>
+		<?php } ?>
+		</ul>
 	<?php }
 
 	/**
@@ -263,7 +256,7 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 			self::$google_fonts = require( $fonts_path );
 		}
 
- 		if ( !empty( self::$google_fonts ) ) {
+		if ( !empty( self::$google_fonts ) ) {
 			return self::$google_fonts;
 		}
 

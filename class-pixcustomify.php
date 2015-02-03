@@ -620,7 +620,10 @@ class PixCustomifyPlugin {
 						}
 
 						if ( ! empty( $the_weight ) ) {
-							echo $font['selector'] . " {\nfont-weight: " . $value['selected_variants'][0] . ";\n}\n";
+							if($the_weight === 'regular') {
+								$the_weight = 'normal';
+							}
+							echo $font['selector'] . " {\nfont-weight: " . $the_weight . ";\n}\n";
 						}
 
 						if ( $italic_font ) {

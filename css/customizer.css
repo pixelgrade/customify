@@ -124,7 +124,7 @@
 }
 
 /**
- * CSS Customizer
+ * CSS Editor Customizer
  */
 #accordion-section-live_css_edit_section #css_editor {
   top: 70px;
@@ -147,6 +147,34 @@
 }
 .wp-full-overlay.editor_opened.collapsed #customize-controls {
   width: 300px;
+}
+
+/**
+ * Typography
+ */
+.customize-control-typography:not(:first-child) .customize-control-title {
+  margin-top: 15px;
+}
+.customize-control-typography ul li {
+  width: 50%;
+  float: left;
+}
+.customize-control-typography ul li:nth-child(2n+1) {
+  width: 45%;
+  margin-right: 5%;
+}
+.customize-control-typography ul li label {
+  width: 100%;
+  display: block;
+  margin-top: 10px;
+  margin-bottom: 5px;
+}
+.customize-control-typography ul li select {
+  width: 100%;
+}
+
+.customize-control select[multiple].customify_typography_font_subsets {
+  height: 28px;
 }
 
 /* Shame */
