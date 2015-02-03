@@ -24,6 +24,12 @@ A series of typographic options that allows you to access the massive **Google F
 *CSS Editor*
 A powerful **Live CSS Editor** directly into your customizer! Useful for better control over the appearance of your theme without the need to create a child theme or worry about theme updates overwriting your customisations.
 
+*Text Field*
+A simple text field that allows you to customize elements like Site Title or Footer Credits.
+
+*Select Dropdown*
+A dropdown menu selector to be used when you have to choose from multiple options.
+
 == Installation ==
 
 1. Upload `pixcustomify.zip` to the `/wp-content/plugins/` directory
