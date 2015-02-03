@@ -122,11 +122,25 @@ return array(
 						'font_weight' => true,
 						'subsets' => true,
 						'recommended' => array(
-							'ABeeZee',
-							'Quattrocento',
-							'Yellowtail',
+							'Playfair Display',
+							'Oswald',
+							'Lato',
+							'Open Sans',
+							'Exo',
+							'PT Sans',
+							'Ubuntu',
 							'Vollkorn',
-							'Unkempt'
+							'Lora',
+							'Arvo',
+							'Josefin Slab',
+							'Crete Round',
+							'Kreon',
+							'Bubblegum Sans',
+							'The Girl Next Door',
+							'Pacifico',
+							'Handlee',
+							'Satify',
+							'Pompiere'
 						)
 					),
 					'body_font'     => array(
@@ -135,20 +149,69 @@ return array(
 						'default' => '"Droid Serif", serif',
 						'selector' => 'html body',
 						'load_all_weights' => true,
+						'recommended' => array(
+							'Open Sans',
+							'PT Sans',
+							'Cabin',
+							'Gentium Book Basic',
+							'PT Serif',
+							'Droid Serif'
+						)
 					)
 				)
 			),
 
 			/**
+			 * BACKGROUNDS - This section will handle different elements colors (eg. links, headings)
+			 */
+
+			'backgrounds_section' => array(
+				'title'    => __( 'Backgrounds', 'hive_txtd' ),
+				'options' => array(
+					'page_background'   => array(
+						'type'      => 'color',
+						'label'     => __( 'Page Background', 'hive_txtd' ),
+						'live' => true,
+						'default'   => '#ffffff',
+						'css'  => array(
+							array(
+								'property'     => 'background',
+								'selector' => 'body, .site',
+
+ 							)
+ 						)
+ 					),
+ 				)
+ 			),
+
+			/**
 			 * LAYOUTS - This section will handle different elements colors (eg. links, headings)
 			 */
 			'layout_options' => array(
-				'title'    => __( 'LAYOUT', 'hive_txtd' ),
+				'title'    => __( 'Layout', 'hive_txtd' ),
 				'options' => array(
-					'page_border' => array(
+					'site_title_size' => array(
 						'type'  => 'range',
-						'label' => 'Page Border',
-						'desc'  => 'ceva ceva pe aici',
+						'label' => 'Site Title Size',
+						'live' => true,
+						'input_attrs' => array(
+							'min'   => 24,
+							'max'   => 100,
+							'step'  => 1,
+						),
+						'default' => 24,
+						'css' => array(
+							array(
+								'property' => 'font-size',
+								'selector' => '.site-title',
+								'media' => 'screen and (min-width: 1000px)',
+								'unit' => 'px',
+							)
+						)
+					),
+					'page_content_spacing' => array(
+						'type'  => 'range',
+						'label' => 'Page Content Spacing',
 						'live' => true,
 						'input_attrs' => array(
 							'min'   => 0,
@@ -159,12 +222,13 @@ return array(
 						'css' => array(
 							array(
 								'property' => 'padding',
-								'selector' => 'html',
+								'selector' => '.site-content',
 								'media' => 'screen and (min-width: 1000px)',
 								'unit' => 'px',
 							)
 						)
 					)
+					
 				)
 			),			
 
