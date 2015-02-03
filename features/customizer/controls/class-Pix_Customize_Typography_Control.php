@@ -176,8 +176,8 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 		<ul class="options">
 		<?php
 		if (! $this->load_all_weights && $this->font_weight &&  ( isset( $values->variants ) && ! empty( $values->variants ) ) ) { ?>
-			<li>
-				<label>Font Weight</label>
+			<li class="customify_subsets_wrapper">
+				<label><?php _e('Font Weight', 'customify_txtd');?></label>
 				<select class="customify_typography_font_weight">
 					<?php
 					foreach ( $values->variants as $weight ) {
@@ -189,7 +189,7 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 		}
 
 		if ( $this->subsets && ( isset( $values->subsets ) && ! empty( $values->subsets ) ) ) { ?>
-			<li>
+			<li class="customify_subsets_wrapper">
 				<label><?php _e('Subsets', 'customify_txtd'); ?></label>
 				<select multiple class="customify_typography_font_subsets">
 					<?php
