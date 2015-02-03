@@ -57,7 +57,6 @@
 	/*
 	 * Useful functions
 	 */
-
 	function check_checkbox_checked( input ){ // yes the name is an ironic
 		if ( $(input).attr('checked') === 'checked' ) {
 			$(input).siblings('input:hidden').val('on');

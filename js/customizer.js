@@ -1,7 +1,5 @@
 (function($, exports){
-
 	$(document).ready(function(){
-
 		// when the customizer is ready prepare our fields events
 		wp.customize.bind('ready', function(){
 			var api = this;
@@ -27,6 +25,7 @@
 			});
 		});
 
+		// get each typography field and bind events
 		var prepare_typography_field = function() {
 
 			var $typos = $('.customify_typography_font_family' );
@@ -34,8 +33,6 @@
 			$typos.each(function(){
 				var font_family_select = this,
 					$input = $(font_family_select).siblings('.customify_typography_values');
-
-				//var font_family = get_typography_font_family( $input );
 
 				// on change
 				$(font_family_select).on('change',function(){
@@ -187,6 +184,12 @@
 
 	});
 
+	/**
+	 * Function to check if a value exists in an object
+	 * @param value
+	 * @param obj
+	 * @returns {boolean}
+	 */
 	var inObject = function( value, obj ) {
 		for (var k in obj) {
 			if (!obj.hasOwnProperty(k)) continue;
