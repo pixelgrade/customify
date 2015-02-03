@@ -833,6 +833,7 @@ class PixCustomifyPlugin {
 
 	protected function register_field( $section_id, $setting_id, $setting_config, $wp_customize ) {
 
+		$add_control = true;
 		// defaults
 		$setting_args = array(
 			'default'    => '',
@@ -903,10 +904,7 @@ class PixCustomifyPlugin {
 			$wp_customize->add_control( $setting_id . '_control', $control_args );
 
 			return;
-		} elseif ( in_array( $setting_config['type'], array(
-				'radio',
-				'select'
-			) ) && isset( $setting_config['choices'] ) && ! empty( $setting_config['choices'] )
+		} elseif ( in_array( $setting_config['type'], array( 'radio', 'select' ) ) && isset( $setting_config['choices'] ) && ! empty( $setting_config['choices'] )
 		) {
 			$control_args['choices'] = $setting_config['choices'];
 			$wp_customize->add_control( $setting_id . '_control', $control_args );
@@ -939,6 +937,13 @@ class PixCustomifyPlugin {
 
 			// Custom types
 			case 'typography' :
+
+				$use_typography = self::get_plugin_option('typography');
+
+				if ( $use_typography !== '1' ) {
+					$add_control = false;
+					continue;
+				}
 
 				$control_class_name = 'Pix_Customize_' . ucfirst( $setting_config['type'] ) . '_Control';
 
@@ -987,8 +992,9 @@ class PixCustomifyPlugin {
 			$control_args
 		);
 
-
-		$wp_customize->add_control( $this_control );
+		if ( $add_control ) {
+			$wp_customize->add_control( $this_control );
+		}
 	}
 
 	/**

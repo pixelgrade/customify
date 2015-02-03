@@ -79,6 +79,10 @@
 				$input = $(font_select).siblings('.customify_typography_values' ),
 				current_val = $input.val();
 
+			if ( typeof current_val === '' ){
+					return;
+			}
+
 			try {
 				current_val = JSON.parse( current_val );
 			} catch (e) {

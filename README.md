@@ -4,7 +4,7 @@ Customify
 A Theme Customizer Booster
 
 How to filter the config?
-
+<pre>
 function add_customify_settings( $settings ) {
 
 	if ( !isset($settings['sections']) ) {
@@ -18,19 +18,11 @@ function add_customify_settings( $settings ) {
 				'type'  => 'color',
 				'label' => 'Body color',
 				'desc'  => 'ceva ceva pe aici',
-//				'live' => true,
+				'live' => true, // this means the previewer won't refresh
 				'css' => array(
 					array(
 						'selector' => 'body',
-//						'media' => 'screen and (min-width: 1600px)',
 						'property' => 'background-color',
-//						'offset' => array(
-//							'from_setting' => 'the_select'
-//						),
-//						'value_template' => array(
-//							'webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(50%, ##replace_here##), color-stop(100%, #464a4d))',
-//							'-webkit-linear-gradient(##replace_here## 50%, #464a4d );',
-//						),
 					)
 				)
 			),
@@ -38,7 +30,6 @@ function add_customify_settings( $settings ) {
 				'type'  => 'range',
 				'label' => 'left white space',
 				'desc'  => 'ceva ceva pe aici',
-//				'live' => true,
 				'input_attrs' => array(
 					'min'   => 10,
 					'max'   => 700,
@@ -52,12 +43,7 @@ function add_customify_settings( $settings ) {
 						'selector' => 'html body:before',
 						'media' => 'screen and (min-width: 700px)',
 						'property' => 'width',
-//						'offset' => array(
-//							'from_setting' => 'the_select'
-//						),
-						'unit' => 'px',
-//						'opposite' => false,
-						'callback_filter' => 'this_setting_can_call_this_function'
+						'unit' => 'px'
 					)
 				)
 			)
@@ -75,3 +61,5 @@ function this_setting_can_call_this_function( $value, $selector, $property, $uni
 
 	return $this_property_output;
 }
+
+</pre>
