@@ -43,7 +43,6 @@
 
 	});
 
-
 	var toggleGroup = function( name, show ){
 		var $group = $( '#' + name );
 
@@ -57,7 +56,6 @@
 	/*
 	 * Useful functions
 	 */
-
 	function check_checkbox_checked( input ){ // yes the name is an ironic
 		if ( $(input).attr('checked') === 'checked' ) {
 			$(input).siblings('input:hidden').val('on');

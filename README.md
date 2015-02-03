@@ -63,3 +63,11 @@ function this_setting_can_call_this_function( $value, $selector, $property, $uni
 }
 
 </pre>
+
+Fields  | Live Preview Support
+------------- | -------------
+Text  | No
+Textarea  | No
+Color | Yes
+Range | Yes
+Typography | No

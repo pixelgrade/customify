@@ -99,7 +99,6 @@ selector {
 	}
 
 	function output_dynamic_style() {
-
 		$store_type = PixCustomifyPlugin::get_plugin_option( 'values_store_mod', 'option' );
 		if ( $store_type === 'option' ) {
 			$output = get_option( 'live_css_edit' );

@@ -45,7 +45,7 @@ $errors    = $processor->errors(); ?>
 		echo $f->field( 'hiddens' )->render();
 		echo $f->field( 'general' )->render();
 		echo $f->field( 'typography' )->render();
-		echo $f->field( 'css_editor' )->render(); ?>
+//		echo $f->field( 'css_editor' )->render(); ?>
 		<button type="submit" class="button button-primary">
 			<?php _e( 'Save Changes', 'pixcustomify_txtd' ); ?>
 		</button>
