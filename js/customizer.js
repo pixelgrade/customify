@@ -39,16 +39,16 @@
 
 				// on change
 				$(font_family_select).on('change',function(){
-						update_siblings_selects( font_family_select );
-						$input.trigger('change');
-					});
+					update_siblings_selects( font_family_select );
+					$input.trigger('change');
+				});
 				update_siblings_selects( font_family_select );
 			});
 		};
 
 		$(document).on('change', '.customify_typography_font_subsets', function(ev){
 
-			var $input = $(this).siblings('.customify_typography_values'),
+			var $input = $(this).parents('.options').siblings('.customify_typography').children('.customify_typography_values'),
 				current_val =  $input.val();
 
 			current_val = JSON.parse( current_val );
@@ -61,7 +61,7 @@
 
 		$(document).on('change', '.customify_typography_font_weight', function(ev){
 
-			var $input = $(this).siblings('.customify_typography_values' ),
+			var $input = $(this).parents('.options').siblings('.customify_typography').children('.customify_typography_values' ),
 				current_val =  $input.val();
 
 			current_val = JSON.parse( current_val );
@@ -86,8 +86,8 @@
 				//return false;
 			}
 
-			var $font_weight = $(font_select).siblings('.customify_typography_font_weight');
-			var $font_subsets = $(font_select).siblings('.customify_typography_font_subsets');
+			var $font_weight = $(font_select ).parent().siblings('ul.options').find('.customify_typography_font_weight');
+			var $font_subsets = $(font_select).parent().siblings('ul.options').find('.customify_typography_font_subsets');
 
 			var option_data = $(font_select).find( 'option[value="' + selected_font + '"]' );
 
