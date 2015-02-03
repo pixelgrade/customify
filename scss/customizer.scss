@@ -238,19 +238,25 @@ $popup 		: 275px;
 	// Ace Editor
 	#css_editor {
 		top: 70px;
+		border-top: 10px solid white;
+		overflow: visible;
+
+		&:before {
+			content: "";
+			width: 48px;
+			height: 10px;
+			display: block;
+			background: #e8e8e8;
+			top: -10px;
+			position: absolute;
+			z-index: 10000000;
+			left: 0;
+		}
 	}
 
 	// Add Some Extra Spacing Around the Editor Content
 	.ace_scroller {
-		padding: 10px 0 0 10px;
-	}
-
-	.ace_gutter-layer {
-		padding-top: 10px;
-	}
-
-	.ace_gutter-active-line {
-		margin-top: 10px;
+		padding-left: 10px;
 	}
 }
 

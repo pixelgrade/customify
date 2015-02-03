@@ -128,15 +128,22 @@
  */
 #accordion-section-live_css_edit_section #css_editor {
   top: 70px;
+  border-top: 10px solid white;
+  overflow: visible;
+}
+#accordion-section-live_css_edit_section #css_editor:before {
+  content: "";
+  width: 48px;
+  height: 10px;
+  display: block;
+  background: #e8e8e8;
+  top: -10px;
+  position: absolute;
+  z-index: 10000000;
+  left: 0;
 }
 #accordion-section-live_css_edit_section .ace_scroller {
-  padding: 10px 0 0 10px;
-}
-#accordion-section-live_css_edit_section .ace_gutter-layer {
-  padding-top: 10px;
-}
-#accordion-section-live_css_edit_section .ace_gutter-active-line {
-  margin-top: 10px;
+  padding-left: 10px;
 }
 
 .wp-full-overlay.editor_opened {
