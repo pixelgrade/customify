@@ -29,7 +29,7 @@
 			var self = this,
 				css = this._cssproperties.cssRules;
 
-			if ( css[0].hasOwnProperty('media') ) {
+			if ( css[0] !== "undefined" && css[0].hasOwnProperty('media') ) {
 				// in this case we run a media query object
 				$.each(css, function( key, media_query ){
 					// simple object with css properties

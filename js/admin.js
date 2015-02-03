@@ -43,7 +43,6 @@
 
 	});
 
-
 	var toggleGroup = function( name, show ){
 		var $group = $( '#' + name );
 
