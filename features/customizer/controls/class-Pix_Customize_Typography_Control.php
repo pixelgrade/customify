@@ -34,7 +34,6 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 		"Verdana, Geneva, sans-serif"                           => "Verdana, Geneva, sans-serif",
 	);
 
-
 	/**
 	 * Constructor.
 	 *
@@ -98,13 +97,9 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 			$font_family = $values->font_family;
 		}
 
-
 		if ( isset( $values->load_all_weights ) ) {
-			$this->load_all_weights = $values->font_load_all_weightsmily;
-		}
-
-
-		?>
+			$this->load_all_weights = $values->font_load_all_weights;
+		} ?>
 		<label class="customify_typography">
 			<?php if ( ! empty( $this->label ) ) : ?>
 				<span class="customize-control-title"><?php echo esc_html( $this->label ); ?></span>
@@ -179,63 +174,54 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 			</select>
 		</label>
 		<ul class="options">
-			<?php
+		<?php
+		if (! $this->load_all_weights && $this->font_weight &&  ( isset( $values->variants ) && ! empty( $values->variants ) ) ) { ?>
+			<li>
+				<label>Font Weight</label>
+				<select class="customify_typography_font_weight">
+					<?php
+					foreach ( $values->variants as $weight ) {
+						echo '<option value="'. $weight . '. "> ' .  $weight . '</option>';
+					} ?>
+				</select>
+			</li>
+		<?php
+		}
 
-			if (! $this->load_all_weights && $this->font_weight &&  ( isset( $values->variants ) && ! empty( $values->variants ) ) ) { ?>
-				<li>
-					<label>Font Weight</label>
-					<select class="customify_typography_font_weight">
-						<?php
-						foreach ( $values->variants as $weight ) {
-							echo '<option value="'. $weight . '. "> ' .  $weight . '</option>';
-						} ?>
-					</select>
-				</li>
-			<?php
-			}
+		if ( $this->subsets && ( isset( $values->subsets ) && ! empty( $values->subsets ) ) ) { ?>
+			<li>
+				<label><?php _e('Subsets', 'customify_txtd'); ?></label>
+				<select multiple class="customify_typography_font_subsets">
+					<?php
 
-			if ( $this->subsets && ( isset( $values->subsets ) && ! empty( $values->subsets ) ) ) { ?>
-				<li>
-					<label>Subsets</label>
-					<select multiple class="customify_typography_font_subsets">
-						<?php
+					$selected = array();
 
-						$selected = array();
+					if ( isset( $values->selected_subsets ) ) {
+						$selected = $values->selected_subsets;
+					}
 
-						if ( isset( $values->selected_subsets ) ) {
-							$selected = $values->selected_subsets;
+					foreach ( $values->subsets as $key => $subset ) {
+						$attrs = '';
+						if ( in_array( $subset, (array)$selected ) ) {
+							$attrs .= ' selected="selected"';
 						}
 
-						foreach ( $values->subsets as $key => $subset ) {
-							$attrs = '';
-							if ( in_array( $subset, (array)$selected ) ) {
-								$attrs .= ' selected="selected"';
-							}
-
-							echo '<option value="'. $subset . '. "'.$attrs.'> ' . $subset . '</option>';
-						}
-						?>
-					</select>
-				</li>
+						echo '<option value="'. $subset . '. "'.$attrs.'> ' . $subset . '</option>';
+					}
+					?>
+				</select>
+			</li>
+		<?php } ?>
 		</ul>
-			<?php
-			}
-			/*
-						if ( isset( $this->backup ) ) { ?>
-							<br/>
-							<span class="title"><?php _e('Backup Font', 'customify_txtd'); ?></span>
-							<select name="<?php echo str_replace( '_control', '', $this->id ); ?>[backup]" class="customify_typography_backup" data-tags="true" data-placeholder="--<?php _e('Select option', 'customify_txtd'); ?>--">
-								<?php
-								if ( PixCustomifyPlugin::get_plugin_option( 'typography_standard_fonts' ) ) {
-									foreach ( self::$std_fonts as $key => $font ) {
-										echo '<option value="' . $font . '">' . $font . '</option>';
-									}
-								} ?>
-							</select>
-						<?php } */ ?>
-		
 	<?php }
 
+	/**
+	 * This method makes an <output> tag from the given params
+	 * @param $key
+	 * @param $font_family
+	 * @param $font
+	 * @param string $type
+	 */
 	protected static function output_font_option( $key, $font_family, $font, $type = 'google' ) {
 		$data = '';
 
@@ -258,6 +244,10 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 		}
 	}
 
+	/**
+	 * Load the google fonts list from the local file
+	 * @return bool|mixed|null
+	 */
 	protected function load_google_fonts() {
 
 		$fonts_path = plugin_dir_path( __FILE__ ) . 'resources/google.fonts.php';
@@ -266,13 +256,16 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 			self::$google_fonts = require( $fonts_path );
 		}
 
- 		if ( !empty( self::$google_fonts ) ) {
+		if ( !empty( self::$google_fonts ) ) {
 			return self::$google_fonts;
 		}
 
 		return false;
 	}
 
+	/**
+	 * This method is used only to update the google fonts json file
+	 */
 	protected function generate_google_fonts_json() {
 
 		$fonts_path = plugin_dir_path( __FILE__ ) . 'resources/google.fonts.php';

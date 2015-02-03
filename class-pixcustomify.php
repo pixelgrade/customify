@@ -423,7 +423,7 @@ class PixCustomifyPlugin {
 	 * @since    1.0.0
 	 */
 	public function enqueue_scripts() {
-		wp_enqueue_script( $this->plugin_slug . '-plugin-script', plugins_url( 'js/public.js', __FILE__ ), array( 'jquery' ), $this->version, true );
+		//wp_enqueue_script( $this->plugin_slug . '-plugin-script', plugins_url( 'js/public.js', __FILE__ ), array( 'jquery' ), $this->version, true );
 		wp_enqueue_script( 'google-fonts', '//ajax.googleapis.com/ajax/libs/webfont/1.5.3/webfont.js' );
 	}
 
@@ -505,14 +505,9 @@ class PixCustomifyPlugin {
 
 					if ( isset( $properties_set['media'] ) && ! empty( $properties_set['media'] ) ) {
 						echo "}\n";
-					}
-
-					?>
-
+					} ?>
 				</style>
-			<?php
-
-			}
+			<?php }
 		}
 
 		if ( ! empty( self::$media_queries ) ) {
@@ -537,12 +532,9 @@ class PixCustomifyPlugin {
 
 						$property_settings = $property['property'];
 						$property_value    = $property['value'];
-						$media_q .= "\t" . self::proccess_css_property( $property_settings, $property_value );
-
-						?></style>
-				<?php
-
-				}
+						$media_q .= "\t" . self::proccess_css_property( $property_settings, $property_value );?>
+					</style>
+				<?php }
 
 				$media_q .= "\n}\n";
 
@@ -602,7 +594,6 @@ class PixCustomifyPlugin {
 				WebFont.load( {google: {families: [<?php echo (rtrim( $families, ',' ) ); ?>]}} );
 			</script>
 		<?php } ?>
-
 		<style id="customify_typography_output_style">
 			<?php
 			foreach ( self::$typo_settings as $key => $font ) {
@@ -642,9 +633,15 @@ class PixCustomifyPlugin {
 				}
 			} ?>
 		</style>
-	<?php
-	}
+	<?php }
 
+	/**
+	 * Turn css options into a valid CSS output
+	 * @param $option_id
+	 * @param array $css_config
+	 *
+	 * @return string
+	 */
 	protected function convert_setting_to_css( $option_id, $css_config = array() ) {
 		$output = '';
 

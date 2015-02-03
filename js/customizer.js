@@ -27,8 +27,6 @@
 			});
 		});
 
-		// the typography field holds a hidden input with the serialization of the google font values
-		// @TODO This is wracked .. review
 		var prepare_typography_field = function() {
 
 			var $typos = $('.customify_typography_font_family' );
@@ -84,7 +82,6 @@
 			try {
 				current_val = JSON.parse( current_val );
 			} catch (e) {
-
 				console.log(e);
 				//return false;
 			}
