@@ -2,7 +2,7 @@
 
 /**
  * This filter is used to change the Customizer Options
- * You can also copy this function inside your functions.php 
+ * You can also copy this function inside your functions.php
  * file but DO NOT FORGET TO CHANGE ITS NAME
  *
  * @param $config array This holds required keys for the plugin config like 'opt-name', 'panels', 'settings'
@@ -105,6 +105,7 @@ if ( ! function_exists('add_customify_base_options') ) {
 						'type'    => 'typography',
 						'label'   => __( 'Body Text', 'customify_txtd' ),
 						'default' => 'Lato',
+						'default' => 'Lato',
 						'selector' => 'html body',
 						'load_all_weights' => true,
 						'recommended' => array(
@@ -154,6 +155,7 @@ if ( ! function_exists('add_customify_base_options') ) {
 							'min'   => 24,
 							'max'   => 100,
 							'step'  => 1,
+							'data-preview' => true
 						),
 						'default' => 24,
 						'css' => array(

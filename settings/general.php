@@ -21,7 +21,7 @@ return array(
 		'disable_default_sections' => array(
 			'name'    => 'disable_default_sections',
 			'label'   => __( 'Disable sections', 'pixcustomify_txtd' ),
-			'desc'    => __( 'You can disable sections', 'pixcustomify_txtd' ),
+			'desc'    => __( 'You can disable default sections', 'pixcustomify_txtd' ),
 			'type'    => 'multicheckbox',
 			'options' => array(
 				'nav'    => __( 'Navigation', 'pixcustomify_txtd' ),
@@ -33,6 +33,5 @@ return array(
 				'widgets' => __( 'Widgets', 'pixcustomify_txtd' ),
 			),
 		),
-
 	)
 ); # config

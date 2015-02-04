@@ -23,6 +23,26 @@
 					}
 				}
 			});
+
+			// for each range input add a value preview output
+			$('input[type="range"]' ).each(function(){
+				var $clone = $(this).clone();
+
+				$clone
+					.attr('type', 'number')
+					.attr('class', 'range-value');
+
+				$(this).after( $clone );
+
+				$(this).on('input', function() {
+					$(this).siblings('.range-value').val($(this).val());
+				});
+			});
+		});
+
+		$(document).on('change', '.customize-control input.range-value', function() {
+			var range = $(this).siblings('input[type="range"]');
+			range.val($(this ).val());
 		});
 
 		// get each typography field and bind events
