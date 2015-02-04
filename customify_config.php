@@ -1,16 +1,17 @@
 <?php
 
 /**
- * This filter can change Customify's settings
- * You can also copy this function inside your functions.php file BUT don't forget to change it's name
+ * This filter is used to change the Customizer Options
+ * You can also copy this function inside your functions.php 
+ * file but DO NOT FORGET TO CHANGE ITS NAME
  *
  * @param $config array This holds required keys for the plugin config like 'opt-name', 'panels', 'settings'
  * @return $config
  */
 
-if ( ! function_exists('filter_to_add_customify_base_options') ) {
+if ( ! function_exists('add_customify_base_options') ) {
 
-	function filter_to_add_customify_base_options( $config ) {
+	function add_customify_base_options( $config ) {
 
 		$config['opt-name'] = 'customify_defaults';
 
@@ -218,4 +219,4 @@ if ( ! function_exists('filter_to_add_customify_base_options') ) {
 }
 
 
-add_filter( 'customify_filter_fields', 'filter_to_add_customify_base_options', 10, 1 );
+add_filter( 'customify_filter_fields', 'add_customify_base_options', 10, 1 );
