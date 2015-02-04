@@ -103,10 +103,11 @@ if ( ! function_exists('filter_to_add_customify_base_options') ) {
 					'body_font'     => array(
 						'type'    => 'typography',
 						'label'   => __( 'Body Text', 'customify_txtd' ),
-						'default' => '"Droid Serif", serif',
+						'default' => 'Lato',
 						'selector' => 'html body',
 						'load_all_weights' => true,
 						'recommended' => array(
+							'Lato',
 							'Open Sans',
 							'PT Sans',
 							'Cabin',

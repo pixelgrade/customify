@@ -232,12 +232,13 @@ class PixCustomifyPlugin {
 		}
 
 		if ( strpos( $option, self::$opt_name . '[' ) !== false ) {
-			var_dump( 'YOU ARE A BIG FAT IDIOT!' );
+			var_dump( 'this is old and it shouldn\'t be here!' );
 
 			// get only the setting id
 			$option = explode( '[', $option );
 			$option = rtrim( $option[1], ']' );
 		}
+
 		if ( isset( self::$current_values[ $option ] ) ) {
 			return self::$current_values[ $option ];
 		}
@@ -468,15 +469,9 @@ class PixCustomifyPlugin {
 
 		$custom_css .= "\n";
 
-		//@todo maybe add a filter to this output
-		?>
+		//@todo maybe add a filter to this output ?>
 		<style id="customify_output_style">
 			<?php 	echo( $custom_css ); ?>
-
-			pre.xdebug-var-dump {
-				min-width: 500px;
-				position: RELATIVE;
-			}
 		</style>
 		<?php
 

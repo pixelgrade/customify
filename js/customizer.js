@@ -33,7 +33,6 @@
 			$typos.each(function(){
 				var font_family_select = this,
 					$input = $(font_family_select).siblings('.customify_typography_values');
-
 				// on change
 				$(font_family_select).on('change',function(){
 					update_siblings_selects( font_family_select );
@@ -43,7 +42,7 @@
 			});
 		};
 
-		$(document).on('change', '.customify_typography_font_subsets', function(ev){
+		$(document).on('change', '.customify_typography_font_subsets',function(ev){
 
 			var $input = $(this).parents('.options').siblings('.customify_typography').children('.customify_typography_values'),
 				current_val =  $input.val();
@@ -72,6 +71,7 @@
 
 		var update_siblings_selects = function ( font_select  ) {
 
+			this.bound_once = false;
 			var selected_font = $(font_select).val(),
 				$input = $(font_select).siblings('.customify_typography_values' ),
 				current_val = $input.val();
@@ -80,15 +80,24 @@
 					return;
 			}
 
+			var $font_weight = $(font_select ).parent().siblings('ul.options').find('.customify_typography_font_weight');
+			var $font_subsets = $(font_select).parent().siblings('ul.options').find('.customify_typography_font_subsets');
+
 			try {
 				current_val = JSON.parse( current_val );
 			} catch (e) {
-				console.log(e);
-				//return false;
-			}
+				// in case of an error, force the rebuild of the json
+				if ( typeof $(font_select).data('bound_once') === "undefined" ) {
 
-			var $font_weight = $(font_select ).parent().siblings('ul.options').find('.customify_typography_font_weight');
-			var $font_subsets = $(font_select).parent().siblings('ul.options').find('.customify_typography_font_subsets');
+					$(font_select).data('bound_once', true);
+					//var api = wp.customize;
+					//api.previewer.refresh();
+
+					$(font_select).change();
+					$font_weight.change();
+					$font_subsets.change();
+				}
+			}
 
 			var option_data = $(font_select).find( 'option[value="' + selected_font + '"]' );
 
