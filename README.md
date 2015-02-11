@@ -18,21 +18,27 @@ The Customify [$config](#about_config_var) can be filtered by any theme and this
 
 ```
  // Advice: change this function's name and make sure it is unique
+ 
 add_filter('customify_filter_fields', 'make_this_function_name_unique' );
+
 function make_this_function_name_unique( $config ) {
+
 	// usually the sections key will be here, but a check won't hurt
 	if ( ! isset($config['sections']) ) { 
 		$config['sections'] = array();
 	}
+	
 	// this means that we add a new entry named "theme_added_settings" in the sections area
 	$config['sections']['theme_added_settings'] = array(
 		'title' => 'Section added dynamically',
 		'settings' => array( 
+		
 			// this is the field id and it must be unique
 			'field_example' => array(
 				'type'  => 'color', // there is a list of types below
 				'label' => 'Body color', // the label is optional but is nice to have one
 				'css' => array(
+				
 					// the CSS key is the one which controls the output of this field
 					array(
 					 	// a CSS selector
@@ -40,6 +46,7 @@ function make_this_function_name_unique( $config ) {
 						// the CSS property which should be affected by this field
 						'property' => 'background-color',
 					)
+					
 					// repeat this as long as you need
 					array(
 						'selector' => 'body',
@@ -57,17 +64,54 @@ function make_this_function_name_unique( $config ) {
 
 ```
 
-In this function, we filter the $config variable
+The Customify plugin also create it's own defaults this way. You can see that in `customify/customify_config.php`
+Personally I like to simply copy this file in my child theme and include it in `funcitons.php` with
 
-### About $config variable<a name="about_config_var"></a> ###
+`require 'customify_config.php'`
 
- The $config array holds 3 important keys:
+And after that the sky is the limit, I can style any elements or group of elements in customizer.
+
+The intro is over let's get to some advanced stuff.
+
+# Advanced Things
+
+### The $config variable<a name="about_config_var"></a> ###
+
+This is the array which is proccesed by the `customify_filter_fields` filter and it contains:
  *  'sections' an array with sections(each section holds an array with fields)
  *  'panels' an array of panels( each panel holds an array with sections)
  *  'opt-name' the option key name which will hold all these options
 
 
-### Field callbacks <a name="callback_example"></a> 
+### Field callbacks<a name="callback_example"></a> 
+
+Each field can take a 'callback_filter' parameter.This should be a function name which should be called when a field is changed.
+
+For example let's take this range field :
+```
+'sidebar_width' => array(
+	'type'  => 'range',
+	'label' => 'Sidebar width',
+	'input_attrs' => array(
+		'min'   => 60,
+		'max'   => 320,
+		'step'  => 60,
+	),
+	'css' => array(
+		array(
+			'selector' => 'span.col',
+			'property' => 'width',
+			'unit' => 'px'
+		)
+	),
+	'callback_filter' => 'this_setting_can_call_this_function'
+)
+
+```
+
+Now let's create a callback which multiplies the effect of this field
+Let's say that we want the sidebar to grow faster in length and double it's value when the slider is changed
+
 ```
 function this_setting_can_call_this_function( $value, $selector, $property, $unit ) {
 
@@ -78,10 +122,23 @@ function this_setting_can_call_this_function( $value, $selector, $property, $uni
 
 ```
 
-Fields  | Live Preview Support
+Fields  | [Live Preview Support!](#live_preview_support)
 ------------- | -------------
 Text  | No
-Textarea  | No
+Textarea | No
 Color | Yes
 Range | Yes
 Typography | No
+Select | No
+Radio | No
+Checkbox | No
+Upload | No
+Image | No
+Date | No
+Pages select | No
+
+### Live Preview Support<a name="live_preview_support"></a>
+
+There are a few fields which support this feature for now, but those are awesome.These fields are capabale to update the previewer iframe without refreshing the iframe, the preview should be instant.
+
+This is recommanded for color fields because you won't need to stop drag-and-dropping the color select to see what color would be better.
