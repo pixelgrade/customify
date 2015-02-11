@@ -7,11 +7,11 @@
 		 *  Any checkbox should switch between value 1 and 0
 		 *  Also test if the checkbox needs to hide or show something under it.
 		 */
-//		$('#pixtypes_form input:checkbox').each(function(i,e){
+//		$('#customify_form input:checkbox').each(function(i,e){
 //			check_checkbox_checked(e);
 //			$(e).check_for_extended_options();
 //		});
-//		$('#pixtypes_form').on('click', 'input:checkbox', function(){
+//		$('#customify_form').on('click', 'input:checkbox', function(){
 //			check_checkbox_checked(this);
 //			$(this).check_for_extended_options();
 //		});

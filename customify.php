@@ -64,7 +64,7 @@ require_once( plugin_dir_path( __FILE__ ) . 'class-pixcustomify.php' );
 
 // Register hooks that are fired when the plugin is activated, deactivated, and uninstalled, respectively.
 register_activation_hook( __FILE__, array( 'PixCustomifyPlugin', 'activate' ) );
-//register_deactivation_hook( __FILE__, array( 'PixTypesPlugin', 'deactivate' ) );
+//register_deactivation_hook( __FILE__, array( 'customifyPlugin', 'deactivate' ) );
 
 global $pixcustomify_plugin;
 $pixcustomify_plugin = PixCustomifyPlugin::get_instance();

@@ -26,14 +26,14 @@ return array(
 		'css_editor' => include 'settings/css_editor' . EXT,
 	),
 	'processor'             => array(
-		// callback signature: (array $input, PixtypesProcessor $processor)
+		// callback signature: (array $input, customifyProcessor $processor)
 		'preupdate'  => array(
 			// callbacks to run before update process
 			// cleanup and validation has been performed on data
 		),
-		'postupdate' => array(
-			'save_settings'
-		),
+//		'postupdate' => array(
+//			'save_settings'
+//		),
 	),
 	'cleanup'               => array(
 		'switch' => array( 'switch_not_available' ),
@@ -44,9 +44,9 @@ return array(
 	'errors'                => array(
 		'not_empty' => __( 'Invalid Value.', pixcustomify::textdomain() ),
 	),
-	'callbacks'             => array(
-		'save_settings' => 'save_customizer_plugin_settings'
-	),
+//	'callbacks'             => array(
+//		'save_settings' => 'save_customizer_plugin_settings'
+//	),
 	// shows exception traces on error
 	'debug'                 => $debug,
 

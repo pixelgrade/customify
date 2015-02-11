@@ -5,7 +5,7 @@
  * This includes the header, options, and other information that should
  * provide the user interface to the end user.
  *
- * @package   PixTypes
+ * @package   customify
  * @author    Pixelgrade <contact@pixelgrade.com>
  * @license   GPL-2.0+
  * @link      http://pixelgrade.com
