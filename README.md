@@ -1,17 +1,19 @@
 Customify
 ========
+**A Theme Customizer Booster**
 
-A Theme Customizer Booster
+If you want to add your own fields you can always filter the fields list like this.
 
-How to filter the config?
-<pre>
-function add_customify_settings( $settings ) {
+How to filter the config? Include this filter in your theme(probably in functions.php)
 
-	if ( !isset($settings['sections']) ) {
-		$settings['sections'] = array();
+```
+function add_customify_settings( $config ) { // more about $config variable [About $config varaible!]()
+
+	if ( !isset($config['sections']) ) {
+		$config['sections'] = array();
 	}
 
-	$settings['sections']['theme_added_settings'] = array(
+	$config['sections']['theme_added_settings'] = array(
 		'title' => 'General Theme Settings',
 		'settings' => array(
 			'body_color' => array(
@@ -50,9 +52,8 @@ function add_customify_settings( $settings ) {
 		)
 	);
 
-	return $settings;
+	return $config;
 }
-
 add_filter('customify_filter_fields', 'add_customify_settings', 10, 1 );
 
 function this_setting_can_call_this_function( $value, $selector, $property, $unit ) {
@@ -62,7 +63,15 @@ function this_setting_can_call_this_function( $value, $selector, $property, $uni
 	return $this_property_output;
 }
 
-</pre>
+```
+
+### About $config varaible ###
+
+ The $config array holds 3 important keys:
+ *  'sections' an array with sections(each section holds an array with fields)
+ *  'panels' an array of panels( each panel holds an array with sections)
+ *  'opt-name' the option key name which will hold all these options
+
 
 Fields  | Live Preview Support
 ------------- | -------------
