@@ -2,7 +2,7 @@ Customify
 ========
 **A Theme Customizer Booster**
 
-With Customify you can easily add Fonts, Colors, Live CSS Editor and other options to your theme.
+With Customify, you can easily add Fonts, Colors, Live CSS Editor and other options to your theme.
 
 ### How to use it?
 
@@ -17,62 +17,49 @@ So this plugin adds some fields in customizer, no big deal right? How about addi
 The Customify [$config](#about_config_var) can be filtered by any theme and this is how you do it, include this filter in your theme(probably in functions.php)
 
 ```
-
-function add_customify_settings( $config ) { // change this function's name and make sure it is unique
-
-	if ( ! isset($config['sections']) ) { // usually the sections key will be there,but a check won't hurt
+ // Advice: change this function's name and make sure it is unique
+add_filter('customify_filter_fields', 'make_this_function_name_unique' );
+function make_this_function_name_unique( $config ) {
+	// usually the sections key will be here, but a check won't hurt
+	if ( ! isset($config['sections']) ) { 
 		$config['sections'] = array();
 	}
-
+	// this means that we add a new entry named "theme_added_settings" in the sections area
 	$config['sections']['theme_added_settings'] = array(
-		'title' => 'General Theme Settings',
-		'settings' => array(
-			'body_color' => array(
-				'type'  => 'color',
-				'label' => 'Body color',
-				'desc'  => 'ceva ceva pe aici',
-				'live' => true, // this means the previewer won't refresh
+		'title' => 'Section added dynamically',
+		'settings' => array( 
+			// this is the field id and it must be unique
+			'field_example' => array(
+				'type'  => 'color', // there is a list of types below
+				'label' => 'Body color', // the label is optional but is nice to have one
 				'css' => array(
+					// the CSS key is the one which controls the output of this field
 					array(
-						'selector' => 'body',
+					 	// a CSS selector
+						'selector' => '#logo',
+						// the CSS property which should be affected by this field
 						'property' => 'background-color',
 					)
-				)
-			),
-			'left_white_space' => array(
-				'type'  => 'range',
-				'label' => 'left white space',
-				'desc'  => 'ceva ceva pe aici',
-				'input_attrs' => array(
-					'min'   => 10,
-					'max'   => 700,
-					'step'  => 1,
-					'class' => 'my-custom-class',
-					'style' => 'color: #0a0',
-				),
-				'default' => 430,
-				'css' => array(
+					// repeat this as long as you need
 					array(
-						'selector' => 'html body:before',
-						'media' => 'screen and (min-width: 700px)',
-						'property' => 'width',
-						'unit' => 'px'
+						'selector' => 'body',
+						'property' => 'color',
 					)
 				)
 			)
 		)
 	);
-
+	
+	// when working with filters always return filtered value
 	return $config;
 }
 
-add_filter('customify_filter_fields', 'add_customify_settings', 10, 1 );
 
 ```
 
-In this function we filter the $config variable
+In this function, we filter the $config variable
 
-### About $config varaible<a name="about_config_var"></a> ###
+### About $config variable<a name="about_config_var"></a> ###
 
  The $config array holds 3 important keys:
  *  'sections' an array with sections(each section holds an array with fields)
