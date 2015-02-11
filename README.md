@@ -64,8 +64,8 @@ function make_this_function_name_unique( $config ) {
 
 ```
 
-The Customify plugin also create it's own defaults this way. You can see that in `customify/customify_config.php`
-Personally I like to simply copy this file in my child theme and include it in `funcitons.php` with
+The Customify plugin also create's its own defaults this way. You can see that in `customify/customify_config.php`
+Personally I like to simply copy this file in my child theme and include it in `functions.php` with
 
 `require 'customify_config.php'`
 
@@ -77,7 +77,7 @@ The intro is over let's get to some advanced stuff.
 
 ### The $config variable<a name="about_config_var"></a> ###
 
-This is the array which is proccesed by the `customify_filter_fields` filter and it contains:
+This is the array which is processed by the `customify_filter_fields` filter and it contains:
  *  'sections' an array with sections(each section holds an array with fields)
  *  'panels' an array of panels( each panel holds an array with sections)
  *  'opt-name' the option key name which will hold all these options
@@ -110,7 +110,7 @@ For example let's take this range field :
 ```
 
 Now let's create a callback which multiplies the effect of this field
-Let's say that we want the sidebar to grow faster in length and double it's value when the slider is changed
+Let's say that we want the sidebar to grow faster in length and double its value when the slider is changed
 
 ```
 function this_setting_can_call_this_function( $value, $selector, $property, $unit ) {
@@ -139,6 +139,6 @@ Pages select | No
 
 ### Live Preview Support<a name="live_preview_support"></a>
 
-There are a few fields which support this feature for now, but those are awesome.These fields are capabale to update the previewer iframe without refreshing the iframe, the preview should be instant.
+There are a few fields which support this feature for now, but those are awesome.These fields are capable to update the previewer iframe without refreshing the iframe, the preview should be instant.
 
-This is recommanded for color fields because you won't need to stop drag-and-dropping the color select to see what color would be better.
+This is recommended for color fields because you won't need to stop drag-and-dropping the color select to see what color would be better.
