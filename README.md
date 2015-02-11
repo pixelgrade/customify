@@ -2,14 +2,25 @@ Customify
 ========
 **A Theme Customizer Booster**
 
-If you want to add your own fields you can always filter the fields list like this.
+With Customify you can easily add Fonts, Colors, Live CSS Editor and other options to your theme.
 
-How to filter the config? Include this filter in your theme(probably in functions.php)
+### How to use it?
 
+First you need to install and activate the stable version. This will always be on [wordpress.org](wordpress.org/support/plugin/pixproof)
 
-function add_customify_settings( [$config](#about_config_var) ) {
+Now go to ‘Appearance -> Customize’ menu and have fun with the new fields.
 
-	if ( ! isset($config['sections']) ) { // read more about [sections](#about_sections)
+### Make your own customizer
+
+So this plugin adds some fields in customizer, no big deal right? How about adding your own customizer fields?
+
+The Customify [$config](#about_config_var) can be filtered by any theme and this is how you do it, include this filter in your theme(probably in functions.php)
+
+```
+
+function add_customify_settings( $config ) { // change this function's name and make sure it is unique
+
+	if ( ! isset($config['sections']) ) { // usually the sections key will be there,but a check won't hurt
 		$config['sections'] = array();
 	}
 
@@ -54,7 +65,12 @@ function add_customify_settings( [$config](#about_config_var) ) {
 
 	return $config;
 }
+
 add_filter('customify_filter_fields', 'add_customify_settings', 10, 1 );
+
+```
+
+In this function we filter the $config variable
 
 ### About $config varaible<a name="about_config_var"></a> ###
 
@@ -72,6 +88,7 @@ function this_setting_can_call_this_function( $value, $selector, $property, $uni
 
 	return $this_property_output;
 }
+
 ```
 
 Fields  | Live Preview Support
