@@ -36,47 +36,4 @@ A drop-down menu selector to be used when you have to choose from multiple optio
 2. Activate the plugin through the 'Plugins' menu in WordPress
 3. Go to ‘Appearance -> Customize’ menu and have fun with the new fields
 
-*Note*
-
-If you want to add your own fields you can always filter the fields list config like this
-`
-/**
- * The $ config array holds 3 important keys:
- *  - 'sections' an array with sections(each section holds an array with fields)
- *  - 'panels' an array of panels( each panel holds an array with sections)
- *  - 'opt-name' the option key name which will hold all these options
- */
-
-function make_this_function_name_unique( $config ) {
-
-	$new_sections = array(
-		'colors_sssection' => array( // this is the id of this section, it must be unique
-			'title'    => __( 'Colorsss', 'customify_txtd' ),
-			'options' => array( //this is the list of fields
-				'links_colorsss'   => array( // each field must have an unique id
-					'type'      => 'color', // the type key is required
-					'label'     => __( 'Links Cosslor', 'customify_txtd' ),
-					'live' => true,
-					'default'   => '#6c6e70',
-					'css'  => array( // the CSS key is the one which controls the output of this field, it contains an array of CSS selectors
-						array( // each CSS selector must be an array with two important keys: the "selector" and the "property" and voila now when you will change the color of this field the CSS property of this selector will change.
-							'selector' => 'a, .entry-meta a',
-							'property'     => 'color',
-						),
-					)
-				)
-			)
-		)
-	);
-
-
-	// Note: this example will overwrite the default sections created by this plugin.
-	$config['sections'] = $new_sections;
-
-	// if you still want to keep the default sections, try
-	$config['sections'] = array_merge( $config['sections'], $new_sections );
-
-	return $config; // when working with filters always return filtered value
-}
-add_filter( 'customify_filter_fields', 'make_this_function_name_unique', 10, 1 );
-`
+[Advanced Config](https://github.com/pixelgrade/customify/blob/dev/README.md)
