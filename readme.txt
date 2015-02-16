@@ -11,29 +11,22 @@ Customify is a Theme Customizer Booster that you can easily use to add Fonts, Co
 
 == Description ==
 
-With Customify, developers can easily create advanced theme-specific options inside the WordPress Customizer. Using those options, a user can make presentational changes without having to know or edit the theme code.
+With [Customify](https://github.com/pixelgrade/customify), developers can easily create **advanced theme-specific options** inside the WordPress Customizer. Using those options, a user can make presentational changes without having to know or edit the theme code.
 
-=Types of Fields=
+**Types of Fields**
 
-*Color*
-A color picker used to control any text or background color of an element.
+* **Color.** A color picker used to control any text or background color of an element.
 
-*Typography*
-A series of typographic options that allow you to access the massive **Google Fonts library** and make them available inside your theme customizer.
+* **Typography.** A series of typographic options that allow you to access the massive **Google Fonts library** and make them available inside your theme customizer.
 
-*CSS Editor*
-A powerful **Live CSS Editor** directly into your customizer! Useful for better control over the appearance of your theme without the need to create a child theme or worry about theme updates overwriting your customizations.
+* **CSS Editor.** A powerful **Live CSS Editor** directly into your customizer! Useful for better control over the appearance of your theme without the need to create a child theme or worry about theme updates overwriting your customizations.
 
-*Text Field*
-A simple text field that allows you to customize elements like Site Title or Footer Credits.
+* **Text Field.** A simple text field that allows you to customize elements like Site Title or Footer Credits.
 
-*Select Dropdown*
-A drop-down menu selector to be used when you have to choose from multiple options.
+* **Select Dropdown.** A drop-down menu selector to be used when you have to choose from multiple options.
 
 == Installation ==
 
-1. Upload `pixcustomify.zip` to the `/wp-content/plugins/` directory
-2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Go to ‘Appearance -> Customize’ menu and have fun with the new fields
-
-[Advanced Config](https://github.com/pixelgrade/customify/blob/dev/README.md)
+1. Install Customify either via the WordPress.org plugin directory, or by uploading the files to your `/wp-content/plugins/` directory
+2. After activating Customify go to `Appearance → Customize` and have fun with the new felds
+3. For further instructions and how to setup your own fields, read our [detailed documentation](http://github.com/pixelgrade/customify/blob/dev/README.md)
