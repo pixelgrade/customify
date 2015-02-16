@@ -6,7 +6,7 @@ With Customify, you can easily add Fonts, Colors, Live CSS Editor and other opti
 
 ### How to use it?
 
-First you need to install and activate the stable version. This will always be on [wordpress.org](wordpress.org/support/plugin/pixproof)
+First you need to install and activate the stable version. This will always be on [wordpress.org](https://wordpress.org/plugins/customify/)
 
 Now go to ‘Appearance -> Customize’ menu and have fun with the new fields.
 
