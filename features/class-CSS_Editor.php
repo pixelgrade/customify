@@ -68,7 +68,7 @@ class Customify_CSS_Live_Editor {
  * 
  * CSS (Cascading Style Sheets) is a language that helps 
  * the browser render your website. You may remove these 
- * comments and get started with your customizations.
+ * lines and get started with your own customizations.
  *
  * The generated code will be placed after the theme 
  * stylesheets, which means that your rules can take 
@@ -76,7 +76,7 @@ class Customify_CSS_Live_Editor {
  * write here what you want to change, you don't need 
  * to copy all your theme's stylesheet content.
  *
- * Getting started with CSS:
+ * Getting started with CSS (tutorial):
  * http://bit.ly/css-getting-started
  */
 
