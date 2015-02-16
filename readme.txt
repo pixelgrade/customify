@@ -1,4 +1,4 @@
-=== Customify ===
+=== Customify - A Theme Customizer Booster ===
 Contributors: euthelup, babbardel
 Tags: customizer, css, editor, live, preview, customise
 Requires at least: 3.8.0
