@@ -1,4 +1,4 @@
-# whitelist
+# whitelist branch dev
 branches:
   only:
     - dev
