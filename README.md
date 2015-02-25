@@ -82,6 +82,26 @@ This is the array which is processed by the `customify_filter_fields` filter and
  *  'panels' an array of panels( each panel holds an array with sections)
  *  'opt-name' the option key name which will hold all these options
 
+### Media queries<a name="media_query_config"></a> 
+
+The `css` configuration can also hold a `media` parameter which will make the output of the CSS property, to wrap in the specified media query, for example:
+
+```
+'site_title_size' => array(
+	'type'  => 'range',
+	'label' => 'Site Title Size',
+	'default' => 24,
+	'css' => array(
+		array(
+			'property' => 'font-size',
+			'selector' => '.site-title',
+			'media' => 'screen and (min-width: 1000px)'
+		)
+	)
+)
+```
+
+This will make the property take effect only on screens larger than 1000px, because on mobile devices you may not want a bigger logo.
 
 ### Field callbacks<a name="callback_example"></a> 
 
@@ -101,15 +121,15 @@ For example let's take this range field :
 		array(
 			'selector' => 'span.col',
 			'property' => 'width',
-			'unit' => 'px'
+			'unit' => 'px',
+			'callback_filter' => 'this_setting_can_call_this_function'
 		)
-	),
-	'callback_filter' => 'this_setting_can_call_this_function'
+	)
 )
 
 ```
 
-Now let's create a callback which multiplies the effect of this field
+Now let's create a callback which multiplies the effect of this css property
 Let's say that we want the sidebar to grow faster in length and double its value when the slider is changed
 
 ```
