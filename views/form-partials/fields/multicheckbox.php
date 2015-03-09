@@ -23,7 +23,7 @@ $attrs = array(
 	foreach ( $this->getmeta( 'options', array() ) as $value => $label ) {
 		$attrs['name'] = $name . '[' . $value . ']';
 
-		if ( array_key_exists( $value, $selected) ) {
+		if ( is_array($selected) && array_key_exists( $value, $selected) ) {
 			$attrs['checked'] = 'checked';
 		} else {
 			unset($attrs['checked']);

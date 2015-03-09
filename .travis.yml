@@ -1,0 +1,26 @@
+# whitelist branch dev
+branches:
+  only:
+    - dev
+
+language: php
+
+php:
+  - 5.2
+  - 5.3
+  - 5.4
+  - 5.5
+
+before_script:
+  - sudo apt-get install ruby
+  - gem install nyx
+
+script:
+  - nyx version
+  - nyx check:php .
+
+notifications:
+  email:
+    recipients:
+    - andrei.lupu@pixelgrade.com
+    on_failure: always
