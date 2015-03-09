@@ -20,7 +20,7 @@ if ( ! function_exists('add_customify_base_options') ) {
 			 * Presets - This section will handle other options
 			 */
 			'presets_section' => array(
-				'title'    => __( 'Presets', 'customify_txtd' ),
+				'title'    => __( 'Style Presets', 'customify_txtd' ),
 				'options' => array(
 					'theme_style'   => array(
 						'type'      => 'preset',
