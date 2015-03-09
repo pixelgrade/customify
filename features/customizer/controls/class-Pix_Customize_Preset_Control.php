@@ -89,19 +89,22 @@ class Pix_Customize_Preset_Control extends Pix_Customize_Control {
 							}
 							$color = '';
 							if ( isset( $setts['color'] ) ) {
-								$color .= ' style="border-left-color: ' . $setts['color'] . '; color: ' . $setts['color'] . ';"';
+								$color .= ' style="background-color: ' . $setts['color'] . '"';
 							}
 
 							$label = $setts['label'];
 							$options = $setts['options'];
 							$data = ' data-options=\'' . json_encode($options) . '\'';?>
 
-							<fieldset class="customify_radio_button">
-								<input <?php $this->link(); echo 'name="' .  $this->setting->id . '" type="radio" value="' . esc_attr( $value ) . '"' . selected( $this->value(), $value, false ) . $data .' />'; ?>
-								<label class="button" for="<?php echo $this->setting->id; ?>" <?php echo $color; ?>>
+							<div class="preset">
+								<div class="preset-color first-color" <?php echo $color; ?>>
+									<span class="first-font">Ag</span>
+									<span class="secondary-font">AaBbCc</span>
+								</div>
+								<div class="preset-name secondary-color">
 									<?php echo $label; ?>
-								</label>
-							</fieldset>
+								</div>
+							</div>
 						<?php } ?>
 					</div>
 				</label>

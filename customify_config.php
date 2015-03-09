@@ -24,102 +24,22 @@ if ( ! function_exists('add_customify_base_options') ) {
 				'options' => array(
 					'theme_style'   => array(
 						'type'      => 'preset',
-						'label'     => __( 'Theme Style', 'customify_txtd' ),
-						'default'   => 'default',
-						'choices'  => array(
-							'default' => array(
-								'label' => __( 'Default', 'customify_txtd' ),
-								'options' => array(
-									'links_color' => '#6c6e70',
-									'headings_color' => '#0aa0d9',
-									'body_color' => '#2d3033'
-								)
-							),
-							'dark' => array(
-								'label' => __( 'Dark', 'customify_txtd' ),
-								'options' => array(
-									'links_color' => '#000000',
-									'headings_color' => '#000000',
-									'body_color' => '#000000',
-									'headings_font' => 'Unlock',
-									'body_font' => 'Oswald'
-								)
-							),
-							'light' => array(
-								'label' => __( 'Light', 'customify_txtd' ),
-								'options' => array(
-									'links_color' => '#ffffff',
-									'headings_color' => '#ffffff',
-									'body_color' => '#ffffff'
-								)
-							)
-						)
-					),
-					'theme_style2'   => array(
-						'type'      => 'preset',
-						'label'     => __( 'Theme Style With Colors', 'customify_txtd' ),
-						'default'   => 'default',
-						'choices_type' => 'radio',
-						'choices'  => array(
-							'blue' => array(
-								'label' => __( 'Blue', 'customify_txtd' ),
-								'color' => 'blue',
-								'options' => array(
-									'links_color' => '#6c6e70',
-									'headings_color' => '#0aa0d9',
-									'body_color' => '#2d3033',
-									'headings_font' => 'Unlock',
-									'body_font' => 'Oswald'
-								)
-							),
-							'red' => array(
-								'label' => __( 'Red', 'customify_txtd' ),
-								'color' => 'red',
-								'options' => array(
-									'links_color' => 'red',
-									'headings_color' => 'red',
-									'body_color' => 'red',
-									'headings_font' => 'Exo',
-									'body_font' => 'Pacifico'
-								)
-							),
-							'pink' => array(
-								'label' => __( 'Pink', 'customify_txtd' ),
-								'color' => 'pink',
-								'options' => array(
-									'links_color' => 'pink',
-									'headings_color' => 'pink',
-									'body_color' => 'pink',
-									'headings_font' => 'Pompiere',
-									'body_font' => 'Oswald'
-								)
-							),
-							'brown' => array(
-								'label' => __( 'Bbrown', 'customify_txtd' ),
-								'color' => 'brown',
-								'options' => array(
-									'links_color' => 'brown',
-									'headings_color' => 'brown',
-									'body_color' => 'brown',
-									'headings_font' => 'Kreon',
-									'body_font' => 'Ubuntu'
-								)
-							)
-						)
-					),
-
-					'theme_style3'   => array(
-						'type'      => 'preset',
-						'label'     => __( 'Awesome Style with Buttons', 'customify_txtd' ),
+						'label'     => __( 'Select a style:', 'customify_txtd' ),
 						'default'   => 'default',
 						'choices_type' => 'buttons',
 						'choices'  => array(
 							'blue' => array(
-								'label' => __( 'Blue', 'customify_txtd' ),
-								'color' => 'blue',
+								'label' => __( 'Silk', 'customify_txtd' ),
+								'preview-color-primary' 	=> '#a33b61',
+								'preview-color-secondary' 	=> '#fcc9b0',
+								'preview-font-primary' 		=> 'Playfair Display Italic',
+								'preview-font-secondary' 	=> 'Merriweather Light',
+								'preview-style'				=> 'light',
+
+								'color' => '#a33b61',
 								'options' => array(
 									'links_color' => '#6c6e70',
-									'headings_color' => '#0aa0d9',
+									'headings_color' => '#a33b61',
 									'body_color' => '#2d3033',
 									'headings_font' => 'Unlock',
 									'body_font' => 'Oswald'
