@@ -979,6 +979,22 @@ class PixCustomifyPlugin {
 				$control_class_name = 'Pix_Customize_' . ucfirst( $setting_config['type'] ) . '_Control';
 				break;
 
+			case 'preset' :
+
+				if ( ! isset( $setting_config['choices'] ) || empty( $setting_config['choices'] ) ) {
+					return;
+				}
+
+				$control_args['choices'] = $setting_config['choices'];
+
+				if ( isset( $setting_config['choices_type'] ) || ! empty( $setting_config['choices_type'] ) ) {
+					$control_args['choices_type'] = $setting_config['choices_type'];
+				}
+
+
+				$control_class_name = 'Pix_Customize_' . ucfirst( $setting_config['type'] ) . '_Control';
+				break;
+
 			default:
 				// if we don't have a real control just quit, it doesn't even matter
 				return;

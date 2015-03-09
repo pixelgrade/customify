@@ -17,6 +17,98 @@ if ( ! function_exists('add_customify_base_options') ) {
 
 		$config['sections'] = array(
 			/**
+			 * Presets - This section will handle other options
+			 */
+			'presets_section' => array(
+				'title'    => __( 'Presets', 'customify_txtd' ),
+				'options' => array(
+					'theme_style'   => array(
+						'type'      => 'preset',
+						'label'     => __( 'Theme Style', 'customify_txtd' ),
+						'default'   => 'default',
+						'choices'  => array(
+							'default' => array(
+								'label' => __( 'Default', 'customify_txtd' ),
+								'options' => array(
+									'links_color' => '#6c6e70',
+									'headings_color' => '#0aa0d9',
+									'body_color' => '#2d3033'
+								)
+							),
+							'dark' => array(
+								'label' => __( 'Dark', 'customify_txtd' ),
+								'options' => array(
+									'links_color' => '#000000',
+									'headings_color' => '#000000',
+									'body_color' => '#000000'
+								)
+							),
+							'light' => array(
+								'label' => __( 'Light', 'customify_txtd' ),
+								'options' => array(
+									'links_color' => '#ffffff',
+									'headings_color' => '#ffffff',
+									'body_color' => '#ffffff'
+								)
+							)
+						)
+					),
+					'theme_style2'   => array(
+						'type'      => 'preset',
+						'label'     => __( 'Theme Style With Colors', 'customify_txtd' ),
+						'default'   => 'default',
+						'choices_type' => 'radio',
+						'choices'  => array(
+							'blue' => array(
+								'label' => __( 'Blue', 'customify_txtd' ),
+								'color' => 'blue',
+								'options' => array(
+									'links_color' => '#6c6e70',
+									'headings_color' => '#0aa0d9',
+									'body_color' => '#2d3033',
+									'headings_font' => 'Unlock',
+									'body_font' => 'Oswald'
+								)
+							),
+							'red' => array(
+								'label' => __( 'Red', 'customify_txtd' ),
+								'color' => 'red',
+								'options' => array(
+									'links_color' => 'red',
+									'headings_color' => 'red',
+									'body_color' => 'red',
+									'headings_font' => 'Exo',
+									'body_font' => 'Pacifico'
+								)
+							),
+							'pink' => array(
+								'label' => __( 'Pink', 'customify_txtd' ),
+								'color' => 'pink',
+								'options' => array(
+									'links_color' => 'pink',
+									'headings_color' => 'pink',
+									'body_color' => 'pink',
+									'headings_font' => 'Pompiere',
+									'body_font' => 'Oswald'
+								)
+							),
+							'brown' => array(
+								'label' => __( 'Bbrown', 'customify_txtd' ),
+								'color' => 'brown',
+								'options' => array(
+									'links_color' => 'brown',
+									'headings_color' => 'brown',
+									'body_color' => 'brown',
+									'headings_font' => 'Kreon',
+									'body_font' => 'Ubuntu'
+								)
+							)
+						)
+					),
+				)
+			),
+
+			/**
 			 * COLORS - This section will handle different elements colors (eg. links, headings)
 			 */
 			'colors_section' => array(
@@ -104,7 +196,6 @@ if ( ! function_exists('add_customify_base_options') ) {
 					'body_font'     => array(
 						'type'    => 'typography',
 						'label'   => __( 'Body Text', 'customify_txtd' ),
-						'default' => 'Lato',
 						'default' => 'Lato',
 						'selector' => 'html body',
 						'load_all_weights' => true,
