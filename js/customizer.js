@@ -113,24 +113,20 @@
 			var data = $(this_option).data('options');
 
 			if ( typeof data !== 'undefined' ) {
-
 				$.each( data, function( id, value ) {
-					var setting_id = customify_settings.options_name + '[' + id + ']';
-					var setting = api( setting_id );
-					setting.set(value);
+					api_set_setting_value( id, value );
 				} );
 			}
 
 			api.previewer.refresh();
 		});
 
-		$(document).on('click', '.customify_preset.radio input', function() {
+		$(document).on('click', '.customify_preset.radio input, .customify_preset.radio_buttons input', function() {
 			var api = wp.customize;
 			var this_option = this;//$(this).children('[value="' + $(this).val() + '"]');
 			var data = $(this_option).data('options');
 
 			if ( typeof data !== 'undefined' ) {
-
 				$.each( data, function( id, value ) {
 					api_set_setting_value( id, value );
 				} );
@@ -141,26 +137,23 @@
 	});
 
 	var api_set_setting_value = function(id, value) {
-		var api = wp.customize;
-		var setting_id = customify_settings.options_name + '[' + id + ']';
-		var setting = api( setting_id );
-
-		var field = $('[data-customize-setting-link="' + setting_id + '"]' ),
+		var api = wp.customize,
+			setting_id = customify_settings.options_name + '[' + id + ']',
+			setting = api( setting_id ),
+			field = $('[data-customize-setting-link="' + setting_id + '"]' ),
 			field_class = $(field).parent().attr('class');
 
 		if ( typeof field_class !== "undefined" && field_class === 'customify_typography') {
 
-			var select = field.siblings('select' );
-//debugger;
-			var this_option = select.find('option[value="' + value + '"]');
-			$(this_option[0]).attr('selected', true);
+			var select = field.siblings('select' ),
+				this_option = select.find('option[value="' + value + '"]');
+			$(this_option[0]).attr('selected', 'selected');
 			update_siblings_selects(select);
 			select.trigger('change');
-			//value = $('option[value=" + value + "]' ).val();
-			console.log( select.val() );
-		}
 
-		setting.set(value);
+		} else {
+			setting.set(value);
+		}
 	};
 
 

@@ -57,9 +57,9 @@ class Pix_Customize_Preset_Control extends Pix_Customize_Control {
 							if ( ! isset( $setts['options']) || ! isset( $setts['label'] ) ) {
 								continue;
 							}
-
+							$color = '';
 							if ( isset( $setts['color'] ) ) {
-								$color = ' style="background-color: ' . $setts['color'] . '"';
+								$color .= ' style="background-color: ' . $setts['color'] . '"';
 							}
 
 							$label = $setts['label'];
@@ -70,6 +70,42 @@ class Pix_Customize_Preset_Control extends Pix_Customize_Control {
 					</div>
 				</label>
 			<?php break;
+			}
+
+			case 'buttons' : { ?>
+				<label>
+					<?php if ( ! empty( $this->label ) ) { ?>
+						<span class="customize-control-title"><?php echo esc_html( $this->label ); ?></span>
+					<?php }
+					if ( ! empty( $this->description ) ) { ?>
+						<span class="description customize-control-description"><?php echo $this->description; ?></span>
+					<?php } ?>
+
+					<div class="customify_preset radio_buttons">
+						<?php
+						foreach ( $this->choices as $value => $setts ){
+							if ( ! isset( $setts['options']) || ! isset( $setts['label'] ) ) {
+								continue;
+							}
+							$color = '';
+							if ( isset( $setts['color'] ) ) {
+								$color .= ' style="border-left-color: ' . $setts['color'] . '; color: ' . $setts['color'] . ';"';
+							}
+
+							$label = $setts['label'];
+							$options = $setts['options'];
+							$data = ' data-options=\'' . json_encode($options) . '\'';?>
+
+							<fieldset class="customify_radio_button">
+								<input <?php $this->link(); echo 'name="' .  $this->setting->id . '" type="radio" value="' . esc_attr( $value ) . '"' . selected( $this->value(), $value, false ) . $data .' />'; ?>
+								<label class="button" for="<?php echo $this->setting->id; ?>" <?php echo $color; ?>>
+									<?php echo $label; ?>
+								</label>
+							</fieldset>
+						<?php } ?>
+					</div>
+				</label>
+				<?php break;
 			}
 
 			default:
