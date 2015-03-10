@@ -414,3 +414,48 @@ $popup 		: 275px;
 	}
 
 }
+
+/**
+ * Toolbar
+ */
+#customize-theme-controls #accordion-section-customify_toolbar {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	width: 100%;
+
+	.accordion-section-content {
+		display:block !important;
+
+		& > li {
+			display: inline-block !important;
+			width: auto;
+		}
+	}
+
+	.accordion-section-title {
+		display: none;
+	}
+}
+
+/**
+ *
+ */
+.reset_panel {
+	position: absolute;
+	bottom: -25px;
+	right:0;
+}
+
+/** Resets */
+
+.reset_section.button {
+	bottom: 0;
+	left: 0;
+}
+
+.reset_panel.button {
+	bottom: 0;
+	right: 0;
+}

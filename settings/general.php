@@ -5,7 +5,6 @@ return array(
 	'type'    => 'postbox',
 	'label'   => 'General Settings',
 	'options' => array(
-
 		'values_store_mod' => array(
 			'name'    => 'values_store_mod',
 			'label'   => __( 'Store values as:', 'pixcustomify_txtd' ),
@@ -32,6 +31,14 @@ return array(
 				'header_image' => __( 'Header', 'pixcustomify_txtd' ),
 				'widgets' => __( 'Widgets', 'pixcustomify_txtd' ),
 			),
+		),
+
+		'enable_reset_buttons' =>  array(
+			'name'    => 'enable_reset_buttons',
+			'label'   => __( 'Enable Reset Buttons', 'pixcustomify_txtd' ),
+			'desc'    => __( 'You can enable reset buttons for panels / sections or all settings', 'pixcustomify_txtd' ),
+			'default'        => false,
+			'type'           => 'switch',
 		),
 	)
 ); # config

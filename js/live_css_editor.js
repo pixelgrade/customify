@@ -28,7 +28,7 @@
 		// if the user types faster than this delay then reset it
 		css_editor.getSession().on('change', function(e) {
 			if ( timeout !== null ){
-				clearTimeout(css_editor);
+				clearTimeout(timeout);
 				timeout = null;
 			} else {
 				timeout = setTimeout( function(){

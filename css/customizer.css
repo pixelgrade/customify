@@ -265,3 +265,44 @@
   z-index: 999;
   border-left: 4px solid;
 }
+
+/**
+ * Toolbar
+ */
+#customize-theme-controls #accordion-section-customify_toolbar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+}
+#customize-theme-controls #accordion-section-customify_toolbar .accordion-section-content {
+  display: block !important;
+}
+#customize-theme-controls #accordion-section-customify_toolbar .accordion-section-content > li {
+  display: inline-block !important;
+  width: auto;
+}
+#customize-theme-controls #accordion-section-customify_toolbar .accordion-section-title {
+  display: none;
+}
+
+/**
+ *
+ */
+.reset_panel {
+  position: absolute;
+  bottom: -25px;
+  right: 0;
+}
+
+/** Resets */
+.reset_section.button {
+  bottom: 0;
+  left: 0;
+}
+
+.reset_panel.button {
+  bottom: 0;
+  right: 0;
+}
