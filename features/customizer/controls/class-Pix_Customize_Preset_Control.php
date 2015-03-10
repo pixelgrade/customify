@@ -127,8 +127,8 @@ class Pix_Customize_Preset_Control extends Pix_Customize_Control {
 
 							$preset_style = ' style="';
 							$preset_name_style = ' style="';
+							$preset_text_color = ' style="';
 
-							$main_color = $second_color = $text = '';
 							if ( isset( $setts['colors'] ) ) {
 
 								if ( isset( $setts['colors']['main'] ) ) {
@@ -140,7 +140,7 @@ class Pix_Customize_Preset_Control extends Pix_Customize_Control {
 								}
 
 								if ( isset( $setts['colors']['text'] ) ) {
-									$preset_style .= 'color: ' .  $setts['colors']['text'] . ';';
+									$preset_text_color .= 'color: ' .  $setts['colors']['text'] . ';"';
 								}
 							}
 
@@ -163,7 +163,7 @@ class Pix_Customize_Preset_Control extends Pix_Customize_Control {
 							$label = $setts['label'];
 							$options = $setts['options'];
 							$data = ' data-options=\'' . json_encode($options) . '\'';?>
-							<div class="awesome_preset">
+							<div class="awesome_preset" <?php echo $preset_text_color; ?>>
 								<input <?php $this->link(); echo 'name="' .  $this->setting->id . '" type="radio" value="' . esc_attr( $value ) . '"' . selected( $this->value(), $value, false ) . $data .' >' . $label . '</input>'; ?>
 								<div class="preset-color" <?php echo $preset_style; ?>>
 									<span class="first-font" <?php echo $first_font; ?>><?php echo substr( get_bloginfo('name'), 0, 2); ?></span>
