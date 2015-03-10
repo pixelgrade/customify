@@ -25,18 +25,23 @@ if ( ! function_exists('add_customify_base_options') ) {
 					'theme_style'   => array(
 						'type'      => 'preset',
 						'label'     => __( 'Select a style:', 'customify_txtd' ),
-						'default'   => 'default',
-						'choices_type' => 'buttons',
+						'desc' => __( 'Conveniently change the design of your site with built-in style presets. Easy as pie.', 'customify_txtd' ),
+						'default'   => 'blue',
+						'choices_type' => 'awesome',
 						'choices'  => array(
+
 							'blue' => array(
 								'label' => __( 'Silk', 'customify_txtd' ),
-								'preview-color-primary' 	=> '#a33b61',
-								'preview-color-secondary' 	=> '#fcc9b0',
-								'preview-font-primary' 		=> 'Playfair Display Italic',
-								'preview-font-secondary' 	=> 'Merriweather Light',
-								'preview-style'				=> 'light',
-
-								'color' => '#a33b61',
+//								'preview-style'				=> 'light',
+								'colors' => array(
+									'text' => '#eee',
+									'main' => '#a33b61',
+									'second' => '#fcc9b0',
+								),
+								'fonts' => array(
+									'main' => 'Unlock',
+									'second' => 'Oswald'
+								),
 								'options' => array(
 									'links_color' => '#6c6e70',
 									'headings_color' => '#a33b61',
@@ -48,6 +53,16 @@ if ( ! function_exists('add_customify_base_options') ) {
 							'red' => array(
 								'label' => __( 'Red', 'customify_txtd' ),
 								'color' => 'red',
+
+								'colors' => array(
+									'text' => 'red',
+									'main' => 'dark-red',
+									'second' => '#fcc9b0',
+								),
+								'fonts' => array(
+									'main' => 'Exo',
+									'second' => 'Pacifico'
+								),
 								'options' => array(
 									'links_color' => 'red',
 									'headings_color' => 'red',
@@ -59,6 +74,15 @@ if ( ! function_exists('add_customify_base_options') ) {
 							'pink' => array(
 								'label' => __( 'Pink', 'customify_txtd' ),
 								'color' => 'pink',
+								'colors' => array(
+									'text' => '#a33b61',
+									'main' => '#111',
+									'second' => 'yellow',
+								),
+								'fonts' => array(
+									'main' => 'Pompiere',
+									'second' => 'Oswald'
+								),
 								'options' => array(
 									'links_color' => 'pink',
 									'headings_color' => 'pink',
