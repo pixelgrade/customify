@@ -164,14 +164,16 @@ class Pix_Customize_Preset_Control extends Pix_Customize_Control {
 							$options = $setts['options'];
 							$data = ' data-options=\'' . json_encode($options) . '\'';?>
 							<div class="awesome_preset" <?php echo $preset_text_color; ?>>
-								<input <?php $this->link(); echo 'name="' .  $this->setting->id . '" type="radio" value="' . esc_attr( $value ) . '"' . selected( $this->value(), $value, false ) . $data .' >' . $label . '</input>'; ?>
-								<div class="preset-color" <?php echo $preset_style; ?>>
-									<span class="first-font" <?php echo $first_font; ?>><?php echo substr( get_bloginfo('name'), 0, 2); ?></span>
-									<span class="secondary-font" <?php echo $second_font; ?>>AaBbCc</span>
-								</div>
-								<div class="preset-name" <?php echo $preset_name_style; ?>>
-									<?php echo $label; ?>
-								</div>
+								<input <?php $this->link(); echo 'name="' .  $this->setting->id . '" type="radio" value="' . esc_attr( $value ) . '"' . selected( $this->value(), $value, false ) . $data .' >'  . '</input>'; ?>
+								<div class="preset-wrap">
+                                    <div class="preset-color" <?php echo $preset_style; ?>>
+                                        <span class="first-font" <?php echo $first_font; ?>><?php echo substr( get_bloginfo('name'), 0, 2); ?></span>
+                                        <span class="secondary-font" <?php echo $second_font; ?>>AaBbCc</span>
+                                    </div>
+                                    <div class="preset-name" <?php echo $preset_name_style; ?>>
+                                        <?php echo $label; ?>
+                                    </div>
+                                </div>
 							</div>
 						<?php }
 
