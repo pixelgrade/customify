@@ -36,7 +36,7 @@ return array(
 		'enable_reset_buttons' =>  array(
 			'name'    => 'enable_reset_buttons',
 			'label'   => __( 'Enable Reset Buttons', 'pixcustomify_txtd' ),
-			'desc'    => __( 'You can enable reset buttons for panels / sections or all settings', 'pixcustomify_txtd' ),
+			'desc'    => __( 'You can enable "Reset to defaults" buttons for panels / sections or all settings. We have disabled this feature by default to avoid accidental resets. If you are sure that you need it please enable this.', 'pixcustomify_txtd' ),
 			'default'        => false,
 			'type'           => 'switch',
 		),

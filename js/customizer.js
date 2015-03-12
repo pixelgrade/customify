@@ -39,107 +39,126 @@
 				} );
 			} );
 
-			// reset_button
-			$( document ).on( 'click', '#customize-control-reset_customify button', function( ev ) {
-				ev.preventDefault();
+			if ( $('button[data-action="reset_customify"]' ).length > 0 ) {
+				// reset_button
+				$( document ).on( 'click', '#customize-control-reset_customify button', function( ev ) {
+					ev.preventDefault();
 
-				var connf = confirm("Do you really want to reset to defaults all the fields?");
+					var iAgree = confirm( 'Do you really want to reset to defaults all the fields? Watch out, this will reset all your Customify options and will save them!' );
 
-				if ( ! connf ) {
-					return;
-				}
+					if ( ! iAgree ) {
+						return;
+					}
 
-				$.each( api.settings.controls, function( key, ctrl ) {
-					if ( ctrl.hasOwnProperty( 'defaultValue' ) ) {
-						//var this_setting = api( key.replace( '_control', '' ) );
-						//this_setting.set( ctrl.defaultValue );
-
+					$.each( api.settings.controls, function( key, ctrl ) {
 						var id = key.replace( '_control', '' );
+						var setting = customify_settings.settings[id];
 
-						id = key.replace( '_control', '' );
+						if ( typeof setting !== "undefined" && typeof setting.default !== "undefined" ) {
 
-						console.log( id );
-						console.log( ctrl );
+							var start_pos = id.indexOf( '[' ) + 1;
+							var end_pos = id.indexOf( ']', start_pos );
 
-						api_set_setting_value( id, ctrl.defaultValue );
+							id = id.substring( start_pos, end_pos );
+							api_set_setting_value( id, setting.default );
+						}
+					} );
+
+					api.previewer.save();
+				} );
+
+				// add a reset button for each panel
+				$( '.panel-meta' ).each( function( el, key ) {
+					var container = $( this ).parents( '.control-panel' ),
+						id = container.attr( 'id' ),
+						panel_id = id.replace( 'accordion-panel-', '' );
+
+
+					$( this ).parent().append( '<button class="reset_panel button" data-panel="' + panel_id + '">Panel\'s defaults</button>' );
+				} );
+
+				// reset panel
+				$( document ).on( 'click', '.reset_panel', function( e ) {
+					e.preventDefault();
+
+					var panel_id = $( this ).data( 'panel' ),
+						panel = api.panel( panel_id ),
+						sections = panel.sections(),
+						iAgree = confirm( "Do you really want to reset " + panel.params.title + "?" );
+
+					if ( !iAgree ) {
+						return;
+					}
+					if ( sections.length > 0 ) {
+						$.each( sections, function() {
+							//var settings = this.settings();
+							var controls = this.controls();
+
+							if ( controls.length > 0 ) {
+								$.each( controls, function( key, ctrl ) {
+									var id = ctrl.id.replace( '_control', '' ),
+										setting = customify_settings.settings[id];
+
+									if ( typeof setting !== "undefined" && typeof setting.default !== "undefined" ) {
+
+										var start_pos = id.indexOf( '[' ) + 1,
+											end_pos = id.indexOf( ']', start_pos );
+
+										id = id.substring( start_pos, end_pos );
+										api_set_setting_value( id, setting.default );
+									}
+								} );
+							}
+						} );
 					}
 				} );
 
-				api.previewer.save();
-			} );
+				//add reset section
+				$( '.accordion-section-content' ).each( function( el, key ) {
+					var section = $( this ).parent(),
+						section_id = section.attr( 'id' );
 
-			// add a reset button for each panel
-			$( '.panel-meta' ).each( function( el, key ) {
-				var container = $( this ).parents( '.control-panel' ),
-					id = container.attr( 'id' ),
-					panel_name = id.replace( 'accordion-panel-', '' );
+					if ( (typeof section_id !== "undefined" ? section_id.indexOf(customify_settings.options_name ) : -1 ) === -1) {
+						return;
+					}
 
-				$( this ).parent().append( '<button class="reset_panel button" data-panel="' + panel_name + '">Reset Panel</button>' );
-			} );
+					if ( typeof section_id !== 'undefined' && section_id.indexOf( 'accordion-section-' ) > -1 ) {
+						var id = section_id.replace( 'accordion-section-', '' );
+						$( this ).prepend( '<button class="reset_section button" data-section="' + id + '">Section\'s defaults</button>' );
+					}
+				} );
 
-			// reset panel
-			$( document ).on( 'click', '.reset_panel', function( e ) {
-				e.preventDefault();
+				// reset section event
+				$( document ).on( 'click', '.reset_section', function( e ) {
+					e.preventDefault();
 
-				var panel_id = $( this ).data( 'panel' ),
-					panel = api.panel( panel_id ),
-					sections = panel.sections(),
-					connf = confirm("Do you really want to reset " + panel_id + "?");
+					var section_id = $( this ).data( 'section' ),
+						section = api.section( section_id ),
+						controls = section.controls();
 
-				if ( ! connf ) {
-					return;
-				}
-				if ( sections.length > 0 ) {
-					$.each( sections, function() {
-						//var settings = this.settings();
-						var controls = this.controls();
+					var iAgree = confirm( "Do you really want to reset " + section.params.title + "?" );
 
-						if ( controls.length > 0 ) {
-							$.each( controls, function( key, ctrl ) {
-								var this_setting = api( ctrl.id.replace( '_control', '' ) );
-								this_setting.set( ctrl.params.defaultValue );
-							} );
-						}
-					} );
-				}
-			} );
+					if ( !iAgree ) {
+						return;
+					}
 
-			//add reset section
-			$( '.accordion-section-content' ).each( function( el, key ) {
-				var section = $( this ).parent();
+					if ( controls.length > 0 ) {
+						$.each( controls, function( key, ctrl ) {
+							var id = ctrl.id.replace( '_control', '' ),
+								setting = customify_settings.settings[id];
 
-				var section_id = section.attr( 'id' );
-				if ( section_id === 'accordion-section-customify_toolbar' ) {
-					return;
-				}
-				if ( typeof section_id !== 'undefined' && section_id.indexOf( 'accordion-section-' ) > -1 ) {
+							if ( typeof setting !== "undefined" && typeof setting.default !== "undefined" ) {
 
-					var id = section_id.replace( 'accordion-section-', '' );
-					$( this ).append( '<button class="reset_section button" data-section="' + id + '">To defaults</button>' );
-				}
-			} );
+								var start_pos = id.indexOf( '[' ) + 1,
+									end_pos = id.indexOf( ']', start_pos );
 
-			// reset section event
-			$( document ).on( 'click', '.reset_section', function( e ) {
-				e.preventDefault();
-
-				var section_id = $( this ).data( 'section' ),
-					section = api.section( section_id ),
-					controls = section.controls();
-
-				var connf = confirm("Do you really want to reset " + section_id + "?");
-
-				if ( ! connf ) {
-					return;
-				}
-
-				if ( controls.length > 0 ) {
-					$.each( controls, function( key, ctrl ) {
-						var this_setting = api( ctrl.id.replace( '_control', '' ) );
-						this_setting.set( ctrl.params.defaultValue );
-					} );
-				}
-			} );
+								id = id.substring( start_pos, end_pos );
+								api_set_setting_value( id, setting.default );
+							}
+						} );
+					}
+				} );
+			}
 
 			$( document ).on( 'change', '.customize-control input.range-value', function() {
 				var range = $( this ).siblings( 'input[type="range"]' );
@@ -239,6 +258,7 @@
 		};
 
 		var api_set_setting_value = function( id, value ) {
+
 			var api = wp.customize,
 				setting_id = customify_settings.options_name + '[' + id + ']',
 				setting = api( setting_id ),

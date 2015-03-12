@@ -784,36 +784,38 @@ class PixCustomifyPlugin {
 				}
 			}
 
-			// create a toolbar section which will be present all the time
-			$reset_section_settings = array(
-				'title' => 'Customify toolbar',
-				'options' => array(
-					'reset_all_button' => array( 'type' => 'button', 'label' => 'Reset Customify', 'action' => 'reset_customify', 'value' => 'Reset'),
-				)
-			);
+			if ( self::$plugin_settings['enable_reset_buttons'] ) {
+				// create a toolbar section which will be present all the time
+				$reset_section_settings = array(
+					'title' => 'Customify toolbar',
+					'options' => array(
+						'reset_all_button' => array( 'type' => 'button', 'label' => 'Reset Customify', 'action' => 'reset_customify', 'value' => 'Reset'),
+					)
+				);
 
-			$wp_customize->add_section(
-				'customify_toolbar',
-				array(
-					'title' => '',
-					'priority' => 999999999
-				)
-			);
+				$wp_customize->add_section(
+					'customify_toolbar',
+					array(
+						'title' => '',
+						'priority' => 999999999
+					)
+				);
 
-			$wp_customize->add_setting(
-				'reset_customify',
-				array()
-			);
-			$wp_customize->add_control( new Pix_Customize_Button_Control(
-				$wp_customize,
-				'reset_customify',
-				array(
-					'label'      => __( 'Reset All', 'customify_txtd' ),
-					'section'    => 'customify_toolbar',
-					'settings'   => 'reset_customify',
-					'action'   => 'reset_customify',
-				)
-			));
+				$wp_customize->add_setting(
+					'reset_customify',
+					array()
+				);
+				$wp_customize->add_control( new Pix_Customize_Button_Control(
+					$wp_customize,
+					'reset_customify',
+					array(
+						'label'      => __( 'Reset Customify to Defaults', 'customify_txtd' ),
+						'section'    => 'customify_toolbar',
+						'settings'   => 'reset_customify',
+						'action'   => 'reset_customify',
+					)
+				));
+			}
 		}
 
 		do_action( 'customify_create_custom_control', $wp_customize );
@@ -931,7 +933,6 @@ class PixCustomifyPlugin {
 			'search'
 		) ) ) {
 			$wp_customize->add_control( $setting_id . '_control', $control_args );
-
 			return;
 		} elseif ( in_array( $setting_config['type'], array( 'radio', 'select' ) ) && isset( $setting_config['choices'] ) && ! empty( $setting_config['choices'] )
 		) {
