@@ -299,10 +299,6 @@
 }
 
 /** Resets */
-.accordion-section-content {
-  position: relative;
-  padding-bottom: 50px;
-}
 .accordion-section-content .reset_section.button {
   float: right;
 }
