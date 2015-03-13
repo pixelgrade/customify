@@ -207,7 +207,7 @@
 				api.previewer.refresh();
 			} );
 
-			$( document ).on( 'click', '.customify_preset.radio input, .customify_preset.radio_buttons input', function() {
+			$( document ).on( 'click', '.customify_preset.radio input, .customify_preset.radio_buttons input, .awesome_presets input', function() {
 				var api = wp.customize;
 				var this_option = this;//$(this).children('[value="' + $(this).val() + '"]');
 				var data = $( this_option ).data( 'options' );
