@@ -376,16 +376,8 @@ $popup 		: 275px;
   margin-bottom: 20px;
 }
 
-.default-preset-button {
-  background-color: #F5F6F6;
-  float: right;
-  padding: 1px 8px;
-  border-radius: 3px;
-  border: 1px solid #CBCBCB;
-  margin-right: 4px;
-  font-family: "Open Sans",sans-serif;
-  font-size: 13px;
-
+#customize-controls .description {
+  font-style: normal;
 }
 
 
@@ -444,32 +436,40 @@ $popup 		: 275px;
 
   .awesome_preset {
     width: 45%;
-    height: 122px;
+    height: 140px;
     position: relative;
     display: inline-block;
     text-align: center;
     margin-bottom: 30px;
+    opacity: 1;
 
-    &:before {
-      content: '';
-      position: absolute;
-      top: 1%;
-      left: 1%;
-      width: 96%;
-      height: 103%;
-      border: 1px solid #FFF;
-      background: transparent;
-      opacity: .5;
-      border-radius: 4px;
-      z-index: 5
-    }
+      &:before {
+        content: '';
+        position: absolute;
+        top: 1%;
+        left: 1%;
+        width: 96%;
+        height: 103%;
+        border: 1px solid #FFF;
+        opacity: .5;
+        border-radius: 3px;
+        z-index: 5;
+        background-image: -webkit-linear-gradient( 90deg, rgba(0,0,0,0) 0%, rgba(204,204,204,.3) 100%);
+      }
 
+      &:hover {
+        opacity: .9;
+        -webkit-transition: opacity .25s ease-out;
+        -moz-transition: opacity .25s ease-out;
+        -o-transition: opacity .25s ease-out;
+        transition: opacity .25s ease-out;
+      }
     .preset-wrap {
-      height: 110px;
+      height: 129px;
 
       .preset-color {
         height: 100%;
-        border-radius: 4px 4px 0 0;
+        border-radius: 3px 3px 0 0;
 
         .first-font {
           display: inline-block;
@@ -490,7 +490,7 @@ $popup 		: 275px;
         position: relative;
         font-size: 11px;
         text-transform: UPPERCASE;
-        border-radius: 0 0 4px 4px;
+        border-radius: 0 0 3px 3px;
         padding: 1px;
 
         &:before {
@@ -514,7 +514,7 @@ $popup 		: 275px;
     }
 
     input[type=radio] {
-      height: 100%;
+      height: 106%;
       width: 100%;
       position: absolute;
       border: 0;
@@ -524,9 +524,9 @@ $popup 		: 275px;
       border-radius: 0;
       margin: 0;
       display: inline-block;
-      top:0;
-      left:0;
-      z-index:10;
+      top: 0;
+      left: 0;
+      z-index: 10;
 
       &:checked {
 
@@ -558,9 +558,10 @@ $popup 		: 275px;
           -o-transform: rotate(-45deg);
           -ms-transform: rotate(-45deg);
           transform: rotate(-45deg);
-          z-index: 10
+          z-index: 10;
         }
       }
+
     }
   }
 

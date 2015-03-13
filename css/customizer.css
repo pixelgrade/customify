@@ -201,15 +201,8 @@
 .customize-control-title {
   margin-bottom: 20px; }
 
-.default-preset-button {
-  background-color: #F5F6F6;
-  float: right;
-  padding: 1px 8px;
-  border-radius: 3px;
-  border: 1px solid #CBCBCB;
-  margin-right: 4px;
-  font-family: "Open Sans",sans-serif;
-  font-size: 13px; }
+#customize-controls .description {
+  font-style: normal; }
 
 /**
  ** Awesome presets
@@ -244,11 +237,12 @@
     border-left: 4px solid; }
 .customify_preset .awesome_preset {
   width: 45%;
-  height: 122px;
+  height: 140px;
   position: relative;
   display: inline-block;
   text-align: center;
-  margin-bottom: 30px; }
+  margin-bottom: 30px;
+  opacity: 1; }
   .customify_preset .awesome_preset:before {
     content: '';
     position: absolute;
@@ -257,15 +251,21 @@
     width: 96%;
     height: 103%;
     border: 1px solid #FFF;
-    background: transparent;
     opacity: .5;
-    border-radius: 4px;
-    z-index: 5; }
+    border-radius: 3px;
+    z-index: 5;
+    background-image: -webkit-linear-gradient(90deg, transparent 0%, rgba(204, 204, 204, 0.3) 100%); }
+  .customify_preset .awesome_preset:hover {
+    opacity: .9;
+    -webkit-transition: opacity .25s ease-out;
+    -moz-transition: opacity .25s ease-out;
+    -o-transition: opacity .25s ease-out;
+    transition: opacity .25s ease-out; }
   .customify_preset .awesome_preset .preset-wrap {
-    height: 110px; }
+    height: 129px; }
     .customify_preset .awesome_preset .preset-wrap .preset-color {
       height: 100%;
-      border-radius: 4px 4px 0 0; }
+      border-radius: 3px 3px 0 0; }
       .customify_preset .awesome_preset .preset-wrap .preset-color .first-font {
         display: inline-block;
         width: 100%;
@@ -281,7 +281,7 @@
       position: relative;
       font-size: 11px;
       text-transform: UPPERCASE;
-      border-radius: 0 0 4px 4px;
+      border-radius: 0 0 3px 3px;
       padding: 1px; }
       .customify_preset .awesome_preset .preset-wrap .preset-name:before {
         content: '';
@@ -297,7 +297,7 @@
   .customify_preset .awesome_preset:nth-child(odd) {
     margin-right: 7%; }
   .customify_preset .awesome_preset input[type=radio] {
-    height: 100%;
+    height: 106%;
     width: 100%;
     position: absolute;
     border: 0;
