@@ -125,14 +125,15 @@ class Pix_Customize_Preset_Control extends Pix_Customize_Control {
 								continue;
 							}
 
-							$preset_style = ' style="';
-							$preset_name_style = ' style="';
-							$preset_text_color = ' style="';
+							$preset_style = ' style="background-color: #444;';
+							$preset_name_style = ' style=" color: #000; background-color: #ccc; border-color: #aaa;';
+							$preset_text_color = ' style=" color: #ebebeb';
 
 							$first_font = $second_font = '';
 							if ( isset( $setts['preview'] ) ) {
 
 								if ( isset( $setts['preview']['background-card'] ) ) {
+									$preset_style = ' style="';
 									$preset_style .= 'background-color: ' .  $setts['preview']['background-card'] . ';';
 								}
 
@@ -145,11 +146,12 @@ class Pix_Customize_Preset_Control extends Pix_Customize_Control {
 									} else {
 										$this_preset_color = '#ffffff';
 									}
-
+									$preset_name_style = ' style="';
 									$preset_name_style .= 'color: ' .$this_preset_color . ';background-color: ' .  $setts['preview']['background-label'] . '; border-color: ' .  $setts['preview']['background-label'];
 								}
 
 								if ( isset( $setts['preview']['color-text'] ) ) {
+									$preset_text_color = ' style="';
 									$preset_text_color .= 'color: ' .  $setts['preview']['color-text'] . ';"';
 								}
 
@@ -165,6 +167,7 @@ class Pix_Customize_Preset_Control extends Pix_Customize_Control {
 							}
 
 							$preset_style .= '"';
+							$preset_text_color .= '"';
 							$preset_name_style .= '"';
 
 							$label = $setts['label'];

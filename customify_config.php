@@ -104,8 +104,6 @@ if ( ! function_exists('add_customify_base_options') ) {
 							),
 							'red' => array(
 								'label' => __( 'Urban', 'customify_txtd' ),
-								'color' => 'red',
-
 								'preview' => array(
 									'color-text' => 'FFF',
 									'background-card' => '#0EB0BF',
@@ -120,6 +118,16 @@ if ( ! function_exists('add_customify_base_options') ) {
 									'page_background' => '#ffffff',
 									'headings_font' => 'Merriweather',
 									'body_font' => 'Source Code Pro'
+								)
+							),
+							'black' => array(
+								'label' => __( 'Black', 'customify_txtd' ),
+								'options' => array(
+									'links_color' => '#ebebeb',
+									'headings_color' => '#333',
+									'body_color' => '#989898',
+									'headings_font' => 'Arvo',
+									'body_font' => 'Lora'
 								)
 							),
 						)
