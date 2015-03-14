@@ -129,45 +129,43 @@ class Pix_Customize_Preset_Control extends Pix_Customize_Control {
 							$preset_name_style = ' style="';
 							$preset_text_color = ' style="';
 
-							if ( isset( $setts['colors'] ) ) {
+							$first_font = $second_font = '';
+							if ( isset( $setts['preview'] ) ) {
 
-								if ( isset( $setts['colors']['main'] ) ) {
-									$preset_style .= 'background-color: ' .  $setts['colors']['main'] . ';';
+								if ( isset( $setts['preview']['background-card'] ) ) {
+									$preset_style .= 'background-color: ' .  $setts['preview']['background-card'] . ';';
 								}
 
-								if ( isset( $setts['colors']['second'] ) ) {
+								if ( isset( $setts['preview']['background-label'] ) ) {
 
-									$this_preset_color = $setts['colors']['second'];
+									$this_preset_color = $setts['preview']['background-label'];
 
-									if ( $this->isLight($this_preset_color) ) {
+									if ( $this->isLight( $this_preset_color ) ) {
 										$this_preset_color = '#000000';
 									} else {
 										$this_preset_color = '#ffffff';
 									}
 
-									$preset_name_style .= 'color: ' .$this_preset_color . ';background-color: ' .  $setts['colors']['second'] . '; border-color: ' .  $setts['colors']['second'];
+									$preset_name_style .= 'color: ' .$this_preset_color . ';background-color: ' .  $setts['preview']['background-label'] . '; border-color: ' .  $setts['preview']['background-label'];
 								}
 
-								if ( isset( $setts['colors']['text'] ) ) {
-									$preset_text_color .= 'color: ' .  $setts['colors']['text'] . ';"';
+								if ( isset( $setts['preview']['color-text'] ) ) {
+									$preset_text_color .= 'color: ' .  $setts['preview']['color-text'] . ';"';
+								}
+
+								if ( isset( $setts['preview']['font-main'] ) ) {
+									$first_font = ' style="font-family: ' . $setts['preview']['font-main'] . '"' ;
+									$google_links[] = str_replace( ' ', '+', $setts['preview']['font-main'] );
+								}
+
+								if ( isset( $setts['preview']['font-alt'] ) ) {
+									$second_font = ' style="font-family: ' . $setts['preview']['font-alt'] . '"' ;
+									$google_links[] = str_replace( ' ', '+', $setts['preview']['font-alt'] );
 								}
 							}
 
 							$preset_style .= '"';
 							$preset_name_style .= '"';
-							$first_font = $second_font = '';
-							if ( isset( $setts['fonts'] ) ) {
-
-								if ( isset( $setts['fonts']['main'] ) ) {
-									$first_font = ' style="font-family: ' . $setts['fonts']['main'] . '"' ;
-									$google_links[] = str_replace( ' ', '+', $setts['fonts']['main'] );
-								}
-
-								if ( isset( $setts['fonts']['second'] ) ) {
-									$second_font = ' style="font-family: ' . $setts['fonts']['second'] . '"' ;
-									$google_links[] = str_replace( ' ', '+', $setts['fonts']['second'] );
-								}
-							}
 
 							$label = $setts['label'];
 							$options = $setts['options'];

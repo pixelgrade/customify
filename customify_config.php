@@ -29,19 +29,8 @@ if ( ! function_exists('add_customify_base_options') ) {
 						'default'   => 'blue',
 						'choices_type' => 'awesome',
 						'choices'  => array(
-
 							'blue' => array(
 								'label' => __( 'Silk', 'customify_txtd' ),
-								'colors' => array(
-									'text' => '#ffffff',
-									'main' => '#A84469',
-									'second' => '#FAC2A8',
-								),
-								'fonts' => array(
-									'main' => 'Unlock',
-									'second' => 'Oswald'
-								),
-								
 								'preview' => array(
 									'color-text' => 'red',
 									'background-card' => '#A84469',
@@ -49,7 +38,6 @@ if ( ! function_exists('add_customify_base_options') ) {
 									'font-main' => 'Unlock',
 									'font-alt' => 'Oswald',
 								),
-
 								'options' => array(
 									'links_color' => '#FAC2A8', //second
 									'headings_color' => '#A84469', //main
@@ -62,14 +50,12 @@ if ( ! function_exists('add_customify_base_options') ) {
 								'label' => __( 'Urban', 'customify_txtd' ),
 								'color' => 'red',
 
-								'colors' => array(
-									'text' => '#FFF',
-									'main' => '#0EB0BF',
-									'second' => '#390303',
-								),
-								'fonts' => array(
-									'main' => 'Exo',
-									'second' => 'Pacifico'
+								'preview' => array(
+									'color-text' => 'FFF',
+									'background-card' => '#0EB0BF',
+									'background-label' => '#390303',
+									'font-main' => 'Exo',
+									'font-alt' => 'Pacifico',
 								),
 								'options' => array(
 									'links_color' => 'red',
@@ -79,46 +65,6 @@ if ( ! function_exists('add_customify_base_options') ) {
 									'body_font' => 'Pacifico'
 								)
 							),
-							'pink' => array(
-								'label' => __( 'Hive', 'customify_txtd' ),
-								'color' => 'pink',
-								'colors' => array(
-									'text' => '#FFF',
-									'main' => '#181618',
-									'second' => '#FFEB00',
-								),
-								'fonts' => array(
-									'main' => 'Pompiere',
-									'second' => 'Oswald'
-								),
-								'options' => array(
-									'links_color' => 'pink',
-									'headings_color' => 'pink',
-									'body_color' => 'pink',
-									'headings_font' => 'Pompiere',
-									'body_font' => 'Oswald'
-								)
-							),
-							'brown' => array(
-								'label' => __( 'Rise', 'customify_txtd' ),
-								'color' => 'brown',
-                                'colors' => array(
-                                    'text' => '#FFF',
-                                    'main' => '#2D957A',
-                                    'second' => '#030F1E',
-                                ),
-                                'fonts' => array(
-                                    'main' => 'Kreon',
-                                    'second' => 'Ubuntu'
-                                ),
-								'options' => array(
-									'links_color' => 'brown',
-									'headings_color' => 'brown',
-									'body_color' => 'brown',
-									'headings_font' => 'Kreon',
-									'body_font' => 'Ubuntu'
-								)
-							)
 						)
 					),
 				)
