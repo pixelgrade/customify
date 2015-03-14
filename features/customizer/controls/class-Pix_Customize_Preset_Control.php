@@ -138,7 +138,14 @@ class Pix_Customize_Preset_Control extends Pix_Customize_Control {
 								if ( isset( $setts['colors']['second'] ) ) {
 
 									$this_preset_color = $setts['colors']['second'];
-									$preset_name_style .= 'color: ' . $this->color_inverse($this_preset_color ) . ';background-color: ' .  $setts['colors']['second'] . '; border-color: ' .  $setts['colors']['second'];
+
+									if ( $this->isLight($this_preset_color) ) {
+										$this_preset_color = '#000000';
+									} else {
+										$this_preset_color = '#ffffff';
+									}
+
+									$preset_name_style .= 'color: ' .$this_preset_color . ';background-color: ' .  $setts['colors']['second'] . '; border-color: ' .  $setts['colors']['second'];
 								}
 
 								if ( isset( $setts['colors']['text'] ) ) {
@@ -197,15 +204,18 @@ class Pix_Customize_Preset_Control extends Pix_Customize_Control {
 		}
 	}
 
-	function color_inverse( $color ) {
-		$color = str_replace('#', '', $color);
-		if (strlen($color) != 6){ return '000000'; }
-		$rgb = '';
-		for ($x=0;$x<3;$x++){
-			$c = 255 - hexdec(substr($color,(2*$x),2));
-			$c = ($c < 0) ? 0 : dechex($c);
-			$rgb .= (strlen($c) < 2) ? '0'.$c : $c;
-		}
-		return '#'.$rgb;
+	/**
+	 * Returns whether or not given color is considered "light"
+	 * @param string|Boolean $color
+	 * @return boolean
+	 */
+	public function isLight( $color = FALSE ){
+		// Get our color
+		$color = ($color) ? $color : $this->_hex;
+		// Calculate straight from rbg
+		$r = hexdec($color[0].$color[1]);
+		$g = hexdec($color[2].$color[3]);
+		$b = hexdec($color[4].$color[5]);
+		return (( $r*299 + $g*587 + $b*114 )/1000 > 130);
 	}
 }
