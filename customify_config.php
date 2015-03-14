@@ -34,7 +34,7 @@ if ( ! function_exists('add_customify_base_options') ) {
 								'label' => __( 'Silk', 'customify_txtd' ),
 //								'preview-style'				=> 'light',
 								'colors' => array(
-									'text' => '#FFF',
+									'text' => '#ffffff',
 									'main' => '#A84469',
 									'second' => '#FAC2A8',
 								),
@@ -43,9 +43,9 @@ if ( ! function_exists('add_customify_base_options') ) {
 									'second' => 'Oswald'
 								),
 								'options' => array(
-									'links_color' => '#6c6e70', //second
-									'headings_color' => '#a33b61', //main
-									'body_color' => '#2d3033', // -
+									'links_color' => '#FAC2A8', //second
+									'headings_color' => '#A84469', //main
+									'body_color' => '#ffffff', // -
 									'headings_font' => 'Unlock', //main
 									'body_font' => 'Oswald'
 								)
@@ -102,13 +102,6 @@ if ( ! function_exists('add_customify_base_options') ) {
                                 'fonts' => array(
                                     'main' => 'Kreon',
                                     'second' => 'Ubuntu'
-                                ),
-                                'options' => array(
-                                    'links_color' => 'pink',
-                                    'headings_color' => 'pink',
-                                    'body_color' => 'pink',
-                                    'headings_font' => 'Kreon',
-                                    'body_font' => 'Ubuntu'
                                 ),
 								'options' => array(
 									'links_color' => 'brown',
