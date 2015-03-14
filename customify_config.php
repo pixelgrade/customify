@@ -26,24 +26,24 @@ if ( ! function_exists('add_customify_base_options') ) {
 						'type'      => 'preset',
 						'label'     => __( 'Select a style:', 'customify_txtd' ),
 						'desc' => __( 'Conveniently change the design of your site with built-in style presets. Easy as pie.', 'customify_txtd' ),
-						'default'   => 'blue',
+						'default'   => 'silk',
 						'choices_type' => 'awesome',
 						'choices'  => array(
-							'blue' => array(
+							'silk' => array(
 								'label' => __( 'Silk', 'customify_txtd' ),
 								'preview' => array(
-									'color-text' => 'red',
+									// 'color-text' => 'white',
 									'background-card' => '#A84469',
 									'background-label' => '#FAC2A8',
-									'font-main' => 'Unlock',
-									'font-alt' => 'Oswald',
+									'font-main' => 'Playfair Display',
+									'font-alt' => 'Merriweather',
 								),
 								'options' => array(
 									'links_color' => '#FAC2A8', //second
 									'headings_color' => '#A84469', //main
 									'body_color' => '#ffffff', // -
-									'headings_font' => 'Unlock', //main
-									'body_font' => 'Oswald'
+									'headings_font' => 'Playfair Display', //main
+									'body_font' => 'Merriweather'
 								)
 							),
 							'red' => array(
