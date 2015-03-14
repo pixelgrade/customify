@@ -244,6 +244,11 @@
   font-size: 13px;
 }
 
+.customize-control-preset .description {
+  margin-right: 5px;
+  font-style: normal;
+}
+
 .customify_preset.radio_buttons .customify_radio_button {
   border: none;
   display: inline-block;
@@ -287,6 +292,10 @@
   color: white;
   margin-top: 5px;
   margin-bottom: 25px;
+  transition: all 0.2s;
+}
+.customify_preset .awesome_preset:hover {
+  opacity: 0.9;
 }
 .customify_preset .awesome_preset:before {
   content: '';

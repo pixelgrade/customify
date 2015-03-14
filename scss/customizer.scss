@@ -393,7 +393,10 @@ $popup 		: 275px;
 }
 
 .customize-control-preset {
-
+	.description {
+		margin-right: 5px;
+		font-style: normal;
+	}
 }
 
 .customify_preset {
@@ -455,6 +458,12 @@ $popup 		: 275px;
 
     margin-top: 5px;
 	margin-bottom: 25px;
+
+	transition: all 0.2s;
+
+	&:hover {
+		opacity: 0.9;
+	}
 
     &:before {
       content: '';
@@ -571,5 +580,6 @@ $popup 		: 275px;
         }
       }
     }
+
   }
 }

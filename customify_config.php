@@ -29,47 +29,87 @@ if ( ! function_exists('add_customify_base_options') ) {
 						'default'   => 'silk',
 						'choices_type' => 'awesome',
 						'choices'  => array(
-							'hibiscus' => array(
-								'label' => __( 'Hibiscus', 'customify_txtd' ),
+							'royal' => array(
+								'label' => __( 'Royal', 'customify_txtd' ),
+								'preview' => array(
+									'color-text' => '#ffffff',
+									'background-card' => '#615375',
+									'background-label' => '#46414c',
+									'font-main' => 'Abril Fatface',
+									'font-alt' => 'PT Serif',
+								),
+								'options' => array(
+									'links_color' => '#8eb2c5',
+									'headings_color' => '#725c92',
+									'body_color' => '#6f8089',
+									'page_background' => '#615375',
+									'headings_font' => 'Abril Fatface',
+									'body_font' => 'PT Serif',
+								)
+							),
+							'lovely' => array(
+								'label' => __( 'Lovely', 'customify_txtd' ),
+								'preview' => array(
+									'color-text' => '#ffffff',
+									'background-card' => '#d15c57',
+									'background-label' => '#5c374b',
+									'font-main' => 'Playfair Display',
+									'font-alt' => 'Playfair Display',
+								),
+								'options' => array(
+									'links_color' => '#cc3747',
+									'headings_color' => '#d15c57',
+									'body_color' => '#5c374b',
+									'page_background' => '#d15c57',
+									'headings_font' => 'Playfair Display',
+									'body_font' => 'Playfair Display',
+								)
+							),
+							
+							
+							'queen' => array(
+								'label' => __( 'Queen', 'customify_txtd' ),
 								'preview' => array(
 									'color-text' => '#fbedec',
-									'background-card' => '#54323c',
-									'background-label' => '#cd8085',
+									'background-card' => '#773347',
+									'background-label' => '#41212a',
 									'font-main' => 'Cinzel Decorative',
 									'font-alt' => 'Gentium Basic',
 								),
 								'options' => array(
-									'links_color' => '#ffffff',
-									'headings_color' => '#ffffff',
-									'body_color' => '#ffffff',
-									'page_background' => '#000000',
-									'headings_font' => 'Pinyon Script',
-									'body_font' => 'Pinyon Script',
+									'links_color' => '#cd8085',
+									'headings_color' => '#54323c',
+									'body_color' => '#cd8085',
+									'page_background' => '#fff',
+									'headings_font' => 'Cinzel Decorative',
+									'body_font' => 'Gentium Basic',
 								)
 							),
-							'secret' => array(
-								'label' => __( 'Secret', 'customify_txtd' ),
+							'carrot' => array(
+								'label' => __( 'Carrot', 'customify_txtd' ),
 								'preview' => array(
-									// 'color-text' => '#68f3c8',
-									'background-card' => '#282828',
-									'background-label' => '#000000',
-									'font-main' => 'Pinyon Script',
-									'font-alt' => 'Josefin Sans',
+									'color-text' => '#ffffff',
+									'background-card' => '#df421d',
+									'background-label' => '#85210a',
+									'font-main' => 'Oswald',
+									'font-alt' => 'PT Sans Narrow',
 								),
 								'options' => array(
-									'links_color' => '#000000',
-									'headings_color' => '#000000',
-									'body_color' => '#000000',
-									'page_background' => '#000000',
-									'headings_font' => 'Pinyon Script',
-									'body_font' => 'Josefin Sans',
+									'links_color' => '#df421d',
+									'headings_color' => '#df421d',
+									'body_color' => '#7e7e7e',
+									'page_background' => '#fff',
+									'headings_font' => 'Oswald',
+									'body_font' => 'PT Sans Narrow',
 								)
 							),
+							
+							
 
 							'adler' => array(
 								'label' => __( 'Adler', 'customify_txtd' ),
 								'preview' => array(
-									'color-text' => '#68f3c8',
+									'color-text' => '#fff',
 									'background-card' => '#0e364f',
 									'background-label' => '#000000',
 									'font-main' => 'Permanent Marker',
@@ -84,52 +124,25 @@ if ( ! function_exists('add_customify_base_options') ) {
 									'body_font' => 'Droid Sans Mono'
 								)
 							),
-							'silk' => array(
-								'label' => __( 'Silk', 'customify_txtd' ),
+							'velvet' => array(
+								'label' => __( 'Velvet', 'customify_txtd' ),
 								'preview' => array(
-									// 'color-text' => 'white',
-									'background-card' => '#A84469',
-									'background-label' => '#FAC2A8',
-									'font-main' => 'Playfair Display',
-									'font-alt' => 'Merriweather',
+									'color-text' => '#ffffff',
+									'background-card' => '#282828',
+									'background-label' => '#000000',
+									'font-main' => 'Pinyon Script',
+									'font-alt' => 'Josefin Sans',
 								),
 								'options' => array(
-									'links_color' => '#FAC2A8', //second
-									'headings_color' => '#A84469', //main
-									'body_color' => '#ffffff', // 
-									'page_background' => '#ffffff',
-									'headings_font' => 'Playfair Display', //main
-									'body_font' => 'Merriweather'
+									'links_color' => '#000000',
+									'headings_color' => '#000000',
+									'body_color' => '#000000',
+									'page_background' => '#000000',
+									'headings_font' => 'Pinyon Script',
+									'body_font' => 'Josefin Sans',
 								)
 							),
-							'red' => array(
-								'label' => __( 'Urban', 'customify_txtd' ),
-								'preview' => array(
-									'color-text' => 'FFF',
-									'background-card' => '#0EB0BF',
-									'background-label' => '#390303',
-									'font-main' => 'Merriweather',
-									'font-alt' => 'Source Code Pro',
-								),
-								'options' => array(
-									'links_color' => '#0EB0BF',
-									'headings_color' => '#0EB0BF',
-									'body_color' => '#3a0303',
-									'page_background' => '#ffffff',
-									'headings_font' => 'Merriweather',
-									'body_font' => 'Source Code Pro'
-								)
-							),
-							'black' => array(
-								'label' => __( 'Black', 'customify_txtd' ),
-								'options' => array(
-									'links_color' => '#ebebeb',
-									'headings_color' => '#333',
-									'body_color' => '#989898',
-									'headings_font' => 'Arvo',
-									'body_font' => 'Lora'
-								)
-							),
+							
 						)
 					),
 				)
