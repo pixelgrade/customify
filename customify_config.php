@@ -32,7 +32,6 @@ if ( ! function_exists('add_customify_base_options') ) {
 
 							'blue' => array(
 								'label' => __( 'Silk', 'customify_txtd' ),
-//								'preview-style'				=> 'light',
 								'colors' => array(
 									'text' => '#ffffff',
 									'main' => '#A84469',
@@ -42,6 +41,15 @@ if ( ! function_exists('add_customify_base_options') ) {
 									'main' => 'Unlock',
 									'second' => 'Oswald'
 								),
+								
+								'preview' => array(
+									'color-text' => 'red',
+									'background-card' => '#A84469',
+									'background-label' => '#FAC2A8',
+									'font-main' => 'Unlock',
+									'font-alt' => 'Oswald',
+								),
+
 								'options' => array(
 									'links_color' => '#FAC2A8', //second
 									'headings_color' => '#A84469', //main
