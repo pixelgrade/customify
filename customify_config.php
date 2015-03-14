@@ -29,6 +29,61 @@ if ( ! function_exists('add_customify_base_options') ) {
 						'default'   => 'silk',
 						'choices_type' => 'awesome',
 						'choices'  => array(
+							'hibiscus' => array(
+								'label' => __( 'Hibiscus', 'customify_txtd' ),
+								'preview' => array(
+									'color-text' => '#fbedec',
+									'background-card' => '#54323c',
+									'background-label' => '#cd8085',
+									'font-main' => 'Cinzel Decorative',
+									'font-alt' => 'Gentium Basic',
+								),
+								'options' => array(
+									'links_color' => '#ffffff',
+									'headings_color' => '#ffffff',
+									'body_color' => '#ffffff',
+									'page_background' => '#000000',
+									'headings_font' => 'Pinyon Script',
+									'body_font' => 'Pinyon Script',
+								)
+							),
+							'secret' => array(
+								'label' => __( 'Secret', 'customify_txtd' ),
+								'preview' => array(
+									// 'color-text' => '#68f3c8',
+									'background-card' => '#282828',
+									'background-label' => '#000000',
+									'font-main' => 'Pinyon Script',
+									'font-alt' => 'Josefin Sans',
+								),
+								'options' => array(
+									'links_color' => '#000000',
+									'headings_color' => '#000000',
+									'body_color' => '#000000',
+									'page_background' => '#000000',
+									'headings_font' => 'Pinyon Script',
+									'body_font' => 'Josefin Sans',
+								)
+							),
+
+							'adler' => array(
+								'label' => __( 'Adler', 'customify_txtd' ),
+								'preview' => array(
+									'color-text' => '#68f3c8',
+									'background-card' => '#0e364f',
+									'background-label' => '#000000',
+									'font-main' => 'Permanent Marker',
+									'font-alt' => 'Droid Sans Mono',
+								),
+								'options' => array(
+									'links_color' => '#68f3c8',
+									'headings_color' => '#0e364f',
+									'body_color' => '#45525a',
+									'page_background' => '#ffffff',
+									'headings_font' => 'Permanent Marker',
+									'body_font' => 'Droid Sans Mono'
+								)
+							),
 							'silk' => array(
 								'label' => __( 'Silk', 'customify_txtd' ),
 								'preview' => array(
@@ -41,7 +96,8 @@ if ( ! function_exists('add_customify_base_options') ) {
 								'options' => array(
 									'links_color' => '#FAC2A8', //second
 									'headings_color' => '#A84469', //main
-									'body_color' => '#ffffff', // -
+									'body_color' => '#ffffff', // 
+									'page_background' => '#ffffff',
 									'headings_font' => 'Playfair Display', //main
 									'body_font' => 'Merriweather'
 								)
@@ -54,15 +110,16 @@ if ( ! function_exists('add_customify_base_options') ) {
 									'color-text' => 'FFF',
 									'background-card' => '#0EB0BF',
 									'background-label' => '#390303',
-									'font-main' => 'Exo',
-									'font-alt' => 'Pacifico',
+									'font-main' => 'Merriweather',
+									'font-alt' => 'Source Code Pro',
 								),
 								'options' => array(
-									'links_color' => 'red',
-									'headings_color' => 'red',
-									'body_color' => 'red',
-									'headings_font' => 'Exo',
-									'body_font' => 'Pacifico'
+									'links_color' => '#0EB0BF',
+									'headings_color' => '#0EB0BF',
+									'body_color' => '#3a0303',
+									'page_background' => '#ffffff',
+									'headings_font' => 'Merriweather',
+									'body_font' => 'Source Code Pro'
 								)
 							),
 						)
