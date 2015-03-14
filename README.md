@@ -87,7 +87,7 @@ This is the array which is processed by the `customify_filter_fields` filter and
 
 Each field can take a 'callback_filter' parameter.This should be a function name which should be called when a field is changed.
 
-For example let's take this range field :
+For example let's take this range field:
 ```
 'sidebar_width' => array(
 	'type'  => 'range',
@@ -122,23 +122,143 @@ function this_setting_can_call_this_function( $value, $selector, $property, $uni
 
 ```
 
-Fields  | [Live Preview Support!](#live_preview_support)
-------------- | -------------
-Text  | No
-Textarea | No
-Color | Yes
-Range | Yes
-Typography | No
-Select | No
-Radio | No
-Checkbox | No
-Upload | No
-Image | No
-Date | No
-Pages select | No
+Fields  | [Live Preview Support!](#live_preview_support) | Description
+------------- | ------------- | -------------
+Text  | No | A simple text input
+Textarea | No | A simple text area input
+Color | Yes | A simple color picker
+Range | Yes | The default html5 range input
+Typography | No | This is an awesome font selector, it supports standard fonts and google fonts. You can also Group fonts or offer a list of recommended fonts
+Select | No | The standard HTML select
+Radio | No |
+Checkbox | No | 
+Upload | No | This field allows you to upload a file which you can use it later in front-end
+Image | No | This is like the upload field, but it accepts only images 
+Date | No | 
+Pages select | No | The standard WordPress Page Select
+[Select2](https://select2.github.io/) | No | An awesome select 
+[Presets](#presets_title) | No | An radio input option to select a group of options (inception style ^^)
 
 ### Live Preview Support<a name="live_preview_support"></a>
 
 There are a few fields which support this feature for now, but those are awesome.These fields are capable to update the previewer iframe without refreshing the iframe, the preview should be instant.
 
 This is recommended for color fields because you won't need to stop drag-and-dropping the color select to see what color would be better.
+
+### Presets<a name="presets_title"></a>
+
+Since version 1.1.0 we added support for presets options. With this fields, you can pre-define other options.
+Here is and example of how to config this.
+
+```
+'theme_style'   => array(
+	'type'      => 'preset',
+	'label'     => __( 'Select a style:', 'customify_txtd' ),
+	'desc' => __( 'Conveniently change the design of your site with built-in style presets. Easy as pie.', 'customify_txtd' ),
+	'default'   => 'silk',
+	'choices_type' => 'select',
+	'choices'  => array(
+		'silk' => array(
+			'label' => __( 'Silk', 'customify_txtd' ),
+			'options' => array(
+				'links_color' => '#FAC2A8', //second
+				'headings_color' => '#A84469', //main
+				'body_color' => '#ffffff', // -
+				'headings_font' => 'Playfair Display', //main
+				'body_font' => 'Merriweather'
+			)
+		),
+		'red' => array(
+			'label' => __( 'Urban', 'customify_txtd' ),
+			'options' => array(
+				'links_color' => 'red',
+				'headings_color' => 'red',
+				'body_color' => 'red',
+				'headings_font' => 'Exo',
+				'body_font' => 'Pacifico'
+			)
+		),
+		'black' => array(
+			'label' => __( 'Black', 'customify_txtd' ),
+			'options' => array(
+				'links_color' => '#ebebeb',
+				'headings_color' => '#333',
+				'body_color' => '#989898',
+				'headings_font' => 'Arvo',
+				'body_font' => 'Lora'
+			)
+		),
+	)
+)
+```
+
+The upper example will output a select which will change all the fields setted up in the `options` array.
+
+If you don't like the select type, at `choices_type` you can choose between `select`, `button` and an `awesome` radio select which allows you not only change de font-end options but also the preview button style.
+
+Wanna have a preset like this?
+
+![img](https://cloud.githubusercontent.com/assets/1893980/6652930/86b7a1aa-ca88-11e4-8997-ba63be1598d8.png)
+
+Just add this section in your config
+
+```
+'presets_section' => array(
+	'title'    => __( 'Style Presets', 'customify_txtd' ),
+	'options' => array(
+		'theme_style'   => array(
+			'type'      => 'preset',
+			'label'     => __( 'Select a style:', 'customify_txtd' ),
+			'desc' => __( 'Conveniently change the design of your site with built-in style presets. Easy as pie.', 'customify_txtd' ),
+			'default'   => 'silk',
+			'choices_type' => 'awesome',
+			'choices'  => array(
+				'silk' => array(
+					'label' => __( 'Silk', 'customify_txtd' ),
+					'preview' => array(
+						// 'color-text' => 'white',
+						'background-card' => '#A84469',
+						'background-label' => '#FAC2A8',
+						'font-main' => 'Playfair Display',
+						'font-alt' => 'Merriweather',
+					),
+					'options' => array(
+						'links_color' => '#FAC2A8', //second
+						'headings_color' => '#A84469', //main
+						'body_color' => '#ffffff', // -
+						'headings_font' => 'Playfair Display', //main
+						'body_font' => 'Merriweather'
+					)
+				),
+				'red' => array(
+					'label' => __( 'Urban', 'customify_txtd' ),
+					'preview' => array(
+						'color-text' => 'FFF',
+						'background-card' => '#0EB0BF',
+						'background-label' => '#390303',
+						'font-main' => 'Exo',
+						'font-alt' => 'Pacifico',
+					),
+					'options' => array(
+						'links_color' => 'red',
+						'headings_color' => 'red',
+						'body_color' => 'red',
+						'headings_font' => 'Exo',
+						'body_font' => 'Pacifico'
+					)
+				),
+				'black' => array(
+					'label' => __( 'Black', 'customify_txtd' ),
+					'options' => array(
+						'links_color' => '#ebebeb',
+						'headings_color' => '#333',
+						'body_color' => '#989898',
+						'headings_font' => 'Arvo',
+						'body_font' => 'Lora'
+					)
+				),
+			)
+		),
+	)
+),
+```
