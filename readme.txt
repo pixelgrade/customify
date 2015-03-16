@@ -2,7 +2,7 @@
 Contributors: euthelup, babbardel
 Tags: customizer, css, editor, live, preview, customise
 Requires at least: 3.8.0
-Tested up to: 4.1
+Tested up to: 4.1.1
 Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -25,8 +25,25 @@ With [Customify](https://github.com/pixelgrade/customify), developers can easily
 
 * **Select Dropdown.** A drop-down menu selector to be used when you have to choose from multiple options.
 
+* **Range.** The html5 range element can be used to select number values.
+
+* **[Preset](https://github.com/pixelgrade/customify/blob/master/README.md#presets_title).** A field which allows you to change a group of Customify fields.
+
+== Changelog ==
+
+= 1.1.0 =
+* Added: [Preset](https://github.com/pixelgrade/customify/blob/master/README.md#presets_title) field type.
+* Added: Reset buttons (disabled by default).
+
 == Installation ==
 
 1. Install Customify either via the WordPress.org plugin directory, or by uploading the files to your `/wp-content/plugins/` directory
 2. After activating Customify go to `Appearance → Customize` and have fun with the new felds
 3. For further instructions and how to setup your own fields, read our [detailed documentation](http://github.com/pixelgrade/customify/blob/dev/README.md)
+
+== Frequently Asked Questions ==
+
+= Is there a way to reset Customify to defaults? =
+Reset buttons are available for all the options or for individual sections or panels.
+They are disabled by default to avoid useless/accidental resets.
+To enable them simply go to Dashboard -> Settings -> Customify and check "Enable Reset Buttons"

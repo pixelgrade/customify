@@ -26,7 +26,7 @@ if ( ! function_exists('add_customify_base_options') ) {
 						'type'      => 'preset',
 						'label'     => __( 'Select a style:', 'customify_txtd' ),
 						'desc' => __( 'Conveniently change the design of your site with built-in style presets. Easy as pie.', 'customify_txtd' ),
-						'default'   => 'silk',
+						'default'   => 'royal',
 						'choices_type' => 'awesome',
 						'choices'  => array(
 							'royal' => array(
@@ -65,8 +65,6 @@ if ( ! function_exists('add_customify_base_options') ) {
 									'body_font' => 'Playfair Display',
 								)
 							),
-							
-							
 							'queen' => array(
 								'label' => __( 'Queen', 'customify_txtd' ),
 								'preview' => array(
@@ -103,8 +101,8 @@ if ( ! function_exists('add_customify_base_options') ) {
 									'body_font' => 'PT Sans Narrow',
 								)
 							),
-							
-							
+
+
 
 							'adler' => array(
 								'label' => __( 'Adler', 'customify_txtd' ),
@@ -142,7 +140,7 @@ if ( ! function_exists('add_customify_base_options') ) {
 									'body_font' => 'Josefin Sans',
 								)
 							),
-							
+
 						)
 					),
 				)
@@ -323,28 +321,28 @@ if ( ! function_exists('add_customify_base_options') ) {
 
 		/**
 		 * A self explanatory example of panels *
-		$config['panels'] = array(
-			'panel_id' => array(
-				'title'    => __( 'Panel Title', 'customify_txtd' ),
-				'sections' => array(
-					'title'    => __( 'Section Title', 'customify_txtd' ),
-					'options' => array(
-						'setting_id'   => array(
-							'type'      => 'color',
-							'label'     => __( 'Label', 'customify_txtd' ),
-							'live' => true, // or false
-							'default'   => '#6c6e70',
-							'css'  => array(
-								array(
-									'property'     => 'color',
-									'selector' => 'a, .entry-meta a',
-								),
-							)
-						),
-					)
-				)
-			)
-		);
+		//$config['panels'] = array(
+		//	'panel_id' => array(
+		//		'title'    => __( 'Panel Title', 'customify_txtd' ),
+		//		'sections' => array(
+		//			'title'    => __( 'Section Title', 'customify_txtd' ),
+		//			'options' => array(
+		//				'setting_id'   => array(
+		//					'type'      => 'color',
+		//					'label'     => __( 'Label', 'customify_txtd' ),
+		//					'live' => true, // or false
+		//					'default'   => '#6c6e70',
+		//					'css'  => array(
+		//						array(
+		//							'property'     => 'color',
+		//							'selector' => 'a, .entry-meta a',
+		//						),
+		//					)
+		//				),
+		//			)
+		//		)
+		//	)
+		//);
 		 *
 		 **/
 
@@ -353,4 +351,4 @@ if ( ! function_exists('add_customify_base_options') ) {
 }
 
 
-add_filter( 'customify_filter_fields', 'add_customify_base_options', 10, 1 );
+add_filter( 'customify_filter_fields', 'add_customify_base_options' );

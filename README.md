@@ -210,55 +210,119 @@ Just add this section in your config
 			'type'      => 'preset',
 			'label'     => __( 'Select a style:', 'customify_txtd' ),
 			'desc' => __( 'Conveniently change the design of your site with built-in style presets. Easy as pie.', 'customify_txtd' ),
-			'default'   => 'silk',
+			'default'   => 'royal',
 			'choices_type' => 'awesome',
 			'choices'  => array(
-				'silk' => array(
-					'label' => __( 'Silk', 'customify_txtd' ),
+				'royal' => array(
+					'label' => __( 'Royal', 'customify_txtd' ),
 					'preview' => array(
-						// 'color-text' => 'white',
-						'background-card' => '#A84469',
-						'background-label' => '#FAC2A8',
+						'color-text' => '#ffffff',
+						'background-card' => '#615375',
+						'background-label' => '#46414c',
+						'font-main' => 'Abril Fatface',
+						'font-alt' => 'PT Serif',
+					),
+					'options' => array(
+						'links_color' => '#8eb2c5',
+						'headings_color' => '#725c92',
+						'body_color' => '#6f8089',
+						'page_background' => '#615375',
+						'headings_font' => 'Abril Fatface',
+						'body_font' => 'PT Serif',
+					)
+				),
+				'lovely' => array(
+					'label' => __( 'Lovely', 'customify_txtd' ),
+					'preview' => array(
+						'color-text' => '#ffffff',
+						'background-card' => '#d15c57',
+						'background-label' => '#5c374b',
 						'font-main' => 'Playfair Display',
-						'font-alt' => 'Merriweather',
+						'font-alt' => 'Playfair Display',
 					),
 					'options' => array(
-						'links_color' => '#FAC2A8', //second
-						'headings_color' => '#A84469', //main
-						'body_color' => '#ffffff', // -
-						'headings_font' => 'Playfair Display', //main
-						'body_font' => 'Merriweather'
+						'links_color' => '#cc3747',
+						'headings_color' => '#d15c57',
+						'body_color' => '#5c374b',
+						'page_background' => '#d15c57',
+						'headings_font' => 'Playfair Display',
+						'body_font' => 'Playfair Display',
 					)
 				),
-				'red' => array(
-					'label' => __( 'Urban', 'customify_txtd' ),
+				'queen' => array(
+					'label' => __( 'Queen', 'customify_txtd' ),
 					'preview' => array(
-						'color-text' => 'FFF',
-						'background-card' => '#0EB0BF',
-						'background-label' => '#390303',
-						'font-main' => 'Exo',
-						'font-alt' => 'Pacifico',
+						'color-text' => '#fbedec',
+						'background-card' => '#773347',
+						'background-label' => '#41212a',
+						'font-main' => 'Cinzel Decorative',
+						'font-alt' => 'Gentium Basic',
 					),
 					'options' => array(
-						'links_color' => 'red',
-						'headings_color' => 'red',
-						'body_color' => 'red',
-						'headings_font' => 'Exo',
-						'body_font' => 'Pacifico'
+						'links_color' => '#cd8085',
+						'headings_color' => '#54323c',
+						'body_color' => '#cd8085',
+						'page_background' => '#fff',
+						'headings_font' => 'Cinzel Decorative',
+						'body_font' => 'Gentium Basic',
 					)
 				),
-				'black' => array(
-					'label' => __( 'Black', 'customify_txtd' ),
+				'carrot' => array(
+					'label' => __( 'Carrot', 'customify_txtd' ),
+					'preview' => array(
+						'color-text' => '#ffffff',
+						'background-card' => '#df421d',
+						'background-label' => '#85210a',
+						'font-main' => 'Oswald',
+						'font-alt' => 'PT Sans Narrow',
+					),
 					'options' => array(
-						'links_color' => '#ebebeb',
-						'headings_color' => '#333',
-						'body_color' => '#989898',
-						'headings_font' => 'Arvo',
-						'body_font' => 'Lora'
+						'links_color' => '#df421d',
+						'headings_color' => '#df421d',
+						'body_color' => '#7e7e7e',
+						'page_background' => '#fff',
+						'headings_font' => 'Oswald',
+						'body_font' => 'PT Sans Narrow',
+					)
+				),
+				'adler' => array(
+					'label' => __( 'Adler', 'customify_txtd' ),
+					'preview' => array(
+						'color-text' => '#fff',
+						'background-card' => '#0e364f',
+						'background-label' => '#000000',
+						'font-main' => 'Permanent Marker',
+						'font-alt' => 'Droid Sans Mono',
+					),
+					'options' => array(
+						'links_color' => '#68f3c8',
+						'headings_color' => '#0e364f',
+						'body_color' => '#45525a',
+						'page_background' => '#ffffff',
+						'headings_font' => 'Permanent Marker',
+						'body_font' => 'Droid Sans Mono'
+					)
+				),
+				'velvet' => array(
+					'label' => __( 'Velvet', 'customify_txtd' ),
+					'preview' => array(
+						'color-text' => '#ffffff',
+						'background-card' => '#282828',
+						'background-label' => '#000000',
+						'font-main' => 'Pinyon Script',
+						'font-alt' => 'Josefin Sans',
+					),
+					'options' => array(
+						'links_color' => '#000000',
+						'headings_color' => '#000000',
+						'body_color' => '#000000',
+						'page_background' => '#000000',
+						'headings_font' => 'Pinyon Script',
+						'body_font' => 'Josefin Sans',
 					)
 				),
 			)
 		),
 	)
-),
+)
 ```
