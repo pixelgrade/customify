@@ -1,5 +1,5 @@
 === Customify - A Theme Customizer Booster ===
-Contributors: euthelup, babbardel
+Contributors: pixelgrade, euthelup, babbardel
 Tags: customizer, css, editor, live, preview, customise
 Requires at least: 3.8.0
 Tested up to: 4.1.1
@@ -34,6 +34,7 @@ With [Customify](https://github.com/pixelgrade/customify), developers can easily
 = 1.1.0 =
 * Added: [Preset](https://github.com/pixelgrade/customify/blob/master/README.md#presets_title) field type.
 * Added: Reset buttons (disabled by default).
+* Added: Button field.
 
 == Installation ==
 
