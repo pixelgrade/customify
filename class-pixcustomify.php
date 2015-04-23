@@ -823,6 +823,10 @@ class PixCustomifyPlugin {
 
 	protected function register_section( $panel_id, $section_key, $options_name, $section_settings, $wp_customize ) {
 
+		if ( isset( self::$plugin_settings['disable_customify_sections'] ) && isset( self::$plugin_settings['disable_customify_sections'][$section_key] ) ) {
+			return;
+		}
+
 		$section_args = array(
 			'priority'   => 10,
 			'capability' => 'edit_theme_options',
@@ -953,6 +957,11 @@ class PixCustomifyPlugin {
 			case 'color':
 
 				$control_class_name = 'WP_Customize_Color_Control';//'Pix_Customize_' . ucfirst( $setting_config['type'] ) . '_Control';
+				break;
+
+			case 'color_drop':
+
+				$control_class_name = 'Pix_Customize_Color_Drop_Control';//'Pix_Customize_' . ucfirst( $setting_config['type'] ) . '_Control';
 				break;
 
 			case 'upload':

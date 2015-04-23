@@ -320,31 +320,32 @@ if ( ! function_exists('add_customify_base_options') ) {
 		);
 
 		/**
-		 * A self explanatory example of panels *
-		//$config['panels'] = array(
-		//	'panel_id' => array(
-		//		'title'    => __( 'Panel Title', 'customify_txtd' ),
-		//		'sections' => array(
-		//			'title'    => __( 'Section Title', 'customify_txtd' ),
-		//			'options' => array(
-		//				'setting_id'   => array(
-		//					'type'      => 'color',
-		//					'label'     => __( 'Label', 'customify_txtd' ),
-		//					'live' => true, // or false
-		//					'default'   => '#6c6e70',
-		//					'css'  => array(
-		//						array(
-		//							'property'     => 'color',
-		//							'selector' => 'a, .entry-meta a',
-		//						),
-		//					)
-		//				),
-		//			)
-		//		)
-		//	)
-		//);
-		 *
+		 * A self explanatory example of panels **
 		 **/
+//		$config['panels'] = array(
+//			'panel_id' => array(
+//				'title'    => __( 'Panel Title', 'customify_txtd' ),
+//				'sections' => array(
+//					'panel_section' => array(
+//						'title'    => __( 'Section Title', 'customify_txtd' ),
+//						'options' => array(
+//							'setting_id'   => array(
+//								'type'      => 'color',
+//								'label'     => __( 'Label', 'customify_txtd' ),
+//								'live' => true, // or false
+//								'default'   => '#6c6e70',
+//								'css'  => array(
+//									array(
+//										'property'     => 'color',
+//										'selector' => 'a, .entry-meta a',
+//									),
+//								)
+//							),
+//						)
+//					)
+//				)
+//			)
+//		);
 
 		return $config;
 	}
