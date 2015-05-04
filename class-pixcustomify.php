@@ -646,7 +646,7 @@ class PixCustomifyPlugin {
 
 		$this_value = self::get_option( $option_id );
 
-		if ( empty( $css_config ) || empty( $this_value ) ) {
+		if ( empty( $css_config ) ) {
 			return $output;
 		}
 
@@ -674,7 +674,6 @@ class PixCustomifyPlugin {
 		if ( isset( $css_property['unit'] ) ) {
 			$unit = $css_property['unit'];
 		}
-
 		$this_property_output = $css_property['selector'] . ' { ' . $css_property['property'] . ': ' . $this_value . $unit . "; } \n";
 
 
