@@ -29,7 +29,7 @@
 			var self = this,
 				css = this._cssproperties.cssRules;
 
-			if ( css[0] !== "undefined" && css[0].hasOwnProperty('media') ) {
+			if ( typeof css[0] !== "undefined" && css[0].hasOwnProperty('media') ) {
 				// in this case we run a media query object
 				$.each(css, function( key, media_query ){
 					// simple object with css properties
@@ -109,8 +109,11 @@
 				unit = 'px';
 			}
 
-			return is_negative + new_value + unit;
+			if ( typeof window[settings.properties.callback] === "function" ) {
+				window[settings.properties.callback](new_value, selectorText, properties, unit);
+			}
 
+			return is_negative + new_value + unit;
 		},
 
 		/**
