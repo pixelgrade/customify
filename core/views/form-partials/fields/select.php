@@ -18,7 +18,16 @@ $attrs = array
 	'name' => $name,
 	'id'   => $idname,
 );
-?>
+
+// group show
+
+if ($field->hasmeta('show_group')) {
+	$attrs['data-show_group'] =  $field->getmeta('show_group');
+}
+
+if ($field->hasmeta('display_option')) {
+	$attrs['data-display_option'] =  $field->getmeta('display_option');
+}?>
 <div class="select">
 	<label id="<?php echo $name ?>"><?php echo $label ?></label>
 	<select <?php echo $field->htmlattributes( $attrs ) ?>>

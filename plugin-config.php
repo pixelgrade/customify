@@ -22,6 +22,7 @@ return array(
 	'fields'                => array(
 		'hiddens' => include 'settings/hiddens' . EXT,
 		'general' => include 'settings/general' . EXT,
+		'output' => include 'settings/output' . EXT,
 		'typography' => include 'settings/typography' . EXT,
 		'css_editor' => include 'settings/css_editor' . EXT,
 	),

@@ -11,6 +11,6 @@
 	'typography_group_google_fonts' => true,
 	'disable_default_sections' => array(),
 	'disable_customify_sections' => array(),
-	'enable_reset_buttons' => false
-
+	'enable_reset_buttons' => false,
+	'style_resources_location' => 'wp_head'
 ); # config

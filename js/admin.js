@@ -18,24 +18,28 @@
 		/** End Checkbox value switcher **/
 
 		/* Ensure groups visibility */
-		$('.switch input[type=checkbox]').each(function(){
+		$('.switch input[type=checkbox], .select select').each(function(){
 
 			if ( $(this).data('show_group') ) {
 
 				var show = false;
 				if ( $(this).attr('checked') ) {
 					show = true
+				} else if ( typeof $(this).data('display_option') !== "undefined" && $(this).data('display_option') === $(this).val() ) {
+					show = true;
 				}
 
 				toggleGroup( $(this).data('show_group'), show);
 			}
 		});
 
-		$('.switch ').on('change', 'input[type=checkbox]', function(){
+		$('.switch, .select ').on('change', 'input[type=checkbox], select', function(){
 			if ( $(this).data('show_group') ) {
 				var show = false;
 				if ( $(this).attr('checked') ) {
-					show = true
+					show = true;
+				} else if ( typeof $(this).data('display_option') !== "undefined" && $(this).data('display_option') === $(this).val() ) {
+					show = true;
 				}
 				toggleGroup( $(this).data('show_group'), show);
 			}

@@ -15,7 +15,8 @@ class Customify_CSS_Live_Editor {
 
 		add_action( 'customize_controls_enqueue_scripts', array( $this, 'enqueue_admin_customizer_styles' ), 10);
 
-		add_action( 'wp_footer', array( $this, 'output_dynamic_style' ), 999999999 );
+		$load_location = PixCustomifyPlugin::get_plugin_option( 'style_resources_location', 'wp_head' );
+		add_action( $load_location, array( $this, 'output_dynamic_style' ), 999999999 );
 	}
 
 	/**

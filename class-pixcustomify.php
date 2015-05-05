@@ -109,7 +109,9 @@ class PixCustomifyPlugin {
 		add_action( 'customize_controls_enqueue_scripts', array( $this, 'enqueue_admin_customizer_scripts' ), 10 );
 		add_action( 'customize_preview_init', array( $this, 'customizer_live_preview_enqueue_scripts' ), 99999 );
 
-		add_action( 'wp_footer', array( $this, 'output_dynamic_style' ), 99999 );
+		$load_location = self::get_plugin_option('style_resources_location', 'wp_head');
+
+		add_action( $load_location, array( $this, 'output_dynamic_style' ), 99999 );
 		add_action( 'wp_head', array( $this, 'output_typography_dynamic_style' ), 10 );
 
 		// add things to the previewer
