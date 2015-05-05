@@ -1038,6 +1038,26 @@ class PixCustomifyPlugin {
 				$control_class_name = 'Pix_Customize_' . ucfirst( $setting_config['type'] ) . '_Control';
 				break;
 
+			case 'image_select' :
+
+				if ( ! isset( $setting_config['choices'] ) || empty( $setting_config['choices'] ) ) {
+					return;
+				}
+
+				$control_args['choices'] = $setting_config['choices'];
+
+				if ( isset( $setting_config['choices_type'] ) || ! empty( $setting_config['choices_type'] ) ) {
+					$control_args['choices_type'] = $setting_config['choices_type'];
+				}
+
+				if ( isset( $setting_config['desc'] ) || ! empty( $setting_config['desc'] ) ) {
+					$control_args['description'] = $setting_config['desc'];
+				}
+
+
+				$control_class_name = 'Pix_Customize_' . ucfirst( $setting_config['type'] ) . '_Control';
+				break;
+
 			case 'button' :
 
 				if ( ! isset( $setting_config['action'] ) || empty( $setting_config['action'] ) ) {

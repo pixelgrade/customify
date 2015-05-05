@@ -30,6 +30,10 @@
 						$.each(el.css, function (counter, property_config) {
 
 							properties[property_config.property] = property_config.selector;
+							if ( typeof property_config.callback_filter !== "undefined" ) {
+								properties['callback'] = property_config.callback_filter;
+							}
+
 							counter++;
 
 							$('#dynamic_setting_' + sliced_id + '_property_' + property_config.property.replace('-', '_') ).cssUpdate({

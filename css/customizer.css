@@ -394,3 +394,30 @@
   transform: rotate(-45deg);
   z-index: 10;
 }
+
+.customify_image_select_radio {
+  display: inline-block;
+}
+.customify_image_select_radio label {
+  display: block;
+  float: left;
+  margin-right: 10px;
+  position: relative;
+}
+.customify_image_select_radio label input[type=radio] {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  visibility: hidden;
+}
+.customify_image_select_radio label input[type=radio] img {
+  cursor: pointer;
+  border: 2px solid transparent;
+}
+.customify_image_select_radio label input[type=radio]:checked + img {
+  border: 3px solid #00a0d2;
+}
