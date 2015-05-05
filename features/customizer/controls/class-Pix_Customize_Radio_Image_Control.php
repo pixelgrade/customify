@@ -1,11 +1,11 @@
 <?php
 
 /**
- * Class Pix_Customize_Select2_Control
+ * Class Pix_Customize_Radio_Image_Control
  * A simple Select2 Control
  */
-class Pix_Customize_Image_Select_Control extends Pix_Customize_Control {
-	public $type    = 'image_select';
+class Pix_Customize_Radio_Image_Control extends Pix_Customize_Control {
+	public $type    = 'radio_image';
 	public $choices_type    = 'radio';
 	public $description    = null;
 
@@ -27,12 +27,12 @@ class Pix_Customize_Image_Select_Control extends Pix_Customize_Control {
 						<span class="description customize-control-description"><?php echo $this->description; ?></span>
 					<?php } ?>
 
-					<div class="customify_image_select_radio">
+					<div class="customify_radio_image">
 						<?php
 						foreach ( $this->choices as $value => $image_url ){
 
 							if ( empty( $image_url ) ) {
-								$image_url = plugins_url() . '/customify/images/default_image_select.png';
+								$image_url = plugins_url() . '/customify/images/default_radio_image.png';
 							} ?>
 							<label>
 								<input <?php $this->link(); echo 'name="' .  $this->setting->id . '" type="radio" value="' . esc_attr( $value ) . '"' . selected( $this->value(), $value, false ) .' ></input>';?>
@@ -53,7 +53,7 @@ class Pix_Customize_Image_Select_Control extends Pix_Customize_Control {
 						<span class="description customize-control-description"><?php echo $this->description; ?></span>
 					<?php } ?>
 
-					<div class="customify_image_select radio_buttons">
+					<div class="customify_radio_image radio_buttons">
 						<?php
 						foreach ( $this->choices as $value => $setts ){
 							if ( ! isset( $setts['options']) || ! isset( $setts['label'] ) ) {

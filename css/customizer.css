@@ -395,16 +395,16 @@
   z-index: 10;
 }
 
-.customify_image_select_radio {
+.customify_radio_image {
   display: inline-block;
 }
-.customify_image_select_radio label {
+.customify_radio_image label {
   display: block;
   float: left;
   margin-right: 10px;
   position: relative;
 }
-.customify_image_select_radio label input[type=radio] {
+.customify_radio_image label input[type=radio] {
   position: absolute;
   top: 0;
   bottom: 0;
@@ -414,10 +414,10 @@
   height: 100%;
   visibility: hidden;
 }
-.customify_image_select_radio label input[type=radio] img {
+.customify_radio_image label input[type=radio] img {
   cursor: pointer;
   border: 2px solid transparent;
 }
-.customify_image_select_radio label input[type=radio]:checked + img {
+.customify_radio_image label input[type=radio]:checked + img {
   border: 3px solid #00a0d2;
 }

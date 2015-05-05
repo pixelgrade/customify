@@ -1038,7 +1038,7 @@ class PixCustomifyPlugin {
 				$control_class_name = 'Pix_Customize_' . ucfirst( $setting_config['type'] ) . '_Control';
 				break;
 
-			case 'image_select' :
+			case 'radio_image' :
 
 				if ( ! isset( $setting_config['choices'] ) || empty( $setting_config['choices'] ) ) {
 					return;
