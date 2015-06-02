@@ -817,6 +817,26 @@ class PixCustomifyPlugin {
 					)
 				));
 			}
+
+			// register typekit options
+			if ( isset( $customizer_settings['typekit_options'] ) ) {
+
+				// create a toolbar section which will be present all the time
+				$reset_section_settings = array(
+					'title' => 'Customify Typekit Options',
+					'capability' => 'manage_options',
+					'options' => array(
+						'typkit_user' => array(
+							'type' => 'text',
+							'label' => 'Typekit Username',
+						),
+						'typkit_password' => array(
+							'type' => 'text',
+							'label' => 'Typekit Username',
+						),
+					)
+				);
+			}
 		}
 
 		do_action( 'customify_create_custom_control', $wp_customize );

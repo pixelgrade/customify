@@ -11,6 +11,7 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 	public $subsets = true;
 	public $load_all_weights = false;
 	public $recommended = array();
+	public $typekit_fonts = array();
 
 	protected static $google_fonts = null;
 
@@ -81,6 +82,8 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 
 		$this->load_google_fonts();
 
+		$this->typekit_fonts = get_option( 'typekit_fonts' );
+
 //		$this->generate_google_fonts_json();
 	}
 
@@ -114,12 +117,22 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 			if ( $this->load_all_weights ) {
 				$select_data .= ' data-load_all_weights="true"';
 			}
+
 			/**
 			 * This input will hold the values of this typography field
 			 */ ?>
 			<input class="customify_typography_values" id="<?php echo $this_id; ?>" type="hidden" <?php $this->link(); ?> value='<?php echo $this->value(); ?>'/>
 			<select class="customify_typography_font_family"<?php echo $select_data;?>>
 				<?php
+
+				if ( ! empty( $this->typekit_fonts ) ) {
+					echo '<optgroup label="' . __('Typekit', 'customify_txtd') . '">';
+					foreach ( $this->typekit_fonts as $key => $font ) {
+						self::output_font_option($font['css_names'][0], $font_family, $font, 'typekit' );
+					}
+					echo "</optgroup>";
+				}
+
 				if ( ! empty( $this->recommended ) ) {
 					echo '<optgroup label="' . __('Recommended', 'customify_txtd') . '">';
 					foreach ( $this->recommended as $key => $font ) {
@@ -216,7 +229,7 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 	<?php }
 
 	/**
-	 * This method makes an <output> tag from the given params
+	 * This method makes an <option> tag from the given params
 	 * @param $key
 	 * @param $font_family
 	 * @param $font
@@ -225,20 +238,25 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 	protected static function output_font_option( $key, $font_family, $font, $type = 'google' ) {
 		$data = '';
 
-		if ( isset( $font['variants'] ) && ! empty( $font['variants'] ) && $type === 'google' ) {
-			$data .= ' data-variants=\'' . json_encode( $font['variants'], JSON_FORCE_OBJECT ) . '\'';
-		}
-
-		if ( isset( $font['subsets'] ) && ! empty( $font['subsets'] ) && $type === 'google' ) {
-			$data .= ' data-subsets=\'' . json_encode( $font['subsets'], JSON_FORCE_OBJECT ) . '\'';
-		}
-
 		$data .= ' data-type="' . $type . '"';
 
 		if ( $type === 'google' ) {
+
+			if ( isset( $font['variants'] ) && ! empty( $font['variants'] ) ) {
+				$data .= ' data-variants=\'' . json_encode( $font['variants'], JSON_FORCE_OBJECT ) . '\'';
+			}
+
+			if ( isset( $font['subsets'] ) && ! empty( $font['subsets'] ) ) {
+				$data .= ' data-subsets=\'' . json_encode( $font['subsets'], JSON_FORCE_OBJECT ) . '\'';
+			}
+
 			$selected = ( $font_family === $font['family'] ) ? ' selected="selected" ' : '';
 			echo '<option value="' . $font['family'] . '"'. $selected . $data .'>' . $font['family'] . '</option>';
-		} else {
+		} elseif ( $type === 'typekit' ) {
+
+			$selected = ( $font_family === $key) ? ' selected="selected" ' : '';
+			echo '<option class="typekit_font" value="' . $key . '"'. $selected . $data .'>' . $font['name'] . '</option>';
+		}  else {
 			$selected = ( $font_family === $font) ? ' selected="selected" ' : '';
 			echo '<option class="std_font" value="' . $font . '"'. $selected . $data .'>' . $font . '</option>';
 		}
