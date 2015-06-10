@@ -207,7 +207,6 @@ class PixCustomifyPlugin {
 						}
 					}
 				}
-
 			}
 		}
 
@@ -431,7 +430,9 @@ class PixCustomifyPlugin {
 	 */
 	public function enqueue_scripts() {
 		//wp_enqueue_script( $this->plugin_slug . '-plugin-script', plugins_url( 'js/public.js', __FILE__ ), array( 'jquery' ), $this->version, true );
-		wp_enqueue_script( 'google-fonts', '//ajax.googleapis.com/ajax/libs/webfont/1.5.3/webfont.js' );
+
+		// quit adding google fonts as a static resource ... we will add it dynamically as a fallback when the typekit library isn't used
+		// wp_enqueue_script( 'google-fonts', '//ajax.googleapis.com/ajax/libs/webfont/1.5.3/webfont.js' );
 	}
 
 	/**
@@ -592,7 +593,29 @@ class PixCustomifyPlugin {
 
 		if ( ! empty ( $families ) ) { ?>
 			<script type="text/javascript">
-				WebFont.load( {google: {families: [<?php echo (rtrim( $families, ',' ) ); ?>]}} );
+				if ( typeof WebFont !== 'undefined' ) {<?php // if there is a WebFont object, use it ?>
+					WebFont.load( {
+						google: {families: [<?php echo (rtrim( $families, ',' ) ); ?>]},
+						classes: false,
+						events: false
+					} );
+				} else {<?php // basically when we don't have the WebFont object we create the google script dynamically  ?>
+
+					var tk = document.createElement('script');
+					tk.src = '//ajax.googleapis.com/ajax/libs/webfont/1.5.3/webfont.js';
+					tk.type = 'text/javascript';
+
+					tk.onload = tk.onreadystatechange = function() {
+						WebFont.load( {
+							google: {families: [<?php echo (rtrim( $families, ',' ) ); ?>]},
+							classes: false,
+							events: false
+						} );
+					};
+
+					var s = document.getElementsByTagName('script')[0];
+					s.parentNode.insertBefore(tk, s);
+				}
 			</script>
 		<?php } ?>
 		<style id="customify_typography_output_style">
