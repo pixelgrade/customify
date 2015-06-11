@@ -63,6 +63,14 @@ $general_settings = array(
 			'default'        => false,
 			'type'           => 'switch',
 		),
+
+		'enable_editor_style' =>  array(
+			'name'    => 'enable_editor_style',
+			'label'   => __( 'Enable Editor Style', 'pixcustomify_txtd' ),
+			'desc'    => __( 'The styling added by Customify in front-end can be added in the WordPress editor too by enabling this option', 'pixcustomify_txtd' ),
+			'default'        => true,
+			'type'           => 'switch',
+		),
 	)
 ); # config
 

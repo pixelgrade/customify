@@ -120,6 +120,10 @@ class PixCustomifyPlugin {
 		add_action( 'customize_register', array( $this, 'remove_default_sections' ), 11 );
 		add_action( 'customize_register', array( $this, 'register_customizer' ), 12 );
 
+		if ( self::get_plugin_option( 'enable_editor_style', true ) ) {
+			add_action('admin_head', array( $this, 'add_customizer_settings_into_wp_editor' ) , 9999999);
+		}
+
 		/**
 		 * Ajax Callbacks
 		 */
@@ -708,6 +712,68 @@ class PixCustomifyPlugin {
 
 		return $this_property_output;
 	}
+
+	// addd editor style
+
+	/**
+	 * add our customizer styling edits into the wp_editor
+	 */
+	function add_customizer_settings_into_wp_editor(  ){
+
+		ob_start();
+		$this->output_typography_dynamic_style();
+		$this->output_dynamic_style();
+
+		$custom_css = ob_get_clean(); ?>
+		<script type="text/javascript">
+			/* <![CDATA[ */
+			(function($){
+				$(window).load(function(){
+					/**
+					 * @param iframe_id the id of the frame you whant to append the style
+					 * @param style_element the style element you want to append
+					 */
+					var append_script_to_iframe = function( ifrm_id, scriptEl ) {
+						var  myIframe = document.getElementById(ifrm_id);
+
+						var script = myIframe.contentWindow.document.createElement("script");
+						script.type = "text/javascript";
+						script.innerHTML = scriptEl.innerHTML;
+
+						myIframe.contentWindow.document.head.appendChild(script);
+					};
+
+					var append_style_to_iframe = function( ifrm_id, styleElment ) {
+						var ifrm = window.frames[ ifrm_id ];
+						ifrm = ( ifrm.contentDocument || ifrm.contentDocument || ifrm.document );
+						var head = ifrm.getElementsByTagName('head')[0]; console.log( styleElment );
+						head.appendChild( styleElment );
+					};
+
+					// Create style element if needed
+					var styleElement = document.getElementById('mies_editor_style');
+
+					if (!styleElement) {
+
+						var xmlString = <?php echo json_encode( str_replace("\n", "", $custom_css ) ); ?>
+							, parser = new DOMParser()
+							, doc = parser.parseFromString(xmlString, "text/html");
+
+						if ( typeof window.frames['content_ifr'] !== 'undefined' ) {
+							append_script_to_iframe( 'content_ifr',doc.head.childNodes[0] );
+
+							// doc.head.childNodes[2] is the typography style#customify_typography_output_style
+							append_style_to_iframe( 'content_ifr',doc.head.childNodes[2] );
+							//doc.head.childNodes[3] is the customify dynamic style #customify_output_style
+							append_style_to_iframe( 'content_ifr',doc.head.childNodes[3] );
+
+						}
+					}
+				});
+			})(jQuery);
+			/* ]]> */
+		</script>
+	<?php }
 
 	/**
 	 * Register the administration menu for this plugin into the WordPress Dashboard menu.
