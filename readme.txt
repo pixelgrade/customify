@@ -3,7 +3,7 @@ Contributors: pixelgrade, euthelup, babbardel
 Tags: customizer, css, editor, live, preview, customise
 Requires at least: 3.8.0
 Tested up to: 4.2.1
-Stable tag: 1.1.1
+Stable tag: 1.1.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -30,6 +30,10 @@ With [Customify](https://github.com/pixelgrade/customify), developers can easily
 * **[Preset](https://github.com/pixelgrade/customify/blob/master/README.md#presets_title).** A field which allows you to change a group of Customify fields.
 
 == Changelog ==
+
+= 1.1.2 =
+* Added: Option to add Customify's changes in the editor.
+* Added: Possibility to load Typekit fonts through config.
 
 = 1.1.1 =
 * Added: Radio input with image label.
