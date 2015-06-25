@@ -44,7 +44,6 @@
 				toggleGroup( $(this).data('show_group'), show);
 			}
 		});
-
 	});
 
 	var toggleGroup = function( name, show ){

@@ -1074,6 +1074,15 @@ class PixCustomifyPlugin {
 				$control_class_name = 'Pix_Customize_Color_Drop_Control';//'Pix_Customize_' . ucfirst( $setting_config['type'] ) . '_Control';
 				break;
 
+			case 'ace_editor':
+
+				if ( isset( $setting_config['editor_type'] ) ) {
+					$control_args['editor_type'] = $setting_config['editor_type'];
+				}
+
+				$control_class_name = 'Pix_Customize_Ace_Editor_Control';//'Pix_Customize_' . ucfirst( $setting_config['type'] ) . '_Control';
+				break;
+
 			case 'upload':
 
 				$control_class_name = 'WP_Customize_Upload_Control';//'Pix_Customize_' . ucfirst( $setting_config['type'] ) . '_Control';
