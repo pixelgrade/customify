@@ -1190,6 +1190,15 @@ class PixCustomifyPlugin {
 
 				break;
 
+			case 'html' :
+
+				if ( isset( $setting_config['html'] ) || ! empty( $setting_config['html'] ) ) {
+					$control_args['html'] = $setting_config['html'];
+				}
+
+				$control_class_name = 'Pix_Customize_HTML_Control';
+				break;
+
 			default:
 				// if we don't have a real control just quit, it doesn't even matter
 				return;
