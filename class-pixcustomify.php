@@ -1010,6 +1010,24 @@ class PixCustomifyPlugin {
 			$setting_args['type'] = 'option';
 		}
 
+		// if we arrive here this means we have a custom field control
+		switch ( $setting_config['type'] ) {
+
+			case 'checkbox':
+
+				$setting_args['sanitize_callback'] = array( $this, 'setting_sanitize_checkbox');
+				break;
+
+			default:
+				break;
+		}
+
+		if ( isset( $setting_config['sanitize_callback'] ) && ! empty( $setting_config['sanitize_callback'] ) && function_exists( $setting_config['sanitize_callback'] ) ) {
+			$setting_args['sanitize_callback'] = $setting_config['sanitize_callback'];
+
+			var_dump($setting_args);
+		}
+
 		// and add it
 		$wp_customize->add_setting( $setting_id, $setting_args );
 
@@ -1257,6 +1275,24 @@ class PixCustomifyPlugin {
 
 		foreach ( $array as $i => $subarray ) {
 			self::get_typography_fields( $subarray, $key, $value, $results, $i );
+		}
+	}
+
+	/**
+	 * Sanitize functions
+	 */
+
+	/**
+	 * Sanitize the checkbox.
+	 *
+	 * @param boolean $input.
+	 * @return boolean true if is 1 or '1', false if anything else
+	 */
+	function setting_sanitize_checkbox( $input ) {
+		if ( 1 == $input ) {
+			return true;
+		} else {
+			return false;
 		}
 	}
 }
