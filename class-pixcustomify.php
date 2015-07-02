@@ -1024,8 +1024,6 @@ class PixCustomifyPlugin {
 
 		if ( isset( $setting_config['sanitize_callback'] ) && ! empty( $setting_config['sanitize_callback'] ) && function_exists( $setting_config['sanitize_callback'] ) ) {
 			$setting_args['sanitize_callback'] = $setting_config['sanitize_callback'];
-
-			var_dump($setting_args);
 		}
 
 		// and add it
