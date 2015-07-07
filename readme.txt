@@ -1,9 +1,9 @@
 === Customify - A Theme Customizer Booster ===
 Contributors: pixelgrade, euthelup, babbardel
 Tags: customizer, css, editor, live, preview, customise
-Requires at least: 3.8.0
-Tested up to: 4.2.1
-Stable tag: 1.1.2
+Requires at least: 3.9.0
+Tested up to: 4.2.2
+Stable tag: 1.1.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -30,6 +30,12 @@ With [Customify](https://github.com/pixelgrade/customify), developers can easily
 * **[Preset](https://github.com/pixelgrade/customify/blob/master/README.md#presets_title).** A field which allows you to change a group of Customify fields.
 
 == Changelog ==
+
+= 1.1.4 =
+* Added: Ace Editor field.
+* Added: HTML field.
+* Added: Sanitize callbacks parameter and a default sanitizer for the checkbox field.
+* Fixed: Slight styling issues
 
 = 1.1.2 =
 * Added: Option to add Customify's changes in the editor.
