@@ -2,7 +2,39 @@
 	$( document ).ready( function() {
 		// when the customizer is ready prepare our fields events
 		wp.customize.bind( 'ready', function() {
-			var api = this;
+			var api = this,
+				timeout = null;
+
+			// add ace editors
+			$('.customify_ace_editor' ).each(function( key, el){
+				var id = $(this ).attr('id' ),
+					css_editor = ace.edit( id );
+
+				var editor_type = $( this ).data('editor_type');
+
+				// init the ace editor
+				css_editor.setTheme("ace/theme/github");
+				css_editor.getSession().setMode("ace/mode/" + editor_type);
+
+				// hide the textarea and enable the ace editor
+				var textarea = $('#' + id + '_textarea').hide();
+				css_editor.getSession().setValue(textarea.val());
+
+				// each time a change is triggered start a timeout of 1,5s and when is finished refresh the previewer
+				// if the user types faster than this delay then reset it
+				css_editor.getSession().on('change', function(e) {
+					if ( timeout !== null ){
+						clearTimeout(timeout);
+						timeout = null;
+					} else {
+						timeout = setTimeout( function(){
+							//var state = css_editor.session.getState();
+							textarea.val(css_editor.getSession().getValue());
+							textarea.trigger('change');
+						},1500);
+					}
+				});
+			});
 
 			// simple select2 field
 			$( '.customify_select2' ).select2();
@@ -325,7 +357,7 @@
 				}
 
 				// make the variants selector
-				if ( variants !== null && typeof $font_weight !== "undefined" ) {
+				if ( typeof variants !== 'undefined' && variants !== null && typeof $font_weight !== "undefined" ) {
 
 					value_to_add['variants'] = variants;
 					// when a font is selected force the first weight to load
@@ -353,7 +385,7 @@
 				}
 
 				// make the subsets selector
-				if ( subsets !== null && typeof $font_subsets !== "undefined" ) {
+				if ( typeof subsets !== 'undefined' && subsets !== null && typeof $font_subsets !== "undefined" ) {
 					value_to_add['subsets'] = subsets;
 					// when a font is selected force the first subset to load
 					value_to_add['selected_subsets'] = {0: subsets[0]};

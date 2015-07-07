@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Class Pix_Customize_Select2_Control
+ * Class Pix_Customize_Preset_Control
  * A simple Select2 Control
  */
 class Pix_Customize_Preset_Control extends Pix_Customize_Control {

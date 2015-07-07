@@ -15,7 +15,8 @@ class Customify_CSS_Live_Editor {
 
 		add_action( 'customize_controls_enqueue_scripts', array( $this, 'enqueue_admin_customizer_styles' ), 10);
 
-		add_action( 'wp_footer', array( $this, 'output_dynamic_style' ), 999999999 );
+		$load_location = PixCustomifyPlugin::get_plugin_option( 'style_resources_location', 'wp_head' );
+		add_action( $load_location, array( $this, 'output_dynamic_style' ), 999999999 );
 	}
 
 	/**
@@ -38,8 +39,8 @@ class Customify_CSS_Live_Editor {
 
 		$dir = rtrim( $dir, 'features/' );
 
-		wp_register_script('ace-editor', $dir . '/js/ace/ace.js', array('jquery'), false, true);
-		wp_enqueue_script('live-css-editor',  $dir . '/js/live_css_editor.js', array('ace-editor'), false, true);
+		wp_register_script('customify-ace-editor', $dir . '/js/ace/ace.js', array('jquery'), false, true);
+		wp_enqueue_script('live-css-editor',  $dir . '/js/live_css_editor.js', array('customify-ace-editor'), false, true);
 
 	}
 
@@ -65,15 +66,15 @@ class Customify_CSS_Live_Editor {
 			'label' => __('CSS Edit', 'customify_txtd'),
 			'default' => __("/*
  * Welcome to the Custom CSS Editor
- * 
- * CSS (Cascading Style Sheets) is a language that helps 
- * the browser render your website. You may remove these 
+ *
+ * CSS (Cascading Style Sheets) is a language that helps
+ * the browser render your website. You may remove these
  * lines and get started with your own customizations.
  *
- * The generated code will be placed after the theme 
- * stylesheets, which means that your rules can take 
- * precedence and override the theme CSS rules. Just 
- * write here what you want to change, you don't need 
+ * The generated code will be placed after the theme
+ * stylesheets, which means that your rules can take
+ * precedence and override the theme CSS rules. Just
+ * write here what you want to change, you don't need
  * to copy all your theme's stylesheet content.
  *
  * Getting started with CSS (tutorial):

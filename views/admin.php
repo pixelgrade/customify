@@ -44,6 +44,7 @@ $errors    = $processor->errors(); ?>
 		echo $f = pixcustomify::form( $config, $processor );
 		echo $f->field( 'hiddens' )->render();
 		echo $f->field( 'general' )->render();
+		echo $f->field( 'output' )->render();
 		echo $f->field( 'typography' )->render();
 //		echo $f->field( 'css_editor' )->render(); ?>
 		<button type="submit" class="button button-primary">

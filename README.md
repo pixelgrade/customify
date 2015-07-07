@@ -146,6 +146,7 @@ Fields  | [Live Preview Support!](#live_preview_support) | Description
 ------------- | ------------- | -------------
 Text  | No | A simple text input
 Textarea | No | A simple text area input
+Ace Editor | No | An ace editor that supports plain_text / css / html / javascript / json / markdown
 Color | Yes | A simple color picker
 Range | Yes | The default html5 range input
 Typography | No | This is an awesome font selector, it supports standard fonts and google fonts. You can also Group fonts or offer a list of recommended fonts

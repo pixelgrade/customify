@@ -11,7 +11,7 @@ var gulp = require( 'gulp' ),
 
 gulp.task( 'styles', function() {
 	return gulp.src( 'scss/**/*.scss' )
-		.pipe( sass( {sourcemap: true, style: 'nested'} ) )
+		.pipe( sass( { sourcemap: false, style: 'nested', 'compass': true } ) )
 		.on( 'error', function( e ) {
 			console.log( e.message );
 		} )

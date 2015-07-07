@@ -583,3 +583,38 @@ $popup 		: 275px;
 
   }
 }
+
+.customify_radio_image {
+	display: inline-block;
+	label {
+		display: block;
+		float: left;
+		margin-right: 10px;
+		position: relative;
+
+		input[type=radio] {
+			position: absolute;
+			top:0;bottom: 0;
+			left: 0;right: 0;
+			width: 100%;
+			height: 100%;
+
+			visibility: hidden;
+
+			img {
+				cursor:pointer;
+				border:2px solid transparent;
+			}
+
+			&:checked + img{
+				border: 3px solid #00a0d2;
+			}
+		}
+	}
+}
+
+.customify_ace_editor {
+	display: block;
+	min-height: 200px;
+	border: 1px solid #ddd;
+}

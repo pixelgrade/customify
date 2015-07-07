@@ -1,7 +1,30 @@
 <?php
-//not used yet - moved them to a per gallery option
 
-return array(
+$config = apply_filters('customify_filter_fields', array() );
+
+$customify_sections = array();
+
+if ( isset( $config['sections'] ) && ! empty( $config['sections'] ) ) {
+
+	foreach ( $config['sections'] as $id => $section ) {
+		$customify_sections[$id] = $section['title'];
+	}
+
+}
+
+if ( isset( $config['panels'] ) && ! empty( $config['panels'] ) ) {
+
+	foreach ( $config['panels'] as $panel_id => $panel ) {
+
+		if ( isset( $panel['sections'] ) && ! empty( $panel['sections'] ) ) {
+			foreach ( $panel['sections'] as $id => $section ) {
+				$customify_sections[$id] = $section['title'];
+			}
+		}
+	}
+}
+
+$general_settings = array(
 	'type'    => 'postbox',
 	'label'   => 'General Settings',
 	'options' => array(
@@ -19,7 +42,7 @@ return array(
 
 		'disable_default_sections' => array(
 			'name'    => 'disable_default_sections',
-			'label'   => __( 'Disable sections', 'pixcustomify_txtd' ),
+			'label'   => __( 'Disable default sections', 'pixcustomify_txtd' ),
 			'desc'    => __( 'You can disable default sections', 'pixcustomify_txtd' ),
 			'type'    => 'multicheckbox',
 			'options' => array(
@@ -40,5 +63,25 @@ return array(
 			'default'        => false,
 			'type'           => 'switch',
 		),
+
+		'enable_editor_style' =>  array(
+			'name'    => 'enable_editor_style',
+			'label'   => __( 'Enable Editor Style', 'pixcustomify_txtd' ),
+			'desc'    => __( 'The styling added by Customify in front-end can be added in the WordPress editor too by enabling this option', 'pixcustomify_txtd' ),
+			'default'        => true,
+			'type'           => 'switch',
+		),
 	)
 ); # config
+
+if ( !empty( $customify_sections ) ) {
+	$general_settings['options']['disable_customify_sections'] = array(
+		'name'    => 'disable_customify_sections',
+		'label'   => __( 'Disable Customify sections', 'pixcustomify_txtd' ),
+		'desc'    => __( 'You can also disable Customify\'s sections', 'pixcustomify_txtd' ),
+		'type'    => 'multicheckbox',
+		'options' => $customify_sections
+	);
+}
+
+return $general_settings;

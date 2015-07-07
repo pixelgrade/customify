@@ -10,6 +10,8 @@
 	'typography_google_fonts' => true,
 	'typography_group_google_fonts' => true,
 	'disable_default_sections' => array(),
-	'enable_reset_buttons' => false
-
+	'disable_customify_sections' => array(),
+	'enable_reset_buttons' => false,
+	'enable_editor_style' => true,
+	'style_resources_location' => 'wp_head'
 ); # config
