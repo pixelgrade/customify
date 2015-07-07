@@ -2,7 +2,7 @@
 
 /**
  * Class Pix_Customize_HTML_Control
- * A simple Color Control
+ * A simple HTML Control
  */
 class Pix_Customize_HTML_Control extends Pix_Customize_Control {
 	public $type    = 'html';

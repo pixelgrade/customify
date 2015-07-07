@@ -159,6 +159,7 @@ Date | No |
 Pages select | No | The standard WordPress Page Select
 [Select2](https://select2.github.io/) | No | An awesome select 
 [Presets](#presets_title) | No | An radio input option to select a group of options (inception style ^^)
+HTML field | No | A field which allows you to add custom HTML in customizer and hook into it with javascript later ;) 
 
 ### Live Preview Support<a name="live_preview_support"></a>
 
