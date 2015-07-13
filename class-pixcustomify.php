@@ -73,6 +73,8 @@ class PixCustomifyPlugin {
 
 	protected static $typo_settings;
 
+	protected static $google_fonts = null;
+
 	/**
 	 * Initialize the plugin by setting localization, filters, and administration functions.
 	 * @since     1.0.0
@@ -121,7 +123,7 @@ class PixCustomifyPlugin {
 		add_action( 'customize_register', array( $this, 'register_customizer' ), 12 );
 
 		if ( self::get_plugin_option( 'enable_editor_style', true ) ) {
-			add_action('admin_head', array( $this, 'add_customizer_settings_into_wp_editor' ) , 9999999);
+			add_action('admin_head', array( $this, 'add_customizer_settings_into_wp_editor' ) );
 		}
 
 		/**
@@ -535,7 +537,6 @@ class PixCustomifyPlugin {
 
 					$display = true;?>
 					<style id="dynamic_setting_<?php echo $key; ?>" type="text/css"><?php
-
 						$property_settings = $property['property'];
 						$property_value    = $property['value'];
 						$media_q .= "\t" . self::proccess_css_property( $property_settings, $property_value );?>
@@ -552,6 +553,21 @@ class PixCustomifyPlugin {
 		}
 	}
 
+	protected function load_google_fonts() {
+
+		$fonts_path = plugin_dir_path( __FILE__ ) . 'features/customizer/controls/resources/google.fonts.php';
+
+		if ( file_exists( $fonts_path ) ) {
+			self::$google_fonts = require( $fonts_path );
+		}
+
+		if ( !empty( self::$google_fonts ) ) {
+			return self::$google_fonts;
+		}
+
+		return false;
+	}
+
 	function output_typography_dynamic_style() {
 
 		self::get_typography_fields( self::$options_list, 'type', 'typography', self::$typo_settings );
@@ -562,16 +578,21 @@ class PixCustomifyPlugin {
 
 		$families = '';
 
-		foreach ( self::$typo_settings as $id => $typo ) {
-			if ( isset ( $typo['value'] ) ) {
+		foreach ( self::$typo_settings as $id => $font ) {
+			if ( isset ( $font['value'] ) ) {
 
 				$load_all_weights = false;
 
-				if ( isset( $typo['load_all_weights'] ) && $typo['load_all_weights'] == 'true' ) {
+				if ( isset( $font['load_all_weights'] ) && $font['load_all_weights'] == 'true' ) {
 					$load_all_weights = true;
 				}
 
-				$value = json_decode( $typo['value'], true );
+				$value = json_decode( $font['value'], true );
+
+				// in case the value is still null, try default value(mostly for google fonts)
+				if ( $value === null ) {
+					$value = $this->get_font_defaults_value( $font['value'] );
+				}
 
 				if ( isset( $value['font_family'] ) && isset( $value['type'] ) && $value['type'] == 'google' ) {
 					$families .= "'" . $value['font_family'];
@@ -581,13 +602,13 @@ class PixCustomifyPlugin {
 					} elseif ( isset( $value['selected_variants'] ) && ! empty( $value['selected_variants'] ) ) {
 						$families .= ":" . implode( ',', $value['selected_variants'] );
 					} elseif ( isset( $value['variants'] ) && ! empty( $value['variants'] ) ) {
-						$families .= ":" . implode( ',', $value['variants'][0] );
+						$families .= ":" . implode( ',', $value['variants'] );
 					}
 
 					if ( isset( $value['selected_subsets'] ) && ! empty( $value['selected_subsets'] ) ) {
 						$families .= ":" . implode( ',', $value['selected_subsets'] );
 					} elseif ( isset( $value['subsets'] ) && ! empty( $value['subsets'] ) ) {
-						$families .= ":" . implode( ',', $value['subsets'][0] );
+						$families .= ":" . implode( ',', $value['subsets'] );
 					}
 
 					$families .= '\',';
@@ -632,36 +653,63 @@ class PixCustomifyPlugin {
 
 				if ( isset( $font['selector'] ) && isset( $font['value'] ) && ! empty( $font['value'] ) ) {
 
-					$value = json_decode( $font['value'], true );
+				$value = json_decode( $font['value'], true );
 
-					if ( isset( $value['font_family'] ) ) {
-						echo $font['selector'] . " {\n font-family: " . $value['font_family'] . ";\n}\n";
+				// in case the value is still null, try default value(mostly for google fonts)
+				if ( $value === null ) {
+					$value = $this->get_font_defaults_value( $font['value'] );
+				}
+
+				if ( isset( $value['font_family'] ) ) {
+					echo $font['selector'] . " {\n font-family: " . $value['font_family'] . ";\n}\n";
+				}
+
+				if ( isset( $value['selected_variants'] ) && ! $load_all_weights ) {
+					$the_weight = $value['selected_variants'][0];
+					$italic_font = false;
+
+					if ( strpos( $the_weight, 'italic' ) !== false ) {
+						$the_weight = str_replace( 'italic', '', $the_weight);
+						$italic_font = true;
 					}
 
-					if ( isset( $value['selected_variants'] ) && ! $load_all_weights ) {
-						$the_weight = $value['selected_variants'][0];
-						$italic_font = false;
-
-						if ( strpos( $the_weight, 'italic' ) !== false ) {
-							$the_weight = str_replace( 'italic', '', $the_weight);
-							$italic_font = true;
+					if ( ! empty( $the_weight ) ) {
+						if($the_weight === 'regular') {
+							$the_weight = 'normal';
 						}
-
-						if ( ! empty( $the_weight ) ) {
-							if($the_weight === 'regular') {
-								$the_weight = 'normal';
-							}
-							echo $font['selector'] . " {\nfont-weight: " . $the_weight . ";\n}\n";
-						}
-
-						if ( $italic_font ) {
-							echo $font['selector'] . " {\nfont-style: italic;\n}\n";
-						}
+						echo $font['selector'] . " {\nfont-weight: " . $the_weight . ";\n}\n";
 					}
+
+					if ( $italic_font ) {
+						echo $font['selector'] . " {\nfont-style: italic;\n}\n";
+					}
+				}
 				}
 			} ?>
 		</style>
 	<?php }
+
+	/**
+	 *
+	 * @param $font_name
+	 *
+	 * @return null
+	 */
+	protected function get_font_defaults_value( $font_name ) {
+
+		if ( empty( self::$google_fonts ) ) {
+			$this->load_google_fonts();
+		}
+
+		if ( isset( self::$google_fonts[ $font_name ] ) ) {
+			$value = self::$google_fonts[ $font_name ];
+			$value['font_family'] = $font_name;
+			$value['type'] = 'google';
+			return $value;
+		}
+
+		return null;
+	}
 
 	/**
 	 * Turn css options into a valid CSS output
@@ -705,7 +753,6 @@ class PixCustomifyPlugin {
 		}
 		$this_property_output = $css_property['selector'] . ' { ' . $css_property['property'] . ': ' . $this_value . $unit . "; } \n";
 
-
 		if ( isset( $css_property['callback_filter'] ) && function_exists( $css_property['callback_filter'] ) ) {
 			$this_property_output = call_user_func( $css_property['callback_filter'], $this_value, $css_property['selector'], $css_property['property'], $unit );
 		}
@@ -747,7 +794,10 @@ class PixCustomifyPlugin {
 						var ifrm = window.frames[ ifrm_id ];
 						ifrm = ( ifrm.contentDocument || ifrm.contentDocument || ifrm.document );
 						var head = ifrm.getElementsByTagName('head')[0];
-						head.appendChild( styleElment );
+
+						if ( typeof styleElment !== "undefined" ){
+							head.appendChild( styleElment );
+						}
 					};
 
 					// Create style element if needed
@@ -760,12 +810,13 @@ class PixCustomifyPlugin {
 							, doc = parser.parseFromString(xmlString, "text/html");
 
 						if ( typeof window.frames['content_ifr'] !== 'undefined' ) {
-							append_script_to_iframe( 'content_ifr',doc.head.childNodes[0] );
+
+							append_script_to_iframe( 'content_ifr', doc.head.childNodes[0] );
 
 							// doc.head.childNodes[2] is the typography style#customify_typography_output_style
-							append_style_to_iframe( 'content_ifr',doc.head.childNodes[2] );
+							append_style_to_iframe( 'content_ifr', doc.head.childNodes[2] );
 							//doc.head.childNodes[3] is the customify dynamic style #customify_output_style
-							append_style_to_iframe( 'content_ifr',doc.head.childNodes[3] );
+							append_style_to_iframe( 'content_ifr', doc.head.childNodes[3] );
 
 						}
 					}
