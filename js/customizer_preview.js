@@ -36,8 +36,6 @@
 
 							counter++;
 
-							console.log( '#dynamic_setting_' + sliced_id + '_property_' + property_config.property.replace('-', '_') );
-
 							$( '#dynamic_setting_' + sliced_id + '_property_' + property_config.property.replace('-', '_') ).cssUpdate({
 								properties: properties,
 								propertyValue: to

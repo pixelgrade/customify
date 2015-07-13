@@ -45,7 +45,6 @@
 				// simple object with css properties
 				// change them with new ones
 				$.each(css, function(i, property){
-					console.log(property);
 					if ( property.hasOwnProperty( 'style' ) ) {
 						var property_name = property.style[0];
 						css[i].style[property_name] = self.updateCssRule(property_name, self.settings, css[i].selectorText);
