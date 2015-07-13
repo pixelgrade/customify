@@ -75,6 +75,44 @@ class PixCustomifyPlugin {
 
 	protected static $google_fonts = null;
 
+	// these properties will get 'px' as a default unit
+	protected static $pixel_dependent_css_properties = array(
+		'width',
+		'max-width',
+		'min-width',
+
+		'height',
+		'max-height',
+		'min-height',
+
+		'padding',
+		'padding-left',
+		'padding-right',
+		'padding-top',
+		'padding-bottom',
+
+		'margin',
+		'margin-right',
+		'margin-left',
+		'margin-top',
+		'margin-bottom',
+
+		'right',
+		'left',
+		'top',
+		'bottom',
+
+		'font-size',
+		'letter-spacing',
+
+		'border-size',
+		'border-width',
+		'border-bottom-width',
+		'border-left-width',
+		'border-right-width',
+		'border-top-width'
+	);
+
 	/**
 	 * Initialize the plugin by setting localization, filters, and administration functions.
 	 * @since     1.0.0
@@ -104,7 +142,7 @@ class PixCustomifyPlugin {
 
 		// Load public-facing style sheet and JavaScript.
 //		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_styles' ), 99999999999 );
-		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
+//		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 
 //		add_action( 'plugins_loaded', array( $this, 'register_metaboxes' ), 14 );
 		add_action( 'customize_controls_enqueue_scripts', array( $this, 'enqueue_admin_customizer_styles' ), 10 );
@@ -164,7 +202,7 @@ class PixCustomifyPlugin {
 			self::$customizer_config = array();
 		}
 
-		// alllow themes or other plugins to filter the config
+		// allow themes or other plugins to filter the config
 		self::$customizer_config = apply_filters( 'customify_filter_fields', self::$customizer_config );
 
 		self::$opt_name = self::$localized['options_name'] = self::$customizer_config['opt-name'];
@@ -381,8 +419,10 @@ class PixCustomifyPlugin {
 			$this->plugin_slug . 'cssUpdate'
 		), $this->version, true );
 
-		wp_localize_script( $this->plugin_slug . '-previewer-scripts', 'customify_settings', self::$localized );
+		// when a live preview field is in action we need to know which props need 'px' as defaults
+		self::$localized['px_dependent_css_props'] = self::$pixel_dependent_css_properties;
 
+		wp_localize_script( $this->plugin_slug . '-previewer-scripts', 'customify_settings', self::$localized );
 	}
 
 	/**
@@ -751,6 +791,12 @@ class PixCustomifyPlugin {
 		if ( isset( $css_property['unit'] ) ) {
 			$unit = $css_property['unit'];
 		}
+
+		// if the unit isn't specified but the property should have a unit force 'px' as it
+		if ( empty( $unit ) && in_array( $css_property['property'], self::$pixel_dependent_css_properties ) ) {
+			$unit = 'px';
+		}
+
 		$this_property_output = $css_property['selector'] . ' { ' . $css_property['property'] . ': ' . $this_value . $unit . "; } \n";
 
 		if ( isset( $css_property['callback_filter'] ) && function_exists( $css_property['callback_filter'] ) ) {

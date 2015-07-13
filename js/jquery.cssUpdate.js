@@ -10,7 +10,7 @@
 	};
 
 	// Plugin constructor
-	function Plugin ( element, options ) {
+	function cssLiveUpdater ( element, options ) {
 		this.element = element;
 		this.settings = $.extend( {}, defaults, options );
 		this._defaults = defaults;
@@ -19,8 +19,19 @@
 		this.init();
 	}
 
-	Plugin.prototype = {
+
+
+	cssLiveUpdater.prototype = {
 		init: function () {
+			this.changeProperties();
+		},
+
+		update_plugin: function ( options ) {
+			//this.element = element;
+			this.settings = $.extend( {}, defaults, options );
+			//this._defaults = defaults;
+			//this._name = pluginName;
+			//this._cssproperties = CSSOM.parse($(this.element).html());
 			this.changeProperties();
 		},
 
@@ -70,41 +81,16 @@
 			var self = this,
 				properties = settings.properties,
 				new_value = settings.propertyValue,
-			px_dependents = [
-					'padding',
-					'padding-left',
-					'padding-right',
-					'padding-top',
-					'padding-bottom',
-					'border-size',
-					'margin',
-					'width',
-					'max-width',
-					'min-width',
-					'height',
-					'max-height',
-					'min-height',
-					'margin-right',
-					'margin-left',
-					'margin-top',
-					'margin-bottom',
-					'right',
-					'left',
-					'top',
-					'bottom',
-					'font-size',
-					'letter-spacing',
-					'border-width',
-					'border-bottom-width',
-					'border-left-width',
-					'border-right-width',
-					'border-top-width'
-				],
 			// if there is a negative property ... keep it negative
 			is_negative = self.is_negative_property(property_name, properties, selectorText );
 
 			var unit = '';
-			if ( px_dependents.indexOf(property_name) != -1 ) {
+
+			if ( typeof this.settings.unit !== 'undefined' ) {
+				unit = this.settings.unit;
+			}
+
+			if (  unit === '' && customify_settings.px_dependent_css_props.indexOf(property_name) != -1 ) {
 				unit = 'px';
 			}
 
@@ -133,15 +119,20 @@
 			}
 
 			return '';
-
 		}
 	};
 
 	// Plugin wrapper
 	$.fn[ pluginName ] = function ( options ) {
-
 		this.each(function() {
-			$.data( this, "plugin_" + pluginName, new Plugin( this, options ) );
+
+			var old_plugin = $(this).data( 'plugin_cssUpdate' );
+
+			if ( typeof old_plugin !== 'undefined' ) {
+				old_plugin.update_plugin( options );
+			} else {
+				$.data( this, "plugin_" + pluginName, new cssLiveUpdater( this, options ) );
+			}
 		});
 
 		// chain jQuery functions
