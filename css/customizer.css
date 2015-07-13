@@ -421,3 +421,9 @@
 .customify_radio_image label input[type=radio]:checked + img {
 	border: 3px solid #00a0d2;
 }
+
+.customify_ace_editor {
+	display: block;
+	min-height: 200px;
+	border: 1px solid #ddd;
+}

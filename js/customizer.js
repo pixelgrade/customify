@@ -11,7 +11,6 @@
 					css_editor = ace.edit( id );
 
 				var editor_type = $( this ).data('editor_type');
-
 				// init the ace editor
 				css_editor.setTheme("ace/theme/github");
 				css_editor.getSession().setMode("ace/mode/" + editor_type);
