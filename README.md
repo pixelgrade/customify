@@ -142,11 +142,11 @@ function this_setting_can_call_this_function( $value, $selector, $property, $uni
 
 ```
 
-Fields  | [Live Preview Support!](#live_preview_support) | Description
+Fields<a name="list_of_fields"></a>  | [Live Preview Support!](#live_preview_support) | Description
 ------------- | ------------- | -------------
-Text  | No | A simple text input
-Textarea | No | A simple text area input
-Ace Editor | No | An ace editor that supports plain_text / css / html / javascript / json / markdown
+Text  | Yes [with classes](#live_preview_with_classes) | A simple text input
+Textarea | Yes [with classes](#live_preview_with_classes) | A simple text area input
+Ace Editor | Yes [with classes](#live_preview_with_classes) | An ace editor that supports plain_text / css / html / javascript / json / markdown
 Color | Yes | A simple color picker
 Range | Yes | The default html5 range input
 Typography | No | This is an awesome font selector, it supports standard fonts and google fonts. You can also Group fonts or offer a list of recommended fonts
@@ -166,6 +166,22 @@ HTML field | No | A field which allows you to add custom HTML in customizer and 
 There are a few fields which support this feature for now, but those are awesome.These fields are capable to update the previewer iframe without refreshing the iframe, the preview should be instant.
 
 This is recommended for color fields because you won't need to stop drag-and-dropping the color select to see what color would be better.
+
+**Note<a name="live_preview_with_classes"></a>** 
+All the text fields have support for a **live preview** but they require an array of classes instead of the boolean `true` for the `live` parameter.
+
+For example a fields which would provide the copyright text from footer whould be like this:
+```
+'footer_copyright' => array(
+	'type'     => 'text',
+	'label'    => 'Footer Copyright'
+	'default'  => 'All contents &copy; Pixelgrade 2011-2015'
+	'sanitize_callback' => 'wp_kses_post',
+	'live' => array( '.copyright-class' )
+)
+```
+
+For this example the element with the `.copyright-class` class will get the text replaced as soon as the user types a new text. I bet this is awesome.
 
 ### Presets<a name="presets_title"></a>
 

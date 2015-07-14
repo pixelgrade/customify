@@ -3,7 +3,7 @@ Contributors: pixelgrade, euthelup, babbardel
 Tags: customizer, css, editor, live, preview, customise
 Requires at least: 3.9.0
 Tested up to: 4.2.2
-Stable tag: 1.1.4
+Stable tag: 1.1.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -13,7 +13,7 @@ Customify is a Theme Customizer Booster that you can easily use to add Fonts, Co
 
 With [Customify](https://github.com/pixelgrade/customify), developers can easily create **advanced theme-specific options** inside the WordPress Customizer. Using those options, a user can make presentational changes without having to know or edit the theme code.
 
-**Types of Fields**
+**[Types of Fields](https://github.com/pixelgrade/customify#list_of_fields)**
 
 * **Color.** A color picker used to control any text or background color of an element.
 
@@ -29,13 +29,21 @@ With [Customify](https://github.com/pixelgrade/customify), developers can easily
 
 * **[Preset](https://github.com/pixelgrade/customify/blob/master/README.md#presets_title).** A field which allows you to change a group of Customify fields.
 
+* **And more others [this is the full list](https://github.com/pixelgrade/customify#list_of_fields)
+
 == Changelog ==
+
+= 1.1.5 =
+* Added: Live-preview support for `text` and `textarea` fields.
+* Added: **Unit** parameter for css values(now we can use all the css units like em, rem, vh, all of them :D).
+* Fixed: Editor style for Typekit fonts.
+* Fixed: Editor style with default values.
 
 = 1.1.4 =
 * Added: Ace Editor field.
 * Added: HTML field.
 * Added: Sanitize callbacks parameter and a default sanitizer for the checkbox field.
-* Fixed: Slight styling issues
+* Fixed: Slight styling issues.
 
 = 1.1.2 =
 * Added: Option to add Customify's changes in the editor.
