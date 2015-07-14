@@ -38,6 +38,8 @@ With [Customify](https://github.com/pixelgrade/customify), developers can easily
 * Added: **Unit** parameter for css values(now we can use all the css units like em, rem, vh, all of them :D).
 * Fixed: Editor style for Typekit fonts.
 * Fixed: Editor style with default values.
+* Fixed: Live Preview small fixes
+* Updated: The list of google fonts is now up to date
 
 = 1.1.4 =
 * Added: Ace Editor field.
