@@ -539,8 +539,7 @@ class PixCustomifyPlugin {
 				continue;
 			}
 			$this_value = self::get_option( $option_id );
-			foreach ( $options['css'] as $key => $properties_set ) {
-				?>
+			foreach ( $options['css'] as $key => $properties_set ) { ?>
 				<style id="dynamic_setting_<?php echo $option_id . '_property_' . str_replace( '-', '_', $properties_set['property'] ); ?>" type="text/css"><?php
 
 					if ( isset( $properties_set['media'] ) && ! empty( $properties_set['media'] ) ) {
@@ -1153,8 +1152,6 @@ class PixCustomifyPlugin {
 
 		// if is a standard wp field type call it here and skip the rest
 		if ( in_array( $setting_config['type'], array(
-			'text',
-			'textarea',
 			'checkbox',
 			'dropdown-pages',
 			'url',
@@ -1182,33 +1179,55 @@ class PixCustomifyPlugin {
 		// if we arrive here this means we have a custom field control
 		switch ( $setting_config['type'] ) {
 
+			case 'text':
+
+				if ( isset( $setting_config['live'] ) ) {
+					$control_args['live'] = $setting_config['live'];
+				}
+
+				$control_class_name = 'Pix_Customize_Text_Control';
+				break;
+
+			case 'textarea':
+
+				if ( isset( $setting_config['live'] ) ) {
+					$control_args['live'] = $setting_config['live'];
+				}
+
+				$control_class_name = 'Pix_Customize_Textarea_Control';
+				break;
+
 			case 'color':
 
-				$control_class_name = 'WP_Customize_Color_Control';//'Pix_Customize_' . ucfirst( $setting_config['type'] ) . '_Control';
+				$control_class_name = 'WP_Customize_Color_Control';
 				break;
 
 			case 'color_drop':
 
-				$control_class_name = 'Pix_Customize_Color_Drop_Control';//'Pix_Customize_' . ucfirst( $setting_config['type'] ) . '_Control';
+				$control_class_name = 'Pix_Customize_Color_Drop_Control';
 				break;
 
 			case 'ace_editor':
+
+				if ( isset( $setting_config['live'] ) ) {
+					$control_args['live'] = $setting_config['live'];
+				}
 
 				if ( isset( $setting_config['editor_type'] ) ) {
 					$control_args['editor_type'] = $setting_config['editor_type'];
 				}
 
-				$control_class_name = 'Pix_Customize_Ace_Editor_Control';//'Pix_Customize_' . ucfirst( $setting_config['type'] ) . '_Control';
+				$control_class_name = 'Pix_Customize_Ace_Editor_Control';
 				break;
 
 			case 'upload':
 
-				$control_class_name = 'WP_Customize_Upload_Control';//'Pix_Customize_' . ucfirst( $setting_config['type'] ) . '_Control';
+				$control_class_name = 'WP_Customize_Upload_Control';
 				break;
 
 			case 'image':
 
-				$control_class_name = 'WP_Customize_Image_Control';//'Pix_Customize_' . ucfirst( $setting_config['type'] ) . '_Control';
+				$control_class_name = 'WP_Customize_Image_Control';
 				break;
 
 			// Custom types
