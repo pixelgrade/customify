@@ -846,25 +846,30 @@ class PixCustomifyPlugin {
 						}
 					};
 
-					// Create style element if needed
-					var styleElement = document.getElementById('mies_editor_style');
+					var xmlString = <?php echo json_encode( str_replace("\n", "", $custom_css ) ); ?>,
+						parser = new DOMParser(),
+						doc = parser.parseFromString( xmlString, "text/html" );
 
-					if (!styleElement) {
+					if ( typeof window.frames['content_ifr'] !== 'undefined' ) {
 
-						var xmlString = <?php echo json_encode( str_replace("\n", "", $custom_css ) ); ?>
-							, parser = new DOMParser()
-							, doc = parser.parseFromString(xmlString, "text/html");
+						$.each( doc.head.childNodes, function( key, el ){
 
-						if ( typeof window.frames['content_ifr'] !== 'undefined' ) {
+							if ( typeof el !== "undefined" && typeof el.tagName !== "undefined" ) {
 
-							append_script_to_iframe( 'content_ifr', doc.head.childNodes[0] );
+								switch ( el.tagName ) {
 
-							// doc.head.childNodes[2] is the typography style#customify_typography_output_style
-							append_style_to_iframe( 'content_ifr', doc.head.childNodes[2] );
-							//doc.head.childNodes[3] is the customify dynamic style #customify_output_style
-							append_style_to_iframe( 'content_ifr', doc.head.childNodes[3] );
+									case 'STYLE' :
+										append_style_to_iframe( 'content_ifr', el );
+										break;
 
-						}
+									case 'SCRIPT' :
+										append_script_to_iframe( 'content_ifr', el );
+										break;
+									default:
+										break;
+								}
+							}
+						});
 					}
 				});
 			})(jQuery);
