@@ -29,7 +29,7 @@ With [Customify](https://github.com/pixelgrade/customify), developers can easily
 
 * **[Preset](https://github.com/pixelgrade/customify/blob/master/README.md#presets_title).** A field which allows you to change a group of Customify fields.
 
-* **And more others [this is the full list](https://github.com/pixelgrade/customify#list_of_fields)
+* **And others** [this is the full list](https://github.com/pixelgrade/customify#list_of_fields)
 
 == Changelog ==
 
