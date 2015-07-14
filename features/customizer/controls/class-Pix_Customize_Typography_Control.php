@@ -290,7 +290,12 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 
 		$new_array = array();
 		foreach (self::$google_fonts as $key => $font ){
-			$new_array[$font->family] = $font;
+			// unset unused data
+			unset( $font['kind'] );
+			unset( $font['version'] );
+			unset( $font['lastModified'] );
+			unset( $font['files'] );
+			$new_array[$font['family']] = $font;
 		}
 
 		file_put_contents( plugin_dir_path( __FILE__ ) . 'resources/google.fonts.json', json_encode($new_array) );
