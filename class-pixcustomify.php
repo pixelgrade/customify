@@ -80,31 +80,25 @@ class PixCustomifyPlugin {
 		'width',
 		'max-width',
 		'min-width',
-
 		'height',
 		'max-height',
 		'min-height',
-
 		'padding',
 		'padding-left',
 		'padding-right',
 		'padding-top',
 		'padding-bottom',
-
 		'margin',
 		'margin-right',
 		'margin-left',
 		'margin-top',
 		'margin-bottom',
-
 		'right',
 		'left',
 		'top',
 		'bottom',
-
 		'font-size',
 		'letter-spacing',
-
 		'border-size',
 		'border-width',
 		'border-bottom-width',
@@ -149,7 +143,7 @@ class PixCustomifyPlugin {
 		add_action( 'customize_controls_enqueue_scripts', array( $this, 'enqueue_admin_customizer_scripts' ), 10 );
 		add_action( 'customize_preview_init', array( $this, 'customizer_live_preview_enqueue_scripts' ), 99999 );
 
-		$load_location = self::get_plugin_option('style_resources_location', 'wp_head');
+		$load_location = self::get_plugin_option( 'style_resources_location', 'wp_head' );
 
 		add_action( $load_location, array( $this, 'output_dynamic_style' ), 99999 );
 		add_action( 'wp_head', array( $this, 'output_typography_dynamic_style' ), 10 );
@@ -161,7 +155,7 @@ class PixCustomifyPlugin {
 		add_action( 'customize_register', array( $this, 'register_customizer' ), 12 );
 
 		if ( self::get_plugin_option( 'enable_editor_style', true ) ) {
-			add_action('admin_head', array( $this, 'add_customizer_settings_into_wp_editor' ) );
+			add_action( 'admin_head', array( $this, 'add_customizer_settings_into_wp_editor' ) );
 		}
 
 		/**
@@ -540,7 +534,9 @@ class PixCustomifyPlugin {
 			}
 			$this_value = self::get_option( $option_id );
 			foreach ( $options['css'] as $key => $properties_set ) { ?>
-				<style id="dynamic_setting_<?php echo $option_id . '_property_' . str_replace( '-', '_', $properties_set['property'] ); ?>" type="text/css"><?php
+				<style
+					id="dynamic_setting_<?php echo $option_id . '_property_' . str_replace( '-', '_', $properties_set['property'] ); ?>"
+					type="text/css"><?php
 
 					if ( isset( $properties_set['media'] ) && ! empty( $properties_set['media'] ) ) {
 						echo '@media '. $properties_set['media'] . " {\n";
@@ -574,7 +570,7 @@ class PixCustomifyPlugin {
 						continue;
 					}
 
-					$display = true;?>
+					$display = true; ?>
 					<style id="dynamic_setting_<?php echo $key; ?>" type="text/css"><?php
 						$property_settings = $property['property'];
 						$property_value    = $property['value'];
@@ -600,7 +596,7 @@ class PixCustomifyPlugin {
 			self::$google_fonts = require( $fonts_path );
 		}
 
-		if ( !empty( self::$google_fonts ) ) {
+		if ( ! empty( self::$google_fonts ) ) {
 			return self::$google_fonts;
 		}
 
@@ -636,7 +632,7 @@ class PixCustomifyPlugin {
 				if ( isset( $value['font_family'] ) && isset( $value['type'] ) && $value['type'] == 'google' ) {
 					$families .= "'" . $value['font_family'];
 
-					if ( $load_all_weights ){
+					if ( $load_all_weights && isset( $value['variants'] ) && ! empty( $value['variants'] ) ) {
 						$families .= ":" . implode( ',', $value['variants'] );
 					} elseif ( isset( $value['selected_variants'] ) && ! empty( $value['selected_variants'] ) ) {
 						$families .= ":" . implode( ',', $value['selected_variants'] );
@@ -657,24 +653,24 @@ class PixCustomifyPlugin {
 
 		if ( ! empty ( $families ) ) { ?>
 			<script type="text/javascript">
-				if ( typeof WebFont !== 'undefined' ) {<?php // if there is a WebFont object, use it ?>
-					WebFont.load( {
+				if (typeof WebFont !== 'undefined') {<?php // if there is a WebFont object, use it ?>
+					WebFont.load({
 						google: {families: [<?php echo (rtrim( $families, ',' ) ); ?>]},
 						classes: false,
 						events: false
-					} );
+					});
 				} else {<?php // basically when we don't have the WebFont object we create the google script dynamically  ?>
 
 					var tk = document.createElement('script');
 					tk.src = '//ajax.googleapis.com/ajax/libs/webfont/1.5.3/webfont.js';
 					tk.type = 'text/javascript';
 
-					tk.onload = tk.onreadystatechange = function() {
-						WebFont.load( {
+					tk.onload = tk.onreadystatechange = function () {
+						WebFont.load({
 							google: {families: [<?php echo (rtrim( $families, ',' ) ); ?>]},
 							classes: false,
 							events: false
-						} );
+						});
 					};
 
 					var s = document.getElementsByTagName('script')[0];
@@ -741,9 +737,10 @@ class PixCustomifyPlugin {
 		}
 
 		if ( isset( self::$google_fonts[ $font_name ] ) ) {
-			$value = self::$google_fonts[ $font_name ];
+			$value                = self::$google_fonts[ $font_name ];
 			$value['font_family'] = $font_name;
-			$value['type'] = 'google';
+			$value['type']        = 'google';
+
 			return $value;
 		}
 
@@ -752,6 +749,7 @@ class PixCustomifyPlugin {
 
 	/**
 	 * Turn css options into a valid CSS output
+	 *
 	 * @param $option_id
 	 * @param array $css_config
 	 *
@@ -810,7 +808,7 @@ class PixCustomifyPlugin {
 	/**
 	 * add our customizer styling edits into the wp_editor
 	 */
-	function add_customizer_settings_into_wp_editor(  ){
+	function add_customizer_settings_into_wp_editor() {
 
 		ob_start();
 		$this->output_typography_dynamic_style();
@@ -819,14 +817,14 @@ class PixCustomifyPlugin {
 		$custom_css = ob_get_clean(); ?>
 		<script type="text/javascript">
 			/* <![CDATA[ */
-			(function($){
-				$(window).load(function(){
+			(function ($) {
+				$(window).load(function () {
 					/**
 					 * @param iframe_id the id of the frame you whant to append the style
 					 * @param style_element the style element you want to append
 					 */
-					var append_script_to_iframe = function( ifrm_id, scriptEl ) {
-						var  myIframe = document.getElementById(ifrm_id);
+					var append_script_to_iframe = function (ifrm_id, scriptEl) {
+						var myIframe = document.getElementById(ifrm_id);
 
 						var script = myIframe.contentWindow.document.createElement("script");
 						script.type = "text/javascript";
@@ -835,34 +833,34 @@ class PixCustomifyPlugin {
 						myIframe.contentWindow.document.head.appendChild(script);
 					};
 
-					var append_style_to_iframe = function( ifrm_id, styleElment ) {
-						var ifrm = window.frames[ ifrm_id ];
+					var append_style_to_iframe = function (ifrm_id, styleElment) {
+						var ifrm = window.frames[ifrm_id];
 						ifrm = ( ifrm.contentDocument || ifrm.contentDocument || ifrm.document );
 						var head = ifrm.getElementsByTagName('head')[0];
 
-						if ( typeof styleElment !== "undefined" ){
-							head.appendChild( styleElment );
+						if (typeof styleElment !== "undefined") {
+							head.appendChild(styleElment);
 						}
 					};
 
 					var xmlString = <?php echo json_encode( str_replace("\n", "", $custom_css ) ); ?>,
 						parser = new DOMParser(),
-						doc = parser.parseFromString( xmlString, "text/html" );
+						doc = parser.parseFromString(xmlString, "text/html");
 
-					if ( typeof window.frames['content_ifr'] !== 'undefined' ) {
+					if (typeof window.frames['content_ifr'] !== 'undefined') {
 
-						$.each( doc.head.childNodes, function( key, el ){
+						$.each(doc.head.childNodes, function (key, el) {
 
-							if ( typeof el !== "undefined" && typeof el.tagName !== "undefined" ) {
+							if (typeof el !== "undefined" && typeof el.tagName !== "undefined") {
 
-								switch ( el.tagName ) {
+								switch (el.tagName) {
 
 									case 'STYLE' :
-										append_style_to_iframe( 'content_ifr', el );
+										append_style_to_iframe('content_ifr', el);
 										break;
 
 									case 'SCRIPT' :
-										append_script_to_iframe( 'content_ifr', el );
+										append_script_to_iframe('content_ifr', el);
 										break;
 									default:
 										break;
@@ -978,16 +976,21 @@ class PixCustomifyPlugin {
 			if ( self::$plugin_settings['enable_reset_buttons'] ) {
 				// create a toolbar section which will be present all the time
 				$reset_section_settings = array(
-					'title' => 'Customify toolbar',
+					'title'   => 'Customify toolbar',
 					'options' => array(
-						'reset_all_button' => array( 'type' => 'button', 'label' => 'Reset Customify', 'action' => 'reset_customify', 'value' => 'Reset'),
+						'reset_all_button' => array(
+							'type'   => 'button',
+							'label'  => 'Reset Customify',
+							'action' => 'reset_customify',
+							'value'  => 'Reset'
+						),
 					)
 				);
 
 				$wp_customize->add_section(
 					'customify_toolbar',
 					array(
-						'title' => '',
+						'title'    => '',
 						'priority' => 999999999
 					)
 				);
@@ -1000,12 +1003,12 @@ class PixCustomifyPlugin {
 					$wp_customize,
 					'reset_customify',
 					array(
-						'label'      => __( 'Reset Customify to Defaults', 'customify_txtd' ),
-						'section'    => 'customify_toolbar',
-						'settings'   => 'reset_customify',
+						'label'    => __( 'Reset Customify to Defaults', 'customify_txtd' ),
+						'section'  => 'customify_toolbar',
+						'settings' => 'reset_customify',
 						'action'   => 'reset_customify',
 					)
-				));
+				) );
 			}
 
 			// register typekit options
@@ -1013,15 +1016,15 @@ class PixCustomifyPlugin {
 
 				// create a toolbar section which will be present all the time
 				$reset_section_settings = array(
-					'title' => 'Customify Typekit Options',
+					'title'      => 'Customify Typekit Options',
 					'capability' => 'manage_options',
-					'options' => array(
-						'typkit_user' => array(
-							'type' => 'text',
+					'options'    => array(
+						'typkit_user'     => array(
+							'type'  => 'text',
 							'label' => 'Typekit Username',
 						),
 						'typkit_password' => array(
-							'type' => 'text',
+							'type'  => 'text',
 							'label' => 'Typekit Username',
 						),
 					)
@@ -1034,7 +1037,7 @@ class PixCustomifyPlugin {
 
 	protected function register_section( $panel_id, $section_key, $options_name, $section_settings, $wp_customize ) {
 
-		if ( isset( self::$plugin_settings['disable_customify_sections'] ) && isset( self::$plugin_settings['disable_customify_sections'][$section_key] ) ) {
+		if ( isset( self::$plugin_settings['disable_customify_sections'] ) && isset( self::$plugin_settings['disable_customify_sections'][ $section_key ] ) ) {
 			return;
 		}
 
@@ -1044,7 +1047,7 @@ class PixCustomifyPlugin {
 			'title'      => __( 'Title Section is required', 'textdomain' ),
 			'panel'      => $panel_id,
 		);
-		$section_id = $options_name . '[' . $section_key . ']';
+		$section_id   = $options_name . '[' . $section_key . ']';
 
 		if ( isset( $section_settings['priority'] ) && ! empty( $section_settings['priority'] ) ) {
 			$section_args['priority'] = $section_settings['priority'];
@@ -1116,7 +1119,7 @@ class PixCustomifyPlugin {
 
 			case 'checkbox':
 
-				$setting_args['sanitize_callback'] = array( $this, 'setting_sanitize_checkbox');
+				$setting_args['sanitize_callback'] = array( $this, 'setting_sanitize_checkbox' );
 				break;
 
 			default:
@@ -1162,8 +1165,12 @@ class PixCustomifyPlugin {
 			'search'
 		) ) ) {
 			$wp_customize->add_control( $setting_id . '_control', $control_args );
+
 			return;
-		} elseif ( in_array( $setting_config['type'], array( 'radio', 'select' ) ) && isset( $setting_config['choices'] ) && ! empty( $setting_config['choices'] )
+		} elseif ( in_array( $setting_config['type'], array(
+				'radio',
+				'select'
+			) ) && isset( $setting_config['choices'] ) && ! empty( $setting_config['choices'] )
 		) {
 			$control_args['choices'] = $setting_config['choices'];
 			$wp_customize->add_control( $setting_id . '_control', $control_args );
@@ -1233,7 +1240,7 @@ class PixCustomifyPlugin {
 			// Custom types
 			case 'typography' :
 
-				$use_typography = self::get_plugin_option('typography', '1');
+				$use_typography = self::get_plugin_option( 'typography', '1' );
 
 				if ( $use_typography === false ) {
 					$add_control = false;
@@ -1404,7 +1411,8 @@ class PixCustomifyPlugin {
 	/**
 	 * Sanitize the checkbox.
 	 *
-	 * @param boolean $input.
+	 * @param boolean $input .
+	 *
 	 * @return boolean true if is 1 or '1', false if anything else
 	 */
 	function setting_sanitize_checkbox( $input ) {
