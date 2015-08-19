@@ -618,3 +618,13 @@ $popup 		: 275px;
 	min-height: 200px;
 	border: 1px solid #ddd;
 }
+
+.customize-control-custom_background {
+
+	.hide_selects {
+		select {
+			display: none;
+		}
+	}
+
+}

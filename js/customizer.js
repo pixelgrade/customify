@@ -498,10 +498,10 @@
 						return;
 					}
 
-					selector.find('.upload').val(attachment.attributes.url);
-					selector.find('.upload-id').val(attachment.attributes.id);
-					selector.find('.upload-height').val(attachment.attributes.height);
-					selector.find('.upload-width').val(attachment.attributes.width);
+					selector.find('.upload').attr( 'value', attachment.attributes.url);
+					selector.find('.upload-id').attr( 'value', attachment.attributes.id);
+					selector.find('.upload-height').attr( 'value', attachment.attributes.height);
+					selector.find('.upload-width').attr( 'value', attachment.attributes.width);
 
 					var thumbSrc = attachment.attributes.url;
 					if (typeof attachment.attributes.sizes !== 'undefined' && typeof attachment.attributes.sizes.thumbnail !== 'undefined') {
@@ -554,16 +554,8 @@
 					return;
 				}
 
-				//var split = parent.data('id') + '][';
-				//var css = 'height:' + image_holder.height() + 'px;';
-
 				var the_id = $parent.find('.button.background_upload_button').data('setting_id'),
 					this_setting = api.instance(the_id);
-
-				//var control = api.control( the_id ),
-
-				//// get a default
-				//var default_default = control.setting();
 
 				var background_data = {};
 
@@ -601,8 +593,6 @@
 					return;
 				}
 
-				var customizer_id = selector.find('.background_upload_button').data('setting_id');
-
 				selector.find('.remove-image').addClass('hide');//hide "Remove" button
 				selector.find('.upload').val('');
 				selector.find('.upload-id').val('');
@@ -610,31 +600,23 @@
 				selector.find('.upload-width').val('');
 				parent.find('.customify_background_input.background-image').val('');
 
-				var screenshot = parent.find('.preview_screenshot');
+				var customizer_id = selector.find('.background_upload_button').data('setting_id'),
+					this_setting = api.control( customizer_id + '_control'),
+					current_vals = this_setting.setting(),
+					screenshot = parent.find('.preview_screenshot'),
+					to_array = $.map(current_vals, function(value, index) {
+						return [value];
+					});
 
 				// Hide the screenshot
 				screenshot.slideUp();
-
 				selector.find('.remove-file').unbind();
-
-				var this_setting = api.control( customizer_id + '_control');
-
-				var current_vals = this_setting.setting();
-
-				var to_array = $.map(current_vals, function(value, index) {
-					return [value];
-				});
-
 				to_array['background-image'] = '';
-
 				this_setting.setting(to_array);
 			}
 
 			return {
 				init: init
-				//addImage: addImage,
-				//preview: preview,
-				//removeImage: removeImage
 			}
 		})(jQuery);
 

@@ -41,37 +41,46 @@ class Pix_Customize_Background_Control extends Pix_Customize_Control {
 
 		if ( $this->field['background-image'] === true ) {
 
-			if ( empty( $this->value ) && ! empty( $this->field['default'] ) ) { // If there are standard values and value is empty
-				if ( is_array( $this->field['default'] ) ) {
-					if ( ! empty( $this->field['default']['media']['id'] ) ) {
-						$this->value['media']['id'] = $this->field['default']['media']['id'];
-					} else if ( ! empty( $this->field['default']['id'] ) ) {
-						$this->value['media']['id'] = $this->field['default']['id'];
-					}
-
-					if ( ! empty( $this->field['default']['url'] ) ) {
-						$this->value['background-image'] = $this->field['default']['url'];
-					} else if ( ! empty( $this->field['default']['media']['url'] ) ) {
-						$this->value['background-image'] = $this->field['default']['media']['url'];
-					} else if ( ! empty( $this->field['default']['background-image'] ) ) {
-						$this->value['background-image'] = $this->field['default']['background-image'];
-					}
-
-				} else {
-					if ( is_numeric( $this->field['default'] ) ) { // Check if it's an attachment ID
-						$this->value['media']['id'] = $this->field['default'];
-					} else { // Must be a URL
-						$this->value['background-image'] = $this->field['default'];
-					}
-				}
-			}
-
+			// NO defaults for now
+//			if ( empty( $this->value ) && ! empty( $this->field['default'] ) ) { // If there are standard values and value is empty
+//				if ( is_array( $this->field['default'] ) ) {
+//					if ( ! empty( $this->field['default']['media']['id'] ) ) {
+//						$this->value['media']['id'] = $this->field['default']['media']['id'];
+//					} else if ( ! empty( $this->field['default']['id'] ) ) {
+//						$this->value['media']['id'] = $this->field['default']['id'];
+//					}
+//
+//					if ( ! empty( $this->field['default']['url'] ) ) {
+//						$this->value['background-image'] = $this->field['default']['url'];
+//					} else if ( ! empty( $this->field['default']['media']['url'] ) ) {
+//						$this->value['background-image'] = $this->field['default']['media']['url'];
+//					} else if ( ! empty( $this->field['default']['background-image'] ) ) {
+//						$this->value['background-image'] = $this->field['default']['background-image'];
+//					}
+//
+//				} else {
+//					if ( is_numeric( $this->field['default'] ) ) { // Check if it's an attachment ID
+//						$this->value['media']['id'] = $this->field['default'];
+//					} else { // Must be a URL
+//						$this->value['background-image'] = $this->field['default'];
+//					}
+//				}
+//			}
 
 			if ( empty( $this->value['background-image'] ) && ! empty( $this->value['media']['id'] ) ) {
 				$img                             = wp_get_attachment_image_src( $this->value['media']['id'], 'full' );
 				$this->value['background-image'] = $img[0];
 				$this->value['media']['width']   = $img[1];
 				$this->value['media']['height']  = $img[2];
+			}
+
+			if ( ! isset( $this->value['media'] ) || empty( $this->value['media'] ) ) {
+				$this->value['media'] = array(
+					'id' => '',
+					'height' => '',
+					'width' => '',
+					'thumbnail' => ''
+				);
 			}
 
 			$hide = 'hide ';
