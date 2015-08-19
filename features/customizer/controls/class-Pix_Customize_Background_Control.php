@@ -23,7 +23,7 @@ class Pix_Customize_Background_Control extends Pix_Customize_Control {
 		'background-clip'       => false,
 		'background-origin'     => false,
 		'background-size'       => true,
-		'preview_media'         => false,
+		'preview_media'         => true,
 		'preview'               => true,
 		'preview_height'        => '200px',
 		'transparent'           => true,
@@ -35,108 +35,9 @@ class Pix_Customize_Background_Control extends Pix_Customize_Control {
 	 */
 	public function render_content() {
 
-//		var_dump( $this );
+		// ensure some values
 		$this->value = $this->value();
 		$this->field = array_merge( $this->field, $this->field_defaults );
-
-		if ( $this->field['background-repeat'] === true ) {
-			$array = array(
-				'no-repeat' => 'No Repeat',
-				'repeat'    => 'Repeat All',
-				'repeat-x'  => 'Repeat Horizontally',
-				'repeat-y'  => 'Repeat Vertically',
-				'inherit'   => 'Inherit',
-			);
-
-			echo '<select id="' . $this->id . '-repeat-select" name="' . $this->setting->id . '[background-repeat]" class="customify_background_select background-repeat ' . $this->field['class'] . '">';
-			echo '<option></option>';
-				foreach ( $array as $k => $v ) {
-					echo '<option value="' . $k . '"' . selected( $this->value['background-repeat'], $k, false ) . '>' . $v . '</option>';
-				}
-			echo '</select>';
-		}
-
-		if ( $this->field['background-clip'] === true ) {
-			$array = array(
-				'inherit'     => 'Inherit',
-				'border-box'  => 'Border Box',
-				'content-box' => 'Content Box',
-				'padding-box' => 'Padding Box',
-			);
-			echo '<select id="' . $this->id . '-repeat-select" name="' . $this->setting->id . '[background-clip]" class="customify_background_select background-clip ' . $this->field['class'] . '">';
-			echo '<option></option>';
-
-			foreach ( $array as $k => $v ) {
-				echo '<option value="' . $k . '"' . selected( $this->value['background-clip'], $k, false ) . '>' . $v . '</option>';
-			}
-			echo '</select>';
-		}
-
-		if ( $this->field['background-origin'] === true ) {
-			$array = array(
-				'inherit'     => 'Inherit',
-				'border-box'  => 'Border Box',
-				'content-box' => 'Content Box',
-				'padding-box' => 'Padding Box',
-			);
-			echo '<select id="' . $this->id . '-repeat-select" name="' . $this->setting->id . '[background-origin]" class="customify_background_select background-origin ' . $this->field['class'] . '">';
-			echo '<option></option>';
-
-			foreach ( $array as $k => $v ) {
-				echo '<option value="' . $k . '"' . selected( $this->value['background-origin'], $k, false ) . '>' . $v . '</option>';
-			}
-			echo '</select>';
-		}
-
-		if ( $this->field['background-size'] === true ) {
-			$array = array(
-				'inherit' => 'Inherit',
-				'cover'   => 'Cover',
-				'contain' => 'Contain',
-			);
-			echo '<select id="' . $this->id . '-repeat-select" name="' . $this->label . '[background-size]" class="customify_background_select background-size ' . $this->field['class'] . '">';
-			echo '<option></option>';
-
-			foreach ( $array as $k => $v ) {
-				echo '<option value="' . $k . '"' . selected( $this->value['background-size'], $k, false ) . '>' . $v . '</option>';
-			}
-			echo '</select>';
-		}
-
-		if ( $this->field['background-attachment'] === true ) {
-			$array = array(
-				'fixed'   => 'Fixed',
-				'scroll'  => 'Scroll',
-				'inherit' => 'Inherit',
-			);
-			echo '<select id="' . $this->id . '-attachment-select" name="' . $this->setting->id . '[background-attachment]" class="customify_background_select background-attachment ' . $this->field['class'] . '">';
-			echo '<option></option>';
-			foreach ( $array as $k => $v ) {
-				echo '<option value="' . $k . '"' . selected( $this->value['background-attachment'], $k, false ) . '>' . $v . '</option>';
-			}
-			echo '</select>';
-		}
-
-		if ( $this->field['background-position'] === true ) {
-			$array = array(
-				'left top'      => 'Left Top',
-				'left center'   => 'Left center',
-				'left bottom'   => 'Left Bottom',
-				'center top'    => 'Center Top',
-				'center center' => 'Center Center',
-				'center bottom' => 'Center Bottom',
-				'right top'     => 'Right Top',
-				'right center'  => 'Right center',
-				'right bottom'  => 'Right Bottom',
-			);
-			echo '<select id="' . $this->id . '-position-select" name="' . $this->setting->id . '[background-position]" class="customify_background_select background-position ' . $this->field['class'] . '">';
-			echo '<option></option>';
-
-			foreach ( $array as $k => $v ) {
-				echo '<option value="' . $k . '"' . selected( $this->value['background-position'], $k, false ) . '>' . $v . '</option>';
-			}
-			echo '</select>';
-		}
 
 		if ( $this->field['background-image'] === true ) {
 
@@ -183,10 +84,10 @@ class Pix_Customize_Background_Control extends Pix_Customize_Control {
 				$hide = '';
 			}
 
-			$placeholder = isset( $this->field['placeholder'] ) ? $this->field['placeholder'] : __( 'No media selected', 'redux-framework' );
+			$placeholder = isset( $this->field['placeholder'] ) ? $this->field['placeholder'] : __( 'No media selected', 'customify_txtd' );
 
 
-			echo '<input placeholder="' . $placeholder . '" type="text" class="redux-background-input ' . $hide . 'upload ' . $this->field['class'] . '" name="' . $this->label . '[background-image]" id="' . $this->manager->options_key . '[' . $this->id . '][background-image]" value="' . $this->value['background-image'] . '" />';
+			echo '<input placeholder="' . $placeholder . '" type="text" class="customify_background_input background-image ' . $hide . 'upload ' . $this->field['class'] . '" name="' . $this->label . '[background-image]" id="' . $this->manager->options_key . '[' . $this->id . '][background-image]" value="' . $this->value['background-image'] . '"  data-select_name="background-image" data-customize-setting-link="' . esc_attr( $this->setting->id ) . '[background-image]"/>';
 			echo '<input type="hidden" class="upload-id ' . $this->field['class'] . '" name="' . $this->manager->options_key . '[media][id]" id="' . $this->manager->options_key . '[' . $this->id . '][media][id]" value="' . $this->value['media']['id'] . '" />';
 			echo '<input type="hidden" class="upload-height" name="' . $this->manager->options_key . '[media][height]" id="' . $this->manager->options_key . '[' . $this->id . '][media][height]" value="' . $this->value['media']['height'] . '" />';
 			echo '<input type="hidden" class="upload-width" name="' . $this->manager->options_key . '[media][width]" id="' . $this->manager->options_key . '[' . $this->id . '][media][width]" value="' . $this->value['media']['width'] . '" />';
@@ -211,26 +112,125 @@ class Pix_Customize_Background_Control extends Pix_Customize_Control {
 				}
 			}
 
-			echo '<div class="' . $hide . 'screenshot">';
-			echo '<a class="of-uploaded-image" href="' . $this->value['background-image'] . '" target="_blank">';
-			echo '<img class="redux-option-image" id="image_' . $this->value['media']['id'] . '" src="' . $this->value['media']['thumbnail'] . '" alt="" target="_blank" rel="external" />';
-			echo '</a>';
+			echo '<div class="' . $hide . 'preview_screenshot">';
+				echo '<a class="of-uploaded-image" href="' . $this->value['background-image'] . '" target="_blank">';
+					echo '<img class="preview_image" id="image_' . $this->value['media']['id'] . '" src="' . $this->value['media']['thumbnail'] . '" alt="" target="_blank" rel="external" />';
+				echo '</a>';
 			echo '</div>';
 
 			//Upload controls DIV
 			echo '<div class="upload_button_div">';
 
-			//If the user has WP3.5+ show upload/remove button
-			echo '<span class="button background_upload_button" id="' . $this->id . '-media">' . __( 'Upload', 'redux-framework' ) . '</span>';
+				//If the user has WP3.5+ show upload/remove button
+				echo '<span class="button background_upload_button" id="' . $this->id . '-media" data-setting_id="' . $this->setting->id .'" >' . __( 'Upload', 'customify_txtd' ) . '</span>';
 
-			$hide = '';
-			if ( empty( $this->value['background-image'] ) || $this->value['background-image'] == '' ) {
-				$hide = ' hide';
-			}
+				$hide = '';
+				if ( empty( $this->value['background-image'] ) || $this->value['background-image'] == '' ) {
+					$hide = ' hide';
+				}
 
-			echo '<span class="button remove-image' . $hide . '" id="reset_' . $this->id . '" rel="' . $this->id . '">' . __( 'Remove', 'redux-framework' ) . '</span>';
+				echo '<span class="button remove-image' . $hide . '" id="reset_' . $this->id . '" rel="' . $this->id . '">' . __( 'Remove', 'customify_txtd' ) . '</span>';
 
 			echo '</div>';
+		}
+
+		if ( $this->field['background-repeat'] === true ) {
+			$array = array(
+				'no-repeat' => 'No Repeat',
+				'repeat'    => 'Repeat All',
+				'repeat-x'  => 'Repeat Horizontally',
+				'repeat-y'  => 'Repeat Vertically',
+				'inherit'   => 'Inherit',
+			);
+
+			echo '<select id="' . $this->id . '-repeat-select" name="' . $this->setting->id . '[background-repeat]" class="customify_background_select ' . $this->field['class'] . '" data-select_name="background-repeat" data-customize-setting-link="' . esc_attr( $this->setting->id ) . '[background-repeat]">';
+			echo '<option></option>';
+				foreach ( $array as $k => $v ) {
+					echo '<option value="' . $k . '"' . selected( $this->value['background-repeat'], $k, false ) . '>' . $v . '</option>';
+				}
+			echo '</select>';
+		}
+
+		if ( $this->field['background-clip'] === true ) {
+			$array = array(
+				'inherit'     => 'Inherit',
+				'border-box'  => 'Border Box',
+				'content-box' => 'Content Box',
+				'padding-box' => 'Padding Box',
+			);
+			echo '<select id="' . $this->id . '-repeat-select" name="' . $this->setting->id . '[background-clip]" class="customify_background_select ' . $this->field['class'] . '" data-select_name="background-clip" data-customize-setting-link="' . esc_attr( $this->setting->id ) . '[background-clip]">';
+			echo '<option></option>';
+
+			foreach ( $array as $k => $v ) {
+				echo '<option value="' . $k . '"' . selected( $this->value['background-clip'], $k, false ) . '>' . $v . '</option>';
+			}
+			echo '</select>';
+		}
+
+		if ( $this->field['background-origin'] === true ) {
+			$array = array(
+				'inherit'     => 'Inherit',
+				'border-box'  => 'Border Box',
+				'content-box' => 'Content Box',
+				'padding-box' => 'Padding Box',
+			);
+			echo '<select id="' . $this->id . '-repeat-select" name="' . $this->setting->id . '[background-origin]" class="customify_background_select ' . $this->field['class'] . '" data-select_name="background-origin" data-customize-setting-link="' . esc_attr( $this->setting->id ) . '[background-origin]">';
+			echo '<option></option>';
+
+			foreach ( $array as $k => $v ) {
+				echo '<option value="' . $k . '"' . selected( $this->value['background-origin'], $k, false ) . '>' . $v . '</option>';
+			}
+			echo '</select>';
+		}
+
+		if ( $this->field['background-size'] === true ) {
+			$array = array(
+				'inherit' => 'Inherit',
+				'cover'   => 'Cover',
+				'contain' => 'Contain',
+			);
+			echo '<select id="' . $this->id . '-repeat-select" name="' . $this->label . '[background-size]" class="customify_background_select ' . $this->field['class'] . '" data-select_name="background-size" data-customize-setting-link="' . esc_attr( $this->setting->id ) . '[background-size]">';
+			echo '<option></option>';
+
+			foreach ( $array as $k => $v ) {
+				echo '<option value="' . $k . '"' . selected( $this->value['background-size'], $k, false ) . '>' . $v . '</option>';
+			}
+			echo '</select>';
+		}
+
+		if ( $this->field['background-attachment'] === true ) {
+			$array = array(
+				'fixed'   => 'Fixed',
+				'scroll'  => 'Scroll',
+				'inherit' => 'Inherit',
+			);
+			echo '<select id="' . $this->id . '-attachment-select" name="' . $this->setting->id . '[background-attachment]" class="customify_background_select ' . $this->field['class'] . '" data-select_name="background-attachment" data-customize-setting-link="' . esc_attr( $this->setting->id ) . '[background-attachment]">';
+			echo '<option></option>';
+			foreach ( $array as $k => $v ) {
+				echo '<option value="' . $k . '"' . selected( $this->value['background-attachment'], $k, false ) . '>' . $v . '</option>';
+			}
+			echo '</select>';
+		}
+
+		if ( $this->field['background-position'] === true ) {
+			$array = array(
+				'left top'      => 'Left Top',
+				'left center'   => 'Left center',
+				'left bottom'   => 'Left Bottom',
+				'center top'    => 'Center Top',
+				'center center' => 'Center Center',
+				'center bottom' => 'Center Bottom',
+				'right top'     => 'Right Top',
+				'right center'  => 'Right center',
+				'right bottom'  => 'Right Bottom',
+			);
+			echo '<select id="' . $this->id . '-position-select" name="' . $this->setting->id . '[background-position]" class="customify_background_select ' . $this->field['class'] . '" data-select_name="background-position" data-customize-setting-link="' . esc_attr( $this->setting->id ) . '[background-position]">';
+			echo '<option></option>';
+
+			foreach ( $array as $k => $v ) {
+				echo '<option value="' . $k . '"' . selected( $this->value['background-position'], $k, false ) . '>' . $v . '</option>';
+			}
+			echo '</select>';
 		}
 	}
 }
