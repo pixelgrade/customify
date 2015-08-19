@@ -40,7 +40,8 @@
 								css_update_args.unit = this.unit;
 							}
 
-							$( '#dynamic_setting_' + sliced_id + '_property_' + property_config.property.replace('-', '_') ).cssUpdate( css_update_args );
+							var req_Exp_for_multiple_replace = new RegExp('-', 'g');
+							$( '#dynamic_setting_' + sliced_id + '_property_' + property_config.property.replace(req_Exp_for_multiple_replace, '_') ).cssUpdate( css_update_args );
 						});
 
 					});

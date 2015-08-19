@@ -596,7 +596,6 @@ class PixCustomifyPlugin {
 				if ( $display ) {
 					$custom_css .= $media_q;
 				}
-
 			}
 		}
 	}
@@ -1393,9 +1392,6 @@ class PixCustomifyPlugin {
 		);
 
 		if ( $add_control ) {
-			if ( 'Pix_Customize_Background_Control' === $control_class_name) {
-//				var_dump($this_control);
-			}
 			$wp_customize->add_control( $this_control );
 		}
 	}

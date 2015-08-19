@@ -94,7 +94,18 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 	 */
 	public function render_content() {
 
-		$values = json_decode( $this->value() );
+		$current_value = $this->value();
+
+		// if this value was an array, well it was wrong
+		if ( is_array( $current_value ) ) {
+
+			$current_value['font_family'] = $current_value['font-family'];
+			unset( $current_value['font-family'] );
+			$current_value = json_encode($current_value);
+		}
+
+		$values = json_decode( $current_value );
+
 		$font_family = '';
 		if ( isset( $values->font_family ) ) {
 			$font_family = $values->font_family;
@@ -121,7 +132,7 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 			/**
 			 * This input will hold the values of this typography field
 			 */ ?>
-			<input class="customify_typography_values" id="<?php echo $this_id; ?>" type="hidden" <?php $this->link(); ?> value='<?php echo $this->value(); ?>'/>
+			<input class="customify_typography_values" id="<?php echo $this_id; ?>" type="hidden" <?php $this->link(); ?> value='<?php echo $current_value; ?>'/>
 			<select class="customify_typography_font_family"<?php echo $select_data;?>>
 				<?php
 

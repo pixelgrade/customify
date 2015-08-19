@@ -95,7 +95,7 @@
 			}
 
 			if ( typeof window[settings.properties.callback] === "function" ) {
-				window[settings.properties.callback](new_value, selectorText, properties, unit);
+				window[settings.properties.callback](new_value, selectorText, property_name, unit );
 			}
 
 			return is_negative + new_value + unit;

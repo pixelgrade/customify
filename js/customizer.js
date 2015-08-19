@@ -584,7 +584,6 @@
 				//image_holder.attr('style', css).fadeIn();
 			}
 
-
 			// Update the background preview
 			function removeImage (parent) {
 				var selector = parent.find( '.upload_button_div' );
