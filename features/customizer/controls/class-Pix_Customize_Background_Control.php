@@ -152,7 +152,7 @@ class Pix_Customize_Background_Control extends Pix_Customize_Control {
 				'inherit'   => 'Inherit',
 			);
 
-			echo '<select id="' . $this->id . '-repeat-select" name="' . $this->setting->id . '[background-repeat]" class="customify_background_select ' . $this->field['class'] . '" data-select_name="background-repeat" data-customize-setting-link="' . esc_attr( $this->setting->id ) . '[background-repeat]">';
+			echo '<select id="' . $this->id . '-repeat-select" name="' . $this->setting->id . '[background-repeat]" class="customify_background_select ' . $this->field['class'] . ' ' . $hide . '" data-select_name="background-repeat" data-customize-setting-link="' . esc_attr( $this->setting->id ) . '[background-repeat]">';
 			echo '<option></option>';
 				foreach ( $array as $k => $v ) {
 					echo '<option value="' . $k . '"' . selected( $this->value['background-repeat'], $k, false ) . '>' . $v . '</option>';
@@ -167,7 +167,7 @@ class Pix_Customize_Background_Control extends Pix_Customize_Control {
 				'content-box' => 'Content Box',
 				'padding-box' => 'Padding Box',
 			);
-			echo '<select id="' . $this->id . '-repeat-select" name="' . $this->setting->id . '[background-clip]" class="customify_background_select ' . $this->field['class'] . '" data-select_name="background-clip" data-customize-setting-link="' . esc_attr( $this->setting->id ) . '[background-clip]">';
+			echo '<select id="' . $this->id . '-repeat-select" name="' . $this->setting->id . '[background-clip]" class="customify_background_select ' . $this->field['class'] . ' ' . $hide . '" data-select_name="background-clip" data-customize-setting-link="' . esc_attr( $this->setting->id ) . '[background-clip]">';
 			echo '<option></option>';
 
 			foreach ( $array as $k => $v ) {
@@ -183,7 +183,7 @@ class Pix_Customize_Background_Control extends Pix_Customize_Control {
 				'content-box' => 'Content Box',
 				'padding-box' => 'Padding Box',
 			);
-			echo '<select id="' . $this->id . '-repeat-select" name="' . $this->setting->id . '[background-origin]" class="customify_background_select ' . $this->field['class'] . '" data-select_name="background-origin" data-customize-setting-link="' . esc_attr( $this->setting->id ) . '[background-origin]">';
+			echo '<select id="' . $this->id . '-repeat-select" name="' . $this->setting->id . '[background-origin]" class="customify_background_select ' . $this->field['class'] . ' ' . $hide . '" data-select_name="background-origin" data-customize-setting-link="' . esc_attr( $this->setting->id ) . '[background-origin]">';
 			echo '<option></option>';
 
 			foreach ( $array as $k => $v ) {
@@ -198,7 +198,7 @@ class Pix_Customize_Background_Control extends Pix_Customize_Control {
 				'cover'   => 'Cover',
 				'contain' => 'Contain',
 			);
-			echo '<select id="' . $this->id . '-repeat-select" name="' . $this->label . '[background-size]" class="customify_background_select ' . $this->field['class'] . '" data-select_name="background-size" data-customize-setting-link="' . esc_attr( $this->setting->id ) . '[background-size]">';
+			echo '<select id="' . $this->id . '-repeat-select" name="' . $this->label . '[background-size]" class="customify_background_select ' . $this->field['class'] . ' ' . $hide . '" data-select_name="background-size" data-customize-setting-link="' . esc_attr( $this->setting->id ) . '[background-size]">';
 			echo '<option></option>';
 
 			foreach ( $array as $k => $v ) {
@@ -213,7 +213,7 @@ class Pix_Customize_Background_Control extends Pix_Customize_Control {
 				'scroll'  => 'Scroll',
 				'inherit' => 'Inherit',
 			);
-			echo '<select id="' . $this->id . '-attachment-select" name="' . $this->setting->id . '[background-attachment]" class="customify_background_select ' . $this->field['class'] . '" data-select_name="background-attachment" data-customize-setting-link="' . esc_attr( $this->setting->id ) . '[background-attachment]">';
+			echo '<select id="' . $this->id . '-attachment-select" name="' . $this->setting->id . '[background-attachment]" class="customify_background_select ' . $this->field['class'] . ' ' . $hide . '" data-select_name="background-attachment" data-customize-setting-link="' . esc_attr( $this->setting->id ) . '[background-attachment]">';
 			echo '<option></option>';
 			foreach ( $array as $k => $v ) {
 				echo '<option value="' . $k . '"' . selected( $this->value['background-attachment'], $k, false ) . '>' . $v . '</option>';
@@ -233,7 +233,7 @@ class Pix_Customize_Background_Control extends Pix_Customize_Control {
 				'right center'  => 'Right center',
 				'right bottom'  => 'Right Bottom',
 			);
-			echo '<select id="' . $this->id . '-position-select" name="' . $this->setting->id . '[background-position]" class="customify_background_select ' . $this->field['class'] . '" data-select_name="background-position" data-customize-setting-link="' . esc_attr( $this->setting->id ) . '[background-position]">';
+			echo '<select id="' . $this->id . '-position-select" name="' . $this->setting->id . '[background-position]" class="customify_background_select ' . $this->field['class'] . ' ' . $hide . '" data-select_name="background-position" data-customize-setting-link="' . esc_attr( $this->setting->id ) . '[background-position]">';
 			echo '<option></option>';
 
 			foreach ( $array as $k => $v ) {

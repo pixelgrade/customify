@@ -525,6 +525,7 @@
 					}
 					//selector.find('.media_upload_button').unbind();
 					selector.find('.remove-image').removeClass('hide');//show "Remove" button
+					selector.find('.customify_background_select').removeClass('hide');//show "Remove" button
 
 					preview(selector);
 				});
@@ -593,6 +594,8 @@
 				}
 
 				selector.find('.remove-image').addClass('hide');//hide "Remove" button
+				parent.find('.customify_background_select').addClass('hide');
+
 				selector.find('.upload').val('');
 				selector.find('.upload-id').val('');
 				selector.find('.upload-height').val('');
