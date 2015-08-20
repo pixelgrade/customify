@@ -46,17 +46,10 @@ class Customify_CSS_Live_Editor {
 
 	function cle_create_custom_control( $wp_customize ) {
 
-		$wp_customize->add_panel( 'live_css_edit_panel', array(
-			'priority'    => 11,
-			'capability'  => 'edit_theme_options',
-			'title' => __('CSS Editor', 'customify_txtd')
-		) );
-
 		$wp_customize->add_section( 'live_css_edit_section', array(
 			'priority'   => 910,
 			'capability' => 'edit_theme_options',
 			'title' => __('CSS Edit', 'customify_txtd'),
-			'panel' => 'live_css_edit_panel'
 		) );
 
 		$saving_type = PixCustomifyPlugin::get_plugin_option( 'values_store_mod', 'option' );

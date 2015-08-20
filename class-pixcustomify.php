@@ -1326,6 +1326,8 @@ class PixCustomifyPlugin {
 					$control_args['load_all_weights'] = $setting_config['load_all_weights'];
 				}
 
+				$control_args['customify_manager'] = $this;
+
 				break;
 
 			case 'select2' :
