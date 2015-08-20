@@ -44,6 +44,10 @@ $popup 		: 275px;
 	border-bottom: 0;
 }
 
+// Temporary Fix to Make "Close" button align with the "Back"
+.customize-controls-close {
+	width: 48px;
+}
 
 
 
@@ -239,6 +243,12 @@ $popup 		: 275px;
 
 // Section
 #accordion-section-live_css_edit_section {
+
+	// Add the default border to title
+	.customize-section-title {
+		margin-top: -13px;
+	    border-bottom: 1px solid #ddd;
+	}
 	// Ace Editor
 	#css_editor {
 		top: 70px;
@@ -329,8 +339,12 @@ $popup 		: 275px;
  * Range Field
  */
 
+.customize-control input[type="range"] {
+	width: 65%;
+}
+
 .customize-control input[type="number"].range-value {
-	width: auto;
+	width: 30%;
 	top:-5px;
 	display: inline-block;
 	position: relative;

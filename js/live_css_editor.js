@@ -14,14 +14,15 @@
 		var textarea = $('#css_editor_textarea').hide();
 		css_editor.getSession().setValue(textarea.val());
 
+		var customizer_overlay = $('.wp-full-overlay');
+
 		// open the ace editor section when we click on the panel
-		$('#accordion-panel-live_css_edit_panel' ).on('click', function(){
-			$('#accordion-section-live_css_edit_section' ).addClass('open');
-			$('.wp-full-overlay' ).addClass('editor_opened');
+		$('#accordion-section-live_css_edit_section').on('click', function(){
+			customizer_overlay.addClass('editor_opened');
 		});
 
-		$('.control-panel-back' ).on('click', function() {
-			$('.wp-full-overlay' ).removeClass('editor_opened');
+		$(document).on('click', '.customize-section-back', function(){
+			customizer_overlay.removeClass('editor_opened');
 		});
 
 		// each time a change is triggered start a timeout of 1,5s and when is finished refresh the previewer

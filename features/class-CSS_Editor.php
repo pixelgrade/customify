@@ -49,14 +49,14 @@ class Customify_CSS_Live_Editor {
 		$wp_customize->add_section( 'live_css_edit_section', array(
 			'priority'   => 910,
 			'capability' => 'edit_theme_options',
-			'title' => __('CSS Edit', 'customify_txtd'),
+			'title' => __('CSS Editor', 'customify_txtd'),
 		) );
 
 		$saving_type = PixCustomifyPlugin::get_plugin_option( 'values_store_mod', 'option' );
 
 		$wp_customize->add_setting( 'live_css_edit', array(
 			'type' => $saving_type,
-			'label' => __('CSS Edit', 'customify_txtd'),
+			'label' => __('CSS Editor', 'customify_txtd'),
 			'default' => __("/*
  * Welcome to the Custom CSS Editor
  *
