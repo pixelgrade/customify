@@ -96,6 +96,10 @@ class Pix_Customize_Background_Control extends Pix_Customize_Control {
 			$placeholder = isset( $this->field['placeholder'] ) ? $this->field['placeholder'] : __( 'No media selected', 'customify_txtd' );
 
 
+			if ( ! isset( $this->value['background-image'] ) ) {
+				$this->value['background-image'] = '';
+			}
+
 			echo '<input placeholder="' . $placeholder . '" type="text" class="customify_background_input background-image ' . $hide . 'upload ' . $this->field['class'] . '" name="' . $this->label . '[background-image]" id="' . $this->manager->options_key . '[' . $this->id . '][background-image]" value="' . $this->value['background-image'] . '"  data-select_name="background-image" data-customize-setting-link="' . esc_attr( $this->setting->id ) . '[background-image]"/>';
 			echo '<input type="hidden" class="upload-id ' . $this->field['class'] . '" name="' . $this->manager->options_key . '[media][id]" id="' . $this->manager->options_key . '[' . $this->id . '][media][id]" value="' . $this->value['media']['id'] . '" />';
 			echo '<input type="hidden" class="upload-height" name="' . $this->manager->options_key . '[media][height]" id="' . $this->manager->options_key . '[' . $this->id . '][media][height]" value="' . $this->value['media']['height'] . '" />';
