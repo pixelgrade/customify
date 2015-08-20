@@ -12,7 +12,6 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 	public $load_all_weights = false;
 	public $recommended = array();
 	public $typekit_fonts = array();
-	protected $customify_manager;
 	public $current_value;
 
 	protected static $google_fonts = null;
@@ -97,8 +96,6 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 	 * @since 3.4.0
 	 */
 	public function render_content() {
-
-//		var_dump( $this->current_value );
 
 		$current_value = $this->value();
 
