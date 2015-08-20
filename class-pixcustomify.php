@@ -634,6 +634,28 @@ class PixCustomifyPlugin {
 					$load_all_weights = true;
 				}
 
+				// shim the time when this was an array
+				if ( is_array( $font['value'] ) ) {
+					$font['value']['font_family'] = $font['value']['font-family'];
+					unset( $font['value']['font-family'] );
+
+					if ( isset( $font['value']['google'] ) && $font['value']['google'] ) {
+						$font['value']['type'] = 'google';
+						unset($font['value']['type']);
+					}
+
+					foreach ($font['value']['font-options']['variants'] as $variant ) {
+						$font['value']['variants'][$variant['id']] = $variant['name'];
+					}
+
+					foreach ($font['value']['font-options']['subsets'] as $subsets ) {
+						$font['value']['subsets'][$subsets['id']] = $subsets['name'];
+					}
+
+					unset( $font['value']['font-options'] );
+					$font['value'] = json_encode($font['value']);
+				}
+
 				$value = json_decode( $font['value'], true );
 
 				// in case the value is still null, try default value(mostly for google fonts)
@@ -662,7 +684,6 @@ class PixCustomifyPlugin {
 				}
 			}
 		}
-
 		if ( ! empty ( $families ) ) { ?>
 			<script type="text/javascript">
 				if ( typeof WebFont !== 'undefined' ) {<?php // if there is a WebFont object, use it ?>

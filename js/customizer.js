@@ -253,8 +253,12 @@
 			} );
 
 			customifyBackgroundJsControl.init();
-		} );
 
+			// sometimes there may be needed a php save
+			if ( getUrlVars('save_customizer_once') ) {
+				api.previewer.save();
+			}
+		} );
 
 		var get_typography_font_family = function( $el ) {
 
@@ -622,6 +626,20 @@
 			}
 		})(jQuery);
 
+		var getUrlVars = function(name){
+			var vars = [], hash;
+			var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+			for(var i = 0; i < hashes.length; i++) {
+				hash = hashes[i].split('=');
 
+				vars.push(hash[0]);
+				vars[hash[0]] = hash[1];
+			}
+
+			if ( typeof vars[name] !== "undefined" ) {
+				return vars[name];
+			}
+			return false;
+		}
 	} );
 })( jQuery, window );
