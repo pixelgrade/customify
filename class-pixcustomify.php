@@ -216,7 +216,9 @@ class PixCustomifyPlugin {
 
 	protected static function check_for_customizer_values() {
 		if ( isset( $_POST['customized'] ) && $_POST['customized'] !== '{}' ) {
-			self::$customizer_values = json_decode( $_POST['customized'], true );
+			// ensure compat with 5.2 by striping slashes
+			// http://stackoverflow.com/questions/28698165/json-data-cannot-be-accessed-in-php-version-5-2-17
+			self::$customizer_values = json_decode( stripslashes_deep($_POST['customized']), true );
 		} else {
 			self::$customizer_values = false;
 		}
