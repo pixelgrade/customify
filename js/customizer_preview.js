@@ -62,5 +62,12 @@
 				}
 			}
 		});
+
+
+		api( 'live_css_edit', function (setting) {
+			setting.bind(function (new_text) {
+				$('#customify_css_editor_output' ).text(new_text);
+			});
+		});
 	});
 })(jQuery, window);
