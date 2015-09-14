@@ -5,6 +5,7 @@
 	$(document).ready(function(){
 		var api = wp.customize;
 		var css_editor = ace.edit("css_editor");
+		css_editor.$blockScrolling = Infinity;
 
 		// init the ace editor
 		css_editor.setTheme("ace/theme/github");
@@ -25,19 +26,11 @@
 			customizer_overlay.removeClass('editor_opened');
 		});
 
-		// each time a change is triggered start a timeout of 1,5s and when is finished refresh the previewer
-		// if the user types faster than this delay then reset it
+		// each time a change is triggered also make those edits in the preview
 		css_editor.getSession().on('change', function(e) {
-			if ( timeout !== null ){
-				clearTimeout(timeout);
-				timeout = null;
-			} else {
-				timeout = setTimeout( function(){
-					//var state = css_editor.session.getState();
-					textarea.val(css_editor.getSession().getValue());
-					textarea.trigger('change');
-				},1500);
-			}
+			textarea.val(css_editor.getSession().getValue());
+			textarea.trigger('change');
 		});
+
 	});
 })(jQuery, window);

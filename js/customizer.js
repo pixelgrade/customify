@@ -362,7 +362,7 @@
 				}
 
 				// make the variants selector
-				if ( typeof variants !== 'undefined' && variants !== null && typeof $font_weight !== "undefined" ) {
+				if ( typeof variants !== 'undefined' && variants !== null && variants !== '' && typeof $font_weight !== "undefined" ) {
 
 					value_to_add['variants'] = variants;
 					// when a font is selected force the first weight to load
@@ -390,7 +390,7 @@
 				}
 
 				// make the subsets selector
-				if ( typeof subsets !== 'undefined' && subsets !== null && typeof $font_subsets !== "undefined" ) {
+				if ( typeof subsets !== 'undefined' && subsets !== null && subsets !== '' && typeof $font_subsets !== "undefined" ) {
 					value_to_add['subsets'] = subsets;
 					// when a font is selected force the first subset to load
 					value_to_add['selected_subsets'] = {0: subsets[0]};
@@ -442,7 +442,7 @@
 
 			var api = wp.customize;
 
-				function init () {
+			function init () {
 				// Remove the image button
 				$('.customize-control-custom_background .remove-image, .customize-control-custom_background .remove-file').unbind('click').on('click', function (e) {
 					removeImage($(this).parents('.customize-control-custom_background:first'));

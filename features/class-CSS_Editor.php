@@ -47,7 +47,7 @@ class Customify_CSS_Live_Editor {
 	function cle_create_custom_control( $wp_customize ) {
 
 		$wp_customize->add_section( 'live_css_edit_section', array(
-			'priority'   => 910,
+			'priority'   => 11,
 			'capability' => 'edit_theme_options',
 			'title' => __('CSS Editor', 'customify_txtd'),
 		) );
@@ -57,6 +57,8 @@ class Customify_CSS_Live_Editor {
 		$wp_customize->add_setting( 'live_css_edit', array(
 			'type' => $saving_type,
 			'label' => __('CSS Editor', 'customify_txtd'),
+			'capability' => 'edit_theme_options',
+			'transport' => 'postMessage',
 			'default' => __("/*
  * Welcome to the Custom CSS Editor
  *
@@ -103,10 +105,10 @@ selector {
 		if ( empty( $output ) ) {
 			return;
 		} ?>
-		<style id="css_editor_output">
+		<style id="customify_css_editor_output">
 			<?php echo $output; ?>
 		</style>
-	<?php
+		<?php
 	}
 }
 

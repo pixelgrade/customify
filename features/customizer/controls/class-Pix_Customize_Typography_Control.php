@@ -201,44 +201,44 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 			</select>
 		</label>
 		<ul class="options">
-		<?php
-		if (! $this->load_all_weights && $this->font_weight &&  ( isset( $values->variants ) && ! empty( $values->variants ) ) ) { ?>
-			<li class="customify_subsets_wrapper">
-				<label><?php _e('Font Weight', 'customify_txtd');?></label>
-				<select class="customify_typography_font_weight">
-					<?php
-					foreach ( $values->variants as $weight ) {
-						echo '<option value="'. $weight . '. "> ' .  $weight . '</option>';
-					} ?>
-				</select>
-			</li>
-		<?php
-		}
+			<?php
+			if (! $this->load_all_weights && $this->font_weight &&  ( isset( $values->variants ) && ! empty( $values->variants ) ) ) { ?>
+				<li class="customify_subsets_wrapper">
+					<label><?php _e('Font Weight', 'customify_txtd');?></label>
+					<select class="customify_typography_font_weight">
+						<?php
+						foreach ( $values->variants as $weight ) {
+							echo '<option value="'. $weight . '. "> ' .  $weight . '</option>';
+						} ?>
+					</select>
+				</li>
+				<?php
+			}
 
-		if ( $this->subsets && ( isset( $values->subsets ) && ! empty( $values->subsets ) ) ) { ?>
-			<li class="customify_subsets_wrapper">
-				<label><?php _e('Subsets', 'customify_txtd'); ?></label>
-				<select multiple class="customify_typography_font_subsets">
-					<?php
+			if ( $this->subsets && ( isset( $values->subsets ) && ! empty( $values->subsets ) ) ) { ?>
+				<li class="customify_subsets_wrapper">
+					<label><?php _e('Subsets', 'customify_txtd'); ?></label>
+					<select multiple class="customify_typography_font_subsets">
+						<?php
 
-					$selected = array();
+						$selected = array();
 
-					if ( isset( $values->selected_subsets ) ) {
-						$selected = $values->selected_subsets;
-					}
-
-					foreach ( $values->subsets as $key => $subset ) {
-						$attrs = '';
-						if ( in_array( $subset, (array)$selected ) ) {
-							$attrs .= ' selected="selected"';
+						if ( isset( $values->selected_subsets ) ) {
+							$selected = $values->selected_subsets;
 						}
 
-						echo '<option value="'. $subset . '. "'.$attrs.'> ' . $subset . '</option>';
-					}
-					?>
-				</select>
-			</li>
-		<?php } ?>
+						foreach ( $values->subsets as $key => $subset ) {
+							$attrs = '';
+							if ( in_array( $subset, (array)$selected ) ) {
+								$attrs .= ' selected="selected"';
+							}
+
+							echo '<option value="'. $subset . '. "'.$attrs.'> ' . $subset . '</option>';
+						}
+						?>
+					</select>
+				</li>
+			<?php } ?>
 		</ul>
 	<?php }
 
@@ -257,11 +257,11 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 		if ( $type === 'google' ) {
 
 			if ( isset( $font['variants'] ) && ! empty( $font['variants'] ) ) {
-				$data .= ' data-variants=\'' . json_encode( $font['variants'], JSON_FORCE_OBJECT ) . '\'';
+				$data .= ' data-variants=\'' . json_encode( (object) $font['variants'] ) . '\'';
 			}
 
 			if ( isset( $font['subsets'] ) && ! empty( $font['subsets'] ) ) {
-				$data .= ' data-subsets=\'' . json_encode( $font['subsets'], JSON_FORCE_OBJECT ) . '\'';
+				$data .= ' data-subsets=\'' . json_encode( (object) $font['subsets'] ) . '\'';
 			}
 
 			$selected = ( $font_family === $font['family'] ) ? ' selected="selected" ' : '';
