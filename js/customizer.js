@@ -523,7 +523,8 @@
 						thumbSrc = attachment.attributes.icon;
 					}
 
-					selector.find('.customify_background_input.background-image').val(thumbSrc);
+					selector.find('.customify_background_input.background-image').val(attachment.attributes.url);
+
 					if (!selector.find('.upload').hasClass('noPreview')) {
 						selector.find('.preview_screenshot').empty().hide().append('<img class="preview_image" src="' + thumbSrc + '">').slideDown('fast');
 					}

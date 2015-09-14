@@ -502,6 +502,10 @@ class PixCustomifyPlugin {
 				// now process each
 				$custom_css .= $this->convert_setting_to_css( $option_id, $option['css'] );
 			}
+
+			if ( $option['type'] === 'custom_background' ) {
+				$custom_css .= $this->process_custom_background_field_output( $option_id, $option );
+			}
 		}
 
 		if ( ! empty( self::$media_queries ) ) {
@@ -525,6 +529,8 @@ class PixCustomifyPlugin {
 			}
 		}
 
+
+
 		$custom_css .= "\n";
 
 		//@todo maybe add a filter to this output ?>
@@ -544,9 +550,22 @@ class PixCustomifyPlugin {
 
 		foreach ( self::$options_list as $option_id => $options ) {
 
+			if ( $options['type'] === 'custom_background' ) {
+				$options['value'] = self::get_option( $option_id );
+				$custom_background_output = $this->process_custom_background_field_output( $option_id, $options ); ?>
+
+				<style id="custom_backgorund_output_for_<?php echo $option_id; ?>" >
+					<?php
+					if ( isset( $custom_background_output ) && ! empty( $custom_background_output )) {
+						echo $custom_background_output;
+					} ?>
+				</style>
+			<?php }
+
 			if ( ! isset( $options['live'] ) || $options['live'] !== true ) {
 				continue;
 			}
+
 			$this_value = self::get_option( $option_id );
 			foreach ( $options['css'] as $key => $properties_set ) { ?>
 				<style id="dynamic_setting_<?php echo $option_id . '_property_' . str_replace( '-', '_', $properties_set['property'] ); ?>" type="text/css"><?php
@@ -832,6 +851,46 @@ class PixCustomifyPlugin {
 		}
 
 		return $this_property_output;
+	}
+
+	protected function process_custom_background_field_output( $option_id, $options ) {
+		$selector = '';
+		$value = $options['value'];
+
+		if ( ! isset(  $options['output'] ) ) {
+			return $selector;
+		} elseif ( is_string( $options['output'] ) ) {
+			$selector = $options['output'];
+		} elseif ( is_array( $options['output'] ) ) {
+			$selector = implode( ' ', $options['output'] );
+		}
+		ob_start();
+
+		echo "\n" . $selector . " { \n";
+			if ( isset( $value['background-image'] ) && ! empty( $value['background-image'] ) ) {
+				echo "background-image: url( " .$value['background-image']. ");\n";
+			} else {
+				echo "background-image: none;\n";
+			}
+
+			if ( isset( $value['background-repeat'] ) && ! empty( $value['background-repeat'] ) ) {
+				echo "background-repeat:" .$value['background-repeat']. ";\n";
+			}
+
+			if ( isset( $value['background-position'] ) && ! empty( $value['background-position'] ) ) {
+				echo "background-position:" .$value['background-position']. ";\n";
+			}
+
+			if ( isset( $value['background-size'] ) && ! empty( $value['background-size'] ) ) {
+				echo "background-size:" .$value['background-size']. ";\n";
+			}
+
+			if ( isset( $value['background-attachment'] ) && ! empty( $value['background-attachment'] ) ) {
+				echo "background-attachment:" .$value['background-attachment']. ";\n";
+			}
+		echo "\n}\n";
+
+		return ob_get_clean();
 	}
 
 	// addd editor style
@@ -1270,8 +1329,6 @@ class PixCustomifyPlugin {
 
 				$control_class_name = 'Pix_Customize_Background_Control';
 				break;
-
-
 
 			case 'cropped_media':
 

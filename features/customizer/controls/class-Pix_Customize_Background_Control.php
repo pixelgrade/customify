@@ -68,7 +68,7 @@ class Pix_Customize_Background_Control extends Pix_Customize_Control {
 //			}
 
 			if ( empty( $this->value['background-image'] ) && ! empty( $this->value['media']['id'] ) ) {
-				$img                             = wp_get_attachment_image_src( $this->value['media']['id'], 'full' );
+				$img                             = wp_get_attachment_image_src( $this->value['media']['id'], 'full' ); var_dump($img);
 				$this->value['background-image'] = $img[0];
 				$this->value['media']['width']   = $img[1];
 				$this->value['media']['height']  = $img[2];
@@ -115,10 +115,7 @@ class Pix_Customize_Background_Control extends Pix_Customize_Control {
 
 			if ( empty( $this->value['media']['thumbnail'] ) && ! empty( $this->value['background-image'] ) ) { // Just in case
 				if ( ! empty( $this->value['media']['id'] ) ) {
-					$image                             = wp_get_attachment_image_src( $this->value['media']['id'], array(
-						150,
-						150
-					) );
+					$image                             = wp_get_attachment_image_src( $this->value['media']['id'], array( 150 ) );
 					$this->value['media']['thumbnail'] = $image[0];
 				} else {
 					$this->value['media']['thumbnail'] = $this->value['background-image'];
@@ -245,5 +242,9 @@ class Pix_Customize_Background_Control extends Pix_Customize_Control {
 			}
 			echo '</select>';
 		}
+	}
+
+	static function css_output(){
+
 	}
 }
