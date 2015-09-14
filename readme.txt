@@ -1,9 +1,9 @@
 === Customify - A Theme Customizer Booster ===
 Contributors: pixelgrade, euthelup, babbardel
 Tags: customizer, css, editor, live, preview, customise
-Requires at least: 3.9.0
-Tested up to: 4.2.2
-Stable tag: 1.1.5
+Requires at least: 4.0.0
+Tested up to: 4.3.0
+Stable tag: 1.1.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -32,6 +32,15 @@ With [Customify](https://github.com/pixelgrade/customify), developers can easily
 * **And more others [this is the full list](https://github.com/pixelgrade/customify#list_of_fields)
 
 == Changelog ==
+
+= 1.1.6 =
+* Added: Custom background field with bacgkround-* css properties selects
+* Added: Compatibility with WordPress 4.3.x
+* Added: Compatibility with PHP 5.2.x
+* Improved: Live CSS Editor is now live...for real
+* Updated: ACE Editor
+* Updated: The list of google fonts is now up to date
+
 
 = 1.1.5 =
 * Added: Live-preview support for `text` and `textarea` fields.
