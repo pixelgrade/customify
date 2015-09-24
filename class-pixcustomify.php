@@ -670,7 +670,7 @@ class PixCustomifyPlugin {
 				if ( isset( $value['font_family'] ) && isset( $value['type'] ) && $value['type'] == 'google' ) {
 					$families .= "'" . $value['font_family'];
 
-					if ( $load_all_weights ){
+					if ( $load_all_weights && is_array( $value['variants'] ) ){
 						$families .= ":" . implode( ',', $value['variants'] );
 					} elseif ( isset( $value['selected_variants'] ) && ! empty( $value['selected_variants'] ) ) {
 						$families .= ":" . implode( ',', $value['selected_variants'] );
