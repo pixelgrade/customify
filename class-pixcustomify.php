@@ -1341,6 +1341,10 @@ class PixCustomifyPlugin {
 					$control_args['load_all_weights'] = $setting_config['load_all_weights'];
 				}
 
+				if ( isset( $setting_config['default'] ) ) {
+					$control_args['default'] = $setting_config['default'];
+				}
+
 				break;
 
 			case 'select2' :

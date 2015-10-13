@@ -13,28 +13,11 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 	public $recommended = array();
 	public $typekit_fonts = array();
 	public $current_value;
+	public $default;
 
 	protected static $google_fonts = null;
 
-	private static $std_fonts = array(
-		"Arial, Helvetica, sans-serif"                          => "Arial, Helvetica, sans-serif",
-		"'Arial Black', Gadget, sans-serif"                     => "'Arial Black', Gadget, sans-serif",
-		"'Bookman Old Style', serif"                            => "'Bookman Old Style', serif",
-		"'Comic Sans MS', cursive"                              => "'Comic Sans MS', cursive",
-		"Courier, monospace"                                    => "Courier, monospace",
-		"Garamond, serif"                                       => "Garamond, serif",
-		"Georgia, serif"                                        => "Georgia, serif",
-		"Impact, Charcoal, sans-serif"                          => "Impact, Charcoal, sans-serif",
-		"'Lucida Console', Monaco, monospace"                   => "'Lucida Console', Monaco, monospace",
-		"'Lucida Sans Unicode', 'Lucida Grande', sans-serif"    => "'Lucida Sans Unicode', 'Lucida Grande', sans-serif",
-		"'MS Sans Serif', Geneva, sans-serif"                   => "'MS Sans Serif', Geneva, sans-serif",
-		"'MS Serif', 'New York', sans-serif"                    => "'MS Serif', 'New York', sans-serif",
-		"'Palatino Linotype', 'Book Antiqua', Palatino, serif"  => "'Palatino Linotype', 'Book Antiqua', Palatino, serif",
-		"Tahoma,Geneva, sans-serif"                             => "Tahoma, Geneva, sans-serif",
-		"'Times New Roman', Times,serif"                        => "'Times New Roman', Times, serif",
-		"'Trebuchet MS', Helvetica, sans-serif"                 => "'Trebuchet MS', Helvetica, sans-serif",
-		"Verdana, Geneva, sans-serif"                           => "Verdana, Geneva, sans-serif",
-	);
+	private static $std_fonts = null;
 
 	/**
 	 * Constructor.
@@ -50,6 +33,27 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 	 * @param array $args
 	 */
 	public function __construct( $manager, $id, $args = array() ) {
+
+		self::$std_fonts = apply_filters( 'customify_filter_standard_fonts_list', array(
+			"Arial, Helvetica, sans-serif"                         => "Arial, Helvetica, sans-serif",
+			"'Arial Black', Gadget, sans-serif"                    => "'Arial Black', Gadget, sans-serif",
+			"'Bookman Old Style', serif"                           => "'Bookman Old Style', serif",
+			"'Comic Sans MS', cursive"                             => "'Comic Sans MS', cursive",
+			"Courier, monospace"                                   => "Courier, monospace",
+			"Garamond, serif"                                      => "Garamond, serif",
+			"Georgia, serif"                                       => "Georgia, serif",
+			"Impact, Charcoal, sans-serif"                         => "Impact, Charcoal, sans-serif",
+			"'Lucida Console', Monaco, monospace"                  => "'Lucida Console', Monaco, monospace",
+			"'Lucida Sans Unicode', 'Lucida Grande', sans-serif"   => "'Lucida Sans Unicode', 'Lucida Grande', sans-serif",
+			"'MS Sans Serif', Geneva, sans-serif"                  => "'MS Sans Serif', Geneva, sans-serif",
+			"'MS Serif', 'New York', sans-serif"                   => "'MS Serif', 'New York', sans-serif",
+			"'Palatino Linotype', 'Book Antiqua', Palatino, serif" => "'Palatino Linotype', 'Book Antiqua', Palatino, serif",
+			"Tahoma,Geneva, sans-serif"                            => "Tahoma, Geneva, sans-serif",
+			"'Times New Roman', Times,serif"                       => "'Times New Roman', Times, serif",
+			"'Trebuchet MS', Helvetica, sans-serif"                => "'Trebuchet MS', Helvetica, sans-serif",
+			"Verdana, Geneva, sans-serif"                          => "Verdana, Geneva, sans-serif",
+		) );
+
 		$keys = array_keys( get_object_vars( $this ) );
 		foreach ( $keys as $key ) {
 			if ( isset( $args[ $key ] ) ) {
@@ -58,7 +62,7 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 		}
 
 		$this->manager = $manager;
-		$this->id = $id;
+		$this->id      = $id;
 		if ( empty( $this->active_callback ) ) {
 			$this->active_callback = array( $this, 'active_callback' );
 		}
@@ -76,14 +80,14 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 				$settings[ $key ] = $this->manager->get_setting( $setting );
 			}
 		} else {
-			$this->setting = $this->manager->get_setting( $this->settings );
+			$this->setting       = $this->manager->get_setting( $this->settings );
 			$settings['default'] = $this->setting;
 		}
 		$this->settings = $settings;
 
 		$this->load_google_fonts();
 
-		$this->typekit_fonts = get_option( 'typekit_fonts' );
+		$this->typekit_fonts = apply_filters('customify_filter_typekit_fonts_list', get_option( 'typekit_fonts' ) );
 
 
 		$this->current_value = $this->value();
@@ -104,7 +108,7 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 
 			$current_value['font_family'] = $current_value['font-family'];
 			unset( $current_value['font-family'] );
-			$current_value = json_encode($current_value);
+			$current_value = json_encode( $current_value );
 		}
 
 		$values = json_decode( $current_value );
@@ -125,47 +129,47 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 				<span class="description customize-control-description"><?php echo $this->description; ?></span>
 			<?php endif;
 
-			$this_id = str_replace('[', '_', $this->id );
-			$this_id = str_replace(']', '_', $this_id );
+			$this_id     = str_replace( '[', '_', $this->id );
+			$this_id     = str_replace( ']', '_', $this_id );
 			$select_data = '';
 			if ( $this->load_all_weights ) {
 				$select_data .= ' data-load_all_weights="true"';
 			}
-
 			/**
 			 * This input will hold the values of this typography field
 			 */ ?>
 			<input class="customify_typography_values" id="<?php echo $this_id; ?>" type="hidden" <?php $this->link(); ?> value='<?php echo $current_value; ?>'/>
-			<select class="customify_typography_font_family"<?php echo $select_data;?>>
+			<select class="customify_typography_font_family"<?php echo $select_data; ?>>
 				<?php
 
 				if ( ! empty( $this->typekit_fonts ) ) {
-					echo '<optgroup label="' . __('Typekit', 'customify_txtd') . '">';
+					echo '<optgroup label="' . __( 'Typekit', 'customify_txtd' ) . '">';
 					foreach ( $this->typekit_fonts as $key => $font ) {
-						self::output_font_option($font['css_names'][0], $font_family, $font, 'typekit' );
+						self::output_font_option( $font['css_names'][0], $font_family, $font, 'typekit' );
 					}
 					echo "</optgroup>";
 				}
 
 				if ( ! empty( $this->recommended ) ) {
-					echo '<optgroup label="' . __('Recommended', 'customify_txtd') . '">';
+
+					echo '<optgroup label="' . __( 'Recommended', 'customify_txtd' ) . '">';
 					foreach ( $this->recommended as $key => $font ) {
 
-						if ( ! isset(self::$google_fonts[$key]) ) {
+						if ( ! isset( self::$google_fonts[ $key ] ) || ( isset( $this->default ) && $this->default == $key) ) {
 							continue;
 						}
 
-						$font = self::$google_fonts[$key];
-						self::output_font_option($key, $font_family, $font);
+						$font = self::$google_fonts[ $key ];
+						self::output_font_option( $key, $font_family, $font );
 					}
 					echo "</optgroup>";
 				}
 
 				if ( PixCustomifyPlugin::get_plugin_option( 'typography_standard_fonts' ) ) {
 
-					echo '<optgroup label="' . __('Standard fonts', 'customify_txtd') . '">';
+					echo '<optgroup label="' . __( 'Standard fonts', 'customify_txtd' ) . '">';
 					foreach ( self::$std_fonts as $key => $font ) {
-						self::output_font_option($key, $font_family, $font, 'std');
+						self::output_font_option( $key, $font_family, $font, 'std' );
 
 					}
 					echo "</optgroup>";
@@ -178,22 +182,22 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 						$grouped_google_fonts = array();
 						foreach ( self::$google_fonts as $key => $font ) {
 							if ( isset( $font['category'] ) ) {
-								$grouped_google_fonts[$font['category']][] = $font;
+								$grouped_google_fonts[ $font['category'] ][] = $font;
 							}
 						}
 
 						foreach ( $grouped_google_fonts as $group_name => $group ) {
-							echo '<optgroup label="' . __('Google fonts', 'customify_txtd') . ' ' . $group_name . '">';
+							echo '<optgroup label="' . __( 'Google fonts', 'customify_txtd' ) . ' ' . $group_name . '">';
 							foreach ( $group as $key => $font ) {
-								self::output_font_option($key, $font_family, $font);
+								self::output_font_option( $key, $font_family, $font );
 							}
 							echo "</optgroup>";
 						}
 
 					} else {
-						echo '<optgroup label="' . __('Google fonts', 'customify_txtd') . '">';
+						echo '<optgroup label="' . __( 'Google fonts', 'customify_txtd' ) . '">';
 						foreach ( self::$google_fonts as $key => $font ) {
-							self::output_font_option($key, $font_family, $font);
+							self::output_font_option( $key, $font_family, $font );
 						}
 						echo "</optgroup>";
 					}
@@ -202,13 +206,13 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 		</label>
 		<ul class="options">
 			<?php
-			if (! $this->load_all_weights && $this->font_weight &&  ( isset( $values->variants ) && ! empty( $values->variants ) ) ) { ?>
+			if ( ! $this->load_all_weights && $this->font_weight && ( isset( $values->variants ) && ! empty( $values->variants ) ) ) { ?>
 				<li class="customify_subsets_wrapper">
-					<label><?php _e('Font Weight', 'customify_txtd');?></label>
+					<label><?php _e( 'Font Weight', 'customify_txtd' ); ?></label>
 					<select class="customify_typography_font_weight">
 						<?php
 						foreach ( $values->variants as $weight ) {
-							echo '<option value="'. $weight . '. "> ' .  $weight . '</option>';
+							echo '<option value="' . $weight . '. "> ' . $weight . '</option>';
 						} ?>
 					</select>
 				</li>
@@ -217,7 +221,7 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 
 			if ( $this->subsets && ( isset( $values->subsets ) && ! empty( $values->subsets ) ) ) { ?>
 				<li class="customify_subsets_wrapper">
-					<label><?php _e('Subsets', 'customify_txtd'); ?></label>
+					<label><?php _e( 'Subsets', 'customify_txtd' ); ?></label>
 					<select multiple class="customify_typography_font_subsets">
 						<?php
 
@@ -229,11 +233,11 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 
 						foreach ( $values->subsets as $key => $subset ) {
 							$attrs = '';
-							if ( in_array( $subset, (array)$selected ) ) {
+							if ( in_array( $subset, (array) $selected ) ) {
 								$attrs .= ' selected="selected"';
 							}
 
-							echo '<option value="'. $subset . '. "'.$attrs.'> ' . $subset . '</option>';
+							echo '<option value="' . $subset . '. "' . $attrs . '> ' . $subset . '</option>';
 						}
 						?>
 					</select>
@@ -244,6 +248,7 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 
 	/**
 	 * This method makes an <option> tag from the given params
+	 *
 	 * @param $key
 	 * @param $font_family
 	 * @param $font
@@ -265,14 +270,14 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 			}
 
 			$selected = ( $font_family === $font['family'] ) ? ' selected="selected" ' : '';
-			echo '<option value="' . $font['family'] . '"'. $selected . $data .'>' . $font['family'] . '</option>';
+			echo '<option value="' . $font['family'] . '"' . $selected . $data . '>' . $font['family'] . '</option>';
 		} elseif ( $type === 'typekit' ) {
 
-			$selected = ( $font_family === $key) ? ' selected="selected" ' : '';
-			echo '<option class="typekit_font" value="' . $key . '"'. $selected . $data .'>' . $font['name'] . '</option>';
-		}  else {
-			$selected = ( $font_family === $font) ? ' selected="selected" ' : '';
-			echo '<option class="std_font" value="' . $font . '"'. $selected . $data .'>' . $font . '</option>';
+			$selected = ( $font_family === $key ) ? ' selected="selected" ' : '';
+			echo '<option class="typekit_font" value="' . $key . '"' . $selected . $data . '>' . $font['name'] . '</option>';
+		} else {
+			$selected = ( $font_family === $font ) ? ' selected="selected" ' : '';
+			echo '<option class="std_font" value="' . $font . '"' . $selected . $data . '>' . $font . '</option>';
 		}
 	}
 
@@ -288,8 +293,8 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 			self::$google_fonts = require( $fonts_path );
 		}
 
-		if ( !empty( self::$google_fonts ) ) {
-			return self::$google_fonts;
+		if ( ! empty( self::$google_fonts ) ) {
+			return apply_filters( 'customify_filter_google_fonts_list', self::$google_fonts );
 		}
 
 		return false;
@@ -303,15 +308,15 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 		$fonts_path = plugin_dir_path( __FILE__ ) . 'resources/google.fonts.php';
 
 		$new_array = array();
-		foreach (self::$google_fonts as $key => $font ){
+		foreach ( self::$google_fonts as $key => $font ) {
 			// unset unused data
 			unset( $font['kind'] );
 			unset( $font['version'] );
 			unset( $font['lastModified'] );
 			unset( $font['files'] );
-			$new_array[$font['family']] = $font;
+			$new_array[ $font['family'] ] = $font;
 		}
 
-		file_put_contents( plugin_dir_path( __FILE__ ) . 'resources/google.fonts.json', json_encode($new_array) );
+		file_put_contents( plugin_dir_path( __FILE__ ) . 'resources/google.fonts.json', json_encode( $new_array ) );
 	}
 }
