@@ -154,15 +154,6 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 
 					echo '<optgroup label="' . __( 'Recommended', 'customify_txtd' ) . '">';
 					foreach ( $this->recommended as $key => $font ) {
-						$is_default = false;
-						if ( isset( $this->default ) && $this->default === $key) {
-							$is_default = true;
-						}
-
-						if ( ! isset( self::$google_fonts[ $key ] ) && ! $is_default ) {
-							continue;
-						}
-
 						$font_type = 'std';
 						if ( isset( self::$google_fonts[ $key ] ) ) {
 							$font = self::$google_fonts[ $key ];
