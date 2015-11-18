@@ -2,8 +2,8 @@
 Contributors: pixelgrade, euthelup, babbardel
 Tags: customizer, css, editor, live, preview, customise
 Requires at least: 4.0.0
-Tested up to: 4.3.0
-Stable tag: 1.1.6
+Tested up to: 4.3.1
+Stable tag: 1.1.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -32,6 +32,13 @@ With [Customify](https://github.com/pixelgrade/customify), developers can easily
 * **And more others [this is the full list](https://github.com/pixelgrade/customify#list_of_fields)
 
 == Changelog ==
+
+= 1.1.7 =
+* Added: Compatibility with WordPress 4.3.1
+* Added: Custom fonts can be used now as defaults
+* Fixed: Fonts preview
+* Fixed: Some rare errors with PHP 5.2.x
+* Fixed: Some font variants warnings with PHP 5.2.x
 
 = 1.1.6 =
 * Added: Custom background field with bacgkround-* css properties selects
