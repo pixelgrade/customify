@@ -167,9 +167,6 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 						}
 
 						self::output_font_option( $key, $font_family, $font, $font_type );
-						}
-
-						self::output_font_option( $key, $font_family, $font, $font_type );
 					}
 					echo "</optgroup>";
 				}
