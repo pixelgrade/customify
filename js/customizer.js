@@ -304,11 +304,31 @@
 
 			if ( typeof field_class !== "undefined" && field_class === 'customify_typography' ) {
 
-				var select = field.siblings( 'select' ),
-					this_option = select.find( 'option[value="' + value + '"]' );
-				$( this_option[0] ).attr( 'selected', 'selected' );
-				update_siblings_selects( select );
-				select.trigger( 'change' );
+				var family_select = field.siblings( 'select' );
+
+				if ( typeof value === 'string' ) {
+					var this_option = family_select.find( 'option[value="' + value + '"]' );
+					$( this_option[0] ).attr( 'selected', 'selected' );
+					update_siblings_selects( family_select );
+				} else if ( typeof value === 'object' ) {
+					var this_family_option = family_select.find( 'option[value="' + value['font_family'] + '"]' );
+					$( this_family_option[0] ).attr( 'selected', 'selected' );
+
+					update_siblings_selects( this_family_option );
+
+					setTimeout(function(){
+						var weight_select = field.parent().siblings( '.options' ).find('.customify_typography_font_weight');
+
+						var this_weight_option = weight_select.find( 'option[value="' + value['selected_variants'] + '"]' );
+						console.log( this_weight_option );
+
+						$( this_weight_option[0] ).attr( 'selected', 'selected' );
+
+						update_siblings_selects( this_family_option );
+					},300);
+				}
+
+				family_select.trigger( 'change' );
 
 			} else {
 				setting.set( value );
