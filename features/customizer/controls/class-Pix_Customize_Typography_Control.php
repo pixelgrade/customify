@@ -83,6 +83,7 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 			$this->setting       = $this->manager->get_setting( $this->settings );
 			$settings['default'] = $this->setting;
 		}
+
 		$this->settings = $settings;
 
 		$this->load_google_fonts();
@@ -102,12 +103,16 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 	public function render_content() {
 
 		$current_value = $this->value();
+		if ( empty( $current_value ) && isset( $this->default ) ) {
+			$current_value = $this->get_default_values();
+		}
 
 		// if this value was an array, well it was wrong
 		if ( is_array( $current_value ) ) {
-
-			$current_value['font_family'] = $current_value['font-family'];
-			unset( $current_value['font-family'] );
+			if ( isset( $current_value['font-family'] ) ) {
+				$current_value['font_family'] = $current_value['font-family'];
+				unset( $current_value['font-family'] );
+			}
 			$current_value = json_encode( $current_value );
 		}
 
@@ -135,10 +140,11 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 			if ( $this->load_all_weights ) {
 				$select_data .= ' data-load_all_weights="true"';
 			}
+
 			/**
 			 * This input will hold the values of this typography field
 			 */ ?>
-			<input class="customify_typography_values" id="<?php echo $this_id; ?>" type="hidden" <?php $this->link(); ?> value='<?php echo $current_value; ?>'/>
+			<input class="customify_typography_values" id="<?php echo $this_id; ?>" type="hidden" <?php $this->link(); ?> value='<?php echo $current_value; ?>' data-default='<?php echo $current_value; ?>'/>
 			<select class="customify_typography_font_family"<?php echo $select_data; ?>>
 				<?php
 
@@ -176,7 +182,6 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 					echo '<optgroup label="' . __( 'Standard fonts', 'customify_txtd' ) . '">';
 					foreach ( self::$std_fonts as $key => $font ) {
 						self::output_font_option( $key, $font_family, $font, 'std' );
-
 					}
 					echo "</optgroup>";
 				}
@@ -212,43 +217,60 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 		</label>
 		<ul class="options">
 			<?php
-			if ( ! $this->load_all_weights && $this->font_weight && ( isset( $values->variants ) && ! empty( $values->variants ) ) ) { ?>
-				<li class="customify_subsets_wrapper">
-					<label><?php _e( 'Font Weight', 'customify_txtd' ); ?></label>
-					<select class="customify_typography_font_weight">
-						<?php
+			$display = 'none';
+			if ( ! $this->load_all_weights && $this->font_weight ) {
+				$display = 'inline-block';
+			} ?>
+			<li class="customify_weights_wrapper" style="display: <?php echo $display; ?>">
+				<label><?php _e( 'Font Weight', 'customify_txtd' ); ?></label>
+				<select class="customify_typography_font_weight">
+					<?php
+					$selected = array();
+					if ( isset( $values->selected_variants ) ) {
+						$selected = $values->selected_variants;
+					}
+
+					if ( isset( $values->variants ) && ! empty( $values->variants ) ) {
+
 						foreach ( $values->variants as $weight ) {
-							echo '<option value="' . $weight . '. "> ' . $weight . '</option>';
-						} ?>
-					</select>
-				</li>
-				<?php
-			}
+							$attrs = '';
+							if ( in_array( $weight, (array) $selected ) ) {
+								$attrs = ' selected="selected"';
+							}
 
-			if ( $this->subsets && ( isset( $values->subsets ) && ! empty( $values->subsets ) ) ) { ?>
-				<li class="customify_subsets_wrapper">
-					<label><?php _e( 'Subsets', 'customify_txtd' ); ?></label>
-					<select multiple class="customify_typography_font_subsets">
-						<?php
-
-						$selected = array();
-
-						if ( isset( $values->selected_subsets ) ) {
-							$selected = $values->selected_subsets;
+							echo '<option value="' . $weight . '" ' . $attrs . '> ' . $weight . '</option>';
 						}
+					} ?>
+				</select>
+			</li>
+			<?php
 
+			$display = 'none';
+			if ( $this->subsets && ! empty( $values->subsets ) ) {
+				$display = 'inline-block';
+			}?>
+			<li class="customify_subsets_wrapper" style="display: <?php echo $display; ?>">
+				<label><?php _e( 'Subsets', 'customify_txtd' ); ?></label>
+				<select multiple class="customify_typography_font_subsets">
+					<?php
+					$selected = array();
+					if ( isset( $values->selected_subsets ) ) {
+						$selected = $values->selected_subsets;
+					}
+
+					if ( isset( $values->subsets ) && ! empty( $values->subsets ) ) {
 						foreach ( $values->subsets as $key => $subset ) {
 							$attrs = '';
 							if ( in_array( $subset, (array) $selected ) ) {
 								$attrs .= ' selected="selected"';
 							}
 
-							echo '<option value="' . $subset . '. "' . $attrs . '> ' . $subset . '</option>';
+							echo '<option value="' . $subset . '"' . $attrs . '> ' . $subset . '</option>';
 						}
-						?>
-					</select>
-				</li>
-			<?php } ?>
+					} ?>
+				</select>
+			</li>
+			<?php ?>
 		</ul>
 	<?php }
 
@@ -282,7 +304,17 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 			$selected = ( $font_family === $key ) ? ' selected="selected" ' : '';
 			echo '<option class="typekit_font" value="' . $key . '"' . $selected . $data . '>' . $font['name'] . '</option>';
 		} else {
-			$selected = ( $font_family === $font ) ? ' selected="selected" ' : '';
+
+			if ( is_array($font) && isset( $font['variants'] ) && ! empty( $font['variants'] ) ) {
+				$data .= ' data-variants=\'' . json_encode( (object) $font['variants'] ) . '\'';
+			}
+
+			if ( is_array( $font ) && isset( $font['font_family'] ) ) {
+				$selected = ( $font_family === $font['font_family'] ) ? ' selected="selected" ' : '';
+				$font = $font['font_family'];
+			} else {
+				$selected = ( $font_family === $font ) ? ' selected="selected" ' : '';
+			}
 			echo '<option class="std_font" value="' . $font . '"' . $selected . $data . '>' . $font . '</option>';
 		}
 	}
@@ -324,5 +356,15 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 		}
 
 		file_put_contents( plugin_dir_path( __FILE__ ) . 'resources/google.fonts.json', json_encode( $new_array ) );
+	}
+
+	function get_default_values( ) {
+
+		// @TODO maybe sanitize things here
+		//$to_return = array();
+
+		$to_return = $this->default;
+
+		return $to_return;
 	}
 }

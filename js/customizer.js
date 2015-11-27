@@ -320,10 +320,12 @@
 			this.bound_once = false;
 			var selected_font = $( font_select ).val(),
 				$input = $( font_select ).siblings( '.customify_typography_values' ),
-				current_val = $input.val();
+				current_val = $input.attr('value');
 
-			if ( typeof current_val === '' ) {
+			if ( current_val === '' ) {
 				return;
+			} else if( current_val === '[object Object]' ) {
+				current_val = $input.data('default');
 			}
 
 			var $font_weight = $( font_select ).parent().siblings( 'ul.options' ).find( '.customify_typography_font_weight' );
@@ -332,6 +334,7 @@
 			try {
 				current_val = JSON.parse( current_val );
 			} catch ( e ) {
+
 				// in case of an error, force the rebuild of the json
 				if ( typeof $( font_select ).data( 'bound_once' ) === "undefined" ) {
 
@@ -356,13 +359,17 @@
 
 				if ( font_type == 'std' ) {
 					variants = {0: '100', 1: '200', 3: '300', 4: '400', 5: '500'};
+					if ( typeof $( option_data[0] ).data( 'variants' ) !== 'undefined' ) {
+						variants = $( option_data[0] ).data( 'variants' );
+					}
+
 				} else {
 					variants = $( option_data[0] ).data( 'variants' );
 					subsets = $( option_data[0] ).data( 'subsets' );
 				}
 
 				// make the variants selector
-				if ( typeof variants !== 'undefined' && variants !== null && variants !== '' && typeof $font_weight !== "undefined" ) {
+				if ( typeof variants !== 'undefined' && variants !== null && variants !== '' ) {
 
 					value_to_add['variants'] = variants;
 					// when a font is selected force the first weight to load
@@ -375,22 +382,30 @@
 						var is_selected = '';
 						if ( typeof current_val.selected_variants === "object" && inObject( el, current_val.selected_variants ) ) {
 							is_selected = ' selected="selected"';
+						} else if ( typeof current_val.selected_variants === "string" && el === current_val.selected_variants) {
+							is_selected = ' selected="selected"';
 						}
 
 						variants_options += '<option value="' + el + '"' + is_selected + '>' + el + '</option>';
 						count_weights++;
 					} );
-					$font_weight.html( variants_options );
-					// if there is no weight or just 1 we hide the weight select ... cuz is useless
-					if ( count_weights <= 1 ) {
-						$font_weight.parent().hide();
-					} else {
-						$font_weight.parent().show();
+
+					if ( typeof $font_weight !== "undefined" ) {
+						$font_weight.html( variants_options );
+						// if there is no weight or just 1 we hide the weight select ... cuz is useless
+						if ( count_weights <= 1 ) {
+							$font_weight.parent().css('display', 'none');
+						} else {
+							$font_weight.parent().css('display', 'inline-block');
+						}
 					}
+				} else if ( typeof $font_weight !== "undefined" ) {
+					$font_weight.parent().css('display', 'none');
 				}
 
 				// make the subsets selector
-				if ( typeof subsets !== 'undefined' && subsets !== null && subsets !== '' && typeof $font_subsets !== "undefined" ) {
+				if ( typeof subsets !== 'undefined' && subsets !== null && subsets !== '' ) {
+
 					value_to_add['subsets'] = subsets;
 					// when a font is selected force the first subset to load
 					value_to_add['selected_subsets'] = {0: subsets[0]};
@@ -406,14 +421,18 @@
 						count_subsets++;
 					} );
 
-					$font_subsets.html( subsets_options );
+					if ( typeof $font_subsets !== "undefined" ) {
+						$font_subsets.html( subsets_options );
 
-					// if there is no subset or just 1 we hide the subsets select ... cuz is useless
-					if ( count_subsets <= 1 ) {
-						$font_subsets.parent().hide();
-					} else {
-						$font_subsets.parent().show();
+						// if there is no subset or just 1 we hide the subsets select ... cuz is useless
+						if ( count_subsets <= 1 ) {
+							$font_subsets.parent().css('display', 'none');
+						} else {
+							$font_subsets.parent().css('display', 'inline-block');
+						}
 					}
+				} else if ( typeof $font_subsets !== "undefined" ) {
+					$font_subsets.parent().css('display', 'none');
 				}
 
 				$input.val( JSON.stringify( value_to_add ) );
@@ -435,7 +454,6 @@
 			}
 			return false;
 		};
-
 
 		var customifyBackgroundJsControl = (function () {
 			"use strict";

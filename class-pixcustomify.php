@@ -497,7 +497,7 @@ class PixCustomifyPlugin {
 		//wp_enqueue_script( $this->plugin_slug . '-plugin-script', plugins_url( 'js/public.js', __FILE__ ), array( 'jquery' ), $this->version, true );
 
 		// quit adding google fonts as a static resource ... we will add it dynamically as a fallback when the typekit library isn't used
-		// wp_enqueue_script( 'google-fonts', '//ajax.googleapis.com/ajax/libs/webfont/1.5.3/webfont.js' );
+		// wp_enqueue_script( 'google-fonts', '//ajax.googleapis.com/ajax/libs/webfont/1/webfont.js' );
 	}
 
 	/**
@@ -722,7 +722,7 @@ class PixCustomifyPlugin {
 				} else {<?php // basically when we don't have the WebFont object we create the google script dynamically  ?>
 
 					var tk = document.createElement( 'script' );
-					tk.src = '//ajax.googleapis.com/ajax/libs/webfont/1.5.3/webfont.js';
+					tk.src = '//ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
 					tk.type = 'text/javascript';
 
 					tk.onload = tk.onreadystatechange = function() {
@@ -754,29 +754,38 @@ class PixCustomifyPlugin {
 						$value = $this->get_font_defaults_value( $font['value'] );
 					}
 					if ( isset( $value['font_family'] ) ) {
-						echo $font['selector'] . " {\n font-family: " . $value['font_family'] . ";\n}\n";
-					}
+						echo $font['selector'] . " {\n font-family: " . $value['font_family'] . ";";
 
-					if ( isset( $value['selected_variants'] ) && ! $load_all_weights ) {
-						$the_weight = $value['selected_variants'][0];
-						$italic_font = false;
+						if ( isset( $value['selected_variants'] ) && ! $load_all_weights ) {
 
-						if ( strpos( $the_weight, 'italic' ) !== false ) {
-							$the_weight = str_replace( 'italic', '', $the_weight);
-							$italic_font = true;
-						}
-
-						if ( ! empty( $the_weight ) ) {
-							if($the_weight === 'regular') {
-								$the_weight = 'normal';
+							if ( is_array( $value['selected_variants'] ) ) {
+								$the_weight = $value['selected_variants'][0];
+							} else {
+								$the_weight = $value['selected_variants'];
 							}
-							echo $font['selector'] . " {\nfont-weight: " . $the_weight . ";\n}\n";
+
+							$italic_font = false;
+
+							if ( strpos( $the_weight, 'italic' ) !== false ) {
+								$the_weight = str_replace( 'italic', '', $the_weight);
+								$italic_font = true;
+							}
+
+							if ( ! empty( $the_weight ) ) {
+								if($the_weight === 'regular') {
+									$the_weight = 'normal';
+								}
+								echo "\nfont-weight: " . $the_weight . ";\n";
+							}
+
+							if ( $italic_font ) {
+								echo "\nfont-style: italic;\n";
+							}
 						}
 
-						if ( $italic_font ) {
-							echo $font['selector'] . " {\nfont-style: italic;\n}\n";
-						}
+						echo "\n}\n";
 					}
+
 				}
 			} ?>
 		</style>
@@ -1527,7 +1536,13 @@ class PixCustomifyPlugin {
 
 		if ( isset( $array[ $key ] ) && $array[ $key ] == $value ) {
 			$results[ $input_key ]          = $array;
-			$results[ $input_key ]['value'] = self::get_option( $input_key );
+
+			$default = null;
+
+			if ( isset( $array['default'] ) ) {
+				$default = json_encode( $array['default'] );
+			}
+			$results[ $input_key ]['value'] = self::get_option( $input_key, $default );
 		}
 
 		foreach ( $array as $i => $subarray ) {
