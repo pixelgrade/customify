@@ -301,12 +301,12 @@ $popup 		: 275px;
 	}
 
 	ul li {
-		width: 48%;
+		width: 100%;
 		display: inline-table;
 
 		&:nth-child(2n+1) {
-			width: 45%;
-			margin-right: 5%;
+			// width: 45%;
+			// margin-right: 5%;
 		}
 
 		label {
@@ -332,8 +332,17 @@ $popup 		: 275px;
 }
 
 	.customize-control select[multiple].customify_typography_font_subsets {
-		height: 48px;
+		// height: 48px;
 	}
+
+/**
+ * Select Field
+ */
+
+.customize-control select {
+	width: 100%;
+}
+
 
 /**
  * Range Field
@@ -653,5 +662,23 @@ $popup 		: 275px;
 		img {
 			border: 2px solid #ccc;
 		}
+	}
+}
+
+/**
+ * RESET Buttons
+ */
+
+.wp-core-ui {
+	.reset_section,
+	.reset_panel {
+	    width: 100%;
+	    height: 4em;
+	    display: block;
+	    margin: 0px 0 25px;
+	}
+
+	.reset_panel {
+		margin-top: 10px;
 	}
 }
