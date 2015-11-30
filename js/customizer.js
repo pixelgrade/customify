@@ -347,7 +347,7 @@
 				return;
 			} else if( current_val === '[object Object]' ) {
 				current_val = $input.data('default');
-			} else if ( ! IsJsonString( current_val ) ) {
+			} else if ( typeof current_val === "string" && ! IsJsonString( current_val ) ) {
 				// a rare case when the value isn't a json but is a representative string like [family,weight]
 				current_val = current_val.split( ',');
 				var new_current_value = {};
