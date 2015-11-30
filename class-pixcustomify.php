@@ -1209,7 +1209,7 @@ class PixCustomifyPlugin {
 			$setting_args['transport'] = 'postMessage';
 		}
 
-		if ( isset( $setting_config['default'] ) && ! empty( $setting_config['default'] ) ) {
+		if ( isset( $setting_config['default'] ) ) {
 			$setting_args['default'] = $setting_config['default'];
 		}
 

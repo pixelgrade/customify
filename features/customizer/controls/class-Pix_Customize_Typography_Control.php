@@ -103,10 +103,9 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 	public function render_content() {
 
 		$current_value = $this->value();
-		if ( empty( $current_value ) && isset( $this->default ) ) {
+		if ( empty( $current_value ) || ( is_array( $current_value ) && ! isset( $current_value['font_family'] ) ) ) {
 			$current_value = $this->get_default_values();
 		}
-
 		// if this value was an array, well it was wrong
 		if ( is_array( $current_value ) ) {
 			if ( isset( $current_value['font-family'] ) ) {
@@ -115,7 +114,6 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 			}
 			$current_value = json_encode( $current_value );
 		}
-
 		$values = json_decode( $current_value );
 
 		$font_family = '';
@@ -244,7 +242,6 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 				</select>
 			</li>
 			<?php
-
 			$display = 'none';
 			if ( $this->subsets && ! empty( $values->subsets ) ) {
 				$display = 'inline-block';
@@ -361,9 +358,30 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 	function get_default_values( ) {
 
 		// @TODO maybe sanitize things here
-		//$to_return = array();
+		$to_return = '';
+		if (isset( $this->default ) && is_array( $this->default ) ) {
 
-		$to_return = $this->default;
+			if ( isset( $this->default['font_family'] ) ) {
+				$to_return['font_family'] = $this->default['font_family'];
+			}
+
+			if ( isset( $this->default[0] ) ) {
+				$to_return['font_family'] = $this->default[0];
+			}
+
+			if ( isset( $this->default['selected_variants'] ) ) {
+				$to_return['selected_variants'] = $this->default['selected_variants'];
+			}
+
+			if ( isset( $this->default[1] ) ) {
+				$to_return['selected_variants'] = $this->default[1];
+			}
+		}
+
+		// rare case whe the there is a standard font we need to get the custom variants if there are some
+		if ( ! isset( $to_return['variants'] ) && isset( self::$std_fonts[ $to_return['font_family'] ] ) && isset( self::$std_fonts[ $to_return['font_family'] ]['variants'] ) )  {
+			$to_return['variants'] = self::$std_fonts[ $to_return['font_family'] ]['variants'];
+		}
 
 		return $to_return;
 	}

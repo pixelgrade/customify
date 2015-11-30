@@ -320,11 +320,12 @@
 						var weight_select = field.parent().siblings( '.options' ).find('.customify_typography_font_weight');
 
 						var this_weight_option = weight_select.find( 'option[value="' + value['selected_variants'] + '"]' );
-						console.log( this_weight_option );
 
 						$( this_weight_option[0] ).attr( 'selected', 'selected' );
 
 						update_siblings_selects( this_family_option );
+
+						weight_select.trigger( 'change' );
 					},300);
 				}
 
@@ -346,10 +347,23 @@
 				return;
 			} else if( current_val === '[object Object]' ) {
 				current_val = $input.data('default');
+			} else if ( ! IsJsonString( current_val ) ) {
+				// a rare case when the value isn't a json but is a representative string like [family,weight]
+				current_val = current_val.split( ',');
+				var new_current_value = {};
+				if ( typeof current_val[0] !== "undefined" ) {
+					new_current_value['font_family'] = current_val[0];
+				}
+
+				if ( typeof current_val[1] !== "undefined" ) {
+					new_current_value['selected_variants'] = current_val[1];
+				}
+
+				current_val = JSON.stringify( new_current_value );
 			}
 
-			var $font_weight = $( font_select ).parent().siblings( 'ul.options' ).find( '.customify_typography_font_weight' );
-			var $font_subsets = $( font_select ).parent().siblings( 'ul.options' ).find( '.customify_typography_font_subsets' );
+			var $font_weight = $( font_select ).parent().siblings( 'ul.options' ).find( '.customify_typography_font_weight' ),
+				$font_subsets = $( font_select ).parent().siblings( 'ul.options' ).find( '.customify_typography_font_subsets' );
 
 			try {
 				current_val = JSON.parse( current_val );
@@ -679,6 +693,15 @@
 				return vars[name];
 			}
 			return false;
+		}
+
+		var IsJsonString = function(str) {
+			try {
+				JSON.parse(str);
+			} catch (e) {
+				return false;
+			}
+			return true;
 		}
 	} );
 })( jQuery, window );
