@@ -216,16 +216,16 @@ class PixCustomifyPlugin {
 
 	protected static function check_for_customizer_values() {
 		if ( isset( $_POST['customized'] ) && $_POST['customized'] !== '{}' ) {
-			$the_value = $_POST['customized'];
-			self::$customizer_values = json_decode($the_value , true );
+			$the_value               = $_POST['customized'];
+			self::$customizer_values = json_decode( $the_value, true );
 
 			/**
 			 * if still empty, use stripslashes_deep to ensure compatibility with 5.2
 			 * http://stackoverflow.com/questions/28698165/json-data-cannot-be-accessed-in-php-version-5-2-17
 			 */
 			if ( empty( self::$customizer_values ) ) {
-				$stripped_value = stripslashes_deep( $the_value );
-				self::$customizer_values = json_decode($stripped_value , true );
+				$stripped_value          = stripslashes_deep( $the_value );
+				self::$customizer_values = json_decode( $stripped_value, true );
 			}
 		} else {
 			self::$customizer_values = false;
@@ -559,10 +559,10 @@ class PixCustomifyPlugin {
 		foreach ( self::$options_list as $option_id => $options ) {
 
 			if ( $options['type'] === 'custom_background' ) {
-				$options['value'] = self::get_option( $option_id );
+				$options['value']         = self::get_option( $option_id );
 				$custom_background_output = $this->process_custom_background_field_output( $option_id, $options ); ?>
 
-				<style id="custom_backgorund_output_for_<?php echo $option_id; ?>" >
+				<style id="custom_backgorund_output_for_<?php echo $option_id; ?>">
 					<?php
 					if ( isset( $custom_background_output ) && ! empty( $custom_background_output )) {
 						echo $custom_background_output;
@@ -610,7 +610,7 @@ class PixCustomifyPlugin {
 						continue;
 					}
 
-					$display = true;?>
+					$display = true; ?>
 					<style id="dynamic_setting_<?php echo $key; ?>" type="text/css"><?php
 						$property_settings = $property['property'];
 						$property_value    = $property['value'];
@@ -715,7 +715,7 @@ class PixCustomifyPlugin {
 			<script type="text/javascript">
 				if ( typeof WebFont !== 'undefined' ) {<?php // if there is a WebFont object, use it ?>
 					WebFont.load( {
-						google: {families: [<?php echo (rtrim( $families, ',' ) ); ?>]},
+						google: {families: [<?php echo( rtrim( $families, ',' ) ); ?>]},
 						classes: false,
 						events: false
 					} );
@@ -727,7 +727,7 @@ class PixCustomifyPlugin {
 
 					tk.onload = tk.onreadystatechange = function() {
 						WebFont.load( {
-							google: {families: [<?php echo (rtrim( $families, ',' ) ); ?>]},
+							google: {families: [<?php echo( rtrim( $families, ',' ) ); ?>]},
 							classes: false,
 							events: false
 						} );
@@ -753,6 +753,12 @@ class PixCustomifyPlugin {
 					if ( $value === null ) {
 						$value = $this->get_font_defaults_value( $font['value'] );
 					}
+
+					// shim the old case when the default was only the font name
+					if ( is_string( $value ) && ! empty( $value ) ) {
+						$value = array( 'font_family' => $value );
+					}
+
 					if ( isset( $value['font_family'] ) ) {
 						echo $font['selector'] . " {\n font-family: " . $value['font_family'] . ";";
 
@@ -872,9 +878,9 @@ class PixCustomifyPlugin {
 
 	protected function process_custom_background_field_output( $option_id, $options ) {
 		$selector = '';
-		$value = $options['value'];
+		$value    = $options['value'];
 
-		if ( ! isset(  $options['output'] ) ) {
+		if ( ! isset( $options['output'] ) ) {
 			return $selector;
 		} elseif ( is_string( $options['output'] ) ) {
 			$selector = $options['output'];
@@ -885,25 +891,25 @@ class PixCustomifyPlugin {
 
 		echo "\n" . $selector . " { \n";
 		if ( isset( $value['background-image'] ) && ! empty( $value['background-image'] ) ) {
-			echo "background-image: url( " .$value['background-image']. ");\n";
+			echo "background-image: url( " . $value['background-image'] . ");\n";
 		} else {
 			echo "background-image: none;\n";
 		}
 
 		if ( isset( $value['background-repeat'] ) && ! empty( $value['background-repeat'] ) ) {
-			echo "background-repeat:" .$value['background-repeat']. ";\n";
+			echo "background-repeat:" . $value['background-repeat'] . ";\n";
 		}
 
 		if ( isset( $value['background-position'] ) && ! empty( $value['background-position'] ) ) {
-			echo "background-position:" .$value['background-position']. ";\n";
+			echo "background-position:" . $value['background-position'] . ";\n";
 		}
 
 		if ( isset( $value['background-size'] ) && ! empty( $value['background-size'] ) ) {
-			echo "background-size:" .$value['background-size']. ";\n";
+			echo "background-size:" . $value['background-size'] . ";\n";
 		}
 
 		if ( isset( $value['background-attachment'] ) && ! empty( $value['background-attachment'] ) ) {
-			echo "background-attachment:" .$value['background-attachment']. ";\n";
+			echo "background-attachment:" . $value['background-attachment'] . ";\n";
 		}
 		echo "\n}\n";
 
@@ -950,7 +956,7 @@ class PixCustomifyPlugin {
 						}
 					};
 
-					var xmlString = <?php echo json_encode( str_replace("\n", "", $custom_css ) ); ?>,
+					var xmlString = <?php echo json_encode( str_replace( "\n", "", $custom_css ) ); ?>,
 						parser = new DOMParser(),
 						doc = parser.parseFromString( xmlString, "text/html" );
 
@@ -1272,8 +1278,13 @@ class PixCustomifyPlugin {
 			'search'
 		) ) ) {
 			$wp_customize->add_control( $setting_id . '_control', $control_args );
+
 			return;
-		} elseif ( in_array( $setting_config['type'], array( 'radio', 'select' ) ) && isset( $setting_config['choices'] ) && ! empty( $setting_config['choices'] ) ) {
+		} elseif ( in_array( $setting_config['type'], array(
+				'radio',
+				'select'
+			) ) && isset( $setting_config['choices'] ) && ! empty( $setting_config['choices'] )
+		) {
 			$control_args['choices'] = $setting_config['choices'];
 			$wp_customize->add_control( $setting_id . '_control', $control_args );
 
@@ -1535,7 +1546,7 @@ class PixCustomifyPlugin {
 		}
 
 		if ( isset( $array[ $key ] ) && $array[ $key ] == $value ) {
-			$results[ $input_key ]          = $array;
+			$results[ $input_key ] = $array;
 
 			$default = null;
 

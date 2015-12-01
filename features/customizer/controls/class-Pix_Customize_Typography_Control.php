@@ -357,7 +357,6 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 
 	function get_default_values( ) {
 
-		// @TODO maybe sanitize things here
 		$to_return = '';
 		if (isset( $this->default ) && is_array( $this->default ) ) {
 
