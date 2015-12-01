@@ -428,7 +428,7 @@
 					if ( typeof $font_weight !== "undefined" ) {
 						$font_weight.html( variants_options );
 						// if there is no weight or just 1 we hide the weight select ... cuz is useless
-						if ( count_weights <= 1 ) {
+						if ( $(font_select ).data('load_all_weights') === true || count_weights <= 1 ) {
 							$font_weight.parent().css('display', 'none');
 						} else {
 							$font_weight.parent().css('display', 'inline-block');
