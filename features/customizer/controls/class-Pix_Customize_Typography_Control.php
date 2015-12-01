@@ -217,13 +217,9 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 			<?php
 			$display = 'none';
 
-			var_dump($this->load_all_weights);
-
 			if ( ! $this->load_all_weights && $this->font_weight ) {
 				$display = 'inline-block';
-			}
-			var_dump( $display );
-			?>
+			} ?>
 			<li class="customify_weights_wrapper" style="display: <?php echo $display; ?>">
 				<label><?php _e( 'Font Weight', 'customify_txtd' ); ?></label>
 				<select class="customify_typography_font_weight">
