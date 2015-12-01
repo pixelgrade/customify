@@ -342,7 +342,7 @@
 			var selected_font = $( font_select ).val(),
 				$input = $( font_select ).siblings( '.customify_typography_values' ),
 				current_val = $input.attr('value');
-console.log( current_val);
+
 			if( current_val === '[object Object]' ) {
 				current_val = $input.data('default');
 			} else if ( typeof current_val === "string" && ! IsJsonString( current_val ) ) {
