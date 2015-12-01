@@ -379,7 +379,7 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 		}
 
 		// rare case whe the there is a standard font we need to get the custom variants if there are some
-		if ( ! isset( $to_return['variants'] ) && isset( self::$std_fonts[ $to_return['font_family'] ] ) && isset( self::$std_fonts[ $to_return['font_family'] ]['variants'] ) )  {
+		if ( ! isset( $to_return['variants'] ) && isset( $to_return['font_family'] ) && isset( self::$std_fonts[ $to_return['font_family'] ] ) && isset( self::$std_fonts[ $to_return['font_family'] ]['variants'] ) )  {
 			$to_return['variants'] = self::$std_fonts[ $to_return['font_family'] ]['variants'];
 		}
 
