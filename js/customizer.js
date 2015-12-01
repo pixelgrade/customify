@@ -342,10 +342,8 @@
 			var selected_font = $( font_select ).val(),
 				$input = $( font_select ).siblings( '.customify_typography_values' ),
 				current_val = $input.attr('value');
-
-			if ( current_val === '' ) {
-				return;
-			} else if( current_val === '[object Object]' ) {
+console.log( current_val);
+			if( current_val === '[object Object]' ) {
 				current_val = $input.data('default');
 			} else if ( typeof current_val === "string" && ! IsJsonString( current_val ) ) {
 				// a rare case when the value isn't a json but is a representative string like [family,weight]
@@ -381,7 +379,6 @@
 					$font_subsets.change();
 				}
 			}
-
 			// first try to get the font from sure sources, not from the recommended list.
 			var option_data = $( font_select ).find( ':not(optgroup[label=Recommended]) option[value="' + selected_font + '"]' );
 			// howevah, if there isn't an option found, get what you can
