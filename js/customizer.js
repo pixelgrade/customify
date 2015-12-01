@@ -382,7 +382,12 @@
 				}
 			}
 
-			var option_data = $( font_select ).find( 'option[value="' + selected_font + '"]' );
+			// first try to get the font from sure sources, not from the recommended list.
+			var option_data = $( font_select ).find( ':not(optgroup[label=Recommended]) option[value="' + selected_font + '"]' );
+			// howevah, if there isn't an option found, get what you can
+			if ( option_data.length < 1 ) {
+				option_data = $( font_select ).find( 'option[value="' + selected_font + '"]' );
+			}
 
 			if ( option_data.length > 0 ) {
 
@@ -423,7 +428,6 @@
 						variants_options += '<option value="' + el + '"' + is_selected + '>' + el + '</option>';
 						count_weights++;
 					} );
-
 					if ( typeof $font_weight !== "undefined" ) {
 						$font_weight.html( variants_options );
 						// if there is no weight or just 1 we hide the weight select ... cuz is useless
