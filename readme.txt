@@ -1,9 +1,9 @@
 === Customify - A Theme Customizer Booster ===
 Contributors: pixelgrade, euthelup, babbardel
 Tags: customizer, css, editor, live, preview, customise
-Requires at least: 4.0.0
-Tested up to: 4.3.1
-Stable tag: 1.1.7
+Requires at least: 4.1.0
+Tested up to: 4.4.0
+Stable tag: 1.2.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -32,6 +32,13 @@ With [Customify](https://github.com/pixelgrade/customify), developers can easily
 * **And more others [this is the full list](https://github.com/pixelgrade/customify#list_of_fields)
 
 == Changelog ==
+
+= 1.2.0 =
+* Added: Compatibility with WordPress 4.4.0
+* Added: Presets can now set fonts and fonts weights
+* Fixed: Font subsets style
+* Fixed: Fixed some PHP and javascript warnings
+* Updated: Font field style
 
 = 1.1.7 =
 * Added: Compatibility with WordPress 4.3.1
