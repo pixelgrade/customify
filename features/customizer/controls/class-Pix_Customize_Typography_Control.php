@@ -358,27 +358,46 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 
 	function get_default_values( ) {
 
-		$to_return = '';
+		$to_return = array();
 		if (isset( $this->default ) && is_array( $this->default ) ) {
 
-			if ( isset( $this->default['font_family'] ) ) {
-				$to_return['font_family'] = $this->default['font_family'];
-			}
+			//Handle special logic for when the $value array is not an associative array
+			if ( ! PixCustomifyPlugin::is_assoc( $this->default ) ) {
 
-			if ( isset( $this->default[0] ) ) {
-				$to_return['font_family'] = $this->default[0];
-			}
+				//Let's determine some type of font
+				if ( ! isset( $this->default[2] ) || ( isset( $this->default[2] ) && 'google' == $this->default[2] ) ) {
+					if ( isset( self::$google_fonts[ $this->default[0] ] ) ) {
+						$to_return                = self::$google_fonts[ $this->default[0] ];
+						$to_return['font_family'] = $this->default[0];
+						$to_return['type']        = 'google';
+					}
+				} else {
+					$to_return['type'] = $this->default[2];
+				}
 
-			if ( isset( $this->default['selected_variants'] ) ) {
-				$to_return['selected_variants'] = $this->default['selected_variants'];
-			}
+				//The first entry is the font-family
+				if ( isset( $this->default[0] ) ) {
+					$to_return['font_family'] = $this->default[0];
+				}
 
-			if ( isset( $this->default[1] ) ) {
-				$to_return['selected_variants'] = $this->default[1];
+				//In case we don't have an associative array
+				//The second entry is the variants
+				if ( isset( $this->default[1] ) ) {
+					$to_return['selected_variants'] = $this->default[1];
+				}
+			} else {
+
+				if ( isset( $this->default['font_family'] ) ) {
+					$to_return['font_family'] = $this->default['font_family'];
+				}
+
+				if ( isset( $this->default['selected_variants'] ) ) {
+					$to_return['selected_variants'] = $this->default['selected_variants'];
+				}
 			}
 		}
 
-		// rare case whe the there is a standard font we need to get the custom variants if there are some
+		// rare case when there is a standard font we need to get the custom variants if there are some
 		if ( ! isset( $to_return['variants'] ) && isset( $to_return['font_family'] ) && isset( self::$std_fonts[ $to_return['font_family'] ] ) && isset( self::$std_fonts[ $to_return['font_family'] ]['variants'] ) )  {
 			$to_return['variants'] = self::$std_fonts[ $to_return['font_family'] ]['variants'];
 		}

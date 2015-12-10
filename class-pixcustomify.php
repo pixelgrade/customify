@@ -690,6 +690,40 @@ class PixCustomifyPlugin {
 					$value = $this->get_font_defaults_value( $font['value'] );
 				}
 
+				//bail if by this time we don't have a value of some sort
+				if ( empty( $value ) ) {
+					continue;
+				}
+
+				//Handle special logic for when the $value array is not an associative array
+				if ( ! self::is_assoc( $value ) ) {
+					$new_value = array();
+
+					//Let's determine some type of font
+					if ( ! isset( $value[2] ) || ( isset( $value[2] ) && 'google' == $value[2] ) ) {
+						$new_value = $this->get_font_defaults_value( $value[0] );
+					} else {
+						$new_value['type'] = $value[2];
+					}
+
+					if ( null == $new_value ) {
+						$new_value = array();
+					}
+
+					//The first entry is the font-family
+					if ( isset( $value[0] ) ) {
+						$new_value['font_family'] = $value[0];
+					}
+
+					//In case we don't have an associative array
+					//The second entry is the variants
+					if ( isset( $value[1] ) ) {
+						$new_value['selected_variants'] = $value[1];
+					}
+
+					$value = $new_value;
+				}
+
 				if ( isset( $value['font_family'] ) && isset( $value['type'] ) && $value['type'] == 'google' ) {
 					$families .= "'" . $value['font_family'];
 
@@ -698,13 +732,25 @@ class PixCustomifyPlugin {
 					} elseif ( isset( $value['selected_variants'] ) && ! empty( $value['selected_variants'] ) ) {
 						$families .= ":" . implode( ',', $value['selected_variants'] );
 					} elseif ( isset( $value['variants'] ) && ! empty( $value['variants'] ) ) {
-						$families .= ":" . implode( ',', $value['variants'] );
+						if ( is_array( $value['variants'] ) ) {
+							$families .= ":" . implode( ',', $value['variants'] );
+						} else {
+							$families .= ":" . $value['variants'];
+						}
 					}
 
 					if ( isset( $value['selected_subsets'] ) && ! empty( $value['selected_subsets'] ) ) {
-						$families .= ":" . implode( ',', $value['selected_subsets'] );
+						if ( is_array( $value['selected_subsets'] ) ) {
+							$families .= ":" . implode( ',', $value['selected_subsets'] );
+						} else {
+							$families .= ":" . $value['selected_subsets'];
+						}
 					} elseif ( isset( $value['subsets'] ) && ! empty( $value['subsets'] ) ) {
-						$families .= ":" . implode( ',', $value['subsets'] );
+						if ( is_array( $value['subsets'] ) ) {
+							$families .= ":" . implode( ',', $value['subsets'] );
+						} else {
+							$families .= ":" . $value['subsets'];
+						}
 					}
 
 					$families .= '\',';
@@ -1394,7 +1440,7 @@ class PixCustomifyPlugin {
 					continue;
 				}
 
-				$control_class_name = 'Pix_Customize_' . ucfirst( $setting_config['type'] ) . '_Control';
+				$control_class_name = 'Pix_Customize_Typography_Control';
 
 				if ( isset( $setting_config['backup'] ) ) {
 					$control_args['backup'] = $setting_config['backup'];
@@ -1430,7 +1476,7 @@ class PixCustomifyPlugin {
 
 				$control_args['choices'] = $setting_config['choices'];
 
-				$control_class_name = 'Pix_Customize_' . ucfirst( $setting_config['type'] ) . '_Control';
+				$control_class_name = 'Pix_Customize_Select2_Control';
 				break;
 
 			case 'preset' :
@@ -1450,7 +1496,7 @@ class PixCustomifyPlugin {
 				}
 
 
-				$control_class_name = 'Pix_Customize_' . ucfirst( $setting_config['type'] ) . '_Control';
+				$control_class_name = 'Pix_Customize_Preset_Control';
 				break;
 
 			case 'radio_image' :
@@ -1470,7 +1516,7 @@ class PixCustomifyPlugin {
 				}
 
 
-				$control_class_name = 'Pix_Customize_' . ucfirst( $setting_config['type'] ) . '_Control';
+				$control_class_name = 'Pix_Customize_Radio_Image_Control';
 				break;
 
 			case 'button' :
@@ -1481,7 +1527,7 @@ class PixCustomifyPlugin {
 
 				$control_args['action'] = $setting_config['action'];
 
-				$control_class_name = 'Pix_Customize_' . ucfirst( $setting_config['type'] ) . '_Control';
+				$control_class_name = 'Pix_Customize_Button_Control';
 
 				break;
 
@@ -1578,5 +1624,22 @@ class PixCustomifyPlugin {
 		} else {
 			return false;
 		}
+	}
+
+	/**
+	 * Checks whether an array is associative or not
+	 *
+	 * @param array $array
+	 *
+	 * @return bool
+	 */
+	public static function is_assoc(array $array)
+	{
+		// Keys of the array
+		$keys = array_keys($array);
+
+		// If the array keys of the keys match the keys, then the array must
+		// not be associative (e.g. the keys array looked like {0:0, 1:1...}).
+		return array_keys($keys) !== $keys;
 	}
 }
