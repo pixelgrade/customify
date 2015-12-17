@@ -757,7 +757,9 @@ class PixCustomifyPlugin {
 				}
 			}
 		}
-		if ( ! empty ( $families ) ) { ?>
+
+
+		if ( ! empty ( $families ) && self::get_plugin_option( 'typography', '1' ) && self::get_plugin_option( 'typography_google_fonts', 1 ) ) { ?>
 			<script type="text/javascript">
 				if ( typeof WebFont !== 'undefined' ) {<?php // if there is a WebFont object, use it ?>
 					WebFont.load( {
