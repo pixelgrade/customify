@@ -686,8 +686,8 @@ class PixCustomifyPlugin {
 				$value = json_decode( $font['value'], true );
 
 				// in case the value is still null, try default value(mostly for google fonts)
-				if ( $value === null ) {
-					$value = $this->get_font_defaults_value( $font['value'] );
+				if ( ! is_array( $value ) || $value === null ) {
+					$value = $this->get_font_defaults_value( str_replace( '"', '', $font['value'] ) );
 				}
 
 				//bail if by this time we don't have a value of some sort
@@ -1596,9 +1596,10 @@ class PixCustomifyPlugin {
 
 			$default = null;
 
-			if ( isset( $array['default'] ) ) {
+			if ( isset( $array['default'] ) && is_array( $array['default'] ) ) {
 				$default = json_encode( $array['default'] );
 			}
+
 			$results[ $input_key ]['value'] = self::get_option( $input_key, $default );
 		}
 
@@ -1633,8 +1634,12 @@ class PixCustomifyPlugin {
 	 *
 	 * @return bool
 	 */
-	public static function is_assoc(array $array)
-	{
+	public static function is_assoc( $array ) {
+
+		if ( ! is_array( $array ) ) {
+			return false;
+		}
+
 		// Keys of the array
 		$keys = array_keys($array);
 
