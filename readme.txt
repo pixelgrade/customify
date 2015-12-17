@@ -3,7 +3,7 @@ Contributors: pixelgrade, euthelup, babbardel
 Tags: customizer, css, editor, live, preview, customise
 Requires at least: 4.1.0
 Tested up to: 4.4.0
-Stable tag: 1.2.0
+Stable tag: 1.2.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -32,6 +32,10 @@ With [Customify](https://github.com/pixelgrade/customify), developers can easily
 * **And more others [this is the full list](https://github.com/pixelgrade/customify#list_of_fields)
 
 == Changelog ==
+
+= 1.2.1 =
+* Improve default fonts parse, and fix some legacy cases
+* Remove google api code when google fonts is disabled
 
 = 1.2.0 =
 * Added: Compatibility with WordPress 4.4.0
