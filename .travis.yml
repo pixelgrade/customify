@@ -1,7 +1,7 @@
-# whitelist branch dev
+# whitelist
 branches:
   only:
-    - dev
+    - master
 
 language: php
 
@@ -10,17 +10,20 @@ php:
   - 5.3
   - 5.4
   - 5.5
+  - 5.6
 
-before_script:
-  - sudo apt-get install ruby
-  - gem install nyx
+sudo: false
+
+cache:
+- bundler
+- apt
+
+addons:
+  apt:
+    packages:
+    - ruby
+
+install: gem install nyx
 
 script:
-  - nyx version
-  - nyx check:php .
-
-notifications:
-  email:
-    recipients:
-    - andrei.lupu@pixelgrade.com
-    on_failure: always
+    - nyx check:php .
