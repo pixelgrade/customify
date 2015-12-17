@@ -35,7 +35,8 @@ With [Customify](https://github.com/pixelgrade/customify), developers can easily
 
 = 1.2.0 =
 * Added: Compatibility with WordPress 4.4.0
-* Added: Presets can now set fonts and fonts weights
+* Added: Presets can now set fonts and font weights
+* Fixed: Now range fields can have `0` as default
 * Fixed: Font subsets style
 * Fixed: Fixed some PHP and javascript warnings
 * Updated: Font field style
