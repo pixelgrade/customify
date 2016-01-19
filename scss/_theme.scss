@@ -24,7 +24,8 @@ $background-hover 	: #f5fcff;
 
 
 
-.wp-full-overlay-sidebar {
+.wp-full-overlay-sidebar,
+.customize-themes-panel {
     background: #eaf9fe;
     border-right: 1px solid $borders;
 }
@@ -47,8 +48,6 @@ $background-hover 	: #f5fcff;
 
 
 #customize-theme-controls {
-
-
 
 	.control-section {
 		.accordion-section-title {

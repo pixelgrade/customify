@@ -2,7 +2,7 @@
 
 .accordion-section-content { overflow: visible; }
 
-.customize-control { float: none; padding: 0px; width: 265px; min-height: 35px; }
+.control-section:not(.control-section-themes) .customize-control { float: none; padding: 0px; width: 265px; min-height: 35px; }
 
 #customize-header-actions { border-bottom: 0; }
 
@@ -11,6 +11,8 @@
 #customize-controls .customize-info { margin-bottom: 0; }
 
 .customize-panel-back, .customize-section-back { height: 74px; }
+
+#customize-theme-controls .theme * { box-sizing: content-box; }
 
 .customize-control-color .wp-picker-container .wp-picker-open + .wp-picker-input-wrap:after { content: ""; position: absolute; bottom: 100%; right: 19px; border-collapse: separate; width: 0; height: 0; border-width: 0 9px 9px 9px; border-style: solid; border-color: transparent transparent #eee transparent; }
 
@@ -108,7 +110,7 @@ h2.separator { margin-bottom: -20px; margin-top: 30px; }
 .customize-controls-close { color: #7da9c3; background: #ffffff; border-color: #dfe8ef; }
 .customize-controls-close:focus, .customize-controls-close:hover { background: #f5fcff; }
 
-.wp-full-overlay-sidebar { background: #eaf9fe; border-right: 1px solid #dfe8ef; }
+.wp-full-overlay-sidebar, .customize-themes-panel { background: #eaf9fe; border-right: 1px solid #dfe8ef; }
 
 #customize-controls #accordion-section-themes > .accordion-section-title { font-weight: 600; border-bottom: 1px solid #dfe8ef; }
 #customize-controls #accordion-section-themes > .accordion-section-title:hover { background: #fff; }

@@ -18,8 +18,6 @@ $popup 		: 275px;
 //------------------------------------*/
 .wp-full-overlay-sidebar {
 	* {
-		-webkit-box-sizing 	: border-box;
-		-moz-box-sizing 	: border-box;
 		box-sizing 			: border-box;
 	}
 }
@@ -31,7 +29,7 @@ $popup 		: 275px;
 
 
 
-.customize-control {
+.control-section:not(.control-section-themes) .customize-control {
 	float: none;
 	padding: 0px;
     width:265px;
@@ -58,6 +56,10 @@ $popup 		: 275px;
 	height: 74px;
 }
 
+
+#customize-theme-controls .theme * {
+		box-sizing: content-box;
+}
 
 
 //------------------------------------*\
