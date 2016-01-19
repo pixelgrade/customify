@@ -49,6 +49,15 @@ $popup 		: 275px;
 	width: 48px;
 }
 
+// Remove Accordion Section Title Margin
+#customize-controls .customize-info {
+	margin-bottom: 0;
+}  
+
+.customize-panel-back, .customize-section-back {
+	height: 74px;
+}
+
 
 
 //------------------------------------*\
@@ -690,3 +699,9 @@ h2.separator {
 	margin-bottom: -20px;
     margin-top: 30px;
 }
+
+
+
+
+
+@import 'theme';

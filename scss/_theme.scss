@@ -1,0 +1,74 @@
+
+//------------------------------------*\
+//    CUSTOMIFY — COLOR SCHEME
+//------------------------------------*/
+
+
+$borders 			: #dfe8ef;
+$background-hover 	: #f5fcff;
+
+#customize-header-actions {
+    background: #ffffff;
+    border-color: $borders;
+}
+
+.customize-controls-close {
+	color: #7da9c3;
+	background: #ffffff;
+	border-color: $borders;
+
+	&:focus, &:hover {
+		background: $background-hover;
+	}
+}
+
+
+
+.wp-full-overlay-sidebar {
+    background: #eaf9fe;
+    border-right: 1px solid $borders;
+}
+
+#customize-controls {
+	#accordion-section-themes {
+		&>.accordion-section-title {
+		    font-weight: 600;
+		    border-bottom: 1px solid $borders;
+
+		    &:hover {
+		    	background: #fff;
+		    }
+		}
+	}
+	.panel-meta.customize-info {
+		border-bottom: none;
+	}
+}
+
+
+#customize-theme-controls {
+
+
+
+	.control-section {
+		.accordion-section-title {
+			font-weight: 400;
+		    border-top: 1px solid $borders;
+		    border-bottom: none;
+	        // transition: background 0.15s ease-in-out;
+		}	
+		&:last-of-type>.accordion-section-title {
+			border-bottom: 1px solid $borders;
+		}
+	}
+
+	.customize-section-title {
+		border-top: 1px solid $borders;
+		border-bottom: 1px solid $borders;
+	}
+}
+
+#customize-controls .control-section .accordion-section-title:focus, #customize-controls .control-section .accordion-section-title:hover, #customize-controls .control-section.open .accordion-section-title, #customize-controls .control-section:hover>.accordion-section-title {
+	color: #056184;
+	background: #f5fcff;
+}
