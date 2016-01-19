@@ -10,3 +10,4 @@ codekit-config.json
 node_modules
 build
 *-ck.js
+npm-debug.log
