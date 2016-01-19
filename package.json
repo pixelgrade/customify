@@ -1,12 +1,24 @@
 {
-  "devDependencies": {
-    "gulp-zip": "~0.4.0",
-    "gulp": "~3.8.5",
-    "gulp-exec": "~2.0.1",
-    "gulp-clean": "~0.3.1",
-    "gulp-sass": "~0.6.0",
-    "gulp-ruby-sass": "~0.7.1",
-    "gulp-autoprefixer": "0.0.6",
-    "gulp-chmod": "~1.2.0"
-  }
+    "name": "customify",
+    "devDependencies": {
+        "gulp": "*",
+        "gulp-sass": "*",
+        "gulp-ruby-sass": "~0.7.1",
+        "gulp-autoprefixer": "~1.0.1",
+        "gulp-minify-css": "*",
+        "gulp-ignore": "*",
+        "gulp-notify": "*",
+        "gulp-concat": "~2.1.7",
+        "gulp-exec": "~2.0.1",
+        "gulp-replace": "~0.4.0",
+        "gulp-beautify": "*",
+        "gulp-csscomb": "*",
+        "gulp-rename": "*",
+        "gulp-combine-media-queries": "*",
+        "gulp-chmod": "*",
+        "del": "*",
+        "gulp-postcss": "*",
+        "rtlcss": "*",
+        "es6-promise": "*"
+    }
 }

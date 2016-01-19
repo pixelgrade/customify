@@ -1,28 +1,99 @@
-/*
- * Load Plugins
- */
-var gulp = require( 'gulp' ),
-	sass = require( 'gulp-ruby-sass' ),
-	prefix = require( 'gulp-autoprefixer' ),
-	exec = require( 'gulp-exec' ),
-	clean = require( 'gulp-clean' ),
-	zip = require( 'gulp-zip' );
+var plugin = 'customify',
+	source_SCSS = 'scss/**/*.scss',
+	dest_CSS = './css/',
+
+	gulp 		= require('gulp'),
+	sass 		= require('gulp-ruby-sass'),
+	prefix 		= require('gulp-autoprefixer'),
+	exec 		= require('gulp-exec'),
+	replace 	= require('gulp-replace'),
+	minify 		= require('gulp-minify-css'),
+	concat 		= require('gulp-concat'),
+	notify 		= require('gulp-notify'),
+	beautify 	= require('gulp-beautify'),
+	csscomb 	= require('gulp-csscomb'),
+	cmq 		= require('gulp-combine-media-queries'),
+	chmod 		= require('gulp-chmod'),
+	fs          = require('fs'),
+	rtlcss 		= require('rtlcss'),
+	postcss 	= require('gulp-postcss'),
+	del         = require('del'),
+	rename 		= require('gulp-rename');
+
+require('es6-promise').polyfill();
+
+var jsFiles = [
+	'./assets/js/vendor/*.js',
+	'./assets/js/main/wrapper_start.js',
+	'./assets/js/main/shared_vars.js',
+	'./assets/js/modules/*.js',
+	'./assets/js/main/main.js',
+	'./assets/js/main/functions.js',
+	'./assets/js/main/wrapper_end.js'
+];
 
 
-gulp.task( 'styles', function() {
-	return gulp.src( 'scss/**/*.scss' )
-		.pipe( sass( { sourcemap: false, style: 'nested', 'compass': true } ) )
-		.on( 'error', function( e ) {
-			console.log( e.message );
-		} )
-		.pipe( prefix( "last 1 version", "> 1%", "ie 8", "ie 7" ) )
-		.pipe( gulp.dest( './css/' ) )
-		.pipe( notify( 'Styles task complete' ) );
-} );
+var options = {
+	silent: true,
+	continueOnError: true // default: false
+};
 
-gulp.task( 'styles-watch', function() {
-	return gulp.watch( 'scss/**/*.scss', ['styles'] );
-} );
+// styles related
+gulp.task('styles-dev', function () {
+	return gulp.src(source_SCSS)
+		.pipe(sass({'sourcemap': false, style: 'compact'}))
+			.on('error', function (e) {
+				console.log(e.message);
+			})
+		.pipe(prefix("last 1 version", "> 1%", "ie 8", "ie 7"))
+        .pipe(gulp.dest(dest_CSS));
+		// .pipe(postcss([
+		//     require('rtlcss')({ /* options */ })
+		// ]))
+		// .pipe(rename("rtl.css"))
+		// .pipe(gulp.dest('./'))
+});
+
+gulp.task('styles', function () {
+	return gulp.src(source_SCSS)
+		.pipe(sass({'sourcemap': true, style: 'expanded'}))
+		.pipe(prefix("last 1 version", "> 1%", "ie 8", "ie 7"))
+		.pipe(csscomb())
+		.pipe(chmod(644))
+        .pipe(gulp.dest(dest_CSS))
+});
+
+gulp.task('styles-watch', function () {
+	return gulp.watch(source_SCSS, ['styles']);
+});
+
+// javascript stuff
+gulp.task('scripts', function () {
+	return gulp.src(jsFiles)
+		.pipe(concat('main.js'))
+		.pipe(beautify({indentSize: 2}))
+		.pipe(chmod(644))
+		.pipe(gulp.dest('./assets/js/'));
+});
+
+gulp.task('scripts-watch', function () {
+	return gulp.watch(source_SCSS, ['scripts']);
+});
+
+gulp.task('watch', function () {
+	gulp.watch(source_SCSS, ['styles-dev']);
+	// gulp.watch('assets/js/**/*.js', ['scripts']);
+});
+
+// usually there is a default task for lazy people who just wanna type gulp
+gulp.task('start', ['styles', 'scripts'], function () {
+	// silence
+});
+
+gulp.task('server', ['styles', 'scripts'], function () {
+	console.log('The styles and scripts have been compiled for production! Go and clear the caches!');
+});
+
 
 /**
  * Create a zip archive out of the cleaned folder and delete the folder
@@ -77,3 +148,36 @@ gulp.task( 'build', ['copy-folder'], function() {
 	return gulp.src( files_to_remove, {read: false} )
 		.pipe( clean( {force: true} ) );
 } );
+
+// usually there is a default task  for lazy people who just wanna type gulp
+gulp.task('default', ['start'], function () {
+	// silence
+});
+
+/**
+ * Short commands help
+ */
+
+gulp.task('help', function () {
+
+	var $help = '\nCommands available : \n \n' +
+		'=== General Commands === \n' +
+		'start              (default)Compiles all styles and scripts and makes the theme ready to start \n' +
+		'zip                Generate the zip archive \n' +
+		'build              Generate the build directory with the cleaned theme \n' +
+		'help               Print all commands \n' +
+		'=== Style === \n' +
+		'styles             Compiles styles in production mode\n' +
+		'styles-dev         Compiles styles in development mode \n' +
+		'styles-admin       Compiles admin styles \n' +
+		'=== Scripts === \n' +
+		'scripts            Concatenate all js scripts \n' +
+		'scripts-dev        Concatenate all js scripts \n' +
+		'=== Watchers === \n' +
+		'watch              Watches all js and scss files \n' +
+		'styles-watch       Watch only styles\n' +
+		'scripts-watch      Watch scripts only \n';
+
+	console.log($help);
+
+});
