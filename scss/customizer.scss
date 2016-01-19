@@ -1,5 +1,5 @@
 @charset "UTF-8";
-@import "compass";
+// @import "compass";
 //------------------------------------*\
 //  VARIABLES
 //------------------------------------*/
@@ -79,7 +79,7 @@ $popup 		: 275px;
 	padding 	: 12px;
 	display 	: none;
 	background 		: #fff;
-	@include border-radius(3px);
+	border-radius 	: 3px;
 	@extend %top-arrow;
 
 	&.active {
@@ -104,8 +104,8 @@ $popup 		: 275px;
 	border 		: none;
 	background 	: #1d1e20;
 	color 		: #5f6369;
-	@include border-radius(100px);
-	@include box-shadow(rgba(0, 0, 0, 0.1) 0 2px 0px inset);
+	border-radius : (100px);
+	box-shadow: rgba(0, 0, 0, 0.1) 0 2px 0px inset;
 	line-height : 30px;
 	text-align 	: center;
 	cursor 		: pointer;
@@ -121,7 +121,7 @@ $popup 		: 275px;
 	}
 
 	&.active {
-		@include box-shadow(rgba(0, 0, 0, 0.4) 0 1px 1px);
+		box-shadow: rgba(0, 0, 0, 0.4) 0 1px 1px;
 	}
 }
 
@@ -162,7 +162,7 @@ $popup 		: 275px;
 			width 		: $popup !important;
 			border-top 	: none;
 			border-color: #DFDFDE;
-			@include border-radius(0 0 3px 3px);
+			border-radius: 0 0 3px 3px;
 			background: white;
 
 			.iris-picker-inner {
@@ -175,18 +175,18 @@ $popup 		: 275px;
 			}
 			.iris-strip {
 				float 	: right;
-				@include box-shadow(rgba(0,0,0,0.4) 0 1px 1px inset);
+				box-shadow: rgba(0,0,0,0.4) 0 1px 1px inset;
 				.ui-slider-handle {
 					border-color 	: #aaa !important;
 					opacity 		: 1;
-					@include box-shadow(none);
+					box-shadow: none;
 				}
 			}
 			.iris-palette {
 				width : 24px !important;
 				height : 24px !important;
-				@include border-radius(50px);
-				@include box-shadow(rgba(0,0,0,0.4) 0 1px 1px inset);
+				border-radius: 50px;
+				box-shadow: rgba(0,0,0,0.4) 0 1px 1px inset;
 			}
 		}
 
@@ -199,7 +199,7 @@ $popup 		: 275px;
 			padding 	: 12px;
 			background 	: #eee;
 			border 		: 1px solid #DFDFDE;
-			@include border-radius(3px 3px 0 0);
+			border-radius: 3px 3px 0 0;
 			@extend %top-arrow;
 
 			input {
@@ -222,8 +222,8 @@ $popup 		: 275px;
 		margin 		: 0;
 		padding 	: 0;
 		border 		: none;
-		@include border-radius(100px);
-		@include box-shadow(rgba(0, 0, 0, 0.4) 0 2px 0px inset);
+		border-radius: 100px;
+		box-shadow: rgba(0, 0, 0, 0.4) 0 2px 0px inset;
 
 		&:after {
 			display:none;
@@ -681,4 +681,12 @@ $popup 		: 275px;
 	.reset_panel {
 		margin-top: 10px;
 	}
+}
+
+/**
+ * Separators Titles
+ */
+h2.separator {
+	margin-bottom: -20px;
+    margin-top: 30px;
 }
