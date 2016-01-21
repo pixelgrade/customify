@@ -730,7 +730,11 @@ class PixCustomifyPlugin {
 					if ( $load_all_weights && is_array( $value['variants'] ) ) {
 						$families .= ":" . implode( ',', $value['variants'] );
 					} elseif ( isset( $value['selected_variants'] ) && ! empty( $value['selected_variants'] ) ) {
-						$families .= ":" . implode( ',', $value['selected_variants'] );
+						if ( is_array( $value['selected_variants'] ) ) {
+							$families .= ":" . implode( ',', $value['selected_variants'] );
+						} elseif ( is_string( $value['selected_variants'] ) || is_numeric( $value['selected_variants'] ) ) {
+							$families .= ":" . $value['selected_variants'];
+						}
 					} elseif ( isset( $value['variants'] ) && ! empty( $value['variants'] ) ) {
 						if ( is_array( $value['variants'] ) ) {
 							$families .= ":" . implode( ',', $value['variants'] );
