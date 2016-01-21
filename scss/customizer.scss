@@ -12,6 +12,8 @@ $lighter 	: #3b3f45; //borders
 $unit 		: 24px;
 $popup 		: 275px;
 
+$blue-dark	: #416B7E;
+
 
 //------------------------------------*\
 //    RESETS
@@ -32,8 +34,8 @@ $popup 		: 275px;
 .control-section:not(.control-section-themes) .customize-control {
 	float: none;
 	padding: 0px;
-    width:265px;
-	min-height: 35px;
+    width:100%;
+	min-height: auto;
 }
 
 
@@ -59,6 +61,12 @@ $popup 		: 275px;
 
 #customize-theme-controls .theme * {
 		box-sizing: content-box;
+}
+
+#customize-controls .description {
+    margin-top: 6px;
+	font-size: 13px;
+	color: #88B6CE;
 }
 
 
@@ -243,9 +251,12 @@ $popup 		: 275px;
 }
 
 
-/**
- * CSS Editor Customizer
- */
+
+
+
+//------------------------------------*\
+//    CSS Editor Customizer
+//------------------------------------*/
 
 // Panel
 #accordion-panel-live_css_edit_panel {
@@ -302,49 +313,106 @@ $popup 		: 275px;
 
 
 
-/**
- * Typography
- */
-.customize-control-typography {
 
-	&:not(:first-child) .customize-control-title {
-		margin-top: 15px;
+//------------------------------------*\
+//    $INPUT FIELDS
+//------------------------------------*/
+
+$fields_height 		: 44px;
+$fields_spacing 	: 24px;
+
+.customize-control {
+
+	input[type=text], 
+	input[type=checkbox], 
+	input[type=password], 
+	input[type=color], 
+	input[type=date], 
+	input[type=datetime], 
+	input[type=datetime-local], 
+	input[type=email], 
+	input[type=month], 
+	input[type=number], 
+	input[type=radio], 
+	input[type=tel], 
+	input[type=time], 
+	input[type=url], 
+	input[type=week], 
+	input[type=search], 
+	select, 
+	textarea {
+	    width: 100%;
+		height: $fields_height;
+		padding: 10px 14px;
+
+		background: #FFFFFF;
+		border: 2px solid #B8DAEB;
+		border-radius: 4px;
+
+		font-size: 14px;
+	    line-height: 1.5;
+		color: $blue-dark;
+		outline: 0;
+
+		&:focus {
+			border-color: #73C5EE;
+			box-shadow: none;
+		    // box-shadow: 0 0 0 2px #73C5EE;
+		}
 	}
 
-	ul li {
-		width: 100%;
-		display: inline-table;
+	input[type=text],
+	textarea {
+		font-size: 13px;
+	}
 
-		&:nth-child(2n+1) {
-			// width: 45%;
-			// margin-right: 5%;
+	input[type=text] {
+
+	}
+
+	// Textarea
+	textarea {
+		height: auto;
+	}
+
+	// Checkbox
+	input[type=checkbox] {
+		width: $fields_height/2;
+		height: $fields_height/2;
+
+		&:checked {
+			background: #73C5EE;
+			border-color: #5AB9E8;
+
+			&:before {
+				color: white;
+				margin: -1px 0 0 -2px;
+			}
 		}
+	}
+
+	&.customize-control-checkbox,
+	&.customize-control-radio {
+		
+		
 
 		label {
-			width: 100%;
-			display: block;
-
-			margin-top: 10px;
-			margin-bottom: 5px;
-		}
-
-		select {
-			width: 100%;
+			color: $blue-dark;
+			padding-top: 0;
+			padding-bottom: 0;
 		}
 	}
 
-	.customify_typography_font_weight {
+	// Select
+	select {
+		-webkit-appearance: button; // hide default arrow in chrome OSX
 
-	}
+		font-weight: 600;
 
-	.customify_typography_font_subsets {
-		// height: 28px;
+		background: white url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+Cjxzdmcgd2lkdGg9IjE1cHgiIGhlaWdodD0iOXB4IiB2aWV3Qm94PSIwIDAgMTUgOSIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIj4KICAgIDxkZWZzPjwvZGVmcz4KICAgIDxnIGlkPSJQYWdlLTEiIHN0cm9rZT0ibm9uZSIgc3Ryb2tlLXdpZHRoPSIxIiBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPgogICAgICAgIDxnIGlkPSJDdXN0b21pZnktQ29weS0yIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMjU2LjAwMDAwMCwgLTM4Ni4wMDAwMDApIiBmaWxsPSIjOThDNkRFIj4KICAgICAgICAgICAgPGcgaWQ9IkhlYWRlciIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTIxLjAwMDAwMCwgNDcuMDAwMDAwKSI+CiAgICAgICAgICAgICAgICA8ZyBpZD0iQ29udGVudCIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMTAuMDAwMDAwLCA3NS4wMDAwMDApIj4KICAgICAgICAgICAgICAgICAgICA8ZyBpZD0iVGl0bGUiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDI2LjAwMDAwMCwgMjE5LjAwMDAwMCkiPgogICAgICAgICAgICAgICAgICAgICAgICA8ZyBpZD0iRmllbGQtLS1TZWxlY3QtQ29weSI+CiAgICAgICAgICAgICAgICAgICAgICAgICAgICA8ZyBpZD0iU2VsZWN0IiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgwLjAwMDAwMCwgMjcuMDAwMDAwKSI+CiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgPHBhdGggZD0iTTI1NC40ODEyLDE4IEwyNTYsMTkuNTE0IEwyNDguNSwyNyBMMjQxLDE5LjUxNCBMMjQyLjUxODgsMTggTDI0OC41LDIzLjk2NzIgTDI1NC40ODEyLDE4IFoiIGlkPSJQYWdlLTEiPjwvcGF0aD4KICAgICAgICAgICAgICAgICAgICAgICAgICAgIDwvZz4KICAgICAgICAgICAgICAgICAgICAgICAgPC9nPgogICAgICAgICAgICAgICAgICAgIDwvZz4KICAgICAgICAgICAgICAgIDwvZz4KICAgICAgICAgICAgPC9nPgogICAgICAgIDwvZz4KICAgIDwvZz4KPC9zdmc+) no-repeat;
+	    background-position: right 16px top 16px;
 	}
 }
-
-	.customize-control select[multiple].customify_typography_font_subsets {
-		// height: 48px;
-	}
 
 /**
  * Select Field
@@ -403,6 +471,56 @@ $popup 		: 275px;
 	border-bottom: 7px solid transparent;
 	content: '';
 }
+
+
+
+
+
+/**
+ * Typography
+ */
+.customize-control-typography {
+
+	&:not(:first-child) .customize-control-title {
+		margin-top: 15px;
+	}
+
+	ul li {
+		width: 100%;
+		display: inline-table;
+
+		&:nth-child(2n+1) {
+			// width: 45%;
+			// margin-right: 5%;
+		}
+
+		label {
+			width: 100%;
+			display: block;
+
+			margin-top: 10px;
+			margin-bottom: 5px;
+		}
+
+		select {
+			width: 100%;
+		}
+	}
+
+	.customify_typography_font_weight {
+
+	}
+
+	.customify_typography_font_subsets {
+		// height: 28px;
+	}
+}
+
+	.customize-control select[multiple].customify_typography_font_subsets {
+		// height: 48px;
+	}
+
+
 
 
 
@@ -697,11 +815,64 @@ $popup 		: 275px;
 /**
  * Separators Titles
  */
+
+%fields-label {
+	display: block;
+    font-size: 14px;
+    line-height: 24px;
+    font-weight: 600;
+    // margin-bottom: 5px;
+}
+
+.customize-control-title {
+	color: $blue-dark;
+}
+
 h2.separator {
 	margin-bottom: -20px;
     margin-top: 30px;
 }
 
+.separator {
+	&.label {
+		@extend %fields-label;
+		@extend .customize-control-title;
+		margin-top: $fields-spacing;
+		margin-bottom: -3px;
+	}
+}
+
+
+
+/**
+ ** Tooltips
+ */
+
+.customize-control-title:after {
+	
+}
+
+// Hide descriptions by default
+.customize-control-title + span {
+	// pointer-events: none;
+	// position: absolute;
+ //    background: white;
+ //    left: 0;
+ //    right: 0;
+ //    padding: 16px;
+
+ //    opacity: 0;
+ //    transition: all 0.3s;
+ //    transition-delay: 0.5s;
+}
+
+.customize-control-title::after:hover + span {
+	// display: block;
+
+	// opacity: 1;
+
+	// transition-delay: 0s;
+}
 
 
 
