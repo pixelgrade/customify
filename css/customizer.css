@@ -34,6 +34,7 @@
 .customize-control-title, .separator.label { color: #416B7E; }
 
 .separator.label { margin-bottom: -3px; margin-bottom: -15px; }
+.separator.large { margin-top: 12px; font-size: 16px; color: #39474D; }
 
 .customize-control-color .wp-picker-container .wp-picker-open + .wp-picker-input-wrap:after { content: ""; position: absolute; bottom: 100%; right: 12px; border-collapse: separate; width: 0; height: 0; border-width: 0 9px 9px 9px; border-style: solid; border-color: transparent transparent #fff transparent; }
 
@@ -93,6 +94,7 @@
 
 /** Typography */
 .customize-control-typography select { margin-bottom: 10px; }
+.customize-control-typography .description { margin-top: -3px; }
 .customize-control-typography ul li { width: 100%; margin: 0; }
 
 /** * Awesome presets */

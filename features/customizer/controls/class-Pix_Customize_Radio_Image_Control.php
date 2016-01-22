@@ -22,9 +22,6 @@ class Pix_Customize_Radio_Image_Control extends Pix_Customize_Control {
 				<label>
 					<?php if ( ! empty( $this->label ) ) { ?>
 						<span class="customize-control-title"><?php echo esc_html( $this->label ); ?></span>
-					<?php }
-					if ( ! empty( $this->description ) ) { ?>
-						<span class="description customize-control-description"><?php echo $this->description; ?></span>
 					<?php } ?>
 
 					<div class="customify_radio_image">
@@ -40,6 +37,10 @@ class Pix_Customize_Radio_Image_Control extends Pix_Customize_Control {
 							</label>
 						<?php } ?>
 					</div>
+
+					<?php if ( ! empty( $this->description ) ) { ?>
+						<span class="description customize-control-description"><?php echo $this->description; ?></span>
+					<?php } ?>
 				</label>
 			<?php break;
 			}
@@ -48,9 +49,6 @@ class Pix_Customize_Radio_Image_Control extends Pix_Customize_Control {
 				<label>
 					<?php if ( ! empty( $this->label ) ) { ?>
 						<span class="customize-control-title"><?php echo esc_html( $this->label ); ?></span>
-					<?php }
-					if ( ! empty( $this->description ) ) { ?>
-						<span class="description customize-control-description"><?php echo $this->description; ?></span>
 					<?php } ?>
 
 					<div class="customify_radio_image radio_buttons">
@@ -76,6 +74,10 @@ class Pix_Customize_Radio_Image_Control extends Pix_Customize_Control {
 							</fieldset>
 						<?php } ?>
 					</div>
+
+					<?php if ( ! empty( $this->description ) ) { ?>
+						<span class="description customize-control-description"><?php echo $this->description; ?></span>
+					<?php } ?>
 				</label>
 				<?php break;
 			}

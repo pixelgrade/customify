@@ -172,6 +172,12 @@ $fields_border-color	: #B8DAEB;
 		margin-bottom: -3px;
 		margin-bottom: -$fields-spacing/2 - 3px;
 	}
+
+	&.large {
+		margin-top: $fields-spacing/2;
+		font-size: 16px;
+		color: #39474D;
+	}
 }
 
 // h2.separator {
@@ -702,6 +708,10 @@ li#customize-control-site_logo {
 	// Font, Weight and Subsets selectors
 	select {
 		margin-bottom: 10px;
+	}
+
+	.description {
+		margin-top: -3px;
 	}
 
 	&:not(:first-child) .customize-control-title {
