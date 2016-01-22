@@ -30,6 +30,12 @@ $background-hover 	: #f5fcff;
     border-right: 1px solid $borders;
 }
 
+#customize-theme-controls {
+	#accordion-section-menu_locations {
+		border-bottom: 1px solid $borders;
+	}
+}
+
 #customize-controls {
 	#accordion-section-themes {
 		&>.accordion-section-title {

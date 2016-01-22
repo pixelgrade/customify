@@ -64,8 +64,10 @@ $fields_border-color	: #B8DAEB;
 }
 
 
-#customize-theme-controls .theme * {
+#customize-theme-controls {
+	.theme * {
 		box-sizing: content-box;
+	}
 }
 
 #customize-controls .description {
@@ -280,7 +282,8 @@ $fields_border-color	: #B8DAEB;
 	input[type=week], 
 	input[type=search], 
 	select, 
-	textarea {
+	textarea,
+	input[type="number"].range-value  {
 	    width: 100%;
 		height: $fields_height;
 		padding: 10px 14px;
@@ -316,7 +319,8 @@ $fields_border-color	: #B8DAEB;
 	}
 
 	// Checkbox
-	input[type=checkbox] {
+	input[type=checkbox], 
+	input[type=radio] {
 		width: $fields_height/2;
 		height: $fields_height/2;
 
@@ -345,15 +349,35 @@ $fields_border-color	: #B8DAEB;
 		}
 	}
 
+	// Radios
+	input[type=radio] {
+		border-radius: 50%;
+
+		&:checked:before {
+			content: none;
+		}
+	}
+
+	&.customize-control-radio {
+		label {
+			margin-top: $fields-spacing/2;
+		}
+	}
+
 	// Select
 	select {
 		width: 100%;
-		-webkit-appearance: button; // hide default arrow in chrome OSX
+		-webkit-appearance: button; // hide default arrow in WebKit/Blink
+		-moz-appearance: none; // hide default arrow in Gecko
 
 		font-weight: 600;
 
 		background: white url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+Cjxzdmcgd2lkdGg9IjE1cHgiIGhlaWdodD0iOXB4IiB2aWV3Qm94PSIwIDAgMTUgOSIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIj4KICAgIDxkZWZzPjwvZGVmcz4KICAgIDxnIGlkPSJQYWdlLTEiIHN0cm9rZT0ibm9uZSIgc3Ryb2tlLXdpZHRoPSIxIiBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPgogICAgICAgIDxnIGlkPSJDdXN0b21pZnktQ29weS0yIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMjU2LjAwMDAwMCwgLTM4Ni4wMDAwMDApIiBmaWxsPSIjOThDNkRFIj4KICAgICAgICAgICAgPGcgaWQ9IkhlYWRlciIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTIxLjAwMDAwMCwgNDcuMDAwMDAwKSI+CiAgICAgICAgICAgICAgICA8ZyBpZD0iQ29udGVudCIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMTAuMDAwMDAwLCA3NS4wMDAwMDApIj4KICAgICAgICAgICAgICAgICAgICA8ZyBpZD0iVGl0bGUiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDI2LjAwMDAwMCwgMjE5LjAwMDAwMCkiPgogICAgICAgICAgICAgICAgICAgICAgICA8ZyBpZD0iRmllbGQtLS1TZWxlY3QtQ29weSI+CiAgICAgICAgICAgICAgICAgICAgICAgICAgICA8ZyBpZD0iU2VsZWN0IiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgwLjAwMDAwMCwgMjcuMDAwMDAwKSI+CiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgPHBhdGggZD0iTTI1NC40ODEyLDE4IEwyNTYsMTkuNTE0IEwyNDguNSwyNyBMMjQxLDE5LjUxNCBMMjQyLjUxODgsMTggTDI0OC41LDIzLjk2NzIgTDI1NC40ODEyLDE4IFoiIGlkPSJQYWdlLTEiPjwvcGF0aD4KICAgICAgICAgICAgICAgICAgICAgICAgICAgIDwvZz4KICAgICAgICAgICAgICAgICAgICAgICAgPC9nPgogICAgICAgICAgICAgICAgICAgIDwvZz4KICAgICAgICAgICAgICAgIDwvZz4KICAgICAgICAgICAgPC9nPgogICAgICAgIDwvZz4KICAgIDwvZz4KPC9zdmc+) no-repeat;
 	    background-position: right 16px top 16px;
+
+	    &[multiple] {
+	    	background: white;
+	    }
 	}
 
 
@@ -362,45 +386,85 @@ $fields_border-color	: #B8DAEB;
 		width: 65%;
 	}
 
-	input[type="number"].range-value {
-		width: 30%;
-		top:-5px;
-		display: inline-block;
-		position: relative;
-		color: #555555;
-		font-size: 14px;
-		line-height: 16px;
-		text-align: center;
-		border-radius: 3px;
-		border: 1px solid #aaa;
-		background-color: #f5f5f5;
-		padding: 5px 10px;
-		margin-left: 10px;
+	$input-size: 210px;
+	$input-height: 6px;
+	$thumb-height: 22px;
+
+	input[type="range"] {
+	  position: relative;
+	  -webkit-appearance: none; 
+	  width: $input-size; 
+	  height: $thumb-height; 
+	  overflow: hidden;
+	  outline: none; 
+	  background: none;
+	  
+	  &:before {
+	    content: " ";
+	    position: absolute;
+	    top: 8px;
+	    left: 0;
+	    height: $input-height;
+	    width: 100%;
+	    background: #DFE8EF;
+	    box-shadow: inset 0px 1px 3px 0px rgba(0,0,0,0.30);
+	    border-radius: 10px;
+	  }
+	  
+	  &::-webkit-slider-thumb {
+	    -webkit-appearance: none; 
+	    width: $thumb-height; 
+	    height: $thumb-height; 
+	    background: #27ae60; 
+	    position: relative; 
+	    z-index: 3; 
+
+	    background: #FFFFFF;
+	    border: 2px solid #B8DAEB;
+	    border-radius: 4px;
+	    
+	    &:before {
+	      content: "..";
+	      position: absolute;
+	      left: 5px;
+	      top: -5px;
+	      color: #B8DAEB;
+	      font-size: 1em;
+	      letter-spacing: 1px; 
+	    }
+
+	    &:after {
+	      content: " "; 
+	      width: $input-size; 
+	      height: $input-height; 
+	      position: absolute; 
+	      z-index: 1; 
+	      right: $thumb-height - 2px; 
+	      top: $input-height; 
+	      background: #73C5EE;
+	    }
+	  } 
 	}
 
-	.range-value-arrow-before {
-		z-index: 5;
-		position: absolute;
-		top: 6px;
-		left: -5px;
-		width: 0;
-		height: 0;
-		border-top: 7px solid transparent;
-		border-right: 7px solid #f5f5f5;
-		border-bottom: 7px solid transparent;
-		content: '';
+
+	input[type="number"].range-value {
+		min-width: 40px;
+		max-width: 80px;
+		width: auto;
+	    height: 30px;
+	    top: -5px;
+	    float: right;
+	    padding: 4px 0px 5px 0px;
+	    margin-left: 10px;
+	    font-size: 13px;
+	    line-height: 1;
+	    text-align: center;
 	}
-	.range-value-arrow-after {
-		z-index: 4;
-		position: absolute;
-		top: 6px;
-		left: -6px;
-		width: 0;
-		height: 0;
-		border-top: 7px solid transparent;
-		border-right: 7px solid #aaa;
-		border-bottom: 7px solid transparent;
-		content: '';
+
+	input[type=number]::-webkit-inner-spin-button, 
+	input[type=number]::-webkit-outer-spin-button { 
+	  -webkit-appearance: none; 
+	  margin: 0; 
 	}
 }
 
@@ -587,7 +651,8 @@ $fields_border-color	: #B8DAEB;
 //    Media Uploader (Logo)
 //------------------------------------*/
 
-.customize-control-media {
+.customize-control-media,
+.customize-control-site_icon {
 
 
 	.current {
@@ -631,13 +696,19 @@ $fields_border-color	: #B8DAEB;
  */
 .customize-control-typography {
 
+	// Font, Weight and Subsets selectors
+	select {
+		margin-bottom: 10px;
+	}
+
 	&:not(:first-child) .customize-control-title {
-		margin-top: 15px;
+		// margin-top: 15px;
 	}
 
 	ul li {
 		width: 100%;
-		display: inline-table;
+		margin: 0;
+		// display: inline-table;
 
 		&:nth-child(2n+1) {
 			// width: 45%;
@@ -645,15 +716,15 @@ $fields_border-color	: #B8DAEB;
 		}
 
 		label {
-			width: 100%;
-			display: block;
+			// width: 100%;
+			// display: block;
 
-			margin-top: 10px;
-			margin-bottom: 5px;
+			// margin-top: 10px;
+			// margin-bottom: 5px;
 		}
 
 		select {
-			width: 100%;
+			// width: 100%;
 		}
 	}
 

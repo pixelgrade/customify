@@ -221,7 +221,6 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 				$display = 'inline-block';
 			} ?>
 			<li class="customify_weights_wrapper" style="display: <?php echo $display; ?>">
-				<label><?php _e( 'Font Weight', 'customify_txtd' ); ?></label>
 				<select class="customify_typography_font_weight">
 					<?php
 					$selected = array();
@@ -248,7 +247,6 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 				$display = 'inline-block';
 			}?>
 			<li class="customify_subsets_wrapper" style="display: <?php echo $display; ?>">
-				<label><?php _e( 'Subsets', 'customify_txtd' ); ?></label>
 				<select multiple class="customify_typography_font_subsets">
 					<?php
 					$selected = array();
