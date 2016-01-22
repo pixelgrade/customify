@@ -127,11 +127,8 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 		<label class="customify_typography">
 			<?php if ( ! empty( $this->label ) ) : ?>
 				<span class="customize-control-title"><?php echo esc_html( $this->label ); ?></span>
-			<?php endif;
-			if ( ! empty( $this->description ) ) : ?>
-				<span class="description customize-control-description"><?php echo $this->description; ?></span>
-			<?php endif;
-
+			<?php endif; 
+			
 			$this_id     = str_replace( '[', '_', $this->id );
 			$this_id     = str_replace( ']', '_', $this_id );
 			$select_data = '';
@@ -212,6 +209,9 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 					}
 				} ?>
 			</select>
+			<?php if ( ! empty( $this->description ) ) : ?>
+				<span class="description customize-control-description"><?php echo $this->description; ?></span>
+			<?php endif; ?>
 		</label>
 		<ul class="options">
 			<?php

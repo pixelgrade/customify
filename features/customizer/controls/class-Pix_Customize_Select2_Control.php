@@ -17,9 +17,6 @@ class Pix_Customize_Select2_Control extends Pix_Customize_Control {
 		<label>
 			<?php if ( ! empty( $this->label ) ) : ?>
 				<span class="customize-control-title"><?php echo esc_html( $this->label ); ?></span>
-			<?php endif;
-			if ( ! empty( $this->description ) ) : ?>
-				<span class="description customize-control-description"><?php echo $this->description; ?></span>
 			<?php endif; ?>
 
 			<select <?php $this->link(); ?> class="customify_select2">
@@ -28,6 +25,10 @@ class Pix_Customize_Select2_Control extends Pix_Customize_Control {
 					echo '<option value="' . esc_attr( $value ) . '"' . selected( $this->value(), $value, false ) . '>' . $label . '</option>';
 				?>
 			</select>
+			
+			<?php if ( ! empty( $this->description ) ) : ?>
+				<span class="description customize-control-description"><?php echo $this->description; ?></span>
+			<?php endif; ?>
 		</label>
 	<?php
 

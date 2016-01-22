@@ -14,7 +14,28 @@
 
 #customize-theme-controls .theme * { box-sizing: content-box; }
 
-#customize-controls .description { margin-top: 6px; font-size: 13px; color: #88B6CE; }
+#customize-controls .description { margin-top: 6px; font-size: 13px; color: #88B6CE; text-indent: 0; }
+
+.customize-control { margin-bottom: 24px; }
+
+/** RESET Buttons */
+.wp-core-ui .reset_section, .wp-core-ui .reset_panel { width: 100%; height: 4em; display: block; margin: 0px 0 25px; }
+.wp-core-ui .reset_panel { margin-top: 10px; }
+
+/** GENERAL Buttons */
+.wp-core-ui .button, .wp-core-ui .button-primary, .wp-core-ui .button-secondary { width: auto; padding: 6px 20px; font-size: 13px; font-weight: 400; color: #F5FCFF; line-height: 1.4; text-shadow: none; border: none; background: #AED2E5; box-shadow: 0px 2px 0px 0px #8DBED7; border-radius: 4px; transition: all 0.1s; }
+.wp-core-ui .button:hover, .wp-core-ui .button-primary:hover, .wp-core-ui .button-secondary:hover { color: white; text-shadow: none; background: #98C6DD; box-shadow: 0px 2px 0px 0px #74A7C2; }
+.wp-core-ui .button-primary { background: #73C5EE; box-shadow: 0px 2px 0px 0px #57ABD5; }
+.wp-core-ui .button-primary:hover { background: #58B0DD; box-shadow: 0px 2px 0px 0px #3F8AAF; }
+
+/** Separators Titles */
+.separator.label { display: block; font-size: 14px; line-height: 24px; font-weight: 600; }
+
+.customize-control-title, .separator.label { color: #416B7E; }
+
+h2.separator { margin-bottom: -20px; margin-top: 30px; }
+
+.separator.label { margin-bottom: -3px; margin-bottom: -15px; }
 
 .customize-control-color .wp-picker-container .wp-picker-open + .wp-picker-input-wrap:after { content: ""; position: absolute; bottom: 100%; right: 19px; border-collapse: separate; width: 0; height: 0; border-width: 0 9px 9px 9px; border-style: solid; border-color: transparent transparent #eee transparent; }
 
@@ -42,6 +63,14 @@
 .wp-full-overlay.editor_opened #customize-controls { width: 500px; }
 .wp-full-overlay.editor_opened.collapsed #customize-controls { width: 300px; }
 
+/* Media Uploader (Logo) */
+.customize-control-media .current { margin-bottom: 10px; }
+.customize-control-media .current .container { min-height: 44px; background: #F5FCFF; border: 2px solid #B8DAEB; border-radius: 4px; }
+.customize-control-media .inner { font-size: 13px; color: #98C6DD; line-height: 1.4; }
+.customize-control-media .thumbnail-image { padding: 14px; text-align: center; }
+.customize-control-media .thumbnail-image img { width: auto; }
+.customize-control-media .actions { margin-bottom: 0; }
+
 .customize-control input[type=text], .customize-control input[type=checkbox], .customize-control input[type=password], .customize-control input[type=color], .customize-control input[type=date], .customize-control input[type=datetime], .customize-control input[type=datetime-local], .customize-control input[type=email], .customize-control input[type=month], .customize-control input[type=number], .customize-control input[type=radio], .customize-control input[type=tel], .customize-control input[type=time], .customize-control input[type=url], .customize-control input[type=week], .customize-control input[type=search], .customize-control select, .customize-control textarea { width: 100%; height: 44px; padding: 10px 14px; background: #FFFFFF; border: 2px solid #B8DAEB; border-radius: 4px; font-size: 14px; line-height: 1.5; color: #416B7E; outline: 0; }
 .customize-control input[type=text]:focus, .customize-control input[type=checkbox]:focus, .customize-control input[type=password]:focus, .customize-control input[type=color]:focus, .customize-control input[type=date]:focus, .customize-control input[type=datetime]:focus, .customize-control input[type=datetime-local]:focus, .customize-control input[type=email]:focus, .customize-control input[type=month]:focus, .customize-control input[type=number]:focus, .customize-control input[type=radio]:focus, .customize-control input[type=tel]:focus, .customize-control input[type=time]:focus, .customize-control input[type=url]:focus, .customize-control input[type=week]:focus, .customize-control input[type=search]:focus, .customize-control select:focus, .customize-control textarea:focus { border-color: #73C5EE; box-shadow: none; }
 .customize-control input[type=text], .customize-control textarea { font-size: 13px; }
@@ -49,7 +78,7 @@
 .customize-control input[type=checkbox] { width: 22px; height: 22px; }
 .customize-control input[type=checkbox]:checked { background: #73C5EE; border-color: #5AB9E8; }
 .customize-control input[type=checkbox]:checked:before { color: white; margin: -1px 0 0 -2px; }
-.customize-control.customize-control-checkbox label, .customize-control.customize-control-radio label { color: #416B7E; padding-top: 0; padding-bottom: 0; }
+.customize-control.customize-control-checkbox label, .customize-control.customize-control-radio label { margin-left: 30px; padding-top: 0; padding-bottom: 0; text-indent: -6px; color: #416B7E; }
 .customize-control select { -webkit-appearance: button; font-weight: 600; background: white url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+Cjxzdmcgd2lkdGg9IjE1cHgiIGhlaWdodD0iOXB4IiB2aWV3Qm94PSIwIDAgMTUgOSIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIj4KICAgIDxkZWZzPjwvZGVmcz4KICAgIDxnIGlkPSJQYWdlLTEiIHN0cm9rZT0ibm9uZSIgc3Ryb2tlLXdpZHRoPSIxIiBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPgogICAgICAgIDxnIGlkPSJDdXN0b21pZnktQ29weS0yIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMjU2LjAwMDAwMCwgLTM4Ni4wMDAwMDApIiBmaWxsPSIjOThDNkRFIj4KICAgICAgICAgICAgPGcgaWQ9IkhlYWRlciIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTIxLjAwMDAwMCwgNDcuMDAwMDAwKSI+CiAgICAgICAgICAgICAgICA8ZyBpZD0iQ29udGVudCIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMTAuMDAwMDAwLCA3NS4wMDAwMDApIj4KICAgICAgICAgICAgICAgICAgICA8ZyBpZD0iVGl0bGUiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDI2LjAwMDAwMCwgMjE5LjAwMDAwMCkiPgogICAgICAgICAgICAgICAgICAgICAgICA8ZyBpZD0iRmllbGQtLS1TZWxlY3QtQ29weSI+CiAgICAgICAgICAgICAgICAgICAgICAgICAgICA8ZyBpZD0iU2VsZWN0IiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgwLjAwMDAwMCwgMjcuMDAwMDAwKSI+CiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgPHBhdGggZD0iTTI1NC40ODEyLDE4IEwyNTYsMTkuNTE0IEwyNDguNSwyNyBMMjQxLDE5LjUxNCBMMjQyLjUxODgsMTggTDI0OC41LDIzLjk2NzIgTDI1NC40ODEyLDE4IFoiIGlkPSJQYWdlLTEiPjwvcGF0aD4KICAgICAgICAgICAgICAgICAgICAgICAgICAgIDwvZz4KICAgICAgICAgICAgICAgICAgICAgICAgPC9nPgogICAgICAgICAgICAgICAgICAgIDwvZz4KICAgICAgICAgICAgICAgIDwvZz4KICAgICAgICAgICAgPC9nPgogICAgICAgIDwvZz4KICAgIDwvZz4KPC9zdmc+) no-repeat; background-position: right 16px top 16px; }
 
 /** Select Field */
@@ -109,20 +138,6 @@
 .customize-control-custom_background .preview_screenshot { text-align: center; margin: 10px 0; }
 .customize-control-custom_background .preview_screenshot img { border: 2px solid #ccc; }
 
-/** RESET Buttons */
-.wp-core-ui .reset_section, .wp-core-ui .reset_panel { width: 100%; height: 4em; display: block; margin: 0px 0 25px; }
-.wp-core-ui .reset_panel { margin-top: 10px; }
-
-/** Separators Titles */
-.separator.label { display: block; font-size: 14px; line-height: 24px; font-weight: 600; }
-
-.customize-control-title, .separator.label { color: #416B7E; }
-
-h2.separator { margin-bottom: -20px; margin-top: 30px; }
-
-.separator.label { margin-top: 24px; margin-bottom: -3px; }
-
-/** * Tooltips */
 #customize-header-actions { background: #ffffff; border-color: #dfe8ef; }
 
 .customize-controls-close { color: #7da9c3; background: #ffffff; border-color: #dfe8ef; }
