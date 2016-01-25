@@ -209,9 +209,6 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 					}
 				} ?>
 			</select>
-			<?php if ( ! empty( $this->description ) ) : ?>
-				<span class="description customize-control-description"><?php echo $this->description; ?></span>
-			<?php endif; ?>
 		</label>
 		<ul class="options">
 			<?php
@@ -268,6 +265,9 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 			</li>
 			<?php ?>
 		</ul>
+		<?php if ( ! empty( $this->description ) ) : ?>
+			<span class="description customize-control-description"><?php echo $this->description; ?></span>
+		<?php endif; ?>
 	<?php }
 
 	/**
