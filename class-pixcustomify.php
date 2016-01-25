@@ -1614,6 +1614,14 @@ class PixCustomifyPlugin {
 		}
 	}
 
+	function get_options_key() {
+		if ( ! empty( self::$opt_name ) ) {
+			return self::$opt_name;
+		}
+
+		return false;
+	}
+
 	/**
 	 * Sanitize functions
 	 */
@@ -1647,10 +1655,10 @@ class PixCustomifyPlugin {
 		}
 
 		// Keys of the array
-		$keys = array_keys($array);
+		$keys = array_keys( $array );
 
 		// If the array keys of the keys match the keys, then the array must
 		// not be associative (e.g. the keys array looked like {0:0, 1:1...}).
-		return array_keys($keys) !== $keys;
+		return array_keys( $keys ) !== $keys;
 	}
 }
