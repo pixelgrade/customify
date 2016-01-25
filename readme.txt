@@ -1,9 +1,9 @@
 === Customify - A Theme Customizer Booster ===
 Contributors: pixelgrade, euthelup, babbardel
 Tags: customizer, css, editor, live, preview, customise
-Requires at least: 4.1.0
-Tested up to: 4.4.0
-Stable tag: 1.2.1
+Requires at least: 4.2.0
+Tested up to: 4.4.1
+Stable tag: 1.2.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -32,6 +32,11 @@ With [Customify](https://github.com/pixelgrade/customify), developers can easily
 * **And more others [this is the full list](https://github.com/pixelgrade/customify#list_of_fields)
 
 == Changelog ==
+
+
+= 1.2.2 =
+* Added: Customizer styling
+* Fixed some rare warnings with google fonts
 
 = 1.2.1 =
 * Improve default fonts parse, and fix some legacy cases
