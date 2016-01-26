@@ -697,31 +697,7 @@ class PixCustomifyPlugin {
 
 				//Handle special logic for when the $value array is not an associative array
 				if ( ! self::is_assoc( $value ) ) {
-					$new_value = array();
-
-					//Let's determine some type of font
-					if ( ! isset( $value[2] ) || ( isset( $value[2] ) && 'google' == $value[2] ) ) {
-						$new_value = $this->get_font_defaults_value( $value[0] );
-					} else {
-						$new_value['type'] = $value[2];
-					}
-
-					if ( null == $new_value ) {
-						$new_value = array();
-					}
-
-					//The first entry is the font-family
-					if ( isset( $value[0] ) ) {
-						$new_value['font_family'] = $value[0];
-					}
-
-					//In case we don't have an associative array
-					//The second entry is the variants
-					if ( isset( $value[1] ) ) {
-						$new_value['selected_variants'] = $value[1];
-					}
-
-					$value = $new_value;
+					$value = $this->process_a_not_associative_font_default( $value );
 				}
 
 				if ( isset( $value['font_family'] ) && isset( $value['type'] ) && $value['type'] == 'google' ) {
@@ -811,6 +787,11 @@ class PixCustomifyPlugin {
 						$value = array( 'font_family' => $value );
 					}
 
+					//Handle special logic for when the $value array is not an associative array
+					if ( ! self::is_assoc( $value ) ) {
+						$value = $this->process_a_not_associative_font_default( $value );
+					}
+
 					if ( isset( $value['font_family'] ) ) {
 						echo $font['selector'] . " {\n font-family: " . $value['font_family'] . ";";
 
@@ -843,11 +824,43 @@ class PixCustomifyPlugin {
 
 						echo "\n}\n";
 					}
-
 				}
 			} ?>
 		</style>
 	<?php }
+
+	/**
+	 * Handle special logic for when the $value array is not an associative array
+	 * Return a new associative array with proper keys
+	 */
+	protected function process_a_not_associative_font_default( $value ) {
+
+		$new_value = array();
+
+		//Let's determine some type of font
+		if ( ! isset( $value[2] ) || ( isset( $value[2] ) && 'google' == $value[2] ) ) {
+			$new_value = $this->get_font_defaults_value( $value[0] );
+		} else {
+			$new_value['type'] = $value[2];
+		}
+
+		if ( null == $new_value ) {
+			$new_value = array();
+		}
+
+		//The first entry is the font-family
+		if ( isset( $value[0] ) ) {
+			$new_value['font_family'] = $value[0];
+		}
+
+		//In case we don't have an associative array
+		//The second entry is the variants
+		if ( isset( $value[1] ) ) {
+			$new_value['selected_variants'] = $value[1];
+		}
+
+		return $new_value;
+	}
 
 	/**
 	 *
@@ -1118,11 +1131,8 @@ class PixCustomifyPlugin {
 						$wp_customize->add_panel( $panel_id, $panel_args );
 
 						foreach ( $panel_settings['sections'] as $section_id => $section_settings ) {
-
 							if ( ! empty( $section_id ) && isset( $section_settings['options'] ) && ! empty( $section_settings['options'] ) ) {
-
 								$this->register_section( $panel_id, $section_id, $options_name, $section_settings, $wp_customize );
-
 							}
 						}
 					}
