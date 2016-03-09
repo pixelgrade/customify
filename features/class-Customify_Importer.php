@@ -226,6 +226,25 @@ final class Customify_Importer_Controller {
 						break;
 					}
 
+					case 'wp_options' : {
+
+						$wp_options = $_POST['recall_data'];
+						if ( ! empty( $wp_options ) ) {
+
+							foreach ( $wp_options as $value ) {
+								// first check if the value actually changes
+								$current_value = get_option( $step_id );
+								if ( $current_value === $value ) {
+									//wp_send_json_success( esc_html__( 'This option is already here', 'customify' ) );
+								}
+
+								$updated = update_option( $step_id, $value );
+							}
+						}
+
+						break;
+					}
+
 					default : {
 						wp_send_json_error( esc_html__( 'wrong type', 'customify' ) );
 						break;
