@@ -140,10 +140,6 @@ class PixCustomifyPlugin {
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_styles' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_scripts' ) );
 
-		// Load public-facing style sheet and JavaScript.
-//		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_styles' ), 99999999999 );
-//		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
-
 //		add_action( 'plugins_loaded', array( $this, 'register_metaboxes' ), 14 );
 		add_action( 'customize_controls_enqueue_scripts', array( $this, 'enqueue_admin_customizer_styles' ), 10 );
 		add_action( 'customize_controls_enqueue_scripts', array( $this, 'enqueue_admin_customizer_scripts' ), 10 );
@@ -210,6 +206,13 @@ class PixCustomifyPlugin {
 		self::get_current_values();
 		self::$options_list = $this->get_options();
 
+		if ( $this->import_button_exists() ) {
+			self::$opt_name = self::$localized['import_rest_url'] = get_rest_url( '/customify/1.0/' );
+			self::$opt_name = self::$localized['import_rest_nonce'] = wp_create_nonce( 'wp_rest' );
+
+			$this->register_import_api();
+		}
+
 		// load custom modules
 		include_once( self::get_base_path() . '/features/class-CSS_Editor.php' );
 	}
@@ -241,7 +244,7 @@ class PixCustomifyPlugin {
 		}
 	}
 
-	protected function get_options() {
+	public function get_options() {
 
 		$settings = array();
 
@@ -425,7 +428,9 @@ class PixCustomifyPlugin {
 		), $this->version );
 
 		wp_localize_script( $this->plugin_slug . '-customizer-scripts', 'customify_settings', self::$localized );
+
 	}
+
 
 	/** Customizer scripts loaded only on previewer page */
 	function customizer_live_preview_enqueue_scripts() {
@@ -479,6 +484,9 @@ class PixCustomifyPlugin {
 				'ajax_url' => admin_url( 'admin-ajax.php' )
 			) );
 		}
+
+
+		wp_localize_script( $this->plugin_slug . '-customizer-scripts', 'WP_API_Settings', array( 'root' => esc_url_raw( rest_url() ), 'nonce' => wp_create_nonce( 'wp_rest' ) ) );
 	}
 
 	/**
@@ -1556,6 +1564,25 @@ class PixCustomifyPlugin {
 				$control_class_name = 'Pix_Customize_HTML_Control';
 				break;
 
+			case 'import_demo_data' :
+
+				if ( isset( $setting_config['html'] ) || ! empty( $setting_config['html'] ) ) {
+					$control_args['html'] = $setting_config['html'];
+				}
+
+				if ( ! isset( $setting_config['label'] ) || empty( $setting_config['label'] ) ) {
+					$control_args['label'] = esc_html__( 'Import', 'customify' );
+				} else {
+					$control_args['label'] = $setting_config['label'];
+				}
+
+				if ( isset( $setting_config['notices'] ) && ! empty( $setting_config['notices'] ) ) {
+					$control_args['notices'] = $setting_config['notices'];
+				}
+
+				$control_class_name = 'Pix_Customize_Import_Demo_Data_Control';
+				break;
+
 			default:
 				// if we don't have a real control just quit, it doesn't even matter
 				return;
@@ -1633,6 +1660,26 @@ class PixCustomifyPlugin {
 	}
 
 	/**
+	 * Use this function when you need to know if an import button is used
+	 * @return bool
+	 */
+	function import_button_exists() {
+
+		if ( empty( self::$options_list ) ) {
+			self::$options_list = $this->get_options();
+		}
+
+		foreach ( self::$options_list as $option ) {
+			if ( isset( $option['type'] ) && 'import_demo_data' === $option['type'] ) {
+				return true;
+				break;
+			}
+		}
+
+		return false;
+	}
+
+	/**
 	 * Sanitize functions
 	 */
 
@@ -1670,5 +1717,16 @@ class PixCustomifyPlugin {
 		// If the array keys of the keys match the keys, then the array must
 		// not be associative (e.g. the keys array looked like {0:0, 1:1...}).
 		return array_keys( $keys ) !== $keys;
+	}
+
+	function register_import_api(){
+
+		include_once( self::get_base_path() . '/features/class-Customify_Importer.php' );
+		$controller = new Customify_Importer_Controller();
+		$controller->init();
+	}
+
+	function get_options_configs () {
+		return self::$options_list;
 	}
 }

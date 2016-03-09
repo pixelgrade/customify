@@ -6,34 +6,34 @@
 				timeout = null;
 
 			// add ace editors
-			$('.customify_ace_editor' ).each(function( key, el){
-				var id = $( this ).attr('id' ),
+			$( '.customify_ace_editor' ).each( function( key, el ) {
+				var id = $( this ).attr( 'id' ),
 					css_editor = ace.edit( id );
 
-				var editor_type = $( this ).data('editor_type');
+				var editor_type = $( this ).data( 'editor_type' );
 				// init the ace editor
-				css_editor.setTheme("ace/theme/github");
-				css_editor.getSession().setMode("ace/mode/" + editor_type);
+				css_editor.setTheme( "ace/theme/github" );
+				css_editor.getSession().setMode( "ace/mode/" + editor_type );
 
 				// hide the textarea and enable the ace editor
-				var textarea = $('#' + id + '_textarea').hide();
-				css_editor.getSession().setValue(textarea.val());
+				var textarea = $( '#' + id + '_textarea' ).hide();
+				css_editor.getSession().setValue( textarea.val() );
 
 				// each time a change is triggered start a timeout of 1,5s and when is finished refresh the previewer
 				// if the user types faster than this delay then reset it
-				css_editor.getSession().on('change', function(e) {
-					if ( timeout !== null ){
-						clearTimeout(timeout);
+				css_editor.getSession().on( 'change', function( e ) {
+					if ( timeout !== null ) {
+						clearTimeout( timeout );
 						timeout = null;
 					} else {
-						timeout = setTimeout( function(){
+						timeout = setTimeout( function() {
 							//var state = css_editor.session.getState();
-							textarea.val(css_editor.getSession().getValue());
-							textarea.trigger('change');
-						},1500);
+							textarea.val( css_editor.getSession().getValue() );
+							textarea.trigger( 'change' );
+						}, 1500 );
 					}
-				});
-			});
+				} );
+			} );
 
 			// simple select2 field
 			$( '.customify_select2' ).select2();
@@ -70,14 +70,14 @@
 				} );
 			} );
 
-			if ( $('button[data-action="reset_customify"]' ).length > 0 ) {
+			if ( $( 'button[data-action="reset_customify"]' ).length > 0 ) {
 				// reset_button
 				$( document ).on( 'click', '#customize-control-reset_customify button', function( ev ) {
 					ev.preventDefault();
 
 					var iAgree = confirm( 'Do you really want to reset to defaults all the fields? Watch out, this will reset all your Customify options and will save them!' );
 
-					if ( ! iAgree ) {
+					if ( !iAgree ) {
 						return;
 					}
 
@@ -149,7 +149,7 @@
 					var section = $( this ).parent(),
 						section_id = section.attr( 'id' );
 
-					if ( (typeof section_id !== "undefined" ? section_id.indexOf(customify_settings.options_name ) : -1 ) === -1) {
+					if ( (typeof section_id !== "undefined" ? section_id.indexOf( customify_settings.options_name ) : -1 ) === -1 ) {
 						return;
 					}
 
@@ -252,10 +252,50 @@
 				api.previewer.refresh();
 			} );
 
+			// bind our event on click
+			$( document ).on( 'click', '.customify_import_demo_data_button', function( event ) {
+
+				if ( $( this ).is( '.wpGrade_button_inactive' ) ) {
+					return false;
+				} else {
+					$( this ).addClass( '.wpGrade_button_inactive' );
+					$( this ).attr( 'disabled', 'disabled' );
+				}
+
+				//var confirmImport = confirm( listable_demodata_params.l10n.import_confirm );
+				//if ( confirmImport == false ) return false;
+
+				var key = $( this ).data( 'key' );
+
+				var import_queue = new Queue( api );
+
+				/// calculate the number of steps
+				var steps = [];
+
+				if ( typeof customify_settings.settings[key].imports !== "undefined" ) {
+
+					$.each( customify_settings.settings[key].imports, function( i, import_setts, k ) {
+						if ( typeof import_setts.steps === "undefined" ) {
+							steps.push( {id: i, type: import_setts.type} );
+						} else {
+							var count = import_setts.steps;
+
+							while ( count >= 1 ) {
+								steps.push( {id: i, type: import_setts.type, count: count} );
+								count = count - 1;
+							}
+						}
+					} );
+				}
+
+				import_queue.add_steps( 'import_demo_data_action_id', steps );
+				return false;
+			} );
+
 			customifyBackgroundJsControl.init();
 
 			// sometimes there may be needed a php save
-			if ( getUrlVars('save_customizer_once') ) {
+			if ( getUrlVars( 'save_customizer_once' ) ) {
 				api.previewer.save();
 			}
 		} );
@@ -316,8 +356,8 @@
 
 					update_siblings_selects( this_family_option );
 
-					setTimeout(function(){
-						var weight_select = field.parent().siblings( '.options' ).find('.customify_typography_font_weight');
+					setTimeout( function() {
+						var weight_select = field.parent().siblings( '.options' ).find( '.customify_typography_font_weight' );
 
 						var this_weight_option = weight_select.find( 'option[value="' + value['selected_variants'] + '"]' );
 
@@ -326,7 +366,7 @@
 						update_siblings_selects( this_family_option );
 
 						weight_select.trigger( 'change' );
-					},300);
+					}, 300 );
 				}
 
 				family_select.trigger( 'change' );
@@ -341,13 +381,13 @@
 			this.bound_once = false;
 			var selected_font = $( font_select ).val(),
 				$input = $( font_select ).siblings( '.customify_typography_values' ),
-				current_val = $input.attr('value');
+				current_val = $input.attr( 'value' );
 
-			if( current_val === '[object Object]' ) {
-				current_val = $input.data('default');
-			} else if ( typeof current_val === "string" && ! IsJsonString( current_val ) ) {
+			if ( current_val === '[object Object]' ) {
+				current_val = $input.data( 'default' );
+			} else if ( typeof current_val === "string" && !IsJsonString( current_val ) ) {
 				// a rare case when the value isn't a json but is a representative string like [family,weight]
-				current_val = current_val.split( ',');
+				current_val = current_val.split( ',' );
 				var new_current_value = {};
 				if ( typeof current_val[0] !== "undefined" ) {
 					new_current_value['font_family'] = current_val[0];
@@ -418,7 +458,7 @@
 						var is_selected = '';
 						if ( typeof current_val.selected_variants === "object" && inObject( el, current_val.selected_variants ) ) {
 							is_selected = ' selected="selected"';
-						} else if ( typeof current_val.selected_variants === "string" && el === current_val.selected_variants) {
+						} else if ( typeof current_val.selected_variants === "string" && el === current_val.selected_variants ) {
 							is_selected = ' selected="selected"';
 						}
 
@@ -428,14 +468,14 @@
 					if ( typeof $font_weight !== "undefined" ) {
 						$font_weight.html( variants_options );
 						// if there is no weight or just 1 we hide the weight select ... cuz is useless
-						if ( $(font_select ).data('load_all_weights') === true || count_weights <= 1 ) {
-							$font_weight.parent().css('display', 'none');
+						if ( $( font_select ).data( 'load_all_weights' ) === true || count_weights <= 1 ) {
+							$font_weight.parent().css( 'display', 'none' );
 						} else {
-							$font_weight.parent().css('display', 'inline-block');
+							$font_weight.parent().css( 'display', 'inline-block' );
 						}
 					}
 				} else if ( typeof $font_weight !== "undefined" ) {
-					$font_weight.parent().css('display', 'none');
+					$font_weight.parent().css( 'display', 'none' );
 				}
 
 				// make the subsets selector
@@ -461,13 +501,13 @@
 
 						// if there is no subset or just 1 we hide the subsets select ... cuz is useless
 						if ( count_subsets <= 1 ) {
-							$font_subsets.parent().css('display', 'none');
+							$font_subsets.parent().css( 'display', 'none' );
 						} else {
-							$font_subsets.parent().css('display', 'inline-block');
+							$font_subsets.parent().css( 'display', 'inline-block' );
 						}
 					}
 				} else if ( typeof $font_subsets !== "undefined" ) {
-					$font_subsets.parent().css('display', 'none');
+					$font_subsets.parent().css( 'display', 'none' );
 				}
 
 				$input.val( JSON.stringify( value_to_add ) );
@@ -490,84 +530,84 @@
 			return false;
 		};
 
-		var customifyBackgroundJsControl = (function () {
+		var customifyBackgroundJsControl = (function() {
 			"use strict";
 
 			var api = wp.customize;
 
-			function init () {
+			function init() {
 				// Remove the image button
-				$('.customize-control-custom_background .remove-image, .customize-control-custom_background .remove-file').unbind('click').on('click', function (e) {
-					removeImage($(this).parents('.customize-control-custom_background:first'));
-					preview($(this));
+				$( '.customize-control-custom_background .remove-image, .customize-control-custom_background .remove-file' ).unbind( 'click' ).on( 'click', function( e ) {
+					removeImage( $( this ).parents( '.customize-control-custom_background:first' ) );
+					preview( $( this ) );
 					return false;
-				});
+				} );
 
 				// Upload media button
-				$('.customize-control-custom_background .background_upload_button').unbind().on('click', function (event) {
-					addImage(event, $(this).parents('.customize-control-custom_background:first'));
-				});
+				$( '.customize-control-custom_background .background_upload_button' ).unbind().on( 'click', function( event ) {
+					addImage( event, $( this ).parents( '.customize-control-custom_background:first' ) );
+				} );
 
-				$('.customify_background_select').on('change', function () {
-					preview($(this));
-				});
+				$( '.customify_background_select' ).on( 'change', function() {
+					preview( $( this ) );
+				} );
 			}
 
 			// Add a file via the wp.media function
-			function addImage (event, selector) {
+			function addImage( event, selector ) {
 
 				event.preventDefault();
 
 				var frame;
-				var jQueryel = jQuery(this);
+				var jQueryel = jQuery( this );
 
 				// If the media frame already exists, reopen it.
-				if (frame) {
+				if ( frame ) {
 					frame.open();
 					return;
 				}
 
 				// Create the media frame.
-				frame = wp.media({
+				frame = wp.media( {
 					multiple: false,
 					library: {
 						//type: 'image' //Only allow images
 					},
 					// Set the title of the modal.
-					title: jQueryel.data('choose'),
+					title: jQueryel.data( 'choose' ),
 
 					// Customize the submit button.
 					button: {
 						// Set the text of the button.
-						text: jQueryel.data('update')
+						text: jQueryel.data( 'update' )
 						// Tell the button not to close the modal, since we're
 						// going to refresh the page when the image is selected.
 					}
-				});
+				} );
 
 				// When an image is selected, run a callback.
-				frame.on('select', function () {
+				frame.on( 'select', function() {
 					// Grab the selected attachment.
-					var attachment = frame.state().get('selection').first();
+					var attachment = frame.state().get( 'selection' ).first();
 					frame.close();
 
-					if (attachment.attributes.type !== "image") {
+					if ( attachment.attributes.type !== "image" ) {
 						return;
 					}
 
-					selector.find('.upload').attr( 'value', attachment.attributes.url);
-					selector.find('.upload-id').attr( 'value', attachment.attributes.id);
-					selector.find('.upload-height').attr( 'value', attachment.attributes.height);
-					selector.find('.upload-width').attr( 'value', attachment.attributes.width);
+					selector.find( '.upload' ).attr( 'value', attachment.attributes.url );
+					selector.find( '.upload-id' ).attr( 'value', attachment.attributes.id );
+					selector.find( '.upload-height' ).attr( 'value', attachment.attributes.height );
+					selector.find( '.upload-width' ).attr( 'value', attachment.attributes.width );
 
 					var thumbSrc = attachment.attributes.url;
-					if (typeof attachment.attributes.sizes !== 'undefined' && typeof attachment.attributes.sizes.thumbnail !== 'undefined') {
+					if ( typeof attachment.attributes.sizes !== 'undefined' && typeof attachment.attributes.sizes.thumbnail !== 'undefined' ) {
 						thumbSrc = attachment.attributes.sizes.thumbnail.url;
-					} else if (typeof attachment.attributes.sizes !== 'undefined') {
+					} else if ( typeof attachment.attributes.sizes !== 'undefined' ) {
 						var height = attachment.attributes.height;
-						for (var key in attachment.attributes.sizes) {
+						for ( var key in attachment.attributes.sizes ) {
 							var object = attachment.attributes.sizes[key];
-							if (object.height < height) {
+							if ( object.height < height ) {
 								height = object.height;
 								thumbSrc = object.url;
 							}
@@ -576,55 +616,55 @@
 						thumbSrc = attachment.attributes.icon;
 					}
 
-					selector.find('.customify_background_input.background-image').val(attachment.attributes.url);
+					selector.find( '.customify_background_input.background-image' ).val( attachment.attributes.url );
 
-					if (!selector.find('.upload').hasClass('noPreview')) {
-						selector.find('.preview_screenshot').empty().hide().append('<img class="preview_image" src="' + thumbSrc + '">').slideDown('fast');
+					if ( !selector.find( '.upload' ).hasClass( 'noPreview' ) ) {
+						selector.find( '.preview_screenshot' ).empty().hide().append( '<img class="preview_image" src="' + thumbSrc + '">' ).slideDown( 'fast' );
 					}
 					//selector.find('.media_upload_button').unbind();
-					selector.find('.remove-image').removeClass('hide');//show "Remove" button
-					selector.find('.customify_background_select').removeClass('hide');//show "Remove" button
+					selector.find( '.remove-image' ).removeClass( 'hide' );//show "Remove" button
+					selector.find( '.customify_background_select' ).removeClass( 'hide' );//show "Remove" button
 
-					preview(selector);
-				});
+					preview( selector );
+				} );
 
 				// Finally, open the modal.
 				frame.open();
 			}
 
 			// Update the background preview
-			function preview (selector) {
+			function preview( selector ) {
 
-				var $parent = selector.parents('.customize-control-custom_background:first');
+				var $parent = selector.parents( '.customize-control-custom_background:first' );
 
-				if ( selector.hasClass('customize-control-custom_background') ) {
+				if ( selector.hasClass( 'customize-control-custom_background' ) ) {
 					var $parent = selector;
 				}
 
 				if ( $parent.length > 0 ) {
-					$parent = $($parent[0]);
+					$parent = $( $parent[0] );
 				} else {
 					return;
 				}
 
-				var image_holder = $parent.find('.background-preview');
+				var image_holder = $parent.find( '.background-preview' );
 
-				if (!image_holder) { // No preview present
+				if ( !image_holder ) { // No preview present
 					return;
 				}
 
-				var the_id = $parent.find('.button.background_upload_button').data('setting_id'),
-					this_setting = api.instance(the_id);
+				var the_id = $parent.find( '.button.background_upload_button' ).data( 'setting_id' ),
+					this_setting = api.instance( the_id );
 
 				var background_data = {};
 
-				$parent.find('.customify_background_select, .customify_background_input').each(function () {
-					var data = $(this).serializeArray();
+				$parent.find( '.customify_background_select, .customify_background_input' ).each( function() {
+					var data = $( this ).serializeArray();
 
 					data = data[0];
-					if (data && data.name.indexOf('[background-') != -1) {
+					if ( data && data.name.indexOf( '[background-' ) != -1 ) {
 
-						background_data[ $(this).data('select_name') ] = data.value;
+						background_data[$( this ).data( 'select_name' )] = data.value;
 
 						//default_default[data.name] = data.value;
 						//if (data.name == "background-image") {
@@ -633,60 +673,60 @@
 						//	css += data.name + ':' + data.value + ';';
 						//}
 					}
-				});
+				} );
 
-				api.instance(the_id).set( background_data );
+				api.instance( the_id ).set( background_data );
 				//// Notify the customizer api about this change
-				api.trigger('change');
+				api.trigger( 'change' );
 				api.previewer.refresh();
 
 				//image_holder.attr('style', css).fadeIn();
 			}
 
 			// Update the background preview
-			function removeImage (parent) {
+			function removeImage( parent ) {
 				var selector = parent.find( '.upload_button_div' );
 				// This shouldn't have been run...
-				if (!selector.find('.remove-image').addClass('hide')) {
+				if ( !selector.find( '.remove-image' ).addClass( 'hide' ) ) {
 					return;
 				}
 
-				selector.find('.remove-image').addClass('hide');//hide "Remove" button
-				parent.find('.customify_background_select').addClass('hide');
+				selector.find( '.remove-image' ).addClass( 'hide' );//hide "Remove" button
+				parent.find( '.customify_background_select' ).addClass( 'hide' );
 
-				selector.find('.upload').val('');
-				selector.find('.upload-id').val('');
-				selector.find('.upload-height').val('');
-				selector.find('.upload-width').val('');
-				parent.find('.customify_background_input.background-image').val('');
+				selector.find( '.upload' ).val( '' );
+				selector.find( '.upload-id' ).val( '' );
+				selector.find( '.upload-height' ).val( '' );
+				selector.find( '.upload-width' ).val( '' );
+				parent.find( '.customify_background_input.background-image' ).val( '' );
 
-				var customizer_id = selector.find('.background_upload_button').data('setting_id'),
-					this_setting = api.control( customizer_id + '_control'),
+				var customizer_id = selector.find( '.background_upload_button' ).data( 'setting_id' ),
+					this_setting = api.control( customizer_id + '_control' ),
 					current_vals = this_setting.setting(),
-					screenshot = parent.find('.preview_screenshot'),
-					to_array = $.map(current_vals, function(value, index) {
+					screenshot = parent.find( '.preview_screenshot' ),
+					to_array = $.map( current_vals, function( value, index ) {
 						return [value];
-					});
+					} );
 
 				// Hide the screenshot
 				screenshot.slideUp();
-				selector.find('.remove-file').unbind();
+				selector.find( '.remove-file' ).unbind();
 				to_array['background-image'] = '';
-				this_setting.setting(to_array);
+				this_setting.setting( to_array );
 			}
 
 			return {
 				init: init
 			}
-		})(jQuery);
+		})( jQuery );
 
-		var getUrlVars = function(name){
+		var getUrlVars = function( name ) {
 			var vars = [], hash;
-			var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
-			for(var i = 0; i < hashes.length; i++) {
-				hash = hashes[i].split('=');
+			var hashes = window.location.href.slice( window.location.href.indexOf( '?' ) + 1 ).split( '&' );
+			for ( var i = 0; i < hashes.length; i++ ) {
+				hash = hashes[i].split( '=' );
 
-				vars.push(hash[0]);
+				vars.push( hash[0] );
 				vars[hash[0]] = hash[1];
 			}
 
@@ -694,15 +734,120 @@
 				return vars[name];
 			}
 			return false;
-		}
+		};
 
-		var IsJsonString = function(str) {
+		var IsJsonString = function( str ) {
 			try {
-				JSON.parse(str);
-			} catch (e) {
+				JSON.parse( str );
+			} catch ( e ) {
 				return false;
 			}
 			return true;
-		}
+		};
 	} );
+
+
+	var Queue = function() {
+		var lastPromise = null;
+		var queueDeferred = null;
+		var methodDeferred = null;
+
+		this.add_steps = function( key, steps, args ) {
+			var self = this;
+			this.methodDeferred = $.Deferred();
+			this.queueDeferred = this.setup();
+
+			$.each( steps, function( i, step ) {
+				self.queue( key, step );
+			} );
+		};
+
+		this.process_remote_step = function( key, data, step ) {
+			var self = this;
+
+			if ( typeof data === "undefined" || data === null ) {
+				return false;
+			}
+
+			var new_step = step;
+			$.each( data, function( i, k ) {
+				// prepare data for new requests
+				new_step.recall_data = k;
+				new_step.recall_type = i;
+				new_step.type = 'recall';
+
+				self.queue( key, new_step, i );
+			} );
+		};
+
+		this.queue = function( key, step, logger ) {
+			var self = this;
+
+			if ( typeof logger !== 'undefined' ) {
+				$('.wpGrade-import-results' ).show();
+				$('.wpGrade-import-results' ).append( '<span class="import_step_note imports_step_' + logger + '" >Importing ' + logger + '</span>' );
+			}
+
+			// execute next queue method
+			this.queueDeferred.done( this.request( key, step ) );
+			lastPromise = self.methodDeferred.promise();
+		};
+
+		this.request = function( key, step ) {
+			var self = this;
+
+			// call actual method and wrap output in deferred
+			//setTimeout( function() {
+			var data_args = {
+				action: 'customify_import_step',
+				step_id: step.id,
+				step_type: step.type,
+				option_key: key
+			};
+
+			if ( typeof step.recall_data !== "undefined" ) {
+				data_args.recall_data = step.recall_data;
+			}
+
+			if ( typeof step.recall_type !== "undefined" ) {
+				data_args.recall_type = step.recall_type;
+			}
+
+			$.ajax( {
+				url: customify_settings.import_rest_url + 'customify/1.0/import',
+				method: 'POST',
+				beforeSend: function( xhr ) {
+					xhr.setRequestHeader( 'X-WP-Nonce', WP_API_Settings.nonce );
+				},
+				dataType: 'json',
+				contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+				data: data_args
+			} ).done( function( response ) {
+				if ( typeof response.success !== "undefined" && response.success ) {
+					var results = response.data;
+
+					if ( step.type === 'remote' ) {
+						self.process_remote_step( key, results, step );
+					}
+				}
+			} );
+
+			self.methodDeferred.resolve();
+			//}, 100 );
+		};
+
+		this.setup = function() {
+			var self = this;
+
+			self.queueDeferred = $.Deferred();
+
+			// when the previous method returns, resolve this one
+			$.when( lastPromise ).always( function() {
+				self.queueDeferred.resolve();
+			} );
+
+			return self.queueDeferred.promise();
+		}
+	};
+
 })( jQuery, window );

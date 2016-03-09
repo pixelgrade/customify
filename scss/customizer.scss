@@ -57,7 +57,7 @@ $fields_border-color	: #B8DAEB;
 // Remove Accordion Section Title Margin
 #customize-controls .customize-info {
 	margin-bottom: 0;
-}  
+}
 
 .customize-panel-back, .customize-section-back {
 	height: 74px;
@@ -271,23 +271,23 @@ $fields_border-color	: #B8DAEB;
 
 .customize-control {
 
-	input[type=text], 
-	input[type=checkbox], 
-	input[type=password], 
-	input[type=color], 
-	input[type=date], 
-	input[type=datetime], 
-	input[type=datetime-local], 
-	input[type=email], 
-	input[type=month], 
-	input[type=number], 
-	input[type=radio], 
-	input[type=tel], 
-	input[type=time], 
-	input[type=url], 
-	input[type=week], 
-	input[type=search], 
-	select, 
+	input[type=text],
+	input[type=checkbox],
+	input[type=password],
+	input[type=color],
+	input[type=date],
+	input[type=datetime],
+	input[type=datetime-local],
+	input[type=email],
+	input[type=month],
+	input[type=number],
+	input[type=radio],
+	input[type=tel],
+	input[type=time],
+	input[type=url],
+	input[type=week],
+	input[type=search],
+	select,
 	textarea,
 	input[type="number"].range-value  {
 	    width: 100%;
@@ -325,7 +325,7 @@ $fields_border-color	: #B8DAEB;
 	}
 
 	// Checkbox
-	input[type=checkbox], 
+	input[type=checkbox],
 	input[type=radio] {
 		width: $fields_height/2;
 		height: $fields_height/2;
@@ -350,7 +350,7 @@ $fields_border-color	: #B8DAEB;
 			padding-bottom: 0;
 
 		    text-indent: -6px;
-	
+
 			color: $blue-dark;
 		}
 	}
@@ -398,13 +398,13 @@ $fields_border-color	: #B8DAEB;
 
 	input[type="range"] {
 	  position: relative;
-	  -webkit-appearance: none; 
-	  width: $input-size; 
-	  height: $thumb-height; 
+	  -webkit-appearance: none;
+	  width: $input-size;
+	  height: $thumb-height;
 	  overflow: hidden;
-	  outline: none; 
+	  outline: none;
 	  background: none;
-	  
+
 	  &:before {
 	    content: " ";
 	    position: absolute;
@@ -416,19 +416,19 @@ $fields_border-color	: #B8DAEB;
 	    box-shadow: inset 0px 1px 3px 0px rgba(0,0,0,0.30);
 	    border-radius: 10px;
 	  }
-	  
+
 	  &::-webkit-slider-thumb {
-	    -webkit-appearance: none; 
-	    width: $thumb-height; 
-	    height: $thumb-height; 
-	    background: #27ae60; 
-	    position: relative; 
-	    z-index: 3; 
+	    -webkit-appearance: none;
+	    width: $thumb-height;
+	    height: $thumb-height;
+	    background: #27ae60;
+	    position: relative;
+	    z-index: 3;
 
 	    background: #FFFFFF;
 	    border: 2px solid #B8DAEB;
 	    border-radius: 4px;
-	    
+
 	    &:before {
 	      content: "..";
 	      position: absolute;
@@ -436,20 +436,20 @@ $fields_border-color	: #B8DAEB;
 	      top: -5px;
 	      color: #B8DAEB;
 	      font-size: 1em;
-	      letter-spacing: 1px; 
+	      letter-spacing: 1px;
 	    }
 
 	    &:after {
-	      content: " "; 
-	      width: $input-size; 
-	      height: $input-height; 
-	      position: absolute; 
-	      z-index: 1; 
-	      right: $thumb-height - 2px; 
-	      top: $input-height; 
+	      content: " ";
+	      width: $input-size;
+	      height: $input-height;
+	      position: absolute;
+	      z-index: 1;
+	      right: $thumb-height - 2px;
+	      top: $input-height;
 	      background: #73C5EE;
 	    }
-	  } 
+	  }
 	}
 
 
@@ -467,10 +467,10 @@ $fields_border-color	: #B8DAEB;
 	    text-align: center;
 	}
 
-	input[type=number]::-webkit-inner-spin-button, 
-	input[type=number]::-webkit-outer-spin-button { 
-	  -webkit-appearance: none; 
-	  margin: 0; 
+	input[type=number]::-webkit-inner-spin-button,
+	input[type=number]::-webkit-outer-spin-button {
+	  -webkit-appearance: none;
+	  margin: 0;
 	}
 }
 
@@ -1022,6 +1022,20 @@ li#customize-control-site_logo {
 	}
 }
 
+#customify_import_demo_data_button {
+	width: 70%;
+	text-align: center;
+	padding: 10px;
+	display: inline-block;
+	height: auto;
+	margin: 0 15% 10% 15%;
+}
+
+.import_step_note {
+	padding: 20px;
+	width: 100%;
+	display: inline-block;
+}
 
 @import 'theme';
 
