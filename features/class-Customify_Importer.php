@@ -235,6 +235,7 @@ final class Customify_Importer_Controller {
 								// first check if the value actually changes
 								$current_value = get_option( $step_id );
 								if ( $current_value === $value ) {
+									continue;
 									//wp_send_json_success( esc_html__( 'This option is already here', 'customify' ) );
 								}
 
