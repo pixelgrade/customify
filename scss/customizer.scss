@@ -1035,6 +1035,14 @@ li#customize-control-site_logo {
 	padding: 20px;
 	width: 100%;
 	display: inline-block;
+
+	&.success:before {
+		content: 'U+1F44D';
+	}
+
+	&.failed:before {
+		content: 'U+274C';
+	}
 }
 
 @import 'theme';

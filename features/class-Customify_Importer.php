@@ -136,7 +136,7 @@ final class Customify_Importer_Controller {
 				}
 				$available = wp_remote_get( $import_step['discover_url'] );
 				$available = wp_remote_retrieve_body( $available );
-
+//				return $available;
 				$available = json_decode( $available, true );
 
 				if ( $available['success'] && ! empty( $available['data'] ) ) {
@@ -145,25 +145,31 @@ final class Customify_Importer_Controller {
 					wp_send_json_error( 'i don\'t evan kno\'' );
 				}
 
-				// sanitize what you can get from the export
+				// select what you can get from the export
 				if ( isset( $available['post_types'] ) && ! empty( $available['post_types'] ) ) {
 
-					foreach ( $available['post_types'] as $post_type => $posts ) {
+					foreach ( $available['post_types'] as $post_type => $post_type_args ) {
+
+						if ( ! isset( $post_type_args['results'] ) ) {
+							// @TODO if we will need an "empty" notice, we'll do here
+							continue;
+						}
+
 						$post_exists = false;
-						if ( ! post_type_exists( $post_type ) || empty( $posts ) ) {
+						if ( ! post_type_exists( $post_type ) || empty( $post_type_args['results'] ) ) {
 							unset( $available['post_types'][ $post_type ] );
 							continue;
 						}
 
-						foreach ( $posts as $post_id => $post ) {
+						foreach ( $post_type_args['results'] as $post_id => $post ) {
 							$post_exists = get_page_by_title( $post['post_title'], OBJECT, $post_type );
 							if ( ! empty( $post_exists ) ) {
-								unset( $available['post_types'][ $post_type ][ $post_id ] );
+								unset( $available['post_types'][ $post_type ]['results'][ $post_id ] );
 							}
 						}
 
 						// if still empty good by
-						if ( empty( $available['post_types'][ $post_type ] ) &&  ! empty( $post_exists ) ) {
+						if ( empty( $available['post_types'][ $post_type ] ) && ! empty( $post_exists ) ) {
 							$available['post_types'][ $post_type ] = 'already_imported';
 						}
 					}
@@ -171,18 +177,23 @@ final class Customify_Importer_Controller {
 
 				if ( isset( $available['taxonomies'] ) && ! empty( $available['taxonomies'] ) ) {
 
-					foreach ( $available['taxonomies'] as $tax => $terms ) {
+					foreach ( $available['taxonomies'] as $tax => $term_args ) {
 						$term_exists = false;
 
-						if ( ! taxonomy_exists( $tax ) || empty( $terms ) ) {
+						if ( ! isset( $term_args['results'] ) ) {
+							$available['taxonomies'][ $tax ] = 'empty';
+							continue;
+						}
+
+						if ( ! taxonomy_exists( $tax ) || empty( $term_args['results'] ) ) {
 							unset( $available['taxonomies'][ $tax ] );
 							continue;
 						}
 
-						foreach ( $terms as $term_id => $term ) {
-							$term_exists = term_exists(  $term['name'], $tax );
-							if ($term_exists !== 0 && $term_exists !== null) {
-								unset( $available['taxonomies'][ $tax ][ $term_id ] );
+						foreach ( $term_args['results'] as $term_id => $term ) {
+							$term_exists = term_exists( $term['name'], $tax );
+							if ( $term_exists !== 0 && $term_exists !== null ) {
+								unset( $available['taxonomies'][ $tax ]['results'][ $term_id ] );
 							}
 						}
 
@@ -201,11 +212,19 @@ final class Customify_Importer_Controller {
 			case 'recall' : {
 
 				if ( ! isset( $_POST['recall_type'] ) ) {
-					wp_send_json( array( 'success' => false, 'code' => 'no_type', 'message' => esc_html__( 'No recall type', 'customify' ) ) );
+					wp_send_json( array(
+						'success' => false,
+						'code'    => 'no_type',
+						'message' => esc_html__( 'No recall type', 'customify' )
+					) );
 				}
 
 				if ( ! isset( $_POST['recall_data'] ) ) {
-					wp_send_json( array( 'success' => false, 'code' => 'no_data', 'message' => esc_html__( 'No recall data', 'customify' ) ) );
+					wp_send_json( array(
+						'success' => false,
+						'code'    => 'no_data',
+						'message' => esc_html__( 'No recall data', 'customify' )
+					) );
 				}
 
 				switch ( $_POST['recall_type'] ) {
@@ -222,7 +241,7 @@ final class Customify_Importer_Controller {
 
 					case 'wp_options' : {
 
-						$wp_options = $_POST['recall_data'];
+						$wp_options       = $_POST['recall_data'];
 						$already_imported = false;
 
 						if ( ! empty( $wp_options ) ) {
@@ -240,24 +259,44 @@ final class Customify_Importer_Controller {
 						}
 
 						if ( $already_imported ) {
-							wp_send_json( array( 'success' => false, 'code' => 'already_imported', 'message' => esc_html__( 'This is already imported', 'customify' ) ) );
+							wp_send_json( array(
+								'success' => false,
+								'code'    => 'already_imported',
+								'message' => esc_html__( 'This is already imported', 'customify' )
+							) );
 						}
-						wp_send_json( array( 'success' => true, 'code' => 'imported', 'message' => esc_html__( 'Done', 'customify' ) ) );
+						wp_send_json( array(
+							'success' => true,
+							'code'    => 'imported',
+							'message' => esc_html__( 'Done', 'customify' )
+						) );
 						break;
 					}
 
 					default : {
-						wp_send_json( array( 'success' => false, 'code' => 'wrong_recall_type', 'message' => esc_html__( 'wrong recall type', 'customify' ) ) );
+						wp_send_json( array(
+							'success' => false,
+							'code'    => 'wrong_recall_type',
+							'message' => esc_html__( 'wrong recall type', 'customify' )
+						) );
 						break;
 					}
 				}
 
-				wp_send_json( array( 'success' => false, 'code' => 'what', 'message' => esc_html__( 'I dont think i should be here', 'customify' ) ) );
+				wp_send_json( array(
+					'success' => false,
+					'code'    => 'what',
+					'message' => esc_html__( 'I dont think i should be here', 'customify' )
+				) );
 				break;
 			}
 
 			default : {
-				wp_send_json( array( 'success' => false, 'code' => 'wrong_type', 'message' => esc_html__( 'Wrong import type', 'customify' ) ) );
+				wp_send_json( array(
+					'success' => false,
+					'code'    => 'wrong_type',
+					'message' => esc_html__( 'Wrong import type', 'customify' )
+				) );
 				break;
 			}
 		}
@@ -270,10 +309,11 @@ final class Customify_Importer_Controller {
 		$result = array();
 		if ( is_array( $data ) ) {
 			foreach ( $data as $post_type => $posts ) {
-				$result[$post_type] = array();
-				$post_exists = false;
+				$result[ $post_type ] = array();
+				$post_exists          = false;
 				if ( post_type_exists( $post_type ) && is_array( $posts ) && ! empty( $posts ) ) {
 
+					wp_send_json( $posts );
 					foreach ( $posts as $id => $post_args ) {
 
 						$post_exists = get_page_by_title( $post_args['post_title'] );
@@ -284,26 +324,26 @@ final class Customify_Importer_Controller {
 
 						$args = array_intersect_key( (array) $post_args
 							, array(
-							'post_author' => 0,
-							'post_date'   => 0,
-							'post_date_gmt'   => 0,
-							'post_content' => 0,
-							'post_content_filtered' => 0,
-							'post_title'  => 0,
-							'post_excerpt'  => 0,
-							'post_status'  => 'published',
-							'post_type'    => 'post',
-							'ping_status' => 'closed',
-							'post_password' => '',
-							'post_name' => '',
-							'to_ping' => '',
-							'pinged' => '',
-							'post_modified' => 0,
-							'post_modified_gmt' => 0,
-							'post_parent' => 0,
-							'menu_order' => '',
-							'post_mime_type' => '',
-						) );
+								'post_author'           => 0,
+								'post_date'             => 0,
+								'post_date_gmt'         => 0,
+								'post_content'          => 0,
+								'post_content_filtered' => 0,
+								'post_title'            => 0,
+								'post_excerpt'          => 0,
+								'post_status'           => 'published',
+								'post_type'             => 'post',
+								'ping_status'           => 'closed',
+								'post_password'         => '',
+								'post_name'             => '',
+								'to_ping'               => '',
+								'pinged'                => '',
+								'post_modified'         => 0,
+								'post_modified_gmt'     => 0,
+								'post_parent'           => 0,
+								'menu_order'            => '',
+								'post_mime_type'        => '',
+							) );
 
 						/**
 						 * ID
@@ -313,24 +353,32 @@ final class Customify_Importer_Controller {
 						 * guid */
 
 						/**
-						* @TODO Still needed
-						'guid'
-						(string) Global Unique ID for referencing the post. Default empty.
-						'tax_input'
-						(array) Array of taxonomy terms keyed by their taxonomy name. Default empty.
-						'meta_input'
+						 * @TODO Still needed
+						 * 'guid'
+						 * (string) Global Unique ID for referencing the post. Default empty.
+						 * 'tax_input'
+						 * (array) Array of taxonomy terms keyed by their taxonomy name. Default empty.
+						 * 'meta_input'
 						 *
 						 * All metadata
 						 */
 
-						$result[$post_type][$id] = wp_insert_post( $args );
+						$result[ $post_type ][ $id ] = wp_insert_post( $args );
 					}
 				}
-
-				if ( $post_exists ) {
-					wp_send_json( array( 'success' => false, 'code' => 'exists', 'message' => esc_html__( 'I dont think i should be here', 'customify' ) ) );
-				} elseif ( empty( $result[$post_type] ) ) {
-					wp_send_json( array( 'success' => false, 'code' => 'empty', 'message' => esc_html__( 'I dont think i should be here', 'customify' ) ) );
+//wp_send_json($post_exists);
+				if ( ! empty( $post_exists ) ) {
+					wp_send_json( array(
+						'success' => false,
+						'code'    => 'exists',
+						'message' => esc_html__( 'They are already here', 'customify' )
+					) );
+				} elseif ( empty( $result[ $post_type ] ) ) {
+					wp_send_json( array(
+						'success' => false,
+						'code'    => 'empty',
+						'message' => esc_html__( 'Nothing to import', 'customify' )
+					) );
 				}
 			}
 		}
@@ -341,32 +389,40 @@ final class Customify_Importer_Controller {
 		$result = array();
 		if ( is_array( $data ) ) {
 			foreach ( $data as $tax => $terms ) {
-				$result[$tax] = array();
-				$term_exists = false;
+				$result[ $tax ] = array();
+				$term_exists    = false;
 
 				if ( taxonomy_exists( $tax ) && is_array( $terms ) && ! empty( $terms ) ) {
 					foreach ( $terms as $id => $term_args ) {
-
-						$term_exists = term_exists(  $term_args['name'], $tax );
-						if ($term_exists !== 0 && $term_exists !== null) {
+						wp_send_json( $term_args );
+						$term_exists = term_exists( $term_args['name'], $tax );
+						if ( $term_exists !== 0 && $term_exists !== null ) {
 							continue;
 						}
 
 						$args = array_intersect_key( (array) $term_args
 							, array(
 								'description' => '',
-								'parent' => 0,
-								'slug' => '',
+								'parent'      => 0,
+								'slug'        => '',
 							) );
 
-						$result[$tax][$id] = wp_insert_term( $term_args['name'], $term_args['taxonomy'], $args );
+						$result[ $tax ][ $id ] = wp_insert_term( $term_args['name'], $tax, $args );
 					}
 				}
 
-				if ( $term_exists ) {
-					wp_send_json( array( 'success' => false, 'code' => 'exists', 'message' => esc_html__( 'I dont think i should be here', 'customify' ) ) );
-				} elseif ( empty( $result[$tax] ) ) {
-					wp_send_json( array( 'success' => false, 'code' => 'empty', 'message' => esc_html__( 'I dont think i should be here', 'customify' ) ) );
+				if ( ! empty( $term_exists ) ) {
+					wp_send_json( array(
+						'success' => false,
+						'code'    => 'exists',
+						'message' => esc_html__( 'They are already here', 'customify' )
+					) );
+				} elseif ( empty( $result[ $tax ] ) ) {
+					wp_send_json( array(
+						'success' => false,
+						'code'    => 'empty',
+						'message' => esc_html__( 'Nothing to import', 'customify' )
+					) );
 				}
 			}
 		}

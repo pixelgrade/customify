@@ -255,12 +255,12 @@
 			// bind our event on click
 			$( document ).on( 'click', '.customify_import_demo_data_button', function( event ) {
 
-				if ( $( this ).hasClass( '.wpGrade_button_inactive' ) ) {
-					return false;
-				} else {
-					$( this ).addClass( '.wpGrade_button_inactive' );
-					$( this ).attr( 'disabled', 'disabled' );
-				}
+				//if ( $( this ).hasClass( '.wpGrade_button_inactive' ) ) {
+				//	return false;
+				//} else {
+				//	$( this ).addClass( '.wpGrade_button_inactive' );
+				//	$( this ).attr( 'disabled', 'disabled' );
+				//}
 
 				//var confirmImport = confirm( listable_demodata_params.l10n.import_confirm );
 				//if ( confirmImport == false ) return false;
@@ -752,7 +752,6 @@
 		var lastPromise = null;
 		var queueDeferred = null;
 		var methodDeferred = null;
-		var count = 1;
 
 		this.add_steps = function( key, steps, args ) {
 			var self = this;
@@ -761,7 +760,6 @@
 
 			$.each( steps, function( i, step ) {
 				self.queue( key, step );
-				//console.log(self.count);
 			} );
 		};
 
@@ -774,6 +772,9 @@
 
 			var new_step = step;
 			$.each( data, function( i, k ) {
+
+				console.log( k );
+
 				// prepare data for new requests
 				new_step.recall_data = k;
 				new_step.recall_type = i;
@@ -786,12 +787,16 @@
 		this.log_action = function( action, key, msg ) {
 			if ( action === 'start' ) {
 				$('.wpGrade-import-results' ).show();
-				$('.wpGrade-import-results' ).append( '<span class="import_step_note imports_step_' + key + '" data-balloon="Working on it" data-balloon-pos="down" >Importing ' + key + '</span>' );
+				$('.wpGrade-import-results' ).append( '<span class="import_step_note imports_step_' + key + '" data-balloon="Working on it" data-balloon-pos="up" >Importing ' + key + '</span>' );
 			} else if ( action === 'end' ) {
 				var $notice = $('.imports_step_' + key);
 
 				if ( $notice.length > 0 || msg !== "undefined") {
 					$notice.attr('data-balloon', msg);
+					$notice.addClass('success');
+				} else {
+					$notice.attr('data-balloon', 'Done');
+					$notice.addClass('failed');
 				}
 			}
 		};
@@ -807,7 +812,6 @@
 			// execute next queue method
 			this.queueDeferred.done( this.request( key, data, step_key ) );
 			lastPromise = self.methodDeferred.promise();
-			self.count = parseInt(self.count) + 1;
 		};
 
 		this.request = function( key, step, step_key ) {
@@ -815,45 +819,45 @@
 
 			// call actual method and wrap output in deferred
 			//setTimeout( function() {
-			var data_args = {
-				action: 'customify_import_step',
-				step_id: step.id,
-				step_type: step.type,
-				option_key: key
-			};
+				var data_args = {
+					action: 'customify_import_step',
+					step_id: step.id,
+					step_type: step.type,
+					option_key: key
+				};
 
-			if ( typeof step.recall_data !== "undefined" ) {
-				data_args.recall_data = step.recall_data;
-			}
+				if ( typeof step.recall_data !== "undefined" ) {
+					data_args.recall_data = step.recall_data;
+				}
 
-			if ( typeof step.recall_type !== "undefined" ) {
-				data_args.recall_type = step.recall_type;
-			}
+				if ( typeof step.recall_type !== "undefined" ) {
+					data_args.recall_type = step.recall_type;
+				}
 
-			$.ajax( {
-				url: customify_settings.import_rest_url + 'customify/1.0/import',
-				method: 'POST',
-				beforeSend: function( xhr ) {
-					xhr.setRequestHeader( 'X-WP-Nonce', WP_API_Settings.nonce );
-				},
-				dataType: 'json',
-				contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
-				data: data_args
-			} ).done( function( response ) {
-				if ( typeof response.success !== "undefined" && response.success ) {
-					var results = response.data;
-					if ( step.type === 'remote' ) {
-						self.process_remote_step( key, results, step );
+				$.ajax( {
+					url: customify_settings.import_rest_url + 'customify/1.0/import',
+					method: 'POST',
+					beforeSend: function( xhr ) {
+						xhr.setRequestHeader( 'X-WP-Nonce', WP_API_Settings.nonce );
+					},
+					dataType: 'json',
+					contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+					data: data_args
+				} ).done( function( response ) {
+					if ( typeof response.success !== "undefined" && response.success ) {
+						var results = response.data;
+						if ( step.type === 'remote' ) {
+							self.process_remote_step( key, results, step );
+						}
 					}
-				}
 
-				if ( typeof step_key !== 'undefined' && typeof response.message !== 'undefined' ) {
-					self.log_action( 'end', step_key, response.message );
-				}
-			} );
+					if ( typeof step_key !== 'undefined' && typeof response.message !== 'undefined' ) {
+						self.log_action( 'end', step_key, response.message );
+					}
+				} );
 
-			self.methodDeferred.resolve();
-			//}, 100 );
+				self.methodDeferred.resolve();
+			//}, 3450 );
 		};
 
 		this.setup = function() {
