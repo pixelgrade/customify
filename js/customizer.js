@@ -255,7 +255,7 @@
 			// bind our event on click
 			$( document ).on( 'click', '.customify_import_demo_data_button', function( event ) {
 
-				if ( $( this ).is( '.wpGrade_button_inactive' ) ) {
+				if ( $( this ).hasClass( '.wpGrade_button_inactive' ) ) {
 					return false;
 				} else {
 					$( this ).addClass( '.wpGrade_button_inactive' );
@@ -265,6 +265,7 @@
 				//var confirmImport = confirm( listable_demodata_params.l10n.import_confirm );
 				//if ( confirmImport == false ) return false;
 
+				//@todo start an anmation here
 				var key = $( this ).data( 'key' );
 
 				var import_queue = new Queue( api );
@@ -751,6 +752,7 @@
 		var lastPromise = null;
 		var queueDeferred = null;
 		var methodDeferred = null;
+		var count = 1;
 
 		this.add_steps = function( key, steps, args ) {
 			var self = this;
@@ -759,6 +761,7 @@
 
 			$.each( steps, function( i, step ) {
 				self.queue( key, step );
+				//console.log(self.count);
 			} );
 		};
 
@@ -780,20 +783,34 @@
 			} );
 		};
 
-		this.queue = function( key, step, logger ) {
+		this.log_action = function( action, key, msg ) {
+			if ( action === 'start' ) {
+				$('.wpGrade-import-results' ).show();
+				$('.wpGrade-import-results' ).append( '<span class="import_step_note imports_step_' + key + '" data-balloon="Working on it" data-balloon-pos="down" >Importing ' + key + '</span>' );
+			} else if ( action === 'end' ) {
+				var $notice = $('.imports_step_' + key);
+
+				if ( $notice.length > 0 || msg !== "undefined") {
+					$notice.attr('data-balloon', msg);
+				}
+			}
+		};
+
+		this.queue = function( key, data, step_key ) {
 			var self = this;
 
-			if ( typeof logger !== 'undefined' ) {
-				$('.wpGrade-import-results' ).show();
-				$('.wpGrade-import-results' ).append( '<span class="import_step_note imports_step_' + logger + '" >Importing ' + logger + '</span>' );
+
+			if ( typeof step_key !== 'undefined' ) {
+				this.log_action( 'start', step_key );
 			}
 
 			// execute next queue method
-			this.queueDeferred.done( this.request( key, step ) );
+			this.queueDeferred.done( this.request( key, data, step_key ) );
 			lastPromise = self.methodDeferred.promise();
+			self.count = parseInt(self.count) + 1;
 		};
 
-		this.request = function( key, step ) {
+		this.request = function( key, step, step_key ) {
 			var self = this;
 
 			// call actual method and wrap output in deferred
@@ -825,10 +842,13 @@
 			} ).done( function( response ) {
 				if ( typeof response.success !== "undefined" && response.success ) {
 					var results = response.data;
-
 					if ( step.type === 'remote' ) {
 						self.process_remote_step( key, results, step );
 					}
+				}
+
+				if ( typeof step_key !== 'undefined' && typeof response.message !== 'undefined' ) {
+					self.log_action( 'end', step_key, response.message );
 				}
 			} );
 
