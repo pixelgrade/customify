@@ -773,7 +773,6 @@
 			var new_step = step;
 			$.each( data, function( i, k ) {
 
-				console.log( k );
 
 				// prepare data for new requests
 				new_step.recall_data = k;
@@ -787,9 +786,9 @@
 		this.log_action = function( action, key, msg ) {
 			if ( action === 'start' ) {
 				$('.wpGrade-import-results' ).show();
-				$('.wpGrade-import-results' ).append( '<span class="import_step_note imports_step_' + key + '" data-balloon="Working on it" data-balloon-pos="up" >Importing ' + key + '</span>' );
+				$('.wpGrade-import-results' ).append( '<span class="import_step_note imports_step_' + key + '" ><span class="step_info" data-balloon="Working on it" data-balloon-pos="up"></span>Importing ' + key + '</span>' );
 			} else if ( action === 'end' ) {
-				var $notice = $('.imports_step_' + key);
+				var $notice = $('.imports_step_' + key + ' .step_info');
 
 				if ( $notice.length > 0 || msg !== "undefined") {
 					$notice.attr('data-balloon', msg);

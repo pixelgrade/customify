@@ -3,6 +3,7 @@
 final class Customify_Importer_Controller {
 
 	protected $customify;
+	protected static $steps = array();
 
 	function init() {
 		add_action( 'rest_api_init', array( $this, 'register_routes' ) );
@@ -134,79 +135,21 @@ final class Customify_Importer_Controller {
 				if ( ! isset( $import_step['discover_url'] ) ) {
 					wp_send_json_error( esc_html__( 'No url', 'customify' ) );
 				}
-				$available = wp_remote_get( $import_step['discover_url'] );
-				$available = wp_remote_retrieve_body( $available );
-//				return $available;
-				$available = json_decode( $available, true );
+				$data = wp_remote_get( $import_step['discover_url'] );
+				$data = wp_remote_retrieve_body( $data );
 
-				if ( $available['success'] && ! empty( $available['data'] ) ) {
-					$available = $available['data'];
+				$data = json_decode( $data, true );
+
+				if ( $data['success'] && ! empty( $data['data'] ) ) {
+					$data = $data['data'];
 				} else {
 					wp_send_json_error( 'i don\'t evan kno\'' );
 				}
 
-				// select what you can get from the export
-				if ( isset( $available['post_types'] ) && ! empty( $available['post_types'] ) ) {
+				$data = $this->process_remote_data( $data );
 
-					foreach ( $available['post_types'] as $post_type => $post_type_args ) {
-
-						if ( ! isset( $post_type_args['results'] ) ) {
-							// @TODO if we will need an "empty" notice, we'll do here
-							continue;
-						}
-
-						$post_exists = false;
-						if ( ! post_type_exists( $post_type ) || empty( $post_type_args['results'] ) ) {
-							unset( $available['post_types'][ $post_type ] );
-							continue;
-						}
-
-						foreach ( $post_type_args['results'] as $post_id => $post ) {
-							$post_exists = get_page_by_title( $post['post_title'], OBJECT, $post_type );
-							if ( ! empty( $post_exists ) ) {
-								unset( $available['post_types'][ $post_type ]['results'][ $post_id ] );
-							}
-						}
-
-						// if still empty good by
-						if ( empty( $available['post_types'][ $post_type ] ) && ! empty( $post_exists ) ) {
-							$available['post_types'][ $post_type ] = 'already_imported';
-						}
-					}
-				}
-
-				if ( isset( $available['taxonomies'] ) && ! empty( $available['taxonomies'] ) ) {
-
-					foreach ( $available['taxonomies'] as $tax => $term_args ) {
-						$term_exists = false;
-
-						if ( ! isset( $term_args['results'] ) ) {
-							$available['taxonomies'][ $tax ] = 'empty';
-							continue;
-						}
-
-						if ( ! taxonomy_exists( $tax ) || empty( $term_args['results'] ) ) {
-							unset( $available['taxonomies'][ $tax ] );
-							continue;
-						}
-
-						foreach ( $term_args['results'] as $term_id => $term ) {
-							$term_exists = term_exists( $term['name'], $tax );
-							if ( $term_exists !== 0 && $term_exists !== null ) {
-								unset( $available['taxonomies'][ $tax ]['results'][ $term_id ] );
-							}
-						}
-
-						// now if after the check if this is still  empty .. .sry for ya
-						if ( empty( $available['taxonomies'][ $tax ] ) && ! empty( $term_exists ) ) {
-							$available['taxonomies'][ $tax ] = 'already_imported';
-						}
-					}
-				}
-
-				wp_send_json_success( $available );
+				wp_send_json_success( $this->get_steps() );
 				break;
-
 			}
 
 			case 'recall' : {
@@ -430,6 +373,88 @@ final class Customify_Importer_Controller {
 		wp_send_json( $result );
 	}
 
+	protected function process_remote_data( $data ) {
+
+		if ( isset( $data['wp_options'] ) && ! empty( $data['wp_options'] ) ) {}
+
+		if ( isset( $data['widgets'] ) && ! empty( $data['widgets'] ) ) {}
+
+		// select what you can get from the export
+		if ( isset( $data['taxonomies'] ) && ! empty( $data['taxonomies'] ) ) {
+
+			foreach ( $data['taxonomies'] as $tax => $term_args ) {
+
+				if ( ! taxonomy_exists( $tax ) ) {
+					unset( $data['taxonomies'][ $tax ] );
+					continue;
+				}
+
+				$term_exists = false;
+
+				if ( ! isset( $term_args['results'] ) || empty( $term_args['results'] ) ) {
+					$this->add_step( $tax, array( 'error' => 'empty' ) );
+					continue;
+				}
+
+				foreach ( $term_args['results'] as $term_id => $term ) {
+					$term_exists = term_exists( $term['name'], $tax );
+					if ( $term_exists !== 0 && $term_exists !== null ) {
+						unset( $data['taxonomies'][ $tax ]['results'][ $term_id ] );
+					}
+				}
+
+				// now if after the check if this is still  empty .. .sry for ya
+				if ( empty( $data['taxonomies'][ $tax ] ) && ! empty( $term_exists ) ) {
+					$data['taxonomies'][ $tax ] = 'already_imported';
+				}
+
+				$this->add_step( $tax, $data['taxonomies'][ $tax ] );
+			}
+		}
+
+		if ( isset( $data['post_types'] ) && ! empty( $data['post_types'] ) ) {
+			foreach ( $data['post_types'] as $post_type => $post_type_args ) {
+
+				if ( ! post_type_exists( $post_type ) || empty( $post_type_args['results'] ) ) {
+					continue;
+				}
+
+				$post_exists = false;
+
+				if ( ! isset( $post_type_args['results'] ) || empty( $post_type_args['results'] ) ) {
+					$this->add_step( $post_type, array( 'error' => 'empty' ) );
+					continue;
+				}
+
+				foreach ( $post_type_args['results'] as $post_id => $post ) {
+					$post_exists = get_page_by_title( $post['post_title'], OBJECT, $post_type );
+					if ( ! empty( $post_exists ) ) {
+						unset( $data['post_types'][ $post_type ]['results'][ $post_id ] );
+					}
+				}
+
+				// if still empty good by
+				if ( empty( $data['post_types'][ $post_type ] ) && ! empty( $post_exists ) ) {
+					$data['post_types'][ $post_type ] = 'already_imported';
+				}
+
+				$this->add_step( $post_type, $data['post_types'][ $post_type ] );
+			}
+
+			unset( $data['post_types'] );
+		}
+
+		return $data;
+	}
+
+	protected function add_step( $id, $data ) {
+		self::$steps[$id] = $data;
+	}
+
+	protected function get_steps(  ) {
+		return self::$steps;
+	}
+
 	protected function get_customify_field_data( $option_key, $step_id ) {
 
 		global $pixcustomify_plugin;
@@ -441,7 +466,6 @@ final class Customify_Importer_Controller {
 		}
 
 		$option_config = $options[ $option_key ];
-
 
 		if ( ! isset( $options[ $option_key ]['imports'] ) ) {
 			wp_send_json_error( 'where is imports????' );

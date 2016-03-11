@@ -1032,16 +1032,21 @@ li#customize-control-site_logo {
 }
 
 .import_step_note {
+
+	&:before {
+		content: "\1F449";
+	}
+
 	padding: 20px;
 	width: 100%;
 	display: inline-block;
 
 	&.success:before {
-		content: 'U+1F44D';
+		content: "\1F44D";
 	}
 
 	&.failed:before {
-		content: 'U+274C';
+		content: "\274C";
 	}
 }
 

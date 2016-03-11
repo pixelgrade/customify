@@ -701,6 +701,15 @@ li#customize-control-site_logo .actions {
   width: 100%;
   display: inline-block;
 }
+.import_step_note:before {
+  content: "\1F449";
+}
+.import_step_note.success:before {
+  content: "\1F44D";
+}
+.import_step_note.failed:before {
+  content: "\274C";
+}
 
 #customize-header-actions {
   background: #ffffff;
