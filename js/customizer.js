@@ -254,18 +254,16 @@
 
 			// bind our event on click
 			$( document ).on( 'click', '.customify_import_demo_data_button', function( event ) {
-
 				//if ( $( this ).hasClass( '.wpGrade_button_inactive' ) ) {
 				//	return false;
 				//} else {
 				//	$( this ).addClass( '.wpGrade_button_inactive' );
 				//	$( this ).attr( 'disabled', 'disabled' );
 				//}
-
 				//var confirmImport = confirm( listable_demodata_params.l10n.import_confirm );
 				//if ( confirmImport == false ) return false;
 
-				//@todo start an anmation here
+				//@todo start an animation here
 				var key = $( this ).data( 'key' );
 
 				var import_queue = new Queue( api );

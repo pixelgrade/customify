@@ -256,7 +256,6 @@ final class Customify_Importer_Controller {
 				$post_exists          = false;
 				if ( post_type_exists( $post_type ) && is_array( $posts ) && ! empty( $posts ) ) {
 
-					wp_send_json( $posts );
 					foreach ( $posts as $id => $post_args ) {
 
 						$post_exists = get_page_by_title( $post_args['post_title'] );
@@ -309,7 +308,7 @@ final class Customify_Importer_Controller {
 						$result[ $post_type ][ $id ] = wp_insert_post( $args );
 					}
 				}
-//wp_send_json($post_exists);
+
 				if ( ! empty( $post_exists ) ) {
 					wp_send_json( array(
 						'success' => false,
@@ -337,7 +336,7 @@ final class Customify_Importer_Controller {
 
 				if ( taxonomy_exists( $tax ) && is_array( $terms ) && ! empty( $terms ) ) {
 					foreach ( $terms as $id => $term_args ) {
-						wp_send_json( $term_args );
+
 						$term_exists = term_exists( $term_args['name'], $tax );
 						if ( $term_exists !== 0 && $term_exists !== null ) {
 							continue;
@@ -375,7 +374,9 @@ final class Customify_Importer_Controller {
 
 	protected function process_remote_data( $data ) {
 
-		if ( isset( $data['wp_options'] ) && ! empty( $data['wp_options'] ) ) {}
+		if ( isset( $data['wp_options'] ) && ! empty( $data['wp_options'] ) ) {
+			$this->add_step( 'wp_options', $data['wp_options'] );
+		}
 
 		if ( isset( $data['widgets'] ) && ! empty( $data['widgets'] ) ) {}
 
