@@ -697,7 +697,7 @@ li#customize-control-site_logo .actions {
 }
 
 .import_step_note {
-  padding: 20px;
+  margin: 5px;
   width: 100%;
   display: inline-block;
 }

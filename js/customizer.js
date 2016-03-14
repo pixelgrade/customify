@@ -770,14 +770,13 @@
 
 			var new_step = step;
 			$.each( data, function( i, k ) {
-
-
+debugger;
 				// prepare data for new requests
-				new_step.recall_data = k;
-				new_step.recall_type = i;
+				new_step.recall_data = k.data;
+				new_step.recall_type = k.type;
 				new_step.type = 'recall';
 
-				self.queue( key, new_step, i );
+				self.queue( key, new_step, k.id );
 			} );
 		};
 
@@ -800,8 +799,6 @@
 
 		this.queue = function( key, data, step_key ) {
 			var self = this;
-
-
 			if ( typeof step_key !== 'undefined' ) {
 				this.log_action( 'start', step_key );
 			}
@@ -813,47 +810,46 @@
 
 		this.request = function( key, step, step_key ) {
 			var self = this;
-
 			// call actual method and wrap output in deferred
 			//setTimeout( function() {
-				var data_args = {
-					action: 'customify_import_step',
-					step_id: step.id,
-					step_type: step.type,
-					option_key: key
-				};
+			var data_args = {
+				action: 'customify_import_step',
+				step_id: step.id,
+				step_type: step.type,
+				option_key: key
+			};
 
-				if ( typeof step.recall_data !== "undefined" ) {
-					data_args.recall_data = step.recall_data;
+			if ( typeof step.recall_data !== "undefined" ) {
+				data_args.recall_data = step.recall_data;
+			}
+
+			if ( typeof step.recall_type !== "undefined" ) {
+				data_args.recall_type = step.recall_type;
+			}
+
+			$.ajax( {
+				url: customify_settings.import_rest_url + 'customify/1.0/import',
+				method: 'POST',
+				beforeSend: function( xhr ) {
+					xhr.setRequestHeader( 'X-WP-Nonce', WP_API_Settings.nonce );
+				},
+				dataType: 'json',
+				contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+				data: data_args
+			} ).done( function( response ) {
+				if ( typeof response.success !== "undefined" && response.success ) {
+					var results = response.data;
+					if ( step.type === 'remote' ) {
+						self.process_remote_step( key, results, step );
+					}
 				}
 
-				if ( typeof step.recall_type !== "undefined" ) {
-					data_args.recall_type = step.recall_type;
+				if ( typeof step_key !== 'undefined' && typeof response.message !== 'undefined' ) {
+					self.log_action( 'end', step_key, response.message );
 				}
+			} );
 
-				$.ajax( {
-					url: customify_settings.import_rest_url + 'customify/1.0/import',
-					method: 'POST',
-					beforeSend: function( xhr ) {
-						xhr.setRequestHeader( 'X-WP-Nonce', WP_API_Settings.nonce );
-					},
-					dataType: 'json',
-					contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
-					data: data_args
-				} ).done( function( response ) {
-					if ( typeof response.success !== "undefined" && response.success ) {
-						var results = response.data;
-						if ( step.type === 'remote' ) {
-							self.process_remote_step( key, results, step );
-						}
-					}
-
-					if ( typeof step_key !== 'undefined' && typeof response.message !== 'undefined' ) {
-						self.log_action( 'end', step_key, response.message );
-					}
-				} );
-
-				self.methodDeferred.resolve();
+			self.methodDeferred.resolve();
 			//}, 3450 );
 		};
 

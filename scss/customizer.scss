@@ -1032,14 +1032,14 @@ li#customize-control-site_logo {
 }
 
 .import_step_note {
+	margin: 5px;
+	width: 100%;
+	display: inline-block;
+
 
 	&:before {
 		content: "\1F449";
 	}
-
-	padding: 20px;
-	width: 100%;
-	display: inline-block;
 
 	&.success:before {
 		content: "\1F44D";
