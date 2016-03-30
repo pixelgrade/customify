@@ -683,6 +683,7 @@ class PixCustomifyPlugin {
 					$font['value'] = json_encode( $font['value'] );
 				}
 
+				$font['value'] = addslashes_gpc( $font['value'] );
 				$value = json_decode( $font['value'], true );
 
 				// in case the value is still null, try default value(mostly for google fonts)
