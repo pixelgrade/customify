@@ -688,10 +688,12 @@ class PixCustomifyPlugin {
 //					}
 //
 //					unset( $font['value']['font-options'] );
+
+					$font['value'] = stripslashes_deep( $font['value'] );
 					$font['value'] = json_encode( $font['value'] );
 				}
 
-				$value = json_decode( $font['value'], true );
+				$value = json_decode( wp_unslash( $font['value'] ), true );
 
 				// in case the value is still null, try default value(mostly for google fonts)
 				if ( ! is_array( $value ) || $value === null ) {
@@ -951,6 +953,10 @@ class PixCustomifyPlugin {
 
 	protected function process_custom_background_field_output( $option_id, $options ) {
 		$selector = '';
+
+		if ( ! isset( $options['value'] ) ) {
+			return false;
+		}
 		$value    = $options['value'];
 
 		if ( ! isset( $options['output'] ) ) {
