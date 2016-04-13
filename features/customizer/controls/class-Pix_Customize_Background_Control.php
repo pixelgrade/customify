@@ -68,7 +68,7 @@ class Pix_Customize_Background_Control extends Pix_Customize_Control {
 //			}
 
 			if ( empty( $this->value['background-image'] ) && ! empty( $this->value['media']['id'] ) ) {
-				$img                             = wp_get_attachment_image_src( $this->value['media']['id'], 'full' ); var_dump($img);
+				$img                             = wp_get_attachment_image_src( $this->value['media']['id'], 'full' );
 				$this->value['background-image'] = $img[0];
 				$this->value['media']['width']   = $img[1];
 				$this->value['media']['height']  = $img[2];
