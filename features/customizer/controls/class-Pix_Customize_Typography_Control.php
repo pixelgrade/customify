@@ -225,8 +225,7 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 						$selected = $values->selected_variants;
 					}
 
-					if ( isset( $values->variants ) && ! empty( $values->variants ) ) {
-
+					if ( isset( $values->variants ) && ! empty( $values->variants ) && is_array( $values->variants ) ) {
 						foreach ( $values->variants as $weight ) {
 							$attrs = '';
 							if ( in_array( $weight, (array) $selected ) ) {
@@ -251,7 +250,7 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 						$selected = $values->selected_subsets;
 					}
 
-					if ( isset( $values->subsets ) && ! empty( $values->subsets ) ) {
+					if ( isset( $values->subsets ) && ! empty( $values->subsets ) && is_array( $values->variants ) ) {
 						foreach ( $values->subsets as $key => $subset ) {
 							$attrs = '';
 							if ( in_array( $subset, (array) $selected ) ) {
