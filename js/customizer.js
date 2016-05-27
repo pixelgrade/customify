@@ -297,7 +297,105 @@
 			if ( getUrlVars( 'save_customizer_once' ) ) {
 				api.previewer.save();
 			}
+
+			setTimeout(function () {
+				customifyFoldingFields();
+			}, 1000);
 		} );
+
+		/**
+		 * This function will search for all the interdependend fields and make a bound between them.
+		 * So whenever a target is changed, it will take actions to the dependent fields.
+		 */
+		var customifyFoldingFields = function() {
+
+			if ( typeof customify_settings === "undefined" || typeof customify_settings.settings === "undefined" ) {
+				return ; // bail
+			}
+
+			/**
+			 * Let's iterate through all the customify settings and gather all the fields that have a "show_on"
+			 * property set.
+			 *
+			 * At the end `targets` will hold a list of [ target : [field, field,...], ... ]
+			 * so when a target is changed we will change all the fields.
+			 */
+			var targets = {};
+
+			var process_a_target = function( parent_id, field ) {
+
+				if ( typeof field[0] === "undefined" ) {
+					return ; // no id, no fun
+				}
+
+				var key = field[0],
+					value = 1, // by default we use 1 the most used value for checboxes or inputs
+					compare = '==', // ... ye
+					action = "show"; // can only be `show` or `hide`
+
+				if ( typeof field[1] !== "undefined" ) {
+					value = field[1];
+				}
+
+				if ( typeof field[2] !== "undefined" ) {
+					compare = field[2];
+				}
+
+				if ( typeof field[3] !== "undefined" ) {
+					action = field[3];
+				}
+
+				// create the target object
+				// var obj = {
+				// 	id: parent_id,
+				// 	value: value,
+				// 	compare: compare,
+				// 	action: action
+				// };
+
+				/**
+				 * Now for each target we have, we will bind a change event to hide or show the dependent fields
+				 */
+				var target_selector = '[data-customize-setting-link="' + customify_settings.options_name + '[' + key + ']"]';
+				var depend_args = {};
+				depend_args[target_selector] = {
+					checked: true,
+					enabled: true
+				};
+				$(parent_id).dependsOn(depend_args, {
+					disable: false,
+					hide: true,
+					duration: 0
+				});
+			};
+
+			$.each( customify_settings.settings, function ( id, field ) {
+				/**
+				 * Here we have the id of the fields. but we know for sure that we just need his parent selector
+				 * So we just create it
+				 */
+				var parent_id = id.replace( '[', '-' );
+				parent_id = parent_id.replace( ']', '' );
+				parent_id = '#customize-control-' + parent_id + '_control';
+
+				// get only the fields that have a 'show_on' property
+				if ( field.hasOwnProperty( 'show_on' ) && field.show_on.length > 0 ) {
+
+					/**
+					 * The 'show_on' can be a simple array with one target like: [ id, value, comparison, action ]
+					 * Or it could be an array of multiple targets and we need to process both cases
+					 */
+					if ( typeof field.show_on[0] === 'string' ) {
+						process_a_target( parent_id, field.show_on );
+					} else if ( typeof field.show_on[0] === 'object' ) {
+						$.each( field.show_on, function (i, j) {
+							process_a_target( parent_id, j );
+						});
+					}
+				}
+			});
+		};
+
 
 		var get_typography_font_family = function( $el ) {
 
@@ -744,7 +842,6 @@
 			return true;
 		};
 	} );
-
 
 	var Queue = function() {
 		var lastPromise = null;

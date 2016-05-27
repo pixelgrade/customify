@@ -12,6 +12,15 @@
 			}
 		});
 
+		var isCustomizeSelectiveRefresh = ( 'undefined' !== typeof api.selectiveRefresh );
+
+		if ( isCustomizeSelectiveRefresh ) {
+			api.selectiveRefresh.bind( 'render-partials-response', function( response ) {
+				console.log(response);
+			} );
+		} else{
+		}
+
 		$.each( customify_settings.settings, function( key, el){
 
 			if ( typeof wp_settings[key] !== "undefined" && typeof el.css !== "undefined" && typeof el.live !== 'undefined' && el.live === true ) {

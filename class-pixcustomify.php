@@ -422,6 +422,7 @@ class PixCustomifyPlugin {
 	function enqueue_admin_customizer_scripts() {
 
 		wp_enqueue_script( 'select2', plugins_url( 'js/select2/select2.js', __FILE__ ), array( 'jquery' ), $this->version );
+		wp_enqueue_script( 'dependsOn-1.0.2', plugins_url( 'js/dependsOn-1.0.2.js', __FILE__ ), array( 'jquery' ), $this->version );
 		wp_enqueue_script( $this->plugin_slug . '-customizer-scripts', plugins_url( 'js/customizer.js', __FILE__ ), array(
 			'jquery',
 			'select2'
@@ -1255,7 +1256,7 @@ class PixCustomifyPlugin {
 		}
 
 		$wp_customize->add_section( $section_id, $section_args );
-
+		$partials_array = array();
 		foreach ( $section_settings['options'] as $option_id => $option_config ) {
 
 			if ( empty( $option_id ) || ! isset( $option_config['type'] ) ) {
@@ -1265,7 +1266,13 @@ class PixCustomifyPlugin {
 			$option_id = $options_name . '[' . $option_id . ']';
 
 			$this->register_field( $section_id, $option_id, $option_config, $wp_customize );
+			$partials_array[] = $option_id;
 		}
+		$wp_customize->selective_refresh->add_partial( 'mymy_partial', array(
+			'selector' => 'body',
+			'settings' => $partials_array,
+			'render_callback' => 'do_nothing_jon_snow',
+		) );
 
 	}
 
@@ -1604,6 +1611,10 @@ class PixCustomifyPlugin {
 		if ( $add_control ) {
 			$wp_customize->add_control( $this_control );
 		}
+	}
+
+	function do_nothing_jon_snow() {
+		echo '1';
 	}
 
 	/**
