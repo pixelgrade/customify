@@ -372,7 +372,7 @@
 					$(parent_id).reactIf( target_selector, function () {
 						return $( this ).is(':checked') == value;
 					} );
-				} else if ( target_type == 'radio' ) {
+				} else if ( target_type == 'radio' || target_type == 'radio_image' ) {
 					$(parent_id)
 						.reactIf( target_selector, function () {
 						console.log($( target_selector + ':checked').val());
