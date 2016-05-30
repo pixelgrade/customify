@@ -204,6 +204,7 @@ For example this read more label will be visible only when the first checkbox wi
 )
 ```
 By default, this field compares with '1' value, if you need another value, just add your preference like this
+
 `'show_on' => array( 'enable_read_more_button', 'custom_value' )`
 
 
