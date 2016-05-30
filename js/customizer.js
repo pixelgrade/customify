@@ -323,13 +323,13 @@
 			var targets = {};
 
 			$.fn.reactor.defaults.compliant = function() {
-				$(this).css({display: 'list-item'});
+				$(this).slideDown();
 				// $(this).animate({opacity: 1});
 				$(this).find(':disabled').attr({disabled: false});
 			};
 
 			$.fn.reactor.defaults.uncompliant = function() {
-				$(this).css({display: 'none' });
+				$(this).slideUp();
 				// $(this).animate({opacity: 0.25});
 				$(this).find(':enabled').attr({disabled: true});
 			};
