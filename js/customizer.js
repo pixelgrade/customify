@@ -375,7 +375,6 @@
 				} else if ( target_type == 'radio' || target_type == 'radio_image' ) {
 					$(parent_id)
 						.reactIf( target_selector, function () {
-						console.log($( target_selector + ':checked').val());
 							return $( target_selector + ':checked').val() == value;
 					} );
 				} else {
