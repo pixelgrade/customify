@@ -552,7 +552,7 @@
 					subsets = null;
 
 				if ( font_type == 'std' ) {
-					variants = {0: '100', 1: '200', 3: '300', 4: '400', 5: '500'};
+					variants = { 0: '100', 1: '200', 3: '300', 4: '400', 5: '500', 6: '600', 7: '700', 8: '800', 9: '900' };
 					if ( typeof $( option_data[0] ).data( 'variants' ) !== 'undefined' ) {
 						variants = $( option_data[0] ).data( 'variants' );
 					}
