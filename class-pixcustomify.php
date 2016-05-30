@@ -422,7 +422,7 @@ class PixCustomifyPlugin {
 	function enqueue_admin_customizer_scripts() {
 
 		wp_enqueue_script( 'select2', plugins_url( 'js/select2/select2.js', __FILE__ ), array( 'jquery' ), $this->version );
-		wp_enqueue_script( 'dependsOn-1.0.2', plugins_url( 'js/dependsOn-1.0.2.js', __FILE__ ), array( 'jquery' ), $this->version );
+		wp_enqueue_script( 'jquery-react', plugins_url( 'js/jquery-react.js', __FILE__ ), array( 'jquery' ), $this->version );
 		wp_enqueue_script( $this->plugin_slug . '-customizer-scripts', plugins_url( 'js/customizer.js', __FILE__ ), array(
 			'jquery',
 			'select2'

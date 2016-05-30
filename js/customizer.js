@@ -322,6 +322,20 @@
 			 */
 			var targets = {};
 
+			$.fn.reactor.defaults.compliant = function() {
+				$(this).css({display: 'list-item'});
+				// $(this).animate({opacity: 1});
+				$(this).find(':disabled').attr({disabled: false});
+			};
+
+			$.fn.reactor.defaults.uncompliant = function() {
+				$(this).css({display: 'none' });
+				// $(this).animate({opacity: 0.25});
+				$(this).find(':enabled').attr({disabled: true});
+			};
+
+			var IS = $.extend({}, $.fn.reactor.helpers);
+
 			var process_a_target = function( parent_id, field ) {
 
 				if ( typeof field[0] === "undefined" ) {
@@ -332,6 +346,10 @@
 					value = 1, // by default we use 1 the most used value for checboxes or inputs
 					compare = '==', // ... ye
 					action = "show"; // can only be `show` or `hide`
+
+				var target_key = customify_settings.options_name + '[' + key + ']';
+				var target_type = customify_settings.settings[ target_key ].type;
+
 
 				if ( typeof field[1] !== "undefined" ) {
 					value = field[1];
@@ -345,31 +363,34 @@
 					action = field[3];
 				}
 
-				// create the target object
-				// var obj = {
-				// 	id: parent_id,
-				// 	value: value,
-				// 	compare: compare,
-				// 	action: action
-				// };
-
 				/**
 				 * Now for each target we have, we will bind a change event to hide or show the dependent fields
 				 */
 				var target_selector = '[data-customize-setting-link="' + customify_settings.options_name + '[' + key + ']"]';
-				var depend_args = {};
-				depend_args[target_selector] = {
-					checked: true,
-					enabled: true
-				};
-				$(parent_id).dependsOn(depend_args, {
-					disable: false,
-					hide: true,
-					duration: 0
-				});
+
+				if ( target_type == 'checkbox' ) {
+					$(parent_id).reactIf( target_selector, function () {
+						return $( this ).is(':checked') == value;
+					} );
+				} else if ( target_type == 'radio' ) {
+					$(parent_id)
+						.reactIf( target_selector, function () {
+						console.log($( target_selector + ':checked').val());
+							return $( target_selector + ':checked').val() == value;
+					} );
+				} else {
+					$(parent_id)
+						.reactIf( target_selector, function () {
+							return $(target_selector).val() == value;
+						} );
+				}
+
+				$(target_selector).trigger('change');
+				$('.reactor').trigger('change.reactor'); // triggers all events on load
 			};
 
 			$.each( customify_settings.settings, function ( id, field ) {
+
 				/**
 				 * Here we have the id of the fields. but we know for sure that we just need his parent selector
 				 * So we just create it
@@ -377,6 +398,7 @@
 				var parent_id = id.replace( '[', '-' );
 				parent_id = parent_id.replace( ']', '' );
 				parent_id = '#customize-control-' + parent_id + '_control';
+
 
 				// get only the fields that have a 'show_on' property
 				if ( field.hasOwnProperty( 'show_on' ) && field.show_on.length > 0 ) {
@@ -395,7 +417,6 @@
 				}
 			});
 		};
-
 
 		var get_typography_font_family = function( $el ) {
 
