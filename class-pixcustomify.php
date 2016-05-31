@@ -1256,7 +1256,7 @@ class PixCustomifyPlugin {
 		}
 
 		$wp_customize->add_section( $section_id, $section_args );
-		$partials_array = array();
+
 		foreach ( $section_settings['options'] as $option_id => $option_config ) {
 
 			if ( empty( $option_id ) || ! isset( $option_config['type'] ) ) {
@@ -1266,13 +1266,7 @@ class PixCustomifyPlugin {
 			$option_id = $options_name . '[' . $option_id . ']';
 
 			$this->register_field( $section_id, $option_id, $option_config, $wp_customize );
-			$partials_array[] = $option_id;
 		}
-		$wp_customize->selective_refresh->add_partial( 'mymy_partial', array(
-			'selector' => 'body',
-			'settings' => $partials_array,
-			'render_callback' => 'do_nothing_jon_snow',
-		) );
 
 	}
 
