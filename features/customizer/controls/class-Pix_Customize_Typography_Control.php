@@ -102,7 +102,7 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 	 */
 	public function render_content() {
 
-		$current_value = $this->value();
+		$current_value = PixCustomifyPlugin::decodeURIComponent( $this->value() );
 		if ( empty( $current_value ) || ( is_array( $current_value ) && ! isset( $current_value['font_family'] ) ) ) {
 			$current_value = $this->get_default_values();
 		}
@@ -139,10 +139,14 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 			/**
 			 * This input will hold the values of this typography field
 			 */ ?>
-			<input class="customify_typography_values" id="<?php echo $this_id; ?>" type="hidden" <?php $this->link(); ?> value='<?php echo $current_value; ?>' data-default='<?php echo $current_value; ?>'/>
+			<input class="customify_typography_values" id="<?php echo esc_attr( $this_id ); ?>" type="hidden" <?php $this->link(); ?> value='<?php echo esc_attr( PixCustomifyPlugin::encodeURIComponent( $current_value ) ); ?>' data-default='<?php echo esc_attr( PixCustomifyPlugin::encodeURIComponent( $current_value ) ); ?>'/>
 			<select class="customify_typography_font_family"<?php echo $select_data; ?>>
-				<?php
 
+				<?php
+				// Allow others to add options here
+				do_action( 'customify_typography_font_family_before_options', $font_family, $current_value ); ?>
+
+				<?php
 				if ( ! empty( $this->typekit_fonts ) ) {
 					echo '<optgroup label="' . __( 'Typekit', 'customify_txtd' ) . '">';
 					foreach ( $this->typekit_fonts as $key => $font ) {
@@ -150,6 +154,9 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 					}
 					echo "</optgroup>";
 				}
+
+				// Allow others to add options here
+				do_action( 'customify_typography_font_family_before_recommended_fonts_options', $font_family, $current_value );
 
 				if ( ! empty( $this->recommended ) ) {
 
@@ -172,6 +179,9 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 					echo "</optgroup>";
 				}
 
+				// Allow others to add options here
+				do_action( 'customify_typography_font_family_before_standard_fonts_options', $font_family, $current_value );
+
 				if ( PixCustomifyPlugin::get_plugin_option( 'typography_standard_fonts' ) ) {
 
 					echo '<optgroup label="' . __( 'Standard fonts', 'customify_txtd' ) . '">';
@@ -180,6 +190,9 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 					}
 					echo "</optgroup>";
 				}
+
+				// Allow others to add options here
+				do_action( 'customify_typography_font_family_before_google_fonts_options' );
 
 				if ( PixCustomifyPlugin::get_plugin_option( 'typography_google_fonts' ) ) {
 
@@ -270,47 +283,70 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 	<?php }
 
 	/**
-	 * This method makes an <option> tag from the given params
+	 * This method displays an <option> tag from the given params
 	 *
-	 * @param $key
-	 * @param $font_family
-	 * @param $font
-	 * @param string $type
+	 * @param string $key
+	 * @param string $active_font_family
+	 * @param string|array $font
+	 * @param string string $type
 	 */
-	protected static function output_font_option( $key, $font_family, $font, $type = 'google' ) {
+	public static function output_font_option( $key, $active_font_family, $font, $type = 'google' ) {
+		//initialize data attributes
 		$data = '';
 
-		$data .= ' data-type="' . $type . '"';
+		$data .= ' data-type="' . esc_attr( $type ) . '"';
 
+		//we will handle Google Fonts separately
 		if ( $type === 'google' ) {
-
+			// Handle the font variants markup, if available
 			if ( isset( $font['variants'] ) && ! empty( $font['variants'] ) ) {
-				$data .= ' data-variants=\'' . json_encode( (object) $font['variants'] ) . '\'';
+				$data .= ' data-variants=\'' . PixCustomifyPlugin::encodeURIComponent( json_encode( (object) $font['variants'] ) ) . '\'';
 			}
 
 			if ( isset( $font['subsets'] ) && ! empty( $font['subsets'] ) ) {
-				$data .= ' data-subsets=\'' . json_encode( (object) $font['subsets'] ) . '\'';
+				$data .= ' data-subsets=\'' . PixCustomifyPlugin::encodeURIComponent( json_encode( (object) $font['subsets'] ) ) . '\'';
 			}
 
-			$selected = ( $font_family === $font['family'] ) ? ' selected="selected" ' : '';
+			//determine if it's selected
+			$selected = ( $active_font_family === $font['family'] ) ? ' selected="selected" ' : '';
+
+			//output the markup
 			echo '<option value="' . $font['family'] . '"' . $selected . $data . '>' . $font['family'] . '</option>';
 		} elseif ( $type === 'typekit' ) {
+			//we will handle TypeKit Fonts separately
+			$selected = ( $active_font_family === $key ) ? ' selected="selected" ' : '';
 
-			$selected = ( $font_family === $key ) ? ' selected="selected" ' : '';
 			echo '<option class="typekit_font" value="' . $key . '"' . $selected . $data . '>' . $font['name'] . '</option>';
 		} else {
-
-			if ( is_array($font) && isset( $font['variants'] ) && ! empty( $font['variants'] ) ) {
-				$data .= ' data-variants=\'' . json_encode( (object) $font['variants'] ) . '\'';
+			// Handle the font variants markup, if available
+			if ( is_array( $font ) && isset( $font['variants'] ) && ! empty( $font['variants'] ) ) {
+				$data .= ' data-variants=\'' . PixCustomifyPlugin::encodeURIComponent( json_encode( (object) $font['variants'] ) ) . '\'';
 			}
 
+			// by default, we assume we only get a font family string
+			$font_family = $font;
+			// when we get an array we expect to get a font_family entry
 			if ( is_array( $font ) && isset( $font['font_family'] ) ) {
-				$selected = ( $font_family === $font['font_family'] ) ? ' selected="selected" ' : '';
-				$font = $font['font_family'];
-			} else {
-				$selected = ( $font_family === $font ) ? ' selected="selected" ' : '';
+				$font_family = $font['font_family'];
 			}
-			echo '<option class="std_font" value="' . $font . '"' . $selected . $data . '>' . $font . '</option>';
+
+			//determine if it's selected
+			$selected = ( $active_font_family === $font_family ) ? ' selected="selected" ' : '';
+
+			//now determine if we have a "pretty" display for this font family
+			$font_family_display = $font_family;
+			if ( is_array( $font ) && isset( $font['font_family_display'] ) ) {
+				$font_family_display = $font['font_family_display'];
+			}
+
+			//determine the option class
+			if ( empty( $type ) ) {
+				$type = 'std';
+			}
+			$option_class = $type . '_font';
+
+			//output the markup
+			echo '<option class="' . esc_attr( $option_class ) . '" value="' . esc_attr( $font_family ) . '"' . $selected . $data . '>' . $font_family_display . '</option>';
 		}
 	}
 

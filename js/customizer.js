@@ -85,7 +85,7 @@
 						var id = key.replace( '_control', '' );
 						var setting = customify_settings.settings[id];
 
-						if ( typeof setting !== "undefined" && typeof setting.default !== "undefined" ) {
+						if ( ! _.isUndefined( setting ) && ! _.isUndefined( setting.default ) ) {
 
 							var start_pos = id.indexOf( '[' ) + 1;
 							var end_pos = id.indexOf( ']', start_pos );
@@ -130,7 +130,7 @@
 									var id = ctrl.id.replace( '_control', '' ),
 										setting = customify_settings.settings[id];
 
-									if ( typeof setting !== "undefined" && typeof setting.default !== "undefined" ) {
+									if ( ! _.isUndefined( setting ) && ! _.isUndefined( setting.default ) ) {
 
 										var start_pos = id.indexOf( '[' ) + 1,
 											end_pos = id.indexOf( ']', start_pos );
@@ -149,11 +149,11 @@
 					var section = $( this ).parent(),
 						section_id = section.attr( 'id' );
 
-					if ( (typeof section_id !== "undefined" ? section_id.indexOf( customify_settings.options_name ) : -1 ) === -1 ) {
+					if ( ( ( ! _.isUndefined( section_id ) ) ? section_id.indexOf( customify_settings.options_name ) : -1 ) === -1 ) {
 						return;
 					}
 
-					if ( typeof section_id !== 'undefined' && section_id.indexOf( 'accordion-section-' ) > -1 ) {
+					if ( ! _.isUndefined( section_id ) && section_id.indexOf( 'accordion-section-' ) > -1 ) {
 						var id = section_id.replace( 'accordion-section-', '' );
 						$( this ).prepend( '<button class="reset_section button" data-section="' + id + '">Section\'s defaults</button>' );
 					}
@@ -178,7 +178,7 @@
 							var id = ctrl.id.replace( '_control', '' ),
 								setting = customify_settings.settings[id];
 
-							if ( typeof setting !== "undefined" && typeof setting.default !== "undefined" ) {
+							if ( ! _.isUndefined( setting ) && ! _.isUndefined( setting.default ) ) {
 
 								var start_pos = id.indexOf( '[' ) + 1,
 									end_pos = id.indexOf( ']', start_pos );
@@ -201,10 +201,12 @@
 				var $input = $( this ).parents( '.options' ).siblings( '.customify_typography' ).children( '.customify_typography_values' ),
 					current_val = $input.val();
 
-				current_val = JSON.parse( current_val );
-				current_val.selected_subsets = $( this ).val();
+				current_val = JSON.parse( decodeURIComponent( current_val ) );
 
-				$input.val( JSON.stringify( current_val ) );
+				//maybe the selected option holds a JSON in its value
+				current_val.selected_subsets = maybeJsonParse( $( this ).val() );
+
+				$input.val( encodeURIComponent( JSON.stringify( current_val ) ) );
 
 				$input.trigger( 'change' );
 			} );
@@ -214,12 +216,14 @@
 				var $input = $( this ).parents( '.options' ).siblings( '.customify_typography' ).children( '.customify_typography_values' ),
 					current_val = $input.val();
 
-				current_val = JSON.parse( current_val );
+				current_val = maybeJsonParse( current_val );
 				// @todo currently the font weight selector works for one value only
 				// maybe make this a multiselect
-				current_val.selected_variants = {0: $( this ).val()};
 
-				$input.val( JSON.stringify( current_val ) );
+				//maybe the selected option holds a JSON in its value
+				current_val.selected_variants = {0: maybeJsonParse( $( this ).val() ) };
+
+				$input.val( encodeURIComponent( JSON.stringify( current_val ) ) );
 				$input.trigger( 'change' );
 			} );
 
@@ -229,7 +233,7 @@
 					this_option = $( this ).children( '[value="' + $( this ).val() + '"]' ),
 					data = $( this_option ).data( 'options' );
 
-				if ( typeof data !== 'undefined' ) {
+				if ( ! _.isUndefined( data ) ) {
 					$.each( data, function( id, value ) {
 						api_set_setting_value( id, value );
 					} );
@@ -243,7 +247,7 @@
 				var this_option = this;//$(this).children('[value="' + $(this).val() + '"]');
 				var data = $( this_option ).data( 'options' );
 
-				if ( typeof data !== 'undefined' ) {
+				if ( ! _.isUndefined( data ) ) {
 					$.each( data, function( id, value ) {
 						api_set_setting_value( id, value );
 					} );
@@ -271,10 +275,10 @@
 				/// calculate the number of steps
 				var steps = [];
 
-				if ( typeof customify_settings.settings[key].imports !== "undefined" ) {
+				if ( ! _.isUndefined( customify_settings.settings[key].imports ) ) {
 
 					$.each( customify_settings.settings[key].imports, function( i, import_setts, k ) {
-						if ( typeof import_setts.steps === "undefined" ) {
+						if ( _.isUndefined( import_setts.steps ) ) {
 							steps.push( {id: i, type: import_setts.type} );
 						} else {
 							var count = import_setts.steps;
@@ -309,7 +313,7 @@
 		 */
 		var customifyFoldingFields = function() {
 
-			if ( typeof customify_settings === "undefined" || typeof customify_settings.settings === "undefined" ) {
+			if ( _.isUndefined( customify_settings ) || _.isUndefined( customify_settings.settings ) ) {
 				return ; // bail
 			}
 
@@ -338,7 +342,7 @@
 
 			var process_a_target = function( parent_id, field ) {
 
-				if ( typeof field[0] === "undefined" ) {
+				if ( _.isUndefined( field[0] ) ) {
 					return ; // no id, no fun
 				}
 
@@ -351,15 +355,15 @@
 				var target_type = customify_settings.settings[ target_key ].type;
 
 
-				if ( typeof field[1] !== "undefined" ) {
+				if ( ! _.isUndefined( field[1] ) ) {
 					value = field[1];
 				}
 
-				if ( typeof field[2] !== "undefined" ) {
+				if ( ! _.isUndefined( field[2] ) ) {
 					compare = field[2];
 				}
 
-				if ( typeof field[3] !== "undefined" ) {
+				if ( ! _.isUndefined( field[3] ) ) {
 					action = field[3];
 				}
 
@@ -406,9 +410,9 @@
 					 * The 'show_on' can be a simple array with one target like: [ id, value, comparison, action ]
 					 * Or it could be an array of multiple targets and we need to process both cases
 					 */
-					if ( typeof field.show_on[0] === 'string' ) {
+					if ( _.isString( field.show_on[0] ) ) {
 						process_a_target( parent_id, field.show_on );
-					} else if ( typeof field.show_on[0] === 'object' ) {
+					} else if ( _.isObject( field.show_on[0] ) ) {
 						$.each( field.show_on, function (i, j) {
 							process_a_target( parent_id, j );
 						});
@@ -427,7 +431,7 @@
 				return {font_family: font_family_value};
 			}
 
-			if ( typeof font_family_value.font_family !== 'undefined' ) {
+			if ( ! _.isUndefined( font_family_value.font_family ) ) {
 				return font_family_value.font_family;
 			}
 
@@ -459,15 +463,15 @@
 				field = $( '[data-customize-setting-link="' + setting_id + '"]' ),
 				field_class = $( field ).parent().attr( 'class' );
 
-			if ( typeof field_class !== "undefined" && field_class === 'customify_typography' ) {
+			if ( ! _.isUndefined( field_class ) && field_class === 'customify_typography' ) {
 
 				var family_select = field.siblings( 'select' );
 
-				if ( typeof value === 'string' ) {
+				if ( _.isString( value ) ) {
 					var this_option = family_select.find( 'option[value="' + value + '"]' );
 					$( this_option[0] ).attr( 'selected', 'selected' );
 					update_siblings_selects( family_select );
-				} else if ( typeof value === 'object' ) {
+				} else if ( _.isObject( value ) ) {
 					var this_family_option = family_select.find( 'option[value="' + value['font_family'] + '"]' );
 					$( this_family_option[0] ).attr( 'selected', 'selected' );
 
@@ -502,15 +506,15 @@
 
 			if ( current_val === '[object Object]' ) {
 				current_val = $input.data( 'default' );
-			} else if ( typeof current_val === "string" && !IsJsonString( current_val ) ) {
+			} else if ( _.isString( current_val ) && !isJsonString( current_val ) && current_val.substr(0,1) == '[' ) {
 				// a rare case when the value isn't a json but is a representative string like [family,weight]
 				current_val = current_val.split( ',' );
 				var new_current_value = {};
-				if ( typeof current_val[0] !== "undefined" ) {
+				if ( ! _.isUndefined( current_val[0] ) ) {
 					new_current_value['font_family'] = current_val[0];
 				}
 
-				if ( typeof current_val[1] !== "undefined" ) {
+				if ( ! _.isUndefined( current_val[1] ) ) {
 					new_current_value['selected_variants'] = current_val[1];
 				}
 
@@ -521,11 +525,11 @@
 				$font_subsets = $( font_select ).parent().siblings( 'ul.options' ).find( '.customify_typography_font_subsets' );
 
 			try {
-				current_val = JSON.parse( current_val );
+				current_val = JSON.parse( decodeURIComponent( current_val ) );
 			} catch ( e ) {
 
 				// in case of an error, force the rebuild of the json
-				if ( typeof $( font_select ).data( 'bound_once' ) === "undefined" ) {
+				if ( _.isUndefined( $( font_select ).data( 'bound_once' ) ) ) {
 
 					$( font_select ).data( 'bound_once', true );
 					//var api = wp.customize;
@@ -536,6 +540,7 @@
 					$font_subsets.change();
 				}
 			}
+
 			// first try to get the font from sure sources, not from the recommended list.
 			var option_data = $( font_select ).find( ':not(optgroup[label=Recommended]) option[value="' + selected_font + '"]' );
 			// howevah, if there isn't an option found, get what you can
@@ -552,17 +557,19 @@
 
 				if ( font_type == 'std' ) {
 					variants = { 0: '100', 1: '200', 3: '300', 4: '400', 5: '500', 6: '600', 7: '700', 8: '800', 9: '900' };
-					if ( typeof $( option_data[0] ).data( 'variants' ) !== 'undefined' ) {
+					if ( ! _.isUndefined( $( option_data[0] ).data( 'variants' ) ) ) {
 						variants = $( option_data[0] ).data( 'variants' );
 					}
-
 				} else {
-					variants = $( option_data[0] ).data( 'variants' );
-					subsets = $( option_data[0] ).data( 'subsets' );
+					//maybe the variants are a JSON
+					variants = maybeJsonParse( $( option_data[0] ).data( 'variants' ) );
+
+					//maybe the subsets are a JSON
+					subsets = maybeJsonParse( $( option_data[0] ).data( 'subsets' ) );
 				}
 
 				// make the variants selector
-				if ( typeof variants !== 'undefined' && variants !== null && variants !== '' ) {
+				if ( ! _.isUndefined( variants ) && ! _.isNull( variants ) && ! _.isEmpty( variants ) ) {
 
 					value_to_add['variants'] = variants;
 					// when a font is selected force the first weight to load
@@ -571,18 +578,41 @@
 					var variants_options = '',
 						count_weights = 0;
 
+					// Take each variant and produce the option markup
 					$.each( variants, function( key, el ) {
 						var is_selected = '';
-						if ( typeof current_val.selected_variants === "object" && inObject( el, current_val.selected_variants ) ) {
+						if ( _.isObject( current_val.selected_variants ) && inObject( el, current_val.selected_variants ) ) {
 							is_selected = ' selected="selected"';
-						} else if ( typeof current_val.selected_variants === "string" && el === current_val.selected_variants ) {
+						} else if ( _.isString( current_val.selected_variants ) && el === current_val.selected_variants ) {
 							is_selected = ' selected="selected"';
 						}
 
-						variants_options += '<option value="' + el + '"' + is_selected + '>' + el + '</option>';
+						// initialize
+						var variant_option_value = el,
+							variant_option_display = el;
+
+						// If we are dealing with a object variant then it means things get tricky (probably it's our fault but bear with us)
+						// This probably comes from our Fonto plugin - a font with individually named variants - hence each has its own font-family
+						if ( _.isObject( el ) ) {
+							//put the entire object in the variation value - we will need it when outputting the custom CSS
+							variant_option_value = encodeURIComponent( JSON.stringify( el ) );
+							variant_option_display = '';
+
+							//if we have weight and style then "compose" them into something standard
+							if ( ! _.isUndefined( el['font-weight'] ) ) {
+								variant_option_display += el['font-weight'];
+							}
+
+							if ( _.isString( el['font-style'] ) && $.inArray( el['font-style'].toLowerCase(), [ "normal", "regular" ] ) < 0 ) { //this comparison means it hasn't been found
+								variant_option_display += el['font-style'];
+							}
+						}
+
+						variants_options += '<option value="' + variant_option_value + '"' + is_selected + '>' + variant_option_display + '</option>';
 						count_weights++;
 					} );
-					if ( typeof $font_weight !== "undefined" ) {
+
+					if ( ! _.isUndefined( $font_weight ) ) {
 						$font_weight.html( variants_options );
 						// if there is no weight or just 1 we hide the weight select ... cuz is useless
 						if ( $( font_select ).data( 'load_all_weights' ) === true || count_weights <= 1 ) {
@@ -591,12 +621,12 @@
 							$font_weight.parent().css( 'display', 'inline-block' );
 						}
 					}
-				} else if ( typeof $font_weight !== "undefined" ) {
+				} else if ( ! _.isUndefined( $font_weight ) ) {
 					$font_weight.parent().css( 'display', 'none' );
 				}
 
 				// make the subsets selector
-				if ( typeof subsets !== 'undefined' && subsets !== null && subsets !== '' ) {
+				if ( ! _.isUndefined( subsets ) && ! _.isNull( subsets ) && ! _.isEmpty( subsets ) ) {
 
 					value_to_add['subsets'] = subsets;
 					// when a font is selected force the first subset to load
@@ -605,7 +635,7 @@
 						count_subsets = 0;
 					$.each( subsets, function( key, el ) {
 						var is_selected = '';
-						if ( typeof current_val.selected_subsets === "object" && inObject( el, current_val.selected_subsets ) ) {
+						if ( _.isObject( current_val.selected_subsets ) && inObject( el, current_val.selected_subsets ) ) {
 							is_selected = ' selected="selected"';
 						}
 
@@ -613,7 +643,7 @@
 						count_subsets++;
 					} );
 
-					if ( typeof $font_subsets !== "undefined" ) {
+					if ( ! _.isUndefined( $font_subsets ) ) {
 						$font_subsets.html( subsets_options );
 
 						// if there is no subset or just 1 we hide the subsets select ... cuz is useless
@@ -623,11 +653,11 @@
 							$font_subsets.parent().css( 'display', 'inline-block' );
 						}
 					}
-				} else if ( typeof $font_subsets !== "undefined" ) {
+				} else if ( ! _.isUndefined( $font_subsets ) ) {
 					$font_subsets.parent().css( 'display', 'none' );
 				}
 
-				$input.val( JSON.stringify( value_to_add ) );
+				$input.val( encodeURIComponent( JSON.stringify( value_to_add ) ) );
 			}
 		};
 
@@ -640,11 +670,26 @@
 		var inObject = function( value, obj ) {
 			for ( var k in obj ) {
 				if ( !obj.hasOwnProperty( k ) ) continue;
-				if ( obj[k] === value ) {
+				if ( _.isEqual( obj[k], value ) ) {
 					return true;
 				}
 			}
 			return false;
+		};
+
+		var maybeJsonParse = function( value ) {
+			var parsed;
+
+			//try and parse it, with decodeURIComponent
+			try {
+				parsed = JSON.parse( decodeURIComponent( value ) );
+			} catch ( e ) {
+
+				// in case of an error, treat is as a string
+				parsed = value;
+			}
+
+			return parsed;
 		};
 
 		var customifyBackgroundJsControl = (function() {
@@ -718,9 +763,9 @@
 					selector.find( '.upload-width' ).attr( 'value', attachment.attributes.width );
 
 					var thumbSrc = attachment.attributes.url;
-					if ( typeof attachment.attributes.sizes !== 'undefined' && typeof attachment.attributes.sizes.thumbnail !== 'undefined' ) {
+					if ( ! _.isUndefined( attachment.attributes.sizes ) && ! _.isUndefined( attachment.attributes.sizes.thumbnail ) ) {
 						thumbSrc = attachment.attributes.sizes.thumbnail.url;
-					} else if ( typeof attachment.attributes.sizes !== 'undefined' ) {
+					} else if ( ! _.isUndefined( attachment.attributes.sizes ) ) {
 						var height = attachment.attributes.height;
 						for ( var key in attachment.attributes.sizes ) {
 							var object = attachment.attributes.sizes[key];
@@ -755,7 +800,7 @@
 				var $parent = selector.parents( '.customize-control-custom_background:first' );
 
 				if ( selector.hasClass( 'customize-control-custom_background' ) ) {
-					var $parent = selector;
+					$parent = selector;
 				}
 
 				if ( $parent.length > 0 ) {
@@ -847,13 +892,13 @@
 				vars[hash[0]] = hash[1];
 			}
 
-			if ( typeof vars[name] !== "undefined" ) {
+			if ( ! _.isUndefined( vars[name] ) ) {
 				return vars[name];
 			}
 			return false;
 		};
 
-		var IsJsonString = function( str ) {
+		var isJsonString = function( str ) {
 			try {
 				JSON.parse( str );
 			} catch ( e ) {
@@ -881,7 +926,7 @@
 		this.process_remote_step = function( key, data, step ) {
 			var self = this;
 
-			if ( typeof data === "undefined" || data === null ) {
+			if ( _.isUndefined( data ) || _.isNull( data ) ) {
 				return false;
 			}
 
@@ -916,7 +961,7 @@ debugger;
 
 		this.queue = function( key, data, step_key ) {
 			var self = this;
-			if ( typeof step_key !== 'undefined' ) {
+			if ( ! _.isUndefined( step_key ) ) {
 				this.log_action( 'start', step_key );
 			}
 
@@ -936,11 +981,11 @@ debugger;
 				option_key: key
 			};
 
-			if ( typeof step.recall_data !== "undefined" ) {
+			if ( ! _.isUndefined( step.recall_data ) ) {
 				data_args.recall_data = step.recall_data;
 			}
 
-			if ( typeof step.recall_type !== "undefined" ) {
+			if ( ! _.isUndefined( step.recall_type ) ) {
 				data_args.recall_type = step.recall_type;
 			}
 
@@ -954,14 +999,14 @@ debugger;
 				contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
 				data: data_args
 			} ).done( function( response ) {
-				if ( typeof response.success !== "undefined" && response.success ) {
+				if ( ! _.isUndefined( response.success ) && response.success ) {
 					var results = response.data;
 					if ( step.type === 'remote' ) {
 						self.process_remote_step( key, results, step );
 					}
 				}
 
-				if ( typeof step_key !== 'undefined' && typeof response.message !== 'undefined' ) {
+				if ( ! _.isUndefined( step_key ) && ! _.isUndefined( response.message ) ) {
 					self.log_action( 'end', step_key, response.message );
 				}
 			} );
