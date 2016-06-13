@@ -543,7 +543,7 @@
 
 			// first try to get the font from sure sources, not from the recommended list.
 			var option_data = $( font_select ).find( ':not(optgroup[label=Recommended]) option[value="' + selected_font + '"]' );
-			// howevah, if there isn't an option found, get what you can
+			// however, if there isn't an option found, get what you can
 			if ( option_data.length < 1 ) {
 				option_data = $( font_select ).find( 'option[value="' + selected_font + '"]' );
 			}
@@ -558,7 +558,8 @@
 				if ( font_type == 'std' ) {
 					variants = { 0: '100', 1: '200', 3: '300', 4: '400', 5: '500', 6: '600', 7: '700', 8: '800', 9: '900' };
 					if ( ! _.isUndefined( $( option_data[0] ).data( 'variants' ) ) ) {
-						variants = $( option_data[0] ).data( 'variants' );
+						//maybe the variants are a JSON
+						variants = maybeJsonParse( $( option_data[0] ).data( 'variants' ) );
 					}
 				} else {
 					//maybe the variants are a JSON
@@ -578,39 +579,41 @@
 					var variants_options = '',
 						count_weights = 0;
 
-					// Take each variant and produce the option markup
-					$.each( variants, function( key, el ) {
-						var is_selected = '';
-						if ( _.isObject( current_val.selected_variants ) && inObject( el, current_val.selected_variants ) ) {
-							is_selected = ' selected="selected"';
-						} else if ( _.isString( current_val.selected_variants ) && el === current_val.selected_variants ) {
-							is_selected = ' selected="selected"';
-						}
-
-						// initialize
-						var variant_option_value = el,
-							variant_option_display = el;
-
-						// If we are dealing with a object variant then it means things get tricky (probably it's our fault but bear with us)
-						// This probably comes from our Fonto plugin - a font with individually named variants - hence each has its own font-family
-						if ( _.isObject( el ) ) {
-							//put the entire object in the variation value - we will need it when outputting the custom CSS
-							variant_option_value = encodeURIComponent( JSON.stringify( el ) );
-							variant_option_display = '';
-
-							//if we have weight and style then "compose" them into something standard
-							if ( ! _.isUndefined( el['font-weight'] ) ) {
-								variant_option_display += el['font-weight'];
+					if ( _.isArray( variants ) || _.isObject( variants ) ) {
+						// Take each variant and produce the option markup
+						$.each(variants, function (key, el) {
+							var is_selected = '';
+							if (_.isObject(current_val.selected_variants) && inObject(el, current_val.selected_variants)) {
+								is_selected = ' selected="selected"';
+							} else if (_.isString(current_val.selected_variants) && el === current_val.selected_variants) {
+								is_selected = ' selected="selected"';
 							}
 
-							if ( _.isString( el['font-style'] ) && $.inArray( el['font-style'].toLowerCase(), [ "normal", "regular" ] ) < 0 ) { //this comparison means it hasn't been found
-								variant_option_display += el['font-style'];
-							}
-						}
+							// initialize
+							var variant_option_value = el,
+								variant_option_display = el;
 
-						variants_options += '<option value="' + variant_option_value + '"' + is_selected + '>' + variant_option_display + '</option>';
-						count_weights++;
-					} );
+							// If we are dealing with a object variant then it means things get tricky (probably it's our fault but bear with us)
+							// This probably comes from our Fonto plugin - a font with individually named variants - hence each has its own font-family
+							if (_.isObject(el)) {
+								//put the entire object in the variation value - we will need it when outputting the custom CSS
+								variant_option_value = encodeURIComponent(JSON.stringify(el));
+								variant_option_display = '';
+
+								//if we have weight and style then "compose" them into something standard
+								if (!_.isUndefined(el['font-weight'])) {
+									variant_option_display += el['font-weight'];
+								}
+
+								if (_.isString(el['font-style']) && $.inArray(el['font-style'].toLowerCase(), ["normal", "regular"]) < 0) { //this comparison means it hasn't been found
+									variant_option_display += el['font-style'];
+								}
+							}
+
+							variants_options += '<option value="' + variant_option_value + '"' + is_selected + '>' + variant_option_display + '</option>';
+							count_weights++;
+						});
+					}
 
 					if ( ! _.isUndefined( $font_weight ) ) {
 						$font_weight.html( variants_options );

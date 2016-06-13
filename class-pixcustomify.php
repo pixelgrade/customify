@@ -420,7 +420,7 @@ class PixCustomifyPlugin {
 	 * Customizer admin scripts
 	 */
 	function enqueue_admin_customizer_scripts() {
-		
+
 		wp_enqueue_script( 'select2', plugins_url( 'js/select2/select2.js', __FILE__ ), array( 'jquery' ), $this->version );
 		wp_enqueue_script( 'jquery-react', plugins_url( 'js/jquery-react.js', __FILE__ ), array( 'jquery' ), $this->version );
 		wp_enqueue_script( $this->plugin_slug . '-customizer-scripts', plugins_url( 'js/customizer.js', __FILE__ ), array(
@@ -1782,8 +1782,16 @@ class PixCustomifyPlugin {
 	 * @return string
 	 */
 	public static function encodeURIComponent( $str ) {
-		$revert = array( '%21'=>'!', '%2A'=>'*', '%27'=>"'", '%28'=>'(', '%29'=>')' );
-		return strtr( rawurlencode( $str ), $revert );
+		//if we get an array we just let it be
+		if ( is_string( $str ) ) {
+			$revert = array( '%21' => '!', '%2A' => '*', '%27' => "'", '%28' => '(', '%29' => ')' );
+
+			$str = strtr( rawurlencode( $str ), $revert );
+		} else {
+			var_dump('boooom');die;
+		}
+
+		return $str;
 	}
 
 	/**
@@ -1794,7 +1802,12 @@ class PixCustomifyPlugin {
 	 * @return string
 	 */
 	public static function decodeURIComponent( $str ) {
-		$revert = array( '!' => '%21', '*' => '%2A', "'" => '%27', '(' => '%28', ')' => '%29' );
-		return rawurldecode( strtr( $str, $revert ) );
+		//if we get an array we just let it be
+		if ( is_string( $str ) ) {
+			$revert = array( '!' => '%21', '*' => '%2A', "'" => '%27', '(' => '%28', ')' => '%29' );
+			$str = rawurldecode( strtr( $str, $revert ) );
+		}
+
+		return $str;
 	}
 }

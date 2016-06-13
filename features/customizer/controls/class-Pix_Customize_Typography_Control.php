@@ -101,34 +101,40 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 	 * @since 3.4.0
 	 */
 	public function render_content() {
+		$current_value = $this->value();
+		//maybe we need to decode it
+		$current_value = PixCustomifyPlugin::decodeURIComponent( $current_value );
 
-		$current_value = PixCustomifyPlugin::decodeURIComponent( $this->value() );
-		if ( empty( $current_value ) || ( is_array( $current_value ) && ! isset( $current_value['font_family'] ) ) ) {
+		if ( empty( $current_value ) || ( is_array( $current_value ) && ( ! isset( $current_value['font_family'] ) || ! isset( $current_value['font-family'] ) ) ) ) {
 			$current_value = $this->get_default_values();
 		}
-		// if this value was an array, well it was wrong
+		// if this value was an array, make sure it is ok
 		if ( is_array( $current_value ) ) {
 			if ( isset( $current_value['font-family'] ) ) {
 				$current_value['font_family'] = $current_value['font-family'];
 				unset( $current_value['font-family'] );
 			}
-			$current_value = json_encode( $current_value );
+		} else {
+			//if we've got a string then it is clear we need to decode it
+			$current_value = json_decode( $current_value );
 		}
-		$values = json_decode( $current_value );
+
+		//make sure it is an object from here going forward
+		$current_value = (object) $current_value;
 
 		$font_family = '';
-		if ( isset( $values->font_family ) ) {
-			$font_family = $values->font_family;
+		if ( isset( $current_value->font_family ) ) {
+			$font_family = $current_value->font_family;
 		}
 
-		if ( isset( $values->load_all_weights ) ) {
-			$this->load_all_weights = $values->font_load_all_weights;
+		if ( isset( $current_value->load_all_weights ) ) {
+			$this->load_all_weights = $current_value->font_load_all_weights;
 		} ?>
 		<label class="customify_typography">
 			<?php if ( ! empty( $this->label ) ) : ?>
 				<span class="customize-control-title"><?php echo esc_html( $this->label ); ?></span>
-			<?php endif; 
-			
+			<?php endif;
+
 			$this_id     = str_replace( '[', '_', $this->id );
 			$this_id     = str_replace( ']', '_', $this_id );
 			$select_data = '';
@@ -139,7 +145,7 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 			/**
 			 * This input will hold the values of this typography field
 			 */ ?>
-			<input class="customify_typography_values" id="<?php echo esc_attr( $this_id ); ?>" type="hidden" <?php $this->link(); ?> value='<?php echo esc_attr( PixCustomifyPlugin::encodeURIComponent( $current_value ) ); ?>' data-default='<?php echo esc_attr( PixCustomifyPlugin::encodeURIComponent( $current_value ) ); ?>'/>
+			<input class="customify_typography_values" id="<?php echo esc_attr( $this_id ); ?>" type="hidden" <?php $this->link(); ?> value="<?php echo esc_attr( PixCustomifyPlugin::encodeURIComponent( json_encode( $current_value ) ) ); ?>" data-default="<?php echo esc_attr( PixCustomifyPlugin::encodeURIComponent( json_encode( $current_value ) ) ); ?>"/>
 			<select class="customify_typography_font_family"<?php echo $select_data; ?>>
 
 				<?php
@@ -234,12 +240,12 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 				<select class="customify_typography_font_weight">
 					<?php
 					$selected = array();
-					if ( isset( $values->selected_variants ) ) {
-						$selected = $values->selected_variants;
+					if ( isset( $current_value->selected_variants ) ) {
+						$selected = $current_value->selected_variants;
 					}
 
-					if ( isset( $values->variants ) && ! empty( $values->variants ) && is_array( $values->variants ) ) {
-						foreach ( $values->variants as $weight ) {
+					if ( isset( $current_value->variants ) && ! empty( $current_value->variants ) && is_array( $current_value->variants ) ) {
+						foreach ( $current_value->variants as $weight ) {
 							$attrs = '';
 							if ( in_array( $weight, (array) $selected ) ) {
 								$attrs = ' selected="selected"';
@@ -252,19 +258,19 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 			</li>
 			<?php
 			$display = 'none';
-			if ( $this->subsets && ! empty( $values->subsets ) ) {
+			if ( $this->subsets && ! empty( $current_value->subsets ) ) {
 				$display = 'inline-block';
 			}?>
 			<li class="customify_subsets_wrapper" style="display: <?php echo $display; ?>">
 				<select multiple class="customify_typography_font_subsets">
 					<?php
 					$selected = array();
-					if ( isset( $values->selected_subsets ) ) {
-						$selected = $values->selected_subsets;
+					if ( isset( $current_value->selected_subsets ) ) {
+						$selected = $current_value->selected_subsets;
 					}
 
-					if ( isset( $values->subsets ) && ! empty( $values->subsets ) && is_array( $values->variants ) ) {
-						foreach ( $values->subsets as $key => $subset ) {
+					if ( isset( $current_value->subsets ) && ! empty( $current_value->subsets ) && is_array( $current_value->variants ) ) {
+						foreach ( $current_value->subsets as $key => $subset ) {
 							$attrs = '';
 							if ( in_array( $subset, (array) $selected ) ) {
 								$attrs .= ' selected="selected"';
@@ -300,11 +306,11 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 		if ( $type === 'google' ) {
 			// Handle the font variants markup, if available
 			if ( isset( $font['variants'] ) && ! empty( $font['variants'] ) ) {
-				$data .= ' data-variants=\'' . PixCustomifyPlugin::encodeURIComponent( json_encode( (object) $font['variants'] ) ) . '\'';
+				$data .= ' data-variants="' . PixCustomifyPlugin::encodeURIComponent( json_encode( (object) $font['variants'] ) ) . '"';
 			}
 
 			if ( isset( $font['subsets'] ) && ! empty( $font['subsets'] ) ) {
-				$data .= ' data-subsets=\'' . PixCustomifyPlugin::encodeURIComponent( json_encode( (object) $font['subsets'] ) ) . '\'';
+				$data .= ' data-subsets="' . PixCustomifyPlugin::encodeURIComponent( json_encode( (object) $font['subsets'] ) ) . '"';
 			}
 
 			//determine if it's selected
@@ -316,11 +322,11 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 			//we will handle TypeKit Fonts separately
 			$selected = ( $active_font_family === $key ) ? ' selected="selected" ' : '';
 
-			echo '<option class="typekit_font" value="' . $key . '"' . $selected . $data . '>' . $font['name'] . '</option>';
+			echo '<option class="typekit_font" value="' . $key . '" ' . $selected . $data . '>' . $font['name'] . '</option>';
 		} else {
 			// Handle the font variants markup, if available
 			if ( is_array( $font ) && isset( $font['variants'] ) && ! empty( $font['variants'] ) ) {
-				$data .= ' data-variants=\'' . PixCustomifyPlugin::encodeURIComponent( json_encode( (object) $font['variants'] ) ) . '\'';
+				$data .= ' data-variants="' . PixCustomifyPlugin::encodeURIComponent( json_encode( (object) $font['variants'] ) ) . '"';
 			}
 
 			// by default, we assume we only get a font family string
@@ -346,7 +352,7 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 			$option_class = $type . '_font';
 
 			//output the markup
-			echo '<option class="' . esc_attr( $option_class ) . '" value="' . esc_attr( $font_family ) . '"' . $selected . $data . '>' . $font_family_display . '</option>';
+			echo '<option class="' . esc_attr( $option_class ) . '" value="' . esc_attr( $font_family ) . '" ' . $selected . $data . '>' . $font_family_display . '</option>';
 		}
 	}
 
