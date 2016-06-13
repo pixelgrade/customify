@@ -420,14 +420,13 @@ class PixCustomifyPlugin {
 	 * Customizer admin scripts
 	 */
 	function enqueue_admin_customizer_scripts() {
-
-		wp_enqueue_script( 'lodash', plugins_url( 'js/lodash.core.min.js', __FILE__ ), array(), '4.13.1' );
+		
 		wp_enqueue_script( 'select2', plugins_url( 'js/select2/select2.js', __FILE__ ), array( 'jquery' ), $this->version );
 		wp_enqueue_script( 'jquery-react', plugins_url( 'js/jquery-react.js', __FILE__ ), array( 'jquery' ), $this->version );
 		wp_enqueue_script( $this->plugin_slug . '-customizer-scripts', plugins_url( 'js/customizer.js', __FILE__ ), array(
 			'jquery',
 			'select2',
-			'lodash',
+			'underscore',
 		), $this->version );
 
 		wp_localize_script( $this->plugin_slug . '-customizer-scripts', 'customify_settings', self::$localized );
