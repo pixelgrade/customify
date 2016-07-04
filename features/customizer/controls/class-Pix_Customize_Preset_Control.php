@@ -189,7 +189,7 @@ class Pix_Customize_Preset_Control extends Pix_Customize_Control {
 
 						// ok now we have our preview fonts, let's ask them from google
 						// note that we request only these chars "AaBbCc" so it should be a small request
-						echo '<link href="http://fonts.googleapis.com/css?family=' . implode('|', $google_links ) . '&text=AaBbCc' . substr( get_bloginfo('name'), 0, 2) . '" rel=\'stylesheet\' type=\'text/css\'>';?>
+						echo '<link href="//fonts.googleapis.com/css?family=' . implode('|', $google_links ) . '&text=AaBbCc' . substr( get_bloginfo('name'), 0, 2) . '" rel=\'stylesheet\' type=\'text/css\'>';?>
 					</div>
 
 					<?php
