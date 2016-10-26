@@ -305,6 +305,22 @@
 			setTimeout(function () {
 				customifyFoldingFields();
 			}, 1000);
+
+			(function() {
+				var $nav = $( '.js-section-navigation' ),
+					navHeight = $nav.outerHeight(),
+					$header = $( '.wp-full-overlay-header'),
+					$sidebar =  $nav.parents( '.accordion-section-content' ),
+					$description = $sidebar.find('.customize-section-description-container');
+
+				$sidebar.on( 'scroll', function() {
+					if( ( $description.offset().top + $description.outerHeight() ) <= $header.height() ) {
+						$nav.addClass( 'is--pinned' ).css( 'top', $header.height() ).css( 'width', $header.outerWidth() );
+					} else {
+						$nav.removeClass('is--pinned').css('top', 0);
+					}
+				});
+			})();
 		} );
 
 		/**

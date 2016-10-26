@@ -42,6 +42,18 @@
 .separator.sub-section { position: relative; padding: 12px 0; }
 .separator.sub-section:before { border-top: 1px solid #e0e8ef; border-bottom: 1px solid #e0e8ef; background-color: #f6fbff; }
 
+/**
+*   Section tabs
+*/
+.section-navigation-wrapper { position: relative; height: 43px; margin: -15px -12px 0 -12px; }
+
+.section-navigation { position: absolute; left: 0; width: 100%; z-index: 1000; display: -ms-flexbox; display: flex; margin-top: -1px; border-top: 1px solid transparent; transition: opacity .15s ease-in-out, border .15s ease-in-out; }
+.section-navigation.is--pinned { position: fixed; margin: 0; opacity: .7; border-top-color: #e0e8ef; }
+.section-navigation:not(.is--pinned) { top: 0; }
+.section-navigation a { -ms-flex: 1 1 auto; flex: 1 1 auto; display: block; padding: 12px 0; color: #3b484e; background-color: #ffffff; border-bottom: 1px solid #e0e8ef; border-right: 1px solid #e0e8ef; text-align: center; }
+.section-navigation a:first-child { color: #486b7e; background-color: #eaf8fd; border-bottom: 0; }
+.section-navigation a:last-child { border-right: 0; }
+
 .customize-control-color .wp-picker-container .wp-picker-open + .wp-picker-input-wrap:after { content: ""; position: absolute; bottom: 100%; right: 12px; border-collapse: separate; width: 0; height: 0; border-width: 0 9px 9px 9px; border-style: solid; border-color: transparent transparent #fff transparent; }
 
 .customize-control input[type=text], .customize-control input[type=checkbox], .customize-control input[type=password], .customize-control input[type=color], .customize-control input[type=date], .customize-control input[type=datetime], .customize-control input[type=datetime-local], .customize-control input[type=email], .customize-control input[type=month], .customize-control input[type=number], .customize-control input[type=radio], .customize-control input[type=tel], .customize-control input[type=time], .customize-control input[type=url], .customize-control input[type=week], .customize-control input[type=search], .customize-control select, .customize-control textarea, .customize-control input[type="number"].range-value { width: 100%; height: 44px; padding: 10px 14px; background: #FFFFFF; border: 2px solid #B8DAEB; border-radius: 4px; font-size: 14px; line-height: 1.5; color: #416B7E; outline: 0; }

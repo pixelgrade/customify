@@ -9,6 +9,8 @@ $gray 					: #303235;
 $light 					: #cbcfd4;
 $lighter 				: #3b3f45; //borders
 
+$borders                :#e0e8ef;
+
 $unit 					: 24px;
 $popup 					: 275px;
 
@@ -198,8 +200,8 @@ $fields_border-color	: #B8DAEB;
 		&:before {
 			@extend %section-background;
 
-			border-top: 2px solid #e0e8ef;
-			border-bottom: 2px solid #e0e8ef;
+			border-top: 2px solid $borders;
+			border-bottom: 2px solid $borders;
 			background-color: #ffffff;
 		}
 	}
@@ -211,8 +213,8 @@ $fields_border-color	: #B8DAEB;
 		&:before {
 			@extend %section-background;
 
-			border-top: 1px solid #e0e8ef;
-			border-bottom: 1px solid #e0e8ef;
+			border-top: 1px solid $borders;
+			border-bottom: 1px solid $borders;
 			background-color: #f6fbff;
 		}
 	}
@@ -223,7 +225,66 @@ $fields_border-color	: #B8DAEB;
 //     margin-top: 30px;
 // }
 
+/**
+*   Section tabs
+*/
 
+.section-navigation-wrapper {
+	position: relative;
+
+	height: 43px;
+	margin: -15px -12px 0 -12px;
+}
+
+.section-navigation {
+	position: absolute;
+	left: 0;
+	width: 100%;
+	z-index: 1000;
+
+	display: flex;
+	margin-top: -1px;
+
+	border-top: 1px solid transparent;
+
+	transition: opacity .15s ease-in-out, border .15s ease-in-out;
+
+	&.is--pinned {
+		position: fixed;
+		margin: 0;
+		opacity: .7;
+
+		border-top-color: $borders;
+	}
+
+	&:not(.is--pinned) {
+		top: 0;
+	}
+
+	a {
+		flex: 1 1 auto;
+		display: block;
+		padding: 12px 0;
+
+		color: #3b484e;
+		background-color: #ffffff;
+
+		border-bottom: 1px solid $borders;
+		border-right: 1px solid $borders;
+
+		text-align: center;
+
+		&:first-child {
+			color: #486b7e;
+			background-color: #eaf8fd;
+			border-bottom: 0;
+		}
+
+		&:last-child {
+			border-right: 0;
+		}
+	}
+}
 
 
 //------------------------------------*\
