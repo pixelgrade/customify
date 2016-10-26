@@ -164,6 +164,17 @@ $fields_border-color	: #B8DAEB;
 	color: $blue-dark;
 }
 
+%section-background {
+	content: "";
+
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: -12px;
+	right: -12px;
+	z-index: -1;
+}
+
 .separator {
 	&.label {
 		@extend %fields-label;
@@ -177,6 +188,33 @@ $fields_border-color	: #B8DAEB;
 		margin-top: $fields-spacing/2;
 		font-size: 16px;
 		color: #39474D;
+	}
+
+	&.section {
+		position: relative;
+		padding: 14px 0;
+		margin-bottom: 15px;
+
+		&:before {
+			@extend %section-background;
+
+			border-top: 2px solid #e0e8ef;
+			border-bottom: 2px solid #e0e8ef;
+			background-color: #ffffff;
+		}
+	}
+
+	&.sub-section {
+		position: relative;
+		padding: 12px 0;
+
+		&:before {
+			@extend %section-background;
+
+			border-top: 1px solid #e0e8ef;
+			border-bottom: 1px solid #e0e8ef;
+			background-color: #f6fbff;
+		}
 	}
 }
 
