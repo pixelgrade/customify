@@ -195,7 +195,7 @@ $fields_border-color	: #B8DAEB;
 	&.section {
 		position: relative;
 		padding: 14px 0;
-		margin-bottom: 15px;
+		margin-bottom: 0;
 
 		&:before {
 			@extend %section-background;
@@ -203,6 +203,7 @@ $fields_border-color	: #B8DAEB;
 			border-top: 2px solid $borders;
 			border-bottom: 2px solid $borders;
 			background-color: #ffffff;
+			box-shadow: 0px 1px 0px 0px #DFE8EF;
 		}
 	}
 
@@ -216,6 +217,11 @@ $fields_border-color	: #B8DAEB;
 			border-top: 1px solid $borders;
 			border-bottom: 1px solid $borders;
 			background-color: #f6fbff;
+		}
+
+		+ span {
+			margin-top: 20px;
+			font-style: normal;
 		}
 	}
 }
@@ -252,9 +258,16 @@ $fields_border-color	: #B8DAEB;
 	&.is--pinned {
 		position: fixed;
 		margin: 0;
-		opacity: .7;
 
 		border-top-color: $borders;
+
+		a {
+			background-color: rgba(#ffffff, .75);
+
+			&:first-child {
+				background-color: rgba(#eaf8fd, .75);
+			}
+		}
 	}
 
 	&:not(.is--pinned) {
@@ -273,6 +286,8 @@ $fields_border-color	: #B8DAEB;
 		border-right: 1px solid $borders;
 
 		text-align: center;
+
+		transition: background-color .15s ease-in-out;
 
 		&:first-child {
 			color: #486b7e;

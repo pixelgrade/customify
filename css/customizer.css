@@ -37,10 +37,11 @@
 
 .separator.label { margin-bottom: -3px; margin-bottom: -15px; }
 .separator.large { margin-top: 12px; font-size: 16px; color: #39474D; }
-.separator.section { position: relative; padding: 14px 0; margin-bottom: 15px; }
-.separator.section:before { border-top: 2px solid #e0e8ef; border-bottom: 2px solid #e0e8ef; background-color: #ffffff; }
+.separator.section { position: relative; padding: 14px 0; margin-bottom: 0; }
+.separator.section:before { border-top: 2px solid #e0e8ef; border-bottom: 2px solid #e0e8ef; background-color: #ffffff; box-shadow: 0px 1px 0px 0px #DFE8EF; }
 .separator.sub-section { position: relative; padding: 12px 0; }
 .separator.sub-section:before { border-top: 1px solid #e0e8ef; border-bottom: 1px solid #e0e8ef; background-color: #f6fbff; }
+.separator.sub-section + span { margin-top: 20px; font-style: normal; }
 
 /**
 *   Section tabs
@@ -48,9 +49,11 @@
 .section-navigation-wrapper { position: relative; height: 43px; margin: -15px -12px 0 -12px; }
 
 .section-navigation { position: absolute; left: 0; width: 100%; z-index: 1000; display: -ms-flexbox; display: flex; margin-top: -1px; border-top: 1px solid transparent; transition: opacity .15s ease-in-out, border .15s ease-in-out; }
-.section-navigation.is--pinned { position: fixed; margin: 0; opacity: .7; border-top-color: #e0e8ef; }
+.section-navigation.is--pinned { position: fixed; margin: 0; border-top-color: #e0e8ef; }
+.section-navigation.is--pinned a { background-color: rgba(255, 255, 255, 0.75); }
+.section-navigation.is--pinned a:first-child { background-color: rgba(234, 248, 253, 0.75); }
 .section-navigation:not(.is--pinned) { top: 0; }
-.section-navigation a { -ms-flex: 1 1 auto; flex: 1 1 auto; display: block; padding: 12px 0; color: #3b484e; background-color: #ffffff; border-bottom: 1px solid #e0e8ef; border-right: 1px solid #e0e8ef; text-align: center; }
+.section-navigation a { -ms-flex: 1 1 auto; flex: 1 1 auto; display: block; padding: 12px 0; color: #3b484e; background-color: #ffffff; border-bottom: 1px solid #e0e8ef; border-right: 1px solid #e0e8ef; text-align: center; transition: background-color .15s ease-in-out; }
 .section-navigation a:first-child { color: #486b7e; background-color: #eaf8fd; border-bottom: 0; }
 .section-navigation a:last-child { border-right: 0; }
 
