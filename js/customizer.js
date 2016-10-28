@@ -306,6 +306,7 @@
 				customifyFoldingFields();
 			}, 1000);
 
+			// Handle the section tabs (ex: Layout | Fonts | Colors)
 			(function() {
 				var $nav = $( '.js-section-navigation' ),
 					navHeight = $nav.outerHeight(),
