@@ -412,7 +412,7 @@ class PixCustomifyPlugin {
 	 * Customizer admin styles
 	 */
 	function enqueue_admin_customizer_styles() {
-		wp_enqueue_style( 'select2', plugins_url( 'js/select2/select2.css', __FILE__ ), array(), $this->version );
+		wp_enqueue_style( 'select2', plugins_url( 'js/select2/css/select2.css', __FILE__ ), array(), $this->version );
 		wp_enqueue_style( 'customify_style', plugins_url( 'css/customizer.css', __FILE__ ), array(), $this->version );
 	}
 
@@ -421,7 +421,7 @@ class PixCustomifyPlugin {
 	 */
 	function enqueue_admin_customizer_scripts() {
 
-		wp_enqueue_script( 'select2', plugins_url( 'js/select2/select2.js', __FILE__ ), array( 'jquery' ), $this->version );
+		wp_enqueue_script( 'select2', plugins_url( 'js/select2/js/select2.js', __FILE__ ), array( 'jquery' ), $this->version );
 		wp_enqueue_script( 'jquery-react', plugins_url( 'js/jquery-react.js', __FILE__ ), array( 'jquery' ), $this->version );
 		wp_enqueue_script( $this->plugin_slug . '-customizer-scripts', plugins_url( 'js/customizer.js', __FILE__ ), array(
 			'jquery',
@@ -654,7 +654,7 @@ class PixCustomifyPlugin {
 
 	function output_typography_dynamic_style() {
 
-		self::get_typography_fields( self::$options_list, 'type', 'typography', self::$typo_settings );
+		self::get_typography_fields( self::$options_list, 'type', 'font', self::$typo_settings );
 
 		if ( empty( self::$typo_settings ) ) {
 			return;
@@ -666,7 +666,6 @@ class PixCustomifyPlugin {
 			if ( isset ( $font['value'] ) ) {
 
 				$load_all_weights = false;
-
 				if ( isset( $font['load_all_weights'] ) && $font['load_all_weights'] == 'true' ) {
 					$load_all_weights = true;
 				}
@@ -1528,6 +1527,48 @@ class PixCustomifyPlugin {
 
 				if ( isset( $setting_config['default'] ) ) {
 					$control_args['default'] = $setting_config['default'];
+				}
+
+				break;
+
+			// Custom types
+			case 'font' :
+
+				$use_typography = self::get_plugin_option( 'typography', '1' );
+
+				if ( $use_typography === false ) {
+					$add_control = false;
+					continue;
+				}
+
+				$control_class_name = 'Pix_Customize_Font_Control';
+
+				if ( isset( $setting_config['backup'] ) ) {
+					$control_args['backup'] = $setting_config['backup'];
+				}
+
+				if ( isset( $setting_config['font_weight'] ) ) {
+					$control_args['font_weight'] = $setting_config['font_weight'];
+				}
+
+				if ( isset( $setting_config['subsets'] ) ) {
+					$control_args['subsets'] = $setting_config['subsets'];
+				}
+
+				if ( isset( $setting_config['recommended'] ) ) {
+					$control_args['recommended'] = array_flip( $setting_config['recommended'] );
+				}
+
+				if ( isset( $setting_config['load_all_weights'] ) ) {
+					$control_args['load_all_weights'] = $setting_config['load_all_weights'];
+				}
+
+				if ( isset( $setting_config['default'] ) ) {
+					$control_args['default'] = $setting_config['default'];
+				}
+
+				if ( isset( $setting_config['fields'] ) ) {
+					$control_args['fields'] = $setting_config['fields'];
 				}
 
 				break;

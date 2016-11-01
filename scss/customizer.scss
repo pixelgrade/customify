@@ -316,10 +316,10 @@ $fields_border-color	: #B8DAEB;
 .font-options__wrapper {
 		position: relative;
 
-		&:hover .font-options__options-list {
-			opacity: 1;
-			pointer-events: auto;
-		}
+		//&:hover .font-options__options-list {
+		//	opacity: 1;
+		//	pointer-events: auto;
+		//}
 
 		&:after {
 			content: "";
@@ -371,6 +371,7 @@ $fields_border-color	: #B8DAEB;
 		background-color: #ffffff;
 
 		opacity: 0;
+		display: none;
 		//pointer-events: none;
 		transition: opacity .15s linear;
 
@@ -942,7 +943,7 @@ li#customize-control-site_logo {
 //    TYPOGRAPHY
 //------------------------------------*/
 
-.customize-control-typography {
+.customize-control-typography, .customize-control-typography {
 
 	// Font, Weight and Subsets selectors
 	select {
@@ -1292,3 +1293,32 @@ li#customize-control-site_logo {
 @import 'theme';
 @import 'balloon';
 
+
+
+
+
+//------------------------------------*\
+//    FONT Field
+//------------------------------------*/
+
+.font-options__wrapper [type=checkbox]:checked ~ .font-options__options-list {
+	opacity: 1;
+	display: block;
+}
+
+input.customify_font_tooltip {
+	display: none;
+}
+
+.font-options__option select, .font-options__option input, .select2-container {
+	width: 100% !important; // am pus important pentru ca exista un inline de 100px
+}
+
+//------------------------------------*\
+//    SELECT2
+//------------------------------------*/
+
+
+.select2-container.select2-container--open {
+	z-index: 99999999;
+}

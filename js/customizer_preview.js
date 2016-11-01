@@ -60,6 +60,10 @@
 						} );
 					} );
 				}
+			} else if ( el.type === "font" ) {
+
+				console.log( 'lively change font size' );
+
 			}
 		});
 

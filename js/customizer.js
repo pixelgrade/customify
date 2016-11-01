@@ -38,6 +38,8 @@
 			// simple select2 field
 			$( '.customify_select2' ).select2();
 
+			prepage_font_fields();
+
 			prepare_typography_field();
 
 			/**
@@ -470,6 +472,12 @@
 				} );
 				update_siblings_selects( font_family_select );
 			} );
+		};
+
+		var prepage_font_fields = function () {
+
+			customifyFontSelect.init();
+
 		};
 
 		var api_set_setting_value = function( id, value ) {
@@ -927,6 +935,99 @@
 			return true;
 		};
 	} );
+
+
+
+	var customifyFontSelect = (function () {
+
+		var fontSelector = '.customify_font_family',
+			selectPlacehoder = "Select a font family";
+
+		function init() {
+
+			setTimeout(function () {
+
+				$(fontSelector).select2({
+					placeholder: selectPlacehoder,
+					allowClear: false
+				}).on('change',function ( e ) {
+
+					// serialize shit and refresh
+					serialize_params( e.target );
+
+					var api = wp.customize;
+					api.previewer.refresh();
+				});
+
+			}, 333);
+		}
+
+		/**
+		 * This function
+		 */
+		function serialize_params( element ) {
+
+			var wraper = $( element ).closest('.font-options__wrapper');
+
+			var options_list = $( element ).closest( '.font-options__options-list' );
+
+			var inputs = options_list.find( 'select, input' );
+
+			var value_holder = wraper.children( '.customify_font_values' );
+
+			console.group( 'Current Values' );
+
+			var current_value = maybeJsonParse( value_holder.val() );
+
+			console.log(current_value);
+
+			console.groupEnd( 'Current Values' );
+
+			var new_value = {};
+
+			console.group( 'New Values' );
+
+			inputs.each( function ( key, el ) {
+
+				console.log( el );
+
+				console.debug( $( el ).val() );
+
+			});
+
+
+			console.groupEnd( 'New Values' );
+		}
+
+		var maybeJsonParse = function( value ) {
+			var parsed;
+
+			//try and parse it, with decodeURIComponent
+			try {
+				parsed = JSON.parse( decodeURIComponent( value ) );
+			} catch ( e ) {
+
+				// in case of an error, treat is as a string
+				parsed = value;
+			}
+
+			return parsed;
+		};
+
+
+		function encodeValues ( obj ) {
+			return encodeURIComponent(JSON.stringify(obj));
+		}
+
+
+		return {
+			init: init,
+			serialize_params: serialize_params
+		};
+
+	})();
+
+
 
 	var Queue = function() {
 		var lastPromise = null;
