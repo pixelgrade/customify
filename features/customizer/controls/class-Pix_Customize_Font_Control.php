@@ -11,7 +11,6 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 	public $subsets = true;
 	public $load_all_weights = false;
 	public $recommended = array();
-	public $typekit_fonts = array();
 	public $current_value;
 	public $default;
 	public $fields;
@@ -88,15 +87,9 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 		}
 
 		$this->settings = $settings;
-
 		$this->CSSID = $this->get_CSS_ID();
-
 		$this->load_google_fonts();
-
-		$this->typekit_fonts = apply_filters( 'customify_filter_typekit_fonts_list', get_option( 'typekit_fonts' ) );
-
 		$this->current_value = $this->value();
-//		$this->generate_google_fonts_json();
 	}
 
 	/**
@@ -161,19 +154,9 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 			<ul class="font-options__options-list">
 				<li class="font-options__option customize-control">
 					<select class="customify_font_family"<?php echo $select_data; ?> data-field="font_family">
-
 						<?php
 						// Allow others to add options here
-						do_action( 'customify_typography_font_family_before_options', $font_family, $current_value ); ?>
-
-						<?php
-						if ( ! empty( $this->typekit_fonts ) ) {
-							echo '<optgroup label="' . __( 'Typekit', 'customify_txtd' ) . '">';
-							foreach ( $this->typekit_fonts as $key => $font ) {
-								self::output_font_option( $font['css_names'][0], $font_family, $font, 'typekit' );
-							}
-							echo "</optgroup>";
-						}
+						do_action( 'customify_typography_font_family_before_options', $font_family, $current_value );
 
 						// Allow others to add options here
 						do_action( 'customify_typography_font_family_before_recommended_fonts_options', $font_family, $current_value );
@@ -187,9 +170,6 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 								if ( isset( self::$google_fonts[ $key ] ) ) {
 									$font      = self::$google_fonts[ $key ];
 									$font_type = 'google';
-								} elseif ( isset( $this->typekit_fonts[ $key ] ) ) {
-									$font_type = 'typekit';
-									$font      = $key;
 								} else {
 									$font = $key;
 								}
@@ -212,6 +192,8 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 						}
 
 						// Allow others to add options here
+						do_action( 'customify_typography_font_family_after_standard_fonts_options' );
+
 						do_action( 'customify_typography_font_family_before_google_fonts_options' );
 
 						if ( PixCustomifyPlugin::get_plugin_option( 'typography_google_fonts' ) ) {
@@ -250,7 +232,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 					$display = 'inline-block';
 				} ?>
 				<li class="customify_weights_wrapper customize-control font-options__option" style="display: <?php echo $display; ?>">
-					<select class="customify_typography_font_weight" data-field="font_weight">
+					<select class="customify_font_weight" data-field="selected_variants">
 						<?php
 						$selected = array();
 						if ( isset( $current_value->selected_variants ) ) {
@@ -276,7 +258,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 					$display = 'inline-block';
 				} ?>
 				<li class="customify_subsets_wrapper customize-control font-options__option" style="display: <?php echo $display; ?>">
-					<select multiple class="customify_typography_font_subsets" data-field="font_subsets">
+					<select multiple class="customify_font_subsets" data-field="selected_subsets">
 						<?php
 						$selected = array();
 						if ( isset( $current_value->selected_subsets ) ) {
@@ -392,11 +374,6 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 
 			//output the markup
 			echo '<option value="' . $font['family'] . '"' . $selected . $data . '>' . $font['family'] . '</option>';
-		} elseif ( $type === 'typekit' ) {
-			//we will handle TypeKit Fonts separately
-			$selected = ( $active_font_family === $key ) ? ' selected="selected" ' : '';
-
-			echo '<option class="typekit_font" value="' . $key . '" ' . $selected . $data . '>' . $font['name'] . '</option>';
 		} else {
 			// Handle the font variants markup, if available
 			if ( is_array( $font ) && isset( $font['variants'] ) && ! empty( $font['variants'] ) ) {
