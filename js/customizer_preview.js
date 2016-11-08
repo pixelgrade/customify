@@ -29,6 +29,7 @@
 							properties[property_config.property] = property_config.selector;
 							if ( typeof property_config.callback_filter !== "undefined" ) {
 								properties['callback'] = property_config.callback_filter;
+								// console.log(property_config);
 							}
 
 							var css_update_args = {
@@ -47,7 +48,6 @@
 					});
 				});
 			} else if ( typeof el.live === "object" && el.live.length > 0 ) {
-
 				// if the live parameter is an object it means that is a list of css classes
 				// these classes should be affected by the change of the text fields
 				var field_class = el.live.join();
@@ -60,10 +60,6 @@
 						} );
 					} );
 				}
-			} else if ( el.type === "font" ) {
-
-				console.log( 'lively change font size' );
-
 			}
 		});
 
@@ -73,5 +69,21 @@
 				$('#customify_css_editor_output' ).text(new_text);
 			});
 		});
+
+
+		var maybeJsonParse = function ( value ) {
+			var parsed;
+
+			//try and parse it, with decodeURIComponent
+			try {
+				parsed = JSON.parse(decodeURIComponent(value));
+			} catch ( e ) {
+
+				// in case of an error, treat is as a string
+				parsed = value;
+			}
+
+			return parsed;
+		};
 	});
 })(jQuery, window);

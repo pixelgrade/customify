@@ -53,9 +53,9 @@ class PixCustomifyPlugin {
 
 	public $display_admin_menu = false;
 
-	protected static $config;
+	private static $config;
 
-	protected static $customizer_config;
+	private static $customizer_config;
 
 	public static $plugin_settings;
 
@@ -150,21 +150,12 @@ class PixCustomifyPlugin {
 		add_action( $load_location, array( $this, 'output_dynamic_style' ), 99999 );
 		add_action( 'wp_head', array( $this, 'output_typography_dynamic_style' ), 10 );
 
-		// add things to the previewer
-//		add_action( 'customize_preview_init', array( $this, 'customize_preview_js' ) );
-
 		add_action( 'customize_register', array( $this, 'remove_default_sections' ), 11 );
 		add_action( 'customize_register', array( $this, 'register_customizer' ), 12 );
 
 		if ( self::get_plugin_option( 'enable_editor_style', true ) ) {
 			add_action( 'admin_head', array( $this, 'add_customizer_settings_into_wp_editor' ) );
 		}
-
-		/**
-		 * Ajax Callbacks
-		 */
-//		add_action( 'wp_ajax_pixcustomify_image_click', array( &$this, 'ajax_click_on_photo' ) );
-//		add_action( 'wp_ajax_nopriv_pixcustomify_image_click', array( &$this, 'ajax_click_on_photo' ) );
 	}
 
 	/**
@@ -215,162 +206,9 @@ class PixCustomifyPlugin {
 
 		// load custom modules
 		include_once( self::get_base_path() . '/features/class-CSS_Editor.php' );
-	}
+		include_once( self::get_base_path() . 'features/class-Font_Selector.php' );
 
-	protected static function check_for_customizer_values() {
-		if ( isset( $_POST['customized'] ) && $_POST['customized'] !== '{}' ) {
-			$the_value               = $_POST['customized'];
-			self::$customizer_values = json_decode( $the_value, true );
-
-			/**
-			 * if still empty, use stripslashes_deep to ensure compatibility with 5.2
-			 * http://stackoverflow.com/questions/28698165/json-data-cannot-be-accessed-in-php-version-5-2-17
-			 */
-			if ( empty( self::$customizer_values ) ) {
-				$stripped_value          = stripslashes_deep( $the_value );
-				self::$customizer_values = json_decode( $stripped_value, true );
-			}
-		} else {
-			self::$customizer_values = false;
-		}
-	}
-
-	protected static function get_current_values() {
-		$store_type = self::get_plugin_option( 'values_store_mod', 'option' );
-		if ( $store_type === 'option' ) {
-			self::$current_values = get_option( self::$opt_name );
-		} elseif ( $store_type === 'theme_mod' ) {
-			self::$current_values = get_theme_mod( self::$opt_name );
-		}
-	}
-
-	public function get_options() {
-
-		$settings = array();
-
-		if ( isset ( self::$customizer_config['panels'] ) ) {
-
-			foreach ( self::$customizer_config['panels'] as $pane_id => $panel_settings ) {
-
-				if ( isset( $panel_settings['sections'] ) ) {
-					foreach ( $panel_settings['sections'] as $section_id => $section_settings ) {
-						if ( isset( $section_settings['options'] ) ) {
-							foreach ( $section_settings['options'] as $option_id => $option ) {
-								$settings[ $option_id ] = $option;
-								if ( isset( self::$current_values[ $option_id ] ) ) {
-									$settings[ $option_id ]['value'] = self::$current_values[ $option_id ];
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-
-		if ( isset ( self::$customizer_config['sections'] ) ) {
-			foreach ( self::$customizer_config['sections'] as $section_id => $section_settings ) {
-				if ( isset( $section_settings['options'] ) ) {
-					foreach ( $section_settings['options'] as $option_id => $option ) {
-						$settings[ $option_id ] = $option;
-						if ( isset( self::$current_values[ $option_id ] ) ) {
-							$settings[ $option_id ]['value'] = self::$current_values[ $option_id ];
-						}
-					}
-				}
-			}
-		}
-
-		return $settings;
-	}
-
-	protected static function get_value( $option ) {
-
-		if ( isset( self::$customizer_values[ self::$opt_name . '[' . $option . ']' ] ) ) {
-			return self::$customizer_values[ self::$opt_name . '[' . $option . ']' ];
-		}
-
-		if ( strpos( $option, self::$opt_name . '[' ) !== false ) {
-			var_dump( 'this is old and it shouldn\'t be here!' );
-
-			// get only the setting id
-			$option = explode( '[', $option );
-			$option = rtrim( $option[1], ']' );
-		}
-
-		if ( isset( self::$current_values[ $option ] ) ) {
-			return self::$current_values[ $option ];
-		}
-
-		return null;
-	}
-
-	/**
-	 * A public function to retreat an option's value
-	 * If there is a value and return it
-	 * Otherwise try to get the default parameter or the default from config
-	 *
-	 * @param $option
-	 * @param null $default
-	 *
-	 * @return bool|null|string
-	 */
-	static function get_option( $option, $default = null ) {
-
-		$return = self::get_value( $option );
-
-		if ( $return !== null ) {
-			return $return;
-		} elseif ( $default !== null ) {
-			return $default;
-		} elseif ( isset( self::$options_list[ $option ] ) && isset( self::$options_list[ $option ]['default'] ) ) {
-			return self::$options_list[ $option ]['default'];
-		}
-
-		return null;
-	}
-
-	static function has_option( $option ) {
-
-		if ( isset( self::$options_list[ $option ] ) ) {
-			return true;
-		}
-
-		return false;
-	}
-
-	protected static function get_config() {
-		// @TODO maybe check this
-		return include 'plugin-config.php';
-	}
-
-	/**
-	 * Get an option's value from the config file
-	 *
-	 * @param $option
-	 * @param null $default
-	 *
-	 * @return bool|null
-	 */
-	public static function get_config_option( $option, $default = null ) {
-
-		if ( isset( self::$config[ $option ] ) ) {
-			return self::$config[ $option ];
-		} elseif ( $default !== null ) {
-			return $default;
-		}
-
-		return false;
-	}
-
-	static function get_plugin_option( $option, $default = null ) {
-
-		if ( isset( self::$plugin_settings[ $option ] ) ) {
-			return self::$plugin_settings[ $option ];
-		} elseif ( $default !== null ) {
-			return $default;
-		}
-
-		return false;
+		$x = new Customify_Font_Selector( $this );
 	}
 
 	/**
@@ -489,25 +327,6 @@ class PixCustomifyPlugin {
 
 
 		wp_localize_script( $this->plugin_slug . '-customizer-scripts', 'WP_API_Settings', array( 'root' => esc_url_raw( rest_url() ), 'nonce' => wp_create_nonce( 'wp_rest' ) ) );
-	}
-
-	/**
-	 * Register and enqueue public-facing style sheet.
-	 * @since    1.0.0
-	 */
-	function enqueue_styles() {
-		// wp_enqueue_style( $this->plugin_slug . '-plugin-styles', plugins_url( 'css/public.css', __FILE__ ), array(), $this->version );
-	}
-
-	/**
-	 * Register and enqueues public-facing JavaScript files.
-	 * @since    1.0.0
-	 */
-	public function enqueue_scripts() {
-		//wp_enqueue_script( $this->plugin_slug . '-plugin-script', plugins_url( 'js/public.js', __FILE__ ), array( 'jquery' ), $this->version, true );
-
-		// quit adding google fonts as a static resource ... we will add it dynamically as a fallback when the typekit library isn't used
-		// wp_enqueue_script( 'google-fonts', '//ajax.googleapis.com/ajax/libs/webfont/1/webfont.js' );
 	}
 
 	/**
@@ -654,7 +473,7 @@ class PixCustomifyPlugin {
 
 	function output_typography_dynamic_style() {
 
-		self::get_typography_fields( self::$options_list, 'type', 'font', self::$typo_settings );
+		self::get_typography_fields( self::$options_list, 'type', 'typography', self::$typo_settings );
 
 		if ( empty( self::$typo_settings ) ) {
 			return;
@@ -672,24 +491,6 @@ class PixCustomifyPlugin {
 
 				// shim the time when this was an array
 				if ( is_array( $font['value'] ) ) {
-//					$font['value']['font_family'] = $font['value']['font-family'];
-//					unset( $font['value']['font-family'] );
-//
-//					if ( isset( $font['value']['google'] ) && $font['value']['google'] ) {
-//						$font['value']['type'] = 'google';
-//						unset($font['value']['type']);
-//					}
-//
-//					foreach ($font['value']['font-options']['variants'] as $variant ) {
-//						$font['value']['variants'][$variant['id']] = $variant['name'];
-//					}
-//
-//					foreach ($font['value']['font-options']['subsets'] as $subsets ) {
-//						$font['value']['subsets'][$subsets['id']] = $subsets['name'];
-//					}
-//
-//					unset( $font['value']['font-options'] );
-
 					$font['value'] = stripslashes_deep( $font['value'] );
 					$font['value'] = json_encode( $font['value'] );
 				}
@@ -748,7 +549,6 @@ class PixCustomifyPlugin {
 				}
 			}
 		}
-
 
 		if ( ! empty ( $families ) && self::get_plugin_option( 'typography', '1' ) && self::get_plugin_option( 'typography_google_fonts', 1 ) ) { ?>
 			<script type="text/javascript">
@@ -1027,8 +827,6 @@ class PixCustomifyPlugin {
 
 		return ob_get_clean();
 	}
-
-	// addd editor style
 
 	/**
 	 * add our customizer styling edits into the wp_editor
@@ -1320,7 +1118,7 @@ class PixCustomifyPlugin {
 		self::$localized['settings'][ $setting_id ] = $setting_config;
 
 		// sanitize settings
-		if ( isset( $setting_config['live'] ) && $setting_config['live'] ) {
+		if ( ( isset( $setting_config['live'] ) && $setting_config['live'] ) || $setting_config['type'] === 'font' ) {
 			$setting_args['transport'] = 'postMessage';
 		}
 
@@ -1570,6 +1368,7 @@ class PixCustomifyPlugin {
 				if ( isset( $setting_config['fields'] ) ) {
 					$control_args['fields'] = $setting_config['fields'];
 				}
+				$control_args['live'] = true;
 
 				break;
 
@@ -1681,10 +1480,6 @@ class PixCustomifyPlugin {
 		}
 	}
 
-	function do_nothing_jon_snow() {
-		echo '1';
-	}
-
 	/**
 	 * Remove the sections selected by user
 	 *
@@ -1759,6 +1554,165 @@ class PixCustomifyPlugin {
 				return true;
 				break;
 			}
+		}
+
+		return false;
+	}
+
+	/** == Helpers == */
+
+
+	protected static function check_for_customizer_values() {
+		if ( isset( $_POST['customized'] ) && $_POST['customized'] !== '{}' ) {
+			$the_value               = $_POST['customized'];
+			self::$customizer_values = json_decode( $the_value, true );
+
+			/**
+			 * if still empty, use stripslashes_deep to ensure compatibility with 5.2
+			 * http://stackoverflow.com/questions/28698165/json-data-cannot-be-accessed-in-php-version-5-2-17
+			 */
+			if ( empty( self::$customizer_values ) ) {
+				$stripped_value          = stripslashes_deep( $the_value );
+				self::$customizer_values = json_decode( $stripped_value, true );
+			}
+		} else {
+			self::$customizer_values = false;
+		}
+	}
+
+	protected static function get_current_values() {
+		$store_type = self::get_plugin_option( 'values_store_mod', 'option' );
+		if ( $store_type === 'option' ) {
+			self::$current_values = get_option( self::$opt_name );
+		} elseif ( $store_type === 'theme_mod' ) {
+			self::$current_values = get_theme_mod( self::$opt_name );
+		}
+	}
+
+	public function get_options() {
+
+		$settings = array();
+
+		if ( isset ( self::$customizer_config['panels'] ) ) {
+
+			foreach ( self::$customizer_config['panels'] as $pane_id => $panel_settings ) {
+
+				if ( isset( $panel_settings['sections'] ) ) {
+					foreach ( $panel_settings['sections'] as $section_id => $section_settings ) {
+						if ( isset( $section_settings['options'] ) ) {
+							foreach ( $section_settings['options'] as $option_id => $option ) {
+								$settings[ $option_id ] = $option;
+								if ( isset( self::$current_values[ $option_id ] ) ) {
+									$settings[ $option_id ]['value'] = self::$current_values[ $option_id ];
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		if ( isset ( self::$customizer_config['sections'] ) ) {
+			foreach ( self::$customizer_config['sections'] as $section_id => $section_settings ) {
+				if ( isset( $section_settings['options'] ) ) {
+					foreach ( $section_settings['options'] as $option_id => $option ) {
+						$settings[ $option_id ] = $option;
+						if ( isset( self::$current_values[ $option_id ] ) ) {
+							$settings[ $option_id ]['value'] = self::$current_values[ $option_id ];
+						}
+					}
+				}
+			}
+		}
+
+		return $settings;
+	}
+
+	protected static function get_value( $option ) {
+
+		if ( isset( self::$customizer_values[ self::$opt_name . '[' . $option . ']' ] ) ) {
+			return self::$customizer_values[ self::$opt_name . '[' . $option . ']' ];
+		}
+
+		if ( strpos( $option, self::$opt_name . '[' ) !== false ) {
+			var_dump( 'this is old and it shouldn\'t be here!' );
+
+			// get only the setting id
+			$option = explode( '[', $option );
+			$option = rtrim( $option[1], ']' );
+		}
+
+		if ( isset( self::$current_values[ $option ] ) ) {
+			return self::$current_values[ $option ];
+		}
+
+		return null;
+	}
+
+	/**
+	 * A public function to retreat an option's value
+	 * If there is a value and return it
+	 * Otherwise try to get the default parameter or the default from config
+	 *
+	 * @param $option
+	 * @param null $default
+	 *
+	 * @return bool|null|string
+	 */
+	static function get_option( $option, $default = null ) {
+
+		$return = self::get_value( $option );
+
+		if ( $return !== null ) {
+			return $return;
+		} elseif ( $default !== null ) {
+			return $default;
+		} elseif ( isset( self::$options_list[ $option ] ) && isset( self::$options_list[ $option ]['default'] ) ) {
+			return self::$options_list[ $option ]['default'];
+		}
+
+		return null;
+	}
+
+	static function has_option( $option ) {
+
+		if ( isset( self::$options_list[ $option ] ) ) {
+			return true;
+		}
+
+		return false;
+	}
+
+	protected static function get_config() {
+		// @TODO maybe check this
+		return include 'plugin-config.php';
+	}
+
+	/**
+	 * Get an option's value from the config file
+	 *
+	 * @param $option
+	 * @param null $default
+	 *
+	 * @return bool|null
+	 */
+	public static function get_config_option( $option, $default = null ) {
+
+		if ( isset( self::$config[ $option ] ) ) {
+			return self::$config[ $option ];
+		} elseif ( $default !== null ) {
+			return $default;
+		}
+
+		return false;
+	}
+
+	static function get_plugin_option( $option, $default = null ) {
+
+		if ( isset( self::$plugin_settings[ $option ] ) ) {
+			return self::$plugin_settings[ $option ];
+		} elseif ( $default !== null ) {
+			return $default;
 		}
 
 		return false;

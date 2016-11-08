@@ -278,32 +278,41 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 					</select>
 				</li>
 
-				<?php if ( ! empty( $this->fields['font-size'] ) ) { ?>
+				<?php if ( ! empty( $this->fields['font-size'] ) ) {
+					$fs_val = $current_value->font_size; ?>
 					<li class="customify_font_size_wrapper customize-control font-options__option">
 						<label><?php esc_html_e( 'Font Size', 'customify' ); ?></label>
-						<input type="range" data-field="font_size" <?php $this->input_field_atts( $this->fields['font-size'] ) ?>>
+						<input type="range" data-field="font_size" <?php $this->input_field_atts( $this->fields['font-size'] ) ?> value="<?php echo $fs_val; ?>">
 					</li>
 				<?php }
 
-				if ( ! empty( $this->fields['line-height'] ) ) { ?>
+				if ( ! empty( $this->fields['line-height'] ) ) {
+					$lh_val = $current_value->line_height; ?>
 					<li class="customify_line_height_wrapper customize-control font-options__option">
 						<label><?php esc_html_e( 'Line height', 'customify' ); ?></label>
-						<input type="range" data-field="line_height" <?php $this->input_field_atts( $this->fields['line-height'] ) ?>>
+						<input type="range" data-field="line_height" <?php $this->input_field_atts( $this->fields['line-height'] ) ?> value="<?php echo $lh_val ?>">
 					</li>
 				<?php }
 
-				if ( ! empty( $this->fields['letter-spacing'] ) ) { ?>
+				if ( ! empty( $this->fields['letter-spacing'] ) ) {
+					$ls_val = $current_value->letter_spacing; ?>
 					<li class="customify_letter_spacing_wrapper customize-control font-options__option">
 						<label><?php esc_html_e( 'Letter Spacing', 'customify' ); ?></label>
-						<input type="range" data-field="letter_spacing" <?php $this->input_field_atts( $this->fields['letter-spacing'] ) ?>>
+						<input type="range" data-field="letter_spacing" <?php $this->input_field_atts( $this->fields['letter-spacing'] ) ?> value="<?php echo $ls_val ?>">
 					</li>
 				<?php }
 
-				if ( ! empty( $this->fields['text-align'] ) ) { ?>
+				if ( ! empty( $this->fields['text-align'] ) ) {
+
+					$ta_val = $current_value->text_align;
+
+//					var_dump( $ta_val );
+
+					?>
 					<li class="customify_text_transform_wrapper customize-control font-options__option">
 						<label><?php esc_html_e( 'Text Align', 'customify' ); ?></label>
-						<select data-field="text-align">
-							<option value="none"><?php esc_html_e( 'None', 'customify' ); ?></option>
+						<select data-field="text_align">
+							<option value="initial"><?php esc_html_e( 'Initial', 'customify' ); ?></option>
 							<option value="center"><?php esc_html_e( 'Center', 'customify' ); ?></option>
 							<option value="left"><?php esc_html_e( 'Left', 'customify' ); ?></option>
 							<option value="right"><?php esc_html_e( 'Right', 'customify' ); ?></option>

@@ -4,6 +4,9 @@
 
 	$(document).ready(function(){
 		var api = wp.customize;
+		if ( $('#css_editor').length < 1 ) {
+			return ;
+		}
 		var css_editor = ace.edit("css_editor");
 		css_editor.$blockScrolling = Infinity;
 

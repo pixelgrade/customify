@@ -38,7 +38,7 @@
 			// simple select2 field
 			$('.customify_select2').select2();
 
-			prepage_font_fields();
+			customifyFontSelect.init(this);
 
 			prepare_typography_field();
 
@@ -472,12 +472,6 @@
 				});
 				update_siblings_selects(font_family_select);
 			});
-		};
-
-		var prepage_font_fields = function () {
-
-			customifyFontSelect.init();
-
 		};
 
 		var api_set_setting_value = function ( id, value ) {
@@ -949,53 +943,99 @@
 
 	var customifyFontSelect = (function () {
 
-		var fontSelector = '.customify_font_family',
+		var wpapi = null,
+			fontSelector = '.customify_font_family',
 			selectPlacehoder = "Select a font family",
 			weightPlaceholder = "Select a font weight",
 			subsetPlaceholder = "Select a font subset";
 
-		function init() {
+		function init( wpapi ) {
+
+			this.wpapi = wpapi;
 
 			setTimeout(function () {
-
 				$(fontSelector).select2({
 					placeholder: selectPlacehoder
 				}).on('change', function ( e ) {
-
-					var select_element = e.target;
-					var new_option = $(select_element).find('option:selected');
-					var wraper = $(select_element).closest('.font-options__wrapper');
+					var new_option = $(e.target).find('option:selected');
+					var wraper = $(e.target).closest('.font-options__wrapper');
 
 					var type = $(new_option).data('type');
 
-					update_weight_field(new_option, wraper);
-					update_subset_field(new_option, wraper);
+					console.debug(type);
+
+					if ( type === 'google' ) {
+						update_weight_field(new_option, wraper);
+						update_subset_field(new_option, wraper);
+					}
 
 					// serialize shit and refresh
-					update_font_value( select_element );
+					update_font_value(wraper);
 
 					// find weight and subset select
 					// var api = wp.customize;
 					// api.previewer.refresh();
-
-
 				});
-
 			}, 333);
 
 			$('.customify_font_weight')
 				.select2({})
 				.on('change', function ( e ) {
-					var select_element = e.target;
-					update_font_value(select_element);
+					var wraper = $(e.target).closest('.font-options__wrapper');
+					var current_value = update_font_value(wraper);
+
+					// temporary just set the new value and refresh the previewr
+					// we may update this with a live version sometime
+
+					var value_holder = wraper.children('.customify_font_values');
+					var setting_id = $(value_holder).data('customize-setting-link');
+					var setting = wpapi(setting_id);
+					setting.set(encodeValues(current_value));
 				});
 
 			$('.customify_font_subsets')
 				.select2({})
 				.on('change', function ( e ) {
-					var select_element = e.target;
-					update_font_value(select_element);
+					var wraper = $(e.target).closest('.font-options__wrapper');
+					var current_value = update_font_value(wraper);
+					// temporary just set the new value and refresh the previewr
+					// we may update this with a live version sometime
+					var value_holder = wraper.children('.customify_font_values');
+					var setting_id = $(value_holder).data('customize-setting-link');
+					var setting = wpapi(setting_id);
+					setting.set(encodeValues(current_value));
 				});
+
+			var rangers = $(fontSelector).parents('.font-options__wrapper').find('input[type=range]');
+			var selects = $(fontSelector).parents('.font-options__wrapper').find('select');
+
+			if ( selects.length > 0 ) {
+				selects.on('change', function ( e ) {
+					var wraper = $(e.target).closest('.font-options__wrapper');
+					var current_value = update_font_value(wraper);
+					// temporary just set the new value and refresh the previewr
+					// we may update this with a live version sometime
+					var value_holder = wraper.children('.customify_font_values');
+					var setting_id = $(value_holder).data('customize-setting-link');
+					var setting = wpapi(setting_id);
+					setting.set(encodeValues(current_value));
+				});
+			}
+
+			if ( rangers.length > 0 ) {
+				rangers.on('mousemove', function ( e ) {
+					var wraper = $(e.target).closest('.font-options__wrapper');
+					var current_value = update_font_value(wraper);
+					// temporary just set the new value and refresh the previewr
+					// we may update this with a live version sometime
+					var value_holder = wraper.children('.customify_font_values');
+					var setting_id = $(value_holder).data('customize-setting-link');
+					var setting = wpapi(setting_id);
+					setting.set(encodeValues(current_value));
+					// setting.trigger('change');
+					wpapi.previewer.send( 'font-changed' );
+				});
+			}
 		}
 
 		/**
@@ -1074,41 +1114,31 @@
 		/**
 		 * This function
 		 */
-		function update_font_value( element ) {
+		function update_font_value( wraper ) {
+			var element = $(wraper).find('.font-options__wrapper');
 
-			var wraper = $(element).closest('.font-options__wrapper');
-
-			var options_list = $(element).closest('.font-options__options-list');
+			var options_list = $(wraper).find('.font-options__options-list');
 
 			var inputs = options_list.find('select, input');
 
 			var value_holder = wraper.children('.customify_font_values');
 
-			console.group('Current Values');
-
 			var current_value = maybeJsonParse(value_holder.val());
-
-			console.log(current_value);
-
-			console.groupEnd('Current Values');
-
-			var new_value = {};
-
-			console.group('New Values');
+			// console.log( current_value );
 
 			inputs.each(function ( key, el ) {
 				var field = $(el).data('field');
 				var value = $(el).val();
 				if ( typeof field !== "undefined" && typeof value !== "undefined" && value !== "" ) {
+
+
 					current_value[field] = value;
 				}
 			});
 
-			console.groupEnd('New Values');
+			value_holder.val(encodeValues(current_value));
 
-			$(value_holder).val(encodeValues(current_value));
-
-			value_holder.trigger('change');
+			return current_value;
 		}
 
 		var maybeJsonParse = function ( value ) {
@@ -1130,12 +1160,10 @@
 			return encodeURIComponent(JSON.stringify(obj));
 		}
 
-
 		return {
 			init: init,
 			update_font_value: update_font_value
 		};
-
 	})();
 
 
