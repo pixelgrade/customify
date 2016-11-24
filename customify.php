@@ -10,7 +10,7 @@
 Plugin Name: Customify
 Plugin URI:  http://pixelgrade.com
 Description: A Theme Customizer Booster
-Version: 1.2.3
+Version: 1.2.4
 Author: PixelGrade
 Author URI: http://pixelgrade.com
 Author Email: contact@pixelgrade.com

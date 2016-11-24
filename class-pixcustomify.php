@@ -75,6 +75,8 @@ class PixCustomifyPlugin {
 
 	protected static $google_fonts = null;
 
+	protected static $theme_fonts = null;
+
 	// these properties will get 'px' as a default unit
 	protected static $pixel_dependent_css_properties = array(
 		'width',
@@ -123,6 +125,10 @@ class PixCustomifyPlugin {
 		self::$config          = self::get_config();
 		self::$plugin_settings = get_option( 'pixcustomify_settings' );
 
+		// load custom modules
+		include_once( self::get_base_path() . '/features/class-CSS_Editor.php' );
+		include_once( self::get_base_path() . 'features/class-Font_Selector.php' );
+
 		self::check_for_customizer_values();
 
 		// Load plugin text domain
@@ -134,7 +140,6 @@ class PixCustomifyPlugin {
 		// Add an action link pointing to the options page.
 		$plugin_basename = plugin_basename( plugin_dir_path( __FILE__ ) . 'pixcustomify.php' );
 		add_filter( 'plugin_action_links_' . $plugin_basename, array( $this, 'add_action_links' ) );
-
 
 		// Load admin style sheet and JavaScript.
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_styles' ) );
@@ -204,11 +209,9 @@ class PixCustomifyPlugin {
 			$this->register_import_api();
 		}
 
-		// load custom modules
-		include_once( self::get_base_path() . '/features/class-CSS_Editor.php' );
-		include_once( self::get_base_path() . 'features/class-Font_Selector.php' );
 
-		$x = new Customify_Font_Selector( $this );
+		$font_selector = new Customify_Font_Selector( $this );
+		self::$localized['theme_fonts'] = self::$theme_fonts = Customify_Font_Selector::$theme_fonts;
 	}
 
 	/**
@@ -268,9 +271,7 @@ class PixCustomifyPlugin {
 		), $this->version );
 
 		wp_localize_script( $this->plugin_slug . '-customizer-scripts', 'customify_settings', self::$localized );
-
 	}
-
 
 	/** Customizer scripts loaded only on previewer page */
 	function customizer_live_preview_enqueue_scripts() {
@@ -721,7 +722,12 @@ class PixCustomifyPlugin {
 			$value                = self::$google_fonts[ $font_name ];
 			$value['font_family'] = $font_name;
 			$value['type']        = 'google';
-
+			return $value;
+		} elseif ( isset( self::$theme_fonts[ $font_name ] ) ) {
+			$value['type'] = 'theme_font';
+			$value['src'] = self::$theme_fonts[ $font_name ]['src'];
+			$value['variants'] = self::$theme_fonts[ $font_name ]['variants'];
+			$value['font_family'] = self::$theme_fonts[ $font_name ]['family'];
 			return $value;
 		}
 
@@ -1634,9 +1640,8 @@ class PixCustomifyPlugin {
 			return self::$customizer_values[ self::$opt_name . '[' . $option . ']' ];
 		}
 
+		// shim
 		if ( strpos( $option, self::$opt_name . '[' ) !== false ) {
-			var_dump( 'this is old and it shouldn\'t be here!' );
-
 			// get only the setting id
 			$option = explode( '[', $option );
 			$option = rtrim( $option[1], ']' );

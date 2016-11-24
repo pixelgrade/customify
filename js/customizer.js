@@ -962,12 +962,8 @@
 
 					var type = $(new_option).data('type');
 
-					console.debug(type);
-
-					if ( type === 'google' ) {
-						update_weight_field(new_option, wraper);
-						update_subset_field(new_option, wraper);
-					}
+					update_weight_field(new_option, wraper);
+					update_subset_field(new_option, wraper);
 
 					// serialize shit and refresh
 					update_font_value(wraper);
@@ -978,23 +974,50 @@
 				});
 			}, 333);
 
-			$('.customify_font_weight')
-				.select2({})
+			$('.customify_font_weight').each(function ( i, el  ) {
+
+				var select2_args = {
+					debug: false
+				};
+
+				// all this fuss is for the case when the font doesn't come with variants from PHP, lile a theme_font
+				if ( this.options.length === 0 ) {
+					var wraper = $(el).closest('.font-options__wrapper'),
+						font = wraper.find('.customify_font_family'),
+						option = font[0].options[font[0].selectedIndex],
+						variants =  maybeJsonParse( $(option).data('variants') ),
+						data = [];
+
+					$.each( variants, function ( index, weight ) {
+						data.push({
+							id: weight,
+							text: weight
+						});
+					} );
+
+					if ( data !== [] ) {
+						select2_args.data = data;
+					}
+				}
+
+				$(this).select2( select2_args )
 				.on('change', function ( e ) {
 					var wraper = $(e.target).closest('.font-options__wrapper');
 					var current_value = update_font_value(wraper);
-
 					// temporary just set the new value and refresh the previewr
 					// we may update this with a live version sometime
-
 					var value_holder = wraper.children('.customify_font_values');
 					var setting_id = $(value_holder).data('customize-setting-link');
 					var setting = wpapi(setting_id);
 					setting.set(encodeValues(current_value));
 				});
+			});
+
 
 			$('.customify_font_subsets')
-				.select2({})
+				.select2({
+					placeholder: "Extra Subsets"
+				})
 				.on('change', function ( e ) {
 					var wraper = $(e.target).closest('.font-options__wrapper');
 					var current_value = update_font_value(wraper);
@@ -1047,11 +1070,13 @@
 		function update_weight_field( option, wraper ) {
 			var variants = $(option).data('variants'),
 				font_weights = wraper.find('.customify_font_weight'),
-				new_variants = [];
+				new_variants = [],
+				type =  $(option).data('type'),
+				id = wraper.find('.customify_font_values').data('customizeSettingLink');
 
 			variants = maybeJsonParse(variants);
 
-			if ( Object.keys(variants).length < 2 ) {
+			if ( customify_settings.settings[id].load_all_weights || typeof variants === "undefined" || Object.keys(variants).length < 2 ) {
 				font_weights.parent().hide();
 			} else {
 				font_weights.parent().show();
@@ -1071,7 +1096,8 @@
 				data: new_variants
 			}).on('change', function ( e ) {
 				var select_element = e.target;
-				update_font_value(select_element);
+				var wraper = $(select_element).closest('.font-options__wrapper');
+				update_font_value(wraper);
 			});
 		}
 
@@ -1080,10 +1106,16 @@
 		 * @param new_option
 		 * @param wraper
 		 */
-		function update_subset_field( new_option, wraper ) {
-			var subsets = $(new_option).data('subsets'),
+		function update_subset_field( option, wraper ) {
+			var subsets = $(option).data('subsets'),
 				font_subsets = wraper.find('.customify_font_subsets'),
-				new_subsets = [];
+				new_subsets = [],
+				type =  $(option).data('type');
+
+			if ( type !== 'google' ) {
+				font_subsets.parent().hide();
+				return;
+			}
 
 			subsets = maybeJsonParse(subsets);
 
@@ -1107,38 +1139,58 @@
 				data: new_subsets
 			}).on('change', function ( e ) {
 				var select_element = e.target;
-				update_font_value(select_element);
+				var wraper = $(select_element).closest('.font-options__wrapper');
+				update_font_value(wraper);
 			});
 		}
 
 		/**
-		 * This function
+		 * This function is a custom value serializer for our entire font field
+		 * It collects values and saves them (encoded) into the `.customify_font_values` input's value
 		 */
 		function update_font_value( wraper ) {
-			var element = $(wraper).find('.font-options__wrapper');
-
-			var options_list = $(wraper).find('.font-options__options-list');
-
-			var inputs = options_list.find('select, input');
-
-			var value_holder = wraper.children('.customify_font_values');
-
-			var current_value = maybeJsonParse(value_holder.val());
-			// console.log( current_value );
+			var element = $(wraper).find('.font-options__wrapper'),
+				options_list = $(wraper).find('.font-options__options-list'),
+				inputs = options_list.find('select, input'),
+				value_holder = wraper.children('.customify_font_values'),
+				new_vals = {};
 
 			inputs.each(function ( key, el ) {
-				var field = $(el).data('field');
-				var value = $(el).val();
+				var field = $(el).data('field'),
+					value = $(el).val();
+
+				if ( field === 'font_family' ) {
+					// the font family also holds the type
+					var selected_opt = $(el.options[el.selectedIndex]),
+						type = selected_opt.data('type'),
+						subsets = selected_opt.data('subsets'),
+						variants = selected_opt.data('variants');
+
+					if ( typeof type !== "undefined") {
+						new_vals['type'] = type;
+						if ( type === 'theme_font' ) {
+							new_vals['src'] = selected_opt.data('src');
+						}
+ 					}
+
+					if ( typeof variants !== "undefined") {
+						new_vals['variants'] = maybeJsonParse(variants);
+					}
+
+					if ( typeof subsets !== "subsets") {
+						new_vals['subsets'] = maybeJsonParse(subsets);
+					}
+				}
+
+
 				if ( typeof field !== "undefined" && typeof value !== "undefined" && value !== "" ) {
-
-
-					current_value[field] = value;
+					new_vals[field] = value;
 				}
 			});
 
-			value_holder.val(encodeValues(current_value));
+			value_holder.val(encodeValues(new_vals));
 
-			return current_value;
+			return new_vals;
 		}
 
 		var maybeJsonParse = function ( value ) {
