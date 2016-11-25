@@ -41,10 +41,6 @@ $fields_border-color	: #B8DAEB;
 // Change sections overflow
 .accordion-section-content {
 	overflow: visible;
-
-	#customize-theme-controls &.accordion-section-content {
-		padding: 20px;
-	}
 }
 
 
@@ -182,8 +178,8 @@ $fields_border-color	: #B8DAEB;
 	position: absolute;
 	top: 0;
 	bottom: 0;
-	left: -20px;
-	right: -20px;
+	left: -12px;
+	right: -12px;
 	z-index: -1;
 }
 
@@ -358,8 +354,8 @@ $fields_border-color	: #B8DAEB;
 	.font-options__options-list {
 		position: absolute;
 		top: calc(100% + 10px);
-		left: -10px;
-		right: -10px;
+		left: -6px;
+		right: -6px;
 		z-index: 2;
 
 		display: block;

@@ -167,9 +167,10 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 						// Allow others to add options here
 						do_action( 'customify_font_family_before_options', $font_family, $current_value );
 
+						$this->display_recommended_options_group( $font_family, $current_value );
+
 						$this->display_standard_options_group( $font_family, $current_value );
 
-						$this->display_recommended_options_group( $font_family, $current_value );
 
 						do_action( 'customify_font_family_before_google_fonts_options' );
 

@@ -7,10 +7,6 @@
 {
     overflow: visible;
 }
-#customize-theme-controls .accordion-section-content.accordion-section-content
-{
-    padding: 20px;
-}
 
 .control-section:not(.control-section-themes) .customize-control
 {
@@ -138,9 +134,9 @@
     position: absolute;
     z-index: -1;
     top: 0;
-    right: -20px;
+    right: -12px;
     bottom: 0;
-    left: -20px;
+    left: -12px;
 
     content: '';
 }
@@ -311,8 +307,8 @@
     position: absolute;
     z-index: 2;
     top: calc(100% + 10px);
-    right: -10px;
-    left: -10px;
+    right: -6px;
+    left: -6px;
 
     display: block;
     display: none;
