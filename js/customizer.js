@@ -1013,7 +1013,6 @@
 				});
 			});
 
-
 			$('.customify_font_subsets')
 				.select2({
 					placeholder: "Extra Subsets"
