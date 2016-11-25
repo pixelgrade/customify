@@ -437,3 +437,40 @@ In 1.5.0 We introduced the new font selector, it works with live preview only an
     'callback' => 'your_custom_callback_function'
 ),
 ```
+
+In the above example you can see the callback parameter, it supports a PHP or Javascript function
+which should replace the current output of the font
+
+```
+function your_custom_callback_function( $value, $font ) {
+	return $combined_css';
+}
+
+function add_javascript_callback_function() { ?>
+	<script>
+		function your_custom_callback_function( $values, field ) {
+			return $combined_css;
+		}
+
+	</script>
+<?php }
+add_action( 'customize_preview_init', 'add_javascript_callback_function' );
+```
+
+
+### Local Fonts
+
+Also this font selector comes with the ability to add custom fonts from a theme.
+If a theme comes with the name of a font and a stylesheet with its fontface it
+will be added as the first option of the font selector
+```
+function theme_add_customify_theme_fonts ( $fonts ) {
+	$fonts['Custom Font'] = array(
+		'family' => 'Custom Font',
+		'src' => get_template_directory_uri() . '/assets/fonts/custom_font/stylesheet.css',
+		'variants' => array( '400', '700' )
+	);
+	return $fonts;
+}
+add_filter( 'customify_theme_fonts', 'theme_add_customify_theme_fonts' );
+```
