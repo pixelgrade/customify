@@ -20,7 +20,7 @@ class PixCustomifyPlugin {
 	 * @since   1.0.0
 	 * @const   string
 	 */
-	protected $version = '1.2.5';
+	protected $version = '1.2.6';
 	/**
 	 * Unique identifier for your plugin.
 	 * Use this value (not the variable name) as the text domain when internationalizing strings of text. It should
@@ -113,6 +113,9 @@ class PixCustomifyPlugin {
 		'border-top-width'
 	);
 
+	protected static $jetpack_default_modules = array();
+	protected static $jetpack_blocked_modules = array();
+
 	/**
 	 * Initialize the plugin by setting localization, filters, and administration functions.
 	 * @since     1.0.0
@@ -127,6 +130,7 @@ class PixCustomifyPlugin {
 
 		// Load plugin text domain
 		add_action( 'init', array( $this, 'load_plugin_textdomain' ) );
+
 		add_action( 'wp_loaded', array( $this, 'init_plugin_configs' ), 5 );
 
 		add_action( 'admin_menu', array( $this, 'add_plugin_admin_menu' ) );
@@ -159,6 +163,10 @@ class PixCustomifyPlugin {
 		if ( self::get_plugin_option( 'enable_editor_style', true ) ) {
 			add_action( 'admin_head', array( $this, 'add_customizer_settings_into_wp_editor' ) );
 		}
+
+		add_action( 'init', array( $this, 'set_jetpack_modules_config') );
+		add_filter( 'default_option_jetpack_active_modules', array( $this, 'default_jetpack_active_modules' ), 10, 2 );
+		add_filter( 'jetpack_get_available_modules', array( $this, 'jetpack_hide_blocked_modules'), 10, 1 );
 
 		/**
 		 * Ajax Callbacks
@@ -216,6 +224,50 @@ class PixCustomifyPlugin {
 		// load custom modules
 		include_once( self::get_base_path() . '/features/class-CSS_Editor.php' );
 	}
+
+	function set_jetpack_modules_config() {
+		// We expect an array of string module names like array( 'infinite-scroll', 'widgets' )
+        // See jetpack/modules/modules-heading.php for module names
+		self::$jetpack_default_modules = apply_filters ( 'customify_filter_jetpack_default_modules', array(
+			'shortcodes',
+			'widget-visibility',
+			'widgets',
+		) );
+
+		// We expect an array of string module names like array( 'infinite-scroll', 'widgets' )
+		// See jetpack/modules/modules-heading.php for module names
+		self::$jetpack_blocked_modules = apply_filters ( 'customify_filter_jetpack_blocked_modules', array() );
+    }
+
+	/**
+     * Control the default modules that are activated in Jetpack.
+     * Use the `customify_filter_jetpack_default_modules` to set your's.
+     *
+	 * @param array  $default The default value to return if the option does not exist
+	 *                        in the database.
+	 * @param string $option  Option name.
+	 *
+	 * @return array
+	 */
+	function default_jetpack_active_modules( $default, $option ) {
+		if ( ! is_array( $default ) ) {
+			$default = array();
+		}
+
+		return array_merge( $default, self::$jetpack_default_modules );
+	}
+
+	/**
+     * Control the modules that are available in Jetpack (hide some of them).
+     * Use the `customify_filter_jetpack_blocked_modules` filter to set your's.
+     *
+	 * @param array $modules
+	 *
+	 * @return array
+	 */
+	function jetpack_hide_blocked_modules( $modules ) {
+        return array_diff_key( $modules, array_flip( self::$jetpack_blocked_modules ) );
+    }
 
 	protected static function check_for_customizer_values() {
 		if ( isset( $_POST['customized'] ) && $_POST['customized'] !== '{}' ) {
