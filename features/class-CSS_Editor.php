@@ -17,6 +17,9 @@ class Customify_CSS_Live_Editor {
 
 		$load_location = PixCustomifyPlugin::get_plugin_option( 'style_resources_location', 'wp_head' );
 		add_action( $load_location, array( $this, 'output_dynamic_style' ), 999999999 );
+
+		//Check the WordPress version and if there are known problems disable it
+		add_filter( 'customify_css_live_editor_enabled', array( $this, 'disable_if_wp_incompatible' ), 10, 1 );
 	}
 
 	/**
@@ -45,6 +48,10 @@ class Customify_CSS_Live_Editor {
 	}
 
 	function cle_create_custom_control( $wp_customize ) {
+        // Allow others to short-circuit us
+        if ( ! apply_filters( 'customify_css_live_editor_enabled', true ) ) {
+            return;
+        }
 
 		$wp_customize->add_section( 'live_css_edit_section', array(
 			'priority'   => 11,
@@ -95,6 +102,11 @@ selector {
 	}
 
 	function output_dynamic_style() {
+		// Allow others to short-circuit us
+		if ( ! apply_filters( 'customify_css_live_editor_enabled', true ) ) {
+			return;
+		}
+
 		$store_type = PixCustomifyPlugin::get_plugin_option( 'values_store_mod', 'option' );
 		if ( $store_type === 'option' ) {
 			$output = get_option( 'live_css_edit' );
@@ -110,6 +122,20 @@ selector {
 		</style>
 		<?php
 	}
+
+	function disable_if_wp_incompatible( $enabled ) {
+		global $wp_version;
+
+		// WordPress 4.7 introduced a Customizer CSS editor that conflicts with our own
+		// It's best to leave only the one in core
+        // So only load our CSS editor for WP version smaller than 4.7
+        // We use 4.6.9 to catch the release candidates also
+		if ( version_compare( $wp_version, '4.6.9', '>=' ) ) {
+            return false;
+		}
+
+		return $enabled;
+    }
 }
 
 $customify_CSS_Editor = Customify_CSS_Live_Editor::get_instance();
