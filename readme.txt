@@ -33,6 +33,9 @@ With [Customify](https://github.com/pixelgrade/customify), developers can easily
 
 == Changelog ==
 
+= 1.2.5 =
+* Fixed WordPress 4.7 incompatibilities
+
 = 1.2.4 =
 * Added: Support for Fonto plugin
 * Improved the font selector
