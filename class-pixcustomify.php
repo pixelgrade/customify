@@ -20,7 +20,7 @@ class PixCustomifyPlugin {
 	 * @since   1.0.0
 	 * @const   string
 	 */
-	protected $version = '1.2.3';
+	protected $version = '1.3.0';
 	/**
 	 * Unique identifier for your plugin.
 	 * Use this value (not the variable name) as the text domain when internationalizing strings of text. It should
@@ -115,6 +115,10 @@ class PixCustomifyPlugin {
 		'border-top-width'
 	);
 
+	protected static $jetpack_default_modules = array();
+	protected static $jetpack_blocked_modules = array();
+	protected static $jetpack_sharing_default_options = array();
+
 	/**
 	 * Initialize the plugin by setting localization, filters, and administration functions.
 	 * @since     1.0.0
@@ -133,6 +137,7 @@ class PixCustomifyPlugin {
 
 		// Load plugin text domain
 		add_action( 'init', array( $this, 'load_plugin_textdomain' ) );
+
 		add_action( 'wp_loaded', array( $this, 'init_plugin_configs' ), 5 );
 
 		add_action( 'admin_menu', array( $this, 'add_plugin_admin_menu' ) );
@@ -161,6 +166,12 @@ class PixCustomifyPlugin {
 		if ( self::get_plugin_option( 'enable_editor_style', true ) ) {
 			add_action( 'admin_head', array( $this, 'add_customizer_settings_into_wp_editor' ) );
 		}
+
+		// Jetpack Related
+		add_action( 'init', array( $this, 'set_jetpack_modules_config') );
+		add_filter( 'default_option_jetpack_active_modules', array( $this, 'default_jetpack_active_modules' ), 10, 1 );
+		add_filter( 'jetpack_get_available_modules', array( $this, 'jetpack_hide_blocked_modules'), 10, 1 );
+		add_filter( 'default_option_sharing-options', array( $this, 'default_jetpack_sharing_options' ), 10, 1 );
 	}
 
 	/**
@@ -209,9 +220,69 @@ class PixCustomifyPlugin {
 			$this->register_import_api();
 		}
 
-
 		$font_selector = new Customify_Font_Selector( $this );
 		self::$localized['theme_fonts'] = self::$theme_fonts = Customify_Font_Selector::$theme_fonts;
+	}
+
+	function set_jetpack_modules_config() {
+		// We expect an array of string module names like array( 'infinite-scroll', 'widgets' )
+		// See jetpack/modules/modules-heading.php for module names
+		self::$jetpack_default_modules = apply_filters ( 'customify_filter_jetpack_default_modules', array(
+			'shortcodes',
+			'widget-visibility',
+			'widgets',
+		) );
+
+		// We expect an array of string module names like array( 'infinite-scroll', 'widgets' )
+		// See jetpack/modules/modules-heading.php for module names
+		self::$jetpack_blocked_modules = apply_filters ( 'customify_filter_jetpack_blocked_modules', array() );
+
+		self::$jetpack_sharing_default_options = apply_filters ( 'customify_filter_jetpack_sharing_default_options', array() );
+	}
+
+	/**
+	 * Control the default modules that are activated in Jetpack.
+	 * Use the `customify_filter_jetpack_default_modules` to set your's.
+	 *
+	 * @param array  $default The default value to return if the option does not exist
+	 *                        in the database.
+	 * @return array
+	 */
+	function default_jetpack_active_modules( $default ) {
+		if ( ! is_array( $default ) ) {
+			$default = array();
+		}
+
+		return array_merge( $default, self::$jetpack_default_modules );
+	}
+
+	/**
+	 * Control the default Jetpack Sharing options.
+	 * Use the `customify_filter_jetpack_sharing_default_options` to set your's.
+	 *
+	 * @param array  $default The default value to return if the option does not exist
+	 *                        in the database.
+	 *
+	 * @return array
+	 */
+	function default_jetpack_sharing_options( $default ) {
+		if ( ! is_array( $default ) ) {
+			$default = array();
+		}
+
+		return array_merge( $default, self::$jetpack_sharing_default_options );
+	}
+
+	/**
+	 * Control the modules that are available in Jetpack (hide some of them).
+	 * Use the `customify_filter_jetpack_blocked_modules` filter to set your's.
+	 *
+	 * @param array $modules
+	 *
+	 * @return array
+	 */
+	function jetpack_hide_blocked_modules( $modules ) {
+		return array_diff_key( $modules, array_flip( self::$jetpack_blocked_modules ) );
 	}
 
 	/**
@@ -553,29 +624,29 @@ class PixCustomifyPlugin {
 
 		if ( ! empty ( $families ) && self::get_plugin_option( 'typography', '1' ) && self::get_plugin_option( 'typography_google_fonts', 1 ) ) { ?>
 			<script type="text/javascript">
-				if ( typeof WebFont !== 'undefined' ) {<?php // if there is a WebFont object, use it ?>
-					WebFont.load( {
-						google: {families: [<?php echo( rtrim( $families, ',' ) ); ?>]},
-						classes: false,
-						events: false
-					} );
-				} else {<?php // basically when we don't have the WebFont object we create the google script dynamically  ?>
+                if ( typeof WebFont !== 'undefined' ) {<?php // if there is a WebFont object, use it ?>
+                    WebFont.load( {
+                        google: {families: [<?php echo( rtrim( $families, ',' ) ); ?>]},
+                        classes: false,
+                        events: false
+                    } );
+                } else {<?php // basically when we don't have the WebFont object we create the google script dynamically  ?>
 
-					var tk = document.createElement( 'script' );
-					tk.src = '//ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
-					tk.type = 'text/javascript';
+                    var tk = document.createElement( 'script' );
+                    tk.src = '//ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
+                    tk.type = 'text/javascript';
 
-					tk.onload = tk.onreadystatechange = function() {
-						WebFont.load( {
-							google: {families: [<?php echo( rtrim( $families, ',' ) ); ?>]},
-							classes: false,
-							events: false
-						} );
-					};
+                    tk.onload = tk.onreadystatechange = function() {
+                        WebFont.load( {
+                            google: {families: [<?php echo( rtrim( $families, ',' ) ); ?>]},
+                            classes: false,
+                            events: false
+                        } );
+                    };
 
-					var s = document.getElementsByTagName( 'script' )[0];
-					s.parentNode.insertBefore( tk, s );
-				}
+                    var s = document.getElementsByTagName( 'script' )[0];
+                    s.parentNode.insertBefore( tk, s );
+                }
 			</script>
 		<?php } ?>
 		<style id="customify_typography_output_style">
@@ -846,59 +917,59 @@ class PixCustomifyPlugin {
 		$custom_css = ob_get_clean(); ?>
 		<script type="text/javascript">
 			/* <![CDATA[ */
-			(function( $ ) {
-				$( window ).load( function() {
-					/**
-					 * @param iframe_id the id of the frame you whant to append the style
-					 * @param style_element the style element you want to append
-					 */
-					var append_script_to_iframe = function( ifrm_id, scriptEl ) {
-						var myIframe = document.getElementById( ifrm_id );
+            (function( $ ) {
+                $( window ).load( function() {
+                    /**
+                     * @param iframe_id the id of the frame you whant to append the style
+                     * @param style_element the style element you want to append
+                     */
+                    var append_script_to_iframe = function( ifrm_id, scriptEl ) {
+                        var myIframe = document.getElementById( ifrm_id );
 
-						var script = myIframe.contentWindow.document.createElement( "script" );
-						script.type = "text/javascript";
-						script.innerHTML = scriptEl.innerHTML;
+                        var script = myIframe.contentWindow.document.createElement( "script" );
+                        script.type = "text/javascript";
+                        script.innerHTML = scriptEl.innerHTML;
 
-						myIframe.contentWindow.document.head.appendChild( script );
-					};
+                        myIframe.contentWindow.document.head.appendChild( script );
+                    };
 
-					var append_style_to_iframe = function( ifrm_id, styleElment ) {
-						var ifrm = window.frames[ifrm_id];
-						ifrm = ( ifrm.contentDocument || ifrm.contentDocument || ifrm.document );
-						var head = ifrm.getElementsByTagName( 'head' )[0];
+                    var append_style_to_iframe = function( ifrm_id, styleElment ) {
+                        var ifrm = window.frames[ifrm_id];
+                        ifrm = ( ifrm.contentDocument || ifrm.contentDocument || ifrm.document );
+                        var head = ifrm.getElementsByTagName( 'head' )[0];
 
-						if ( typeof styleElment !== "undefined" ) {
-							head.appendChild( styleElment );
-						}
-					};
+                        if ( typeof styleElment !== "undefined" ) {
+                            head.appendChild( styleElment );
+                        }
+                    };
 
-					var xmlString = <?php echo json_encode( str_replace( "\n", "", $custom_css ) ); ?>,
-						parser = new DOMParser(),
-						doc = parser.parseFromString( xmlString, "text/html" );
+                    var xmlString = <?php echo json_encode( str_replace( "\n", "", $custom_css ) ); ?>,
+                        parser = new DOMParser(),
+                        doc = parser.parseFromString( xmlString, "text/html" );
 
-					if ( typeof window.frames['content_ifr'] !== 'undefined' ) {
+                    if ( typeof window.frames['content_ifr'] !== 'undefined' ) {
 
-						$.each( doc.head.childNodes, function( key, el ) {
+                        $.each( doc.head.childNodes, function( key, el ) {
 
-							if ( typeof el !== "undefined" && typeof el.tagName !== "undefined" ) {
+                            if ( typeof el !== "undefined" && typeof el.tagName !== "undefined" ) {
 
-								switch ( el.tagName ) {
+                                switch ( el.tagName ) {
 
-									case 'STYLE' :
-										append_style_to_iframe( 'content_ifr', el );
-										break;
+                                    case 'STYLE' :
+                                        append_style_to_iframe( 'content_ifr', el );
+                                        break;
 
-									case 'SCRIPT' :
-										append_script_to_iframe( 'content_ifr', el );
-										break;
-									default:
-										break;
-								}
-							}
-						} );
-					}
-				} );
-			})( jQuery );
+                                    case 'SCRIPT' :
+                                        append_script_to_iframe( 'content_ifr', el );
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            }
+                        } );
+                    }
+                } );
+            })( jQuery );
 			/* ]]> */
 		</script>
 	<?php }

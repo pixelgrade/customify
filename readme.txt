@@ -1,9 +1,9 @@
 === Customify - A Theme Customizer Booster ===
-Contributors: pixelgrade, euthelup, babbardel
+Contributors: pixelgrade, euthelup, babbardel, vlad.olaru
 Tags: customizer, css, editor, live, preview, customise
 Requires at least: 4.3.0
-Tested up to: 4.5.2
-Stable tag: 1.2.3
+Tested up to: 4.7.0
+Stable tag: 1.2.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -32,6 +32,20 @@ With [Customify](https://github.com/pixelgrade/customify), developers can easily
 * **And more others [this is the full list](https://github.com/pixelgrade/customify#list_of_fields)
 
 == Changelog ==
+
+= 1.2.7 =
+* Added capability to control the Jetpack Sharing default options
+
+= 1.2.6 =
+* Added capability to define Jetpack default and hidden modules
+
+= 1.2.5 =
+* Fixed WordPress 4.7 incompatibilities
+
+= 1.2.4 =
+* Added: Support for Fonto plugin
+* Improved the font selector
+* Fixed presets on ssl
 
 = 1.2.3 =
 * Added: Support for conditional fields display

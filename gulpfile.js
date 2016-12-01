@@ -145,8 +145,7 @@ gulp.task( 'build', ['copy-folder'], function() {
 		files_to_remove[k] = '../build/customify/' + e;
 	} );
 
-	return gulp.src( files_to_remove, {read: false} )
-		.pipe( clean( {force: true} ) );
+	return del.sync(files_to_remove, {force: true});
 } );
 
 // usually there is a default task  for lazy people who just wanna type gulp
