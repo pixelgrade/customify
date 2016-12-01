@@ -20,7 +20,7 @@ class PixCustomifyPlugin {
 	 * @since   1.0.0
 	 * @const   string
 	 */
-	protected $version = '1.2.7';
+	protected $version = '1.2.7.1';
 	/**
 	 * Unique identifier for your plugin.
 	 * Use this value (not the variable name) as the text domain when internationalizing strings of text. It should
@@ -166,9 +166,9 @@ class PixCustomifyPlugin {
 		}
 
 		add_action( 'init', array( $this, 'set_jetpack_modules_config') );
-		add_filter( 'default_option_jetpack_active_modules', array( $this, 'default_jetpack_active_modules' ), 10, 2 );
+		add_filter( 'default_option_jetpack_active_modules', array( $this, 'default_jetpack_active_modules' ), 10, 1 );
 		add_filter( 'jetpack_get_available_modules', array( $this, 'jetpack_hide_blocked_modules'), 10, 1 );
-		add_filter( 'default_option_sharing-options', array( $this, 'default_jetpack_sharing_options' ), 10, 2 );
+		add_filter( 'default_option_sharing-options', array( $this, 'default_jetpack_sharing_options' ), 10, 1 );
 
 		/**
 		 * Ajax Callbacks
@@ -249,11 +249,9 @@ class PixCustomifyPlugin {
      *
 	 * @param array  $default The default value to return if the option does not exist
 	 *                        in the database.
-	 * @param string $option  Option name.
-	 *
 	 * @return array
 	 */
-	function default_jetpack_active_modules( $default, $option ) {
+	function default_jetpack_active_modules( $default ) {
 		if ( ! is_array( $default ) ) {
 			$default = array();
 		}
@@ -267,11 +265,10 @@ class PixCustomifyPlugin {
 	 *
 	 * @param array  $default The default value to return if the option does not exist
 	 *                        in the database.
-	 * @param string $option  Option name.
 	 *
 	 * @return array
 	 */
-	function default_jetpack_sharing_options( $default, $option ) {
+	function default_jetpack_sharing_options( $default ) {
 		if ( ! is_array( $default ) ) {
 			$default = array();
 		}
