@@ -12,11 +12,13 @@ $dark 					: #232527;
 $gray 					: #303235;
 $light 					: #cbcfd4;
 $lighter 				: #3b3f45; //borders
+$descriptions			: #4d7b90;
 
 $borders                :#e0e8ef;
 
 $unit 					: 24px;
 $popup 					: 275px;
+$container-spacing		: 17px;
 
 $blue-dark				: #416B7E;
 
@@ -77,11 +79,26 @@ $fields_border-color	: #B8DAEB;
 	.theme * {
 		box-sizing: content-box;
 	}
+
+	.accordion-section-content {
+		padding: $container-spacing;
+	}
+
+	.customize-section-title {
+		margin-top: -$container-spacing;
+		margin-right: -$container-spacing;
+		margin-left: -$container-spacing;
+	}
 }
 
 #customize-controls .description {
-	font-size: 13px;
-	color: #88B6CE;
+    margin-bottom: 9px;
+
+	font-size: 12px;
+	font-weight: 300;
+    font-style: normal;
+	line-height: 1.6;
+	color: $descriptions;
     text-indent: 0;
 }
 
@@ -108,7 +125,7 @@ $fields_border-color	: #B8DAEB;
 .wp-core-ui {
 
 	// Primary & Secondary Buttons
-	 .button, .button-primary, .button-secondary {
+	 .button:not(.theme-details), .button-primary, .button-secondary {
 	 	width: auto;
 	 	padding: 6px 20px;
 
@@ -178,8 +195,8 @@ $fields_border-color	: #B8DAEB;
 	position: absolute;
 	top: 0;
 	bottom: 0;
-	left: -12px;
-	right: -12px;
+	left: -$container-spacing - 1;
+	right: -$container-spacing - 1;
 	z-index: -1;
 }
 
@@ -187,9 +204,10 @@ $fields_border-color	: #B8DAEB;
 	&.label {
 		@extend %fields-label;
 		@extend .customize-control-title;
-		// margin-top: $fields-spacing;
 		margin-bottom: -3px;
 		margin-bottom: -$fields-spacing/2 - 3px;
+
+	    font-weight: 500;
 	}
 
 	&.large {
@@ -202,12 +220,13 @@ $fields_border-color	: #B8DAEB;
 		position: relative;
 		padding: 14px 0;
 		margin-bottom: 0;
+		background: none;
+		border: none;
 
 		&:before {
 			@extend %section-background;
 
-			border-top: 2px solid $borders;
-			border-bottom: 2px solid $borders;
+			border: 1px solid $borders;
 			background-color: #ffffff;
 			box-shadow: 0px 1px 0px 0px #DFE8EF;
 		}
@@ -246,6 +265,8 @@ $fields_border-color	: #B8DAEB;
 
 	height: 43px;
 	margin: -15px -12px 0 -12px;
+	margin-right: -$container-spacing;
+	margin-left: -$container-spacing;
 }
 
 .section-navigation {
@@ -339,16 +360,25 @@ $fields_border-color	: #B8DAEB;
 
 		&.font-options__head {
 			-webkit-appearance: none;
+
+		    text-overflow: ellipsis;
+		    // overflow: hidden;
+		    white-space: nowrap;
 		}
 	}
 		.font-options__font-title {
 			margin-right: 26px;
+			margin-left: 10px;
 
 			font-size: 12px;
 			line-height: 20px;
 			font-weight: 300;
 
 			color: #98c6dd;
+
+		    text-overflow: ellipsis;
+		    overflow: hidden;
+		    white-space: nowrap;
 		}
 
 	.font-options__options-list {
@@ -585,7 +615,9 @@ $fields_border-color	: #B8DAEB;
 	&.customize-control-checkbox,
 	&.customize-control-radio {
 
-		label {
+		// Split into two columns only when 
+		// there is more than one label
+		label:not(:only-of-type) {
 			margin-left: 30px;
 			padding-top: 0;
 			padding-bottom: 0;
@@ -595,8 +627,22 @@ $fields_border-color	: #B8DAEB;
 
 			text-indent: -6px;
 
-			color: $blue-dark;
 		}
+
+		label {
+			color: $blue-dark;
+
+		}
+
+		// Select HTML Labels followed by a Checkbox or Radio field
+		.customize-control-html + & {
+			margin-top: -24px;
+		}
+
+			// Except de dividers titles
+			[id*="divider"] + & {
+				margin-top: 0;
+			}
 	}
 
 	// Radios
@@ -1306,8 +1352,37 @@ input.customify_font_tooltip {
 	display: none;
 }
 
-.font-options__option select, .font-options__option input, .select2-container {
-	width: 100% !important; // am pus important pentru ca exista un inline de 100px
+.font-options__option select, 
+.font-options__option input, 
+.select2-container {
+	// width: 100% !important; // am pus important pentru ca exista un inline de 100px
+}
+
+ul.font-options__options-list {
+	.font-options__option {
+
+	}
+
+	.select2-container {
+		width: 100% !important;
+		 .select2-selection--single {
+		 	@extend %input;
+		 	@extend %select;
+		 	-webkit-appearance: initial;
+
+		 	.select2-selection__arrow {
+		 		display: none;
+		 	}
+		 }
+	}
+
+	.select2-container--default 
+		.select2-selection--single 
+			.select2-selection__rendered {
+			    color: inherit;
+			    line-height: initial;
+			}
+
 }
 
 //------------------------------------*\
