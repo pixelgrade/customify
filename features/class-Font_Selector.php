@@ -309,8 +309,6 @@ class Customify_Font_Selector extends PixCustomifyPlugin {
 			} ?>
 		</style>
 	<?php
-
-
 	}
 
 	function get_field_unit( $font, $field ) {
@@ -331,6 +329,10 @@ class Customify_Font_Selector extends PixCustomifyPlugin {
 	}
 
 	function validate_font_values( $values ) {
+
+		if ( empty( $values ) ) {
+			return array();
+		}
 
 		foreach ( $values as $key => $value ) {
 
