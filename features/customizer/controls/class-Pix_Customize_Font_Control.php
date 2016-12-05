@@ -120,7 +120,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 	public function render_content() {
 
 		$current_value = $this->current_value;
-
+var_dump($current_value);
 		//maybe we need to decode it
 		$current_value = PixCustomifyPlugin::decodeURIComponent( $current_value );
 
@@ -155,12 +155,10 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 
 			$select_data .= ' data-load_all_weights="true"';
 		}
-
 		?>
 		<div class="font-options__wrapper">
 			<?php
 			$this->display_value_holder( $current_value );
-
 			$this->display_field_title( $font_family );
 			?>
 

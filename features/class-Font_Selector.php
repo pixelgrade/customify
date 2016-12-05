@@ -135,7 +135,7 @@ class Customify_Font_Selector extends PixCustomifyPlugin {
 			}
 		}
 
-		if ( ! empty ( $args['google_families'] ) && self::get_plugin_option( 'typography', '1' ) && self::get_plugin_option( 'typography_google_fonts', 1 ) ) {
+		if ( ( ! empty ( $args['local_families'] ) || ! empty ( $args['google_families'] ) ) && self::get_plugin_option( 'typography', '1' ) && self::get_plugin_option( 'typography_google_fonts', 1 ) ) {
 			$this->display_webfont_script( $args );
 		}
 
