@@ -99,9 +99,13 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 			if ( strpos( $key, '-' ) !== false ) {
 				$new_key = str_replace( '-', '_', $key );
 
-				$values[ $new_key ] = $value;
-
-				unset( $values[ $key ] );
+				if ( $new_key === 'font_weight' ) {
+					$values[ 'selected_variants' ] = $value;
+					unset( $values[ 'font_weight' ] );
+				} else {
+					$values[ $new_key ] = $value;
+					unset( $values[ $key ] );
+				}
 			}
 		}
 
@@ -114,12 +118,13 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 	 * @since 3.4.0
 	 */
 	public function render_content() {
+
 		$current_value = $this->current_value;
 
 		//maybe we need to decode it
 		$current_value = PixCustomifyPlugin::decodeURIComponent( $current_value );
 
-		if ( empty( $current_value ) || ( is_array( $current_value ) && ( ! isset( $current_value['font_family'] ) || ! isset( $current_value['font-family'] ) ) ) ) {
+		if ( empty( $current_value ) ) {
 			$current_value = $this->get_default_values();
 		}
 
@@ -149,7 +154,9 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 			$this->load_all_weights = $current_value->font_load_all_weights;
 
 			$select_data .= ' data-load_all_weights="true"';
-		} ?>
+		}
+
+		?>
 		<div class="font-options__wrapper">
 			<?php
 			$this->display_value_holder( $current_value );
@@ -298,7 +305,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 		} ?>
 		<li class="customify_weights_wrapper customize-control font-options__option"
 		    style="display: <?php echo $display; ?>">
-			<select class="customify_font_weight" data-field="selected_variants">
+			<select class="customify_font_weight" data-field="selected_variants" <?php echo ! empty( $current_value->selected_variants ) ? 'data-default="' . $current_value->selected_variants . '"' : null; ?>>
 				<?php
 				$selected = array();
 				if ( isset( $current_value->selected_variants ) ) {
@@ -314,7 +321,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 
 						echo '<option value="' . $weight . '" ' . $attrs . '> ' . $weight . '</option>';
 					}
-				} else if ( is_string( $current_value->variants ) ) {
+				} else if ( ! empty( $current_value->variants ) && is_string( $current_value->variants ) ) {
 					echo '<option value="' . $current_value->variants . '" selected="selected"> ' . $current_value->variants . '</option>';
 				} ?>
 			</select>
@@ -681,5 +688,4 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 			echo $attr . '="' . esc_attr( $value ) . '" ';
 		}
 	}
-
 }

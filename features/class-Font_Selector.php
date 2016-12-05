@@ -50,7 +50,14 @@ class Customify_Font_Selector extends PixCustomifyPlugin {
 			return;
 		}
 
-		$families = '';
+		$google_families = $local_families = '';
+
+		$args = array(
+			'google_families' => '',
+			'local_families' => '',
+			'local_srcs' => '',
+		);
+
 		foreach ( self::$typo_settings as $id => $font ) {
 			if ( isset ( $font['value'] ) ) {
 
@@ -78,51 +85,58 @@ class Customify_Font_Selector extends PixCustomifyPlugin {
 				}
 
 				if ( isset( $value['font_family'] ) && isset( $value['type'] ) && $value['type'] == 'google' ) {
-					$families .= "'" . $value['font_family'];
+					$args['google_families'] .= "'" . $value['font_family'];
 
 					if ( $load_all_weights && is_array( $value['variants'] ) ) {
-						$families .= ":" . implode( ',', $value['variants'] );
+						$args['google_families'] .= ":" . implode( ',', $value['variants'] );
 					} elseif ( isset( $value['selected_variants'] ) && ! empty( $value['selected_variants'] ) ) {
 						if ( is_array( $value['selected_variants'] ) ) {
-							$families .= ":" . implode( ',', $value['selected_variants'] );
+							$args['google_families'] .= ":" . implode( ',', $value['selected_variants'] );
 						} elseif ( is_string( $value['selected_variants'] ) || is_numeric( $value['selected_variants'] ) ) {
-							$families .= ":" . $value['selected_variants'];
+							$args['google_families'] .= ":" . $value['selected_variants'];
 						}
 					} elseif ( isset( $value['variants'] ) && ! empty( $value['variants'] ) ) {
 						if ( is_array( $value['variants'] ) ) {
-							$families .= ":" . implode( ',', $value['variants'] );
+							$args['google_families'] .= ":" . implode( ',', $value['variants'] );
 						} else {
-							$families .= ":" . $value['variants'];
+							$args['google_families'] .= ":" . $value['variants'];
 						}
 					}
 
 					if ( isset( $value['selected_subsets'] ) && ! empty( $value['selected_subsets'] ) ) {
 						if ( is_array( $value['selected_subsets'] ) ) {
-							$families .= ":" . implode( ',', $value['selected_subsets'] );
+							$args['google_families'] .= ":" . implode( ',', $value['selected_subsets'] );
 						} else {
-							$families .= ":" . $value['selected_subsets'];
+							$args['google_families'] .= ":" . $value['selected_subsets'];
 						}
 					} elseif ( isset( $value['subsets'] ) && ! empty( $value['subsets'] ) ) {
 						if ( is_array( $value['subsets'] ) ) {
-							$families .= ":" . implode( ',', $value['subsets'] );
+							$args['google_families'] .= ":" . implode( ',', $value['subsets'] );
 						} else {
-							$families .= ":" . $value['subsets'];
+							$args['google_families'] .= ":" . $value['subsets'];
 						}
 					}
 
-					$families .= '\',';
+					$args['google_families'] .= '\',';
 				} elseif ( isset( self::$theme_fonts[ $value['font_family'] ] ) ) {
-					$value['type']     = 'theme_font';
-					$value['src']      = self::$theme_fonts[ $value['font_family'] ]['src'];
-					$value['variants'] = self::$theme_fonts[ $value['font_family'] ]['variants'];
 
-					$families .= $value['font_family'];
+//					$value['type']     = 'theme_font';
+//					$args['local_srcs'] .= self::$theme_fonts[ $value['font_family'] ]['src'] . ',';
+//					$value['variants'] = self::$theme_fonts[ $value['font_family'] ]['variants'];
+
+					if ( false === strpos( $args['local_families'], $value['font_family'] ) ) {
+						$args['local_families'] .= $value['font_family'];
+					}
+
+					if ( false === strpos( $args['local_srcs'], self::$theme_fonts[ $value['font_family'] ]['src'] ) ) {
+						$args['local_srcs'] .= self::$theme_fonts[ $value['font_family'] ]['src'] . ',';
+					}
 				}
 			}
 		}
 
-		if ( ! empty ( $families ) && self::get_plugin_option( 'typography', '1' ) && self::get_plugin_option( 'typography_google_fonts', 1 ) ) {
-			$this->display_webfont_script( $families, $value );
+		if ( ! empty ( $args['google_families'] ) && self::get_plugin_option( 'typography', '1' ) && self::get_plugin_option( 'typography_google_fonts', 1 ) ) {
+			$this->display_webfont_script( $args );
 		}
 
 		foreach ( self::$typo_settings as $key => $font ) {
@@ -150,37 +164,27 @@ class Customify_Font_Selector extends PixCustomifyPlugin {
 		}
 	}
 
-	function display_webfont_script( $families, $value ) { ?>
+	function display_webfont_script( $args ) { ?>
 		<script type="text/javascript">
 			var customify_font_loader = function () {
-				<?php if ( $value['type'] === 'google' ) { ?>
-
 				var webfontargs = {
-					google: {families: [<?php echo( rtrim( $families, ',' ) ); ?>]},
 					classes: false,
 					events: false
 				};
-
-				<?php } elseif ( $value['type'] === 'theme_font' ) { ?>
-
-				var webfontargs = {
-					custom: {
-						families: ['<?php echo( rtrim( $families, ',' ) ); ?>'],
-						urls: ['<?php echo $value['src'] ?>']
-					},
-					classes: false,
-					events: false
+				<?php if ( ! empty( $args['google_families'] ) ) { ?>
+				webfontargs.google = { families: [<?php echo( rtrim( $args['google_families'], ',' ) ); ?>] };
+				<?php }
+				if ( ! empty( $args['local_families'] ) && ! empty( $args['local_srcs'] ) ) { ?>
+				webfontargs.custom = {
+					families: ['<?php echo( rtrim( $args['local_families'], ',' ) ); ?>'],
+					urls: ['<?php echo rtrim( $args['local_srcs'], ',' ) ?>']
 				};
-
 				<?php } ?>
-
 				WebFont.load(webfontargs);
 			}
 
 			if ( typeof WebFont !== 'undefined' ) { <?php // if there is a WebFont object, use it ?>
-
 				customify_font_loader();
-
 			} else { <?php // basically when we don't have the WebFont object we create the google script dynamically  ?>
 				var tk = document.createElement('script');
 				tk.src = '//ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';

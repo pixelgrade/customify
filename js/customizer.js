@@ -970,7 +970,7 @@
 					update_weight_field(new_option, wraper);
 					update_subset_field(new_option, wraper);
 
-					// serialize shit and refresh
+					// serialize stuff and refresh
 					update_font_value(wraper);
 
 					// find weight and subset select
@@ -991,13 +991,19 @@
 						font = wraper.find('.customify_font_family'),
 						option = font[0].options[font[0].selectedIndex],
 						variants =  maybeJsonParse( $(option).data('variants') ),
-						data = [];
+						data = [],
+						selecter_variants = $(el).data('default') || null;
 
 					$.each( variants, function ( index, weight ) {
-						data.push({
+						var this_value = {
 							id: weight,
 							text: weight
-						});
+						};
+						if ( selecter_variants !== null && weight == selecter_variants ) {
+							this_value.selected = true;
+						}
+
+						data.push(this_value);
 					} );
 
 					if ( data !== [] ) {
@@ -1086,12 +1092,19 @@
 				font_weights.parent().show();
 			}
 
+			var selected = 1;
+
 			// we need to turn the data array into a specific form like [{id:"id", text:"Text"}]
 			$.each(variants, function ( i, j ) {
 				new_variants[i] = {
 					'id': j,
 					'text': j
+				};
+
+				if ( selected === 3 ) {
+					new_variants[i].selected = true;
 				}
+				selected++;
 			});
 
 			// we need to clear the old values
