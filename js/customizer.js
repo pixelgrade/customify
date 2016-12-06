@@ -961,10 +961,9 @@
 				$(fontSelector).select2({
 					placeholder: selectPlacehoder
 				}).on('change', function ( e ) {
-					var new_option = $(e.target).find('option:selected');
-					var wraper = $(e.target).closest('.font-options__wrapper');
-
-					var type = $(new_option).data('type');
+					var new_option = $(e.target).find('option:selected'),
+						wraper = $(e.target).closest('.font-options__wrapper'),
+						type = $(new_option).data('type');
 
 					update_weight_field(new_option, wraper);
 					update_subset_field(new_option, wraper);
@@ -992,6 +991,11 @@
 						variants =  maybeJsonParse( $(option).data('variants') ),
 						data = [],
 						selecter_variants = $(el).data('default') || null;
+
+					if ( typeof variants === "undefined" ) {
+						$(this).hide();
+						return;
+					}
 
 					$.each( variants, function ( index, weight ) {
 						var this_value = {

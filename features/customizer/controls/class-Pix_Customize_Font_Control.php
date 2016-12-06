@@ -176,7 +176,6 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 
 						$this->display_standard_options_group( $font_family, $current_value );
 
-
 						do_action( 'customify_font_family_before_google_fonts_options' );
 
 						if ( PixCustomifyPlugin::get_plugin_option( 'typography_google_fonts' ) ) {
@@ -209,7 +208,6 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 					</select>
 				</li>
 				<?php
-
 				$this->display_font_weight_field( $current_value );
 
 				$this->display_font_subset_field( $current_value );
