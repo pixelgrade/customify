@@ -71,7 +71,7 @@
 
 .font-options__font-title { margin-right: 26px; margin-left: 10px; font-size: 12px; line-height: 20px; font-weight: 300; color: #98c6dd; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; }
 
-.font-options__options-list { position: absolute; top: calc(100% + 10px); left: -6px; right: -6px; z-index: 2; display: block; padding: 10px; border: 1px solid #dfe8ef; border-radius: 5px; background-color: #ffffff; opacity: 0; display: none; transition: opacity .15s linear; }
+.font-options__options-list { position: absolute; top: calc(100% + 6px); left: -6px; right: -6px; z-index: 2; display: block; padding: 10px; border: 1px solid #dfe8ef; border-radius: 5px; background-color: #ffffff; opacity: 0; display: none; transition: opacity .15s linear; }
 .font-options__options-list:last-child { margin-bottom: 0; }
 .font-options__options-list:before, .font-options__options-list:after { content: ""; position: absolute; top: -20px; right: 25px; height: 0; width: 0; border: solid transparent; z-index: 10; }
 .font-options__options-list:before { border-bottom-color: white; border-width: 10px; z-index: 11; }
@@ -254,6 +254,9 @@
 @media screen and (max-width: 768px) { [data-balloon][data-balloon-length='xlarge']::before { white-space: normal; width: 90vw; } }
 [data-balloon][data-balloon-length='fit']::before { white-space: normal; width: 100%; }
 
+.font-options__wrapper .font-options__options-list { border-color: #B8DAEB; box-shadow: 0 10px 20px 0 rgba(0, 0, 0, 0.15); }
+.font-options__wrapper .font-options__option { margin-bottom: 12px; }
+.font-options__wrapper .font-options__option label { display: block; margin-bottom: 6px; }
 .font-options__wrapper [type=checkbox]:checked ~ .font-options__options-list { opacity: 1; display: block; }
 
 input.customify_font_tooltip { display: none; }
