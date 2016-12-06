@@ -451,7 +451,7 @@ $background-hover 	: #f5fcff;
 
 	.font-options__options-list {
 		position: absolute;
-		top: calc(100% + 10px);
+		top: calc(100% + 6px);
 		left: -6px;
 		right: -6px;
 		z-index: 2;
@@ -1411,9 +1411,25 @@ li#customize-control-site_logo {
 //    FONT Field
 //------------------------------------*/
 
-.font-options__wrapper [type=checkbox]:checked ~ .font-options__options-list {
-	opacity: 1;
-	display: block;
+.font-options__wrapper {
+
+	.font-options__options-list {
+		border-color: #B8DAEB;
+		box-shadow: 0 10px 20px 0 rgba(0,0,0,0.15);
+	}
+
+	.font-options__option {
+		margin-bottom: 12px;
+		label {
+			display: block;
+			margin-bottom: 6px;
+		}
+	}
+
+	[type=checkbox]:checked ~ .font-options__options-list {
+		opacity: 1;
+		display: block;
+	}
 }
 
 input.customify_font_tooltip {
