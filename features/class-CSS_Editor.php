@@ -40,14 +40,16 @@ class Customify_CSS_Live_Editor {
 	}
 
 	function enqueue_admin_customizer_styles() {
-		if ( ! apply_filters( 'customify_css_live_editor_enabled', true ) ) {
-			return ;
-		}
 
 		$dir = plugin_dir_url( __FILE__ );
 		$dir = rtrim( $dir, 'features/' );
 
 		wp_register_script( 'customify-ace-editor', $dir . '/js/ace/ace.js', array( 'jquery' ), false, true );
+
+		if ( ! apply_filters( 'customify_css_live_editor_enabled', true ) ) {
+			return ;
+		}
+
 		wp_enqueue_script( 'live-css-editor', $dir . '/js/live_css_editor.js', array( 'customify-ace-editor' ), false, true );
 	}
 
