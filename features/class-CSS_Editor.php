@@ -44,7 +44,7 @@ class Customify_CSS_Live_Editor {
 		$dir = plugin_dir_url( __FILE__ );
 		$dir = rtrim( $dir, 'features/' );
 
-		wp_register_script( 'customify-ace-editor', $dir . '/js/ace/ace.js', array( 'jquery' ), false, true );
+		wp_enqueue_script( 'customify-ace-editor', $dir . '/js/ace/ace.js', array( 'jquery' ), false, true );
 
 		if ( ! apply_filters( 'customify_css_live_editor_enabled', true ) ) {
 			return ;
