@@ -3,7 +3,7 @@ var plugin = 'customify',
 	dest_CSS = './css/',
 
 	gulp 		= require('gulp'),
-	sass 		= require('gulp-ruby-sass'),
+	sass 		= require('gulp-sass'),
 	prefix 		= require('gulp-autoprefixer'),
 	exec 		= require('gulp-exec'),
 	replace 	= require('gulp-replace'),
@@ -13,7 +13,6 @@ var plugin = 'customify',
 	beautify 	= require('gulp-beautify'),
 	csscomb 	= require('gulp-csscomb'),
 	cmq 		= require('gulp-combine-media-queries'),
-	chmod 		= require('gulp-chmod'),
 	fs          = require('fs'),
 	rtlcss 		= require('rtlcss'),
 	postcss 	= require('gulp-postcss'),
@@ -59,8 +58,7 @@ gulp.task('styles', function () {
 		.pipe(sass({'sourcemap': true, style: 'expanded'}))
 		.pipe(prefix("last 1 version", "> 1%", "ie 8", "ie 7"))
 		.pipe(csscomb())
-		.pipe(chmod(644))
-        .pipe(gulp.dest(dest_CSS))
+        .pipe(gulp.dest(dest_CSS, {"mode": "0644"}))
 });
 
 gulp.task('styles-watch', function () {
@@ -72,8 +70,7 @@ gulp.task('scripts', function () {
 	return gulp.src(jsFiles)
 		.pipe(concat('main.js'))
 		.pipe(beautify({indentSize: 2}))
-		.pipe(chmod(644))
-		.pipe(gulp.dest('./assets/js/'));
+		.pipe(gulp.dest('./assets/js/', {"mode": "0644"}));
 });
 
 gulp.task('scripts-watch', function () {

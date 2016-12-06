@@ -311,22 +311,27 @@
 
 			// Handle the section tabs (ex: Layout | Fonts | Colors)
 			(function() {
-				var $navs = $( '.js-section-navigation' ),
-					$header = $( '.wp-full-overlay-header');
+				var $navs = $( '.js-section-navigation' );
 
 				$navs.each( function () {
 					var $nav = $( this );
+					var $title = $nav.parents( '.accordion-section-content' ).find( '.customize-section-title' );
 
-					var $sidebar =  $nav.parents( '.accordion-section-content' ),
-						$description = $sidebar.find('.customize-section-description-container');
+					$title.append( $nav ).parent().addClass( 'has-nav' );
+				});
 
-					$sidebar.on( 'scroll', function() {
-						if( ( $description.offset().top + $description.outerHeight() ) <= $header.height() ) {
-							$nav.addClass( 'is--pinned' ).css( 'top', $header.height() ).css( 'width', $header.outerWidth() );
-						} else {
-							$nav.removeClass('is--pinned').css('top', 0);
-						}
-					});
+				$('.js-section-navigation a').on( 'click', function(e) {
+					e.preventDefault();
+
+					var $sidebar = $('.wp-full-overlay-sidebar-content');
+					var $parent = $(this).parents( '.accordion-section-content' );
+					var href = $.attr(this, 'href');
+
+					if ( href != '#' ) {
+						$sidebar.animate({
+							scrollTop: $( $.attr(this, 'href') ).position().top - $parent.find( '.customize-section-title' ).outerHeight()
+						}, 500);
+					}
 				});
 			})();
 		});
