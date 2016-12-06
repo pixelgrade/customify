@@ -81,7 +81,7 @@ Ace Editor | Yes [with classes](#live_preview_with_classes) | An ace editor that
 Color | Yes | A simple color picker
 Range | Yes | The default html5 range input
 Font | Custom Live Preview | A complete font selector with Live Preview, google fonts, filtrable theme fonts and custom callbacks 
-Typography | No | This is an awesome font selectorbut it will be soon depricated, use Font instead
+Typography | No | This is a font selector but it will be soon depricated, use Font instead
 Select | No | The standard HTML select
 Radio | No |
 Checkbox | No | 
@@ -395,7 +395,7 @@ Just add this section in your config
 
 ### Font Selector<a name="font_selector"></a>
 
-In 1.5.0 We introduced the new font selector, it works with live preview only and it has this possible configs:
+In 1.3.0 We introduced the new font selector, it works with live preview only and it has this possible configs:
 
 ```
 'headings_font' => array(
