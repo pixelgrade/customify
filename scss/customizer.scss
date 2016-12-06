@@ -27,6 +27,8 @@ $fields_spacing 		: 24px;
 $fields_border-radius	: 4px;
 $fields_border-color	: #B8DAEB;
 
+$background-hover 	: #f5fcff;
+
 
 
 
@@ -48,7 +50,6 @@ $fields_border-color	: #B8DAEB;
 
 
 .control-section:not(.control-section-themes) .customize-control {
-	// float: none;
 	padding: 0px;
     width:100%;
 	min-height: auto;
@@ -57,21 +58,43 @@ $fields_border-color	: #B8DAEB;
 
 // Header – Close + Save Controls
 #customize-header-actions {
-	border-bottom: 0;
+	// border-bottom: 0;
 }
 
 // Temporary Fix to Make "Close" button align with the "Back"
 .customize-controls-close {
 	width: 48px;
+    height: 44px;
+	color: #7da9c3;
+	background: #ffffff;
+	border-top: none;
+	border-right-color: $borders;
+
+	&:focus, &:hover {
+		background: $background-hover;
+	}
+	
+	// "X" Icon
+	&:before {
+		top: 0px;
+	}
 }
 
 // Remove Accordion Section Title Margin
 #customize-controls .customize-info {
-	margin-bottom: 0;
+	// margin-bottom: 0;
+	border-bottom-color: $borders;
 }
 
 .customize-panel-back, .customize-section-back {
 	height: 74px;
+	color: #7da9c3;
+	border-right-color: $borders;
+
+	&:hover, &:focus {
+		border-left-color: $background-hover;
+		background: $background-hover;
+	}
 }
 
 
@@ -87,8 +110,33 @@ $fields_border-color	: #B8DAEB;
 	.customize-section-title {
 		margin-top: -$container-spacing;
 		margin-right: -$container-spacing;
-		margin-left: -$container-spacing;
+		// margin-left: -$container-spacing;
 	}
+	
+	.control-panel-content {
+		.control-section:nth-child(2),
+		.control-section:nth-child(3) {
+			border-top: none;
+		}
+
+		// Select the Second to Last Element
+		// https://css-tricks.com/useful-nth-child-recipies/
+		.control-section:nth-last-child(2) {
+			border-bottom: 1px solid $borders;
+		}
+	}
+
+	#accordion-section-add_menu {
+		text-align: right;
+		overflow: visible;
+
+		.add-menu-toggle {
+		 	float: none;
+		}
+	}
+
+
+
 }
 
 #customize-controls .description {
@@ -110,6 +158,23 @@ $fields_border-color	: #B8DAEB;
 	margin-bottom: $fields-spacing;
 }
 
+// Active Themes Section
+#accordion-section-themes {
+		+.control-section {
+			border-top: none;
+		}
+}
+
+// Subsection Info Title
+#customize-controls {
+	.panel-meta.customize-info {
+		 .accordion-section-title {
+		 	border-top: none;
+		 	height: 74px;
+		 }
+	}
+}
+
 
 
 
@@ -125,7 +190,9 @@ $fields_border-color	: #B8DAEB;
 .wp-core-ui {
 
 	// Primary & Secondary Buttons
-	 .button:not(.theme-details), .button-primary, .button-secondary {
+	 .button:not(.theme-details):not(.collapse-sidebar), 
+	 .button-primary, 
+	 .button-secondary {
 	 	width: auto;
 	 	padding: 6px 20px;
 
@@ -313,6 +380,7 @@ $fields_border-color	: #B8DAEB;
 		border-right: 1px solid $borders;
 
 		text-align: center;
+		text-decoration: none;
 
 		transition: background-color .15s ease-in-out;
 

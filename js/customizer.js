@@ -308,8 +308,8 @@
 				customifyFoldingFields();
 			}, 1000);
 
-			// Handle the section tabs (ex: Layout | Fonts | Colors)
 
+			// Handle the section tabs (ex: Layout | Fonts | Colors)
 			(function() {
 				var $navs = $( '.js-section-navigation' ),
 					$header = $( '.wp-full-overlay-header');
