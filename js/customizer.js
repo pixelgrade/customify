@@ -947,7 +947,6 @@
 
 
 	var customifyFontSelect = (function () {
-
 		var wpapi = null,
 			fontSelector = '.customify_font_family',
 			selectPlacehoder = "Select a font family",
