@@ -428,7 +428,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 	}
 
 	function display_text_decoration_field( $current_value ) {
-		if ( ! empty( $this->fields['text-decoration'] && $this->fields['text-decoration'] ) ) {
+		if ( ! empty( $this->fields['text-decoration'] ) && $this->fields['text-decoration'] ) {
 			$td_val = isset( $current_value->text_decoration ) ? $current_value->text_decoration : 'none';?>
 			<li class="customify_text_decoration_wrapper customize-control font-options__option">
 				<label><?php esc_html_e( 'Text Decoration', 'customify' ); ?></label>
