@@ -18,6 +18,9 @@ class Customify_CSS_Live_Editor {
 		if ( function_exists( 'wp_custom_css_cb' ) ) {
 			remove_action( 'wp_head', 'wp_custom_css_cb', 11 );
 			add_action( $load_location, 'wp_custom_css_cb', 999999999 );
+		} else {
+			// keep this for wordpress versions lower than 4.7
+			add_action( $load_location, array( $this, 'output_dynamic_style' ), 999999999 );
 		}
 
 		//Check the WordPress version and if there are known problems disable it
