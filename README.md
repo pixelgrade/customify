@@ -1,4 +1,4 @@
-Customify [![Build Status](https://travis-ci.org/pixelgrade/customify.svg?branch=dev)](https://travis-ci.org/pixelgrade/customify)
+Customify [![Build Status](https://travis-ci.org/pixelgrade/customify.svg?branch=wporg)](https://travis-ci.org/pixelgrade/customify)
 ========
 **A Theme Customizer Booster**
 
