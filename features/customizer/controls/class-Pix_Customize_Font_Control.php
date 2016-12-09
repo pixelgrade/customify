@@ -159,7 +159,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 		<div class="font-options__wrapper">
 			<?php
 			$this->display_value_holder( $current_value );
-			$this->display_field_title( $font_family );
+			$this->display_field_title( $font_family, esc_attr( $this->CSSID ) );
 			?>
 
 			<input type="checkbox" class="customify_font_tooltip"
@@ -167,7 +167,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 
 			<ul class="font-options__options-list">
 				<li class="font-options__option customize-control">
-					<select class="customify_font_family"<?php echo $select_data; ?> data-field="font_family">
+					<select id="select_font_font_family_<?php echo esc_attr( $this->CSSID ); ?>" class="customify_font_family"<?php echo $select_data; ?> data-field="font_family">
 						<?php
 						// Allow others to add options here
 						do_action( 'customify_font_family_before_options', $font_family, $current_value );
@@ -225,6 +225,13 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 				$this->display_text_decoration_field( $current_value ); ?>
 			</ul>
 		</div>
+		<script>
+			// Update the font name in the font field label
+			jQuery( '#select_font_font_family_<?php echo esc_attr( $this->CSSID ); ?>' ).change( function(){
+				var newValue = jQuery( '#select_font_font_family_<?php echo esc_attr( $this->CSSID ); ?>' ).val();
+				jQuery( '#font_name_<?php echo esc_attr( $this->CSSID ); ?>' ).html( newValue );
+			});
+		</script>
 
 		<?php if ( ! empty( $this->description ) ) : ?>
 			<span class="description customize-control-description"><?php echo $this->description; ?></span>
@@ -243,12 +250,12 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 		       data-default="<?php echo esc_attr( PixCustomifyPlugin::encodeURIComponent( json_encode( $current_value ) ) ); ?>"/>
 	<?php }
 
-	function display_field_title( $font_family ) { ?>
+	function display_field_title( $font_family, $font_name_id ) { ?>
 		<label class="font-options__head  select" for="tooltip_toogle_<?php echo esc_attr( $this->CSSID ); ?>">
 			<?php if ( ! empty( $this->label ) ) : ?>
 				<span class="font-options__option-title"><?php echo esc_html( $this->label ); ?></span>
 			<?php endif; ?>
-			<span class="font-options__font-title"><?php echo $font_family; ?></span>
+			<span class="font-options__font-title" id="font_name_<?php echo $font_name_id; ?>"><?php echo $font_family; ?></span>
 		</label>
 	<?php }
 
