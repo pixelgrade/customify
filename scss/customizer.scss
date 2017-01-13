@@ -135,8 +135,9 @@ $background-hover 	: #f5fcff;
 		}
 	}
 
-
-
+	.customize-pane-child.open {
+		height: 100%;
+	}
 }
 
 #customize-controls .description {
