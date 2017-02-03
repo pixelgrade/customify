@@ -18,6 +18,9 @@ class Customify_CSS_Live_Editor {
 		if ( function_exists( 'wp_custom_css_cb' ) ) {
 			remove_action( 'wp_head', 'wp_custom_css_cb', 11 );
 			add_action( $load_location, 'wp_custom_css_cb', 999999999 );
+		} else {
+			// keep this for wordpress versions lower than 4.7
+			add_action( $load_location, array( $this, 'output_dynamic_style' ), 999999999 );
 		}
 
 		//Check the WordPress version and if there are known problems disable it
@@ -40,14 +43,16 @@ class Customify_CSS_Live_Editor {
 	}
 
 	function enqueue_admin_customizer_styles() {
-		if ( ! apply_filters( 'customify_css_live_editor_enabled', true ) ) {
-			return ;
-		}
 
 		$dir = plugin_dir_url( __FILE__ );
 		$dir = rtrim( $dir, 'features/' );
 
-		wp_register_script( 'customify-ace-editor', $dir . '/js/ace/ace.js', array( 'jquery' ), false, true );
+		wp_enqueue_script( 'customify-ace-editor', $dir . '/js/ace/ace.js', array( 'jquery' ), false, true );
+
+		if ( ! apply_filters( 'customify_css_live_editor_enabled', true ) ) {
+			return ;
+		}
+
 		wp_enqueue_script( 'live-css-editor', $dir . '/js/live_css_editor.js', array( 'customify-ace-editor' ), false, true );
 	}
 
