@@ -11,7 +11,7 @@ class Customify_Font_Selector extends PixCustomifyPlugin {
 	protected $parent = null;
 	protected static $typo_settings = null;
 	protected static $options_list = null;
-	protected static $theme_fonts = null;
+	static $theme_fonts = null;
 
 	function __construct( $parent ) {
 		add_action( 'customize_preview_init', array( $this, 'enqueue_admin_customizer_preview_assets' ), 10 );
@@ -207,7 +207,6 @@ class Customify_Font_Selector extends PixCustomifyPlugin {
 		if ( isset( $font['load_all_weights'] ) && $font['load_all_weights'] == 'true' ) {
 			$load_all_weights = true;
 		}
-
 		$selected_variant = '';
 		if ( ! empty( $value['selected_variants'] ) ) {
 			if ( is_array( $value['selected_variants'] ) ) {
@@ -237,14 +236,16 @@ class Customify_Font_Selector extends PixCustomifyPlugin {
 							$selected_variant['font-style'] = 'normal !important';
 						}
 
+						$italic_font = false;
+
 						// output the font weight, if available
 						if ( ! empty( $selected_variant['font-weight'] ) ) {
 							echo ": " . $selected_variant['font-weight'] . ";\n";
-							$this->display_property( 'font-weight', $selected_variant['font-weight'] );
+							$italic_font = $this->display_weight_property( $selected_variant['font-weight'] );
 						}
 
-						// output the font style, if available
-						if ( ! empty( $selected_variant['font-style'] ) ) {
+						// output the font style, if available and if it wasn't displayed already
+						if ( ! $italic_font && ! empty( $selected_variant['font-style'] ) ) {
 							$this->display_property( 'font-style', $selected_variant['font-style'] );
 						}
 					}
@@ -258,21 +259,17 @@ class Customify_Font_Selector extends PixCustomifyPlugin {
 						$italic_font = false;
 
 						//determine if this is an italic font (the $weight_and_style is usually like '400' or '400italic' )
-						if ( strpos( $weight_and_style, 'italic' ) !== false ) {
-							$weight_and_style = str_replace( 'italic', '', $weight_and_style);
-							$italic_font = true;
-						}
-
 						if ( ! empty( $weight_and_style ) ) {
 							//a little bit of sanity check - in case it's not a number
 							if( $weight_and_style === 'regular' ) {
 								$weight_and_style = 'normal';
 							}
-							$this->display_property( 'font-weight', $weight_and_style );
+							$italic_font = $this->display_weight_property( $weight_and_style );
 						}
 
-						if ( $italic_font ) {
-							$this->display_property( 'font-style', 'italic' );
+						// output the font style, if available
+						if ( ! $italic_font && ! empty( $selected_variant['font-style'] ) ) {
+							$this->display_property( 'font-style', $selected_variant['font-style'] );
 						}
 					}
 				} else if (  isset( $value['font-family'] ) ) {
@@ -280,7 +277,7 @@ class Customify_Font_Selector extends PixCustomifyPlugin {
 				}
 
 				if ( ! empty( $value['font_weight'] ) ) {
-					$this->display_property( 'font-weight', $value['font_weight'] );
+					$italic_font = $this->display_weight_property( $value['font_weight'] );
 				}
 
 				if ( ! empty( $value['font_size'] ) ) {
@@ -358,6 +355,24 @@ class Customify_Font_Selector extends PixCustomifyPlugin {
 
 	function display_property( $property, $value, $unit = '' ) {
 		echo "\n" . $property . ": " . $value . $unit . ";\n";
+	}
+
+	// well weight sometimes comes from google as 600italic which in CSS syntax should come in two separate properties
+	function display_weight_property( $value ) {
+		$has_style = false;
+
+		if ( strpos( $value, 'italic' ) !== false ) {
+
+			$value = str_replace( 'italic', '', $value );
+			echo "\n" . 'font-weight' . ": " . $value . ";\n";
+			echo "\n" . 'font-style' . ": italic;\n";
+			$has_style = true;
+		} else {
+			echo "\n" . 'font-weight' . ": " . $value . ";\n";
+		}
+
+
+		return $has_style;
 	}
 
 	function enqueue_admin_customizer_preview_assets() {
