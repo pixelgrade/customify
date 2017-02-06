@@ -324,11 +324,6 @@
     border-right: 0;
 }
 
-.customize-section-description-container + .customize-control
-{
-    margin-bottom: 0;
-}
-
 #customize-controls .customize-info.is-sticky.is-sticky,
 #customize-controls .customize-section-title.is-sticky.is-sticky
 {

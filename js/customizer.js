@@ -317,6 +317,7 @@
 					var $nav = $( this );
 					var $title = $nav.parents( '.accordion-section-content' ).find( '.customize-section-title' );
 
+					$nav.closest('.customize-control').addClass('screen-reader-text');
 					$title.append( $nav ).parent().addClass( 'has-nav' );
 				});
 
