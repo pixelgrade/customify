@@ -339,6 +339,7 @@
 		/**
 		 * This function will search for all the interdependend fields and make a bound between them.
 		 * So whenever a target is changed, it will take actions to the dependent fields.
+		 * @TOOD  this is still written in a barbaric way, refactor when needed
 		 */
 		var customifyFoldingFields = function () {
 
@@ -347,7 +348,7 @@
 			}
 
 			/**
-			 * Let's iterate through all the customify settings and gather all the fields that have a "show_on"
+			 * Let's iterate through all the customify settings and gather all the fields that have a "show_if"
 			 * property set.
 			 *
 			 * At the end `targets` will hold a list of [ target : [field, field,...], ... ]
@@ -369,31 +370,58 @@
 
 			var IS = $.extend({}, $.fn.reactor.helpers);
 
-			var process_a_target = function ( parent_id, field ) {
+			var bind_folding_events = function ( parent_id, field, relation ) {
 
-				if ( _.isUndefined(field[0]) ) {
-					return; // no id, no fun
+				var key = null;
+
+				if ( _.isString(field) ) {
+					key = field;
+				} else if ( ! _.isUndefined(field.id) ) {
+					key = field.id;
+				} else if ( isString( field[0] ) ) {
+					key = field[0];
+				} else {
+					return; // no key, no fun
 				}
 
-				var key = field[0],
-					value = 1, // by default we use 1 the most used value for checboxes or inputs
+				var value = 1, // by default we use 1 the most used value for checboxes or inputs
 					compare = '==', // ... ye
-					action = "show"; // can only be `show` or `hide`
+					action = "show",
+					between = [0,1]; // can only be `show` or `hide`
 
 				var target_key = customify_settings.options_name + '[' + key + ']';
+
 				var target_type = customify_settings.settings[target_key].type;
 
-
-				if ( !_.isUndefined(field[1]) ) {
+				// we support the usual syntax like a config array like `array( 'id' => $id, 'value' => $value, 'compare' => $compare )`
+				// but we also support a non-associative array like `array( $id, $value, $compare )`
+				if ( ! _.isUndefined ( field.value ) ) {
+					value = field.value;
+				} else if ( ! _.isUndefined( field[1] ) && ! _.isString(field[1]) ) {
 					value = field[1];
 				}
 
-				if ( !_.isUndefined(field[2]) ) {
+				if ( ! _.isUndefined(field.compare) ) {
+					compare = field.compare;
+				} else if ( ! _.isUndefined(field[2]) ) {
 					compare = field[2];
 				}
 
-				if ( !_.isUndefined(field[3]) ) {
+				if ( !_.isUndefined(field.action) ) {
+					action = field.action;
+				} else if ( !_.isUndefined(field[3]) ) {
 					action = field[3];
+				}
+
+				// a field can also overwrite the parent relation
+				if ( !_.isUndefined(field.relation) ) {
+					action = field.relation;
+				} else if ( !_.isUndefined(field[4]) ) {
+					action = field[4];
+				}
+
+				if ( !_.isUndefined(field.between) ) {
+					between = field.between;
 				}
 
 				/**
@@ -401,20 +429,46 @@
 				 */
 				var target_selector = '[data-customize-setting-link="' + customify_settings.options_name + '[' + key + ']"]';
 
-				if ( target_type == 'checkbox' ) {
-					$(parent_id).reactIf(target_selector, function () {
-						return $(this).is(':checked') == value;
-					});
-				} else if ( target_type == 'radio' || target_type == 'radio_image' ) {
-					$(parent_id)
-						.reactIf(target_selector, function () {
-							return $(target_selector + ':checked').val() == value;
+				switch ( target_type ) {
+					case 'checkbox':
+						$(parent_id).reactIf(target_selector, function () {
+							return $(this).is(':checked') == value;
 						});
-				} else {
-					$(parent_id)
-						.reactIf(target_selector, function () {
-							return $(target_selector).val() == value;
-						});
+						break;
+
+					case 'radio':
+					case 'radio_image':
+
+						// in case of an array of values we use the ( val in array) condition
+						if ( _.isObject(value) ) {
+							$(parent_id).reactIf(target_selector, function () {
+								return ( value.indexOf( $(target_selector + ':checked').val() ) !== -1 );
+							});
+						} else { // in any other case we use a simple == comparison
+							$(parent_id).reactIf(target_selector, function () {
+								return $(target_selector + ':checked').val() == value;
+							});
+						}
+						break;
+
+					case 'range':
+						var x = IS.Between(between[0], between[1]);
+
+						$(parent_id).reactIf(target_selector, x);
+						break;
+
+					default:
+						// in case of an array of values we use the ( val in array) condition
+						if ( _.isObject(value) ) {
+							$(parent_id).reactIf(target_selector, function () {
+								return ( value.indexOf($(target_selector).val()) !== -1 );
+							});
+						} else { // in any other case we use a simple == comparison
+							$(parent_id).reactIf(target_selector, function () {
+								return $(target_selector).val() == value;
+							});
+						}
+						break;
 				}
 
 				$(target_selector).trigger('change');
@@ -422,7 +476,6 @@
 			};
 
 			$.each(customify_settings.settings, function ( id, field ) {
-
 				/**
 				 * Here we have the id of the fields. but we know for sure that we just need his parent selector
 				 * So we just create it
@@ -431,19 +484,26 @@
 				parent_id = parent_id.replace(']', '');
 				parent_id = '#customize-control-' + parent_id + '_control';
 
+				// get only the fields that have a 'show_if' property
+				if ( field.hasOwnProperty('show_if') ) {
+					var relation = 'AND';
 
-				// get only the fields that have a 'show_on' property
-				if ( field.hasOwnProperty('show_on') && field.show_on.length > 0 ) {
+					if ( ! _.isUndefined( field.show_if.relation ) ) {
+						relation = field.show_if.relation;
+						// remove the relation property, we need the config to be array based only
+						delete field.show_if.relation;
+					}
 
 					/**
-					 * The 'show_on' can be a simple array with one target like: [ id, value, comparison, action ]
+					 * The 'show_if' can be a simple array with one target like: [ id, value, comparison, action ]
 					 * Or it could be an array of multiple targets and we need to process both cases
 					 */
-					if ( _.isString(field.show_on[0]) ) {
-						process_a_target(parent_id, field.show_on);
-					} else if ( _.isObject(field.show_on[0]) ) {
-						$.each(field.show_on, function ( i, j ) {
-							process_a_target(parent_id, j);
+
+					if ( ! _.isUndefined( field.show_if.id ) ) {
+						bind_folding_events(parent_id, field.show_if, relation );
+					} else if ( _.isObject( field.show_if ) ) {
+						$.each(field.show_if, function ( i, j ) {
+							bind_folding_events( parent_id, j, relation );
 						});
 					}
 				}
@@ -703,37 +763,6 @@
 			}
 		};
 
-		/**
-		 * Function to check if a value exists in an object
-		 * @param value
-		 * @param obj
-		 * @returns {boolean}
-		 */
-		var inObject = function ( value, obj ) {
-			for ( var k in obj ) {
-				if ( !obj.hasOwnProperty(k) ) continue;
-				if ( _.isEqual(obj[k], value) ) {
-					return true;
-				}
-			}
-			return false;
-		};
-
-		var maybeJsonParse = function ( value ) {
-			var parsed;
-
-			//try and parse it, with decodeURIComponent
-			try {
-				parsed = JSON.parse(decodeURIComponent(value));
-			} catch ( e ) {
-
-				// in case of an error, treat is as a string
-				parsed = value;
-			}
-
-			return parsed;
-		};
-
 		var customifyBackgroundJsControl = (function () {
 			"use strict";
 
@@ -923,6 +952,39 @@
 				init: init
 			}
 		})(jQuery);
+
+		/** HELPERS **/
+
+		/**
+		 * Function to check if a value exists in an object
+		 * @param value
+		 * @param obj
+		 * @returns {boolean}
+		 */
+		var inObject = function ( value, obj ) {
+			for ( var k in obj ) {
+				if ( !obj.hasOwnProperty(k) ) continue;
+				if ( _.isEqual(obj[k], value) ) {
+					return true;
+				}
+			}
+			return false;
+		};
+
+		var maybeJsonParse = function ( value ) {
+			var parsed;
+
+			//try and parse it, with decodeURIComponent
+			try {
+				parsed = JSON.parse(decodeURIComponent(value));
+			} catch ( e ) {
+
+				// in case of an error, treat is as a string
+				parsed = value;
+			}
+
+			return parsed;
+		};
 
 		var getUrlVars = function ( name ) {
 			var vars = [], hash;

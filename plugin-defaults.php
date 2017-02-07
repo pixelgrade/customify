@@ -3,7 +3,7 @@
 	# Hidden fields
 	'settings_saved_once'                   => '0',
 	# General
-	'values_store_mod'                => 'option',
+	'values_store_mod'                => 'theme_mod',
 
 	'typography' => true,
 	'typography_standard_fonts' => true,
