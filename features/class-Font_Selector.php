@@ -13,9 +13,12 @@ class Customify_Font_Selector extends PixCustomifyPlugin {
 	protected static $options_list = null;
 	static $theme_fonts = null;
 
+
 	function __construct( $parent ) {
+		global $pixcustomify_plugin;
 		add_action( 'customize_preview_init', array( $this, 'enqueue_admin_customizer_preview_assets' ), 10 );
-		$load_location = PixCustomifyPlugin::get_plugin_option( 'style_resources_location', 'wp_head' );
+
+		$load_location = $this::get_plugin_option( 'style_resources_location', 'wp_head' );
 		add_action( $load_location, array( $this, 'output_font_dynamic_style' ), 999999999 );
 
 		$this->parent      = $parent;
@@ -38,6 +41,16 @@ class Customify_Font_Selector extends PixCustomifyPlugin {
 			}
 		}
 		echo "</optgroup>";
+	}
+
+	function maybe_decode_value( $value ) {
+
+		$to_return = $this::decodeURIComponent( $value );
+		if ( is_string( $value ) ) {
+			$to_return = json_decode( wp_unslash( $to_return ), true );
+		}
+
+		return $to_return;
 	}
 
 	function output_font_dynamic_style() {
@@ -65,8 +78,8 @@ class Customify_Font_Selector extends PixCustomifyPlugin {
 				if ( isset( $font['load_all_weights'] ) && $font['load_all_weights'] == 'true' ) {
 					$load_all_weights = true;
 				}
-				$value = json_decode( wp_unslash( PixCustomifyPlugin::decodeURIComponent( $font['value'] ) ), true );
 
+				$value = $this->maybe_decode_value( $font['value'] );
 				$value = $this->validate_font_values( $value );
 
 				// in case the value is still null, try default value(mostly for google fonts)
@@ -143,9 +156,8 @@ class Customify_Font_Selector extends PixCustomifyPlugin {
 			if ( empty( $font['selector'] ) || empty( $font['value'] ) ) {
 				continue;
 			}
+			$value = $this->maybe_decode_value( $font['value'] );
 
-			$value = json_decode( PixCustomifyPlugin::decodeURIComponent( $font['value'] ), true );
-			// in case the value is still null, try default value(mostly for google fonts)
 			if ( $value === null ) {
 				$value = $this->get_font_defaults_value( $font['value'] );
 			}

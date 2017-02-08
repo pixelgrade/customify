@@ -35,6 +35,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 	 * @param array $args
 	 */
 	public function __construct( $manager, $id, $args = array() ) {
+		global $wp_customize;
 
 		self::$std_fonts = apply_filters( 'customify_filter_standard_fonts_list', array(
 			"Arial, Helvetica, sans-serif"                         => "Arial, Helvetica, sans-serif",
@@ -89,27 +90,15 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 		$this->settings = $settings;
 		$this->CSSID    = $this->get_CSS_ID();
 		$this->load_google_fonts();
-		$this->current_value = $this->value();
-	}
 
-	function validate_font_values( $values ) {
+		// since 4.7 all the customizer data is saved in a post type named changeset this is how we get it.
+		$changeset_data = $wp_customize->changeset_data();
 
-		foreach ( $values as $key => $value ) {
-
-			if ( strpos( $key, '-' ) !== false ) {
-				$new_key = str_replace( '-', '_', $key );
-
-				if ( $new_key === 'font_weight' ) {
-					$values[ 'selected_variants' ] = $value;
-					unset( $values[ 'font_weight' ] );
-				} else {
-					$values[ $new_key ] = $value;
-					unset( $values[ $key ] );
-				}
-			}
+		if ( isset( $changeset_data[$this->setting->id] ) ) {
+			$this->current_value = $changeset_data[$this->setting->id]['value'];
+		} else {
+			$this->current_value = $this->value();
 		}
-
-		return $values;
 	}
 
 	/**
@@ -154,13 +143,11 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 			$this->load_all_weights = $current_value->font_load_all_weights;
 
 			$select_data .= ' data-load_all_weights="true"';
-		}
-		?>
+		} ?>
 		<div class="font-options__wrapper">
 			<?php
 			$this->display_value_holder( $current_value );
-			$this->display_field_title( $font_family, esc_attr( $this->CSSID ) );
-			?>
+			$this->display_field_title( $font_family, esc_attr( $this->CSSID ) ); ?>
 
 			<input type="checkbox" class="customify_font_tooltip"
 			       id="tooltip_toogle_<?php echo esc_attr( $this->CSSID ); ?>">
@@ -654,6 +641,26 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 		}
 
 		return $to_return;
+	}
+
+	function validate_font_values( $values ) {
+
+		foreach ( $values as $key => $value ) {
+
+			if ( strpos( $key, '-' ) !== false ) {
+				$new_key = str_replace( '-', '_', $key );
+
+				if ( $new_key === 'font_weight' ) {
+					$values[ 'selected_variants' ] = $value;
+					unset( $values[ 'font_weight' ] );
+				} else {
+					$values[ $new_key ] = $value;
+					unset( $values[ $key ] );
+				}
+			}
+		}
+
+		return $values;
 	}
 
 	private function get_CSS_ID( $id = null ) {

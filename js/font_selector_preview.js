@@ -22,6 +22,7 @@
 				api( key, function (setting) {
 					setting.bind(function (to) {
 						var $values =  maybeJsonParse( to );
+
 						if ( typeof $values.font_family !== "undefined" ) {
 							maybeLoadFontFamily($values);
 						}
@@ -97,7 +98,8 @@
 
 			var field = customify_settings.settings[ID];
 			var output = '';
-			if ( typeof field.callback !== "undefined" && typeof window[field.callback] === "function" ) {
+			debugger;
+			if ( typeof window !== "undefined" && typeof field.callback !== "undefined" && typeof window[field.callback] === "function" ) {
 				output = window[field.callback]( $values, field );
 			} else {
 				output = field.selector + "{\n";
