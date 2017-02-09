@@ -16,7 +16,6 @@ class Customify_Font_Selector extends PixCustomifyPlugin {
 
 	function __construct( $parent ) {
 		global $pixcustomify_plugin;
-		add_action( 'customize_preview_init', array( $this, 'enqueue_admin_customizer_preview_assets' ), 10 );
 
 		$load_location = $this::get_plugin_option( 'style_resources_location', 'wp_head' );
 		add_action( $load_location, array( $this, 'output_font_dynamic_style' ), 999999999 );
@@ -385,11 +384,5 @@ class Customify_Font_Selector extends PixCustomifyPlugin {
 
 
 		return $has_style;
-	}
-
-	function enqueue_admin_customizer_preview_assets() {
-		$dir = plugin_dir_url( __FILE__ );
-		$dir = rtrim( $dir, 'features/' );
-		wp_enqueue_script( 'font_selector_preview', $dir . '/js/font_selector_preview.js', array( 'jquery' ), false, true );
 	}
 }
