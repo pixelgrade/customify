@@ -645,6 +645,10 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 
 	function validate_font_values( $values ) {
 
+		if ( empty( $values ) ) {
+			return array();
+		}
+
 		foreach ( $values as $key => $value ) {
 
 			if ( strpos( $key, '-' ) !== false ) {

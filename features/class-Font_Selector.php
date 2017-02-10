@@ -79,6 +79,7 @@ class Customify_Font_Selector extends PixCustomifyPlugin {
 				}
 
 				$value = $this->maybe_decode_value( $font['value'] );
+
 				$value = $this->validate_font_values( $value );
 
 				// in case the value is still null, try default value(mostly for google fonts)
