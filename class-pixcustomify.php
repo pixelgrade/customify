@@ -67,8 +67,6 @@ class PixCustomifyPlugin {
 
 	protected static $media_queries = array();
 
-	protected static $customizer_values;
-
 	protected static $opt_name;
 
 	protected static $typo_settings;
@@ -132,8 +130,6 @@ class PixCustomifyPlugin {
 		// load custom modules
 		include_once( self::get_base_path() . '/features/class-CSS_Editor.php' );
 		include_once( self::get_base_path() . 'features/class-Font_Selector.php' );
-
-		self::check_for_customizer_values();
 
 		// Load plugin text domain
 		add_action( 'init', array( $this, 'load_plugin_textdomain' ) );
@@ -324,7 +320,7 @@ class PixCustomifyPlugin {
 	 * Customizer admin styles
 	 */
 	function enqueue_admin_customizer_styles() {
-		wp_enqueue_style( 'select2', plugins_url( 'js/select2/css/select2.css', __FILE__ ), array(), $this->version );
+		wp_enqueue_style( 'customify_select2', plugins_url( 'js/select2/css/select2.css', __FILE__ ), array(), $this->version );
 		wp_enqueue_style( 'customify_style', plugins_url( 'css/customizer.css', __FILE__ ), array(), $this->version );
 	}
 
@@ -333,11 +329,11 @@ class PixCustomifyPlugin {
 	 */
 	function enqueue_admin_customizer_scripts() {
 
-		wp_enqueue_script( 'select2', plugins_url( 'js/select2/js/select2.js', __FILE__ ), array( 'jquery' ), $this->version );
+		wp_enqueue_script( 'customify_select2', plugins_url( 'js/select2/js/select2.js', __FILE__ ), array( 'jquery' ), $this->version );
 		wp_enqueue_script( 'jquery-react', plugins_url( 'js/jquery-react.js', __FILE__ ), array( 'jquery' ), $this->version );
 		wp_enqueue_script( $this->plugin_slug . '-customizer-scripts', plugins_url( 'js/customizer.js', __FILE__ ), array(
 			'jquery',
-			'select2',
+			'customify_select2',
 			'underscore',
 		), $this->version );
 
@@ -1638,25 +1634,6 @@ class PixCustomifyPlugin {
 
 	/** == Helpers == */
 
-
-	protected static function check_for_customizer_values() {
-		if ( isset( $_POST['customized'] ) && $_POST['customized'] !== '{}' ) {
-			$the_value               = $_POST['customized'];
-			self::$customizer_values = json_decode( $the_value, true );
-
-			/**
-			 * if still empty, use stripslashes_deep to ensure compatibility with 5.2
-			 * http://stackoverflow.com/questions/28698165/json-data-cannot-be-accessed-in-php-version-5-2-17
-			 */
-			if ( empty( self::$customizer_values ) ) {
-				$stripped_value          = stripslashes_deep( $the_value );
-				self::$customizer_values = json_decode( $stripped_value, true );
-			}
-		} else {
-			self::$customizer_values = false;
-		}
-	}
-
 	protected static function get_current_values() {
 		$store_type = self::get_plugin_option( 'values_store_mod', 'option' );
 		if ( $store_type === 'option' ) {
@@ -1706,9 +1683,16 @@ class PixCustomifyPlugin {
 	}
 
 	protected static function get_value( $option ) {
+		global $wp_customize;
 
-		if ( isset( self::$customizer_values[ self::$opt_name . '[' . $option . ']' ] ) ) {
-			return self::$customizer_values[ self::$opt_name . '[' . $option . ']' ];
+		if ( ! empty( $wp_customize ) && method_exists( $wp_customize, 'get_setting') ) {
+
+			$option_key = self::$opt_name . '[' . $option . ']';
+			$setting = $wp_customize->get_setting( $option_key );
+			if ( ! empty( $setting ) ) {
+				$value = $setting->value();
+				return $value;
+			}
 		}
 
 		// shim

@@ -189,26 +189,10 @@ new text. I bet this is awesome.
 
 ### Conditional fields<a name="conditional_fields"></a>
 
-Once with 1.2.3 version we've added support for conditional fields. This means that you can use the `show_on` argument
+Once with 1.2.3 version we've added support for conditional fields. This means that you can use the `show_if` argument
 to display a field only when another field has a certain value.
-For example this read more label will be visible only when the first checkbox will be active
-```
-'enable_read_more_button' => array(
-    'type' => 'checkbox',
-    'label' => esc_html__( 'Enable Read More Button', 'heap' ),
-    'default' => 1,
-),
-'read_more_button_label' => array(
-    'type' => 'text',
-    'label' => esc_html__( 'Read More Button Text', 'heap' ),
-    'default' => '+ READ MORE',
-    'show_on' => array( 'enable_read_more_button' ),
-)
-```
-By default, this field compares with '1' value, if you need another value, just add your preference like this
 
-`'show_on' => array( 'enable_read_more_button', 'custom_value' )`
-
+This [gist](https://gist.github.com/andreilupu/3a71618fb6d2ea2c2b1429544c667cd1) shows how this can be done.
 
 ### Presets<a name="presets_title"></a>
 
@@ -474,3 +458,12 @@ function theme_add_customify_theme_fonts ( $fonts ) {
 }
 add_filter( 'customify_theme_fonts', 'theme_add_customify_theme_fonts' );
 ```
+
+## License
+
+## Thanks!
+This plugin also includes the following libraries:
+
+* Select 2 - https://select2.github.io/
+* Ace Editor - https://ace.c9.io/
+* React jQuery Plugin - https://github.com/natedavisolds/jquery-react

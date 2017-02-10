@@ -66,5 +66,9 @@ require_once( plugin_dir_path( __FILE__ ) . 'class-pixcustomify.php' );
 register_activation_hook( __FILE__, array( 'PixCustomifyPlugin', 'activate' ) );
 //register_deactivation_hook( __FILE__, array( 'customifyPlugin', 'deactivate' ) );
 
-global $pixcustomify_plugin;
-$pixcustomify_plugin = PixCustomifyPlugin::get_instance();
+
+function customify_init_plugin () {
+	global $pixcustomify_plugin;
+	$pixcustomify_plugin = PixCustomifyPlugin::get_instance();
+}
+add_action('plugins_loaded', 'customify_init_plugin', 20 );

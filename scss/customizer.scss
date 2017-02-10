@@ -135,8 +135,9 @@ $background-hover 	: #f5fcff;
 		}
 	}
 
-
-
+	.customize-pane-child.open {
+		height: 100%;
+	}
 }
 
 #customize-controls .description {
@@ -372,10 +373,6 @@ $background-hover 	: #f5fcff;
 			border-right: 0;
 		}
 	}
-}
-
-.customize-section-description-container + .customize-control {
-	margin-bottom: 0;
 }
 
 #customize-controls .customize-info,
