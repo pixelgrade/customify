@@ -75,7 +75,8 @@ class Pix_Customize_Background_Control extends Pix_Customize_Control {
 				$this->value['media']['height']  = $img[2];
 			}
 
-			if ( ! isset( $this->value['media'] ) || empty( $this->value['media'] ) ) {
+			if ( ! is_array( $this->value ) || ! isset( $this->value['media'] ) || empty( $this->value['media'] ) ) {
+				$this->value = array();
 				$media_array          = array(
 					'id'        => '',
 					'height'    => '',
