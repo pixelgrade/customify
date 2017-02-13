@@ -38,9 +38,9 @@ class Pix_Customize_Import_Demo_Data_Control extends Pix_Customize_Control {
 					) );
 
 				} else {
-					esc_html_e( 'Please wait a few minutes (between 1 and 3 minutes usually, but depending on your hosting it can take longer) and ', 'customify' ); ?>
-					<strong><?php esc_html_e( 'don\'t reload the page', 'customify' ); ?></strong>
-					<?php esc_html__( 'You will be notified as soon as the import has finished!', 'customify' );
+					esc_html_e( 'Please wait a few minutes (between 1 and 3 minutes usually, but depending on your hosting it can take longer) and ', 'customify_txtd' ); ?>
+					<strong><?php esc_html_e( 'don\'t reload the page', 'customify_txtd' ); ?></strong>
+					<?php esc_html__( 'You will be notified as soon as the import has finished!', 'customify_txtd' );
 				} ?>
 			</div>
 		</div>

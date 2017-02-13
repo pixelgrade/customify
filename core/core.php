@@ -191,7 +191,7 @@ class pixcustomify {
 	}
 
 	/** @var string the translation text domain */
-	protected static $textdomain = 'pixcustomify_txtd';
+	protected static $textdomain = 'customify_txtd';
 
 	/**
 	 * @return string text domain
@@ -210,7 +210,7 @@ class pixcustomify {
 		}
 		else { // null or otherwise empty value
 			// revert to default
-			self::$textdomain = 'pixcustomify_txtd';
+			self::$textdomain = 'customify_txtd';
 		}
 	}
 

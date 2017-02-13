@@ -1030,8 +1030,8 @@ class PixCustomifyPlugin {
 						$panel_args = array(
 							'priority'    => 10,
 							'capability'  => 'edit_theme_options',
-							'title'       => __( 'Panel title is required', 'textdomain' ),
-							'description' => __( 'Description of what this panel does.', 'textdomain' ),
+							'title'       => __( 'Panel title is required', 'customify_txtd' ),
+							'description' => __( 'Description of what this panel does.', 'customify_txtd' ),
 						);
 
 						if ( isset( $panel_settings['priority'] ) && ! empty( $panel_settings['priority'] ) ) {
@@ -1137,7 +1137,7 @@ class PixCustomifyPlugin {
 		$section_args = array(
 			'priority'   => 10,
 			'capability' => 'edit_theme_options',
-			'title'      => __( 'Title Section is required', 'textdomain' ),
+			'title'      => __( 'Title Section is required', 'customify_txtd' ),
 			'panel'      => $panel_id,
 		);
 		$section_id   = $options_name . '[' . $section_key . ']';
@@ -1524,7 +1524,7 @@ class PixCustomifyPlugin {
 				}
 
 				if ( ! isset( $setting_config['label'] ) || empty( $setting_config['label'] ) ) {
-					$control_args['label'] = esc_html__( 'Import', 'customify' );
+					$control_args['label'] = esc_html__( 'Import', 'customify_txtd' );
 				} else {
 					$control_args['label'] = $setting_config['label'];
 				}

@@ -6,7 +6,7 @@ return array(
 	'label'   => 'CSS Editor',
 	'options' => array(
 		'css_editor'   => array(
-			'label'          => __( 'Enable CSS Editor', 'pixcustomify_txtd' ),
+			'label'          => __( 'Enable CSS Editor', 'customify_txtd' ),
 			'default'        => true,
 			'type'           => 'switch',
 			'show_group'     => 'css_editor_group',
@@ -18,7 +18,7 @@ return array(
 			'options' => array(
 				'css_editor_use_ace' => array(
 					'name'    => 'typography_standard_fonts',
-					'label'   => __( 'Use Ace Editor?', 'pixcustomify_txtd' ),
+					'label'   => __( 'Use Ace Editor?', 'customify_txtd' ),
 					'default' => true,
 					'type'    => 'switch',
 				)
