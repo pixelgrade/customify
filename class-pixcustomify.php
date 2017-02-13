@@ -320,7 +320,7 @@ class PixCustomifyPlugin {
 	 * Customizer admin styles
 	 */
 	function enqueue_admin_customizer_styles() {
-		wp_enqueue_style( 'customify_select2', plugins_url( 'js/select2/css/select2.css', __FILE__ ), array(), $this->version );
+		wp_enqueue_style( 'select2', plugins_url( 'js/select2/css/select2.css', __FILE__ ), array(), $this->version );
 		wp_enqueue_style( 'customify_style', plugins_url( 'css/customizer.css', __FILE__ ), array(), $this->version );
 	}
 
@@ -329,12 +329,13 @@ class PixCustomifyPlugin {
 	 */
 	function enqueue_admin_customizer_scripts() {
 
-		wp_enqueue_script( 'customify_select2', plugins_url( 'js/select2/js/select2.js', __FILE__ ), array( 'jquery' ), $this->version );
+		wp_enqueue_script( 'select2', plugins_url( 'js/select2/js/select2.js', __FILE__ ), array( 'jquery' ), $this->version );
 		wp_enqueue_script( 'jquery-react', plugins_url( 'js/jquery-react.js', __FILE__ ), array( 'jquery' ), $this->version );
 		wp_enqueue_script( $this->plugin_slug . '-customizer-scripts', plugins_url( 'js/customizer.js', __FILE__ ), array(
 			'jquery',
-			'customify_select2',
+			'select2',
 			'underscore',
+			'customize-controls'
 		), $this->version );
 
 		wp_localize_script( $this->plugin_slug . '-customizer-scripts', 'customify_settings', self::$localized );
