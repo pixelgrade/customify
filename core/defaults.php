@@ -27,8 +27,8 @@
 
 		'errors' => array
 			(
-				'is_numeric' => __('Numberic value required.', 'customify_txtd' ),
-				'not_empty' => __('Field is required.', 'customify_txtd' ),
+				'is_numeric' => __('Numberic value required.', 'customify' ),
+				'not_empty' => __('Field is required.', 'customify' ),
 			),
 
 		'callbacks' => array

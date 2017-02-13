@@ -202,13 +202,13 @@ Here is and example of how to config this.
 ```
 'theme_style'   => array(
 	'type'      => 'preset',
-	'label'     => __( 'Select a style:', 'customify_txtd' ),
-	'desc' => __( 'Conveniently change the design of your site with built-in style presets. Easy as pie.', 'customify_txtd' ),
+	'label'     => __( 'Select a style:', 'customify' ),
+	'desc' => __( 'Conveniently change the design of your site with built-in style presets. Easy as pie.', 'customify' ),
 	'default'   => 'silk',
 	'choices_type' => 'select',
 	'choices'  => array(
 		'silk' => array(
-			'label' => __( 'Silk', 'customify_txtd' ),
+			'label' => __( 'Silk', 'customify' ),
 			'options' => array(
 				'links_color' => '#FAC2A8', //second
 				'headings_color' => '#A84469', //main
@@ -218,7 +218,7 @@ Here is and example of how to config this.
 			)
 		),
 		'red' => array(
-			'label' => __( 'Urban', 'customify_txtd' ),
+			'label' => __( 'Urban', 'customify' ),
 			'options' => array(
 				'links_color' => 'red',
 				'headings_color' => 'red',
@@ -228,7 +228,7 @@ Here is and example of how to config this.
 			)
 		),
 		'black' => array(
-			'label' => __( 'Black', 'customify_txtd' ),
+			'label' => __( 'Black', 'customify' ),
 			'options' => array(
 				'links_color' => '#ebebeb',
 				'headings_color' => '#333',
@@ -253,17 +253,17 @@ Just add this section in your config
 
 ```
 'presets_section' => array(
-	'title'    => __( 'Style Presets', 'customify_txtd' ),
+	'title'    => __( 'Style Presets', 'customify' ),
 	'options' => array(
 		'theme_style'   => array(
 			'type'      => 'preset',
-			'label'     => __( 'Select a style:', 'customify_txtd' ),
-			'desc' => __( 'Conveniently change the design of your site with built-in style presets. Easy as pie.', 'customify_txtd' ),
+			'label'     => __( 'Select a style:', 'customify' ),
+			'desc' => __( 'Conveniently change the design of your site with built-in style presets. Easy as pie.', 'customify' ),
 			'default'   => 'royal',
 			'choices_type' => 'awesome',
 			'choices'  => array(
 				'royal' => array(
-					'label' => __( 'Royal', 'customify_txtd' ),
+					'label' => __( 'Royal', 'customify' ),
 					'preview' => array(
 						'color-text' => '#ffffff',
 						'background-card' => '#615375',
@@ -281,7 +281,7 @@ Just add this section in your config
 					)
 				),
 				'lovely' => array(
-					'label' => __( 'Lovely', 'customify_txtd' ),
+					'label' => __( 'Lovely', 'customify' ),
 					'preview' => array(
 						'color-text' => '#ffffff',
 						'background-card' => '#d15c57',
@@ -299,7 +299,7 @@ Just add this section in your config
 					)
 				),
 				'queen' => array(
-					'label' => __( 'Queen', 'customify_txtd' ),
+					'label' => __( 'Queen', 'customify' ),
 					'preview' => array(
 						'color-text' => '#fbedec',
 						'background-card' => '#773347',
@@ -317,7 +317,7 @@ Just add this section in your config
 					)
 				),
 				'carrot' => array(
-					'label' => __( 'Carrot', 'customify_txtd' ),
+					'label' => __( 'Carrot', 'customify' ),
 					'preview' => array(
 						'color-text' => '#ffffff',
 						'background-card' => '#df421d',
@@ -335,7 +335,7 @@ Just add this section in your config
 					)
 				),
 				'adler' => array(
-					'label' => __( 'Adler', 'customify_txtd' ),
+					'label' => __( 'Adler', 'customify' ),
 					'preview' => array(
 						'color-text' => '#fff',
 						'background-card' => '#0e364f',
@@ -353,7 +353,7 @@ Just add this section in your config
 					)
 				),
 				'velvet' => array(
-					'label' => __( 'Velvet', 'customify_txtd' ),
+					'label' => __( 'Velvet', 'customify' ),
 					'preview' => array(
 						'color-text' => '#ffffff',
 						'background-card' => '#282828',

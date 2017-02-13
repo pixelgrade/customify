@@ -96,7 +96,7 @@ class Pix_Customize_Background_Control extends Pix_Customize_Control {
 				$hide = '';
 			}
 
-			$placeholder = isset( $this->field['placeholder'] ) ? $this->field['placeholder'] : __( 'No media selected', 'customify_txtd' );
+			$placeholder = isset( $this->field['placeholder'] ) ? $this->field['placeholder'] : __( 'No media selected', 'customify' );
 
 
 			if ( ! isset( $this->value['background-image'] ) ) {
@@ -135,14 +135,14 @@ class Pix_Customize_Background_Control extends Pix_Customize_Control {
 			echo '<div class="upload_button_div">';
 
 			//If the user has WP3.5+ show upload/remove button
-			echo '<span class="button background_upload_button" id="' . $this->id . '-media" data-setting_id="' . $this->setting->id . '" >' . __( 'Upload', 'customify_txtd' ) . '</span>';
+			echo '<span class="button background_upload_button" id="' . $this->id . '-media" data-setting_id="' . $this->setting->id . '" >' . __( 'Upload', 'customify' ) . '</span>';
 
 			$hide = '';
 			if ( empty( $this->value['background-image'] ) || $this->value['background-image'] == '' ) {
 				$hide = ' hide';
 			}
 
-			echo '<span class="button remove-image' . $hide . '" id="reset_' . $this->id . '" rel="' . $this->id . '">' . __( 'Remove', 'customify_txtd' ) . '</span>';
+			echo '<span class="button remove-image' . $hide . '" id="reset_' . $this->id . '" rel="' . $this->id . '">' . __( 'Remove', 'customify' ) . '</span>';
 
 			echo '</div>';
 		}

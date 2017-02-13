@@ -85,7 +85,7 @@ class Customify_CSS_Live_Editor {
 /* An example of a Custom CSS Snippet */
 selector {
 	color: green;
-}", 'customify_txtd' );
+}", 'customify' );
 
 				if ( $store_type === 'option' ) {
 					$CSS = get_option( 'live_css_edit' );
@@ -117,14 +117,14 @@ selector {
 		$wp_customize->add_section( 'live_css_edit_section', array(
 			'priority'   => 11,
 			'capability' => 'edit_theme_options',
-			'title'      => __( 'CSS Editor', 'customify_txtd' ),
+			'title'      => __( 'CSS Editor', 'customify' ),
 		) );
 
 		$saving_type = PixCustomifyPlugin::get_plugin_option( 'values_store_mod', 'option' );
 
 		$wp_customize->add_setting( 'live_css_edit', array(
 			'type'       => $saving_type,
-			'label'      => __( 'CSS Editor', 'customify_txtd' ),
+			'label'      => __( 'CSS Editor', 'customify' ),
 			'capability' => 'edit_theme_options',
 			'transport'  => 'postMessage',
 			'default'    => __( "/*
@@ -147,14 +147,14 @@ selector {
 /* An example of a Custom CSS Snippet */
 selector {
 	color: green;
-}", 'customify_txtd' )
+}", 'customify' )
 		) );
 
 		$this_control = new Pix_Customize_CSS_Editor_Control(
 			$wp_customize,
 			'live_css_edit_control',
 			array(
-				'label'    => __( 'Edit Live Css', 'customify_txtd' ),
+				'label'    => __( 'Edit Live Css', 'customify' ),
 				'section'  => 'live_css_edit_section',
 				'settings' => 'live_css_edit',
 			)

@@ -310,7 +310,7 @@ class PixCustomifyPlugin {
 		$domain = $this->plugin_slug;
 		$locale = apply_filters( 'plugin_locale', get_locale(), $domain );
 
-		load_textdomain( $domain, WP_LANG_DIR . '/' . $domain . '/' . $domain . '-' . $locale . '.mo' );
+		//load_textdomain( $domain, WP_LANG_DIR . '/' . $domain . '/' . $domain . '-' . $locale . '.mo' );
 		load_plugin_textdomain( $domain, false, basename( dirname( __FILE__ ) ) . '/lang/' );
 	}
 
@@ -1030,8 +1030,8 @@ class PixCustomifyPlugin {
 						$panel_args = array(
 							'priority'    => 10,
 							'capability'  => 'edit_theme_options',
-							'title'       => __( 'Panel title is required', 'customify_txtd' ),
-							'description' => __( 'Description of what this panel does.', 'customify_txtd' ),
+							'title'       => __( 'Panel title is required', 'pixcustomify' ),
+							'description' => __( 'Description of what this panel does.', 'pixcustomify' ),
 						);
 
 						if ( isset( $panel_settings['priority'] ) && ! empty( $panel_settings['priority'] ) ) {
@@ -1096,7 +1096,7 @@ class PixCustomifyPlugin {
 					$wp_customize,
 					'reset_customify',
 					array(
-						'label'    => __( 'Reset Customify to Defaults', 'customify_txtd' ),
+						'label'    => __( 'Reset Customify to Defaults', 'customify' ),
 						'section'  => 'customify_toolbar',
 						'settings' => 'reset_customify',
 						'action'   => 'reset_customify',
@@ -1137,7 +1137,7 @@ class PixCustomifyPlugin {
 		$section_args = array(
 			'priority'   => 10,
 			'capability' => 'edit_theme_options',
-			'title'      => __( 'Title Section is required', 'customify_txtd' ),
+			'title'      => __( 'Title Section is required', '' ),
 			'panel'      => $panel_id,
 		);
 		$section_id   = $options_name . '[' . $section_key . ']';
@@ -1524,7 +1524,7 @@ class PixCustomifyPlugin {
 				}
 
 				if ( ! isset( $setting_config['label'] ) || empty( $setting_config['label'] ) ) {
-					$control_args['label'] = esc_html__( 'Import', 'customify_txtd' );
+					$control_args['label'] = esc_html__( 'Import', 'customify' );
 				} else {
 					$control_args['label'] = $setting_config['label'];
 				}

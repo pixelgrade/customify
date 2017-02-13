@@ -23,22 +23,22 @@ $errors    = $processor->errors(); ?>
 
 	<div id="icon-options-general" class="icon32"><br></div>
 
-	<h2><?php _e( 'PixCustomify', 'customify_txtd' ); ?></h2>
+	<h2><?php _e( 'PixCustomify', 'customify' ); ?></h2>
 
 	<?php if ( $processor->ok() ): ?>
 
 		<?php if ( ! empty( $errors ) ): ?>
 			<br/>
 			<p class="update-nag">
-				<strong><?php _e( 'Unable to save settings.', 'customify_txtd' ); ?></strong>
-				<?php _e( 'Please check the fields for errors and typos.', 'customify_txtd' ); ?>
+				<strong><?php _e( 'Unable to save settings.', 'customify' ); ?></strong>
+				<?php _e( 'Please check the fields for errors and typos.', 'customify' ); ?>
 			</p>
 		<?php endif;
 
 		if ( $processor->performed_update() ): ?>
 			<br/>
 			<p class="update-nag">
-				<?php _e( 'Settings have been updated.', 'customify_txtd' ); ?>
+				<?php _e( 'Settings have been updated.', 'customify' ); ?>
 			</p>
 		<?php endif;
 		echo $f = pixcustomify::form( $config, $processor );
@@ -48,7 +48,7 @@ $errors    = $processor->errors(); ?>
 		echo $f->field( 'typography' )->render();
 //		echo $f->field( 'css_editor' )->render(); ?>
 		<button type="submit" class="button button-primary">
-			<?php _e( 'Save Changes', 'customify_txtd' ); ?>
+			<?php _e( 'Save Changes', 'customify' ); ?>
 		</button>
 
 		<?php echo $f->endform();

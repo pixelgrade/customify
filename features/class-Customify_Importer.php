@@ -49,12 +49,12 @@ final class Customify_Importer_Controller {
 	 */
 	public function import_step( $request ) {
 		if ( ! isset( $_POST['option_key'] ) ) {
-			wp_send_json_error( esc_html__( 'Missing option key', 'customify_txtd' ) );
+			wp_send_json_error( esc_html__( 'Missing option key', 'customify' ) );
 		}
 
 		$option_key = $_POST['option_key'];
 		if ( ! isset( $_POST['step_id'] ) ) {
-			wp_send_json_error( esc_html__( 'Missing step id', 'customify_txtd' ) );
+			wp_send_json_error( esc_html__( 'Missing step id', 'customify' ) );
 		}
 
 		$step_id     = $_POST['step_id'];
@@ -78,20 +78,20 @@ final class Customify_Importer_Controller {
 					$value = base64_decode( $value );
 					$value = json_decode( $value, true );
 					if ( empty( $value ) ) {
-						wp_send_json_error( esc_html__( 'Wrong value, I cannot decode', 'customify_txtd' ) );
+						wp_send_json_error( esc_html__( 'Wrong value, I cannot decode', 'customify' ) );
 					}
 				}
 
 				// first check if the value actually changes
 				$current_value = get_option( $step_id );
 				if ( $current_value === $value ) {
-					wp_send_json_success( esc_html__( 'This option is already here', 'customify_txtd' ) );
+					wp_send_json_success( esc_html__( 'This option is already here', 'customify' ) );
 				}
 
 				$updated = update_option( $step_id, $value );
 
 				if ( ! $updated ) {
-					wp_send_json_error( esc_html__( 'I can\'t import this!', 'customify_txtd' ) );
+					wp_send_json_error( esc_html__( 'I can\'t import this!', 'customify' ) );
 				} else {
 					wp_send_json_success( 'awesome' );
 				}
@@ -105,7 +105,7 @@ final class Customify_Importer_Controller {
 					$decoded = base64_decode( $import_step['value'] );
 					$decoded = json_decode( $decoded, true );
 					if ( empty( $decoded ) ) {
-						wp_send_json_error( esc_html__( 'Wrong value, I cannot decode', 'customify_txtd' ) );
+						wp_send_json_error( esc_html__( 'Wrong value, I cannot decode', 'customify' ) );
 					}
 
 					$updated = $this->import_widget_data( $decoded );
@@ -114,7 +114,7 @@ final class Customify_Importer_Controller {
 				}
 
 				if ( ! $updated ) {
-					wp_send_json_error( esc_html__( 'I can\'t import this!', 'customify_txtd' ) );
+					wp_send_json_error( esc_html__( 'I can\'t import this!', 'customify' ) );
 				} else {
 					wp_send_json_success( 'awesome' );
 				}
@@ -124,14 +124,14 @@ final class Customify_Importer_Controller {
 
 			case 'xml' : {
 				if ( ! isset( $import_step['file'] ) || ! file_exists( $import_step['file'] ) ) {
-					wp_send_json_error( esc_html__( 'No file', 'customify_txtd' ) );
+					wp_send_json_error( esc_html__( 'No file', 'customify' ) );
 				}
 				break;
 			}
 
 			case 'remote' : {
 				if ( ! isset( $import_step['discover_url'] ) ) {
-					wp_send_json_error( esc_html__( 'No url', 'customify_txtd' ) );
+					wp_send_json_error( esc_html__( 'No url', 'customify' ) );
 				}
 				$data = wp_remote_get( $import_step['discover_url'] );
 				$data = wp_remote_retrieve_body( $data );
@@ -154,7 +154,7 @@ final class Customify_Importer_Controller {
 					wp_send_json( array(
 						'success' => false,
 						'code'    => 'no_type',
-						'message' => esc_html__( 'No recall type', 'customify_txtd' )
+						'message' => esc_html__( 'No recall type', 'customify' )
 					) );
 				}
 
@@ -162,7 +162,7 @@ final class Customify_Importer_Controller {
 					wp_send_json( array(
 						'success' => false,
 						'code'    => 'no_data',
-						'message' => esc_html__( 'No recall data', 'customify_txtd' )
+						'message' => esc_html__( 'No recall data', 'customify' )
 					) );
 				}
 
@@ -201,13 +201,13 @@ final class Customify_Importer_Controller {
 							wp_send_json( array(
 								'success' => false,
 								'code'    => 'already_imported',
-								'message' => esc_html__( 'This is already imported', 'customify_txtd' )
+								'message' => esc_html__( 'This is already imported', 'customify' )
 							) );
 						}
 						wp_send_json( array(
 							'success' => true,
 							'code'    => 'imported',
-							'message' => esc_html__( 'Done', 'customify_txtd' )
+							'message' => esc_html__( 'Done', 'customify' )
 						) );
 						break;
 					}
@@ -216,7 +216,7 @@ final class Customify_Importer_Controller {
 						wp_send_json( array(
 							'success' => false,
 							'code'    => 'wrong_recall_type',
-							'message' => esc_html__( 'wrong recall type', 'customify_txtd' )
+							'message' => esc_html__( 'wrong recall type', 'customify' )
 						) );
 						break;
 					}
@@ -225,7 +225,7 @@ final class Customify_Importer_Controller {
 				wp_send_json( array(
 					'success' => false,
 					'code'    => 'what',
-					'message' => esc_html__( 'I dont think i should be here', 'customify_txtd' )
+					'message' => esc_html__( 'I dont think i should be here', 'customify' )
 				) );
 				break;
 			}
@@ -234,7 +234,7 @@ final class Customify_Importer_Controller {
 				wp_send_json( array(
 					'success' => false,
 					'code'    => 'wrong_type',
-					'message' => esc_html__( 'Wrong import type', 'customify_txtd' )
+					'message' => esc_html__( 'Wrong import type', 'customify' )
 				) );
 				break;
 			}
@@ -311,13 +311,13 @@ final class Customify_Importer_Controller {
 					wp_send_json( array(
 						'success' => false,
 						'code'    => 'exists',
-						'message' => esc_html__( 'They are already here', 'customify_txtd' )
+						'message' => esc_html__( 'They are already here', 'customify' )
 					) );
 				} elseif ( empty( $result[ $post_type ] ) ) {
 					wp_send_json( array(
 						'success' => false,
 						'code'    => 'empty',
-						'message' => esc_html__( 'Nothing to import', 'customify_txtd' )
+						'message' => esc_html__( 'Nothing to import', 'customify' )
 					) );
 				}
 			}
@@ -357,13 +357,13 @@ final class Customify_Importer_Controller {
 				wp_send_json( array(
 					'success' => false,
 					'code'    => 'exists',
-					'message' => esc_html__( 'They are already here', 'customify_txtd' )
+					'message' => esc_html__( 'They are already here', 'customify' )
 				) );
 			} elseif ( empty( $result[ $tax ] ) ) {
 				wp_send_json( array(
 					'success' => false,
 					'code'    => 'empty',
-					'message' => esc_html__( 'Nothing to import', 'customify_txtd' )
+					'message' => esc_html__( 'Nothing to import', 'customify' )
 				) );
 			}
 		}

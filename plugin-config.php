@@ -14,7 +14,7 @@ $customify_config = require $basepath . 'customify_config.php';
 return array(
 	'plugin-name'           => 'pixcustomify',
 	'settings-key'          => 'pixcustomify_settings',
-	'textdomain'            => 'customify_txtd',
+	'textdomain'            => 'customify',
 	'template-paths'        => array(
 		$basepath . 'core/views/form-partials/',
 		$basepath . 'views/form-partials/',
@@ -43,7 +43,7 @@ return array(
 		'counter' => array( 'is_numeric', 'not_empty' ),
 	),
 	'errors'                => array(
-		'not_empty' => __( 'Invalid Value.', 'customify_txtd' ),
+		'not_empty' => __( 'Invalid Value.', 'customify' ),
 	),
 //	'callbacks'             => array(
 //		'save_settings' => 'save_customizer_plugin_settings'

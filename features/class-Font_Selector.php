@@ -32,7 +32,7 @@ class Customify_Font_Selector extends PixCustomifyPlugin {
 			return;
 		}
 
-		echo '<optgroup label="' . esc_html__( 'Theme Fonts', 'customify_txtd' ) . '">';
+		echo '<optgroup label="' . esc_html__( 'Theme Fonts', 'customify' ) . '">';
 		foreach ( self::$theme_fonts as $font ) {
 			if ( ! empty( $font ) ) {
 				//display the select option's HTML

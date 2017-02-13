@@ -1,23 +1,16 @@
 <?php
 /*
-* @package   Customify
-* @author    PixelGrade <contact@pixelgrade.com>
-* @license   GPL-2.0+
-* @link      http://pixelgrade.com
-* @copyright 2014 PixelGrade
-*
-* @wordpress-plugin
 Plugin Name: Customify
-Plugin URI:  http://pixelgrade.com
+Plugin URI:  https://pixelgrade.com
 Description: A Theme Customizer Booster
 Version: 1.3.1
 Author: PixelGrade
-Author URI: http://pixelgrade.com
+Author URI: https://pixelgrade.com
 Author Email: contact@pixelgrade.com
-Text Domain: customify_txtd
+Text Domain: customify
 License:     GPL-2.0+
 License URI: http://www.gnu.org/licenses/gpl-2.0.txt
-Domain Path: /lang/
+Domain Path: /languages/
 */
 
 // If this file is called directly, abort.
@@ -35,7 +28,7 @@ require 'core/bootstrap'.EXT;
 $config = include 'plugin-config'.EXT;
 
 // set textdomain
-pixcustomify::settextdomain($config['textdomain']);
+pixcustomify::settextdomain('customify');
 
 // Ensure Test Data
 // ----------------

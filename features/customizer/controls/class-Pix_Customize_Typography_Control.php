@@ -154,7 +154,7 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 
 				<?php
 				if ( ! empty( $this->typekit_fonts ) ) {
-					echo '<optgroup label="' . __( 'Typekit', 'customify_txtd' ) . '">';
+					echo '<optgroup label="' . __( 'Typekit', 'customify' ) . '">';
 					foreach ( $this->typekit_fonts as $key => $font ) {
 						self::output_font_option( $font['css_names'][0], $font_family, $font, 'typekit' );
 					}
@@ -166,7 +166,7 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 
 				if ( ! empty( $this->recommended ) ) {
 
-					echo '<optgroup label="' . __( 'Recommended', 'customify_txtd' ) . '">';
+					echo '<optgroup label="' . __( 'Recommended', 'customify' ) . '">';
 
 					foreach ( $this->recommended as $key => $font ) {
 						$font_type = 'std';
@@ -190,7 +190,7 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 
 				if ( PixCustomifyPlugin::get_plugin_option( 'typography_standard_fonts' ) ) {
 
-					echo '<optgroup label="' . __( 'Standard fonts', 'customify_txtd' ) . '">';
+					echo '<optgroup label="' . __( 'Standard fonts', 'customify' ) . '">';
 					foreach ( self::$std_fonts as $key => $font ) {
 						self::output_font_option( $key, $font_family, $font, 'std' );
 					}
@@ -212,7 +212,7 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 						}
 
 						foreach ( $grouped_google_fonts as $group_name => $group ) {
-							echo '<optgroup label="' . __( 'Google fonts', 'customify_txtd' ) . ' ' . $group_name . '">';
+							echo '<optgroup label="' . __( 'Google fonts', 'customify' ) . ' ' . $group_name . '">';
 							foreach ( $group as $key => $font ) {
 								self::output_font_option( $key, $font_family, $font );
 							}
@@ -220,7 +220,7 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 						}
 
 					} else {
-						echo '<optgroup label="' . __( 'Google fonts', 'customify_txtd' ) . '">';
+						echo '<optgroup label="' . __( 'Google fonts', 'customify' ) . '">';
 						foreach ( self::$google_fonts as $key => $font ) {
 							self::output_font_option( $key, $font_family, $font );
 						}
