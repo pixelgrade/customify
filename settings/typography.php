@@ -6,7 +6,7 @@ return array(
 	'label'   => 'Typography Settings',
 	'options' => array(
 		'typography'   => array(
-			'label'          => __( 'Enable Typography Options', 'pixcustomify_txtd' ),
+			'label'          => __( 'Enable Typography Options', 'customify_txtd' ),
 			'default'        => true,
 			'type'           => 'switch',
 			'show_group'     => 'typography_group',
@@ -18,15 +18,15 @@ return array(
 			'options' => array(
 				'typography_standard_fonts' => array(
 					'name'    => 'typography_standard_fonts',
-					'label'   => __( 'Use Standard fonts:', 'pixcustomify_txtd' ),
-					'desc'    => __( 'Would you like them?', 'pixcustomify_txtd' ),
+					'label'   => __( 'Use Standard fonts:', 'customify_txtd' ),
+					'desc'    => __( 'Would you like them?', 'customify_txtd' ),
 					'default' => true,
 					'type'    => 'switch',
 				),
 				'typography_google_fonts' => array(
 					'name'    => 'typography_google_fonts',
-					'label'   => __( 'Use Google fonts:', 'pixcustomify_txtd' ),
-					'desc'    => __( 'Would you like them?', 'pixcustomify_txtd' ),
+					'label'   => __( 'Use Google fonts:', 'customify_txtd' ),
+					'desc'    => __( 'Would you like them?', 'customify_txtd' ),
 					'default' => true,
 					'type'    => 'switch',
 					'show_group'     => 'typography_google_fonts_group',
@@ -37,8 +37,8 @@ return array(
 					'options' => array(
 						'typography_group_google_fonts' => array(
 							'name'    => 'typography_standard_fonts',
-							'label'   => __( 'Group Google fonts:', 'pixcustomify_txtd' ),
-							'desc'    => __( 'You can chose to see the google fonts in groups', 'pixcustomify_txtd' ),
+							'label'   => __( 'Group Google fonts:', 'customify_txtd' ),
+							'desc'    => __( 'You can chose to see the google fonts in groups', 'customify_txtd' ),
 							'default' => true,
 							'type'    => 'switch',
 						),

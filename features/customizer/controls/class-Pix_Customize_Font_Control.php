@@ -358,7 +358,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 		if ( ! empty( $this->fields['font-size'] ) ) {
 			$fs_val = empty( $current_value->font_size ) ? 0 : $current_value->font_size; ?>
 			<li class="customify_font_size_wrapper customize-control font-options__option">
-				<label><?php esc_html_e( 'Font Size', 'customify' ); ?></label>
+				<label><?php esc_html_e( 'Font Size', 'customify_txtd' ); ?></label>
 				<input type="range"
 				       data-field="font_size" <?php $this->input_field_atts( $this->fields['font-size'] ) ?>
 				       value="<?php echo $fs_val; ?>">
@@ -370,7 +370,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 		if ( ! empty( $this->fields['line-height'] ) ) {
 			$lh_val = isset( $current_value->line_height ) ? $current_value->line_height : 0 ; ?>
 			<li class="customify_line_height_wrapper customize-control font-options__option">
-				<label><?php esc_html_e( 'Line height', 'customify' ); ?></label>
+				<label><?php esc_html_e( 'Line height', 'customify_txtd' ); ?></label>
 				<input type="range"
 				       data-field="line_height" <?php $this->input_field_atts( $this->fields['line-height'] ) ?>
 				       value="<?php echo $lh_val ?>">
@@ -383,7 +383,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 		if ( ! empty( $this->fields['letter-spacing'] ) ) {
 			$ls_val = isset( $current_value->letter_spacing ) ? $current_value->letter_spacing : 0; ?>
 			<li class="customify_letter_spacing_wrapper customize-control font-options__option">
-				<label><?php esc_html_e( 'Letter Spacing', 'customify' ); ?></label>
+				<label><?php esc_html_e( 'Letter Spacing', 'customify_txtd' ); ?></label>
 				<input type="range"
 				       data-field="letter_spacing" <?php $this->input_field_atts( $this->fields['letter-spacing'] ) ?>
 				       value="<?php echo $ls_val ?>">
@@ -395,12 +395,12 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 		if ( ! empty( $this->fields['text-align'] ) && $this->fields['text-align'] ) {
 			$ta_val = isset( $current_value->text_align ) ? $current_value->text_align : 'initial'; ?>
 			<li class="customify_text_align_wrapper customize-control font-options__option">
-				<label><?php esc_html_e( 'Text Align', 'customify' ); ?></label>
+				<label><?php esc_html_e( 'Text Align', 'customify_txtd' ); ?></label>
 				<select data-field="text_align">
-					<option <?php $this->display_option_value( 'initial', $ta_val ); ?>><?php esc_html_e( 'Initial', 'customify' ); ?></option>
-					<option  <?php $this->display_option_value( 'center', $ta_val ); ?>><?php esc_html_e( 'Center', 'customify' ); ?></option>
-					<option <?php $this->display_option_value( 'left', $ta_val ); ?>><?php esc_html_e( 'Left', 'customify' ); ?></option>
-					<option <?php $this->display_option_value( 'right', $ta_val ); ?>><?php esc_html_e( 'Right', 'customify' ); ?></option>
+					<option <?php $this->display_option_value( 'initial', $ta_val ); ?>><?php esc_html_e( 'Initial', 'customify_txtd' ); ?></option>
+					<option  <?php $this->display_option_value( 'center', $ta_val ); ?>><?php esc_html_e( 'Center', 'customify_txtd' ); ?></option>
+					<option <?php $this->display_option_value( 'left', $ta_val ); ?>><?php esc_html_e( 'Left', 'customify_txtd' ); ?></option>
+					<option <?php $this->display_option_value( 'right', $ta_val ); ?>><?php esc_html_e( 'Right', 'customify_txtd' ); ?></option>
 				</select>
 			</li>
 		<?php }
@@ -410,12 +410,12 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 		if ( ! empty( $this->fields['text-transform'] ) && $this->fields['text-transform'] ) {
 			$tt_val = isset( $current_value->text_transform ) ? $current_value->text_transform : 'none'; ?>
 			<li class="customify_text_transform_wrapper customize-control font-options__option">
-				<label><?php esc_html_e( 'Text Transform', 'customify' ); ?></label>
+				<label><?php esc_html_e( 'Text Transform', 'customify_txtd' ); ?></label>
 				<select data-field="text_transform">
-					<option <?php $this->display_option_value( 'none', $tt_val ); ?>><?php esc_html_e( 'None', 'customify' ); ?></option>
-					<option <?php $this->display_option_value( 'capitalize', $tt_val ); ?>><?php esc_html_e( 'Capitalize', 'customify' ); ?></option>
-					<option <?php $this->display_option_value( 'uppercase', $tt_val ); ?>><?php esc_html_e( 'Uppercase', 'customify' ); ?></option>
-					<option <?php $this->display_option_value( 'lowercase', $tt_val ); ?>><?php esc_html_e( 'Lowercase', 'customify' ); ?></option>
+					<option <?php $this->display_option_value( 'none', $tt_val ); ?>><?php esc_html_e( 'None', 'customify_txtd' ); ?></option>
+					<option <?php $this->display_option_value( 'capitalize', $tt_val ); ?>><?php esc_html_e( 'Capitalize', 'customify_txtd' ); ?></option>
+					<option <?php $this->display_option_value( 'uppercase', $tt_val ); ?>><?php esc_html_e( 'Uppercase', 'customify_txtd' ); ?></option>
+					<option <?php $this->display_option_value( 'lowercase', $tt_val ); ?>><?php esc_html_e( 'Lowercase', 'customify_txtd' ); ?></option>
 				</select>
 			</li>
 		<?php }
@@ -425,12 +425,12 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 		if ( ! empty( $this->fields['text-decoration'] ) && $this->fields['text-decoration'] ) {
 			$td_val = isset( $current_value->text_decoration ) ? $current_value->text_decoration : 'none';?>
 			<li class="customify_text_decoration_wrapper customize-control font-options__option">
-				<label><?php esc_html_e( 'Text Decoration', 'customify' ); ?></label>
+				<label><?php esc_html_e( 'Text Decoration', 'customify_txtd' ); ?></label>
 				<select data-field="text_decoration">
-					<option <?php $this->display_option_value( 'none', $td_val ); ?>><?php esc_html_e( 'None', 'customify' ); ?></option>
-					<option <?php $this->display_option_value( 'underline', $td_val ); ?>><?php esc_html_e( 'Underline', 'customify' ); ?></option>
-					<option <?php $this->display_option_value( 'overline', $td_val ); ?>><?php esc_html_e( 'Overline', 'customify' ); ?></option>
-					<option <?php $this->display_option_value( 'line-through', $td_val ); ?>><?php esc_html_e( 'Line Through', 'customify' ); ?></option>
+					<option <?php $this->display_option_value( 'none', $td_val ); ?>><?php esc_html_e( 'None', 'customify_txtd' ); ?></option>
+					<option <?php $this->display_option_value( 'underline', $td_val ); ?>><?php esc_html_e( 'Underline', 'customify_txtd' ); ?></option>
+					<option <?php $this->display_option_value( 'overline', $td_val ); ?>><?php esc_html_e( 'Overline', 'customify_txtd' ); ?></option>
+					<option <?php $this->display_option_value( 'line-through', $td_val ); ?>><?php esc_html_e( 'Line Through', 'customify_txtd' ); ?></option>
 				</select>
 			</li>
 		<?php }
