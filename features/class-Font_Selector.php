@@ -17,7 +17,8 @@ class Customify_Font_Selector extends PixCustomifyPlugin {
 	function __construct( $parent ) {
 		global $pixcustomify_plugin;
 
-		$load_location = $this::get_plugin_option( 'style_resources_location', 'wp_head' );
+		$load_location = PixCustomifyPlugin::get_plugin_option( 'style_resources_location', 'wp_head' );
+
 		add_action( $load_location, array( $this, 'output_font_dynamic_style' ), 999999999 );
 
 		$this->parent      = $parent;
@@ -44,7 +45,7 @@ class Customify_Font_Selector extends PixCustomifyPlugin {
 
 	function maybe_decode_value( $value ) {
 
-		$to_return = $this::decodeURIComponent( $value );
+		$to_return = PixCustomifyPlugin::decodeURIComponent( $value );
 		if ( is_string( $value ) ) {
 			$to_return = json_decode( wp_unslash( $to_return ), true );
 		}
