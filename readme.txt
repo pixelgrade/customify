@@ -3,7 +3,7 @@ Contributors: pixelgrade, euthelup, babbardel, vlad.olaru, cristianfrumusanu
 Tags: customizer, css, editor, live, preview, customise
 Requires at least: 4.4.0
 Tested up to: 4.7.0
-Stable tag: 1.3.1
+Stable tag: 1.4.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -36,6 +36,15 @@ With [Customify](https://github.com/pixelgrade/customify), developers can easily
 **Made with love by Pixelgrade**
 
 == Changelog ==
+
+= 1.4.0 =
+* Make Customify compatible with the [4.7 customizer changes](https://make.wordpress.org/core/2016/10/12/customize-changesets-technical-design-decisions)
+* Add `show_if` [config option](https://github.com/pixelgrade/customify#conditional-fields)
+* Fix Conflict with Jetpack - Related posts
+* Fix Javascript callbacks loss
+* Switch de default storage from option to theme_mod
+* Fixed Incorrect Color Panel Height
+* Fixed Font field weight in customizer preview
 
 = 1.3.1 =
 * Fixed compatibility with PHP <= 5.3.x
