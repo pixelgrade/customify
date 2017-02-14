@@ -139,11 +139,11 @@ class Customify_Font_Selector extends PixCustomifyPlugin {
 //					$value['variants'] = self::$theme_fonts[ $value['font_family'] ]['variants'];
 
 					if ( false === strpos( $args['local_families'], $value['font_family'] ) ) {
-						$args['local_families'] .= $value['font_family'];
+						$args['local_families'] .= "'" . $value['font_family'] . "',";
 					}
 
 					if ( false === strpos( $args['local_srcs'], self::$theme_fonts[ $value['font_family'] ]['src'] ) ) {
-						$args['local_srcs'] .= self::$theme_fonts[ $value['font_family'] ]['src'] . ',';
+						$args['local_srcs'] .= "'" . self::$theme_fonts[ $value['font_family'] ]['src'] . "',";
 					}
 				}
 			}
@@ -179,36 +179,36 @@ class Customify_Font_Selector extends PixCustomifyPlugin {
 
 	function display_webfont_script( $args ) { ?>
 		<script type="text/javascript">
-			var customify_font_loader = function () {
-				var webfontargs = {
-					classes: false,
-					events: false
-				};
+            var customify_font_loader = function () {
+                var webfontargs = {
+                    classes: false,
+                    events: false
+                };
 				<?php if ( ! empty( $args['google_families'] ) ) { ?>
-				webfontargs.google = { families: [<?php echo( rtrim( $args['google_families'], ',' ) ); ?>] };
+                webfontargs.google = { families: [<?php echo( rtrim( $args['google_families'], ',' ) ); ?>] };
 				<?php }
 				if ( ! empty( $args['local_families'] ) && ! empty( $args['local_srcs'] ) ) { ?>
-				webfontargs.custom = {
-					families: ['<?php echo( rtrim( $args['local_families'], ',' ) ); ?>'],
-					urls: ['<?php echo rtrim( $args['local_srcs'], ',' ) ?>']
-				};
+                webfontargs.custom = {
+                    families: [<?php echo( rtrim( $args['local_families'], ',' ) ); ?>],
+                    urls: [<?php echo rtrim( $args['local_srcs'], ',' ) ?>]
+                };
 				<?php } ?>
-				WebFont.load(webfontargs);
-			}
+                WebFont.load(webfontargs);
+            };
 
-			if ( typeof WebFont !== 'undefined' ) { <?php // if there is a WebFont object, use it ?>
-				customify_font_loader();
-			} else { <?php // basically when we don't have the WebFont object we create the google script dynamically  ?>
-				var tk = document.createElement('script');
-				tk.src = '//ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
-				tk.type = 'text/javascript';
+            if ( typeof WebFont !== 'undefined' ) { <?php // if there is a WebFont object, use it ?>
+                customify_font_loader();
+            } else { <?php // basically when we don't have the WebFont object we create the google script dynamically  ?>
+                var tk = document.createElement('script');
+                tk.src = '//ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
+                tk.type = 'text/javascript';
 
-				tk.onload = tk.onreadystatechange = function () {
-					customify_font_loader();
-				};
-				var s = document.getElementsByTagName('script')[0];
-				s.parentNode.insertBefore(tk, s);
-			}
+                tk.onload = tk.onreadystatechange = function () {
+                    customify_font_loader();
+                };
+                var s = document.getElementsByTagName('script')[0];
+                s.parentNode.insertBefore(tk, s);
+            }
 		</script>
 		<?php
 	}
@@ -322,7 +322,7 @@ class Customify_Font_Selector extends PixCustomifyPlugin {
 				echo "}\n";
 			} ?>
 		</style>
-	<?php
+		<?php
 	}
 
 	function get_field_unit( $font, $field ) {
