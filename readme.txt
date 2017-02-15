@@ -1,9 +1,9 @@
 === Customify - A Theme Customizer Booster ===
-Contributors: pixelgrade, euthelup, babbardel, vlad.olaru, cristianfrumusanu
+Contributors: pixelgrade, euthelup, babbardel, vlad.olaru, cristianfrumusanu, raduconstantin
 Tags: customizer, css, editor, live, preview, customise
-Requires at least: 4.4.0
-Tested up to: 4.7.0
-Stable tag: 1.4.0
+Requires at least: 4.5.0
+Tested up to: 4.7.2
+Stable tag: 1.4.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -36,6 +36,9 @@ With [Customify](https://github.com/pixelgrade/customify), developers can easily
 **Made with love by Pixelgrade**
 
 == Changelog ==
+
+= 1.4.1 =
+* Fixed Multiple local fonts
 
 = 1.4.0 =
 * Make Customify compatible with the [4.7 customizer changes](https://make.wordpress.org/core/2016/10/12/customize-changesets-technical-design-decisions)
