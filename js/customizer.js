@@ -322,7 +322,7 @@
 			$('.js-section-navigation a').on( 'click', function(e) {
 				e.preventDefault();
 
-				var $sidebar = $('.wp-full-overlay-sidebar-content');
+				var $sidebar = $( this ).parents( '.customize-pane-child' );
 				var $parent = $(this).parents( '.accordion-section-content' );
 				var href = $.attr(this, 'href');
 
