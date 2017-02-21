@@ -333,6 +333,23 @@
 				}
 			});
 		})();
+
+		(function() {
+			// Close a font field when clicking on another field
+			$( '.customify_font_tooltip' ).on( 'click', function() {
+				if ( $( this ).prop( 'checked' ) === true ) {
+					$( '.customify_font_tooltip' ).prop( 'checked', false );
+					$( this ).prop( 'checked', true );
+				}
+			});
+
+			// Close a font field when clicking anywhere but a font field
+			$( document ).on( 'click', function( e ) {
+				if( ! $( e.target ).is( '[class*="font"]' ) ) {
+					$( '.customify_font_tooltip' ).prop( 'checked', false );
+				}
+			});
+		})();
 	});
 
 	/**
