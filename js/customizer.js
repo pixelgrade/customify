@@ -325,7 +325,7 @@
 			$('.js-section-navigation a').on( 'click', function(e) {
 				e.preventDefault();
 
-				var $sidebar = $('.wp-full-overlay-sidebar-content');
+				var $sidebar = $( this ).parents( '.customize-pane-child' );
 				var $parent = $(this).parents( '.accordion-section-content' );
 				var href = $.attr(this, 'href');
 
@@ -333,6 +333,23 @@
 					$sidebar.animate({
 						scrollTop: $( $.attr(this, 'href') ).position().top - $parent.find( '.customize-section-title' ).outerHeight()
 					}, 500);
+				}
+			});
+		})();
+
+		(function() {
+			// Close a font field when clicking on another field
+			$( '.customify_font_tooltip' ).on( 'click', function() {
+				if ( $( this ).prop( 'checked' ) === true ) {
+					$( '.customify_font_tooltip' ).prop( 'checked', false );
+					$( this ).prop( 'checked', true );
+				}
+			});
+
+			// Close a font field when clicking anywhere but a font field
+			$( document ).on( 'click', function( e ) {
+				if( ! $( e.target ).is( '[class*="font"]' ) ) {
+					$( '.customify_font_tooltip' ).prop( 'checked', false );
 				}
 			});
 		})();
