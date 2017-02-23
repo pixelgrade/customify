@@ -420,15 +420,15 @@ class PixCustomifyPlugin {
 					continue;
 				}
 
-				$custom_css .= '@media ' . $media_query . " {\n";
+				$custom_css .= '@media ' . $media_query . " { ";
 
 				foreach ( $properties as $key => $property ) {
 					$property_settings = $property['property'];
 					$property_value    = $property['value'];
-					$custom_css .= "\t" . self::proccess_css_property( $property_settings, $property_value );
+					$custom_css .=  self::proccess_css_property( $property_settings, $property_value );
 				}
 
-				$custom_css .= "\n}\n";
+				$custom_css .= " }\n";
 
 			}
 		}
@@ -436,11 +436,9 @@ class PixCustomifyPlugin {
 		$custom_css .= "\n";
 
 		//@todo maybe add a filter to this output ?>
-		<style id="customify_output_style">
-			<?php 	echo( $custom_css ); ?>
-		</style>
-		<?php
-
+<style id="customify_output_style">
+<?php echo( $custom_css ); ?>
+</style><?php
 
 		/**
 		 * from now on we output only style tags only for the preview purpose
@@ -844,8 +842,10 @@ class PixCustomifyPlugin {
 		if ( empty( $unit ) && in_array( $css_property['property'], self::$pixel_dependent_css_properties ) ) {
 			$unit = 'px';
 		}
+		// lose the tons of tabs
+		$css_property['selector'] = trim(preg_replace('/\t+/', '', $css_property['selector'] ));
 
-		$this_property_output = $css_property['selector'] . ' { ' . $css_property['property'] . ': ' . $this_value . $unit . "; } \n";
+		$this_property_output = $css_property['selector'] . ' { ' . $css_property['property'] . ': ' . $this_value . $unit . "; }\n";
 
 		if ( isset( $css_property['callback_filter'] ) && function_exists( $css_property['callback_filter'] ) ) {
 			$this_property_output = call_user_func( $css_property['callback_filter'], $this_value, $css_property['selector'], $css_property['property'], $unit );
@@ -871,29 +871,29 @@ class PixCustomifyPlugin {
 		}
 		ob_start();
 
-		echo "\n" . $selector . " { \n";
+		echo $selector . " {";
 		if ( isset( $value['background-image'] ) && ! empty( $value['background-image'] ) ) {
-			echo "background-image: url( " . $value['background-image'] . ");\n";
+			echo "background-image: url( " . $value['background-image'] . ");";
 		} else {
-			echo "background-image: none;\n";
+			echo "background-image: none;";
 		}
 
 		if ( isset( $value['background-repeat'] ) && ! empty( $value['background-repeat'] ) ) {
-			echo "background-repeat:" . $value['background-repeat'] . ";\n";
+			echo "background-repeat:" . $value['background-repeat'] . ";";
 		}
 
 		if ( isset( $value['background-position'] ) && ! empty( $value['background-position'] ) ) {
-			echo "background-position:" . $value['background-position'] . ";\n";
+			echo "background-position:" . $value['background-position'] . ";";
 		}
 
 		if ( isset( $value['background-size'] ) && ! empty( $value['background-size'] ) ) {
-			echo "background-size:" . $value['background-size'] . ";\n";
+			echo "background-size:" . $value['background-size'] . ";";
 		}
 
 		if ( isset( $value['background-attachment'] ) && ! empty( $value['background-attachment'] ) ) {
-			echo "background-attachment:" . $value['background-attachment'] . ";\n";
+			echo "background-attachment:" . $value['background-attachment'] . ";";
 		}
-		echo "\n}\n";
+		echo "}\n";
 
 		return ob_get_clean();
 	}
@@ -910,59 +910,56 @@ class PixCustomifyPlugin {
 		$custom_css = ob_get_clean(); ?>
 		<script type="text/javascript">
 			/* <![CDATA[ */
-            (function( $ ) {
-                $( window ).load( function() {
-                    /**
-                     * @param iframe_id the id of the frame you whant to append the style
-                     * @param style_element the style element you want to append
-                     */
-                    var append_script_to_iframe = function( ifrm_id, scriptEl ) {
-                        var myIframe = document.getElementById( ifrm_id );
+			(function ($) {
+				$(window).load(function () {
+					/**
+					 * @param iframe_id the id of the frame you whant to append the style
+					 * @param style_element the style element you want to append
+					 */
+					var append_script_to_iframe = function (ifrm_id, scriptEl) {
+						var myIframe = document.getElementById(ifrm_id);
 
-                        var script = myIframe.contentWindow.document.createElement( "script" );
-                        script.type = "text/javascript";
-                        script.innerHTML = scriptEl.innerHTML;
+						var script = myIframe.contentWindow.document.createElement("script");
+						script.type = "text/javascript";
+						script.innerHTML = scriptEl.innerHTML;
 
-                        myIframe.contentWindow.document.head.appendChild( script );
-                    };
+						myIframe.contentWindow.document.head.appendChild(script);
+					};
 
-                    var append_style_to_iframe = function( ifrm_id, styleElment ) {
-                        var ifrm = window.frames[ifrm_id];
-                        ifrm = ( ifrm.contentDocument || ifrm.contentDocument || ifrm.document );
-                        var head = ifrm.getElementsByTagName( 'head' )[0];
+					var append_style_to_iframe = function (ifrm_id, styleElment) {
+						var ifrm = window.frames[ifrm_id];
+						ifrm = ( ifrm.contentDocument || ifrm.contentDocument || ifrm.document );
+						var head = ifrm.getElementsByTagName('head')[0];
 
-                        if ( typeof styleElment !== "undefined" ) {
-                            head.appendChild( styleElment );
-                        }
-                    };
+						if (typeof styleElment !== "undefined") {
+							head.appendChild(styleElment);
+						}
+					};
 
-                    var xmlString = <?php echo json_encode( str_replace( "\n", "", $custom_css ) ); ?>,
-                        parser = new DOMParser(),
-                        doc = parser.parseFromString( xmlString, "text/html" );
+					var xmlString = <?php echo json_encode( str_replace( "\n", "", $custom_css ) ); ?>,
+						parser = new DOMParser(),
+						doc = parser.parseFromString(xmlString, "text/html");
 
-                    if ( typeof window.frames['content_ifr'] !== 'undefined' ) {
+					if (typeof window.frames['content_ifr'] !== 'undefined') {
 
-                        $.each( doc.head.childNodes, function( key, el ) {
+						$.each(doc.head.childNodes, function (key, el) {
+							if (typeof el !== "undefined" && typeof el.tagName !== "undefined") {
 
-                            if ( typeof el !== "undefined" && typeof el.tagName !== "undefined" ) {
-
-                                switch ( el.tagName ) {
-
-                                    case 'STYLE' :
-                                        append_style_to_iframe( 'content_ifr', el );
-                                        break;
-
-                                    case 'SCRIPT' :
-                                        append_script_to_iframe( 'content_ifr', el );
-                                        break;
-                                    default:
-                                        break;
-                                }
-                            }
-                        } );
-                    }
-                } );
-            })( jQuery );
+								switch (el.tagName) {
+									case 'STYLE' :
+										append_style_to_iframe('content_ifr', el);
+										break;
+									case 'SCRIPT' :
+										append_script_to_iframe('content_ifr', el);
+										break;
+									default:
+										break;
+								}
+							}
+						});
+					}
+				});
+			})(jQuery);
 			/* ]]> */
 		</script>
 	<?php }
