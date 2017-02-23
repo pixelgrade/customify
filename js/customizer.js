@@ -193,9 +193,10 @@
 			});
 		}
 
-		$(document).on('change', '.customize-control input.range-value', function () {
+		$(document).on('change keyup', '.customize-control-range input.range-value', function () {
 			var range = $(this).siblings('input[type="range"]');
 			range.val($(this).val());
+			range.trigger('change');
 		});
 
 		$(document).on('change', '.customify_typography_font_subsets', function ( ev ) {
