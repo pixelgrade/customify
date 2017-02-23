@@ -193,9 +193,10 @@
 			});
 		}
 
-		$(document).on('change', '.customize-control input.range-value', function () {
+		$(document).on('change keyup', '.customize-control-range input.range-value', function () {
 			var range = $(this).siblings('input[type="range"]');
 			range.val($(this).val());
+			range.trigger('change');
 		});
 
 		$(document).on('change', '.customify_typography_font_subsets', function ( ev ) {
@@ -241,6 +242,7 @@
 			}
 
 			api.previewer.refresh();
+			$( '.customify_font_family' ).trigger( 'change' );
 		});
 
 		$(document).on('click', '.customify_preset.radio input, .customify_preset.radio_buttons input, .awesome_presets input', function () {
@@ -254,6 +256,8 @@
 			}
 
 			api.previewer.refresh();
+			// // after refresh we need to update the fonts previews
+			$( '.customify_font_family' ).trigger( 'change' );
 		});
 
 		// bind our event on click
@@ -588,6 +592,15 @@
 			}
 
 			family_select.trigger('change');
+
+		} else if(  !_.isUndefined(field_class) && field_class === 'font-options__wrapper' ) {
+
+			// if the values is a simple string it should be the font family
+			if ( _.isString( value ) ) {
+				jQuery(field[0].parentElement).find('option[value="' + value + '"]').attr('selected', 'selected');
+			} else if (  _.isObject(value) ) {
+				// @todo process each font property
+			}
 
 		} else {
 			setting.set(value);
@@ -977,6 +990,7 @@
 						type = $(new_option).data('type');
 
 					update_weight_field(new_option, wraper);
+
 					update_subset_field(new_option, wraper);
 
 					// serialize stuff and refresh

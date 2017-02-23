@@ -69,7 +69,9 @@
 				if ( $.inArray( el.type, ['text', 'textarea', 'ace_editor']) > -1 ) {
 					wp.customize( key, function( value ) {
 						value.bind( function( text ) {
-							$( field_class ).text( text );
+							var sanitizer = document.createElement('div');
+							sanitizer.innerHTML = text;
+							$( field_class ).html( text );
 						} );
 					} );
 				}
@@ -128,7 +130,7 @@
 				// google fonts also have the italic string inside, split that
 				if ( variants !== null && variants.indexOf('italic') !== -1 ) {
 					store['font-style'] = 'italic';
-					variants.replace('italic', '');
+					variants = variants.replace('italic', '');
 				}
 
 				if ( variants !== "" ) {

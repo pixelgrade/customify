@@ -12,6 +12,7 @@ class Customify_Font_Selector extends PixCustomifyPlugin {
 	protected static $typo_settings = null;
 	protected static $options_list = null;
 	static $theme_fonts = null;
+	protected $customify_CSS_output = array();
 
 
 	function __construct( $parent ) {
@@ -67,8 +68,8 @@ class Customify_Font_Selector extends PixCustomifyPlugin {
 
 		$args = array(
 			'google_families' => '',
-			'local_families' => '',
-			'local_srcs' => '',
+			'local_families'  => '',
+			'local_srcs'      => '',
 		);
 
 		foreach ( self::$typo_settings as $id => $font ) {
@@ -175,40 +176,48 @@ class Customify_Font_Selector extends PixCustomifyPlugin {
 
 			$this->output_font_style( $key, $font, $value );
 		}
+
+		// in customizer the CSS is printed per option, in front-end we need to print them in bulk
+		if ( ! isset( $GLOBALS['wp_customize'] ) ) { ?>
+<style id="customify_fonts_output">
+<?php echo join( "\n", $this->customify_CSS_output ); ?>
+</style><?php
+			return;
+		}
 	}
 
 	function display_webfont_script( $args ) { ?>
 		<script type="text/javascript">
-            var customify_font_loader = function () {
-                var webfontargs = {
-                    classes: false,
-                    events: false
-                };
+			var customify_font_loader = function () {
+				var webfontargs = {
+					classes: false,
+					events: false
+				};
 				<?php if ( ! empty( $args['google_families'] ) ) { ?>
-                webfontargs.google = { families: [<?php echo( rtrim( $args['google_families'], ',' ) ); ?>] };
+				webfontargs.google = {families: [<?php echo( rtrim( $args['google_families'], ',' ) ); ?>]};
 				<?php }
 				if ( ! empty( $args['local_families'] ) && ! empty( $args['local_srcs'] ) ) { ?>
-                webfontargs.custom = {
-                    families: [<?php echo( rtrim( $args['local_families'], ',' ) ); ?>],
-                    urls: [<?php echo rtrim( $args['local_srcs'], ',' ) ?>]
-                };
+				webfontargs.custom = {
+					families: [<?php echo( rtrim( $args['local_families'], ',' ) ); ?>],
+					urls: [<?php echo rtrim( $args['local_srcs'], ',' ) ?>]
+				};
 				<?php } ?>
-                WebFont.load(webfontargs);
-            };
+				WebFont.load(webfontargs);
+			};
 
-            if ( typeof WebFont !== 'undefined' ) { <?php // if there is a WebFont object, use it ?>
-                customify_font_loader();
-            } else { <?php // basically when we don't have the WebFont object we create the google script dynamically  ?>
-                var tk = document.createElement('script');
-                tk.src = '//ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
-                tk.type = 'text/javascript';
+			if (typeof WebFont !== 'undefined') { <?php // if there is a WebFont object, use it ?>
+				customify_font_loader();
+			} else { <?php // basically when we don't have the WebFont object we create the google script dynamically  ?>
+				var tk = document.createElement('script');
+				tk.src = '//ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
+				tk.type = 'text/javascript';
 
-                tk.onload = tk.onreadystatechange = function () {
-                    customify_font_loader();
-                };
-                var s = document.getElementsByTagName('script')[0];
-                s.parentNode.insertBefore(tk, s);
-            }
+				tk.onload = tk.onreadystatechange = function () {
+					customify_font_loader();
+				};
+				var s = document.getElementsByTagName('script')[0];
+				s.parentNode.insertBefore(tk, s);
+			}
 		</script>
 		<?php
 	}
@@ -227,102 +236,112 @@ class Customify_Font_Selector extends PixCustomifyPlugin {
 			} else {
 				$selected_variant = $value['selected_variants'];
 			}
-		} ?>
-		<style id="customify_font_output_for_<?php echo $field; ?>">
-			<?php
-			if ( isset( $font['callback'] ) && function_exists( $font['callback'] ) ) {
-				$output = call_user_func( $font['callback'], $value, $font );
-				echo $output;
-			} else {
-				echo $font['selector'] . " {";
+		}
 
-				// First handle the case where we have the font-family in the selected variant (usually this means a custom font from our Fonto plugin)
-				if ( ! empty( $selected_variant ) && is_array( $selected_variant ) && ! empty( $selected_variant['font-family'] ) ) {
-					//the variant's font-family
-					$this->display_property( 'font-family', $selected_variant['font-family'] );
+		ob_start();
 
-					if ( ! $load_all_weights ) {
-						// if this is a custom font (like from our plugin Fonto) with individual styles & weights - i.e. the font-family says it all
-						// we need to "force" the font-weight and font-style
-						if ( ! empty( $value['type'] ) && 'custom_individual' == $value['type'] ) {
-							$selected_variant['font-weight'] = '400 !important';
-							$selected_variant['font-style'] = 'normal !important';
-						}
+		if ( isset( $font['callback'] ) && function_exists( $font['callback'] ) ) {
+			$output = call_user_func( $font['callback'], $value, $font );
+			echo $output;
+		} else {
+			echo $font['selector'] . " {";
 
-						$italic_font = false;
+			// First handle the case where we have the font-family in the selected variant (usually this means a custom font from our Fonto plugin)
+			if ( ! empty( $selected_variant ) && is_array( $selected_variant ) && ! empty( $selected_variant['font-family'] ) ) {
+				//the variant's font-family
+				$this->display_property( 'font-family', $selected_variant['font-family'] );
 
-						// output the font weight, if available
-						if ( ! empty( $selected_variant['font-weight'] ) ) {
-							echo ": " . $selected_variant['font-weight'] . ";\n";
-							$italic_font = $this->display_weight_property( $selected_variant['font-weight'] );
-						}
-
-						// output the font style, if available and if it wasn't displayed already
-						if ( ! $italic_font && ! empty( $selected_variant['font-style'] ) ) {
-							$this->display_property( 'font-style', $selected_variant['font-style'] );
-						}
+				if ( ! $load_all_weights ) {
+					// if this is a custom font (like from our plugin Fonto) with individual styles & weights - i.e. the font-family says it all
+					// we need to "force" the font-weight and font-style
+					if ( ! empty( $value['type'] ) && 'custom_individual' == $value['type'] ) {
+						$selected_variant['font-weight'] = '400 !important';
+						$selected_variant['font-style'] = 'normal !important';
 					}
 
-				} elseif ( isset( $value['font_family'] ) ) {
-					// the selected font family
-					$this->display_property( 'font-family', $value['font_family'] );
+					$italic_font = false;
 
-					if ( ! empty( $selected_variant ) && ! $load_all_weights ) {
-						$weight_and_style = strtolower( $selected_variant );
-						$italic_font = false;
-
-						//determine if this is an italic font (the $weight_and_style is usually like '400' or '400italic' )
-						if ( ! empty( $weight_and_style ) ) {
-							//a little bit of sanity check - in case it's not a number
-							if( $weight_and_style === 'regular' ) {
-								$weight_and_style = 'normal';
-							}
-							$italic_font = $this->display_weight_property( $weight_and_style );
-						}
-
-						// output the font style, if available
-						if ( ! $italic_font && ! empty( $selected_variant['font-style'] ) ) {
-							$this->display_property( 'font-style', $selected_variant['font-style'] );
-						}
+					// output the font weight, if available
+					if ( ! empty( $selected_variant['font-weight'] ) ) {
+						echo ": " . $selected_variant['font-weight'] . ";\n";
+						$italic_font = $this->display_weight_property( $selected_variant['font-weight'] );
 					}
-				} else if (  isset( $value['font-family'] ) ) {
-					$this->display_property( 'font-family', $value['font-family'] );
+
+					// output the font style, if available and if it wasn't displayed already
+					if ( ! $italic_font && ! empty( $selected_variant['font-style'] ) ) {
+						$this->display_property( 'font-style', $selected_variant['font-style'] );
+					}
 				}
 
-				if ( ! empty( $value['font_weight'] ) ) {
-					$italic_font = $this->display_weight_property( $value['font_weight'] );
-				}
+			} elseif ( isset( $value['font_family'] ) ) {
+				// the selected font family
+				$this->display_property( 'font-family', $value['font_family'] );
 
-				if ( ! empty( $value['font_size'] ) ) {
-					$unit = $this->get_field_unit( $font, 'font-size' );
-					$this->display_property( 'font-size', $value['font_size'], $unit );
-				}
+				if ( ! empty( $selected_variant ) && ! $load_all_weights ) {
+					$weight_and_style = strtolower( $selected_variant );
+					$italic_font = false;
 
-				if ( ! empty( $value['line_height'] ) ) {
-					$unit = $this->get_field_unit( $font, 'line-height' );
-					$this->display_property( 'line-height', $value['line_height'], $unit );
-				}
+					//determine if this is an italic font (the $weight_and_style is usually like '400' or '400italic' )
+					if ( ! empty( $weight_and_style ) ) {
+						//a little bit of sanity check - in case it's not a number
+						if( $weight_and_style === 'regular' ) {
+							$weight_and_style = 'normal';
+						}
+						$italic_font = $this->display_weight_property( $weight_and_style );
+					}
 
-				if ( ! empty( $value['letter_spacing'] ) ) {
-					$unit = $this->get_field_unit( $font, 'letter-spacing' );
-					$this->display_property( 'letter-spacing', $value['letter_spacing'], $unit );
+					// output the font style, if available
+					if ( ! $italic_font && ! empty( $selected_variant['font-style'] ) ) {
+						$this->display_property( 'font-style', $selected_variant['font-style'] );
+					}
 				}
+			} else if (  isset( $value['font-family'] ) ) {
+				$this->display_property( 'font-family', $value['font-family'] );
+			}
 
-				if ( ! empty( $value['text_align'] ) ) {
-					$this->display_property( 'text-align', $value['text_align'] );
-				}
+			if ( ! empty( $value['font_weight'] ) ) {
+				$italic_font = $this->display_weight_property( $value['font_weight'] );
+			}
 
-				if ( ! empty( $value['text_transform'] ) ) {
-					$this->display_property( 'text-transform', $value['text_transform'] );
-				}
+			if ( ! empty( $value['font_size'] ) ) {
+				$unit = $this->get_field_unit( $font, 'font-size' );
+				$this->display_property( 'font-size', $value['font_size'], $unit );
+			}
 
-				if ( ! empty( $value['text_decoration'] ) ) {
-					$this->display_property( 'text-decoration', $value['text_decoration'] );
-				}
-				echo "}\n";
-			} ?>
-		</style>
-		<?php
+			if ( ! empty( $value['line_height'] ) ) {
+				$unit = $this->get_field_unit( $font, 'line-height' );
+				$this->display_property( 'line-height', $value['line_height'], $unit );
+			}
+
+			if ( ! empty( $value['letter_spacing'] ) ) {
+				$unit = $this->get_field_unit( $font, 'letter-spacing' );
+				$this->display_property( 'letter-spacing', $value['letter_spacing'], $unit );
+			}
+
+			if ( ! empty( $value['text_align'] ) ) {
+				$this->display_property( 'text-align', $value['text_align'] );
+			}
+
+			if ( ! empty( $value['text_transform'] ) ) {
+				$this->display_property( 'text-transform', $value['text_transform'] );
+			}
+
+			if ( ! empty( $value['text_decoration'] ) ) {
+				$this->display_property( 'text-decoration', $value['text_decoration'] );
+			}
+			echo "}\n";
+		}
+
+		$CSS = ob_get_clean();
+
+		if ( isset( $GLOBALS['wp_customize'] ) ) { ?>
+			<style id="customify_font_output_for_<?php echo $field; ?>">
+				<?php $CSS ?>
+			</style><?php
+			return;
+		} else {
+			$this->customify_CSS_output[] = $CSS;
+		}
 	}
 
 	function get_field_unit( $font, $field ) {
