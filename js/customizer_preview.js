@@ -69,7 +69,9 @@
 				if ( $.inArray( el.type, ['text', 'textarea', 'ace_editor']) > -1 ) {
 					wp.customize( key, function( value ) {
 						value.bind( function( text ) {
-							$( field_class ).text( text );
+							var sanitizer = document.createElement('div');
+							sanitizer.innerHTML = text;
+							$( field_class ).html( text );
 						} );
 					} );
 				}
