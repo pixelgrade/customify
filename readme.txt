@@ -3,7 +3,7 @@ Contributors: pixelgrade, euthelup, babbardel, vlad.olaru, cristianfrumusanu, ra
 Tags: customizer, css, editor, live, preview, customise
 Requires at least: 4.5.0
 Tested up to: 4.7.2
-Stable tag: 1.4.1
+Stable tag: 1.4.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -36,6 +36,14 @@ With [Customify](https://github.com/pixelgrade/customify), developers can easily
 **Made with love by Pixelgrade**
 
 == Changelog ==
+
+= 1.4.2 =
+* Improved Font style output in front-end. Now is just one style element with all the fonts inside.
+* Improved Fonts panels, now only one can be opened to avoid confusion
+* Fixed Presets with fonts
+* Fixed Google Fonts with italic weights
+* Fixed Range input field
+* Small Fixes
 
 = 1.4.1 =
 * Fixed Multiple local fonts
