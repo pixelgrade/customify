@@ -242,7 +242,6 @@
 			}
 
 			api.previewer.refresh();
-			$( '.customify_font_family' ).trigger( 'change' );
 		});
 
 		$(document).on('click', '.customify_preset.radio input, .customify_preset.radio_buttons input, .awesome_presets input', function () {
@@ -256,8 +255,6 @@
 			}
 
 			api.previewer.refresh();
-			// // after refresh we need to update the fonts previews
-			$( '.customify_font_family' ).trigger( 'change' );
 		});
 
 		// bind our event on click
@@ -597,7 +594,11 @@
 
 			// if the values is a simple string it should be the font family
 			if ( _.isString( value ) ) {
-				jQuery(field[0].parentElement).find('option[value="' + value + '"]').attr('selected', 'selected');
+
+				var option = field.parent().find('option[value="' + value + '"]');
+
+				option.attr('selected', 'selected');
+				// option.parents('select').trigger('change');
 			} else if (  _.isObject(value) ) {
 				// @todo process each font property
 			}
@@ -1089,10 +1090,17 @@
 					var setting_id = $(value_holder).data('customize-setting-link');
 					var setting = wpapi(setting_id);
 					setting.set(encodeValues(current_value));
-					// setting.trigger('change');
+
 					wpapi.previewer.send( 'font-changed' );
 				});
 			}
+
+			var self = this;
+			wpapi.previewer.bind('synced', function ( e ) {
+				// setTimeout( function () {
+					self.render_fonts();
+				// },100);
+			})
 		}
 
 		/**
@@ -1253,7 +1261,12 @@
 			return encodeURIComponent(JSON.stringify(obj));
 		}
 
+		function render_fonts() {
+			$( '.customify_font_family').select2().trigger('change')
+		}
+
 		return {
+			render_fonts: render_fonts,
 			init: init,
 			update_font_value: update_font_value
 		};
