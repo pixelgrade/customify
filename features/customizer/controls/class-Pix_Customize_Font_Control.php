@@ -168,9 +168,9 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 
 						do_action( 'customify_font_family_before_google_fonts_options' );
 
-						if ( PixCustomifyPlugin::get_plugin_option( 'typography_google_fonts' ) ) {
+						if ( PixCustomifyPlugin()->get_plugin_setting( 'typography_google_fonts' ) ) {
 
-							if ( PixCustomifyPlugin::get_plugin_option( 'typography_group_google_fonts' ) ) {
+							if ( PixCustomifyPlugin()->get_plugin_setting( 'typography_group_google_fonts' ) ) {
 
 								$grouped_google_fonts = array();
 								foreach ( self::$google_fonts as $key => $font ) {
@@ -276,7 +276,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 		// Allow others to add options here
 		do_action( 'customify_font_family_before_standard_fonts_options', $font_family, $current_value );
 
-		if ( PixCustomifyPlugin::get_plugin_option( 'typography_standard_fonts' ) ) {
+		if ( PixCustomifyPlugin()->get_plugin_setting( 'typography_standard_fonts' ) ) {
 
 			echo '<optgroup label="' . __( 'Standard fonts', 'customify' ) . '">';
 			foreach ( self::$std_fonts as $key => $font ) {
@@ -579,7 +579,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 		if ( isset( $this->default ) && is_array( $this->default ) ) {
 
 			//Handle special logic for when the $value array is not an associative array
-			if ( ! PixCustomifyPlugin::is_assoc( $this->default ) ) {
+			if ( ! PixCustomifyPlugin()->is_assoc( $this->default ) ) {
 
 				//Let's determine some type of font
 				if ( ! isset( $this->default[2] ) || ( isset( $this->default[2] ) && 'google' == $this->default[2] ) ) {
@@ -690,7 +690,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 	 */
 	public function input_field_atts( $atts ) {
 
-		if ( ! PixCustomifyPlugin::is_assoc( $atts ) ) {
+		if ( ! PixCustomifyPlugin()->is_assoc( $atts ) ) {
 			$defaults = array(
 				'min',
 				'max',

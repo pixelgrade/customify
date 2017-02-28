@@ -1,9 +1,9 @@
 <?php
 /*
 Plugin Name: Customify
-Plugin URI:  https://pixelgrade.com
+Plugin URI:  https://wordpress.org/plugins/customify/
 Description: A Theme Customizer Booster
-Version: 1.4.2
+Version: 1.5.0
 Author: PixelGrade
 Author URI: https://pixelgrade.com
 Author Email: contact@pixelgrade.com
@@ -35,33 +35,33 @@ pixcustomify::settextdomain('customify');
 
 $defaults = include 'plugin-defaults'.EXT;
 
-$current_data = get_option($config['settings-key']);
+$current_data = get_option( $config['settings-key'] );
 
-if ($current_data === false) {
-	add_option($config['settings-key'], $defaults);
-}
-else if (count(array_diff_key($defaults, $current_data)) != 0) {
-	$plugindata = array_merge($defaults, $current_data);
-	update_option($config['settings-key'], $plugindata);
+if ( $current_data === false ) {
+	add_option( $config['settings-key'], $defaults );
+} elseif ( count( array_diff_key( $defaults, $current_data ) ) != 0)  {
+	$plugindata = array_merge( $defaults, $current_data );
+	update_option( $config['settings-key'], $plugindata );
 }
 # else: data is available; do nothing
 
-// Load Callbacks
-// --------------
+/**
+ * Returns the main instance of PixCustomifyPlugin to prevent the need to use globals.
+ *
+ * @since  1.5.0
+ * @return PixCustomifyPlugin
+ */
+function PixCustomifyPlugin() {
 
-$basepath = dirname(__FILE__).DIRECTORY_SEPARATOR;
-$callbackpath = $basepath.'callbacks'.DIRECTORY_SEPARATOR;
-pixcustomify::require_all($callbackpath);
-
-require_once( plugin_dir_path( __FILE__ ) . 'class-pixcustomify.php' );
-
-// Register hooks that are fired when the plugin is activated, deactivated, and uninstalled, respectively.
-register_activation_hook( __FILE__, array( 'PixCustomifyPlugin', 'activate' ) );
-//register_deactivation_hook( __FILE__, array( 'customifyPlugin', 'deactivate' ) );
-
-
-function customify_init_plugin () {
-	global $pixcustomify_plugin;
-	$pixcustomify_plugin = PixCustomifyPlugin::get_instance();
+	require_once( plugin_dir_path( __FILE__ ) . 'class-pixcustomify.php' );
+	$instance = PixCustomifyPlugin::instance( __FILE__, '1.5.0' );
+	return $instance;
 }
-add_action('plugins_loaded', 'customify_init_plugin', 20 );
+
+// Now get the party started
+// We will keep this global variable for legacy
+$pixcustomify_plugin = PixCustomifyPlugin();
+
+// Load custom modules
+require_once( 'features/class-CSS_Editor.php' );
+require_once( 'features/class-Font_Selector.php' );

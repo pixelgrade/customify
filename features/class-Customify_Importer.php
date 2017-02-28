@@ -468,9 +468,7 @@ final class Customify_Importer_Controller {
 
 	protected function get_customify_field_data( $option_key, $step_id ) {
 
-		global $pixcustomify_plugin;
-
-		$options = $pixcustomify_plugin->get_options_configs();
+		$options = PixCustomifyPlugin()->get_options_configs();
 
 		if ( ! isset( $options[ $option_key ] ) ) {
 			wp_send_json_error( 'inexistent key' );

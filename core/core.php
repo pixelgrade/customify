@@ -1,9 +1,5 @@
 <?php defined('ABSPATH') or die;
 
-/* This file is property of Pixel Grade Media. You may NOT copy, or redistribute
- * it. Please see the license that came with your copy for more information.
- */
-
 /**
  * @package    pixcustomify
  * @category   core
@@ -268,7 +264,7 @@ class pixcustomify {
 
 		foreach ($priority_list as $file => $priority) {
 			if (strpos($file, EXT)) {
-				require $file;
+				require_once $file;
 			}
 		}
 	}
@@ -287,8 +283,10 @@ class pixcustomify {
 	}
 
 	static function option( $option, $default = null ) {
+		/** @var PixCustomifyPlugin $local_plugin */
+		$local_plugin = PixCustomifyPlugin();
 
-		return PixCustomifyPlugin::get_option($option, $default = null);
+		return $local_plugin->get_option($option, $default = null);
 
 	}
 

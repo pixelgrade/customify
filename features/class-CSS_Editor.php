@@ -13,7 +13,7 @@ class Customify_CSS_Live_Editor {
 
 		add_action( 'customify_create_custom_control', array( $this, 'cle_create_custom_control' ), 10, 1 );
 		add_action( 'customize_controls_enqueue_scripts', array( $this, 'enqueue_admin_customizer_styles' ), 10 );
-		$load_location = PixCustomifyPlugin::get_plugin_option( 'style_resources_location', 'wp_head' );
+		$load_location = PixCustomifyPlugin()->get_plugin_setting( 'style_resources_location', 'wp_head' );
 
 		if ( function_exists( 'wp_custom_css_cb' ) ) {
 			remove_action( 'wp_head', 'wp_custom_css_cb', 11 );
@@ -35,7 +35,7 @@ class Customify_CSS_Live_Editor {
 	public static function get_instance() {
 
 		// If the single instance hasn't been set, set it now.
-		if ( null == self::$instance ) {
+		if ( is_null( self::$instance ) ) {
 			self::$instance = new self;
 		}
 
@@ -63,7 +63,7 @@ class Customify_CSS_Live_Editor {
 			// port CSS if
 			if ( function_exists( 'wp_update_custom_css_post' ) ) {
 				// Migrate any existing theme CSS to the core option added in WordPress 4.7.
-				$store_type = PixCustomifyPlugin::get_plugin_option( 'values_store_mod', 'option' );
+				$store_type = PixCustomifyPlugin()->get_plugin_setting( 'values_store_mod', 'option' );
 
 				$default_css = __( "/*
  * Welcome to the Custom CSS Editor
@@ -120,7 +120,7 @@ selector {
 			'title'      => __( 'CSS Editor', 'customify' ),
 		) );
 
-		$saving_type = PixCustomifyPlugin::get_plugin_option( 'values_store_mod', 'option' );
+		$saving_type = PixCustomifyPlugin()->get_plugin_setting( 'values_store_mod', 'option' );
 
 		$wp_customize->add_setting( 'live_css_edit', array(
 			'type'       => $saving_type,
@@ -168,7 +168,7 @@ selector {
 			return;
 		}
 
-		$store_type = PixCustomifyPlugin::get_plugin_option( 'values_store_mod', 'option' );
+		$store_type = PixCustomifyPlugin()->get_plugin_setting( 'values_store_mod', 'option' );
 		if ( $store_type === 'option' ) {
 			$output = get_option( 'live_css_edit' );
 		} elseif ( $store_type === 'theme_mod' ) {

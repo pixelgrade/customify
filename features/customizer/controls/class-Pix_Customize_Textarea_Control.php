@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Class Pix_Customize_Text_Control
+ * Class Pix_Customize_Textarea_Control
  * A simple Text Control
  */
 class Pix_Customize_Textarea_Control extends Pix_Customize_Control {

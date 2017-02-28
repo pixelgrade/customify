@@ -1,41 +1,40 @@
 <?php
 
-class Customify_Font_Selector extends PixCustomifyPlugin {
+class Customify_Font_Selector {
 
 	/**
 	 * Instance of this class.
 	 * @since    1.0.0
 	 * @var      object
 	 */
-	protected static $instance = null;
-	protected $parent = null;
+	protected static $_instance = null;
+
 	protected static $typo_settings = null;
 	protected static $options_list = null;
-	static $theme_fonts = null;
+	protected $theme_fonts = null;
 	protected $customify_CSS_output = array();
 
 
-	function __construct( $parent ) {
-		global $pixcustomify_plugin;
+	function __construct() {
+		$this->theme_fonts = apply_filters( 'customify_theme_fonts', array() );
 
-		$load_location = PixCustomifyPlugin::get_plugin_option( 'style_resources_location', 'wp_head' );
-
+		$load_location = PixCustomifyPlugin()->get_plugin_setting( 'style_resources_location', 'wp_head' );
 		add_action( $load_location, array( $this, 'output_font_dynamic_style' ), 999999999 );
-
-		$this->parent      = $parent;
-		self::$theme_fonts = apply_filters( 'customify_theme_fonts', array() );
-
 		add_action( 'customify_font_family_before_options', array( $this, 'add_customify_theme_fonts' ), 11, 2 );
+	}
+
+	public function get_theme_fonts() {
+		return $this->theme_fonts;
 	}
 
 	function add_customify_theme_fonts( $active_font_family, $val ) {
 		//first get all the published custom fonts
-		if ( empty( self::$theme_fonts ) ) {
+		if ( empty( $this->theme_fonts ) ) {
 			return;
 		}
 
 		echo '<optgroup label="' . esc_html__( 'Theme Fonts', 'customify' ) . '">';
-		foreach ( self::$theme_fonts as $font ) {
+		foreach ( $this->theme_fonts as $font ) {
 			if ( ! empty( $font ) ) {
 				//display the select option's HTML
 				Pix_Customize_Font_Control::output_font_option( $font['family'], $active_font_family, $font, 'theme_font' );
@@ -56,9 +55,12 @@ class Customify_Font_Selector extends PixCustomifyPlugin {
 
 	function output_font_dynamic_style() {
 
-		self::$options_list = $this->get_options();
+		/** @var PixCustomifyPlugin $local_plugin */
+		$local_plugin = PixCustomifyPlugin();
 
-		self::get_typography_fields( self::$options_list, 'type', 'font', self::$typo_settings );
+		self::$options_list = $local_plugin->get_options();
+
+		$local_plugin->get_typography_fields( self::$options_list, 'type', 'font', self::$typo_settings );
 
 		if ( empty( self::$typo_settings ) ) {
 			return;
@@ -86,7 +88,7 @@ class Customify_Font_Selector extends PixCustomifyPlugin {
 
 				// in case the value is still null, try default value(mostly for google fonts)
 				if ( ! is_array( $value ) || $value === null ) {
-					$value = $this->get_font_defaults_value( str_replace( '"', '', $font['value'] ) );
+					$value = $local_plugin->get_font_defaults_value( str_replace( '"', '', $font['value'] ) );
 				}
 
 				//bail if by this time we don't have a value of some sort
@@ -95,8 +97,8 @@ class Customify_Font_Selector extends PixCustomifyPlugin {
 				}
 
 				//Handle special logic for when the $value array is not an associative array
-				if ( ! self::is_assoc( $value ) ) {
-					$value = $this->process_a_not_associative_font_default( $value );
+				if ( ! $local_plugin->is_assoc( $value ) ) {
+					$value = $local_plugin->process_a_not_associative_font_default( $value );
 				}
 
 				if ( isset( $value['font_family'] ) && isset( $value['type'] ) && $value['type'] == 'google' ) {
@@ -133,24 +135,24 @@ class Customify_Font_Selector extends PixCustomifyPlugin {
 					}
 
 					$args['google_families'] .= '\',';
-				} elseif ( isset( self::$theme_fonts[ $value['font_family'] ] ) ) {
+				} elseif ( isset( $this->theme_fonts[ $value['font_family'] ] ) ) {
 
 //					$value['type']     = 'theme_font';
-//					$args['local_srcs'] .= self::$theme_fonts[ $value['font_family'] ]['src'] . ',';
-//					$value['variants'] = self::$theme_fonts[ $value['font_family'] ]['variants'];
+//					$args['local_srcs'] .= $this->theme_fonts[ $value['font_family'] ]['src'] . ',';
+//					$value['variants'] = $this->theme_fonts[ $value['font_family'] ]['variants'];
 
 					if ( false === strpos( $args['local_families'], $value['font_family'] ) ) {
 						$args['local_families'] .= "'" . $value['font_family'] . "',";
 					}
 
-					if ( false === strpos( $args['local_srcs'], self::$theme_fonts[ $value['font_family'] ]['src'] ) ) {
-						$args['local_srcs'] .= "'" . self::$theme_fonts[ $value['font_family'] ]['src'] . "',";
+					if ( false === strpos( $args['local_srcs'], $this->theme_fonts[ $value['font_family'] ]['src'] ) ) {
+						$args['local_srcs'] .= "'" . $this->theme_fonts[ $value['font_family'] ]['src'] . "',";
 					}
 				}
 			}
 		}
 
-		if ( ( ! empty ( $args['local_families'] ) || ! empty ( $args['google_families'] ) ) && self::get_plugin_option( 'typography', '1' ) && self::get_plugin_option( 'typography_google_fonts', 1 ) ) {
+		if ( ( ! empty ( $args['local_families'] ) || ! empty ( $args['google_families'] ) ) && PixCustomifyPlugin()->get_plugin_setting( 'typography', '1' ) && PixCustomifyPlugin()->get_plugin_setting( 'typography_google_fonts', 1 ) ) {
 			$this->display_webfont_script( $args );
 		}
 
@@ -161,7 +163,7 @@ class Customify_Font_Selector extends PixCustomifyPlugin {
 			$value = $this->maybe_decode_value( $font['value'] );
 
 			if ( $value === null ) {
-				$value = $this->get_font_defaults_value( $font['value'] );
+				$value = $local_plugin->get_font_defaults_value( $font['value'] );
 			}
 
 			// shim the old case when the default was only the font name
@@ -170,8 +172,8 @@ class Customify_Font_Selector extends PixCustomifyPlugin {
 			}
 
 			//Handle special logic for when the $value array is not an associative array
-			if ( ! self::is_assoc( $value ) ) {
-				$value = $this->process_a_not_associative_font_default( $value );
+			if ( ! $local_plugin->is_assoc( $value ) ) {
+				$value = $local_plugin->process_a_not_associative_font_default( $value );
 			}
 
 			$this->output_font_style( $key, $font, $value );
@@ -406,4 +408,42 @@ class Customify_Font_Selector extends PixCustomifyPlugin {
 
 		return $has_style;
 	}
+
+	/**
+	 * Main Customify_Font_Selector Instance
+	 *
+	 * Ensures only one instance of Customify_Font_Selector is loaded or can be loaded.
+	 *
+	 * @since  1.0.0
+	 * @static
+	 *
+	 * @return Customify_Font_Selector Main Customify_Font_Selector instance
+	 */
+	public static function instance() {
+
+		if ( is_null( self::$_instance ) ) {
+			self::$_instance = new self();
+		}
+		return self::$_instance;
+	} // End instance ()
+
+	/**
+	 * Cloning is forbidden.
+	 *
+	 * @since 1.0.0
+	 */
+	public function __clone() {
+
+		_doing_it_wrong( __FUNCTION__,esc_html( __( 'Cheatin&#8217; huh?' ) ), '' );
+	} // End __clone ()
+
+	/**
+	 * Unserializing instances of this class is forbidden.
+	 *
+	 * @since 1.0.0
+	 */
+	public function __wakeup() {
+
+		_doing_it_wrong( __FUNCTION__, esc_html( __( 'Cheatin&#8217; huh?' ) ), '' );
+	} // End __wakeup ()
 }

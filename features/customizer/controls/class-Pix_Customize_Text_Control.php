@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Class Pix_Customize_Text_Control
  * A simple Text Control

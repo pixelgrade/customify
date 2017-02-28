@@ -4,8 +4,8 @@
  * @package   PixCustomify
  * @author    Pixelgrade <contact@pixelgrade.com>
  * @license   GPL-2.0+
- * @link      http://pixelgrade.com
- * @copyright 2014 Pixelgrade
+ * @link      https://pixelgrade.com
+ * @copyright 2014-2017 Pixelgrade
  */
 
 /**
@@ -17,10 +17,10 @@ class PixCustomifyPlugin {
 
 	/**
 	 * Plugin version, used for cache-busting of style and script file references.
-	 * @since   1.0.0
+	 * @since   1.5.0
 	 * @const   string
 	 */
-	protected $version = '1.4.2';
+	protected $_version;
 	/**
 	 * Unique identifier for your plugin.
 	 * Use this value (not the variable name) as the text domain when internationalizing strings of text. It should
@@ -32,10 +32,10 @@ class PixCustomifyPlugin {
 
 	/**
 	 * Instance of this class.
-	 * @since    1.0.0
+	 * @since    1.5.0
 	 * @var      object
 	 */
-	protected static $instance = null;
+	protected static $_instance = null;
 
 	/**
 	 * Slug of the plugin screen.
@@ -53,27 +53,27 @@ class PixCustomifyPlugin {
 
 	public $display_admin_menu = false;
 
-	private static $config;
+	private $config;
 
-	private static $customizer_config;
+	private $customizer_config;
 
-	public static $plugin_settings;
+	public $plugin_settings;
 
-	protected static $localized = array();
+	protected $localized = array();
 
-	protected static $current_values = array();
+	protected $current_values = array();
 
-	protected static $options_list = array();
+	protected $options_list = array();
 
-	protected static $media_queries = array();
+	protected $media_queries = array();
 
-	protected static $opt_name;
+	protected $opt_name;
 
-	protected static $typo_settings;
+	protected $typo_settings;
 
-	protected static $google_fonts = null;
+	protected $google_fonts = null;
 
-	protected static $theme_fonts = null;
+	protected $theme_fonts = null;
 
 	// these properties will get 'px' as a default unit
 	protected static $pixel_dependent_css_properties = array(
@@ -113,45 +113,103 @@ class PixCustomifyPlugin {
 		'border-top-width'
 	);
 
-	protected static $jetpack_default_modules = array();
-	protected static $jetpack_blocked_modules = array();
-	protected static $jetpack_sharing_default_options = array();
+	protected $jetpack_default_modules = array();
+	protected $jetpack_blocked_modules = array();
+	protected $jetpack_sharing_default_options = array();
 
 	/**
-	 * Initialize the plugin by setting localization, filters, and administration functions.
-	 * @since     1.0.0
+	 * The main plugin file.
+	 * @var     string
+	 * @access  public
+	 * @since   1.5.0
 	 */
-	protected function __construct() {
+	public $file;
 
-		$this->plugin_basepath = plugin_dir_path( __FILE__ );
-		self::$config          = self::get_config();
-		self::$plugin_settings = get_option( 'pixcustomify_settings' );
+	/**
+	 * Minimal Required PHP Version
+	 * @var string
+	 * @access  private
+	 * @since   1.5.0
+	 */
+	private $minimalRequiredPhpVersion  = 5.2;
 
-		// load custom modules
-		include_once( self::get_base_path() . '/features/class-CSS_Editor.php' );
-		include_once( self::get_base_path() . 'features/class-Font_Selector.php' );
+	protected function __construct( $file, $version = '1.0.0' ) {
+		//the main plugin file (the one that loads all this)
+		$this->file = $file;
+		//the current plugin version
+		$this->_version = $version;
 
-		// Load plugin text domain
+		// Remember our base path
+		$this->plugin_basepath = plugin_dir_path( $file );
+
+		if ( $this->php_version_check() ) {
+			// Only load and run the init function if we know PHP version can parse it.
+			$this->init();
+		}
+	}
+
+	/**
+	 * Initialize plugin
+	 */
+	private function init() {
+		// Load the config file
+		$this->config          = $this->get_config();
+		// Load the plugin's settings from the DB
+		$this->plugin_settings = get_option( $this->config['settings-key'] );
+
+		// Register all the needed hooks
+		$this->register_hooks();
+	}
+
+	/**
+	 * Register our actions and filters
+	 *
+	 * @return null
+	 */
+	function register_hooks() {
+		/*
+		 * Register hooks that are fired when the plugin is activated, deactivated, and uninstalled, respectively.
+		 */
+		register_activation_hook( $this->file, array( $this, 'activate' ) );
+		register_deactivation_hook( $this->file, array( $this, 'deactivate' ) );
+
+		/*
+		 * Load plugin text domain
+		 */
 		add_action( 'init', array( $this, 'load_plugin_textdomain' ) );
 
-		add_action( 'wp_loaded', array( $this, 'init_plugin_configs' ), 5 );
+		/*
+		 * Prepare and load the configuration
+		 */
+		$this->init_plugin_configs();
 
+		// We can load the actual plugins config only on after_setup_theme so we can give the themes a change to have their say
+		// DO NOT TRY to use the Customify values before this!
+		add_action( 'after_setup_theme', array( $this, 'load_plugin_configs' ), 5 );
+
+		/*
+		 * Now setup the admin side of things
+		 */
+		// Starting with the menu item for this plugin
 		add_action( 'admin_menu', array( $this, 'add_plugin_admin_menu' ) );
 
 		// Add an action link pointing to the options page.
-		$plugin_basename = plugin_basename( plugin_dir_path( __FILE__ ) . 'pixcustomify.php' );
+		$plugin_basename = plugin_basename( plugin_dir_path( $this->file ) . 'pixcustomify.php' );
 		add_filter( 'plugin_action_links_' . $plugin_basename, array( $this, 'add_action_links' ) );
 
 		// Load admin style sheet and JavaScript.
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_styles' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_scripts' ) );
 
-//		add_action( 'plugins_loaded', array( $this, 'register_metaboxes' ), 14 );
+		/*
+		 * Now it's time for the Customizer logic to kick in
+		 */
+		// Both in the Customizer and on the frontend
 		add_action( 'customize_controls_enqueue_scripts', array( $this, 'enqueue_admin_customizer_styles' ), 10 );
 		add_action( 'customize_controls_enqueue_scripts', array( $this, 'enqueue_admin_customizer_scripts' ), 10 );
 		add_action( 'customize_preview_init', array( $this, 'customizer_live_preview_enqueue_scripts' ), 99999 );
 
-		$load_location = self::get_plugin_option( 'style_resources_location', 'wp_head' );
+		$load_location = $this->get_plugin_setting( 'style_resources_location', 'wp_head' );
 
 		add_action( $load_location, array( $this, 'output_dynamic_style' ), 99999 );
 		add_action( 'wp_head', array( $this, 'output_typography_dynamic_style' ), 10 );
@@ -159,11 +217,13 @@ class PixCustomifyPlugin {
 		add_action( 'customize_register', array( $this, 'remove_default_sections' ), 11 );
 		add_action( 'customize_register', array( $this, 'register_customizer' ), 12 );
 
-		if ( self::get_plugin_option( 'enable_editor_style', true ) ) {
+		if ( $this->get_plugin_setting( 'enable_editor_style', true ) ) {
 			add_action( 'admin_head', array( $this, 'add_customizer_settings_into_wp_editor' ) );
 		}
 
-		// Jetpack Related
+		/*
+		 * Jetpack Related
+		 */
 		add_action( 'init', array( $this, 'set_jetpack_modules_config') );
 		add_filter( 'default_option_jetpack_active_modules', array( $this, 'default_jetpack_active_modules' ), 10, 1 );
 		add_filter( 'jetpack_get_available_modules', array( $this, 'jetpack_hide_blocked_modules'), 10, 1 );
@@ -171,59 +231,48 @@ class PixCustomifyPlugin {
 	}
 
 	/**
-	 * Return an instance of this class.
-	 * @since     1.0.0
-	 * @return    object    A single instance of this class.
+	 * Initialize Configs, Options and Values methods
 	 */
-	public static function get_instance() {
+	function init_plugin_configs() {
+		$this->customizer_config = get_option( 'pixcustomify_config' );
 
-		// If the single instance hasn't been set, set it now.
-		if ( null == self::$instance ) {
-			self::$instance = new self;
+		// no option so go for default
+		if ( empty( $this->customizer_config ) ) {
+			$this->customizer_config = $this->get_config_option( 'default_options' );
 		}
 
-		return self::$instance;
+		if ( empty( $this->customizer_config ) ) {
+			$this->customizer_config = array();
+		}
 	}
 
 	/**
-	 * Configs, Options and Values methods
+	 * Load the plugin configuration and options
 	 */
-
-	function init_plugin_configs() {
-		self::$customizer_config = get_option( 'pixcustomify_config' );
-
-		// no option so go for default
-		if ( empty( self::$customizer_config ) ) {
-			self::$customizer_config = self::get_config_option( 'default_options' );
-		}
-
-		if ( empty( self::$customizer_config ) ) {
-			self::$customizer_config = array();
-		}
+	function load_plugin_configs() {
 
 		// allow themes or other plugins to filter the config
-		self::$customizer_config = apply_filters( 'customify_filter_fields', self::$customizer_config );
+		$this->customizer_config = apply_filters( 'customify_filter_fields', $this->customizer_config );
+		$this->opt_name = $this->localized['options_name'] = $this->customizer_config['opt-name'];
+		$this->options_list = $this->get_options();
 
-		self::$opt_name = self::$localized['options_name'] = self::$customizer_config['opt-name'];
-
-		self::get_current_values();
-		self::$options_list = $this->get_options();
+		// Load the current options values
+		$this->current_values = $this->get_current_values();
 
 		if ( $this->import_button_exists() ) {
-			self::$opt_name = self::$localized['import_rest_url'] = get_rest_url( '/customify/1.0/' );
-			self::$opt_name = self::$localized['import_rest_nonce'] = wp_create_nonce( 'wp_rest' );
+			$this->localized['import_rest_url'] = get_rest_url( '/customify/1.0/' );
+			$this->localized['import_rest_nonce'] = wp_create_nonce( 'wp_rest' );
 
 			$this->register_import_api();
 		}
 
-		$font_selector = new Customify_Font_Selector( $this );
-		self::$localized['theme_fonts'] = self::$theme_fonts = Customify_Font_Selector::$theme_fonts;
+		$this->localized['theme_fonts'] = $this->theme_fonts = Customify_Font_Selector::instance()->get_theme_fonts();
 	}
 
 	function set_jetpack_modules_config() {
 		// We expect an array of string module names like array( 'infinite-scroll', 'widgets' )
 		// See jetpack/modules/modules-heading.php for module names
-		self::$jetpack_default_modules = apply_filters ( 'customify_filter_jetpack_default_modules', array(
+		$this->jetpack_default_modules = apply_filters ( 'customify_filter_jetpack_default_modules', array(
 			'shortcodes',
 			'widget-visibility',
 			'widgets',
@@ -231,9 +280,9 @@ class PixCustomifyPlugin {
 
 		// We expect an array of string module names like array( 'infinite-scroll', 'widgets' )
 		// See jetpack/modules/modules-heading.php for module names
-		self::$jetpack_blocked_modules = apply_filters ( 'customify_filter_jetpack_blocked_modules', array() );
+		$this->jetpack_blocked_modules = apply_filters ( 'customify_filter_jetpack_blocked_modules', array() );
 
-		self::$jetpack_sharing_default_options = apply_filters ( 'customify_filter_jetpack_sharing_default_options', array() );
+		$this->jetpack_sharing_default_options = apply_filters ( 'customify_filter_jetpack_sharing_default_options', array() );
 	}
 
 	/**
@@ -249,7 +298,7 @@ class PixCustomifyPlugin {
 			$default = array();
 		}
 
-		return array_merge( $default, self::$jetpack_default_modules );
+		return array_merge( $default, $this->jetpack_default_modules );
 	}
 
 	/**
@@ -266,7 +315,7 @@ class PixCustomifyPlugin {
 			$default = array();
 		}
 
-		return array_merge( $default, self::$jetpack_sharing_default_options );
+		return array_merge( $default, $this->jetpack_sharing_default_options );
 	}
 
 	/**
@@ -278,7 +327,7 @@ class PixCustomifyPlugin {
 	 * @return array
 	 */
 	function jetpack_hide_blocked_modules( $modules ) {
-		return array_diff_key( $modules, array_flip( self::$jetpack_blocked_modules ) );
+		return array_diff_key( $modules, array_flip( $this->jetpack_blocked_modules ) );
 	}
 
 	/**
@@ -288,7 +337,7 @@ class PixCustomifyPlugin {
 	 * @param    boolean $network_wide True if WPMU superadmin uses "Network Activate" action, false if WPMU is disabled or plugin is activated on an individual blog.
 	 */
 	public static function activate( $network_wide ) {
-
+		//@todo Define activation functionality here
 	}
 
 	/**
@@ -298,7 +347,7 @@ class PixCustomifyPlugin {
 	 * @param    boolean $network_wide True if WPMU superadmin uses "Network Deactivate" action, false if WPMU is disabled or plugin is deactivated on an individual blog.
 	 */
 	static function deactivate( $network_wide ) {
-		// TODO: Define deactivation functionality here
+		//@todo Define deactivation functionality here
 	}
 
 	/**
@@ -307,7 +356,7 @@ class PixCustomifyPlugin {
 	 */
 	function load_plugin_textdomain() {
 		$domain = $this->plugin_slug;
-		load_plugin_textdomain( $domain, false, basename( dirname( __FILE__ ) ) . '/languages/' );
+		load_plugin_textdomain( $domain, false, basename( dirname( $this->file ) ) . '/languages/' );
 	}
 
 	/** === RESOURCES === **/
@@ -316,8 +365,8 @@ class PixCustomifyPlugin {
 	 * Customizer admin styles
 	 */
 	function enqueue_admin_customizer_styles() {
-		wp_enqueue_style( 'select2', plugins_url( 'js/select2/css/select2.css', __FILE__ ), array(), $this->version );
-		wp_enqueue_style( 'customify_style', plugins_url( 'css/customizer.css', __FILE__ ), array(), $this->version );
+		wp_enqueue_style( 'select2', plugins_url( 'js/select2/css/select2.css', $this->file ), array(), $this->_version );
+		wp_enqueue_style( 'customify_style', plugins_url( 'css/customizer.css', $this->file ), array(), $this->_version );
 	}
 
 	/**
@@ -325,33 +374,33 @@ class PixCustomifyPlugin {
 	 */
 	function enqueue_admin_customizer_scripts() {
 
-		wp_enqueue_script( 'select2', plugins_url( 'js/select2/js/select2.js', __FILE__ ), array( 'jquery' ), $this->version );
-		wp_enqueue_script( 'jquery-react', plugins_url( 'js/jquery-react.js', __FILE__ ), array( 'jquery' ), $this->version );
-		wp_enqueue_script( $this->plugin_slug . '-customizer-scripts', plugins_url( 'js/customizer.js', __FILE__ ), array(
+		wp_enqueue_script( 'select2', plugins_url( 'js/select2/js/select2.js', $this->file ), array( 'jquery' ), $this->_version );
+		wp_enqueue_script( 'jquery-react', plugins_url( 'js/jquery-react.js', $this->file ), array( 'jquery' ), $this->_version );
+		wp_enqueue_script( $this->plugin_slug . '-customizer-scripts', plugins_url( 'js/customizer.js', $this->file ), array(
 			'jquery',
 			'select2',
 			'underscore',
 			'customize-controls'
-		), $this->version );
+		), $this->_version );
 
-		wp_localize_script( $this->plugin_slug . '-customizer-scripts', 'customify_settings', self::$localized );
+		wp_localize_script( $this->plugin_slug . '-customizer-scripts', 'customify_settings', $this->localized );
 	}
 
 	/** Customizer scripts loaded only on previewer page */
 	function customizer_live_preview_enqueue_scripts() {
 
-		wp_register_script( $this->plugin_slug . 'CSSOM', plugins_url( 'js/CSSOM.js', __FILE__ ), array( 'jquery' ), $this->version, true );
-		wp_register_script( $this->plugin_slug . 'cssUpdate', plugins_url( 'js/jquery.cssUpdate.js', __FILE__ ), array(), $this->version, true );
-		wp_enqueue_script( $this->plugin_slug . '-previewer-scripts', plugins_url( 'js/customizer_preview.js', __FILE__ ), array(
+		wp_register_script( $this->plugin_slug . 'CSSOM', plugins_url( 'js/CSSOM.js', $this->file ), array( 'jquery' ), $this->_version, true );
+		wp_register_script( $this->plugin_slug . 'cssUpdate', plugins_url( 'js/jquery.cssUpdate.js', $this->file ), array(), $this->_version, true );
+		wp_enqueue_script( $this->plugin_slug . '-previewer-scripts', plugins_url( 'js/customizer_preview.js', $this->file ), array(
 			'jquery',
 			$this->plugin_slug . 'CSSOM',
 			$this->plugin_slug . 'cssUpdate'
-		), $this->version, true );
+		), $this->_version, true );
 
 		// when a live preview field is in action we need to know which props need 'px' as defaults
-		self::$localized['px_dependent_css_props'] = self::$pixel_dependent_css_properties;
+		$this->localized['px_dependent_css_props'] = self::$pixel_dependent_css_properties;
 
-		wp_localize_script( $this->plugin_slug . '-previewer-scripts', 'customify_settings', self::$localized );
+		wp_localize_script( $this->plugin_slug . '-previewer-scripts', 'customify_settings', $this->localized );
 	}
 
 	/**
@@ -369,7 +418,7 @@ class PixCustomifyPlugin {
 
 		$screen = get_current_screen();
 		if ( $screen->id == $this->plugin_screen_hook_suffix ) {
-			wp_enqueue_style( $this->plugin_slug . '-admin-styles', plugins_url( 'css/admin.css', __FILE__ ), array(), $this->version );
+			wp_enqueue_style( $this->plugin_slug . '-admin-styles', plugins_url( 'css/admin.css', $this->file ), array(), $this->_version );
 		}
 	}
 
@@ -384,7 +433,7 @@ class PixCustomifyPlugin {
 
 		$screen = get_current_screen();
 		if ( $screen->id == $this->plugin_screen_hook_suffix ) {
-			wp_enqueue_script( $this->plugin_slug . '-admin-script', plugins_url( 'js/admin.js', __FILE__ ), array( 'jquery' ), $this->version );
+			wp_enqueue_script( $this->plugin_slug . '-admin-script', plugins_url( 'js/admin.js', $this->file ), array( 'jquery' ), $this->_version );
 			wp_localize_script( $this->plugin_slug . '-admin-script', 'locals', array(
 				'ajax_url' => admin_url( 'admin-ajax.php' )
 			) );
@@ -400,7 +449,7 @@ class PixCustomifyPlugin {
 	function output_dynamic_style() {
 		$custom_css = "\n";
 
-		foreach ( self::$options_list as $option_id => $option ) {
+		foreach ( $this->options_list as $option_id => $option ) {
 
 			if ( isset( $option['css'] ) && ! empty( $option['css'] ) ) {
 				// now process each
@@ -412,9 +461,9 @@ class PixCustomifyPlugin {
 			}
 		}
 
-		if ( ! empty( self::$media_queries ) ) {
+		if ( ! empty( $this->media_queries ) ) {
 
-			foreach ( self::$media_queries as $media_query => $properties ) {
+			foreach ( $this->media_queries as $media_query => $properties ) {
 
 				if ( empty( $properties ) ) {
 					continue;
@@ -425,7 +474,7 @@ class PixCustomifyPlugin {
 				foreach ( $properties as $key => $property ) {
 					$property_settings = $property['property'];
 					$property_value    = $property['value'];
-					$custom_css .=  self::proccess_css_property( $property_settings, $property_value );
+					$custom_css .=  $this->proccess_css_property( $property_settings, $property_value );
 				}
 
 				$custom_css .= " }\n";
@@ -434,10 +483,8 @@ class PixCustomifyPlugin {
 		}
 
 		$custom_css .= "\n";
-
-		//@todo maybe add a filter to this output ?>
-<style id="customify_output_style">
-<?php echo( $custom_css ); ?>
+?><style id="customify_output_style">
+<?php echo apply_filters( 'customify_dynamic_style', $custom_css ); ?>
 </style><?php
 
 		/**
@@ -448,10 +495,10 @@ class PixCustomifyPlugin {
 			return;
 		}
 
-		foreach ( self::$options_list as $option_id => $options ) {
+		foreach ( $this->options_list as $option_id => $options ) {
 
 			if ( $options['type'] === 'custom_background' ) {
-				$options['value']         = self::get_option( $option_id );
+				$options['value']         = $this->get_option( $option_id );
 				$custom_background_output = $this->process_custom_background_field_output( $option_id, $options ); ?>
 
 				<style id="custom_backgorund_output_for_<?php echo $option_id; ?>">
@@ -466,7 +513,7 @@ class PixCustomifyPlugin {
 				continue;
 			}
 
-			$this_value = self::get_option( $option_id );
+			$this_value = $this->get_option( $option_id );
 			foreach ( $options['css'] as $key => $properties_set ) { ?>
 				<style id="dynamic_setting_<?php echo $option_id . '_property_' . str_replace( '-', '_', $properties_set['property'] ); ?>" type="text/css"><?php
 
@@ -475,7 +522,7 @@ class PixCustomifyPlugin {
 					}
 
 					if ( isset( $properties_set['selector'] ) && isset( $properties_set['property'] ) ) {
-						echo self::proccess_css_property($properties_set, $this_value);
+						echo $this->proccess_css_property($properties_set, $this_value);
 					}
 
 					if ( isset( $properties_set['media'] ) && ! empty( $properties_set['media'] ) ) {
@@ -485,9 +532,9 @@ class PixCustomifyPlugin {
 			<?php }
 		}
 
-		if ( ! empty( self::$media_queries ) ) {
+		if ( ! empty( $this->media_queries ) ) {
 
-			foreach ( self::$media_queries as $media_query => $properties ) {
+			foreach ( $this->media_queries as $media_query => $properties ) {
 
 				if ( empty( $properties ) ) {
 					continue;
@@ -506,7 +553,7 @@ class PixCustomifyPlugin {
 					<style id="dynamic_setting_<?php echo $key; ?>" type="text/css"><?php
 						$property_settings = $property['property'];
 						$property_value    = $property['value'];
-						$media_q .= "\t" . self::proccess_css_property( $property_settings, $property_value );?>
+						$media_q .= "\t" . $this->proccess_css_property( $property_settings, $property_value );?>
 					</style>
 				<?php }
 
@@ -520,31 +567,29 @@ class PixCustomifyPlugin {
 	}
 
 	protected function load_google_fonts() {
-
-		$fonts_path = plugin_dir_path( __FILE__ ) . 'features/customizer/controls/resources/google.fonts.php';
+		$fonts_path = plugin_dir_path( $this->file ) . 'features/customizer/controls/resources/google.fonts.php';
 
 		if ( file_exists( $fonts_path ) ) {
-			self::$google_fonts = require( $fonts_path );
+			$this->google_fonts = require( $fonts_path );
 		}
 
-		if ( ! empty( self::$google_fonts ) ) {
-			return self::$google_fonts;
+		if ( ! empty( $this->google_fonts ) ) {
+			return $this->google_fonts;
 		}
 
 		return false;
 	}
 
 	function output_typography_dynamic_style() {
+		$this->get_typography_fields( $this->options_list, 'type', 'typography', $this->typo_settings );
 
-		self::get_typography_fields( self::$options_list, 'type', 'typography', self::$typo_settings );
-
-		if ( empty( self::$typo_settings ) ) {
+		if ( empty( $this->typo_settings ) ) {
 			return;
 		}
 
 		$families = '';
 
-		foreach ( self::$typo_settings as $id => $font ) {
+		foreach ( $this->typo_settings as $id => $font ) {
 			if ( isset ( $font['value'] ) ) {
 
 				$load_all_weights = false;
@@ -571,7 +616,7 @@ class PixCustomifyPlugin {
 				}
 
 				//Handle special logic for when the $value array is not an associative array
-				if ( ! self::is_assoc( $value ) ) {
+				if ( ! $this->is_assoc( $value ) ) {
 					$value = $this->process_a_not_associative_font_default( $value );
 				}
 
@@ -613,7 +658,7 @@ class PixCustomifyPlugin {
 			}
 		}
 
-		if ( ! empty ( $families ) && self::get_plugin_option( 'typography', '1' ) && self::get_plugin_option( 'typography_google_fonts', 1 ) ) { ?>
+		if ( ! empty ( $families ) && $this->get_plugin_setting( 'typography', '1' ) && $this->get_plugin_setting( 'typography_google_fonts', 1 ) ) { ?>
 			<script type="text/javascript">
                 if ( typeof WebFont !== 'undefined' ) {<?php // if there is a WebFont object, use it ?>
                     WebFont.load( {
@@ -642,7 +687,7 @@ class PixCustomifyPlugin {
 		<?php } ?>
 		<style id="customify_typography_output_style">
 			<?php
-			foreach ( self::$typo_settings as $key => $font ) {
+			foreach ( $this->typo_settings as $key => $font ) {
 				$load_all_weights = false;
 				if ( isset( $font['load_all_weights'] ) && $font['load_all_weights'] == 'true' ) {
 					$load_all_weights = true;
@@ -662,7 +707,7 @@ class PixCustomifyPlugin {
 					}
 
 					//Handle special logic for when the $value array is not an associative array
-					if ( ! self::is_assoc( $value ) ) {
+					if ( ! $this->is_assoc( $value ) ) {
 						$value = $this->process_a_not_associative_font_default( $value );
 					}
 
@@ -739,7 +784,7 @@ class PixCustomifyPlugin {
 	 * Handle special logic for when the $value array is not an associative array
 	 * Return a new associative array with proper keys
 	 */
-	protected function process_a_not_associative_font_default( $value ) {
+	public function process_a_not_associative_font_default( $value ) {
 
 		$new_value = array();
 
@@ -774,22 +819,22 @@ class PixCustomifyPlugin {
 	 *
 	 * @return null
 	 */
-	protected function get_font_defaults_value( $font_name ) {
+	public function get_font_defaults_value( $font_name ) {
 
-		if ( empty( self::$google_fonts ) ) {
+		if ( empty( $this->google_fonts ) ) {
 			$this->load_google_fonts();
 		}
 
-		if ( isset( self::$google_fonts[ $font_name ] ) ) {
-			$value                = self::$google_fonts[ $font_name ];
+		if ( isset( $this->google_fonts[ $font_name ] ) ) {
+			$value                = $this->google_fonts[ $font_name ];
 			$value['font_family'] = $font_name;
 			$value['type']        = 'google';
 			return $value;
-		} elseif ( isset( self::$theme_fonts[ $font_name ] ) ) {
+		} elseif ( isset( $this->theme_fonts[ $font_name ] ) ) {
 			$value['type'] = 'theme_font';
-			$value['src'] = self::$theme_fonts[ $font_name ]['src'];
-			$value['variants'] = self::$theme_fonts[ $font_name ]['variants'];
-			$value['font_family'] = self::$theme_fonts[ $font_name ]['family'];
+			$value['src'] = $this->theme_fonts[ $font_name ]['src'];
+			$value['variants'] = $this->theme_fonts[ $font_name ]['variants'];
+			$value['font_family'] = $this->theme_fonts[ $font_name ]['family'];
 			return $value;
 		}
 
@@ -807,7 +852,7 @@ class PixCustomifyPlugin {
 	protected function convert_setting_to_css( $option_id, $css_config = array() ) {
 		$output = '';
 
-		$this_value = self::get_option( $option_id );
+		$this_value = $this->get_option( $option_id );
 
 		if ( empty( $css_config ) ) {
 			return $output;
@@ -816,7 +861,7 @@ class PixCustomifyPlugin {
 		foreach ( $css_config as $css_property ) {
 
 			if ( isset( $css_property['media'] ) && ! empty( $css_property['media'] ) ) {
-				self::$media_queries[ $css_property['media'] ][ $option_id ] = array(
+				$this->media_queries[ $css_property['media'] ][ $option_id ] = array(
 					'property' => $css_property,
 					'value'    => $this_value
 				);
@@ -824,7 +869,7 @@ class PixCustomifyPlugin {
 			}
 
 			if ( ! isset( $css_property['selector'] ) || isset( $css_property['property'] ) ) {
-				$output .= self::proccess_css_property( $css_property, $this_value );
+				$output .= $this->proccess_css_property( $css_property, $this_value );
 			}
 		}
 
@@ -991,18 +1036,21 @@ class PixCustomifyPlugin {
 	protected function register_customizer_controls() {
 
 		// first get the base customizer extend class
-		require_once( self::get_base_path() . '/features/customizer/class-Pix_Customize_Control.php' );
+		require_once( $this->get_base_path() . '/features/customizer/class-Pix_Customize_Control.php' );
 
 		// now get all the controls
-		$path = self::get_base_path() . '/features/customizer/controls/';
+		$path = $this->get_base_path() . '/features/customizer/controls/';
 		pixcustomify::require_all( $path );
 	}
 
+	/**
+	 * @param WP_Customize_Manager $wp_customize
+	 */
 	function register_customizer( $wp_customize ) {
 
 		$this->register_customizer_controls();
 
-		$customizer_settings = self::$customizer_config;
+		$customizer_settings = $this->customizer_config;
 
 		if ( ! empty ( $customizer_settings ) ) {
 
@@ -1060,7 +1108,7 @@ class PixCustomifyPlugin {
 				}
 			}
 
-			if ( self::$plugin_settings['enable_reset_buttons'] ) {
+			if ( $this->plugin_settings['enable_reset_buttons'] ) {
 				// create a toolbar section which will be present all the time
 				$reset_section_settings = array(
 					'title'   => 'Customify toolbar',
@@ -1124,7 +1172,7 @@ class PixCustomifyPlugin {
 
 	protected function register_section( $panel_id, $section_key, $options_name, $section_settings, $wp_customize ) {
 
-		if ( isset( self::$plugin_settings['disable_customify_sections'] ) && isset( self::$plugin_settings['disable_customify_sections'][ $section_key ] ) ) {
+		if ( isset( $this->plugin_settings['disable_customify_sections'] ) && isset( $this->plugin_settings['disable_customify_sections'][ $section_key ] ) ) {
 			return;
 		}
 
@@ -1167,6 +1215,12 @@ class PixCustomifyPlugin {
 
 	}
 
+	/**
+	 * @param string $section_id
+	 * @param string $setting_id
+	 * @param array $setting_config
+	 * @param WP_Customize_Manager $wp_customize
+	 */
 	protected function register_field( $section_id, $setting_id, $setting_config, $wp_customize ) {
 
 		$add_control = true;
@@ -1182,7 +1236,7 @@ class PixCustomifyPlugin {
 			'settings' => $setting_id,
 		);
 
-		self::$localized['settings'][ $setting_id ] = $setting_config;
+		$this->localized['settings'][ $setting_id ] = $setting_config;
 
 		// sanitize settings
 		if ( ( isset( $setting_config['live'] ) && $setting_config['live'] ) || $setting_config['type'] === 'font' ) {
@@ -1197,7 +1251,7 @@ class PixCustomifyPlugin {
 			$setting_args['capability'] = $setting_config['capability'];
 		}
 
-		if ( self::$plugin_settings['values_store_mod'] == 'option' ) {
+		if ( $this->plugin_settings['values_store_mod'] == 'option' ) {
 			$setting_args['type'] = 'option';
 		}
 
@@ -1274,7 +1328,6 @@ class PixCustomifyPlugin {
 		switch ( $setting_config['type'] ) {
 
 			case 'text':
-
 				if ( isset( $setting_config['live'] ) ) {
 					$control_args['live'] = $setting_config['live'];
 				}
@@ -1283,7 +1336,6 @@ class PixCustomifyPlugin {
 				break;
 
 			case 'textarea':
-
 				if ( isset( $setting_config['live'] ) ) {
 					$control_args['live'] = $setting_config['live'];
 				}
@@ -1292,17 +1344,14 @@ class PixCustomifyPlugin {
 				break;
 
 			case 'color':
-
 				$control_class_name = 'WP_Customize_Color_Control';
 				break;
 
 			case 'color_drop':
-
 				$control_class_name = 'Pix_Customize_Color_Drop_Control';
 				break;
 
 			case 'ace_editor':
-
 				if ( isset( $setting_config['live'] ) ) {
 					$control_args['live'] = $setting_config['live'];
 				}
@@ -1315,17 +1364,14 @@ class PixCustomifyPlugin {
 				break;
 
 			case 'upload':
-
 				$control_class_name = 'WP_Customize_Upload_Control';
 				break;
 
 			case 'image':
-
 				$control_class_name = 'WP_Customize_Image_Control';
 				break;
 
 			case 'media':
-
 				$control_class_name = 'WP_Customize_Media_Control';
 				break;
 
@@ -1338,7 +1384,6 @@ class PixCustomifyPlugin {
 				break;
 
 			case 'cropped_media':
-
 				if ( isset( $setting_config['width'] ) ) {
 					$control_args['width'] = $setting_config['width'];
 				}
@@ -1360,8 +1405,7 @@ class PixCustomifyPlugin {
 
 			// Custom types
 			case 'typography' :
-
-				$use_typography = self::get_plugin_option( 'typography', '1' );
+				$use_typography = $this->get_plugin_setting( 'typography', '1' );
 
 				if ( $use_typography === false ) {
 					$add_control = false;
@@ -1398,8 +1442,7 @@ class PixCustomifyPlugin {
 
 			// Custom types
 			case 'font' :
-
-				$use_typography = self::get_plugin_option( 'typography', '1' );
+				$use_typography = $this->get_plugin_setting( 'typography', '1' );
 
 				if ( $use_typography === false ) {
 					$add_control = false;
@@ -1440,7 +1483,6 @@ class PixCustomifyPlugin {
 				break;
 
 			case 'select2' :
-
 				if ( ! isset( $setting_config['choices'] ) || empty( $setting_config['choices'] ) ) {
 					return;
 				}
@@ -1451,7 +1493,6 @@ class PixCustomifyPlugin {
 				break;
 
 			case 'preset' :
-
 				if ( ! isset( $setting_config['choices'] ) || empty( $setting_config['choices'] ) ) {
 					return;
 				}
@@ -1471,7 +1512,6 @@ class PixCustomifyPlugin {
 				break;
 
 			case 'radio_image' :
-
 				if ( ! isset( $setting_config['choices'] ) || empty( $setting_config['choices'] ) ) {
 					return;
 				}
@@ -1491,7 +1531,6 @@ class PixCustomifyPlugin {
 				break;
 
 			case 'button' :
-
 				if ( ! isset( $setting_config['action'] ) || empty( $setting_config['action'] ) ) {
 					return;
 				}
@@ -1503,7 +1542,6 @@ class PixCustomifyPlugin {
 				break;
 
 			case 'html' :
-
 				if ( isset( $setting_config['html'] ) || ! empty( $setting_config['html'] ) ) {
 					$control_args['html'] = $setting_config['html'];
 				}
@@ -1512,7 +1550,6 @@ class PixCustomifyPlugin {
 				break;
 
 			case 'import_demo_data' :
-
 				if ( isset( $setting_config['html'] ) || ! empty( $setting_config['html'] ) ) {
 					$control_args['html'] = $setting_config['html'];
 				}
@@ -1550,12 +1587,12 @@ class PixCustomifyPlugin {
 	/**
 	 * Remove the sections selected by user
 	 *
-	 * @param $wp_customize
+	 * @param WP_Customize_Manager $wp_customize
 	 */
 	function remove_default_sections( $wp_customize ) {
 		global $wp_registered_sidebars;
 
-		$to_remove = self::get_plugin_option( 'disable_default_sections' );
+		$to_remove = $this->get_plugin_setting( 'disable_default_sections' );
 
 		if ( ! empty( $to_remove ) ) {
 			foreach ( $to_remove as $section => $nothing ) {
@@ -1572,11 +1609,11 @@ class PixCustomifyPlugin {
 		}
 	}
 
-	static function get_base_path() {
-		return plugin_dir_path( __FILE__ );
+	public function get_base_path() {
+		return plugin_dir_path( $this->file );
 	}
 
-	protected static function get_typography_fields( $array, $key, $value, &$results, $input_key = 0 ) {
+	public function get_typography_fields( $array, $key, $value, &$results, $input_key = 0 ) {
 		if ( ! is_array( $array ) ) {
 			return;
 		}
@@ -1590,17 +1627,17 @@ class PixCustomifyPlugin {
 				$default = json_encode( $array['default'] );
 			}
 
-			$results[ $input_key ]['value'] = self::get_option( $input_key, $default );
+			$results[ $input_key ]['value'] = $this->get_option( $input_key, $default );
 		}
 
 		foreach ( $array as $i => $subarray ) {
-			self::get_typography_fields( $subarray, $key, $value, $results, $i );
+			$this->get_typography_fields( $subarray, $key, $value, $results, $i );
 		}
 	}
 
 	function get_options_key() {
-		if ( ! empty( self::$opt_name ) ) {
-			return self::$opt_name;
+		if ( ! empty( $this->opt_name ) ) {
+			return $this->opt_name;
 		}
 
 		return false;
@@ -1612,11 +1649,11 @@ class PixCustomifyPlugin {
 	 */
 	function import_button_exists() {
 
-		if ( empty( self::$options_list ) ) {
-			self::$options_list = $this->get_options();
+		if ( empty( $this->options_list ) ) {
+			$this->options_list = $this->get_options();
 		}
 
-		foreach ( self::$options_list as $option ) {
+		foreach ( $this->options_list as $option ) {
 			if ( isset( $option['type'] ) && 'import_demo_data' === $option['type'] ) {
 				return true;
 				break;
@@ -1628,30 +1665,42 @@ class PixCustomifyPlugin {
 
 	/** == Helpers == */
 
-	protected static function get_current_values() {
-		$store_type = self::get_plugin_option( 'values_store_mod', 'option' );
-		if ( $store_type === 'option' ) {
-			self::$current_values = get_option( self::$opt_name );
-		} elseif ( $store_type === 'theme_mod' ) {
-			self::$current_values = get_theme_mod( self::$opt_name );
+	protected function get_current_values( $opt_name = null ) {
+		// Fallback to the global $opt_name
+		if ( empty( $opt_name ) ) {
+			$opt_name = $this->opt_name;
 		}
+
+		// Bail as we have nothing to work with
+		if ( empty( $opt_name ) ) {
+			return false;
+		}
+
+		$store_type = $this->get_plugin_setting( 'values_store_mod', 'option' );
+		if ( $store_type === 'option' ) {
+			return get_option( $opt_name );
+		} elseif ( $store_type === 'theme_mod' ) {
+			return get_theme_mod( $opt_name );
+		}
+
+		return false;
 	}
 
 	public function get_options() {
 
 		$settings = array();
 
-		if ( isset ( self::$customizer_config['panels'] ) ) {
+		if ( isset ( $this->customizer_config['panels'] ) ) {
 
-			foreach ( self::$customizer_config['panels'] as $pane_id => $panel_settings ) {
+			foreach ( $this->customizer_config['panels'] as $pane_id => $panel_settings ) {
 
 				if ( isset( $panel_settings['sections'] ) ) {
 					foreach ( $panel_settings['sections'] as $section_id => $section_settings ) {
 						if ( isset( $section_settings['options'] ) ) {
 							foreach ( $section_settings['options'] as $option_id => $option ) {
 								$settings[ $option_id ] = $option;
-								if ( isset( self::$current_values[ $option_id ] ) ) {
-									$settings[ $option_id ]['value'] = self::$current_values[ $option_id ];
+								if ( isset( $this->current_values[ $option_id ] ) ) {
+									$settings[ $option_id ]['value'] = $this->current_values[ $option_id ];
 								}
 							}
 						}
@@ -1660,13 +1709,13 @@ class PixCustomifyPlugin {
 			}
 		}
 
-		if ( isset ( self::$customizer_config['sections'] ) ) {
-			foreach ( self::$customizer_config['sections'] as $section_id => $section_settings ) {
+		if ( isset ( $this->customizer_config['sections'] ) ) {
+			foreach ( $this->customizer_config['sections'] as $section_id => $section_settings ) {
 				if ( isset( $section_settings['options'] ) ) {
 					foreach ( $section_settings['options'] as $option_id => $option ) {
 						$settings[ $option_id ] = $option;
-						if ( isset( self::$current_values[ $option_id ] ) ) {
-							$settings[ $option_id ]['value'] = self::$current_values[ $option_id ];
+						if ( isset( $this->current_values[ $option_id ] ) ) {
+							$settings[ $option_id ]['value'] = $this->current_values[ $option_id ];
 						}
 					}
 				}
@@ -1676,12 +1725,21 @@ class PixCustomifyPlugin {
 		return $settings;
 	}
 
-	protected static function get_value( $option ) {
+	protected function get_value( $option, $alt_opt_name ) {
 		global $wp_customize;
+
+		$opt_name = $this->opt_name;
+		$values = $this->current_values;
+
+		// In case someone asked for a DB value too early but it has given us the opt_name under which to search, let's do it
+		if ( empty( $opt_name ) && ! empty( $alt_opt_name ) ) {
+			$opt_name = $alt_opt_name;
+			$values = $this->get_current_values( $opt_name );
+		}
 
 		if ( ! empty( $wp_customize ) && method_exists( $wp_customize, 'get_setting') ) {
 
-			$option_key = self::$opt_name . '[' . $option . ']';
+			$option_key = $opt_name . '[' . $option . ']';
 			$setting = $wp_customize->get_setting( $option_key );
 			if ( ! empty( $setting ) ) {
 				$value = $setting->value();
@@ -1690,14 +1748,14 @@ class PixCustomifyPlugin {
 		}
 
 		// shim
-		if ( strpos( $option, self::$opt_name . '[' ) !== false ) {
+		if ( strpos( $option, $opt_name . '[' ) !== false ) {
 			// get only the setting id
 			$option = explode( '[', $option );
 			$option = rtrim( $option[1], ']' );
 		}
 
-		if ( isset( self::$current_values[ $option ] ) ) {
-			return self::$current_values[ $option ];
+		if ( isset( $values[ $option ] ) ) {
+			return $values[ $option ];
 		}
 
 		return null;
@@ -1709,37 +1767,41 @@ class PixCustomifyPlugin {
 	 * Otherwise try to get the default parameter or the default from config
 	 *
 	 * @param $option
-	 * @param null $default
+	 * @param mixed $default Optional.
+	 * @param string $alt_opt_name Optional. We can use this to bypass the fact that the DB values are loaded on after_setup_theme, if we know what to look for.
 	 *
 	 * @return bool|null|string
 	 */
-	static function get_option( $option, $default = null ) {
+	 public function get_option( $option, $default = null, $alt_opt_name = null ) {
 
-		$return = self::get_value( $option );
+		$return = $this->get_value( $option, $alt_opt_name );
 
 		if ( $return !== null ) {
 			return $return;
 		} elseif ( $default !== null ) {
 			return $default;
-		} elseif ( isset( self::$options_list[ $option ] ) && isset( self::$options_list[ $option ]['default'] ) ) {
-			return self::$options_list[ $option ]['default'];
+		} elseif ( isset( $this->options_list[ $option ] ) && isset( $this->options_list[ $option ]['default'] ) ) {
+			return $this->options_list[ $option ]['default'];
 		}
 
 		return null;
 	}
 
-	static function has_option( $option ) {
+	public function has_option( $option ) {
 
-		if ( isset( self::$options_list[ $option ] ) ) {
+		if ( isset( $this->options_list[ $option ] ) ) {
 			return true;
 		}
 
 		return false;
 	}
 
-	protected static function get_config() {
-		// @TODO maybe check this
-		return include 'plugin-config.php';
+	protected function get_config() {
+		if ( file_exists( $this->get_base_path() . 'plugin-config.php' ) ) {
+			return include( $this->get_base_path() . 'plugin-config.php' );
+		}
+
+		return false;
 	}
 
 	/**
@@ -1750,10 +1812,10 @@ class PixCustomifyPlugin {
 	 *
 	 * @return bool|null
 	 */
-	public static function get_config_option( $option, $default = null ) {
+	public function get_config_option( $option, $default = null ) {
 
-		if ( isset( self::$config[ $option ] ) ) {
-			return self::$config[ $option ];
+		if ( isset( $this->config[ $option ] ) ) {
+			return $this->config[ $option ];
 		} elseif ( $default !== null ) {
 			return $default;
 		}
@@ -1761,10 +1823,10 @@ class PixCustomifyPlugin {
 		return false;
 	}
 
-	static function get_plugin_option( $option, $default = null ) {
+	public function get_plugin_setting( $option, $default = null ) {
 
-		if ( isset( self::$plugin_settings[ $option ] ) ) {
-			return self::$plugin_settings[ $option ];
+		if ( isset( $this->plugin_settings[ $option ] ) ) {
+			return $this->plugin_settings[ $option ];
 		} elseif ( $default !== null ) {
 			return $default;
 		}
@@ -1798,7 +1860,7 @@ class PixCustomifyPlugin {
 	 *
 	 * @return bool
 	 */
-	public static function is_assoc( $array ) {
+	public function is_assoc( $array ) {
 
 		if ( ! is_array( $array ) ) {
 			return false;
@@ -1814,13 +1876,13 @@ class PixCustomifyPlugin {
 
 	function register_import_api(){
 
-		include_once( self::get_base_path() . '/features/class-Customify_Importer.php' );
+		include_once( $this->get_base_path() . '/features/class-Customify_Importer.php' );
 		$controller = new Customify_Importer_Controller();
 		$controller->init();
 	}
 
 	function get_options_configs () {
-		return self::$options_list;
+		return $this->options_list;
 	}
 
 	/**
@@ -1859,4 +1921,64 @@ class PixCustomifyPlugin {
 
 		return $str;
 	}
+
+	/**
+	 * PHP version check
+	 */
+	protected function php_version_check() {
+
+		if ( version_compare( phpversion(), $this->minimalRequiredPhpVersion ) < 0 ) {
+			add_action( 'admin_notices', array( $this, 'notice_php_version_wrong' ) );
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
+	 * Return an instance of this class.
+	 * @since     1.0.0
+	 * @return    PixCustomifyPlugin    A single instance of this class.
+	 */
+	/**
+	 * Main PixCustomifyPlugin Instance
+	 *
+	 * Ensures only one instance of PixCustomifyPlugin is loaded or can be loaded.
+	 *
+	 * @since  1.0.0
+	 * @static
+	 * @param string $file    File.
+	 * @param string $version Version.
+	 *
+	 * @see    PixCustomifyPlugin()
+	 * @return object Main PixCustomifyPlugin instance
+	 */
+	public static function instance( $file = '', $version = '1.0.0' ) {
+		// If the single instance hasn't been set, set it now.
+		if ( is_null( self::$_instance ) ) {
+			self::$_instance = new self( $file, $version );
+		}
+
+		return self::$_instance;
+	}
+
+	/**
+	 * Cloning is forbidden.
+	 *
+	 * @since 1.5.0
+	 */
+	public function __clone() {
+
+		_doing_it_wrong( __FUNCTION__,esc_html( __( 'Cheatin&#8217; huh?' ) ), esc_html( $this->_version ) );
+	} // End __clone ()
+
+	/**
+	 * Unserializing instances of this class is forbidden.
+	 *
+	 * @since 1.5.0
+	 */
+	public function __wakeup() {
+
+		_doing_it_wrong( __FUNCTION__, esc_html( __( 'Cheatin&#8217; huh?' ) ),  esc_html( $this->_version ) );
+	} // End __wakeup ()
 }
