@@ -1,8 +1,10 @@
-(function ( $, exports, api ) {
+(function ( $, exports, wp ) {
 	'use strict';
 
+	var api = wp.customize;
+
 	// when the customizer is ready prepare our fields events
-	api.bind('ready', function () {
+	wp.customize.bind('ready', function () {
 		var timeout = null;
 
 		// add ace editors
@@ -38,7 +40,9 @@
 		// simple select2 field
 		$('.customify_select2').select2();
 
-		customifyFontSelect.init(this);
+		setTimeout(function () {
+			customifyFontSelect.init(this);
+		}, 333);
 
 		prepare_typography_field();
 
@@ -259,14 +263,6 @@
 
 		// bind our event on click
 		$(document).on('click', '.customify_import_demo_data_button', function ( event ) {
-			//if ( $( this ).hasClass( '.wpGrade_button_inactive' ) ) {
-			//	return false;
-			//} else {
-			//	$( this ).addClass( '.wpGrade_button_inactive' );
-			//	$( this ).attr( 'disabled', 'disabled' );
-			//}
-			//var confirmImport = confirm( listable_demodata_params.l10n.import_confirm );
-			//if ( confirmImport == false ) return false;
 
 			//@todo start an animation here
 			var key = $(this).data('key');
@@ -972,17 +968,12 @@
 	})(jQuery);
 
 	var customifyFontSelect = (function () {
-		var wpapi = null,
-			fontSelector = '.customify_font_family',
+		var fontSelector = '.customify_font_family',
 			selectPlacehoder = "Select a font family",
 			weightPlaceholder = "Select a font weight",
 			subsetPlaceholder = "Select a font subset";
 
 		function init( wpapi ) {
-
-			this.wpapi = wpapi;
-
-			setTimeout(function () {
 				$(fontSelector).select2({
 					placeholder: selectPlacehoder
 				}).on('change', function ( e ) {
@@ -997,7 +988,6 @@
 					// serialize stuff and refresh
 					update_font_value(wraper);
 				});
-			}, 333);
 
 			$('.customify_font_weight').each(function ( i, el  ) {
 
@@ -1024,6 +1014,7 @@
 							id: weight,
 							text: weight
 						};
+
 						if ( selecter_variants !== null && weight == selecter_variants ) {
 							this_value.selected = true;
 						}
@@ -1044,7 +1035,7 @@
 					// we may update this with a live version sometime
 					var value_holder = wraper.children('.customify_font_values');
 					var setting_id = $(value_holder).data('customize-setting-link');
-					var setting = wpapi(setting_id);
+					var setting = wp.customize(setting_id);
 					setting.set(encodeValues(current_value));
 				});
 			});
@@ -1060,7 +1051,7 @@
 					// we may update this with a live version sometime
 					var value_holder = wraper.children('.customify_font_values');
 					var setting_id = $(value_holder).data('customize-setting-link');
-					var setting = wpapi(setting_id);
+					var setting = wp.customize(setting_id);
 					setting.set(encodeValues(current_value));
 				});
 
@@ -1075,7 +1066,7 @@
 					// we may update this with a live version sometime
 					var value_holder = wraper.children('.customify_font_values');
 					var setting_id = $(value_holder).data('customize-setting-link');
-					var setting = wpapi(setting_id);
+					var setting = wp.customize(setting_id);
 					setting.set(encodeValues(current_value));
 				});
 			}
@@ -1088,19 +1079,18 @@
 					// we may update this with a live version sometime
 					var value_holder = wraper.children('.customify_font_values');
 					var setting_id = $(value_holder).data('customize-setting-link');
-					var setting = wpapi(setting_id);
+					var setting = wp.customize(setting_id);
 					setting.set(encodeValues(current_value));
 
-					wpapi.previewer.send( 'font-changed' );
+					wp.customize.previewer.send( 'font-changed' );
 				});
 			}
 
 			var self = this;
-			wpapi.previewer.bind('synced', function ( e ) {
-				// setTimeout( function () {
-					self.render_fonts();
-				// },100);
-			})
+
+			wp.customize.previewer.bind( 'ready', function () {
+				self.render_fonts();
+			});
 		}
 
 		/**
@@ -1112,6 +1102,7 @@
 		function update_weight_field( option, wraper ) {
 			var variants = $(option).data('variants'),
 				font_weights = wraper.find('.customify_font_weight'),
+				selected_variant = font_weights.data('default'),
 				new_variants = [],
 				type =  $(option).data('type'),
 				id = wraper.find('.customify_font_values').data('customizeSettingLink');
@@ -1124,8 +1115,6 @@
 				font_weights.parent().show();
 			}
 
-			var selected = 1;
-
 			// we need to turn the data array into a specific form like [{id:"id", text:"Text"}]
 			$.each(variants, function ( i, j ) {
 				new_variants[i] = {
@@ -1133,10 +1122,9 @@
 					'text': j
 				};
 
-				if ( selected === 3 ) {
+				if ( selected_variant == j ) {
 					new_variants[i].selected = true;
 				}
-				selected++;
 			});
 
 			// we need to clear the old values
@@ -1450,4 +1438,4 @@
 		}
 		return true;
 	};
-})(jQuery, window, wp.customize);
+})(jQuery, window, wp);

@@ -29,6 +29,7 @@
 						field_style.html(CSS);
 					});
 				});
+
 			} else if (typeof wp_settings[key] !== "undefined" && typeof el.css !== "undefined" && typeof el.live !== 'undefined' && el.live === true) {
 
 				var sliced_id = key.slice(0, -1);
@@ -234,8 +235,11 @@
 
 						family = family + v;
 
-						if (Object.keys(variants).length > (parseInt(k) + 1)) {
+						if ( Object.keys(variants).length > ( parseInt(k) + 1 ) ) {
 							family = family + ',';
+						} else if ( typeof font.selected_subsets !== "undefined" ) {
+							// in case there is a subset selected, we need to separate it from the font weight
+							family = family + ':';
 						}
 					});
 				}
@@ -245,13 +249,13 @@
 
 					$.each(subsets, function (k, v) {
 
-						if (k === "0") {
+						if ( k === "0" ) {
 							family = family + ':';
 						}
 
 						family = family + v;
 
-						if (Object.keys(subsets).length > (parseInt(k) + 1)) {
+						if ( Object.keys(subsets).length > ( parseInt(k) + 1 ) ) {
 							family = family + ',';
 						}
 					});

@@ -393,6 +393,7 @@ class PixCustomifyPlugin {
 		wp_register_script( $this->plugin_slug . 'cssUpdate', plugins_url( 'js/jquery.cssUpdate.js', $this->file ), array(), $this->_version, true );
 		wp_enqueue_script( $this->plugin_slug . '-previewer-scripts', plugins_url( 'js/customizer_preview.js', $this->file ), array(
 			'jquery',
+			'customize-preview',
 			$this->plugin_slug . 'CSSOM',
 			$this->plugin_slug . 'cssUpdate'
 		), $this->_version, true );

@@ -338,7 +338,7 @@ class Customify_Font_Selector {
 
 		if ( isset( $GLOBALS['wp_customize'] ) ) { ?>
 			<style id="customify_font_output_for_<?php echo $field; ?>">
-				<?php $CSS ?>
+				<?php echo $CSS ?>
 			</style><?php
 			return;
 		} else {
