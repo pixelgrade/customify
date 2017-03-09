@@ -1,4 +1,4 @@
-Customify [![Build Status](https://travis-ci.org/pixelgrade/customify.svg?branch=wporg)](https://travis-ci.org/pixelgrade/customify)
+Customify [![Build Status](https://travis-ci.org/pixelgrade/customify.svg?branch=wporg)](https://travis-ci.org/pixelgrade/customify) [![Code Climate](https://lima.codeclimate.com/github/pixelgrade/customify/badges/gpa.svg)](https://lima.codeclimate.com/github/pixelgrade/customify) [![Issue Count](https://lima.codeclimate.com/github/pixelgrade/customify/badges/issue_count.svg)](https://lima.codeclimate.com/github/pixelgrade/customify)
 ========
 **A Theme Customizer Booster**
 
