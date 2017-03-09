@@ -24,3 +24,7 @@ ratings:
   - "**.scss"
   - "**.js"
   - "**.php"
+exclude_paths:
+- tests/
+- js/ace
+- js/select2
