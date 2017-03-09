@@ -1146,6 +1146,7 @@
 		function update_subset_field( option, wraper ) {
 			var subsets = $(option).data('subsets'),
 				font_subsets = wraper.find('.customify_font_subsets'),
+				selected_subsets = font_subsets.data('default'),
 				new_subsets = [],
 				type =  $(option).data('type');
 
@@ -1154,7 +1155,12 @@
 				return;
 			}
 
-			subsets = maybeJsonParse(subsets);
+			var current_value = wraper.children('.customify_font_values').val();
+
+			current_value = maybeJsonParse( current_value );
+			current_value = current_value.selected_subsets;
+
+			subsets = maybeJsonParse( subsets );
 
 			if ( Object.keys(subsets).length < 2 ) {
 				font_subsets.parent().hide();
@@ -1167,6 +1173,11 @@
 				new_subsets[i] = {
 					'id': j,
 					'text': j
+				}
+
+				// current_subsets
+				if ( current_value !== null && current_value.indexOf( j ) !== -1 ) {
+					new_subsets[i].selected = true;
 				}
 			});
 

@@ -3,7 +3,7 @@ Contributors: pixelgrade, euthelup, babbardel, vlad.olaru, cristianfrumusanu, ra
 Tags: customizer, css, editor, live, preview, customise
 Requires at least: 4.5.0
 Tested up to: 4.7.2
-Stable tag: 1.4.2
+Stable tag: 1.5.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -36,6 +36,12 @@ With [Customify](https://github.com/pixelgrade/customify), developers can easily
 **Made with love by Pixelgrade**
 
 == Changelog ==
+
+= 1.5.0 =
+* Plugin core refactored for a better performance
+* Fixed Font Weight saving
+* Fixed Font Subset saving
+* Fix Select2 enqueue_script
 
 = 1.4.2 =
 * Improved Font style output in front-end. Now is just one style element with all the fonts inside.
