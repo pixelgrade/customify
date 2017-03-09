@@ -1173,10 +1173,10 @@
 				new_subsets[i] = {
 					'id': j,
 					'text': j
-				}
+				};
 
 				// current_subsets
-				if ( current_value !== null && current_value.indexOf( j ) !== -1 ) {
+				if ( typeof current_value !== 'undefined' && current_value !== null && current_value.indexOf( j ) !== -1 ) {
 					new_subsets[i].selected = true;
 				}
 			});
