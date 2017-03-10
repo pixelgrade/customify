@@ -131,7 +131,7 @@ class PixCustomifyPlugin {
 	 * @access  private
 	 * @since   1.5.0
 	 */
-	private $minimalRequiredPhpVersion  = 5.2;
+	private $minimalRequiredPhpVersion = 5.2;
 
 	protected function __construct( $file, $version = '1.0.0' ) {
 		//the main plugin file (the one that loads all this)
@@ -153,7 +153,7 @@ class PixCustomifyPlugin {
 	 */
 	private function init() {
 		// Load the config file
-		$this->config          = $this->get_config();
+		$this->config = $this->get_config();
 		// Load the plugin's settings from the DB
 		$this->plugin_settings = get_option( $this->config['settings-key'] );
 
@@ -224,9 +224,8 @@ class PixCustomifyPlugin {
 		/*
 		 * Jetpack Related
 		 */
-		add_action( 'init', array( $this, 'set_jetpack_modules_config') );
 		add_filter( 'default_option_jetpack_active_modules', array( $this, 'default_jetpack_active_modules' ), 10, 1 );
-		add_filter( 'jetpack_get_available_modules', array( $this, 'jetpack_hide_blocked_modules'), 10, 1 );
+		add_filter( 'jetpack_get_available_modules', array( $this, 'jetpack_hide_blocked_modules' ), 10, 1 );
 		add_filter( 'default_option_sharing-options', array( $this, 'default_jetpack_sharing_options' ), 10, 1 );
 	}
 
@@ -253,14 +252,14 @@ class PixCustomifyPlugin {
 
 		// allow themes or other plugins to filter the config
 		$this->customizer_config = apply_filters( 'customify_filter_fields', $this->customizer_config );
-		$this->opt_name = $this->localized['options_name'] = $this->customizer_config['opt-name'];
-		$this->options_list = $this->get_options();
+		$this->opt_name          = $this->localized['options_name'] = $this->customizer_config['opt-name'];
+		$this->options_list      = $this->get_options();
 
 		// Load the current options values
 		$this->current_values = $this->get_current_values();
 
 		if ( $this->import_button_exists() ) {
-			$this->localized['import_rest_url'] = get_rest_url( '/customify/1.0/' );
+			$this->localized['import_rest_url']   = get_rest_url( '/customify/1.0/' );
 			$this->localized['import_rest_nonce'] = wp_create_nonce( 'wp_rest' );
 
 			$this->register_import_api();
@@ -269,43 +268,39 @@ class PixCustomifyPlugin {
 		$this->localized['theme_fonts'] = $this->theme_fonts = Customify_Font_Selector::instance()->get_theme_fonts();
 	}
 
-	function set_jetpack_modules_config() {
-		// We expect an array of string module names like array( 'infinite-scroll', 'widgets' )
-		// See jetpack/modules/modules-heading.php for module names
-		$this->jetpack_default_modules = apply_filters ( 'customify_filter_jetpack_default_modules', array(
-			'shortcodes',
-			'widget-visibility',
-			'widgets',
-		) );
-
-		// We expect an array of string module names like array( 'infinite-scroll', 'widgets' )
-		// See jetpack/modules/modules-heading.php for module names
-		$this->jetpack_blocked_modules = apply_filters ( 'customify_filter_jetpack_blocked_modules', array() );
-
-		$this->jetpack_sharing_default_options = apply_filters ( 'customify_filter_jetpack_sharing_default_options', array() );
-	}
-
 	/**
 	 * Control the default modules that are activated in Jetpack.
 	 * Use the `customify_filter_jetpack_default_modules` to set your's.
 	 *
-	 * @param array  $default The default value to return if the option does not exist
+	 * @param array $default The default value to return if the option does not exist
 	 *                        in the database.
+	 *
 	 * @return array
 	 */
 	function default_jetpack_active_modules( $default ) {
 		if ( ! is_array( $default ) ) {
 			$default = array();
 		}
+		$jetpack_default_modules = array();
 
-		return array_merge( $default, $this->jetpack_default_modules );
+		$theme_default_modules = get_theme_mod( 'pixelgrade_jetpack_default_active_modules', array() );
+
+		if ( ! is_array( $theme_default_modules ) ) {
+			return array_merge( $default, $jetpack_default_modules );
+		}
+
+		foreach ( $theme_default_modules as $module ) {
+			array_push( $jetpack_default_modules, $module );
+		}
+
+		return array_merge( $default, $jetpack_default_modules );
 	}
 
 	/**
 	 * Control the default Jetpack Sharing options.
 	 * Use the `customify_filter_jetpack_sharing_default_options` to set your's.
 	 *
-	 * @param array  $default The default value to return if the option does not exist
+	 * @param array $default The default value to return if the option does not exist
 	 *                        in the database.
 	 *
 	 * @return array
@@ -441,7 +436,10 @@ class PixCustomifyPlugin {
 		}
 
 
-		wp_localize_script( $this->plugin_slug . '-customizer-scripts', 'WP_API_Settings', array( 'root' => esc_url_raw( rest_url() ), 'nonce' => wp_create_nonce( 'wp_rest' ) ) );
+		wp_localize_script( $this->plugin_slug . '-customizer-scripts', 'WP_API_Settings', array(
+			'root'  => esc_url_raw( rest_url() ),
+			'nonce' => wp_create_nonce( 'wp_rest' )
+		) );
 	}
 
 	/**
@@ -475,7 +473,7 @@ class PixCustomifyPlugin {
 				foreach ( $properties as $key => $property ) {
 					$property_settings = $property['property'];
 					$property_value    = $property['value'];
-					$custom_css .=  $this->proccess_css_property( $property_settings, $property_value );
+					$custom_css .= $this->proccess_css_property( $property_settings, $property_value );
 				}
 
 				$custom_css .= " }\n";
@@ -484,9 +482,10 @@ class PixCustomifyPlugin {
 		}
 
 		$custom_css .= "\n";
-?><style id="customify_output_style">
-<?php echo apply_filters( 'customify_dynamic_style', $custom_css ); ?>
-</style><?php
+		?>
+		<style id="customify_output_style">
+		<?php echo apply_filters( 'customify_dynamic_style', $custom_css ); ?>
+		</style><?php
 
 		/**
 		 * from now on we output only style tags only for the preview purpose
@@ -516,7 +515,8 @@ class PixCustomifyPlugin {
 
 			$this_value = $this->get_option( $option_id );
 			foreach ( $options['css'] as $key => $properties_set ) { ?>
-				<style id="dynamic_setting_<?php echo $option_id . '_property_' . str_replace( '-', '_', $properties_set['property'] ); ?>" type="text/css"><?php
+				<style id="dynamic_setting_<?php echo $option_id . '_property_' . str_replace( '-', '_', $properties_set['property'] ); ?>"
+				       type="text/css"><?php
 
 					if ( isset( $properties_set['media'] ) && ! empty( $properties_set['media'] ) ) {
 						echo '@media '. $properties_set['media'] . " {\n";
@@ -661,29 +661,29 @@ class PixCustomifyPlugin {
 
 		if ( ! empty ( $families ) && $this->get_plugin_setting( 'typography', '1' ) && $this->get_plugin_setting( 'typography_google_fonts', 1 ) ) { ?>
 			<script type="text/javascript">
-                if ( typeof WebFont !== 'undefined' ) {<?php // if there is a WebFont object, use it ?>
-                    WebFont.load( {
-                        google: {families: [<?php echo( rtrim( $families, ',' ) ); ?>]},
-                        classes: false,
-                        events: false
-                    } );
-                } else {<?php // basically when we don't have the WebFont object we create the google script dynamically  ?>
+				if (typeof WebFont !== 'undefined') {<?php // if there is a WebFont object, use it ?>
+					WebFont.load({
+						google: {families: [<?php echo( rtrim( $families, ',' ) ); ?>]},
+						classes: false,
+						events: false
+					});
+				} else {<?php // basically when we don't have the WebFont object we create the google script dynamically  ?>
 
-                    var tk = document.createElement( 'script' );
-                    tk.src = '//ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
-                    tk.type = 'text/javascript';
+					var tk = document.createElement('script');
+					tk.src = '//ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
+					tk.type = 'text/javascript';
 
-                    tk.onload = tk.onreadystatechange = function() {
-                        WebFont.load( {
-                            google: {families: [<?php echo( rtrim( $families, ',' ) ); ?>]},
-                            classes: false,
-                            events: false
-                        } );
-                    };
+					tk.onload = tk.onreadystatechange = function () {
+						WebFont.load({
+							google: {families: [<?php echo( rtrim( $families, ',' ) ); ?>]},
+							classes: false,
+							events: false
+						});
+					};
 
-                    var s = document.getElementsByTagName( 'script' )[0];
-                    s.parentNode.insertBefore( tk, s );
-                }
+					var s = document.getElementsByTagName('script')[0];
+					s.parentNode.insertBefore(tk, s);
+				}
 			</script>
 		<?php } ?>
 		<style id="customify_typography_output_style">
@@ -830,12 +830,14 @@ class PixCustomifyPlugin {
 			$value                = $this->google_fonts[ $font_name ];
 			$value['font_family'] = $font_name;
 			$value['type']        = 'google';
+
 			return $value;
 		} elseif ( isset( $this->theme_fonts[ $font_name ] ) ) {
-			$value['type'] = 'theme_font';
-			$value['src'] = $this->theme_fonts[ $font_name ]['src'];
-			$value['variants'] = $this->theme_fonts[ $font_name ]['variants'];
+			$value['type']        = 'theme_font';
+			$value['src']         = $this->theme_fonts[ $font_name ]['src'];
+			$value['variants']    = $this->theme_fonts[ $font_name ]['variants'];
 			$value['font_family'] = $this->theme_fonts[ $font_name ]['family'];
+
 			return $value;
 		}
 
@@ -889,7 +891,7 @@ class PixCustomifyPlugin {
 			$unit = 'px';
 		}
 		// lose the tons of tabs
-		$css_property['selector'] = trim(preg_replace('/\t+/', '', $css_property['selector'] ));
+		$css_property['selector'] = trim( preg_replace( '/\t+/', '', $css_property['selector'] ) );
 
 		$this_property_output = $css_property['selector'] . ' { ' . $css_property['property'] . ': ' . $this_value . $unit . "; }\n";
 
@@ -906,7 +908,7 @@ class PixCustomifyPlugin {
 		if ( ! isset( $options['value'] ) ) {
 			return false;
 		}
-		$value    = $options['value'];
+		$value = $options['value'];
 
 		if ( ! isset( $options['output'] ) ) {
 			return $selector;
@@ -1730,20 +1732,21 @@ class PixCustomifyPlugin {
 		global $wp_customize;
 
 		$opt_name = $this->opt_name;
-		$values = $this->current_values;
+		$values   = $this->current_values;
 
 		// In case someone asked for a DB value too early but it has given us the opt_name under which to search, let's do it
 		if ( empty( $opt_name ) && ! empty( $alt_opt_name ) ) {
 			$opt_name = $alt_opt_name;
-			$values = $this->get_current_values( $opt_name );
+			$values   = $this->get_current_values( $opt_name );
 		}
 
-		if ( ! empty( $wp_customize ) && method_exists( $wp_customize, 'get_setting') ) {
+		if ( ! empty( $wp_customize ) && method_exists( $wp_customize, 'get_setting' ) ) {
 
 			$option_key = $opt_name . '[' . $option . ']';
-			$setting = $wp_customize->get_setting( $option_key );
+			$setting    = $wp_customize->get_setting( $option_key );
 			if ( ! empty( $setting ) ) {
 				$value = $setting->value();
+
 				return $value;
 			}
 		}
@@ -1773,7 +1776,7 @@ class PixCustomifyPlugin {
 	 *
 	 * @return bool|null|string
 	 */
-	 public function get_option( $option, $default = null, $alt_opt_name = null ) {
+	public function get_option( $option, $default = null, $alt_opt_name = null ) {
 
 		$return = $this->get_value( $option, $alt_opt_name );
 
@@ -1875,14 +1878,14 @@ class PixCustomifyPlugin {
 		return array_keys( $keys ) !== $keys;
 	}
 
-	function register_import_api(){
+	function register_import_api() {
 
 		include_once( $this->get_base_path() . '/features/class-Customify_Importer.php' );
 		$controller = new Customify_Importer_Controller();
 		$controller->init();
 	}
 
-	function get_options_configs () {
+	function get_options_configs() {
 		return $this->options_list;
 	}
 
@@ -1900,7 +1903,8 @@ class PixCustomifyPlugin {
 
 			$str = strtr( rawurlencode( $str ), $revert );
 		} else {
-			var_dump('boooom');die;
+			var_dump( 'boooom' );
+			die;
 		}
 
 		return $str;
@@ -1917,7 +1921,7 @@ class PixCustomifyPlugin {
 		//if we get an array we just let it be
 		if ( is_string( $str ) ) {
 			$revert = array( '!' => '%21', '*' => '%2A', "'" => '%27', '(' => '%28', ')' => '%29' );
-			$str = rawurldecode( strtr( $str, $revert ) );
+			$str    = rawurldecode( strtr( $str, $revert ) );
 		}
 
 		return $str;
@@ -1930,6 +1934,7 @@ class PixCustomifyPlugin {
 
 		if ( version_compare( phpversion(), $this->minimalRequiredPhpVersion ) < 0 ) {
 			add_action( 'admin_notices', array( $this, 'notice_php_version_wrong' ) );
+
 			return false;
 		}
 
@@ -1948,7 +1953,8 @@ class PixCustomifyPlugin {
 	 *
 	 * @since  1.0.0
 	 * @static
-	 * @param string $file    File.
+	 *
+	 * @param string $file File.
 	 * @param string $version Version.
 	 *
 	 * @see    PixCustomifyPlugin()
@@ -1970,7 +1976,7 @@ class PixCustomifyPlugin {
 	 */
 	public function __clone() {
 
-		_doing_it_wrong( __FUNCTION__,esc_html( __( 'Cheatin&#8217; huh?' ) ), esc_html( $this->_version ) );
+		_doing_it_wrong( __FUNCTION__, esc_html( __( 'Cheatin&#8217; huh?' ) ), esc_html( $this->_version ) );
 	} // End __clone ()
 
 	/**
@@ -1980,6 +1986,6 @@ class PixCustomifyPlugin {
 	 */
 	public function __wakeup() {
 
-		_doing_it_wrong( __FUNCTION__, esc_html( __( 'Cheatin&#8217; huh?' ) ),  esc_html( $this->_version ) );
+		_doing_it_wrong( __FUNCTION__, esc_html( __( 'Cheatin&#8217; huh?' ) ), esc_html( $this->_version ) );
 	} // End __wakeup ()
 }
