@@ -204,11 +204,18 @@ class PixCustomifyPlugin {
 		/*
 		 * Now it's time for the Customizer logic to kick in
 		 */
-		// Both in the Customizer and on the frontend
+		// Styles for the Customizer
+		add_action( 'customize_controls_init', array( $this, 'register_admin_customizer_styles' ), 10 );
 		add_action( 'customize_controls_enqueue_scripts', array( $this, 'enqueue_admin_customizer_styles' ), 10 );
+		// Scripts enqueued in the Customizer
+		add_action( 'customize_controls_init', array( $this, 'register_admin_customizer_scripts' ), 10 );
 		add_action( 'customize_controls_enqueue_scripts', array( $this, 'enqueue_admin_customizer_scripts' ), 10 );
+
+		// Scripts enqueued only in the theme preview
+		add_action( 'customize_preview_init', array( $this, 'customizer_live_preview_register_scripts' ), 10 );
 		add_action( 'customize_preview_init', array( $this, 'customizer_live_preview_enqueue_scripts' ), 99999 );
 
+		// The frontend effects of the Customizer controls
 		$load_location = $this->get_plugin_setting( 'style_resources_location', 'wp_head' );
 
 		add_action( $load_location, array( $this, 'output_dynamic_style' ), 99999 );
@@ -357,41 +364,60 @@ class PixCustomifyPlugin {
 	/** === RESOURCES === **/
 
 	/**
-	 * Customizer admin styles
+	 * Register Customizer admin styles
 	 */
-	function enqueue_admin_customizer_styles() {
-		wp_enqueue_style( 'customify_select2', plugins_url( 'js/select2/css/select2.css', $this->file ), array(), $this->_version );
-		wp_enqueue_style( 'customify_style', plugins_url( 'css/customizer.css', $this->file ), array(), $this->_version );
+	function register_admin_customizer_styles() {
+		wp_register_style( 'customify_select2', plugins_url( 'js/select2/css/select2.css', $this->file ), array(), $this->_version );
+		wp_register_style( 'customify_style', plugins_url( 'css/customizer.css', $this->file ), array( 'customify_select2' ), $this->_version );
 	}
 
 	/**
-	 * Customizer admin scripts
+	 * Enqueue Customizer admin styles
 	 */
-	function enqueue_admin_customizer_scripts() {
+	function enqueue_admin_customizer_styles() {
+		wp_enqueue_style( 'customify_style' );
+	}
 
-		wp_enqueue_script( 'customify_select2', plugins_url( 'js/select2/js/select2.js', $this->file ), array( 'jquery' ), $this->_version );
-		wp_enqueue_script( 'jquery-react', plugins_url( 'js/jquery-react.js', $this->file ), array( 'jquery' ), $this->_version );
-		wp_enqueue_script( $this->plugin_slug . '-customizer-scripts', plugins_url( 'js/customizer.js', $this->file ), array(
+	/**
+	 * Register Customizer admin scripts
+	 */
+	function register_admin_customizer_scripts() {
+
+		wp_register_script( 'customify_select2', plugins_url( 'js/select2/js/select2.js', $this->file ), array( 'jquery' ), $this->_version );
+		wp_register_script( 'jquery-react', plugins_url( 'js/jquery-react.js', $this->file ), array( 'jquery' ), $this->_version );
+		wp_register_script( $this->plugin_slug . '-customizer-scripts', plugins_url( 'js/customizer.js', $this->file ), array(
 			'jquery',
 			'customify_select2',
 			'underscore',
 			'customize-controls'
 		), $this->_version );
+	}
+
+	/**
+	 * Enqueue Customizer admin scripts
+	 */
+	function enqueue_admin_customizer_scripts() {
+		wp_enqueue_script( 'jquery-react' );
+		wp_enqueue_script( $this->plugin_slug . '-customizer-scripts' );
 
 		wp_localize_script( $this->plugin_slug . '-customizer-scripts', 'customify_settings', $this->localized );
 	}
 
-	/** Customizer scripts loaded only on previewer page */
-	function customizer_live_preview_enqueue_scripts() {
-
+	/** Register Customizer scripts loaded only on previewer page */
+	function customizer_live_preview_register_scripts() {
 		wp_register_script( $this->plugin_slug . 'CSSOM', plugins_url( 'js/CSSOM.js', $this->file ), array( 'jquery' ), $this->_version, true );
 		wp_register_script( $this->plugin_slug . 'cssUpdate', plugins_url( 'js/jquery.cssUpdate.js', $this->file ), array(), $this->_version, true );
-		wp_enqueue_script( $this->plugin_slug . '-previewer-scripts', plugins_url( 'js/customizer_preview.js', $this->file ), array(
+		wp_register_script( $this->plugin_slug . '-previewer-scripts', plugins_url( 'js/customizer_preview.js', $this->file ), array(
 			'jquery',
 			'customize-preview',
 			$this->plugin_slug . 'CSSOM',
 			$this->plugin_slug . 'cssUpdate'
 		), $this->_version, true );
+	}
+
+	/** Enqueue Customizer scripts loaded only on previewer page */
+	function customizer_live_preview_enqueue_scripts() {
+		wp_enqueue_script( $this->plugin_slug . '-previewer-scripts' );
 
 		// when a live preview field is in action we need to know which props need 'px' as defaults
 		$this->localized['px_dependent_css_props'] = self::$pixel_dependent_css_properties;
