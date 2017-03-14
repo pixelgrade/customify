@@ -609,8 +609,7 @@ ul.font-options__options-list .select2-container [multiple].select2-selection--s
     color: #416b7e;
 }
 
-.customize-control-html + .customize-control.customize-control-checkbox,
-.customize-control-html + .customize-control.customize-control-radio
+.customize-control-html + .customize-control.customize-control-checkbox
 {
     margin-top: -24px;
 }

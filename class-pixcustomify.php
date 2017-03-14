@@ -1316,6 +1316,10 @@ class PixCustomifyPlugin {
 			$control_args['description'] = $setting_config['desc'];
 		}
 
+		if ( isset( $setting_config['active_callback'] ) && ! empty( $setting_config['active_callback'] ) ) {
+			$control_args['active_callback'] = $setting_config['active_callback'];
+		}
+
 
 		$control_args['type'] = $setting_config['type'];
 
