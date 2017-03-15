@@ -390,7 +390,7 @@
 				return; // no key, no fun
 			}
 
-			var value = 1, // by default we use 1 the most used value for checboxes or inputs
+			var value = 1, // by default we use 1 the most used value for checkboxes or inputs
 				compare = '==', // ... ye
 				action = "show",
 				between = [0,1]; // can only be `show` or `hide`

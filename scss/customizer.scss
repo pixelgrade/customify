@@ -705,15 +705,10 @@ $background-hover 	: #f5fcff;
 
 		}
 
-		// Select HTML Labels followed by a Checkbox or Radio field
-		.customize-control-html + & {
-			margin-top: -24px;
-		}
-
-			// Except de dividers titles
-			[id*="divider"] + & {
-				margin-top: 0;
-			}
+        // Except the dividers titles
+        [id*="divider"] + & {
+            margin-top: 0;
+        }
 	}
 
 	// Radios
@@ -724,6 +719,13 @@ $background-hover 	: #f5fcff;
 			content: none;
 		}
 	}
+
+    &.customize-control-checkbox {
+      // Select HTML Labels followed by a Checkbox field
+      .customize-control-html + & {
+        margin-top: -24px;
+      }
+    }
 
 	&.customize-control-radio {
 		label {
