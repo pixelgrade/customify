@@ -231,6 +231,7 @@ class PixCustomifyPlugin {
 		/*
 		 * Jetpack Related
 		 */
+		add_action( 'init', array( $this, 'set_jetpack_sharing_config') );
 		add_filter( 'default_option_jetpack_active_modules', array( $this, 'default_jetpack_active_modules' ), 10, 1 );
 		add_filter( 'jetpack_get_available_modules', array( $this, 'jetpack_hide_blocked_modules' ), 10, 1 );
 		add_filter( 'default_option_sharing-options', array( $this, 'default_jetpack_sharing_options' ), 10, 1 );
@@ -273,6 +274,11 @@ class PixCustomifyPlugin {
 		}
 
 		$this->localized['theme_fonts'] = $this->theme_fonts = Customify_Font_Selector::instance()->get_theme_fonts();
+	}
+
+	function set_jetpack_sharing_config() {
+		// Allow others to change the sharing config here
+		$this->jetpack_sharing_default_options = apply_filters ( 'customify_filter_jetpack_sharing_default_options', array() );
 	}
 
 	/**
