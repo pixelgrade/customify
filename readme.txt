@@ -2,7 +2,7 @@
 Contributors: pixelgrade, euthelup, babbardel, vlad.olaru, cristianfrumusanu, raduconstantin
 Tags: customizer, css, editor, live, preview, customise
 Requires at least: 4.5.0
-Tested up to: 4.7.2
+Tested up to: 4.7.3
 Stable tag: 1.5.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
