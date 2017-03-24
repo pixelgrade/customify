@@ -46,7 +46,7 @@ $errors    = $processor->errors(); ?>
 		echo $f->field( 'general' )->render();
 		echo $f->field( 'output' )->render();
 		echo $f->field( 'typography' )->render();
-//		echo $f->field( 'css_editor' )->render(); ?>
+		echo $f->field( 'tools' )->render(); ?>
 		<button type="submit" class="button button-primary">
 			<?php _e( 'Save Changes', 'customify' ); ?>
 		</button>

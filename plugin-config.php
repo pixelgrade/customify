@@ -25,6 +25,7 @@ return array(
 		'output' => include 'settings/output' . EXT,
 		'typography' => include 'settings/typography' . EXT,
 		'css_editor' => include 'settings/css_editor' . EXT,
+		'tools' => include 'settings/tools' . EXT,
 	),
 	'processor'             => array(
 		// callback signature: (array $input, customifyProcessor $processor)

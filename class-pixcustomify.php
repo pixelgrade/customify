@@ -235,6 +235,8 @@ class PixCustomifyPlugin {
 		add_filter( 'default_option_jetpack_active_modules', array( $this, 'default_jetpack_active_modules' ), 10, 1 );
 		add_filter( 'jetpack_get_available_modules', array( $this, 'jetpack_hide_blocked_modules' ), 10, 1 );
 		add_filter( 'default_option_sharing-options', array( $this, 'default_jetpack_sharing_options' ), 10, 1 );
+
+		add_action( 'rest_api_init', array( $this, 'add_rest_routes_api' ) );
 	}
 
 	/**
@@ -462,16 +464,63 @@ class PixCustomifyPlugin {
 		$screen = get_current_screen();
 		if ( $screen->id == $this->plugin_screen_hook_suffix ) {
 			wp_enqueue_script( $this->plugin_slug . '-admin-script', plugins_url( 'js/admin.js', $this->file ), array( 'jquery' ), $this->_version );
-			wp_localize_script( $this->plugin_slug . '-admin-script', 'locals', array(
-				'ajax_url' => admin_url( 'admin-ajax.php' )
+			wp_localize_script( $this->plugin_slug . '-admin-script', 'customify_settings', array(
+				'ajax_url' => admin_url( 'admin-ajax.php' ),
+				'wp_rest' => array(
+					'root'  => esc_url_raw( rest_url() ),
+					'nonce' => wp_create_nonce( 'wp_rest' ),
+					'customify_settings_nonce' => wp_create_nonce( 'customify_settings_nonce' )
+				),
 			) );
 		}
-
 
 		wp_localize_script( $this->plugin_slug . '-customizer-scripts', 'WP_API_Settings', array(
 			'root'  => esc_url_raw( rest_url() ),
 			'nonce' => wp_create_nonce( 'wp_rest' )
 		) );
+	}
+
+	function add_rest_routes_api(){
+		register_rest_route( 'customfiy/v1', '/delete_theme_mod', array(
+			'methods'             => 'POST',
+			'callback'            => array( $this, 'delete_theme_mod' ),
+			'permission_callback' => array( $this, 'permission_nonce_callback' ),
+		) );
+	}
+
+	function delete_theme_mod(){
+		$user = wp_get_current_user();
+		if ( ! $user->caps['administrator'] ) {
+			wp_send_json_error('no admin');
+		}
+
+		$config = apply_filters('customify_filter_fields', array() );
+
+		if ( empty( $config['opt-name'] ) ) {
+			wp_send_json_error('no option key');
+		}
+
+		$key = $config['opt-name'];
+
+		remove_theme_mod( $key );
+
+		wp_send_json_success('Bby ' . $key . '!');
+	}
+
+	function permission_nonce_callback() {
+		return wp_verify_nonce( $this->get_nonce(), 'customify_settings_nonce' );
+	}
+
+	private function get_nonce() {
+		$nonce = null;
+
+		if ( isset( $_REQUEST['customify_settings_nonce'] ) ) {
+			$nonce = wp_unslash( $_REQUEST['customify_settings_nonce'] );
+		} elseif ( isset( $_POST['customify_settings_nonce'] ) ) {
+			$nonce = wp_unslash( $_POST['customify_settings_nonce'] );
+		}
+
+		return $nonce;
 	}
 
 	/**
