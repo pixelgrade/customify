@@ -537,6 +537,7 @@ class PixCustomifyPlugin {
 			}
 
 			if ( $option['type'] === 'custom_background' ) {
+				$option['value']         = $this->get_option( $option_id );
 				$custom_css .= $this->process_custom_background_field_output( $option_id, $option );
 			}
 		}
@@ -984,7 +985,7 @@ class PixCustomifyPlugin {
 	}
 
 	protected function process_custom_background_field_output( $option_id, $options ) {
-		$selector = '';
+		$selector = $output = '';
 
 		if ( ! isset( $options['value'] ) ) {
 			return false;
@@ -998,33 +999,33 @@ class PixCustomifyPlugin {
 		} elseif ( is_array( $options['output'] ) ) {
 			$selector = implode( ' ', $options['output'] );
 		}
-		ob_start();
 
-		echo $selector . " {";
+
+		$output .= $selector . " {";
 		if ( isset( $value['background-image'] ) && ! empty( $value['background-image'] ) ) {
-			echo "background-image: url( " . $value['background-image'] . ");";
+			$output .= "background-image: url( " . $value['background-image'] . ");";
 		} else {
-			echo "background-image: none;";
+			$output .= "background-image: none;";
 		}
 
 		if ( isset( $value['background-repeat'] ) && ! empty( $value['background-repeat'] ) ) {
-			echo "background-repeat:" . $value['background-repeat'] . ";";
+			$output .= "background-repeat:" . $value['background-repeat'] . ";";
 		}
 
 		if ( isset( $value['background-position'] ) && ! empty( $value['background-position'] ) ) {
-			echo "background-position:" . $value['background-position'] . ";";
+			$output .= "background-position:" . $value['background-position'] . ";";
 		}
 
 		if ( isset( $value['background-size'] ) && ! empty( $value['background-size'] ) ) {
-			echo "background-size:" . $value['background-size'] . ";";
+			$output .= "background-size:" . $value['background-size'] . ";";
 		}
 
 		if ( isset( $value['background-attachment'] ) && ! empty( $value['background-attachment'] ) ) {
-			echo "background-attachment:" . $value['background-attachment'] . ";";
+			$output .= "background-attachment:" . $value['background-attachment'] . ";";
 		}
-		echo "}\n";
+		$output .= "}\n";
 
-		return ob_get_clean();
+		return $output;
 	}
 
 	/**
