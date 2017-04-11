@@ -3,7 +3,7 @@ Contributors: pixelgrade, euthelup, babbardel, vlad.olaru, cristianfrumusanu, ra
 Tags: customizer, css, editor, live, preview, customise
 Requires at least: 4.5.0
 Tested up to: 4.7.3
-Stable tag: 1.5.1
+Stable tag: 1.5.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -36,6 +36,10 @@ With [Customify](https://github.com/pixelgrade/customify), developers can easily
 **Made with love by Pixelgrade**
 
 == Changelog ==
+
+= 1.5.2 =
+* Fixed Background field output
+* Fixed Font's preview in wp-editor
 
 = 1.5.1 =
 * Added support for `active_callback` argument for customizer controls
