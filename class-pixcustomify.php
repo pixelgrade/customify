@@ -231,9 +231,12 @@ class PixCustomifyPlugin {
 		/*
 		 * Jetpack Related
 		 */
+		add_action( 'init', array( $this, 'set_jetpack_sharing_config') );
 		add_filter( 'default_option_jetpack_active_modules', array( $this, 'default_jetpack_active_modules' ), 10, 1 );
 		add_filter( 'jetpack_get_available_modules', array( $this, 'jetpack_hide_blocked_modules' ), 10, 1 );
 		add_filter( 'default_option_sharing-options', array( $this, 'default_jetpack_sharing_options' ), 10, 1 );
+
+		add_action( 'rest_api_init', array( $this, 'add_rest_routes_api' ) );
 	}
 
 	/**
@@ -273,6 +276,11 @@ class PixCustomifyPlugin {
 		}
 
 		$this->localized['theme_fonts'] = $this->theme_fonts = Customify_Font_Selector::instance()->get_theme_fonts();
+	}
+
+	function set_jetpack_sharing_config() {
+		// Allow others to change the sharing config here
+		$this->jetpack_sharing_default_options = apply_filters ( 'customify_filter_jetpack_sharing_default_options', array() );
 	}
 
 	/**
@@ -456,16 +464,63 @@ class PixCustomifyPlugin {
 		$screen = get_current_screen();
 		if ( $screen->id == $this->plugin_screen_hook_suffix ) {
 			wp_enqueue_script( $this->plugin_slug . '-admin-script', plugins_url( 'js/admin.js', $this->file ), array( 'jquery' ), $this->_version );
-			wp_localize_script( $this->plugin_slug . '-admin-script', 'locals', array(
-				'ajax_url' => admin_url( 'admin-ajax.php' )
+			wp_localize_script( $this->plugin_slug . '-admin-script', 'customify_settings', array(
+				'ajax_url' => admin_url( 'admin-ajax.php' ),
+				'wp_rest' => array(
+					'root'  => esc_url_raw( rest_url() ),
+					'nonce' => wp_create_nonce( 'wp_rest' ),
+					'customify_settings_nonce' => wp_create_nonce( 'customify_settings_nonce' )
+				),
 			) );
 		}
-
 
 		wp_localize_script( $this->plugin_slug . '-customizer-scripts', 'WP_API_Settings', array(
 			'root'  => esc_url_raw( rest_url() ),
 			'nonce' => wp_create_nonce( 'wp_rest' )
 		) );
+	}
+
+	function add_rest_routes_api(){
+		register_rest_route( 'customfiy/v1', '/delete_theme_mod', array(
+			'methods'             => 'POST',
+			'callback'            => array( $this, 'delete_theme_mod' ),
+			'permission_callback' => array( $this, 'permission_nonce_callback' ),
+		) );
+	}
+
+	function delete_theme_mod(){
+		$user = wp_get_current_user();
+		if ( ! $user->caps['administrator'] ) {
+			wp_send_json_error('no admin');
+		}
+
+		$config = apply_filters('customify_filter_fields', array() );
+
+		if ( empty( $config['opt-name'] ) ) {
+			wp_send_json_error('no option key');
+		}
+
+		$key = $config['opt-name'];
+
+		remove_theme_mod( $key );
+
+		wp_send_json_success('Bby ' . $key . '!');
+	}
+
+	function permission_nonce_callback() {
+		return wp_verify_nonce( $this->get_nonce(), 'customify_settings_nonce' );
+	}
+
+	private function get_nonce() {
+		$nonce = null;
+
+		if ( isset( $_REQUEST['customify_settings_nonce'] ) ) {
+			$nonce = wp_unslash( $_REQUEST['customify_settings_nonce'] );
+		} elseif ( isset( $_POST['customify_settings_nonce'] ) ) {
+			$nonce = wp_unslash( $_POST['customify_settings_nonce'] );
+		}
+
+		return $nonce;
 	}
 
 	/**
@@ -482,6 +537,7 @@ class PixCustomifyPlugin {
 			}
 
 			if ( $option['type'] === 'custom_background' ) {
+				$option['value']         = $this->get_option( $option_id );
 				$custom_css .= $this->process_custom_background_field_output( $option_id, $option );
 			}
 		}
@@ -929,7 +985,7 @@ class PixCustomifyPlugin {
 	}
 
 	protected function process_custom_background_field_output( $option_id, $options ) {
-		$selector = '';
+		$selector = $output = '';
 
 		if ( ! isset( $options['value'] ) ) {
 			return false;
@@ -943,33 +999,33 @@ class PixCustomifyPlugin {
 		} elseif ( is_array( $options['output'] ) ) {
 			$selector = implode( ' ', $options['output'] );
 		}
-		ob_start();
 
-		echo $selector . " {";
+
+		$output .= $selector . " {";
 		if ( isset( $value['background-image'] ) && ! empty( $value['background-image'] ) ) {
-			echo "background-image: url( " . $value['background-image'] . ");";
+			$output .= "background-image: url( " . $value['background-image'] . ");";
 		} else {
-			echo "background-image: none;";
+			$output .= "background-image: none;";
 		}
 
 		if ( isset( $value['background-repeat'] ) && ! empty( $value['background-repeat'] ) ) {
-			echo "background-repeat:" . $value['background-repeat'] . ";";
+			$output .= "background-repeat:" . $value['background-repeat'] . ";";
 		}
 
 		if ( isset( $value['background-position'] ) && ! empty( $value['background-position'] ) ) {
-			echo "background-position:" . $value['background-position'] . ";";
+			$output .= "background-position:" . $value['background-position'] . ";";
 		}
 
 		if ( isset( $value['background-size'] ) && ! empty( $value['background-size'] ) ) {
-			echo "background-size:" . $value['background-size'] . ";";
+			$output .= "background-size:" . $value['background-size'] . ";";
 		}
 
 		if ( isset( $value['background-attachment'] ) && ! empty( $value['background-attachment'] ) ) {
-			echo "background-attachment:" . $value['background-attachment'] . ";";
+			$output .= "background-attachment:" . $value['background-attachment'] . ";";
 		}
-		echo "}\n";
+		$output .= "}\n";
 
-		return ob_get_clean();
+		return $output;
 	}
 
 	/**
