@@ -135,7 +135,8 @@ gulp.task( 'build', ['copy-folder'], function() {
 		'**/__MACOSX',
 		'+development.rb',
 		'+production.rb',
-		'README.md'
+		'README.md',
+		'.labels'
 	];
 
 	files_to_remove.forEach( function( e, k ) {
