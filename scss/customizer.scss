@@ -42,6 +42,14 @@ $background-hover 	: #f5fcff;
 	}
 }
 
+@mixin clearfix {
+	&:after {
+		content: " ";
+		display: table;
+		clear: both;
+	}
+}
+
 // Change sections overflow
 .accordion-section-content {
 	overflow: visible;
@@ -174,6 +182,10 @@ $background-hover 	: #f5fcff;
 		 	height: 74px;
 		 }
 	}
+}
+
+.button-controls {
+	@include clearfix();
 }
 
 

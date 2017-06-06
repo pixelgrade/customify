@@ -136,6 +136,14 @@
     border-top: none;
 }
 
+.button-controls:after
+{
+    display: table;
+    clear: both; 
+
+    content: ' ';
+}
+
 .wp-core-ui .button:not(.theme-details):not(.collapse-sidebar),
 .wp-core-ui .button-primary,
 .wp-core-ui .button-secondary
@@ -609,11 +617,6 @@ ul.font-options__options-list .select2-container [multiple].select2-selection--s
     color: #416b7e;
 }
 
-.customize-control-html + .customize-control.customize-control-checkbox
-{
-    margin-top: -24px;
-}
-
 [id*='divider'] + .customize-control.customize-control-checkbox,
 [id*='divider'] + .customize-control.customize-control-radio
 {
@@ -627,6 +630,11 @@ ul.font-options__options-list .select2-container [multiple].select2-selection--s
 .customize-control input[type=radio]:checked:before
 {
     content: none;
+}
+
+.customize-control-html + .customize-control.customize-control-checkbox
+{
+    margin-top: -24px;
 }
 
 .customize-control.customize-control-radio label
