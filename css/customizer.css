@@ -1676,3 +1676,39 @@ ul.font-options__options-list .select2-container--default .select2-selection--si
 {
     z-index: 99999999;
 }
+
+.wp-customizer .widget-conditional .condition-control:after
+{
+    display: table;
+    clear: both; 
+
+    content: ' ';
+}
+
+.wp-customizer .widget-conditional .selection
+{
+    margin-right: 0;
+    margin-bottom: 10px;
+    margin-left: 0;
+    padding-right: 50px;
+    padding-bottom: 19px;
+    padding-left: 28px;
+
+    border-bottom: 1px solid #cbcfd4;
+}
+
+.wp-customizer .widget-conditional .condition:last-child .selection
+{
+    border: 0;
+}
+
+.wp-customizer .widget-conditional select
+{
+    width: 170px; 
+    max-width: 100%;
+}
+
+.wp-customizer .widget-conditional .condition-top select
+{
+    width: 130px;
+}
