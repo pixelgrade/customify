@@ -40,6 +40,7 @@ With [Customify](https://github.com/pixelgrade/customify), developers can easily
 = 1.5.2 =
 * Fixed Background field output
 * Fixed Font's preview in wp-editor
+* Added Reset Theme Mods tool
 
 = 1.5.1 =
 * Added support for `active_callback` argument for customizer controls
