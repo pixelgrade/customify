@@ -1,9 +1,9 @@
 === Customify - A Theme Customizer Booster ===
 Contributors: pixelgrade, euthelup, babbardel, vlad.olaru, cristianfrumusanu, raduconstantin
 Tags: customizer, css, editor, live, preview, customise
-Requires at least: 4.5.0
-Tested up to: 4.7.3
-Stable tag: 1.5.2
+Requires at least: 4.6.0
+Tested up to: 4.8.0
+Stable tag: 1.5.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -36,6 +36,12 @@ With [Customify](https://github.com/pixelgrade/customify), developers can easily
 **Made with love by Pixelgrade**
 
 == Changelog ==
+
+= 1.5.3 =
+* Update Style for WordPress 4.8
+* Updated Google Fonts list
+* Fixed the double output of the custom CSS
+* Fixed Menu Add Button overlap
 
 = 1.5.2 =
 * Fixed Background field output
