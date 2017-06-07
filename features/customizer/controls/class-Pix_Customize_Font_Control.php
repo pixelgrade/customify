@@ -90,6 +90,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 		$this->settings = $settings;
 		$this->CSSID    = $this->get_CSS_ID();
 		$this->load_google_fonts();
+		//$this->generate_google_fonts_json();
 
 		// since 4.7 all the customizer data is saved in a post type named changeset this is how we get it.
 		if ( method_exists( $wp_customize, 'changeset_data' ) ) {
@@ -553,7 +554,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 	 * call this
 	 * the result needs to be put back into google.fonts.php
 	 * remove this call
-	 * before rage about file_get_content + json file thing about the security avoided with this simple call
+	 * before rage about file_get_content + json file think about the security avoided with this simple call
 	 */
 	protected function generate_google_fonts_json() {
 

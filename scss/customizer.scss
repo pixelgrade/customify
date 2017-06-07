@@ -42,6 +42,14 @@ $background-hover 	: #f5fcff;
 	}
 }
 
+@mixin clearfix {
+	&:after {
+		content: " ";
+		display: table;
+		clear: both;
+	}
+}
+
 // Change sections overflow
 .accordion-section-content {
 	overflow: visible;
@@ -174,6 +182,10 @@ $background-hover 	: #f5fcff;
 		 	height: 74px;
 		 }
 	}
+}
+
+.button-controls {
+	@include clearfix();
 }
 
 
@@ -1481,4 +1493,39 @@ ul.font-options__options-list {
 
 .select2-container.select2-container--open {
 	z-index: 99999999;
+}
+
+
+
+
+
+//------------------------------------*\
+//    Jetpack Widget Visibility
+//------------------------------------*/
+
+.wp-customizer .widget-conditional {
+	.condition-control { @include clearfix(); }
+
+	.selection {
+		padding-right: 50px;
+		padding-left: 28px;
+		padding-bottom: 19px;
+		margin-left: 0;
+		margin-right: 0;
+		margin-bottom: 10px;
+		border-bottom: 1px solid $light;
+	}
+
+	.condition:last-child .selection {
+		border: 0;
+	}
+
+	select {
+		max-width: 100%;
+		width: 170px;
+	}
+
+	.condition-top select {
+		width: 130px;
+	}
 }
