@@ -284,8 +284,8 @@ $background-hover 	: #f5fcff;
 	&.label {
 		@extend %fields-label;
 		@extend .customize-control-title;
-		margin-bottom: -3px;
-		margin-bottom: -$fields-spacing/2 - 3px;
+		//margin-bottom: -3px;
+		//margin-bottom: -$fields-spacing/2 - 3px;
 
 	    font-weight: 500;
 	}
