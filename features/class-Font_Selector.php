@@ -19,7 +19,7 @@ class Customify_Font_Selector {
 		$this->theme_fonts = apply_filters( 'customify_theme_fonts', array() );
 
 		$load_location = PixCustomifyPlugin()->get_plugin_setting( 'style_resources_location', 'wp_head' );
-		add_action( $load_location, array( $this, 'output_font_dynamic_style' ), 999999999 );
+		add_action( $load_location, array( $this, 'output_font_dynamic_style' ), 100 );
 		add_action( 'customify_font_family_before_options', array( $this, 'add_customify_theme_fonts' ), 11, 2 );
 
 		if ( PixCustomifyPlugin()->get_plugin_setting( 'enable_editor_style', true ) ) {

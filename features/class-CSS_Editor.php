@@ -16,11 +16,11 @@ class Customify_CSS_Live_Editor {
 		$load_location = PixCustomifyPlugin()->get_plugin_setting( 'style_resources_location', 'wp_head' );
 
 		if ( function_exists( 'wp_custom_css_cb' ) ) {
-			remove_action( 'wp_head', 'wp_custom_css_cb', 101 );
-			add_action( $load_location, 'wp_custom_css_cb', 999999999 );
+//			remove_action( 'wp_head', 'wp_custom_css_cb', 101 );
+//			add_action( $load_location, 'wp_custom_css_cb', 999999999 );
 		} else {
 			// keep this for wordpress versions lower than 4.7
-			add_action( $load_location, array( $this, 'output_dynamic_style' ), 999999999 );
+			add_action( $load_location, array( $this, 'output_dynamic_style' ), 99 );
 		}
 
 		//Check the WordPress version and if there are known problems disable it

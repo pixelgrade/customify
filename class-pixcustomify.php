@@ -218,7 +218,7 @@ class PixCustomifyPlugin {
 		// The frontend effects of the Customizer controls
 		$load_location = $this->get_plugin_setting( 'style_resources_location', 'wp_head' );
 
-		add_action( $load_location, array( $this, 'output_dynamic_style' ), 99999 );
+		add_action( $load_location, array( $this, 'output_dynamic_style' ), 99 );
 		add_action( 'wp_head', array( $this, 'output_typography_dynamic_style' ), 10 );
 
 		add_action( 'customize_register', array( $this, 'remove_default_sections' ), 11 );
