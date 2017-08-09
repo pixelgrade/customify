@@ -183,9 +183,11 @@ class PixCustomifyPlugin {
 		 */
 		$this->init_plugin_configs();
 
-		// We can load the actual plugins config only on after_setup_theme so we can give the themes a change to have their say
+		// We need to load the configuration as late as possible so we allow all that want to influence it
+		// We need the init hook and not after_setup_theme because there a number of plugins that fire up on init (like certain modules from Jetpack)
+		// We need to be able to load things like components configs depending on those firing up or not
 		// DO NOT TRY to use the Customify values before this!
-		add_action( 'after_setup_theme', array( $this, 'load_plugin_configs' ), 5 );
+		add_action( 'init', array( $this, 'load_plugin_configs' ), 15 );
 
 		/*
 		 * Now setup the admin side of things
