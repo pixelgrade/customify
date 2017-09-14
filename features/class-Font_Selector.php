@@ -377,12 +377,12 @@ class Customify_Font_Selector {
 				$this->display_property( 'font-size', $value['font_size'], $unit );
 			}
 
-			if ( ! empty( $value['line_height'] ) ) {
+			if ( isset( $value['line_height'] ) ) {
 				$unit = $this->get_field_unit( $font, 'line-height' );
 				$this->display_property( 'line-height', $value['line_height'], $unit );
 			}
 
-			if ( ! empty( $value['letter_spacing'] ) ) {
+			if ( isset( $value['letter_spacing'] ) ) {
 				$unit = $this->get_field_unit( $font, 'letter-spacing' );
 				$this->display_property( 'letter-spacing', $value['letter_spacing'], $unit );
 			}
