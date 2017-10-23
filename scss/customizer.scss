@@ -67,6 +67,9 @@ $background-hover 	: #f5fcff;
 // Header – Close + Save Controls
 #customize-header-actions {
 	// border-bottom: 0;
+	#customize-save-button-wrapper {
+		margin-top: 7px;
+	}
 }
 
 // Temporary Fix to Make "Close" button align with the "Back"
@@ -203,16 +206,18 @@ $background-hover 	: #f5fcff;
 .wp-core-ui {
 
 	// Primary & Secondary Buttons
-	 .button:not(.theme-details):not(.collapse-sidebar), 
+	 .button:not(.theme-details):not(.collapse-sidebar):not(.wp-color-result), 
 	 .button-primary, 
 	 .button-secondary {
 	 	width: auto;
-	 	padding: 6px 20px;
+	 	// padding: 6px 20px;
+	 	padding-left: 15px;
+	 	padding-right: 15px;
 
-	 	font-size: 13px;
+	 	// font-size: 13px;
 	 	font-weight: 400;
 		color: #F5FCFF;
-		line-height: 1.4;
+		// line-height: 1.4;
 		text-shadow: none;
 		border: none;
 		background: #AED2E5;
@@ -229,15 +234,32 @@ $background-hover 	: #f5fcff;
 		}
 	 }
 
-	 .button-primary {
-		background: #73C5EE;
-		box-shadow: 0px 2px 0px 0px #57ABD5;
+	 #customize-header-actions {
+		 .button-primary {
+			background: #73C5EE;
+			box-shadow: 0px 2px 0px 0px #57ABD5;
 
-		&:hover {
-			background: #58B0DD;
-			box-shadow: 0px 2px 0px 0px #3F8AAF;
-		}
+			&:hover {
+				background: #58B0DD;
+				box-shadow: 0px 2px 0px 0px #3F8AAF;
+			}
+
+			&.save {
+
+			}
+
+			&.has-next-sibling {
+				border-right: 1px solid #57ABD5;
+			}
+
+			&:disabled {
+				color: white !important;
+				background: #AED2E5 !important;
+				opacity: 0.7;
+			}
+		 }
 	 }
+
 
 	 // Reset Buttons
 	.reset_section,
@@ -700,7 +722,9 @@ $background-hover 	: #f5fcff;
 
 		// Split into two columns only when 
 		// there is more than one label
-		label:not(:only-of-type) {
+		label:not(:only-of-type),
+		// WordPress 4.9 Class
+		> .customize-inside-control-row:not(:only-of-type) {
 			margin-left: 30px;
 			padding-top: 0;
 			padding-bottom: 0;
@@ -740,8 +764,17 @@ $background-hover 	: #f5fcff;
     }
 
 	&.customize-control-radio {
-		label {
+		label,
+		// WordPress 4.9 Class
+		.customize-inside-control-row {
 			margin-top: $fields-spacing/2;
+
+		}
+
+		// New WP 4.9 Changesets options
+		&#customize-control-changeset_status .customize-inside-control-row {
+			margin-top: 0;
+		    text-indent: 0;
 		}
 	}
 
@@ -756,7 +789,7 @@ $background-hover 	: #f5fcff;
 		width: 65%;
 	}
 
-	$input-size: 200px;
+	$input-size: calc(100% - 55px);
 	$input-height: 6px;
 	$thumb-height: 22px;
 
@@ -878,6 +911,10 @@ $background-hover 	: #f5fcff;
 			border 		: none;
 			background 	: white;
 
+			&, * {
+				box-sizing: content-box;
+			}
+
 			.iris-picker-inner {
 
 			}
@@ -936,7 +973,8 @@ $background-hover 	: #f5fcff;
 		}
 	}
 
-	.wp-color-result{
+	.wp-color-result,
+	.wp-color-result.button {
 		top 		: 0;
 		height 		: 30px;
 		width 		: 40px;
@@ -948,7 +986,8 @@ $background-hover 	: #f5fcff;
 		border: 2px solid #B8DAEB;
 		box-shadow: none;
 
-		&:after {
+		&:after,
+		.wp-color-result-text {
 			display:none;
 		}
 	}
