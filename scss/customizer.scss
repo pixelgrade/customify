@@ -72,6 +72,16 @@ $background-hover 	: #f5fcff;
 	}
 }
 
+// Footer
+.wp-full-overlay-footer {
+	.devices {
+		button {
+			float: left;
+			border-radius: 0;
+		}
+	}
+}
+
 // Temporary Fix to Make "Close" button align with the "Back"
 .customize-controls-close {
 	width: 48px;
