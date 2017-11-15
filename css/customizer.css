@@ -1354,9 +1354,15 @@ li#customize-control-site_logo .actions
 }
 
 .wp-full-overlay-sidebar,
-.customize-themes-panel
+.customize-themes-panel,
+#customize-sidebar-outer-content
 {
     border-right: 1px solid #e0e8ef; 
+    background: #eaf9fe;
+}
+
+.outer-section-open #customize-controls .wp-full-overlay-sidebar-content
+{
     background: #eaf9fe;
 }
 
