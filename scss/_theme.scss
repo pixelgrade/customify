@@ -76,3 +76,23 @@ $background-sidebar	: #eaf9fe;
 	background: $background-hover;
 	border-left-color: $background-hover;
 }
+
+.wp-customizer {
+
+	/* SECTION: NAV MENUS */
+	.menu-item-settings {
+
+	}
+
+	.menu-item-edit-active .menu-item-handle, .section-open .menu-item-settings, .menu-item-bar .menu-item-handle:hover {
+	    border-color: $borders;
+	}
+
+	.section-open .menu-item-settings {
+	    background: $background-hover;
+	}
+
+	.control-section-nav_menu .menu-location-settings {
+	    border-top-color: $borders !important;
+	}
+}

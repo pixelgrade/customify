@@ -148,8 +148,9 @@ $background-hover 	: #f5fcff;
 	}
 
 	#accordion-section-add_menu {
-		text-align: right;
-		overflow: visible;
+		// text-align: right;
+		// overflow: visible;
+		border-bottom: none;
 
 		.add-menu-toggle {
 		 	float: none;

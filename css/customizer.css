@@ -57,8 +57,7 @@
   border-bottom: 1px solid #e0e8ef; }
 
 #customize-theme-controls #accordion-section-add_menu {
-  text-align: right;
-  overflow: visible; }
+  border-bottom: none; }
   #customize-theme-controls #accordion-section-add_menu .add-menu-toggle {
     float: none; }
 
@@ -899,6 +898,15 @@ li#customize-control-site_logo .actions {
   color: #056184;
   background: #f5fcff;
   border-left-color: #f5fcff; }
+
+.wp-customizer {
+  /* SECTION: NAV MENUS */ }
+  .wp-customizer .menu-item-edit-active .menu-item-handle, .wp-customizer .section-open .menu-item-settings, .wp-customizer .menu-item-bar .menu-item-handle:hover {
+    border-color: #e0e8ef; }
+  .wp-customizer .section-open .menu-item-settings {
+    background: #f5fcff; }
+  .wp-customizer .control-section-nav_menu .menu-location-settings {
+    border-top-color: #e0e8ef !important; }
 
 [data-balloon] {
   position: relative; }
