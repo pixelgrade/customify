@@ -22,7 +22,8 @@ $background-sidebar	: #eaf9fe;
     border-right: 1px solid $borders;
 }
 
-.outer-section-open #customize-controls .wp-full-overlay-sidebar-content {
+.outer-section-open #customize-controls .wp-full-overlay-sidebar-content,
+.attachment-media-view, .media-widget-preview.media_audio, .media-widget-preview.media_image {
 	background: $background-sidebar;
 }
 
