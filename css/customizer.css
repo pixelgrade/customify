@@ -125,7 +125,10 @@
   .wp-core-ui #customize-header-actions .button-primary:disabled {
     color: white !important;
     background: #AED2E5 !important;
-    opacity: 0.7; }
+    opacity: 0.7;
+    box-shadow: 0px 2px 0px 0px #8db5ca !important; }
+    .wp-core-ui #customize-header-actions .button-primary:disabled.has-next-sibling {
+      border-right: none; }
 
 .wp-core-ui .reset_section,
 .wp-core-ui .reset_panel {
@@ -572,6 +575,9 @@
     .customize-control-color .wp-color-result.button:after,
     .customize-control-color .wp-color-result.button .wp-color-result-text {
       display: none; }
+
+.customize-control-font:last-child {
+  margin-bottom: 150px; }
 
 #accordion-section-live_css_edit_section .customize-section-title {
   margin-top: -13px;

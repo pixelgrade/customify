@@ -266,6 +266,11 @@ $background-hover 	: #f5fcff;
 				color: white !important;
 				background: #AED2E5 !important;
 				opacity: 0.7;
+				box-shadow: 0px 2px 0px 0px #8db5ca !important;
+
+				&.has-next-sibling {
+					border-right: none; 
+				}
 			}
 		 }
 	 }
@@ -1004,6 +1009,19 @@ $background-hover 	: #f5fcff;
 }
 
 
+
+
+//------------------------------------*\
+//    Font Selector
+//------------------------------------*/
+
+.customize-control-font {
+
+	// Add extra bottom spacing to better view the modal
+	&:last-child {
+		margin-bottom: 150px;
+	}
+}
 
 
 
