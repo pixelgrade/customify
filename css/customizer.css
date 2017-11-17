@@ -1128,7 +1128,7 @@ ul.font-options__options-list .select2-container--default .select2-selection--si
   #customize-theme-controls .widget-content .accordion-container .accordion-section.open {
     border-bottom: none; }
     #customize-theme-controls .widget-content .accordion-container .accordion-section.open .accordion-section-content {
-      max-height: 50em;
+      max-height: 100%;
       padding-top: 17px;
       padding-bottom: 17px; }
     #customize-theme-controls .widget-content .accordion-container .accordion-section.open .accordion-section-title {
