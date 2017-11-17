@@ -1597,14 +1597,27 @@ ul.font-options__options-list {
 				overflow: hidden;
 			    transition: all .4s ease;
 
+			    color: $blue-dark;
+
+			    p {
+			    	&:first-child {
+			    		margin-top: 0;
+			    	}
+
+			    	&:last-child {
+			    		margin-bottom: 0;
+			    	}
+			    }
+
 			}
 
 			.accordion-section-title {
 				color: #39474D;
-				// @extend .customize-control-title;
 
 				&:after {
-				    transform: rotate(90deg);
+					content: "\f142"; // Change arrow style to be more consistent 
+				    transform: rotate(180deg);
+
 				}
 			}
 
@@ -1627,10 +1640,31 @@ ul.font-options__options-list {
 					border-bottom: 1px solid;
 
 					&:after {
-					    transform: rotate(-90deg);
+					    transform: rotate(0deg);
 					}
 				}
 			}
+		}
+
+		label.customize-control-title {
+			cursor: default;
+		}
+	}
+}
+
+.widget {
+	.widget-content {
+			> p {
+				input[type=checkbox],
+				input[type=radio] {
+				    margin-bottom: 3px;
+				    margin-top: 3px;
+				}
+			}
+
+		small {
+		    margin-top: 5px;
+		    display: block;
 		}
 	}
 }

@@ -1113,12 +1113,18 @@ ul.font-options__options-list .select2-container--default .select2-selection--si
     padding-top: 0;
     padding-bottom: 0;
     overflow: hidden;
-    transition: all .4s ease; }
+    transition: all .4s ease;
+    color: #416B7E; }
+    #customize-theme-controls .widget-content .accordion-container .accordion-section .accordion-section-content p:first-child {
+      margin-top: 0; }
+    #customize-theme-controls .widget-content .accordion-container .accordion-section .accordion-section-content p:last-child {
+      margin-bottom: 0; }
   #customize-theme-controls .widget-content .accordion-container .accordion-section .accordion-section-title {
     color: #39474D; }
     #customize-theme-controls .widget-content .accordion-container .accordion-section .accordion-section-title:after {
-      -webkit-transform: rotate(90deg);
-              transform: rotate(90deg); }
+      content: "\f142";
+      -webkit-transform: rotate(180deg);
+              transform: rotate(180deg); }
   #customize-theme-controls .widget-content .accordion-container .accordion-section.open {
     border-bottom: none; }
     #customize-theme-controls .widget-content .accordion-container .accordion-section.open .accordion-section-content {
@@ -1128,8 +1134,19 @@ ul.font-options__options-list .select2-container--default .select2-selection--si
     #customize-theme-controls .widget-content .accordion-container .accordion-section.open .accordion-section-title {
       border-bottom: 1px solid; }
       #customize-theme-controls .widget-content .accordion-container .accordion-section.open .accordion-section-title:after {
-        -webkit-transform: rotate(-90deg);
-                transform: rotate(-90deg); }
+        -webkit-transform: rotate(0deg);
+                transform: rotate(0deg); }
+  #customize-theme-controls .widget-content .accordion-container label.customize-control-title, #customize-theme-controls .widget-content .accordion-container label.separator.label {
+    cursor: default; }
+
+.widget .widget-content > p input[type=checkbox],
+.widget .widget-content > p input[type=radio] {
+  margin-bottom: 3px;
+  margin-top: 3px; }
+
+.widget .widget-content small {
+  margin-top: 5px;
+  display: block; }
 
 .wp-customizer .widget-conditional .condition-control:after {
   content: " ";
