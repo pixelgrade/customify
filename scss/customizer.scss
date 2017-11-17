@@ -1568,6 +1568,77 @@ ul.font-options__options-list {
 
 
 //------------------------------------*\
+//    Widgets Options Accordion System
+//------------------------------------*/
+.pixelgrade-widget-title {
+
+}
+
+#customize-theme-controls .widget-content {
+	.accordion-container {
+
+		// Stick the container to the margins
+		margin-left: -10px;
+		margin-right: -10px;
+
+	    margin-top: 20px;
+	    margin-bottom: 10px;
+
+		.accordion-section {
+
+			.accordion-section-content {
+				position: relative;
+				left: 0;
+
+				max-height: 0;
+				padding-top: 0;
+				padding-bottom: 0;
+
+				overflow: hidden;
+			    transition: all .4s ease;
+
+			}
+
+			.accordion-section-title {
+				color: #39474D;
+				// @extend .customize-control-title;
+
+				&:after {
+				    transform: rotate(90deg);
+				}
+			}
+
+			&.closed {
+				.accordion-section-content {
+
+				}
+			}
+
+			&.open {
+				border-bottom: none;
+
+				.accordion-section-content {
+					max-height: 50em;
+					padding-top: 17px; //default
+					padding-bottom: 17px; //default
+				}
+
+				.accordion-section-title {
+					border-bottom: 1px solid;
+
+					&:after {
+					    transform: rotate(-90deg);
+					}
+				}
+			}
+		}
+	}
+}
+
+
+
+
+//------------------------------------*\
 //    Jetpack Widget Visibility
 //------------------------------------*/
 

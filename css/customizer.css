@@ -1101,6 +1101,36 @@ ul.font-options__options-list .select2-container--default .select2-selection--si
 .select2-container.select2-container--open {
   z-index: 99999999; }
 
+#customize-theme-controls .widget-content .accordion-container {
+  margin-left: -10px;
+  margin-right: -10px;
+  margin-top: 20px;
+  margin-bottom: 10px; }
+  #customize-theme-controls .widget-content .accordion-container .accordion-section .accordion-section-content {
+    position: relative;
+    left: 0;
+    max-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    overflow: hidden;
+    transition: all .4s ease; }
+  #customize-theme-controls .widget-content .accordion-container .accordion-section .accordion-section-title {
+    color: #39474D; }
+    #customize-theme-controls .widget-content .accordion-container .accordion-section .accordion-section-title:after {
+      -webkit-transform: rotate(90deg);
+              transform: rotate(90deg); }
+  #customize-theme-controls .widget-content .accordion-container .accordion-section.open {
+    border-bottom: none; }
+    #customize-theme-controls .widget-content .accordion-container .accordion-section.open .accordion-section-content {
+      max-height: 50em;
+      padding-top: 17px;
+      padding-bottom: 17px; }
+    #customize-theme-controls .widget-content .accordion-container .accordion-section.open .accordion-section-title {
+      border-bottom: 1px solid; }
+      #customize-theme-controls .widget-content .accordion-container .accordion-section.open .accordion-section-title:after {
+        -webkit-transform: rotate(-90deg);
+                transform: rotate(-90deg); }
+
 .wp-customizer .widget-conditional .condition-control:after {
   content: " ";
   display: table;
