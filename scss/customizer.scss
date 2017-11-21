@@ -1670,6 +1670,52 @@ ul.font-options__options-list {
 }
 
 
+// Widgets Icons
+#available-widgets {
+	[class*=pixelgrade],
+	[class*=featured-posts],
+	[class*=categories-image-grid] {
+		 .widget .widget-title:before {
+		    content: "\f538";
+		    color: #9660c6; // Branding Icons
+		}
+	}
+	
+	// Slideshow
+	[class*=pixelgrade-featured-posts-slideshow] .widget .widget-title:before {
+		 content: "\f233"; // images-alt2
+	}
+
+	// Carousel
+	[class*=pixelgrade-featured-posts-carousel] .widget .widget-title:before {
+		 content: "\f169";
+	}
+
+	// Grid Posts
+	[class*=featured-posts-grid] .widget .widget-title:before {
+		 content: "\f180";
+	}
+	
+	// List Posts
+	[class*=featured-posts-list] .widget .widget-title:before {
+		 content: "\f164";
+	}
+
+	// Categories Image
+	[class*=categories-image-grid] .widget .widget-title:before {
+		 content: "\f163"; // list-view
+	}
+
+	// Promo Box
+	[class*=pixelgrade-promo-box] .widget .widget-title:before {
+		 content: "\f488"; // Megaphone
+	}
+
+}
+
+
+
+
 
 
 //------------------------------------*\

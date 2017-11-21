@@ -1148,6 +1148,30 @@ ul.font-options__options-list .select2-container--default .select2-selection--si
   margin-top: 5px;
   display: block; }
 
+#available-widgets [class*=pixelgrade] .widget .widget-title:before,
+#available-widgets [class*=featured-posts] .widget .widget-title:before,
+#available-widgets [class*=categories-image-grid] .widget .widget-title:before {
+  content: "\f538";
+  color: #9660c6; }
+
+#available-widgets [class*=pixelgrade-featured-posts-slideshow] .widget .widget-title:before {
+  content: "\f233"; }
+
+#available-widgets [class*=pixelgrade-featured-posts-carousel] .widget .widget-title:before {
+  content: "\f169"; }
+
+#available-widgets [class*=featured-posts-grid] .widget .widget-title:before {
+  content: "\f180"; }
+
+#available-widgets [class*=featured-posts-list] .widget .widget-title:before {
+  content: "\f164"; }
+
+#available-widgets [class*=categories-image-grid] .widget .widget-title:before {
+  content: "\f163"; }
+
+#available-widgets [class*=pixelgrade-promo-box] .widget .widget-title:before {
+  content: "\f488"; }
+
 .wp-customizer .widget-conditional .condition-control:after {
   content: " ";
   display: table;
