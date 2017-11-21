@@ -1550,7 +1550,7 @@ ul.font-options__options-list {
 			.select2-selection__rendered {
 			    color: inherit;
 			    line-height: initial;
-			}
+	}
 
 }
 
@@ -1561,6 +1561,51 @@ ul.font-options__options-list {
 
 .select2-container.select2-container--open {
 	z-index: 99999999;
+}
+
+#customize-theme-controls .select2-container {
+	width: 100% !important;
+
+	.select2-selection--multiple {
+	 	@extend %input;
+	 	@extend %select;
+	 	-webkit-appearance: initial;
+
+		padding: 8px 8px 4px;
+	 	height: auto;
+	 	background: none;
+
+	 	.select2-selection__arrow {
+	 		display: none;
+	 	}
+
+	 	.select2-selection__rendered {
+	 		padding: 0;
+
+	 		.select2-selection__choice {
+	 			padding: 3px 7px;
+	 			margin-right: 6px;
+	 			margin-top: 0px;
+
+	 			border-color: $borders;
+	 			background-color: #f6fbff;
+	 		}
+	 	}
+
+	}
+ 	.select2-search--inline {
+
+	 	.select2-search__field {
+	 		height: 24px;
+	 	}
+ 	}
+
+}
+
+.select2-container {
+	.select2-dropdown {
+		border-color: $borders;
+	}
 }
 
 
