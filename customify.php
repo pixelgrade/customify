@@ -3,7 +3,7 @@
 Plugin Name: Customify
 Plugin URI:  https://wordpress.org/plugins/customify/
 Description: A Theme Customizer Booster
-Version: 1.5.5
+Version: 1.5.6
 Author: Pixelgrade
 Author URI: https://pixelgrade.com
 Author Email: contact@pixelgrade.com
