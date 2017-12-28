@@ -153,7 +153,7 @@
 
 				if ( !_.isUndefined(section_id) && section_id.indexOf('sub-accordion-section-') > -1 ) {
 					var id = section_id.replace('sub-accordion-section-', '');
-					$(this).prepend('<button class="reset_section button" data-section="' + id + '">Section\'s defaults</button>');
+					$(this).append('<button class="reset_section button" data-section="' + id + '">Section\'s defaults</button>');
 				}
 			});
 

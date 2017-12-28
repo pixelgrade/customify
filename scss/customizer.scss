@@ -461,7 +461,6 @@ $background-hover 	: #f5fcff;
 
 		&:after {
 			content: "";
-
 			position: absolute;
 			top: 90%;
 			left: 0;
@@ -469,7 +468,7 @@ $background-hover 	: #f5fcff;
 			z-index: 0;
 
 			display: block;
-			height: 100px;
+			height: 30px;
 		}
 }
 	.font-options__head {
@@ -915,6 +914,25 @@ $background-hover 	: #f5fcff;
 			position: relative;
 		}
 
+        .wp-color-result,
+        .wp-color-result.button {
+          top 		: 0;
+          height 		: 30px;
+          width 		: 40px;
+          margin 		: 0;
+          padding 	: 0;
+
+          border-radius: $fields_border-radius;
+          background: #2ECC71;
+          border: 2px solid #B8DAEB;
+          box-shadow: none;
+
+          &:after,
+          .wp-color-result-text {
+            display:none;
+          }
+        }
+
 		.iris-picker {
 			position 	: absolute;
 			top 		: 40px;
@@ -986,25 +1004,6 @@ $background-hover 	: #f5fcff;
 				    height: 30px;
 				}
 			}
-		}
-	}
-
-	.wp-color-result,
-	.wp-color-result.button {
-		top 		: 0;
-		height 		: 30px;
-		width 		: 40px;
-		margin 		: 0;
-		padding 	: 0;
-
-		border-radius: $fields_border-radius;
-		background: #2ECC71;
-		border: 2px solid #B8DAEB;
-		box-shadow: none;
-
-		&:after,
-		.wp-color-result-text {
-			display:none;
 		}
 	}
 }
