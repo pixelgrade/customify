@@ -62,18 +62,10 @@
 		});
 
 		// for each range input add a value preview output
-		$('input[type="range"]').each(function () {
-			var $clone = $(this).clone();
+		$('.accordion-section-content[id*="' + customify_settings.options_name + '"]').each(function () {
 
-			$clone
-				.attr('type', 'number')
-				.attr('class', 'range-value');
-
-			$(this).after($clone);
-
-			$(this).on('input', function () {
-				$(this).siblings('.range-value').val($(this).val());
-			});
+            // Initialize range fields logic
+            customifyHandleRangeFields(this);
 		});
 
 		if ( $('button[data-action="reset_customify"]').length > 0 ) {
@@ -107,11 +99,12 @@
 			// add a reset button for each panel
 			$('.panel-meta').each(function ( el, key ) {
 				var container = $(this).parents('.control-panel'),
-					id = container.attr('id'),
-					panel_id = id.replace('accordion-panel-', '');
+					id = container.attr('id');
 
-
-				$(this).parent().append('<button class="reset_panel button" data-panel="' + panel_id + '">Panel\'s defaults</button>');
+				if ( typeof id !== 'undefined' ) {
+                    var panel_id = id.replace('accordion-panel-', '');
+                    $(this).parent().append('<button class="reset_panel button" data-panel="' + panel_id + '">Panel\'s defaults</button>');
+                }
 			});
 
 			// reset panel
@@ -152,15 +145,14 @@
 
 			//add reset section
 			$('.accordion-section-content').each(function ( el, key ) {
-				var section = $(this).parent(),
-					section_id = section.attr('id');
+				var section_id = $(this).attr('id');
 
 				if ( ( ( !_.isUndefined(section_id) ) ? section_id.indexOf(customify_settings.options_name) : -1 ) === -1 ) {
 					return;
 				}
 
-				if ( !_.isUndefined(section_id) && section_id.indexOf('accordion-section-') > -1 ) {
-					var id = section_id.replace('accordion-section-', '');
+				if ( !_.isUndefined(section_id) && section_id.indexOf('sub-accordion-section-') > -1 ) {
+					var id = section_id.replace('sub-accordion-section-', '');
 					$(this).prepend('<button class="reset_section button" data-section="' + id + '">Section\'s defaults</button>');
 				}
 			});
@@ -342,10 +334,36 @@
 		})();
 	});
 
+    var customifyHandleRangeFields = function (el) {
+
+        // For each range input add a number field (for preview mainly - but it can also be used for input)
+        $(el).find('input[type="range"]').each(function () {
+            if ( ! $(this).siblings('.range-value').length ) {
+                var $clone = $(this).clone();
+
+                $clone
+                    .attr('type', 'number')
+                    .attr('class', 'range-value');
+
+                $(this).after($clone);
+            }
+
+            // Update the number field when changing the range
+            $(this).on('input', function () {
+                $(this).siblings('.range-value').val($(this).val());
+            });
+
+            // And the other way around, update the range field when changing the number
+            $($clone).on('input', function () {
+                $(this).siblings('input[type="range"]').val($(this).val());
+            });
+        });
+    }
+
 	/**
 	 * This function will search for all the interdependend fields and make a bound between them.
 	 * So whenever a target is changed, it will take actions to the dependent fields.
-	 * @TOOD  this is still written in a barbaric way, refactor when needed
+	 * @TODO  this is still written in a barbaric way, refactor when needed
 	 */
 	var customifyFoldingFields = function () {
 

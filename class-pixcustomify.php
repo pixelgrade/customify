@@ -1199,6 +1199,8 @@ class PixCustomifyPlugin {
 				// create a toolbar section which will be present all the time
 				$reset_section_settings = array(
 					'title'   => 'Customify toolbar',
+					'capability' => 'manage_options',
+					'priority' => 999999999,
 					'options' => array(
 						'reset_all_button' => array(
 							'type'   => 'button',
@@ -1211,10 +1213,7 @@ class PixCustomifyPlugin {
 
 				$wp_customize->add_section(
 					'customify_toolbar',
-					array(
-						'title'    => '',
-						'priority' => 999999999
-					)
+					$reset_section_settings
 				);
 
 				$wp_customize->add_setting(
