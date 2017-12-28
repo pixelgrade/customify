@@ -2049,7 +2049,7 @@ class PixCustomifyPlugin {
 	 * @param string $version Version.
 	 *
 	 * @see    PixCustomifyPlugin()
-	 * @return object Main PixCustomifyPlugin instance
+	 * @return PixCustomifyPlugin Main PixCustomifyPlugin instance
 	 */
 	public static function instance( $file = '', $version = '1.0.0' ) {
 		// If the single instance hasn't been set, set it now.
