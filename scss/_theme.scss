@@ -6,6 +6,7 @@
 
 $borders 			: #e0e8ef;
 $background-hover 	: #f5fcff;
+$background-sidebar	: #eaf9fe;
 
 #customize-header-actions {
     background: #ffffff;
@@ -15,9 +16,15 @@ $background-hover 	: #f5fcff;
 
 
 .wp-full-overlay-sidebar,
-.customize-themes-panel {
-    background: #eaf9fe;
+.customize-themes-panel,
+#customize-sidebar-outer-content {
+    background: $background-sidebar;
     border-right: 1px solid $borders;
+}
+
+.outer-section-open #customize-controls .wp-full-overlay-sidebar-content,
+.attachment-media-view, .media-widget-preview.media_audio, .media-widget-preview.media_image {
+	background: $background-sidebar;
 }
 
 #customize-theme-controls {
@@ -68,4 +75,24 @@ $background-hover 	: #f5fcff;
 	color: #056184;
 	background: $background-hover;
 	border-left-color: $background-hover;
+}
+
+.wp-customizer {
+
+	/* SECTION: NAV MENUS */
+	.menu-item-settings {
+
+	}
+
+	.menu-item-edit-active .menu-item-handle, .section-open .menu-item-settings, .menu-item-bar .menu-item-handle:hover {
+	    border-color: $borders;
+	}
+
+	.section-open .menu-item-settings {
+	    background: $background-hover;
+	}
+
+	.control-section-nav_menu .menu-location-settings {
+	    border-top-color: $borders !important;
+	}
 }

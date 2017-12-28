@@ -506,7 +506,7 @@ class PixCustomifyPlugin {
 
 		remove_theme_mod( $key );
 
-		wp_send_json_success('Bby ' . $key . '!');
+		wp_send_json_success('Bye bye ' . $key . '!');
 	}
 
 	function permission_nonce_callback() {
@@ -585,7 +585,7 @@ class PixCustomifyPlugin {
 				$options['value']         = $this->get_option( $option_id );
 				$custom_background_output = $this->process_custom_background_field_output( $option_id, $options ); ?>
 
-				<style id="custom_backgorund_output_for_<?php echo $option_id; ?>">
+				<style id="custom_background_output_for_<?php echo $option_id; ?>">
 					<?php
 					if ( isset( $custom_background_output ) && ! empty( $custom_background_output )) {
 						echo $custom_background_output;
@@ -1257,38 +1257,36 @@ class PixCustomifyPlugin {
 		do_action( 'customify_create_custom_control', $wp_customize );
 	}
 
+	/**
+	 * @param string $panel_id
+	 * @param string $section_key
+	 * @param string $options_name
+	 * @param array $section_settings
+	 * @param WP_Customize_Manager $wp_customize
+	 */
 	protected function register_section( $panel_id, $section_key, $options_name, $section_settings, $wp_customize ) {
 
 		if ( isset( $this->plugin_settings['disable_customify_sections'] ) && isset( $this->plugin_settings['disable_customify_sections'][ $section_key ] ) ) {
 			return;
 		}
 
-		$section_args = array(
+		// Merge the section settings with the defaults
+		$section_args = wp_parse_args( $section_settings, array(
 			'priority'   => 10,
-			'capability' => 'edit_theme_options',
-			'title'      => __( 'Title Section is required', '' ),
 			'panel'      => $panel_id,
-		);
+			'capability' => 'edit_theme_options',
+			'theme_supports' => '',
+			'title'      => __( 'Title Section is required', 'customify' ),
+			'description' => '',
+			'type' => 'default',
+			'description_hidden' => false,
+		) );
 		$section_id   = $options_name . '[' . $section_key . ']';
 
-		if ( isset( $section_settings['priority'] ) && ! empty( $section_settings['priority'] ) ) {
-			$section_args['priority'] = $section_settings['priority'];
-		}
-
-		if ( isset( $section_settings['title'] ) && ! empty( $section_settings['title'] ) ) {
-			$section_args['title'] = $section_settings['title'];
-		}
-
-		if ( isset( $section_settings['theme_supports'] ) && ! empty( $section_settings['theme_supports'] ) ) {
-			$section_args['theme_supports'] = $section_settings['theme_supports'];
-		}
-
-		if ( isset( $section_settings['description'] ) && ! empty( $section_settings['description'] ) ) {
-			$section_args['description'] = $section_settings['description'];
-		}
-
+		// Add the new section to the Customizer
 		$wp_customize->add_section( $section_id, $section_args );
 
+		// Now go through each section option and add the fields
 		foreach ( $section_settings['options'] as $option_id => $option_config ) {
 
 			if ( empty( $option_id ) || ! isset( $option_config['type'] ) ) {
@@ -1303,6 +1301,11 @@ class PixCustomifyPlugin {
 	}
 
 	/**
+	 * Register a Customizer field
+	 *
+	 * @see WP_Customize_Setting
+	 * @see WP_Customize_Control
+	 *
 	 * @param string $section_id
 	 * @param string $setting_id
 	 * @param array $setting_config
@@ -2046,7 +2049,7 @@ class PixCustomifyPlugin {
 	 * @param string $version Version.
 	 *
 	 * @see    PixCustomifyPlugin()
-	 * @return object Main PixCustomifyPlugin instance
+	 * @return PixCustomifyPlugin Main PixCustomifyPlugin instance
 	 */
 	public static function instance( $file = '', $version = '1.0.0' ) {
 		// If the single instance hasn't been set, set it now.
