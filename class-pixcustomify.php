@@ -483,7 +483,7 @@ class PixCustomifyPlugin {
 	}
 
 	function add_rest_routes_api(){
-		register_rest_route( 'customfiy/v1', '/delete_theme_mod', array(
+		register_rest_route( 'customify/v1', '/delete_theme_mod', array(
 			'methods'             => 'POST',
 			'callback'            => array( $this, 'delete_theme_mod' ),
 			'permission_callback' => array( $this, 'permission_nonce_callback' ),
@@ -491,9 +491,8 @@ class PixCustomifyPlugin {
 	}
 
 	function delete_theme_mod(){
-		$user = wp_get_current_user();
-		if ( ! $user->caps['administrator'] ) {
-			wp_send_json_error('no admin');
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error('You don\'t have admin privileges.');
 		}
 
 		$config = apply_filters('customify_filter_fields', array() );
@@ -506,7 +505,7 @@ class PixCustomifyPlugin {
 
 		remove_theme_mod( $key );
 
-		wp_send_json_success('Bye bye ' . $key . '!');
+		wp_send_json_success('Deleted ' . $key . ' theme mod!');
 	}
 
 	function permission_nonce_callback() {
