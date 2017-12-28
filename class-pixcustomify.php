@@ -1198,7 +1198,7 @@ class PixCustomifyPlugin {
 			if ( $this->plugin_settings['enable_reset_buttons'] ) {
 				// create a toolbar section which will be present all the time
 				$reset_section_settings = array(
-					'title'   => 'Customify toolbar',
+					'title'   => 'Customify Toolbox',
 					'capability' => 'manage_options',
 					'priority' => 999999999,
 					'options' => array(
