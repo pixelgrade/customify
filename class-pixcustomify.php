@@ -163,8 +163,6 @@ class PixCustomifyPlugin {
 
 	/**
 	 * Register our actions and filters
-	 *
-	 * @return null
 	 */
 	function register_hooks() {
 		/*
@@ -239,6 +237,17 @@ class PixCustomifyPlugin {
 		add_filter( 'default_option_sharing-options', array( $this, 'default_jetpack_sharing_options' ), 10, 1 );
 
 		add_action( 'rest_api_init', array( $this, 'add_rest_routes_api' ) );
+
+		/*
+		 * Development related
+		 */
+		if ( defined( 'CUSTOMIFY_DEV_FORCE_DEFAULTS' ) && true === CUSTOMIFY_DEV_FORCE_DEFAULTS ) {
+			// If the development constant CUSTOMIFY_DEV_FORCE_DEFAULTS has been defined we will not save anything in the database
+			// Always go with the default
+			add_filter( 'customize_changeset_save_data', array( $this, 'prevent_changeset_save_in_devmode' ), 50, 2 );
+			// Add a JS to display a notification
+			add_action( 'customize_controls_print_footer_scripts', array( $this, 'prevent_changeset_save_in_devmode_notification' ), 100 );
+		}
 	}
 
 	/**
@@ -1866,8 +1875,13 @@ class PixCustomifyPlugin {
 	 * @return bool|null|string
 	 */
 	public function get_option( $option, $default = null, $alt_opt_name = null ) {
-
-		$return = $this->get_value( $option, $alt_opt_name );
+		// If the development constant CUSTOMIFY_DEV_FORCE_DEFAULTS has been defined we will not retrieve anything from the database
+		// Always go with the default
+		if ( defined( 'CUSTOMIFY_DEV_FORCE_DEFAULTS' ) && true === CUSTOMIFY_DEV_FORCE_DEFAULTS ) {
+			$return = null;
+		} else {
+			$return = $this->get_value( $option, $alt_opt_name );
+		}
 
 		if ( $return !== null ) {
 			return $return;
@@ -2029,6 +2043,47 @@ class PixCustomifyPlugin {
 
 		return true;
 	}
+
+	/**
+	 * Prevent saving of plugin options in the Customizer
+	 *
+	 * @param array $data The data to save
+	 * @param array $filter_context
+	 *
+	 * @return array
+	 */
+	public function prevent_changeset_save_in_devmode( $data, $filter_context ) {
+		// Get the options key
+		$options_key = $this->customizer_config['opt-name'];
+		if ( ! empty( $options_key ) ) {
+			// Remove any Customify data thus preventing it from saving
+			foreach ( $data as $key => $value ) {
+				if ( false !== strpos( $key, $options_key ) ) {
+					unset( $data[$key] );
+				}
+			}
+		}
+
+		return $data;
+	}
+
+	public function prevent_changeset_save_in_devmode_notification() { ?>
+		<script type="application/javascript">
+            (function ( $, exports, wp ) {
+                'use strict';
+                // when the customizer is ready add our notification
+                wp.customize.bind('ready', function () {
+                    wp.customize.notifications.add( 'customify_force_defaults', new wp.customize.Notification(
+                        'customify_force_defaults',
+                        {
+                            type: 'warning',
+                            message: '<strong style="margin-bottom: ">Customify: Development Mode</strong><p>All the options are switched to default. While they are changing in the live preview, they will not be kept when publish.</p>'
+                        }
+                    ) );
+                });
+            })(jQuery, window, wp);
+		</script>
+	<?php }
 
 	/**
 	 * Return an instance of this class.
