@@ -349,12 +349,12 @@
             }
 
             // Update the number field when changing the range
-            $(this).on('input', function () {
+            $(this).on('change', function () {
                 $(this).siblings('.range-value').val($(this).val());
             });
 
             // And the other way around, update the range field when changing the number
-            $($clone).on('input', function () {
+            $($clone).on('change', function () {
                 $(this).siblings('input[type="range"]').val($(this).val());
             });
         });
