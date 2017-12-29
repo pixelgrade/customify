@@ -459,7 +459,28 @@ function theme_add_customify_theme_fonts ( $fonts ) {
 add_filter( 'customify_theme_fonts', 'theme_add_customify_theme_fonts' );
 ```
 
+# Developer Love
+
+We know developers are a special kind of breed and they need special kinds of treats. That is why we have introduced options dedicated to them.
+
+### Reset Buttons
+
+In the plugin's settings page (*WP Dashboard > Settings > Customify*) you will find a checkbox called **Enable Reset Buttons** that once activated will show a new Customizer section called **Customify Toolbox** and also introduce buttons in each section or panel configured via the plugin.
+
+All these buttons will reset the options to their default values.
+
+### Continuous Default Values
+
+If you want to go even further, there is a nuclear option. Simply define the `CUSTOMIFY_DEV_FORCE_DEFAULTS` constant to `true` and everywhere the default value will be used. You can play with the values in the Customizer and the live preview will work, but no value gets saved in the database.
+
+Add this in your `wp-config.php` file:
+```php
+define( 'CUSTOMIFY_DEV_FORCE_DEFAULTS', true);
+```
+
 ## License
+
+GPLv2 and later, of course!
 
 ## Thanks!
 This plugin also includes the following libraries:
