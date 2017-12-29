@@ -25,7 +25,7 @@ $attrs = array(
 	'type' => 'checkbox',
 ); ?>
 <div class="reset_customify_theme_mod">
-	<div class="button" id="reset_theme_mods"><?php esc_html_e( 'Reset theme mod', 'customify' ); ?></div>
+	<div class="button" id="reset_theme_mods"><?php esc_html_e( 'Reset Theme Mods', 'customify' ); ?></div>
 	<script>
 		(function ($) {
 			$(document).ready(function () {
@@ -60,3 +60,5 @@ $attrs = array(
 		})(jQuery)
 	</script>
 </div>
+<br>
+<div class="field-desc"><?php esc_html_e('Resets all the Customizer settings introduced by the plugin. It will NOT reset core Customizer settings or plugin settings.'); ?></div>

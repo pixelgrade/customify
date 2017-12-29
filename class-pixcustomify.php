@@ -1232,7 +1232,7 @@ class PixCustomifyPlugin {
 					$wp_customize,
 					'reset_customify',
 					array(
-						'label'    => __( 'Reset Customify to Defaults', 'customify' ),
+						'label'    => __( 'Reset All Customify Options to Default', 'customify' ),
 						'section'  => 'customify_toolbar',
 						'settings' => 'reset_customify',
 						'action'   => 'reset_customify',
