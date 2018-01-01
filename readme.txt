@@ -37,6 +37,11 @@ With [Customify](https://github.com/pixelgrade/customify), developers can easily
 
 == Changelog ==
 
+= 1.5.7 =
+* Improved development logic for easier testing
+* Improved and fixed reset settings buttons
+* Fixed a couple of styling inconsistencies regarding the Customizer
+
 = 1.5.6 =
 * New Fields Styling Improvements
 
