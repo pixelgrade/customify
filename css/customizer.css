@@ -3,7 +3,7 @@
     box-sizing: border-box;
 }
 
-.accordion-section-content
+.wp-full-overlay-sidebar-content .accordion-section-content
 {
     overflow: visible;
 }
@@ -507,25 +507,25 @@
 }
 
 .font-options__head,
-.customize-control input[type=text],
-.customize-control input[type=checkbox],
-.customize-control input[type=password],
-.customize-control input[type=color],
-.customize-control input[type=date],
-.customize-control input[type=datetime],
-.customize-control input[type=datetime-local],
-.customize-control input[type=email],
-.customize-control input[type=month],
-.customize-control input[type=number],
-.customize-control input[type=radio],
-.customize-control input[type=tel],
-.customize-control input[type=time],
-.customize-control input[type=url],
-.customize-control input[type=week],
-.customize-control input[type=search],
-.customize-control select,
-.customize-control textarea,
-.customize-control input[type='number'].range-value,
+.wp-full-overlay-sidebar-content .customize-control input[type=text]:not(#_customize-input-wpcom_custom_css_content_width_control),
+.wp-full-overlay-sidebar-content .customize-control input[type=checkbox],
+.wp-full-overlay-sidebar-content .customize-control input[type=password],
+.wp-full-overlay-sidebar-content .customize-control input[type=color],
+.wp-full-overlay-sidebar-content .customize-control input[type=date],
+.wp-full-overlay-sidebar-content .customize-control input[type=datetime],
+.wp-full-overlay-sidebar-content .customize-control input[type=datetime-local],
+.wp-full-overlay-sidebar-content .customize-control input[type=email],
+.wp-full-overlay-sidebar-content .customize-control input[type=month],
+.wp-full-overlay-sidebar-content .customize-control input[type=number],
+.wp-full-overlay-sidebar-content .customize-control input[type=radio],
+.wp-full-overlay-sidebar-content .customize-control input[type=tel],
+.wp-full-overlay-sidebar-content .customize-control input[type=time],
+.wp-full-overlay-sidebar-content .customize-control input[type=url],
+.wp-full-overlay-sidebar-content .customize-control input[type=week],
+.wp-full-overlay-sidebar-content .customize-control input[type=search],
+.wp-full-overlay-sidebar-content .customize-control select,
+.wp-full-overlay-sidebar-content .customize-control textarea,
+.wp-full-overlay-sidebar-content .customize-control input[type='number'].range-value,
 ul.font-options__options-list .select2-container .select2-selection--single,
 #customize-theme-controls .select2-container .select2-selection--multiple
 {
@@ -543,25 +543,25 @@ ul.font-options__options-list .select2-container .select2-selection--single,
     background: #fff;
 }
 .font-options__head:focus,
-.customize-control input[type=text]:focus,
-.customize-control input[type=checkbox]:focus,
-.customize-control input[type=password]:focus,
-.customize-control input[type=color]:focus,
-.customize-control input[type=date]:focus,
-.customize-control input[type=datetime]:focus,
-.customize-control input[type=datetime-local]:focus,
-.customize-control input[type=email]:focus,
-.customize-control input[type=month]:focus,
-.customize-control input[type=number]:focus,
-.customize-control input[type=radio]:focus,
-.customize-control input[type=tel]:focus,
-.customize-control input[type=time]:focus,
-.customize-control input[type=url]:focus,
-.customize-control input[type=week]:focus,
-.customize-control input[type=search]:focus,
-.customize-control select:focus,
-.customize-control textarea:focus,
-.customize-control input[type='number'].range-value:focus,
+.wp-full-overlay-sidebar-content .customize-control input[type=text]:focus:not(#_customize-input-wpcom_custom_css_content_width_control),
+.wp-full-overlay-sidebar-content .customize-control input[type=checkbox]:focus,
+.wp-full-overlay-sidebar-content .customize-control input[type=password]:focus,
+.wp-full-overlay-sidebar-content .customize-control input[type=color]:focus,
+.wp-full-overlay-sidebar-content .customize-control input[type=date]:focus,
+.wp-full-overlay-sidebar-content .customize-control input[type=datetime]:focus,
+.wp-full-overlay-sidebar-content .customize-control input[type=datetime-local]:focus,
+.wp-full-overlay-sidebar-content .customize-control input[type=email]:focus,
+.wp-full-overlay-sidebar-content .customize-control input[type=month]:focus,
+.wp-full-overlay-sidebar-content .customize-control input[type=number]:focus,
+.wp-full-overlay-sidebar-content .customize-control input[type=radio]:focus,
+.wp-full-overlay-sidebar-content .customize-control input[type=tel]:focus,
+.wp-full-overlay-sidebar-content .customize-control input[type=time]:focus,
+.wp-full-overlay-sidebar-content .customize-control input[type=url]:focus,
+.wp-full-overlay-sidebar-content .customize-control input[type=week]:focus,
+.wp-full-overlay-sidebar-content .customize-control input[type=search]:focus,
+.wp-full-overlay-sidebar-content .customize-control select:focus,
+.wp-full-overlay-sidebar-content .customize-control textarea:focus,
+.wp-full-overlay-sidebar-content .customize-control input[type='number'].range-value:focus,
 ul.font-options__options-list .select2-container .select2-selection--single:focus,
 #customize-theme-controls .select2-container .select2-selection--multiple:focus
 {
@@ -570,7 +570,7 @@ ul.font-options__options-list .select2-container .select2-selection--single:focu
 }
 
 .font-options__head,
-.customize-control select,
+.wp-full-overlay-sidebar-content .customize-control select,
 ul.font-options__options-list .select2-container .select2-selection--single,
 #customize-theme-controls .select2-container .select2-selection--multiple
 {
@@ -585,48 +585,48 @@ ul.font-options__options-list .select2-container .select2-selection--single,
        -moz-appearance: none;
 }
 [multiple].font-options__head,
-.customize-control select[multiple],
+.wp-full-overlay-sidebar-content .customize-control select[multiple],
 ul.font-options__options-list .select2-container [multiple].select2-selection--single,
 #customize-theme-controls .select2-container [multiple].select2-selection--multiple
 {
     background: white;
 }
 
-.customize-control input[type=text],
-.customize-control textarea
+.wp-full-overlay-sidebar-content .customize-control input[type=text],
+.wp-full-overlay-sidebar-content .customize-control textarea
 {
     font-size: 13px;
 }
 
-.customize-control textarea
+.wp-full-overlay-sidebar-content .customize-control textarea
 {
     height: auto;
 }
 
-.customize-control input[type=checkbox],
-.customize-control input[type=radio]
+.wp-full-overlay-sidebar-content .customize-control input[type=checkbox],
+.wp-full-overlay-sidebar-content .customize-control input[type=radio]
 {
     width: 22px;
     height: 22px;
 }
-.customize-control input[type=checkbox]:checked,
-.customize-control input[type=radio]:checked
+.wp-full-overlay-sidebar-content .customize-control input[type=checkbox]:checked,
+.wp-full-overlay-sidebar-content .customize-control input[type=radio]:checked
 {
     border-color: #5ab9e8; 
     background: #73c5ee;
 }
-.customize-control input[type=checkbox]:checked:before,
-.customize-control input[type=radio]:checked:before
+.wp-full-overlay-sidebar-content .customize-control input[type=checkbox]:checked:before,
+.wp-full-overlay-sidebar-content .customize-control input[type=radio]:checked:before
 {
     margin: -1px 0 0 -2px; 
 
     color: white;
 }
 
-.customize-control.customize-control-checkbox label:not(:only-of-type),
-.customize-control.customize-control-checkbox > .customize-inside-control-row:not(:only-of-type),
-.customize-control.customize-control-radio label:not(:only-of-type),
-.customize-control.customize-control-radio > .customize-inside-control-row:not(:only-of-type)
+.wp-full-overlay-sidebar-content .customize-control.customize-control-checkbox:not(#customize-control-jetpack_css_mode_control) label:not(:only-of-type),
+.wp-full-overlay-sidebar-content .customize-control.customize-control-checkbox:not(#customize-control-jetpack_css_mode_control) > .customize-inside-control-row:not(:only-of-type),
+.wp-full-overlay-sidebar-content .customize-control.customize-control-radio label:not(:only-of-type),
+.wp-full-overlay-sidebar-content .customize-control.customize-control-radio > .customize-inside-control-row:not(:only-of-type)
 {
     display: inline-block;
 
@@ -638,51 +638,51 @@ ul.font-options__options-list .select2-container [multiple].select2-selection--s
     text-indent: -6px;
 }
 
-.customize-control.customize-control-checkbox label,
-.customize-control.customize-control-radio label
+.wp-full-overlay-sidebar-content .customize-control.customize-control-checkbox:not(#customize-control-jetpack_css_mode_control) label,
+.wp-full-overlay-sidebar-content .customize-control.customize-control-radio label
 {
     color: #416b7e;
 }
 
-[id*='divider'] + .customize-control.customize-control-checkbox,
-[id*='divider'] + .customize-control.customize-control-radio
+[id*='divider'] + .wp-full-overlay-sidebar-content .customize-control.customize-control-checkbox:not(#customize-control-jetpack_css_mode_control),
+[id*='divider'] + .wp-full-overlay-sidebar-content .customize-control.customize-control-radio
 {
     margin-top: 0;
 }
 
-.customize-control input[type=radio]
+.wp-full-overlay-sidebar-content .customize-control input[type=radio]
 {
     border-radius: 50%;
 }
-.customize-control input[type=radio]:checked:before
+.wp-full-overlay-sidebar-content .customize-control input[type=radio]:checked:before
 {
     content: none;
 }
 
-.customize-control-html + .customize-control.customize-control-checkbox
+.customize-control-html + .wp-full-overlay-sidebar-content .customize-control.customize-control-checkbox
 {
     margin-top: -24px;
 }
 
-.customize-control.customize-control-radio label,
-.customize-control.customize-control-radio .customize-inside-control-row
+.wp-full-overlay-sidebar-content .customize-control.customize-control-radio label,
+.wp-full-overlay-sidebar-content .customize-control.customize-control-radio .customize-inside-control-row
 {
     margin-top: 12px;
 }
 
-.customize-control.customize-control-radio#customize-control-changeset_status .customize-inside-control-row
+.wp-full-overlay-sidebar-content .customize-control.customize-control-radio#customize-control-changeset_status .customize-inside-control-row
 {
     margin-top: 0;
 
     text-indent: 0;
 }
 
-.customize-control input[type='range']
+.wp-full-overlay-sidebar-content .customize-control input[type='range']
 {
     width: 65%;
 }
 
-.customize-control input[type='range']
+.wp-full-overlay-sidebar-content .customize-control input[type='range']
 {
     position: relative;
 
@@ -696,7 +696,7 @@ ul.font-options__options-list .select2-container [multiple].select2-selection--s
 
     -webkit-appearance: none;
 }
-.customize-control input[type='range']:before
+.wp-full-overlay-sidebar-content .customize-control input[type='range']:before
 {
     position: absolute;
     top: 8px;
@@ -711,7 +711,7 @@ ul.font-options__options-list .select2-container [multiple].select2-selection--s
     background: #dfe8ef;
     box-shadow: inset 0 1px 3px 0 rgba(0, 0, 0, .3);
 }
-.customize-control input[type='range']::-webkit-slider-thumb
+.wp-full-overlay-sidebar-content .customize-control input[type='range']::-webkit-slider-thumb
 {
     position: relative;
     z-index: 3;
@@ -726,7 +726,7 @@ ul.font-options__options-list .select2-container [multiple].select2-selection--s
 
     -webkit-appearance: none;
 }
-.customize-control input[type='range']::-webkit-slider-thumb:before
+.wp-full-overlay-sidebar-content .customize-control input[type='range']::-webkit-slider-thumb:before
 {
     font-size: 1em;
 
@@ -739,7 +739,7 @@ ul.font-options__options-list .select2-container [multiple].select2-selection--s
 
     color: #b8daeb;
 }
-.customize-control input[type='range']::-webkit-slider-thumb:after
+.wp-full-overlay-sidebar-content .customize-control input[type='range']::-webkit-slider-thumb:after
 {
     position: absolute;
     z-index: 1;
@@ -754,7 +754,7 @@ ul.font-options__options-list .select2-container [multiple].select2-selection--s
     background: #73c5ee;
 }
 
-.customize-control input[type='number'].range-value
+.wp-full-overlay-sidebar-content .customize-control input[type='number'].range-value
 {
     font-size: 13px;
     line-height: 1;
@@ -773,8 +773,8 @@ ul.font-options__options-list .select2-container [multiple].select2-selection--s
     text-align: center;
 }
 
-.customize-control input[type=number]::-webkit-inner-spin-button,
-.customize-control input[type=number]::-webkit-outer-spin-button
+.wp-full-overlay-sidebar-content .customize-control input[type=number]::-webkit-inner-spin-button,
+.wp-full-overlay-sidebar-content .customize-control input[type=number]::-webkit-outer-spin-button
 {
     margin: 0; 
 

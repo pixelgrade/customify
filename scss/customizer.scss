@@ -51,7 +51,7 @@ $background-hover 	: #f5fcff;
 }
 
 // Change sections overflow
-.accordion-section-content {
+.wp-full-overlay-sidebar-content .accordion-section-content {
 	overflow: visible;
 }
 
@@ -635,8 +635,6 @@ $background-hover 	: #f5fcff;
 
 
 
-
-
 //------------------------------------*\
 //    $INPUT FIELDS
 //------------------------------------*/
@@ -677,9 +675,9 @@ $background-hover 	: #f5fcff;
 	}
 }
 
-.customize-control {
+.wp-full-overlay-sidebar-content .customize-control {
 
-	input[type=text],
+	input[type=text]:not(#_customize-input-wpcom_custom_css_content_width_control),
 	input[type=checkbox],
 	input[type=password],
 	input[type=color],
@@ -732,7 +730,7 @@ $background-hover 	: #f5fcff;
 		}
 	}
 
-	&.customize-control-checkbox,
+	&.customize-control-checkbox:not(#customize-control-jetpack_css_mode_control),
 	&.customize-control-radio {
 
 		// Split into two columns only when 
