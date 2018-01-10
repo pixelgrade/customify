@@ -691,26 +691,35 @@ class PixCustomifyPlugin {
 				}
 
 				// shim the time when this was an array
+				// @todo Is this really needed? Or does it make sense?
 				if ( is_array( $font['value'] ) ) {
 					$font['value'] = stripslashes_deep( $font['value'] );
 					$font['value'] = json_encode( $font['value'] );
 				}
 
-				$value = json_decode( wp_unslash( PixCustomifyPlugin::decodeURIComponent( $font['value'] ) ), true );
+				$value = wp_unslash( PixCustomifyPlugin::decodeURIComponent( $font['value'] ) );
+				if ( is_string( $value ) ) {
+					$value = json_decode( $value, true );
+				}
 
-				// in case the value is still null, try default value(mostly for google fonts)
-				if ( ! is_array( $value ) || $value === null ) {
+				// In case the value is still null, try default value (mostly for google fonts)
+				if ( $value === null || ! is_array( $value ) ) {
 					$value = $this->get_font_defaults_value( str_replace( '"', '', $font['value'] ) );
 				}
 
-				//bail if by this time we don't have a value of some sort
+				// Bail if by this time we don't have a value of some sort
 				if ( empty( $value ) ) {
 					continue;
 				}
 
-				//Handle special logic for when the $value array is not an associative array
+				// Handle special logic for when the $value array is not an associative array
 				if ( ! $this->is_assoc( $value ) ) {
-					$value = $this->process_a_not_associative_font_default( $value );
+					$value = $this->standardize_non_associative_font_default( $value );
+				}
+
+				// Bail if empty or we don't have an array
+				if ( empty( $value ) || ! is_array( $value ) ) {
+					continue;
 				}
 
 				if ( isset( $value['font_family'] ) && isset( $value['type'] ) && $value['type'] == 'google' ) {
@@ -787,21 +796,31 @@ class PixCustomifyPlugin {
 				}
 
 				if ( isset( $font['selector'] ) && isset( $font['value'] ) && ! empty( $font['value'] ) ) {
+					// Make sure that the value is in the proper format
+					$value = PixCustomifyPlugin::decodeURIComponent( $font['value'] );
+					if ( is_string( $value ) ) {
+						$value = json_decode( $value, true );
+					}
 
-					$value = json_decode( PixCustomifyPlugin::decodeURIComponent( $font['value'] ), true );
-					// in case the value is still null, try default value(mostly for google fonts)
+					// In case the value is null (most probably because the json_decode failed),
+					// try the default value (mostly for google fonts)
 					if ( $value === null ) {
 						$value = $this->get_font_defaults_value( $font['value'] );
 					}
 
-					// shim the old case when the default was only the font name
-					if ( is_string( $value ) && ! empty( $value ) ) {
+					// Shim the old case when the default was only the font name
+					if ( ! empty( $value ) && is_string( $value ) ) {
 						$value = array( 'font_family' => $value );
 					}
 
-					//Handle special logic for when the $value array is not an associative array
+					// Handle special logic for when the $value array is not an associative array
 					if ( ! $this->is_assoc( $value ) ) {
-						$value = $this->process_a_not_associative_font_default( $value );
+						$value = $this->standardize_non_associative_font_default( $value );
+					}
+
+					// Bail if empty or we don't have an array
+					if ( empty( $value ) || ! is_array( $value ) ) {
+						continue;
 					}
 
 					$selected_variant = '';
@@ -815,23 +834,23 @@ class PixCustomifyPlugin {
 
 					// First handle the case where we have the font-family in the selected variant (usually this means a custom font from our Fonto plugin)
 					if ( ! empty( $selected_variant ) && is_array( $selected_variant ) && ! empty( $selected_variant['font-family'] ) ) {
-						//the variant's font-family
+						// The variant's font-family
 						echo $font['selector'] . " {\nfont-family: " . $selected_variant['font-family'] . ";\n";
 
 						if ( ! $load_all_weights ) {
-							// if this is a custom font (like from our plugin Fonto) with individual styles & weights - i.e. the font-family says it all
+							// If this is a custom font (like from our plugin Fonto) with individual styles & weights - i.e. the font-family says it all
 							// we need to "force" the font-weight and font-style
 							if ( ! empty( $value['type'] ) && 'custom_individual' == $value['type'] ) {
 								$selected_variant['font-weight'] = '400 !important';
 								$selected_variant['font-style'] = 'normal !important';
 							}
 
-							// output the font weight, if available
+							// Output the font weight, if available
 							if ( ! empty( $selected_variant['font-weight'] ) ) {
 								echo "font-weight: " . $selected_variant['font-weight'] . ";\n";
 							}
 
-							// output the font style, if available
+							// Output the font style, if available
 							if ( ! empty( $selected_variant['font-style'] ) ) {
 								echo "font-style: " . $selected_variant['font-style'] . ";\n";
 							}
@@ -839,7 +858,7 @@ class PixCustomifyPlugin {
 
 						echo "}\n";
 					} elseif ( isset( $value['font_family'] ) ) {
-						// the selected font family
+						// The selected font family
 						echo $font['selector'] . " {\n font-family: " . $value['font_family'] . ";\n";
 
 						if ( ! empty( $selected_variant ) && ! $load_all_weights ) {
@@ -877,12 +896,16 @@ class PixCustomifyPlugin {
 	 * Handle special logic for when the $value array is not an associative array
 	 * Return a new associative array with proper keys
 	 */
-	public function process_a_not_associative_font_default( $value ) {
+	public function standardize_non_associative_font_default( $value ) {
+		// If the value provided is not array, simply return it
+		if ( ! is_array( $value ) ) {
+			return $value;
+		}
 
 		$new_value = array();
 
-		//Let's determine some type of font
-		if ( ! isset( $value[2] ) || ( isset( $value[2] ) && 'google' == $value[2] ) ) {
+		// Let's determine some type of font
+		if ( ! isset( $value[2] ) || 'google' == $value[2] ) {
 			$new_value = $this->get_font_defaults_value( $value[0] );
 		} else {
 			$new_value['type'] = $value[2];
@@ -892,13 +915,13 @@ class PixCustomifyPlugin {
 			$new_value = array();
 		}
 
-		//The first entry is the font-family
+		// The first entry is the font-family
 		if ( isset( $value[0] ) ) {
 			$new_value['font_family'] = $value[0];
 		}
 
-		//In case we don't have an associative array
-		//The second entry is the variants
+		// In case we don't have an associative array
+		// The second entry is the variants
 		if ( isset( $value[1] ) ) {
 			$new_value['selected_variants'] = $value[1];
 		}
@@ -2021,7 +2044,7 @@ class PixCustomifyPlugin {
 	 * @return string
 	 */
 	public static function decodeURIComponent( $str ) {
-		//if we get an array we just let it be
+		// If we get an array we just let it be
 		if ( is_string( $str ) ) {
 			$revert = array( '!' => '%21', '*' => '%2A', "'" => '%27', '(' => '%28', ')' => '%29' );
 			$str    = rawurldecode( strtr( $str, $revert ) );
