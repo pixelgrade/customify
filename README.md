@@ -189,7 +189,7 @@ new text. I bet this is awesome.
 
 ### Conditional fields<a name="conditional_fields"></a>
 
-Once with 1.2.3 version we've added support for conditional fields. This means that you can use the `show_if` argument
+Along with version 1.2.3 we've added support for conditional fields. This means that you can use the `show_if` argument
 to display a field only when another field has a certain value.
 
 This [gist](https://gist.github.com/andreilupu/3a71618fb6d2ea2c2b1429544c667cd1) shows how this can be done.
@@ -241,9 +241,9 @@ Here is and example of how to config this.
 )
 ```
 
-The upper example will output a select which will change all the fields setted up in the `options` array.
+The above example will output a select which will change all the fields configured in the `options` array.
 
-If you don't like the select type, at `choices_type` you can choose between `select`, `button` and an `awesome` radio select which allows you not only change de font-end options but also the preview button style.
+If you don't like the select type, at `choices_type` you can choose between `select`, `button` and an `awesome` radio select which allows you to not only change the font-end options but also the preview button style.
 
 Wanna have a preset like this?
 
@@ -379,7 +379,7 @@ Just add this section in your config
 
 ### Font Selector<a name="font_selector"></a>
 
-In 1.3.0 We introduced the new font selector, it works with live preview only and it has this possible configs:
+In 1.3.0 we introduced the new font selector, it works with live preview only and it has this possible configs:
 
 ```
 'headings_font' => array(

@@ -286,7 +286,7 @@
 
 		customifyBackgroundJsControl.init();
 
-		// sometimes there may be needed a php save
+		// sometimes a php save may be needed
 		if ( getUrlVars('save_customizer_once') ) {
 			api.previewer.save();
 		}

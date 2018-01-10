@@ -91,14 +91,33 @@ gulp.task('server', ['styles', 'scripts'], function () {
 	console.log('The styles and scripts have been compiled for production! Go and clear the caches!');
 });
 
-
 /**
  * Create a zip archive out of the cleaned folder and delete the folder
  */
 gulp.task( 'zip', ['build'], function() {
+    var versionString = '';
+    // get plugin version from the main plugin file
+    var contents = fs.readFileSync("./" + plugin + ".php", "utf8");
 
-	return gulp.src( './' )
-		.pipe( exec( 'cd ./../; rm -rf customify.zip; cd ./build/; zip -r -X ./../customify.zip ./customify; cd ./../; rm -rf build' ) );
+    // split it by lines
+    var lines = contents.split(/[\r\n]/);
+
+    function checkIfVersionLine(value, index, ar) {
+        var myRegEx = /^[\s\*]*[Vv]ersion:/;
+        if (myRegEx.test(value)) {
+            return true;
+        }
+        return false;
+    }
+
+    // apply the filter
+    var versionLine = lines.filter(checkIfVersionLine);
+
+    versionString = versionLine[0].replace(/^[\s\*]*[Vv]ersion:/, '').trim();
+    versionString = '-' + versionString.replace(/\./g, '-');
+
+    return gulp.src('./')
+        .pipe(exec('cd ./../; rm -rf ' + plugin[0].toUpperCase() + plugin.slice(1) + '*.zip; cd ./build/; zip -r -X ./../' + plugin[0].toUpperCase() + plugin.slice(1) + versionString + '.zip ./; cd ./../; rm -rf build'));
 
 } );
 
@@ -123,6 +142,7 @@ gulp.task( 'build', ['copy-folder'], function() {
 		'config.rb',
 		'gulpfile.js',
 		'package.json',
+        'package-lock.json',
 		'pxg.json',
 		'build',
 		'.idea',
@@ -136,7 +156,17 @@ gulp.task( 'build', ['copy-folder'], function() {
 		'+development.rb',
 		'+production.rb',
 		'README.md',
-		'.labels'
+		'.labels',
+        '.csscomb',
+        '.csscomb.json',
+        '.codeclimate.yml',
+        'tests',
+        'circle.yml',
+        '.circleci',
+        '.labels',
+        '.jscsrc',
+        '.jshintignore',
+        'browserslist'
 	];
 
 	files_to_remove.forEach( function( e, k ) {
