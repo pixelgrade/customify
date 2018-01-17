@@ -1786,7 +1786,9 @@ ul.font-options__options-list .select2-container--default .select2-selection--si
 }
 #customize-theme-controls .select2-container .select2-search--inline .select2-search__field
 {
-    height: 24px;
+    min-width: 9em;
+    height: 29px;
+    margin-top: 0;
 }
 
 .select2-container .select2-dropdown

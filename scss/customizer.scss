@@ -1593,7 +1593,9 @@ ul.font-options__options-list {
  	.select2-search--inline {
 
 	 	.select2-search__field {
-	 		height: 24px;
+	 		height: 29px;
+            min-width: 9em;
+            margin-top: 0;
 	 	}
  	}
 
