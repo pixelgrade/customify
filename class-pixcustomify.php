@@ -546,7 +546,7 @@ class PixCustomifyPlugin {
 				$custom_css .= $this->convert_setting_to_css( $option_id, $option['css'] );
 			}
 
-			if ( $option['type'] === 'custom_background' ) {
+			if ( isset( $option['type'] ) && $option['type'] === 'custom_background' ) {
 				$option['value']         = $this->get_option( $option_id );
 				$custom_css .= $this->process_custom_background_field_output( $option_id, $option );
 			}
@@ -589,7 +589,7 @@ class PixCustomifyPlugin {
 
 		foreach ( $this->options_list as $option_id => $options ) {
 
-			if ( $options['type'] === 'custom_background' ) {
+			if ( isset( $options['type'] ) && $options['type'] === 'custom_background' ) {
 				$options['value']         = $this->get_option( $option_id );
 				$custom_background_output = $this->process_custom_background_field_output( $option_id, $options ); ?>
 
