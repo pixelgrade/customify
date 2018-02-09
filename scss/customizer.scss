@@ -1568,7 +1568,7 @@ ul.font-options__options-list {
 	 	@extend %select;
 	 	-webkit-appearance: initial;
 
-		padding: 8px 8px 4px;
+		padding: 4px 8px 4px;
 	 	height: auto;
 	 	background: none;
 
@@ -1578,6 +1578,17 @@ ul.font-options__options-list {
 
 	 	.select2-selection__rendered {
 	 		padding: 0;
+			display: flex;
+
+			.select2-search--inline {
+				flex: 1;
+
+				.select2-search__field[class] {
+					min-width: 100%;
+					border-width: 0;
+					margin-top: 3px !important;
+				}
+			}
 
 	 		.select2-selection__choice {
 	 			padding: 3px 7px;
@@ -1599,6 +1610,12 @@ ul.font-options__options-list {
 	 	}
  	}
 
+}
+
+.select2-container--default .select2-results__option[aria-selected=true][class] {
+	background: transparent;
+	opacity: 0.3;
+	pointer-events: none;
 }
 
 .select2-container {
