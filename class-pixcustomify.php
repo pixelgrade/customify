@@ -228,14 +228,6 @@ class PixCustomifyPlugin {
 			add_action( 'admin_head', array( $this, 'add_customizer_settings_into_wp_editor' ) );
 		}
 
-		/*
-		 * Jetpack Related
-		 */
-		add_action( 'init', array( $this, 'set_jetpack_sharing_config') );
-		add_filter( 'default_option_jetpack_active_modules', array( $this, 'default_jetpack_active_modules' ), 10, 1 );
-		add_filter( 'jetpack_get_available_modules', array( $this, 'jetpack_hide_blocked_modules' ), 10, 1 );
-		add_filter( 'default_option_sharing-options', array( $this, 'default_jetpack_sharing_options' ), 10, 1 );
-
 		add_action( 'rest_api_init', array( $this, 'add_rest_routes_api' ) );
 
 		/*
@@ -287,68 +279,6 @@ class PixCustomifyPlugin {
 		}
 
 		$this->localized['theme_fonts'] = $this->theme_fonts = Customify_Font_Selector::instance()->get_theme_fonts();
-	}
-
-	function set_jetpack_sharing_config() {
-		// Allow others to change the sharing config here
-		$this->jetpack_sharing_default_options = apply_filters ( 'customify_filter_jetpack_sharing_default_options', array() );
-	}
-
-	/**
-	 * Control the default modules that are activated in Jetpack.
-	 * Use the `customify_filter_jetpack_default_modules` to set your's.
-	 *
-	 * @param array $default The default value to return if the option does not exist
-	 *                        in the database.
-	 *
-	 * @return array
-	 */
-	function default_jetpack_active_modules( $default ) {
-		if ( ! is_array( $default ) ) {
-			$default = array();
-		}
-		$jetpack_default_modules = array();
-
-		$theme_default_modules = get_theme_mod( 'pixelgrade_jetpack_default_active_modules', array() );
-
-		if ( ! is_array( $theme_default_modules ) ) {
-			return array_merge( $default, $jetpack_default_modules );
-		}
-
-		foreach ( $theme_default_modules as $module ) {
-			array_push( $jetpack_default_modules, $module );
-		}
-
-		return array_merge( $default, $jetpack_default_modules );
-	}
-
-	/**
-	 * Control the default Jetpack Sharing options.
-	 * Use the `customify_filter_jetpack_sharing_default_options` to set your's.
-	 *
-	 * @param array $default The default value to return if the option does not exist
-	 *                        in the database.
-	 *
-	 * @return array
-	 */
-	function default_jetpack_sharing_options( $default ) {
-		if ( ! is_array( $default ) ) {
-			$default = array();
-		}
-
-		return array_merge( $default, $this->jetpack_sharing_default_options );
-	}
-
-	/**
-	 * Control the modules that are available in Jetpack (hide some of them).
-	 * Use the `customify_filter_jetpack_blocked_modules` filter to set your's.
-	 *
-	 * @param array $modules
-	 *
-	 * @return array
-	 */
-	function jetpack_hide_blocked_modules( $modules ) {
-		return array_diff_key( $modules, array_flip( $this->jetpack_blocked_modules ) );
 	}
 
 	/**
