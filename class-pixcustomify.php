@@ -1666,16 +1666,15 @@ class PixCustomifyPlugin {
 	}
 
 	/**
-	 * Print JavaScript for adding additional data to _wpCustomizeSettings.settings of the parent window.
+	 * Print JavaScript for adding additional data to _wpCustomizeSettings.settings object of the main window (not the preview window).
 	 */
 	public function customize_pane_settings_additional_data() {
-		$opt = $this->get_options();
 		/**
 		 * @global WP_Customize_Manager $wp_customize
 		 */
 		global $wp_customize;
 
-		// first check the very needed options name
+		// Without an options name we can't do much.
 		if ( empty( $this->customizer_config['opt-name'] ) ) {
 			return;
 		}
@@ -1687,17 +1686,24 @@ class PixCustomifyPlugin {
             if ( 'undefined' === typeof _wpCustomizeSettings.settings ) {
                 _wpCustomizeSettings.settings = {};
             }
-            
+
 			<?php
 			echo "(function ( s ){\n";
 			foreach ( $this->get_options() as $option_id => $option_config ) {
 				$setting_id = $options_name . '[' . $option_id . ']';
+				// @todo Right now we only handle the connected_fields key - make this more dynamic by adding the keys that are not returned by WP_Customize_Setting->json()
 				if ( ! empty( $customizer_settings[ $setting_id ] ) && ! empty( $option_config['connected_fields'] ) ) {
+					// Pass through all the connected fields and make sure the id is in the final format
+					$connected_fields = array();
+					foreach ( $option_config['connected_fields'] as $connected_field_id ) {
+						$connected_fields[] = $options_name . '[' . $connected_field_id . ']';
+					}
+
 					printf(
 						"s[%s].%s = %s;\n",
 						wp_json_encode( $setting_id ),
 						'connected_fields',
-						wp_json_encode( $option_config['connected_fields'] )
+						wp_json_encode( $connected_fields )
 					);
 				}
 			}

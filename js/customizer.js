@@ -68,6 +68,8 @@
             customifyHandleRangeFields(this);
 		});
 
+        customifyHandleConnectedFields();
+
 		if ( $('button[data-action="reset_customify"]').length > 0 ) {
 			// reset_button
 			$(document).on('click', '#customize-control-reset_customify button', function ( ev ) {
@@ -334,7 +336,7 @@
 		})();
 	});
 
-    var customifyHandleRangeFields = function (el) {
+    const customifyHandleRangeFields = function (el) {
 
         // For each range input add a number field (for preview mainly - but it can also be used for input)
         $(el).find('input[type="range"]').each(function () {
@@ -358,7 +360,35 @@
                 $(this).siblings('input[type="range"]').val($(this).val());
             });
         });
-    }
+    };
+
+    /**
+     * Setup the necessary binding and logic for the workings of connected fields.
+     *
+     * A field can define a series of connected fields and when its value changes it will enforce it also on the connected fields.
+     * We do this with a light touch taking advantage as much as possible of the wiring already done by the Customizer core logic.
+     */
+    const customifyHandleConnectedFields = function () {
+        // Iterate through all the registered settings and setup the ones that define connected_fields.
+        _.each( wp.customize.settings.settings, function ( parent_setting_data, parent_setting_id ) {
+            if ( parent_setting_data.hasOwnProperty('connected_fields') ) {
+                _.each( parent_setting_data.connected_fields, function( connected_field_id ) {
+                    // We need to bind to the controlling setting change event and update the connected fields value/setting.
+                    let parent_setting = wp.customize( parent_setting_id ),
+                        connected_setting = wp.customize( connected_field_id );
+
+                    if ( !_.isUndefined( parent_setting ) && !_.isUndefined( connected_setting ) ) {
+                        parent_setting.bind( function( new_value, old_value ) {
+                            // Update the connected setting value.
+                            // This will trigger all the necessary events just like in the case of manually setting it.
+                            connected_setting.set( new_value );
+                        } );
+                    }
+
+                } )
+            }
+        } );
+    };
 
 	/**
 	 * This function will search for all the interdependend fields and make a bound between them.
@@ -552,6 +582,7 @@
 	};
 
 	// get each typography field and bind events
+    // @todo Are we still using the typography field since we have the font field?
 	var prepare_typography_field = function () {
 
 		var $typos = $('.customify_typography_font_family');
@@ -607,7 +638,7 @@
 
 		} else if(  !_.isUndefined(field_class) && field_class === 'font-options__wrapper' ) {
 
-			// if the values is a simple string it should be the font family
+			// if the value is a simple string it must be the font family
 			if ( _.isString( value ) ) {
 
 				var option = field.parent().find('option[value="' + value + '"]');
@@ -1019,6 +1050,7 @@
 		}
 	})(jQuery);
 
+	// This is for the Font control
 	var customifyFontSelect = (function () {
 		var fontSelector = '.customify_font_family',
 			selectPlacehoder = "Select a font family",
@@ -1026,21 +1058,23 @@
 			subsetPlaceholder = "Select a font subset";
 
 		function init( wpapi ) {
-				$(fontSelector).select2({
-					placeholder: selectPlacehoder
-				}).on('change', function ( e ) {
-					var new_option = $(e.target).find('option:selected'),
-						wraper = $(e.target).closest('.font-options__wrapper'),
-						type = $(new_option).data('type');
+		    // Initialize the select2 field for the font family
+            $(fontSelector).select2({
+                placeholder: selectPlacehoder
+            }).on('change', function ( e ) {
+                var new_option = $(e.target).find('option:selected'),
+                    wraper = $(e.target).closest('.font-options__wrapper'),
+                    type = $(new_option).data('type');
 
-					update_weight_field(new_option, wraper);
+                update_weight_field(new_option, wraper);
 
-					update_subset_field(new_option, wraper);
+                update_subset_field(new_option, wraper);
 
-					// serialize stuff and refresh
-					update_font_value(wraper);
-				});
+                // serialize stuff and refresh
+                update_font_value(wraper);
+            });
 
+            // Initialize the select2 field for the font weight
 			$('.customify_font_weight').each(function ( i, el  ) {
 
 				var select2_args = {
@@ -1083,8 +1117,7 @@
 				.on('change', function ( e ) {
 					var wraper = $(e.target).closest('.font-options__wrapper');
 					var current_value = update_font_value(wraper);
-					// temporary just set the new value and refresh the previewer
-					// we may update this with a live version sometime
+					// @todo temporary just set the new value and refresh the previewer - we may update this with a live version sometime
 					var value_holder = wraper.children('.customify_font_values');
 					var setting_id = $(value_holder).data('customize-setting-link');
 					var setting = wp.customize(setting_id);
@@ -1092,6 +1125,7 @@
 				});
 			});
 
+            // Initialize the select2 field for the font subsets
 			$('.customify_font_subsets')
 				.select2({
 					placeholder: "Extra Subsets"
@@ -1099,8 +1133,7 @@
 				.on('change', function ( e ) {
 					var wraper = $(e.target).closest('.font-options__wrapper');
 					var current_value = update_font_value(wraper);
-					// temporary just set the new value and refresh the previewr
-					// we may update this with a live version sometime
+					// @todo temporary just set the new value and refresh the previewr - we may update this with a live version sometime
 					var value_holder = wraper.children('.customify_font_values');
 					var setting_id = $(value_holder).data('customize-setting-link');
 					var setting = wp.customize(setting_id);
@@ -1110,12 +1143,12 @@
 			var rangers = $(fontSelector).parents('.font-options__wrapper').find('input[type=range]');
 			var selects = $(fontSelector).parents('.font-options__wrapper').find('select');
 
+            // Initialize the all the regular selects in the font controls
 			if ( selects.length > 0 ) {
 				selects.on('change', function ( e ) {
 					var wraper = $(e.target).closest('.font-options__wrapper');
 					var current_value = update_font_value(wraper);
-					// temporary just set the new value and refresh the previewr
-					// we may update this with a live version sometime
+					// @todo temporary just set the new value and refresh the previewr - we may update this with a live version sometime
 					var value_holder = wraper.children('.customify_font_values');
 					var setting_id = $(value_holder).data('customize-setting-link');
 					var setting = wp.customize(setting_id);
@@ -1123,6 +1156,7 @@
 				});
 			}
 
+            // Initialize the all the range fields in the font controls
 			if ( rangers.length > 0 ) {
 				rangers.on('mousemove', function ( e ) {
 					var wraper = $(e.target).closest('.font-options__wrapper');
@@ -1138,11 +1172,25 @@
 				});
 			}
 
+			// When the previewer window is ready, render the fonts
 			var self = this;
-
 			wp.customize.previewer.bind( 'ready', function () {
 				self.render_fonts();
 			});
+
+			// Handle the reverse value direction, when the customize setting is updated and the controls need to update their state
+            $(fontSelector).each( function( i, el ) {
+                var wraper = $(el).closest('.font-options__wrapper'),
+                    value_holder = wraper.children('.customify_font_values'),
+                    setting_id = $(value_holder).data('customize-setting-link'),
+                    setting = wp.customize(setting_id);
+
+                setting.bind( function( new_value, old_value ) {
+                    value_holder.val(new_value);
+
+                    load_font_value( wraper );
+                })
+            })
 		}
 
 		/**
@@ -1292,6 +1340,31 @@
 
 			return new_vals;
 		}
+
+        /**
+         * This function is a reverse of update_font_value(), initializing the entire font field controls based on the value stored in the hidden input.
+         */
+        function load_font_value( wraper ) {
+            var element = $(wraper).find('.font-options__wrapper'),
+                options_list = $(wraper).find('.font-options__options-list'),
+                inputs = options_list.find('select, input'),
+                value_holder = wraper.children('.customify_font_values'),
+                value = maybeJsonParse( value_holder.val() );
+
+            inputs.each(function ( key, el ) {
+                var field = $(el).data('field');
+
+                if ( typeof field !== "undefined" ) {
+                    $(el).val( value[field] );
+                }
+
+                if ( field === 'font_family' ) {
+                    update_weight_field(value[field], wraper);
+
+                    update_subset_field(value[field], wraper);
+                }
+            });
+        }
 
 		var maybeJsonParse = function ( value ) {
 			var parsed;
