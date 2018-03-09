@@ -215,6 +215,9 @@ class PixCustomifyPlugin {
 		add_action( 'customize_preview_init', array( $this, 'customizer_live_preview_register_scripts' ), 10 );
 		add_action( 'customize_preview_init', array( $this, 'customizer_live_preview_enqueue_scripts' ), 99999 );
 
+		// Add extra settings data to _wpCustomizeSettings.settings of the parent window.
+		add_action( 'customize_controls_print_footer_scripts', array( $this, 'customize_pane_settings_additional_data' ), 10000 );
+
 		// The frontend effects of the Customizer controls
 		$load_location = $this->get_plugin_setting( 'style_resources_location', 'wp_head' );
 
@@ -1236,7 +1239,7 @@ class PixCustomifyPlugin {
 			'panel'      => $panel_id,
 			'capability' => 'edit_theme_options',
 			'theme_supports' => '',
-			'title'      => __( 'Title Section is required', 'customify' ),
+			'title'      => esc_html__( 'Title Section is required', 'customify' ),
 			'description' => '',
 			'type' => 'default',
 			'description_hidden' => false,
@@ -1253,15 +1256,15 @@ class PixCustomifyPlugin {
 				continue;
 			}
 
-			$option_id = $options_name . '[' . $option_id . ']';
+			$setting_id = $options_name . '[' . $option_id . ']';
 
-			$this->register_field( $section_id, $option_id, $option_config, $wp_customize );
+			$this->register_field( $section_id, $setting_id, $option_config, $wp_customize );
 		}
 
 	}
 
 	/**
-	 * Register a Customizer field
+	 * Register a Customizer field (setting and control).
 	 *
 	 * @see WP_Customize_Setting
 	 * @see WP_Customize_Control
@@ -1297,7 +1300,7 @@ class PixCustomifyPlugin {
 			$setting_args['default'] = $setting_config['default'];
 		}
 
-		if ( isset( $setting_config['capability'] ) && ! empty( $setting_config['capability'] ) ) {
+		if ( ! empty( $setting_config['capability'] ) ) {
 			$setting_args['capability'] = $setting_config['capability'];
 		}
 
@@ -1317,27 +1320,27 @@ class PixCustomifyPlugin {
 				break;
 		}
 
-		if ( isset( $setting_config['sanitize_callback'] ) && ! empty( $setting_config['sanitize_callback'] ) && function_exists( $setting_config['sanitize_callback'] ) ) {
+		if ( ! empty( $setting_config['sanitize_callback'] ) && function_exists( $setting_config['sanitize_callback'] ) ) {
 			$setting_args['sanitize_callback'] = $setting_config['sanitize_callback'];
 		}
 
-		// and add it
+		// Add the setting
 		$wp_customize->add_setting( $setting_id, $setting_args );
 
 		// now sanitize the control
-		if ( isset( $setting_config['label'] ) && ! empty( $setting_config['label'] ) ) {
+		if ( ! empty( $setting_config['label'] ) ) {
 			$control_args['label'] = $setting_config['label'];
 		}
 
-		if ( isset( $setting_config['priority'] ) && ! empty( $setting_config['priority'] ) ) {
+		if ( ! empty( $setting_config['priority'] ) ) {
 			$control_args['priority'] = $setting_config['priority'];
 		}
 
-		if ( isset( $setting_config['desc'] ) && ! empty( $setting_config['desc'] ) ) {
+		if ( ! empty( $setting_config['desc'] ) ) {
 			$control_args['description'] = $setting_config['desc'];
 		}
 
-		if ( isset( $setting_config['active_callback'] ) && ! empty( $setting_config['active_callback'] ) ) {
+		if ( ! empty( $setting_config['active_callback'] ) ) {
 			$control_args['active_callback'] = $setting_config['active_callback'];
 		}
 
@@ -1348,7 +1351,7 @@ class PixCustomifyPlugin {
 		// but first init a default
 		$control_class_name = 'Pix_Customize_Text_Control';
 
-		// if is a standard wp field type call it here and skip the rest
+		// If is a standard wp field type call it here and skip the rest.
 		if ( in_array( $setting_config['type'], array(
 			'checkbox',
 			'dropdown-pages',
@@ -1365,20 +1368,20 @@ class PixCustomifyPlugin {
 		} elseif ( in_array( $setting_config['type'], array(
 				'radio',
 				'select'
-			) ) && isset( $setting_config['choices'] ) && ! empty( $setting_config['choices'] )
+			) ) && ! empty( $setting_config['choices'] )
 		) {
 			$control_args['choices'] = $setting_config['choices'];
 			$wp_customize->add_control( $setting_id . '_control', $control_args );
 
 			return;
-		} elseif ( in_array( $setting_config['type'], array( 'range' ) ) && isset( $setting_config['input_attrs'] ) && ! empty( $setting_config['input_attrs'] ) ) {
+		} elseif ( in_array( $setting_config['type'], array( 'range' ) ) && ! empty( $setting_config['input_attrs'] ) ) {
 
 			$control_args['input_attrs'] = $setting_config['input_attrs'];
 
 			$wp_customize->add_control( $setting_id . '_control', $control_args );
 		}
 
-		// if we arrive here this means we have a custom field control
+		// If we arrive here this means we have a custom field control.
 		switch ( $setting_config['type'] ) {
 
 			case 'text':
@@ -1494,7 +1497,6 @@ class PixCustomifyPlugin {
 
 				break;
 
-			// Custom types
 			case 'font' :
 				$use_typography = $this->get_plugin_setting( 'typography', '1' );
 
@@ -1661,6 +1663,48 @@ class PixCustomifyPlugin {
 				$wp_customize->remove_section( $section );
 			}
 		}
+	}
+
+	/**
+	 * Print JavaScript for adding additional data to _wpCustomizeSettings.settings of the parent window.
+	 */
+	public function customize_pane_settings_additional_data() {
+		$opt = $this->get_options();
+		/**
+		 * @global WP_Customize_Manager $wp_customize
+		 */
+		global $wp_customize;
+
+		// first check the very needed options name
+		if ( empty( $this->customizer_config['opt-name'] ) ) {
+			return;
+		}
+
+		$options_name = $this->customizer_config['opt-name'];
+		$customizer_settings = $wp_customize->settings();
+		?>
+		<script type="text/javascript">
+            if ( 'undefined' === typeof _wpCustomizeSettings.settings ) {
+                _wpCustomizeSettings.settings = {};
+            }
+            
+			<?php
+			echo "(function ( s ){\n";
+			foreach ( $this->get_options() as $option_id => $option_config ) {
+				$setting_id = $options_name . '[' . $option_id . ']';
+				if ( ! empty( $customizer_settings[ $setting_id ] ) && ! empty( $option_config['connected_fields'] ) ) {
+					printf(
+						"s[%s].%s = %s;\n",
+						wp_json_encode( $setting_id ),
+						'connected_fields',
+						wp_json_encode( $option_config['connected_fields'] )
+					);
+				}
+			}
+			echo "})( _wpCustomizeSettings.settings );\n";
+			?>
+		</script>
+		<?php
 	}
 
 	public function get_base_path() {
