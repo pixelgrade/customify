@@ -539,9 +539,10 @@ class PixCustomifyPlugin {
 			}
 
 			$this_value = $this->get_option( $option_id );
-			foreach ( $options['css'] as $key => $properties_set ) { ?>
-				<style id="dynamic_setting_<?php echo $option_id . '_property_' . str_replace( '-', '_', $properties_set['property'] ); ?>"
-				       type="text/css"><?php
+			if ( ! empty( $options['css'] ) ) {
+				foreach ( $options['css'] as $key => $properties_set ) { ?>
+					<style id="dynamic_setting_<?php echo $option_id . '_property_' . str_replace( '-', '_', $properties_set['property'] ); ?>"
+					       type="text/css"><?php
 
 					if ( isset( $properties_set['media'] ) && ! empty( $properties_set['media'] ) ) {
 						echo '@media '. $properties_set['media'] . " {\n";
@@ -554,8 +555,9 @@ class PixCustomifyPlugin {
 					if ( isset( $properties_set['media'] ) && ! empty( $properties_set['media'] ) ) {
 						echo "}\n";
 					} ?>
-				</style>
-			<?php }
+					</style>
+				<?php }
+			}
 		}
 
 		if ( ! empty( $this->media_queries ) ) {
@@ -1119,7 +1121,13 @@ class PixCustomifyPlugin {
 
 					if ( ! empty( $panel_id ) && isset( $panel_settings['sections'] ) && ! empty( $panel_settings['sections'] ) ) {
 
-						$panel_id   = $options_name . '[' . $panel_id . ']';
+						// If we have been explicitly given a panel ID we will use that
+						if ( ! empty( $panel_settings['panel_id'] ) ) {
+							$panel_id = $panel_settings['panel_id'];
+						} else {
+							$panel_id   = $options_name . '[' . $panel_id . ']';
+						}
+
 						$panel_args = array(
 							'priority'    => 10,
 							'capability'  => 'edit_theme_options',
@@ -1244,7 +1252,13 @@ class PixCustomifyPlugin {
 			'type' => 'default',
 			'description_hidden' => false,
 		) );
-		$section_id   = $options_name . '[' . $section_key . ']';
+
+		// If we have been explicitly given a section ID we will use that
+		if ( ! empty( $section_settings['section_id'] ) ) {
+			$section_id = $section_settings['section_id'];
+		} else {
+			$section_id = $options_name . '[' . $section_key . ']';
+		}
 
 		// Add the new section to the Customizer
 		$wp_customize->add_section( $section_id, $section_args );
@@ -1256,7 +1270,12 @@ class PixCustomifyPlugin {
 				continue;
 			}
 
-			$setting_id = $options_name . '[' . $option_id . ']';
+			// If we have been explicitly given a setting ID we will use that
+			if ( ! empty( $option_config['setting_id'] ) ) {
+				$setting_id = $option_config['setting_id'];
+			} else {
+				$setting_id = $options_name . '[' . $option_id . ']';
+			}
 
 			$this->register_field( $section_id, $setting_id, $option_config, $wp_customize );
 		}
@@ -1304,7 +1323,12 @@ class PixCustomifyPlugin {
 			$setting_args['capability'] = $setting_config['capability'];
 		}
 
-		if ( $this->plugin_settings['values_store_mod'] == 'option' ) {
+		// If the setting defines it's own type we will respect that, otherwise we will follow the global plugin setting.
+		if ( ! empty( $setting_config['setting_type'] ) ) {
+			if ( 'option' === $setting_config['setting_type'] ) {
+				$setting_args['type'] = 'option';
+			}
+		} elseif ( $this->plugin_settings['values_store_mod'] === 'option' ) {
 			$setting_args['type'] = 'option';
 		}
 
