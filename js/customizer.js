@@ -345,7 +345,8 @@
 
                 $clone
                     .attr('type', 'number')
-                    .attr('class', 'range-value');
+                    .attr('class', 'range-value')
+                    .removeAttr('data-field');
 
                 $(this).after($clone);
             }
@@ -1052,106 +1053,122 @@
 
 	// This is for the Font control
 	var customifyFontSelect = (function () {
-		var fontSelector = '.customify_font_family',
-			selectPlacehoder = "Select a font family",
-			weightPlaceholder = "Select a font weight",
-			subsetPlaceholder = "Select a font subset";
+        const
+            wrapperSelector = '.font-options__wrapper',
+            valueHolderSelector = '.customify_font_values',
+            fontFamilySelector = '.customify_font_family',
+            fontWeightSelector = '.customify_font_weight',
+            fontSubsetsSelector = '.customify_font_subsets',
+            selectPlaceholder = "Select a font family",
+            weightPlaceholder = "Select a font weight",
+            subsetPlaceholder = "Extra Subsets";
+
+        // We will use this to remember that we are self-updating the field from the subfields.
+        // We will save this info for each setting ID.
+        var updatingValue = {},
+            loadingValue = {};
 
 		function init( wpapi ) {
-		    // Initialize the select2 field for the font family
-            $(fontSelector).select2({
-                placeholder: selectPlacehoder
-            }).on('change', function ( e ) {
-                var new_option = $(e.target).find('option:selected'),
-                    wrapper = $(e.target).closest('.font-options__wrapper'),
-                    type = $(new_option).data('type');
+		    let $fontFamilyFields = $(fontFamilySelector);
 
+            // Initialize the select2 field for the font family
+            $fontFamilyFields.select2({
+                placeholder: selectPlaceholder
+            }).on('change', function (e) {
+                let new_option = $(e.target).find('option:selected'),
+                    wrapper = $(e.target).closest(wrapperSelector);
+
+                // Update the weight subfield with the new options given by the selected font family.
                 update_weight_field(new_option, wrapper);
 
+                // Update the subset subfield with the new options given by the selected font family.
                 update_subset_field(new_option, wrapper);
 
-                // serialize stuff and refresh
+                // Serialize subfield values and refresh the fonts in the preview window.
                 update_font_value(wrapper);
             });
 
             // Initialize the select2 field for the font weight
-			$('.customify_font_weight').each(function ( i, el  ) {
+            $(fontWeightSelector).each(function (i, el) {
 
-				var select2_args = {
-					debug: false
-				};
+                let select2_args = {
+                    placeholder: weightPlaceholder
+                };
 
-				// all this fuss is for the case when the font doesn't come with variants from PHP, like a theme_font
-				if ( this.options.length === 0 ) {
-					var wraper = $(el).closest('.font-options__wrapper'),
-						font = wraper.find('.customify_font_family'),
-						option = font[0].options[font[0].selectedIndex],
-						variants =  maybeJsonParse( $(option).data('variants') ),
-						data = [],
-						selecter_variants = $(el).data('default') || null;
+                // all this fuss is for the case when the font doesn't come with variants from PHP, like a theme_font
+                if (this.options.length === 0) {
+                    var wrapper = $(el).closest(wrapperSelector),
+                        font = wrapper.find(fontFamilySelector),
+                        option = font[0].options[font[0].selectedIndex],
+                        variants = maybeJsonParse($(option).data('variants')),
+                        data = [],
+                        selecter_variants = $(el).data('default') || null;
 
-					if ( typeof variants === "undefined" ) {
-						$(this).hide();
-						return;
-					}
+                    if (typeof variants === "undefined") {
+                        $(this).hide();
+                        return;
+                    }
 
-					$.each( variants, function ( index, weight ) {
-						var this_value = {
-							id: weight,
-							text: weight
-						};
+                    $.each(variants, function (index, weight) {
+                        let this_value = {
+                            id: weight,
+                            text: weight
+                        };
 
-						if ( selecter_variants !== null && weight == selecter_variants ) {
-							this_value.selected = true;
-						}
+                        if (selecter_variants !== null && weight == selecter_variants) {
+                            this_value.selected = true;
+                        }
 
-						data.push(this_value);
-					} );
+                        data.push(this_value);
+                    });
 
-					if ( data !== [] ) {
-						select2_args.data = data;
-					}
-				}
+                    if (data !== []) {
+                        select2_args.data = data;
+                    }
+                }
 
-				$(this).select2( select2_args )
-				.on('change', function ( e ) {
-					var wraper = $(e.target).closest('.font-options__wrapper');
-					var current_value = update_font_value(wraper);
-					// @todo temporary just set the new value and refresh the previewer - we may update this with a live version sometime
+                $(this).select2(
+                    select2_args
+                ).on('change', function (e) {
+                    let wrapper = $(e.target).closest(wrapperSelector);
 
-				});
-			});
+                    // Serialize subfield values and refresh the fonts in the preview window.
+                    update_font_value(wrapper);
+                });
+            });
 
             // Initialize the select2 field for the font subsets
-			$('.customify_font_subsets')
+			$(fontSubsetsSelector)
 				.select2({
-					placeholder: "Extra Subsets"
+					placeholder: subsetPlaceholder
 				})
 				.on('change', function ( e ) {
-					var wraper = $(e.target).closest('.font-options__wrapper');
-					var current_value = update_font_value(wraper);
+					let wrapper = $(e.target).closest(wrapperSelector);
 
+                    // Serialize subfield values and refresh the fonts in the preview window.
+					update_font_value(wrapper);
 				});
 
-			var rangers = $(fontSelector).parents('.font-options__wrapper').find('input[type=range]');
-			var selects = $(fontSelector).parents('.font-options__wrapper').find('select').not("select[class*=' select2'],select[class^='select2']");
+			let rangers = $fontFamilyFields.parents(wrapperSelector).find('input[type=range]'),
+			    selects = $fontFamilyFields.parents(wrapperSelector).find('select').not("select[class*=' select2'],select[class^='select2']");
 
             // Initialize the all the regular selects in the font controls
 			if ( selects.length > 0 ) {
 				selects.on('change', function ( e ) {
-					var wraper = $(e.target).closest('.font-options__wrapper');
-					var current_value = update_font_value(wraper);
-					// @todo temporary just set the new value and refresh the previewr - we may update this with a live version sometime
+					let wrapper = $(e.target).closest(wrapperSelector);
+
+                    // Serialize subfield values and refresh the fonts in the preview window.
+					update_font_value(wrapper);
 				});
 			}
 
             // Initialize the all the range fields in the font controls
 			if ( rangers.length > 0 ) {
-				rangers.on('mousemove', function ( e ) {
-					var wraper = $(e.target).closest('.font-options__wrapper');
-					var current_value = update_font_value(wraper);
-					// temporary just set the new value and refresh the previewr
-					// we may update this with a live version sometime
+				rangers.on('change', function ( e ) {
+					let wrapper = $(e.target).closest(wrapperSelector);
+
+                    // Serialize subfield values and refresh the fonts in the preview window.
+					update_font_value(wrapper);
 
 					wp.customize.previewer.send( 'font-changed' );
 				});
@@ -1163,17 +1180,19 @@
 				self.render_fonts();
 			});
 
-			// Handle the reverse value direction, when the customize setting is updated and the controls need to update their state/values.
-            $(fontSelector).each( function( i, el ) {
-                var wraper = $(el).closest('.font-options__wrapper'),
-                    value_holder = wraper.children('.customify_font_values'),
+			// Handle the reverse value direction, when the customize setting is updated and the subfields need to update their values.
+            $fontFamilyFields.each( function( i, el ) {
+                let wrapper = $(el).closest(wrapperSelector),
+                    value_holder = wrapper.children(valueHolderSelector),
                     setting_id = $(value_holder).data('customize-setting-link'),
                     setting = wp.customize(setting_id);
 
-                setting.bind( function( new_value, old_value ) {
-                    value_holder.val(new_value);
+                setting.bind( function( newValue, oldValue ) {
+                    if ( ! updatingValue[this.id] ) {
+                        value_holder.val(newValue);
 
-                    load_font_value( wraper );
+                        load_font_value(wrapper);
+                    }
                 })
             })
 		}
@@ -1185,12 +1204,11 @@
 		 * @param wraper
 		 */
 		function update_weight_field( option, wraper ) {
-			var variants = $(option).data('variants'),
-				font_weights = wraper.find('.customify_font_weight'),
+			let variants = $(option).data('variants'),
+				font_weights = wraper.find(fontWeightSelector),
 				selected_variant = font_weights.data('default'),
 				new_variants = [],
-				type =  $(option).data('type'),
-				id = wraper.find('.customify_font_values').data('customizeSettingLink');
+				id = wraper.find(valueHolderSelector).data('customizeSettingLink');
 
 			variants = maybeJsonParse(variants);
 
@@ -1201,25 +1219,26 @@
 			}
 
 			// we need to turn the data array into a specific form like [{id:"id", text:"Text"}]
-			$.each(variants, function ( i, j ) {
-				new_variants[i] = {
-					'id': j,
-					'text': j
+			$.each(variants, function ( index, variant ) {
+				new_variants[index] = {
+					'id': variant,
+					'text': variant
 				};
 
-				if ( selected_variant == j ) {
-					new_variants[i].selected = true;
+				if ( selected_variant == variant ) {
+					new_variants[index].selected = true;
 				}
 			});
 
-			// we need to clear the old values
+            // We need to clear the old select2 field and reinitialize it.
 			$(font_weights).select2().empty();
 			$(font_weights).select2({
 				data: new_variants
 			}).on('change', function ( e ) {
-				var select_element = e.target;
-				var wraper = $(select_element).closest('.font-options__wrapper');
-				update_font_value(wraper);
+				let wrapper = $(e.target).closest(wrapperSelector);
+
+                // Serialize subfield values and refresh the fonts in the preview window.
+				update_font_value(wrapper);
 			});
 		}
 
@@ -1229,9 +1248,8 @@
 		 * @param wraper
 		 */
 		function update_subset_field( option, wraper ) {
-			var subsets = $(option).data('subsets'),
-				font_subsets = wraper.find('.customify_font_subsets'),
-				selected_subsets = font_subsets.data('default'),
+			let subsets = $(option).data('subsets'),
+				font_subsets = wraper.find(fontSubsetsSelector),
 				new_subsets = [],
 				type =  $(option).data('type');
 
@@ -1240,9 +1258,12 @@
 				return;
 			}
 
-			var current_value = wraper.children('.customify_font_values').val();
+			let current_value = wraper.children(valueHolderSelector).val();
 
 			current_value = maybeJsonParse( current_value );
+			if ( _.isUndefined( current_value.selected_subsets ) ) {
+                return;
+            }
 			current_value = current_value.selected_subsets;
 
 			subsets = maybeJsonParse( subsets );
@@ -1254,26 +1275,27 @@
 			}
 
 			// we need to turn the data array into a specific form like [{id:"id", text:"Text"}]
-			$.each(subsets, function ( i, j ) {
-				new_subsets[i] = {
-					'id': j,
-					'text': j
+			$.each(subsets, function ( index, subset ) {
+				new_subsets[index] = {
+					'id': subset,
+					'text': subset
 				};
 
 				// current_subsets
-				if ( typeof current_value !== 'undefined' && current_value !== null && current_value.indexOf( j ) !== -1 ) {
-					new_subsets[i].selected = true;
+				if ( typeof current_value !== 'undefined' && current_value !== null && current_value.indexOf( subset ) !== -1 ) {
+					new_subsets[index].selected = true;
 				}
 			});
 
-			// we need to clear the old values
+			// We need to clear the old select2 field and reinitialize it.
 			$(font_subsets).select2().empty();
 			$(font_subsets).select2({
 				data: new_subsets
 			}).on('change', function ( e ) {
-				var select_element = e.target;
-				var wraper = $(select_element).closest('.font-options__wrapper');
-				update_font_value(wraper);
+				let wrapper = $(e.target).closest(wrapperSelector);
+
+                // Serialize subfield values and refresh the fonts in the preview window.
+				update_font_value(wrapper);
 			});
 		}
 
@@ -1282,51 +1304,72 @@
 		 * It collects values and saves them (encoded) into the `.customify_font_values` input's value
 		 */
 		function update_font_value( wraper ) {
-			var options_list = $(wraper).find('.font-options__options-list'),
-				inputs = options_list.find('select, input'),
-				value_holder = wraper.children('.customify_font_values'),
+			let options_list = $(wraper).find('.font-options__options-list'),
+				inputs = options_list.find('[data-field]'),
+				value_holder = wraper.children(valueHolderSelector),
                 setting_id = $(value_holder).data('customize-setting-link'),
                 setting = wp.customize(setting_id),
-				new_vals = {};
+				newFontData = {};
 
-			inputs.each(function ( key, el ) {
-				var field = $(el).data('field'),
-					value = $(el).val();
+			// If we are already self-updating this and we haven't finished, we need to stop here to prevent infinite loops
+            // This call might have come from a subfield detecting the change the triggering a further update_font_value()
+            if ( true === updatingValue[setting_id] ) {
+                return;
+            }
 
-				if ( field === 'font_family' ) {
-					// the font family also holds the type
-					var selected_opt = $(el.options[el.selectedIndex]),
-						type = selected_opt.data('type'),
-						subsets = selected_opt.data('subsets'),
-						variants = selected_opt.data('variants');
+            // If we are loading this setting value and haven't finished, there is no point in updating it as this would cause infinite loops.
+            if ( true === loadingValue[setting_id] ) {
+                return;
+            }
 
-					if ( typeof type !== "undefined") {
-						new_vals['type'] = type;
-						if ( type === 'theme_font' ) {
-							new_vals['src'] = selected_opt.data('src');
-						}
- 					}
+			// Mark the fact that we are self-updating the field value
+            updatingValue[setting_id] = true;
 
-					if ( typeof variants !== "undefined") {
-						new_vals['variants'] = maybeJsonParse(variants);
-					}
+            inputs.each(function (key, el) {
+                let field = $(el).data('field'),
+                    value = $(el).val();
 
-					if ( typeof subsets !== "undefined") {
-						new_vals['subsets'] = maybeJsonParse(subsets);
-					}
-				}
+                if ('font_family' === field) {
+                    // the font family also holds the type
+                    let selected_opt = $(el.options[el.selectedIndex]),
+                        type = selected_opt.data('type'),
+                        subsets = selected_opt.data('subsets'),
+                        variants = selected_opt.data('variants');
+
+                    if (!_.isUndefined(type)) {
+                        newFontData['type'] = type;
+                        if (type === 'theme_font') {
+                            newFontData['src'] = selected_opt.data('src');
+                        }
+                    }
+
+                    if (!_.isUndefined( variants)) {
+                        newFontData['variants'] = maybeJsonParse(variants);
+                    }
+
+                    if (!_.isUndefined(subsets)) {
+                        newFontData['subsets'] = maybeJsonParse(subsets);
+                    }
+                }
 
 
-				if ( typeof field !== "undefined" && typeof value !== "undefined" && value !== "" ) {
-					new_vals[field] = value;
-				}
-			});
+                if (!_.isUndefined(field) && !_.isUndefined(value) && !_.isNull(value) && value !== '' ) {
+                    newFontData[field] = value;
+                }
+            });
 
-			value_holder.val(encodeValues(new_vals));
+            // Serialize the newly gathered font data
+            let serializedNewFontData = encodeValues(newFontData);
+			// Set the serialized value in the hidden field.
+			value_holder.val(serializedNewFontData);
+            // Update also the Customizer setting value.
+            setting.set(serializedNewFontData);
 
-            setting.set(encodeValues(new_vals));
 
-			return new_vals;
+            // Finished with the field value self-updating.
+            updatingValue[setting_id] = false;
+
+			return newFontData;
 		}
 
         /**
@@ -1334,30 +1377,34 @@
          */
         function load_font_value( wrapper ) {
             let options_list = $(wrapper).find('.font-options__options-list'),
-                inputs = options_list.find('select, input'),
-                value_holder = wrapper.children('.customify_font_values'),
-                value = maybeJsonParse( value_holder.val() );
+                inputs = options_list.find('[data-field]'),
+                value_holder = wrapper.children(valueHolderSelector),
+                value = maybeJsonParse( value_holder.val() ),
+                setting_id = $(value_holder).data('customize-setting-link');
+
+            // If we are already loading this setting value and haven't finished, there is no point in starting again.
+            if ( true === loadingValue[setting_id] ) {
+                return;
+            }
+
+            // Mark the fact that we are loading the field value
+            loadingValue[setting_id] = true;
 
             inputs.each(function ( key, el ) {
                 let field = $(el).data('field');
 
                 // In the case of select2, only the original selects have the data field, thus excluding select2 created select DOM elements
-                if ( typeof field !== "undefined" ) {
-
-                    if ( field === 'font_family' ) {
-                        console.log( 'Load font from value: ' + value[field]);
-                        // Since this is a select2 field, we need to let it know that the value has changed.
-                        $(wrapper).find('.customify_font_family').select2("val", value[field]);
-                        // $(el).trigger("change");
-                    } else {
-                        $(el).val(value[field]);
-                    }
+                if ( typeof field !== "undefined" && field !== "" && typeof value[field] !== "undefined" ) {
+                    $(el).val(value[field]).trigger('change');
                 }
             });
+
+            // Finished with the field value loading.
+            loadingValue[setting_id] = false;
         }
 
 		var maybeJsonParse = function ( value ) {
-			var parsed;
+			let parsed;
 
 			//try and parse it, with decodeURIComponent
 			try {
