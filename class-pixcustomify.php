@@ -215,6 +215,9 @@ class PixCustomifyPlugin {
 		add_action( 'customize_preview_init', array( $this, 'customizer_live_preview_register_scripts' ), 10 );
 		add_action( 'customize_preview_init', array( $this, 'customizer_live_preview_enqueue_scripts' ), 99999 );
 
+		// Add extra settings data to _wpCustomizeSettings.settings of the parent window.
+		add_action( 'customize_controls_print_footer_scripts', array( $this, 'customize_pane_settings_additional_data' ), 10000 );
+
 		// The frontend effects of the Customizer controls
 		$load_location = $this->get_plugin_setting( 'style_resources_location', 'wp_head' );
 
@@ -227,14 +230,6 @@ class PixCustomifyPlugin {
 		if ( $this->get_plugin_setting( 'enable_editor_style', true ) ) {
 			add_action( 'admin_head', array( $this, 'add_customizer_settings_into_wp_editor' ) );
 		}
-
-		/*
-		 * Jetpack Related
-		 */
-		add_action( 'init', array( $this, 'set_jetpack_sharing_config') );
-		add_filter( 'default_option_jetpack_active_modules', array( $this, 'default_jetpack_active_modules' ), 10, 1 );
-		add_filter( 'jetpack_get_available_modules', array( $this, 'jetpack_hide_blocked_modules' ), 10, 1 );
-		add_filter( 'default_option_sharing-options', array( $this, 'default_jetpack_sharing_options' ), 10, 1 );
 
 		add_action( 'rest_api_init', array( $this, 'add_rest_routes_api' ) );
 
@@ -287,68 +282,6 @@ class PixCustomifyPlugin {
 		}
 
 		$this->localized['theme_fonts'] = $this->theme_fonts = Customify_Font_Selector::instance()->get_theme_fonts();
-	}
-
-	function set_jetpack_sharing_config() {
-		// Allow others to change the sharing config here
-		$this->jetpack_sharing_default_options = apply_filters ( 'customify_filter_jetpack_sharing_default_options', array() );
-	}
-
-	/**
-	 * Control the default modules that are activated in Jetpack.
-	 * Use the `customify_filter_jetpack_default_modules` to set your's.
-	 *
-	 * @param array $default The default value to return if the option does not exist
-	 *                        in the database.
-	 *
-	 * @return array
-	 */
-	function default_jetpack_active_modules( $default ) {
-		if ( ! is_array( $default ) ) {
-			$default = array();
-		}
-		$jetpack_default_modules = array();
-
-		$theme_default_modules = get_theme_mod( 'pixelgrade_jetpack_default_active_modules', array() );
-
-		if ( ! is_array( $theme_default_modules ) ) {
-			return array_merge( $default, $jetpack_default_modules );
-		}
-
-		foreach ( $theme_default_modules as $module ) {
-			array_push( $jetpack_default_modules, $module );
-		}
-
-		return array_merge( $default, $jetpack_default_modules );
-	}
-
-	/**
-	 * Control the default Jetpack Sharing options.
-	 * Use the `customify_filter_jetpack_sharing_default_options` to set your's.
-	 *
-	 * @param array $default The default value to return if the option does not exist
-	 *                        in the database.
-	 *
-	 * @return array
-	 */
-	function default_jetpack_sharing_options( $default ) {
-		if ( ! is_array( $default ) ) {
-			$default = array();
-		}
-
-		return array_merge( $default, $this->jetpack_sharing_default_options );
-	}
-
-	/**
-	 * Control the modules that are available in Jetpack (hide some of them).
-	 * Use the `customify_filter_jetpack_blocked_modules` filter to set your's.
-	 *
-	 * @param array $modules
-	 *
-	 * @return array
-	 */
-	function jetpack_hide_blocked_modules( $modules ) {
-		return array_diff_key( $modules, array_flip( $this->jetpack_blocked_modules ) );
 	}
 
 	/**
@@ -606,9 +539,10 @@ class PixCustomifyPlugin {
 			}
 
 			$this_value = $this->get_option( $option_id );
-			foreach ( $options['css'] as $key => $properties_set ) { ?>
-				<style id="dynamic_setting_<?php echo $option_id . '_property_' . str_replace( '-', '_', $properties_set['property'] ); ?>"
-				       type="text/css"><?php
+			if ( ! empty( $options['css'] ) ) {
+				foreach ( $options['css'] as $key => $properties_set ) { ?>
+					<style id="dynamic_setting_<?php echo $option_id . '_property_' . str_replace( '-', '_', $properties_set['property'] ); ?>"
+					       type="text/css"><?php
 
 					if ( isset( $properties_set['media'] ) && ! empty( $properties_set['media'] ) ) {
 						echo '@media '. $properties_set['media'] . " {\n";
@@ -621,8 +555,9 @@ class PixCustomifyPlugin {
 					if ( isset( $properties_set['media'] ) && ! empty( $properties_set['media'] ) ) {
 						echo "}\n";
 					} ?>
-				</style>
-			<?php }
+					</style>
+				<?php }
+			}
 		}
 
 		if ( ! empty( $this->media_queries ) ) {
@@ -1186,7 +1121,13 @@ class PixCustomifyPlugin {
 
 					if ( ! empty( $panel_id ) && isset( $panel_settings['sections'] ) && ! empty( $panel_settings['sections'] ) ) {
 
-						$panel_id   = $options_name . '[' . $panel_id . ']';
+						// If we have been explicitly given a panel ID we will use that
+						if ( ! empty( $panel_settings['panel_id'] ) ) {
+							$panel_id = $panel_settings['panel_id'];
+						} else {
+							$panel_id   = $options_name . '[' . $panel_id . ']';
+						}
+
 						$panel_args = array(
 							'priority'    => 10,
 							'capability'  => 'edit_theme_options',
@@ -1306,12 +1247,18 @@ class PixCustomifyPlugin {
 			'panel'      => $panel_id,
 			'capability' => 'edit_theme_options',
 			'theme_supports' => '',
-			'title'      => __( 'Title Section is required', 'customify' ),
+			'title'      => esc_html__( 'Title Section is required', 'customify' ),
 			'description' => '',
 			'type' => 'default',
 			'description_hidden' => false,
 		) );
-		$section_id   = $options_name . '[' . $section_key . ']';
+
+		// If we have been explicitly given a section ID we will use that
+		if ( ! empty( $section_settings['section_id'] ) ) {
+			$section_id = $section_settings['section_id'];
+		} else {
+			$section_id = $options_name . '[' . $section_key . ']';
+		}
 
 		// Add the new section to the Customizer
 		$wp_customize->add_section( $section_id, $section_args );
@@ -1323,15 +1270,20 @@ class PixCustomifyPlugin {
 				continue;
 			}
 
-			$option_id = $options_name . '[' . $option_id . ']';
+			// If we have been explicitly given a setting ID we will use that
+			if ( ! empty( $option_config['setting_id'] ) ) {
+				$setting_id = $option_config['setting_id'];
+			} else {
+				$setting_id = $options_name . '[' . $option_id . ']';
+			}
 
-			$this->register_field( $section_id, $option_id, $option_config, $wp_customize );
+			$this->register_field( $section_id, $setting_id, $option_config, $wp_customize );
 		}
 
 	}
 
 	/**
-	 * Register a Customizer field
+	 * Register a Customizer field (setting and control).
 	 *
 	 * @see WP_Customize_Setting
 	 * @see WP_Customize_Control
@@ -1367,11 +1319,16 @@ class PixCustomifyPlugin {
 			$setting_args['default'] = $setting_config['default'];
 		}
 
-		if ( isset( $setting_config['capability'] ) && ! empty( $setting_config['capability'] ) ) {
+		if ( ! empty( $setting_config['capability'] ) ) {
 			$setting_args['capability'] = $setting_config['capability'];
 		}
 
-		if ( $this->plugin_settings['values_store_mod'] == 'option' ) {
+		// If the setting defines it's own type we will respect that, otherwise we will follow the global plugin setting.
+		if ( ! empty( $setting_config['setting_type'] ) ) {
+			if ( 'option' === $setting_config['setting_type'] ) {
+				$setting_args['type'] = 'option';
+			}
+		} elseif ( $this->plugin_settings['values_store_mod'] === 'option' ) {
 			$setting_args['type'] = 'option';
 		}
 
@@ -1387,27 +1344,27 @@ class PixCustomifyPlugin {
 				break;
 		}
 
-		if ( isset( $setting_config['sanitize_callback'] ) && ! empty( $setting_config['sanitize_callback'] ) && function_exists( $setting_config['sanitize_callback'] ) ) {
+		if ( ! empty( $setting_config['sanitize_callback'] ) && function_exists( $setting_config['sanitize_callback'] ) ) {
 			$setting_args['sanitize_callback'] = $setting_config['sanitize_callback'];
 		}
 
-		// and add it
+		// Add the setting
 		$wp_customize->add_setting( $setting_id, $setting_args );
 
 		// now sanitize the control
-		if ( isset( $setting_config['label'] ) && ! empty( $setting_config['label'] ) ) {
+		if ( ! empty( $setting_config['label'] ) ) {
 			$control_args['label'] = $setting_config['label'];
 		}
 
-		if ( isset( $setting_config['priority'] ) && ! empty( $setting_config['priority'] ) ) {
+		if ( ! empty( $setting_config['priority'] ) ) {
 			$control_args['priority'] = $setting_config['priority'];
 		}
 
-		if ( isset( $setting_config['desc'] ) && ! empty( $setting_config['desc'] ) ) {
+		if ( ! empty( $setting_config['desc'] ) ) {
 			$control_args['description'] = $setting_config['desc'];
 		}
 
-		if ( isset( $setting_config['active_callback'] ) && ! empty( $setting_config['active_callback'] ) ) {
+		if ( ! empty( $setting_config['active_callback'] ) ) {
 			$control_args['active_callback'] = $setting_config['active_callback'];
 		}
 
@@ -1418,7 +1375,7 @@ class PixCustomifyPlugin {
 		// but first init a default
 		$control_class_name = 'Pix_Customize_Text_Control';
 
-		// if is a standard wp field type call it here and skip the rest
+		// If is a standard wp field type call it here and skip the rest.
 		if ( in_array( $setting_config['type'], array(
 			'checkbox',
 			'dropdown-pages',
@@ -1435,20 +1392,20 @@ class PixCustomifyPlugin {
 		} elseif ( in_array( $setting_config['type'], array(
 				'radio',
 				'select'
-			) ) && isset( $setting_config['choices'] ) && ! empty( $setting_config['choices'] )
+			) ) && ! empty( $setting_config['choices'] )
 		) {
 			$control_args['choices'] = $setting_config['choices'];
 			$wp_customize->add_control( $setting_id . '_control', $control_args );
 
 			return;
-		} elseif ( in_array( $setting_config['type'], array( 'range' ) ) && isset( $setting_config['input_attrs'] ) && ! empty( $setting_config['input_attrs'] ) ) {
+		} elseif ( in_array( $setting_config['type'], array( 'range' ) ) && ! empty( $setting_config['input_attrs'] ) ) {
 
 			$control_args['input_attrs'] = $setting_config['input_attrs'];
 
 			$wp_customize->add_control( $setting_id . '_control', $control_args );
 		}
 
-		// if we arrive here this means we have a custom field control
+		// If we arrive here this means we have a custom field control.
 		switch ( $setting_config['type'] ) {
 
 			case 'text':
@@ -1564,7 +1521,6 @@ class PixCustomifyPlugin {
 
 				break;
 
-			// Custom types
 			case 'font' :
 				$use_typography = $this->get_plugin_setting( 'typography', '1' );
 
@@ -1731,6 +1687,54 @@ class PixCustomifyPlugin {
 				$wp_customize->remove_section( $section );
 			}
 		}
+	}
+
+	/**
+	 * Print JavaScript for adding additional data to _wpCustomizeSettings.settings object of the main window (not the preview window).
+	 */
+	public function customize_pane_settings_additional_data() {
+		/**
+		 * @global WP_Customize_Manager $wp_customize
+		 */
+		global $wp_customize;
+
+		// Without an options name we can't do much.
+		if ( empty( $this->customizer_config['opt-name'] ) ) {
+			return;
+		}
+
+		$options_name = $this->customizer_config['opt-name'];
+		$customizer_settings = $wp_customize->settings();
+		?>
+		<script type="text/javascript">
+            if ( 'undefined' === typeof _wpCustomizeSettings.settings ) {
+                _wpCustomizeSettings.settings = {};
+            }
+
+			<?php
+			echo "(function ( s ){\n";
+			foreach ( $this->get_options() as $option_id => $option_config ) {
+				$setting_id = $options_name . '[' . $option_id . ']';
+				// @todo Right now we only handle the connected_fields key - make this more dynamic by adding the keys that are not returned by WP_Customize_Setting->json()
+				if ( ! empty( $customizer_settings[ $setting_id ] ) && ! empty( $option_config['connected_fields'] ) ) {
+					// Pass through all the connected fields and make sure the id is in the final format
+					$connected_fields = array();
+					foreach ( $option_config['connected_fields'] as $connected_field_id ) {
+						$connected_fields[] = $options_name . '[' . $connected_field_id . ']';
+					}
+
+					printf(
+						"s[%s].%s = %s;\n",
+						wp_json_encode( $setting_id ),
+						'connected_fields',
+						wp_json_encode( $connected_fields )
+					);
+				}
+			}
+			echo "})( _wpCustomizeSettings.settings );\n";
+			?>
+		</script>
+		<?php
 	}
 
 	public function get_base_path() {

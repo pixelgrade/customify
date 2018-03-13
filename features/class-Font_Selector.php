@@ -39,7 +39,7 @@ class Customify_Font_Selector {
 			(function ($) {
 				$(window).load(function () {
 					/**
-					 * @param iframe_id the id of the frame you whant to append the style
+					 * @param iframe_id the id of the frame you want to append the style
 					 * @param style_element the style element you want to append
 					 */
 					var append_script_to_iframe = function (ifrm_id, scriptEl) {
