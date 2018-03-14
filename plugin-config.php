@@ -11,6 +11,10 @@ $debug = true;
 
 $customify_config = require $basepath . 'customify_config.php';
 
+// Load our mock customizer section
+// @todo Remove this at some point.
+require_once $basepath . 'mock_style_manager_config.php';
+
 return array(
 	'plugin-name'           => 'pixcustomify',
 	'settings-key'          => 'pixcustomify_settings',
