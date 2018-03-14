@@ -1108,7 +1108,7 @@ class PixCustomifyPlugin {
 		if ( ! empty ( $customizer_settings ) ) {
 
 			// first check the very needed options name
-			if ( ! isset ( $customizer_settings['opt-name'] ) || empty( $customizer_settings['opt-name'] ) ) {
+			if ( empty( $customizer_settings['opt-name'] ) ) {
 				return;
 			}
 			$options_name              = $customizer_settings['opt-name'];
@@ -1117,13 +1117,13 @@ class PixCustomifyPlugin {
 			// let's check if we have sections or panels
 			if ( isset( $customizer_settings['panels'] ) && ! empty( $customizer_settings['panels'] ) ) {
 
-				foreach ( $customizer_settings['panels'] as $panel_id => $panel_settings ) {
+				foreach ( $customizer_settings['panels'] as $panel_id => $panel_config ) {
 
-					if ( ! empty( $panel_id ) && isset( $panel_settings['sections'] ) && ! empty( $panel_settings['sections'] ) ) {
+					if ( ! empty( $panel_id ) && isset( $panel_config['sections'] ) && ! empty( $panel_config['sections'] ) ) {
 
 						// If we have been explicitly given a panel ID we will use that
-						if ( ! empty( $panel_settings['panel_id'] ) ) {
-							$panel_id = $panel_settings['panel_id'];
+						if ( ! empty( $panel_config['panel_id'] ) ) {
+							$panel_id = $panel_config['panel_id'];
 						} else {
 							$panel_id   = $options_name . '[' . $panel_id . ']';
 						}
@@ -1135,23 +1135,23 @@ class PixCustomifyPlugin {
 							'description' => __( 'Description of what this panel does.', 'pixcustomify' ),
 						);
 
-						if ( isset( $panel_settings['priority'] ) && ! empty( $panel_settings['priority'] ) ) {
-							$panel_args['priority'] = $panel_settings['priority'];
+						if ( isset( $panel_config['priority'] ) && ! empty( $panel_config['priority'] ) ) {
+							$panel_args['priority'] = $panel_config['priority'];
 						}
 
-						if ( isset( $panel_settings['title'] ) && ! empty( $panel_settings['title'] ) ) {
-							$panel_args['title'] = $panel_settings['title'];
+						if ( isset( $panel_config['title'] ) && ! empty( $panel_config['title'] ) ) {
+							$panel_args['title'] = $panel_config['title'];
 						}
 
-						if ( isset( $panel_settings['description'] ) && ! empty( $panel_settings['description'] ) ) {
-							$panel_args[10] = $panel_settings['description'];
+						if ( isset( $panel_config['description'] ) && ! empty( $panel_config['description'] ) ) {
+							$panel_args['description'] = $panel_config['description'];
 						}
 
 						$wp_customize->add_panel( $panel_id, $panel_args );
 
-						foreach ( $panel_settings['sections'] as $section_id => $section_settings ) {
-							if ( ! empty( $section_id ) && isset( $section_settings['options'] ) && ! empty( $section_settings['options'] ) ) {
-								$this->register_section( $panel_id, $section_id, $options_name, $section_settings, $wp_customize );
+						foreach ( $panel_config['sections'] as $section_id => $section_config ) {
+							if ( ! empty( $section_id ) && isset( $section_config['options'] ) && ! empty( $section_config['options'] ) ) {
+								$this->register_section( $panel_id, $section_id, $options_name, $section_config, $wp_customize );
 							}
 						}
 					}
@@ -1160,9 +1160,9 @@ class PixCustomifyPlugin {
 
 			if ( isset( $customizer_settings['sections'] ) && ! empty( $customizer_settings['sections'] ) ) {
 
-				foreach ( $customizer_settings['sections'] as $section_id => $section_settings ) {
-					if ( ! empty( $section_id ) && isset( $section_settings['options'] ) && ! empty( $section_settings['options'] ) ) {
-						$this->register_section( $panel_id = false, $section_id, $options_name, $section_settings, $wp_customize );
+				foreach ( $customizer_settings['sections'] as $section_id => $section_config ) {
+					if ( ! empty( $section_id ) && isset( $section_config['options'] ) && ! empty( $section_config['options'] ) ) {
+						$this->register_section( $panel_id = false, $section_id, $options_name, $section_config, $wp_customize );
 					}
 				}
 			}
@@ -1232,17 +1232,17 @@ class PixCustomifyPlugin {
 	 * @param string $panel_id
 	 * @param string $section_key
 	 * @param string $options_name
-	 * @param array $section_settings
+	 * @param array $section_config
 	 * @param WP_Customize_Manager $wp_customize
 	 */
-	protected function register_section( $panel_id, $section_key, $options_name, $section_settings, $wp_customize ) {
+	protected function register_section( $panel_id, $section_key, $options_name, $section_config, $wp_customize ) {
 
 		if ( isset( $this->plugin_settings['disable_customify_sections'] ) && isset( $this->plugin_settings['disable_customify_sections'][ $section_key ] ) ) {
 			return;
 		}
 
 		// Merge the section settings with the defaults
-		$section_args = wp_parse_args( $section_settings, array(
+		$section_args = wp_parse_args( $section_config, array(
 			'priority'   => 10,
 			'panel'      => $panel_id,
 			'capability' => 'edit_theme_options',
@@ -1254,8 +1254,8 @@ class PixCustomifyPlugin {
 		) );
 
 		// If we have been explicitly given a section ID we will use that
-		if ( ! empty( $section_settings['section_id'] ) ) {
-			$section_id = $section_settings['section_id'];
+		if ( ! empty( $section_config['section_id'] ) ) {
+			$section_id = $section_config['section_id'];
 		} else {
 			$section_id = $options_name . '[' . $section_key . ']';
 		}
@@ -1264,7 +1264,7 @@ class PixCustomifyPlugin {
 		$wp_customize->add_section( $section_id, $section_args );
 
 		// Now go through each section option and add the fields
-		foreach ( $section_settings['options'] as $option_id => $option_config ) {
+		foreach ( $section_config['options'] as $option_id => $option_config ) {
 
 			if ( empty( $option_id ) || ! isset( $option_config['type'] ) ) {
 				continue;
@@ -1290,10 +1290,10 @@ class PixCustomifyPlugin {
 	 *
 	 * @param string $section_id
 	 * @param string $setting_id
-	 * @param array $setting_config
+	 * @param array $field_config
 	 * @param WP_Customize_Manager $wp_customize
 	 */
-	protected function register_field( $section_id, $setting_id, $setting_config, $wp_customize ) {
+	protected function register_field( $section_id, $setting_id, $field_config, $wp_customize ) {
 
 		$add_control = true;
 		// defaults
@@ -1303,29 +1303,30 @@ class PixCustomifyPlugin {
 			'transport'  => 'refresh',
 		);
 		$control_args = array(
+			'priority' => 10,
 			'label'    => '',
 			'section'  => $section_id,
 			'settings' => $setting_id,
 		);
 
-		$this->localized['settings'][ $setting_id ] = $setting_config;
+		$this->localized['settings'][ $setting_id ] = $field_config;
 
 		// sanitize settings
-		if ( ( isset( $setting_config['live'] ) && $setting_config['live'] ) || $setting_config['type'] === 'font' ) {
+		if ( ! empty( $field_config['live'] ) || $field_config['type'] === 'font' ) {
 			$setting_args['transport'] = 'postMessage';
 		}
 
-		if ( isset( $setting_config['default'] ) ) {
-			$setting_args['default'] = $setting_config['default'];
+		if ( isset( $field_config['default'] ) ) {
+			$setting_args['default'] = $field_config['default'];
 		}
 
-		if ( ! empty( $setting_config['capability'] ) ) {
-			$setting_args['capability'] = $setting_config['capability'];
+		if ( ! empty( $field_config['capability'] ) ) {
+			$setting_args['capability'] = $field_config['capability'];
 		}
 
 		// If the setting defines it's own type we will respect that, otherwise we will follow the global plugin setting.
-		if ( ! empty( $setting_config['setting_type'] ) ) {
-			if ( 'option' === $setting_config['setting_type'] ) {
+		if ( ! empty( $field_config['setting_type'] ) ) {
+			if ( 'option' === $field_config['setting_type'] ) {
 				$setting_args['type'] = 'option';
 			}
 		} elseif ( $this->plugin_settings['values_store_mod'] === 'option' ) {
@@ -1333,7 +1334,7 @@ class PixCustomifyPlugin {
 		}
 
 		// if we arrive here this means we have a custom field control
-		switch ( $setting_config['type'] ) {
+		switch ( $field_config['type'] ) {
 
 			case 'checkbox':
 
@@ -1344,39 +1345,39 @@ class PixCustomifyPlugin {
 				break;
 		}
 
-		if ( ! empty( $setting_config['sanitize_callback'] ) && function_exists( $setting_config['sanitize_callback'] ) ) {
-			$setting_args['sanitize_callback'] = $setting_config['sanitize_callback'];
+		if ( ! empty( $field_config['sanitize_callback'] ) && is_callable( $field_config['sanitize_callback'] ) ) {
+			$setting_args['sanitize_callback'] = $field_config['sanitize_callback'];
 		}
 
 		// Add the setting
 		$wp_customize->add_setting( $setting_id, $setting_args );
 
 		// now sanitize the control
-		if ( ! empty( $setting_config['label'] ) ) {
-			$control_args['label'] = $setting_config['label'];
+		if ( ! empty( $field_config['label'] ) ) {
+			$control_args['label'] = $field_config['label'];
 		}
 
-		if ( ! empty( $setting_config['priority'] ) ) {
-			$control_args['priority'] = $setting_config['priority'];
+		if ( ! empty( $field_config['priority'] ) ) {
+			$control_args['priority'] = $field_config['priority'];
 		}
 
-		if ( ! empty( $setting_config['desc'] ) ) {
-			$control_args['description'] = $setting_config['desc'];
+		if ( ! empty( $field_config['desc'] ) ) {
+			$control_args['description'] = $field_config['desc'];
 		}
 
-		if ( ! empty( $setting_config['active_callback'] ) ) {
-			$control_args['active_callback'] = $setting_config['active_callback'];
+		if ( ! empty( $field_config['active_callback'] ) ) {
+			$control_args['active_callback'] = $field_config['active_callback'];
 		}
 
 
-		$control_args['type'] = $setting_config['type'];
+		$control_args['type'] = $field_config['type'];
 
 		// select the control type
 		// but first init a default
 		$control_class_name = 'Pix_Customize_Text_Control';
 
 		// If is a standard wp field type call it here and skip the rest.
-		if ( in_array( $setting_config['type'], array(
+		if ( in_array( $field_config['type'], array(
 			'checkbox',
 			'dropdown-pages',
 			'url',
@@ -1389,36 +1390,36 @@ class PixCustomifyPlugin {
 			$wp_customize->add_control( $setting_id . '_control', $control_args );
 
 			return;
-		} elseif ( in_array( $setting_config['type'], array(
+		} elseif ( in_array( $field_config['type'], array(
 				'radio',
 				'select'
-			) ) && ! empty( $setting_config['choices'] )
+			) ) && ! empty( $field_config['choices'] )
 		) {
-			$control_args['choices'] = $setting_config['choices'];
+			$control_args['choices'] = $field_config['choices'];
 			$wp_customize->add_control( $setting_id . '_control', $control_args );
 
 			return;
-		} elseif ( in_array( $setting_config['type'], array( 'range' ) ) && ! empty( $setting_config['input_attrs'] ) ) {
+		} elseif ( in_array( $field_config['type'], array( 'range' ) ) && ! empty( $field_config['input_attrs'] ) ) {
 
-			$control_args['input_attrs'] = $setting_config['input_attrs'];
+			$control_args['input_attrs'] = $field_config['input_attrs'];
 
 			$wp_customize->add_control( $setting_id . '_control', $control_args );
 		}
 
 		// If we arrive here this means we have a custom field control.
-		switch ( $setting_config['type'] ) {
+		switch ( $field_config['type'] ) {
 
 			case 'text':
-				if ( isset( $setting_config['live'] ) ) {
-					$control_args['live'] = $setting_config['live'];
+				if ( isset( $field_config['live'] ) ) {
+					$control_args['live'] = $field_config['live'];
 				}
 
 				$control_class_name = 'Pix_Customize_Text_Control';
 				break;
 
 			case 'textarea':
-				if ( isset( $setting_config['live'] ) ) {
-					$control_args['live'] = $setting_config['live'];
+				if ( isset( $field_config['live'] ) ) {
+					$control_args['live'] = $field_config['live'];
 				}
 
 				$control_class_name = 'Pix_Customize_Textarea_Control';
@@ -1433,12 +1434,12 @@ class PixCustomifyPlugin {
 				break;
 
 			case 'ace_editor':
-				if ( isset( $setting_config['live'] ) ) {
-					$control_args['live'] = $setting_config['live'];
+				if ( isset( $field_config['live'] ) ) {
+					$control_args['live'] = $field_config['live'];
 				}
 
-				if ( isset( $setting_config['editor_type'] ) ) {
-					$control_args['editor_type'] = $setting_config['editor_type'];
+				if ( isset( $field_config['editor_type'] ) ) {
+					$control_args['editor_type'] = $field_config['editor_type'];
 				}
 
 				$control_class_name = 'Pix_Customize_Ace_Editor_Control';
@@ -1457,28 +1458,28 @@ class PixCustomifyPlugin {
 				break;
 
 			case 'custom_background':
-				if ( isset( $setting_config['field'] ) ) {
-					$control_args['field'] = $setting_config['field'];
+				if ( isset( $field_config['field'] ) ) {
+					$control_args['field'] = $field_config['field'];
 				}
 
 				$control_class_name = 'Pix_Customize_Background_Control';
 				break;
 
 			case 'cropped_media':
-				if ( isset( $setting_config['width'] ) ) {
-					$control_args['width'] = $setting_config['width'];
+				if ( isset( $field_config['width'] ) ) {
+					$control_args['width'] = $field_config['width'];
 				}
 
-				if ( isset( $setting_config['height'] ) ) {
-					$control_args['height'] = $setting_config['height'];
+				if ( isset( $field_config['height'] ) ) {
+					$control_args['height'] = $field_config['height'];
 				}
 
-				if ( isset( $setting_config['flex_width'] ) ) {
-					$control_args['flex_width'] = $setting_config['flex_width'];
+				if ( isset( $field_config['flex_width'] ) ) {
+					$control_args['flex_width'] = $field_config['flex_width'];
 				}
 
-				if ( isset( $setting_config['flex_height'] ) ) {
-					$control_args['flex_height'] = $setting_config['flex_height'];
+				if ( isset( $field_config['flex_height'] ) ) {
+					$control_args['flex_height'] = $field_config['flex_height'];
 				}
 
 				$control_class_name = 'WP_Customize_Cropped_Image_Control';
@@ -1495,28 +1496,28 @@ class PixCustomifyPlugin {
 
 				$control_class_name = 'Pix_Customize_Typography_Control';
 
-				if ( isset( $setting_config['backup'] ) ) {
-					$control_args['backup'] = $setting_config['backup'];
+				if ( isset( $field_config['backup'] ) ) {
+					$control_args['backup'] = $field_config['backup'];
 				}
 
-				if ( isset( $setting_config['font_weight'] ) ) {
-					$control_args['font_weight'] = $setting_config['font_weight'];
+				if ( isset( $field_config['font_weight'] ) ) {
+					$control_args['font_weight'] = $field_config['font_weight'];
 				}
 
-				if ( isset( $setting_config['subsets'] ) ) {
-					$control_args['subsets'] = $setting_config['subsets'];
+				if ( isset( $field_config['subsets'] ) ) {
+					$control_args['subsets'] = $field_config['subsets'];
 				}
 
-				if ( isset( $setting_config['recommended'] ) ) {
-					$control_args['recommended'] = array_flip( $setting_config['recommended'] );
+				if ( isset( $field_config['recommended'] ) ) {
+					$control_args['recommended'] = array_flip( $field_config['recommended'] );
 				}
 
-				if ( isset( $setting_config['load_all_weights'] ) ) {
-					$control_args['load_all_weights'] = $setting_config['load_all_weights'];
+				if ( isset( $field_config['load_all_weights'] ) ) {
+					$control_args['load_all_weights'] = $field_config['load_all_weights'];
 				}
 
-				if ( isset( $setting_config['default'] ) ) {
-					$control_args['default'] = $setting_config['default'];
+				if ( isset( $field_config['default'] ) ) {
+					$control_args['default'] = $field_config['default'];
 				}
 
 				break;
@@ -1531,60 +1532,60 @@ class PixCustomifyPlugin {
 
 				$control_class_name = 'Pix_Customize_Font_Control';
 
-				if ( isset( $setting_config['backup'] ) ) {
-					$control_args['backup'] = $setting_config['backup'];
+				if ( isset( $field_config['backup'] ) ) {
+					$control_args['backup'] = $field_config['backup'];
 				}
 
-				if ( isset( $setting_config['font_weight'] ) ) {
-					$control_args['font_weight'] = $setting_config['font_weight'];
+				if ( isset( $field_config['font_weight'] ) ) {
+					$control_args['font_weight'] = $field_config['font_weight'];
 				}
 
-				if ( isset( $setting_config['subsets'] ) ) {
-					$control_args['subsets'] = $setting_config['subsets'];
+				if ( isset( $field_config['subsets'] ) ) {
+					$control_args['subsets'] = $field_config['subsets'];
 				}
 
-				if ( isset( $setting_config['recommended'] ) ) {
-					$control_args['recommended'] = array_flip( $setting_config['recommended'] );
+				if ( isset( $field_config['recommended'] ) ) {
+					$control_args['recommended'] = array_flip( $field_config['recommended'] );
 				}
 
-				if ( isset( $setting_config['load_all_weights'] ) ) {
-					$control_args['load_all_weights'] = $setting_config['load_all_weights'];
+				if ( isset( $field_config['load_all_weights'] ) ) {
+					$control_args['load_all_weights'] = $field_config['load_all_weights'];
 				}
 
-				if ( isset( $setting_config['default'] ) ) {
-					$control_args['default'] = $setting_config['default'];
+				if ( isset( $field_config['default'] ) ) {
+					$control_args['default'] = $field_config['default'];
 				}
 
-				if ( isset( $setting_config['fields'] ) ) {
-					$control_args['fields'] = $setting_config['fields'];
+				if ( isset( $field_config['fields'] ) ) {
+					$control_args['fields'] = $field_config['fields'];
 				}
 				$control_args['live'] = true;
 
 				break;
 
 			case 'select2' :
-				if ( ! isset( $setting_config['choices'] ) || empty( $setting_config['choices'] ) ) {
+				if ( ! isset( $field_config['choices'] ) || empty( $field_config['choices'] ) ) {
 					return;
 				}
 
-				$control_args['choices'] = $setting_config['choices'];
+				$control_args['choices'] = $field_config['choices'];
 
 				$control_class_name = 'Pix_Customize_Select2_Control';
 				break;
 
 			case 'preset' :
-				if ( ! isset( $setting_config['choices'] ) || empty( $setting_config['choices'] ) ) {
+				if ( ! isset( $field_config['choices'] ) || empty( $field_config['choices'] ) ) {
 					return;
 				}
 
-				$control_args['choices'] = $setting_config['choices'];
+				$control_args['choices'] = $field_config['choices'];
 
-				if ( isset( $setting_config['choices_type'] ) || ! empty( $setting_config['choices_type'] ) ) {
-					$control_args['choices_type'] = $setting_config['choices_type'];
+				if ( isset( $field_config['choices_type'] ) || ! empty( $field_config['choices_type'] ) ) {
+					$control_args['choices_type'] = $field_config['choices_type'];
 				}
 
-				if ( isset( $setting_config['desc'] ) || ! empty( $setting_config['desc'] ) ) {
-					$control_args['description'] = $setting_config['desc'];
+				if ( isset( $field_config['desc'] ) || ! empty( $field_config['desc'] ) ) {
+					$control_args['description'] = $field_config['desc'];
 				}
 
 
@@ -1592,18 +1593,18 @@ class PixCustomifyPlugin {
 				break;
 
 			case 'radio_image' :
-				if ( ! isset( $setting_config['choices'] ) || empty( $setting_config['choices'] ) ) {
+				if ( ! isset( $field_config['choices'] ) || empty( $field_config['choices'] ) ) {
 					return;
 				}
 
-				$control_args['choices'] = $setting_config['choices'];
+				$control_args['choices'] = $field_config['choices'];
 
-				if ( isset( $setting_config['choices_type'] ) || ! empty( $setting_config['choices_type'] ) ) {
-					$control_args['choices_type'] = $setting_config['choices_type'];
+				if ( isset( $field_config['choices_type'] ) || ! empty( $field_config['choices_type'] ) ) {
+					$control_args['choices_type'] = $field_config['choices_type'];
 				}
 
-				if ( isset( $setting_config['desc'] ) || ! empty( $setting_config['desc'] ) ) {
-					$control_args['description'] = $setting_config['desc'];
+				if ( isset( $field_config['desc'] ) || ! empty( $field_config['desc'] ) ) {
+					$control_args['description'] = $field_config['desc'];
 				}
 
 
@@ -1611,37 +1612,37 @@ class PixCustomifyPlugin {
 				break;
 
 			case 'button' :
-				if ( ! isset( $setting_config['action'] ) || empty( $setting_config['action'] ) ) {
+				if ( ! isset( $field_config['action'] ) || empty( $field_config['action'] ) ) {
 					return;
 				}
 
-				$control_args['action'] = $setting_config['action'];
+				$control_args['action'] = $field_config['action'];
 
 				$control_class_name = 'Pix_Customize_Button_Control';
 
 				break;
 
 			case 'html' :
-				if ( isset( $setting_config['html'] ) || ! empty( $setting_config['html'] ) ) {
-					$control_args['html'] = $setting_config['html'];
+				if ( isset( $field_config['html'] ) || ! empty( $field_config['html'] ) ) {
+					$control_args['html'] = $field_config['html'];
 				}
 
 				$control_class_name = 'Pix_Customize_HTML_Control';
 				break;
 
 			case 'import_demo_data' :
-				if ( isset( $setting_config['html'] ) || ! empty( $setting_config['html'] ) ) {
-					$control_args['html'] = $setting_config['html'];
+				if ( isset( $field_config['html'] ) || ! empty( $field_config['html'] ) ) {
+					$control_args['html'] = $field_config['html'];
 				}
 
-				if ( ! isset( $setting_config['label'] ) || empty( $setting_config['label'] ) ) {
+				if ( ! isset( $field_config['label'] ) || empty( $field_config['label'] ) ) {
 					$control_args['label'] = esc_html__( 'Import', 'customify' );
 				} else {
-					$control_args['label'] = $setting_config['label'];
+					$control_args['label'] = $field_config['label'];
 				}
 
-				if ( isset( $setting_config['notices'] ) && ! empty( $setting_config['notices'] ) ) {
-					$control_args['notices'] = $setting_config['notices'];
+				if ( isset( $field_config['notices'] ) && ! empty( $field_config['notices'] ) ) {
+					$control_args['notices'] = $field_config['notices'];
 				}
 
 				$control_class_name = 'Pix_Customize_Import_Demo_Data_Control';
@@ -1925,6 +1926,50 @@ class PixCustomifyPlugin {
 
 		if ( isset( $this->options_list[ $option ] ) ) {
 			return true;
+		}
+
+		return false;
+	}
+
+	public function get_customizer_config() {
+		return $this->customizer_config;
+	}
+
+	/**
+	 * Get the Customify configuration of a certain option.
+	 *
+	 * @param string $option_id
+	 *
+	 * @return array|false The option config or false on failure.
+	 */
+	public function get_option_customizer_config( $option_id ) {
+		// We need to search for the option configured under the given id (the array key)
+		if ( isset ( $this->customizer_config['panels'] ) ) {
+			foreach ( $this->customizer_config['panels'] as $panel_id => $panel_settings ) {
+				if ( isset( $panel_settings['sections'] ) ) {
+					foreach ( $panel_settings['sections'] as $section_id => $section_settings ) {
+						if ( isset( $section_settings['options'] ) ) {
+							foreach ( $section_settings['options'] as $id => $option_config ) {
+								if ( $id === $option_id ) {
+									return $option_config;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		if ( isset ( $this->customizer_config['sections'] ) ) {
+			foreach ( $this->customizer_config['sections'] as $section_id => $section_settings ) {
+				if ( isset( $section_settings['options'] ) ) {
+					foreach ( $section_settings['options'] as $id => $option_config ) {
+						if ( $id === $option_id ) {
+							return $option_config;
+						}
+					}
+				}
+			}
 		}
 
 		return false;
