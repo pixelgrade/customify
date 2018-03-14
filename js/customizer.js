@@ -82,16 +82,11 @@
 				}
 
 				$.each(api.settings.controls, function ( key, ctrl ) {
-					var id = key.replace('_control', '');
-					var setting = customify_settings.settings[id];
+					var setting_id = key.replace('_control', '');
+					var setting = customify_settings.settings[setting_id];
 
 					if ( !_.isUndefined(setting) && !_.isUndefined(setting.default) ) {
-
-						var start_pos = id.indexOf('[') + 1;
-						var end_pos = id.indexOf(']', start_pos);
-
-						id = id.substring(start_pos, end_pos);
-						api_set_setting_value(id, setting.default);
+						api_set_setting_value(setting_id, setting.default);
 					}
 				});
 
@@ -128,16 +123,11 @@
 
 						if ( controls.length > 0 ) {
 							$.each(controls, function ( key, ctrl ) {
-								var id = ctrl.id.replace('_control', ''),
-									setting = customify_settings.settings[id];
+								var setting_id = ctrl.id.replace('_control', ''),
+									setting = customify_settings.settings[setting_id];
 
 								if ( !_.isUndefined(setting) && !_.isUndefined(setting.default) ) {
-
-									var start_pos = id.indexOf('[') + 1,
-										end_pos = id.indexOf(']', start_pos);
-
-									id = id.substring(start_pos, end_pos);
-									api_set_setting_value(id, setting.default);
+									api_set_setting_value(setting_id, setting.default);
 								}
 							});
 						}
@@ -175,16 +165,11 @@
 
 				if ( controls.length > 0 ) {
 					$.each(controls, function ( key, ctrl ) {
-						var id = ctrl.id.replace('_control', ''),
-							setting = customify_settings.settings[id];
+						var setting_id = ctrl.id.replace('_control', ''),
+							setting = customify_settings.settings[setting_id];
 
 						if ( !_.isUndefined(setting) && !_.isUndefined(setting.default) ) {
-
-							var start_pos = id.indexOf('[') + 1,
-								end_pos = id.indexOf(']', start_pos);
-
-							id = id.substring(start_pos, end_pos);
-							api_set_setting_value(id, setting.default);
+							api_set_setting_value(setting_id, setting.default);
 						}
 					});
 				}
@@ -228,31 +213,28 @@
 			$input.trigger('change');
 		});
 
-		// presets
+		// presets with select
 		$(document).on('change', '.customify_preset.select', function () {
 			var this_option = $(this).children('[value="' + $(this).val() + '"]'),
 				data = $(this_option).data('options');
 
 			if ( !_.isUndefined(data) ) {
-				$.each(data, function ( id, value ) {
-					api_set_setting_value(id, value);
+				$.each(data, function ( setting_id, value ) {
+					api_set_setting_value(setting_id, value);
 				});
 			}
-
-			api.previewer.refresh();
 		});
 
+		// presets with radio and other
 		$(document).on('click', '.customify_preset.radio input, .customify_preset.radio_buttons input, .awesome_presets input', function () {
 			var this_option = this,//$(this).children('[value="' + $(this).val() + '"]');
 				data = $(this_option).data('options');
 
 			if ( !_.isUndefined(data) ) {
-				$.each(data, function ( id, value ) {
-					api_set_setting_value(id, value);
+				$.each(data, function ( setting_id, value ) {
+					api_set_setting_value(setting_id, value);
 				});
 			}
-
-			api.previewer.refresh();
 		});
 
 		// bind our event on click
@@ -600,32 +582,30 @@
 		});
 	};
 
-	var api_set_setting_value = function ( id, value ) {
-
-		var setting_id = customify_settings.options_name + '[' + id + ']',
-			setting = api(setting_id),
+	var api_set_setting_value = function ( setting_id, value ) {
+		let setting = api(setting_id),
 			field = $('[data-customize-setting-link="' + setting_id + '"]'),
 			field_class = $(field).parent().attr('class');
 
 		// Legacy field type
 		if ( !_.isUndefined(field_class) && field_class === 'customify_typography' ) {
 
-			var family_select = field.siblings('select');
+			let family_select = field.siblings('select');
 
 			if ( _.isString(value) ) {
-				var this_option = family_select.find('option[value="' + value + '"]');
+				let this_option = family_select.find('option[value="' + value + '"]');
 				$(this_option[0]).attr('selected', 'selected');
 				update_siblings_selects(family_select);
 			} else if ( _.isObject(value) ) {
-				var this_family_option = family_select.find('option[value="' + value['font_family'] + '"]');
+				let this_family_option = family_select.find('option[value="' + value['font_family'] + '"]');
+
 				$(this_family_option[0]).attr('selected', 'selected');
 
 				update_siblings_selects(this_family_option);
 
 				setTimeout(function () {
-					var weight_select = field.parent().siblings('.options').find('.customify_typography_font_weight');
-
-					var this_weight_option = weight_select.find('option[value="' + value['selected_variants'] + '"]');
+					let weight_select = field.parent().siblings('.options').find('.customify_typography_font_weight'),
+                        this_weight_option = weight_select.find('option[value="' + value['selected_variants'] + '"]');
 
 					$(this_weight_option[0]).attr('selected', 'selected');
 
@@ -641,20 +621,19 @@
 
 			// if the value is a simple string it must be the font family
 			if ( _.isString( value ) ) {
-
-				var option = field.parent().find('option[value="' + value + '"]');
+				let option = field.parent().find('option[value="' + value + '"]');
 
 				option.attr('selected', 'selected');
 				// option.parents('select').trigger('change');
 			} else if (  _.isObject(value) ) {
 				// Find the options list wrapper
-                var optionsList = field.parent().children('.font-options__options-list');
+                let optionsList = field.parent().children('.font-options__options-list');
 
                 if ( optionsList.length ) {
                     // We will process each font property and update it
                     _.each(value, function (val, key) {
                         // We need to map the keys to the data attributes we are using - I know :(
-                        var mappedKey = key;
+                        let mappedKey = key;
                         switch (key) {
                             case 'font-family':
                                 mappedKey = 'font_family';
@@ -674,7 +653,7 @@
                             default:
                                 break;
                         }
-                        var subField = optionsList.find('[data-field="' + mappedKey + '"]');
+                        let subField = optionsList.find('[data-field="' + mappedKey + '"]');
                         if ( subField.length ) {
                             subField.val(val);
                             subField.trigger('change');
