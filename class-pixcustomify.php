@@ -1713,9 +1713,14 @@ class PixCustomifyPlugin {
             }
 
 			<?php
-			echo "(function ( s ){\n";
+			echo "(function ( sAdditional ){\n";
 			foreach ( $this->get_options() as $option_id => $option_config ) {
-				$setting_id = $options_name . '[' . $option_id . ']';
+				// If we have been explicitly given a setting ID we will use that
+				if ( ! empty( $option_config['setting_id'] ) ) {
+					$setting_id = $option_config['setting_id'];
+				} else {
+					$setting_id = $options_name . '[' . $option_id . ']';
+				}
 				// @todo Right now we only handle the connected_fields key - make this more dynamic by adding the keys that are not returned by WP_Customize_Setting->json()
 				if ( ! empty( $customizer_settings[ $setting_id ] ) && ! empty( $option_config['connected_fields'] ) ) {
 					// Pass through all the connected fields and make sure the id is in the final format
@@ -1725,7 +1730,7 @@ class PixCustomifyPlugin {
 					}
 
 					printf(
-						"s[%s].%s = %s;\n",
+						"sAdditional[%s].%s = %s;\n",
 						wp_json_encode( $setting_id ),
 						'connected_fields',
 						wp_json_encode( $connected_fields )
