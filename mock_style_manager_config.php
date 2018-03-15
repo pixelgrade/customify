@@ -32,6 +32,16 @@ if ( ! function_exists('mock_style_manager_section') ) {
 					'default'      => 'royal',
 					'choices_type' => 'radio',
 					'choices'      => array(
+						'hive'  => array(
+							'label'   => __( 'Hive', 'customify' ),
+							'options' => array(
+								'primary_color'              => '#3d3e40',
+								'secondary_color'            => '#afafaf',
+								'tertiary_color'             => '#ffeb00',
+								'background_primary_color'   => '#FFFFFF',
+								'background_secondary_color' => '#e7f2f8',
+							),
+						),
 						'julia'  => array(
 							'label'   => __( 'Julia', 'customify' ),
 							'options' => array(
@@ -40,6 +50,16 @@ if ( ! function_exists('mock_style_manager_section') ) {
 								'tertiary_color'             => '#383c50',
 								'background_primary_color'   => '#f7f6f5',
 								'background_secondary_color' => '#e7f2f8',
+							),
+						),
+						'vasco'  => array(
+							'label'   => __( 'Vasco', 'customify' ),
+							'options' => array(
+								'primary_color'              => '#F59828',
+								'secondary_color'            => '#38C3C8',
+								'tertiary_color'             => '#2B3D39',
+								'background_primary_color'   => '#F5F6F1',
+								'background_secondary_color' => '#FFFFFF',
 							),
 						),
 						'royal'  => array(
@@ -138,6 +158,18 @@ if ( ! function_exists('mock_style_manager_section') ) {
 					// We don't want to refresh the preview window, even though we have no direct effect on it through this field.
 					'live'             => true,
 					'label'            => esc_html__( 'Tertiary Color', 'customify' ),
+					'default'          => '#eeee22',
+					'connected_fields' => array(),
+				),
+				'quaternary_color'             => array(
+					'type'             => 'color',
+					// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
+					'setting_type'     => 'option',
+					// We will force this setting id preventing prefixing and other regular processing.
+					'setting_id'       => 'pxg_quaternary_color',
+					// We don't want to refresh the preview window, even though we have no direct effect on it through this field.
+					'live'             => true,
+					'label'            => esc_html__( 'Quaternary Color', 'customify' ),
 					'default'          => '#eeee22',
 					'connected_fields' => array(),
 				),
