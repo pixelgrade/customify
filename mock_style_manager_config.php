@@ -35,11 +35,11 @@ if ( ! function_exists('mock_style_manager_section') ) {
 						'hive'  => array(
 							'label'   => __( 'Hive', 'customify' ),
 							'options' => array(
-								'primary_color'              => '#3d3e40',
+								'primary_color'              => '#171617',
 								'secondary_color'            => '#afafaf',
 								'tertiary_color'             => '#ffeb00',
 								'background_primary_color'   => '#FFFFFF',
-								'background_secondary_color' => '#e7f2f8',
+								'background_secondary_color' => '#FFFFFF',
 							),
 						),
 						'julia'  => array(
