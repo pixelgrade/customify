@@ -32,6 +32,16 @@ if ( ! function_exists('mock_style_manager_section') ) {
 					'default'      => 'royal',
 					'choices_type' => 'radio',
 					'choices'      => array(
+						'julia'  => array(
+							'label'   => __( 'Julia', 'customify' ),
+							'options' => array(
+								'primary_color'              => '#161616',
+								'secondary_color'            => '#383c50',
+								'tertiary_color'             => '#383c50',
+								'background_primary_color'   => '#f7f6f5',
+								'background_secondary_color' => '#e7f2f8',
+							),
+						),
 						'royal'  => array(
 							'label'   => __( 'Royal', 'customify' ),
 							'options' => array(
