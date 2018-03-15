@@ -38,8 +38,8 @@ if ( ! function_exists('mock_style_manager_section') ) {
 								'primary_color'              => '#8eb2c5',
 								'secondary_color'            => '#725c92',
 								'tertiary_color'             => '#6f8089',
-								'primary_background_color'   => '#615375',
-								'secondary_background_color' => '#715375',
+								'background_primary_color'   => '#615375',
+								'background_secondary_color' => '#715375',
 							),
 						),
 						'lovely' => array(
@@ -48,8 +48,8 @@ if ( ! function_exists('mock_style_manager_section') ) {
 								'primary_color'              => '#2E6171',
 								'secondary_color'            => '#556F7A',
 								'tertiary_color'             => '#798086',
-								'primary_background_color'   => '#B79FAD',
-								'secondary_background_color' => '#D4AFCD',
+								'background_primary_color'   => '#B79FAD',
+								'background_secondary_color' => '#D4AFCD',
 							),
 						),
 						'queen'  => array(
@@ -58,8 +58,8 @@ if ( ! function_exists('mock_style_manager_section') ) {
 								'primary_color'              => '#7A918D',
 								'secondary_color'            => '#93B1A7',
 								'tertiary_color'             => '#99C2A2',
-								'primary_background_color'   => '#C5EDAC',
-								'secondary_background_color' => '#DBFEB8',
+								'background_primary_color'   => '#C5EDAC',
+								'background_secondary_color' => '#DBFEB8',
 							),
 						),
 						'carrot' => array(
@@ -68,8 +68,8 @@ if ( ! function_exists('mock_style_manager_section') ) {
 								'primary_color'              => '#FCECC9',
 								'secondary_color'            => '#FCB0B3',
 								'tertiary_color'             => '#F93943',
-								'primary_background_color'   => '#7EB2DD',
-								'secondary_background_color' => '#445E93',
+								'background_primary_color'   => '#7EB2DD',
+								'background_secondary_color' => '#445E93',
 							),
 						),
 						'adler'  => array(
@@ -78,8 +78,8 @@ if ( ! function_exists('mock_style_manager_section') ) {
 								'primary_color'              => '#FE4A49',
 								'secondary_color'            => '#FED766',
 								'tertiary_color'             => '#009FB7',
-								'primary_background_color'   => '#E6E6EA',
-								'secondary_background_color' => '#F4F4F8',
+								'background_primary_color'   => '#E6E6EA',
+								'background_secondary_color' => '#F4F4F8',
 							),
 						),
 						'velvet' => array(
@@ -88,8 +88,8 @@ if ( ! function_exists('mock_style_manager_section') ) {
 								'primary_color'              => '#65DEF1',
 								'secondary_color'            => '#A8DCD1',
 								'tertiary_color'             => '#DCE2C8',
-								'primary_background_color'   => '#F96900',
-								'secondary_background_color' => '#F17F29',
+								'background_primary_color'   => '#F96900',
+								'background_secondary_color' => '#F17F29',
 							),
 						),
 
@@ -131,27 +131,27 @@ if ( ! function_exists('mock_style_manager_section') ) {
 					'default'          => '#eeee22',
 					'connected_fields' => array(),
 				),
-				'primary_background_color'   => array(
+				'background_primary_color'   => array(
 					'type'             => 'color',
 					// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
 					'setting_type'     => 'option',
 					// We will force this setting id preventing prefixing and other regular processing.
-					'setting_id'       => 'pxg_primary_background_color',
+					'setting_id'       => 'pxg_background_primary_color',
 					// We don't want to refresh the preview window, even though we have no direct effect on it through this field.
 					'live'             => true,
-					'label'            => esc_html__( 'Primary Background Color', 'customify' ),
+					'label'            => esc_html__( 'Background Primary Color', 'customify' ),
 					'default'          => '#dd3333',
 					'connected_fields' => array(),
 				),
-				'secondary_background_color' => array(
+				'background_secondary_color' => array(
 					'type'             => 'color',
 					// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
 					'setting_type'     => 'option',
 					// We will force this setting id preventing prefixing and other regular processing.
-					'setting_id'       => 'pxg_secondary_background_color',
+					'setting_id'       => 'pxg_background_secondary_color',
 					// We don't want to refresh the preview window, even though we have no direct effect on it through this field.
 					'live'             => true,
-					'label'            => esc_html__( 'Secondary Background Color', 'customify' ),
+					'label'            => esc_html__( 'Background Secondary Color', 'customify' ),
 					'default'          => '#ffffff',
 					'connected_fields' => array(),
 				),
