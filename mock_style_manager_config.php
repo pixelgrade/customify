@@ -204,7 +204,7 @@ if ( ! function_exists('mock_style_manager_section') ) {
 					'default'          => '#dd3333',
 					'connected_fields' => array(),
 				),
-				'master_background_secondary_colors' => array(
+				'master_background_secondary_color' => array(
 					'type'             => 'color',
 					// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
 					'setting_type'     => 'option',
