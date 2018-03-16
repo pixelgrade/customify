@@ -139,7 +139,7 @@ if ( ! function_exists('mock_style_manager_section') ) {
 								'master_tertiary_color'             => '#81d742',
 								'master_quaternary_color'           => '#81d742',
 								'master_background_primary_color'   => '#81d742',
-								'background_secondary_color' => '#81d742',
+								'master_background_secondary_color' => '#81d742',
 							),
 						),
 					),
