@@ -1727,15 +1727,15 @@ class PixCustomifyPlugin {
 				if ( ! empty( $customizer_settings[ $setting_id ] ) && ! empty( $option_config['connected_fields'] ) ) {
 					// Pass through all the connected fields and make sure the id is in the final format
 					$connected_fields = array();
-					foreach ( $option_config['connected_fields'] as $connected_field_config ) {
+					foreach ( $option_config['connected_fields'] as $key => $connected_field_config ) {
 						$connected_field_data = array();
 
 						if ( is_string( $connected_field_config ) ) {
 							$connected_field_id = $connected_field_config;
 						} elseif ( is_array( $connected_field_config ) ) {
 							// We have a full blown connected field config
-							if ( isset( $connected_field_config['field_id'] ) ) {
-								$connected_field_id = $connected_field_config['field_id'];
+							if ( is_string( $key ) ) {
+								$connected_field_id = $key;
 							} else {
 								continue;
 							}
@@ -1749,6 +1749,7 @@ class PixCustomifyPlugin {
 							continue;
 						}
 
+						// We will need to determine if the connected field specifies a setting ID or we need to determine it.
 						if ( ! empty( $options[ $connected_field_id ] ) && ! empty( $options[ $connected_field_id ]['setting_id'] ) ) {
 							$connected_field_data['setting_id'] = $options[ $connected_field_id ]['setting_id'];
 						} else {

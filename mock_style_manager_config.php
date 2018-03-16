@@ -35,162 +35,181 @@ if ( ! function_exists('mock_style_manager_section') ) {
 						'hive'  => array(
 							'label'   => __( 'Hive', 'customify' ),
 							'options' => array(
-								'primary_color'              => '#171617',
-								'secondary_color'            => '#afafaf',
-								'tertiary_color'             => '#ffeb00',
-								'background_primary_color'   => '#FFFFFF',
-								'background_secondary_color' => '#FFFFFF',
+								'master_primary_color'              => '#171617',
+								'master_secondary_color'            => '#afafaf',
+								'master_tertiary_color'             => '#ffeb00',
+								'master_quaternary_color'           => '#81d742',
+								'master_background_primary_color'   => '#FFFFFF',
+								'master_background_secondary_color' => '#FFFFFF',
 							),
 						),
 						'julia'  => array(
 							'label'   => __( 'Julia', 'customify' ),
 							'options' => array(
-								'primary_color'              => '#161616',
-								'secondary_color'            => '#383c50',
-								'tertiary_color'             => '#383c50',
-								'background_primary_color'   => '#f7f6f5',
-								'background_secondary_color' => '#e7f2f8',
+								'master_primary_color'              => '#161616',
+								'master_secondary_color'            => '#383c50',
+								'master_tertiary_color'             => '#383c50',
+								'master_quaternary_color'           => '#81d742',
+								'master_background_primary_color'   => '#f7f6f5',
+								'master_background_secondary_color' => '#e7f2f8',
 							),
 						),
 						'vasco'  => array(
 							'label'   => __( 'Vasco', 'customify' ),
 							'options' => array(
-								'primary_color'              => '#F59828',
-								'secondary_color'            => '#38C3C8',
-								'tertiary_color'             => '#2B3D39',
-								'background_primary_color'   => '#F5F6F1',
-								'background_secondary_color' => '#FFFFFF',
+								'master_primary_color'              => '#F59828',
+								'master_secondary_color'            => '#38C3C8',
+								'master_tertiary_color'             => '#2B3D39',
+								'master_quaternary_color'           => '#81d742',
+								'master_background_primary_color'   => '#F5F6F1',
+								'master_background_secondary_color' => '#FFFFFF',
 							),
 						),
 						'royal'  => array(
 							'label'   => __( 'Royal', 'customify' ),
 							'options' => array(
-								'primary_color'              => '#8eb2c5',
-								'secondary_color'            => '#725c92',
-								'tertiary_color'             => '#6f8089',
-								'background_primary_color'   => '#615375',
-								'background_secondary_color' => '#715375',
+								'master_primary_color'              => '#8eb2c5',
+								'master_secondary_color'            => '#725c92',
+								'master_tertiary_color'             => '#6f8089',
+								'master_quaternary_color'           => '#81d742',
+								'master_background_primary_color'   => '#615375',
+								'master_background_secondary_color' => '#715375',
 							),
 						),
 						'lovely' => array(
 							'label'   => __( 'Lovely', 'customify' ),
 							'options' => array(
-								'primary_color'              => '#2E6171',
-								'secondary_color'            => '#556F7A',
-								'tertiary_color'             => '#798086',
-								'background_primary_color'   => '#B79FAD',
-								'background_secondary_color' => '#D4AFCD',
+								'master_primary_color'              => '#2E6171',
+								'master_secondary_color'            => '#556F7A',
+								'master_tertiary_color'             => '#798086',
+								'master_quaternary_color'           => '#81d742',
+								'master_background_primary_color'   => '#B79FAD',
+								'master_background_secondary_color' => '#D4AFCD',
 							),
 						),
 						'queen'  => array(
 							'label'   => __( 'Queen', 'customify' ),
 							'options' => array(
-								'primary_color'              => '#7A918D',
-								'secondary_color'            => '#93B1A7',
-								'tertiary_color'             => '#99C2A2',
-								'background_primary_color'   => '#C5EDAC',
-								'background_secondary_color' => '#DBFEB8',
+								'master_primary_color'              => '#7A918D',
+								'master_secondary_color'            => '#93B1A7',
+								'master_tertiary_color'             => '#99C2A2',
+								'master_quaternary_color'           => '#81d742',
+								'master_background_primary_color'   => '#C5EDAC',
+								'master_background_secondary_color' => '#DBFEB8',
 							),
 						),
 						'carrot' => array(
 							'label'   => __( 'Carrot', 'customify' ),
 							'options' => array(
-								'primary_color'              => '#FCECC9',
-								'secondary_color'            => '#FCB0B3',
-								'tertiary_color'             => '#F93943',
-								'background_primary_color'   => '#7EB2DD',
-								'background_secondary_color' => '#445E93',
+								'master_primary_color'              => '#FCECC9',
+								'master_secondary_color'            => '#FCB0B3',
+								'master_tertiary_color'             => '#F93943',
+								'master_quaternary_color'           => '#81d742',
+								'master_background_primary_color'   => '#7EB2DD',
+								'master_background_secondary_color' => '#445E93',
 							),
 						),
 						'adler'  => array(
 							'label'   => __( 'Adler', 'customify' ),
 							'options' => array(
-								'primary_color'              => '#FE4A49',
-								'secondary_color'            => '#FED766',
-								'tertiary_color'             => '#009FB7',
-								'background_primary_color'   => '#E6E6EA',
-								'background_secondary_color' => '#F4F4F8',
+								'master_primary_color'              => '#FE4A49',
+								'master_secondary_color'            => '#FED766',
+								'master_tertiary_color'             => '#009FB7',
+								'master_quaternary_color'           => '#81d742',
+								'master_background_primary_color'   => '#E6E6EA',
+								'master_background_secondary_color' => '#F4F4F8',
 							),
 						),
 						'velvet' => array(
 							'label'   => __( 'Velvet', 'customify' ),
 							'options' => array(
-								'primary_color'              => '#65DEF1',
-								'secondary_color'            => '#A8DCD1',
-								'tertiary_color'             => '#DCE2C8',
-								'background_primary_color'   => '#F96900',
-								'background_secondary_color' => '#F17F29',
+								'master_primary_color'              => '#65DEF1',
+								'master_secondary_color'            => '#A8DCD1',
+								'master_tertiary_color'             => '#DCE2C8',
+								'master_quaternary_color'           => '#81d742',
+								'master_background_primary_color'   => '#F96900',
+								'master_background_secondary_color' => '#F17F29',
 							),
 						),
-
+						'chroma' => array(
+							'label'   => __( 'Chroma', 'customify' ),
+							'options' => array(
+								'master_primary_color'              => '#81d742',
+								'master_secondary_color'            => '#81d742',
+								'master_tertiary_color'             => '#81d742',
+								'master_quaternary_color'           => '#81d742',
+								'master_background_primary_color'   => '#81d742',
+								'background_secondary_color' => '#81d742',
+							),
+						),
 					),
 				),
-				'primary_color'              => array(
+				'master_primary_color'              => array(
 					'type'             => 'color',
 					// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
 					'setting_type'     => 'option',
 					// We will force this setting id preventing prefixing and other regular processing.
-					'setting_id'       => 'pxg_primary_color',
+					'setting_id'       => 'master_primary_color',
 					// We don't want to refresh the preview window, even though we have no direct effect on it through this field.
 					'live'             => true,
 					'label'            => esc_html__( 'Primary Color', 'customify' ),
 					'default'          => '#8224e3',
 					'connected_fields' => array(),
 				),
-				'secondary_color'            => array(
+				'master_secondary_color'            => array(
 					'type'             => 'color',
 					// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
 					'setting_type'     => 'option',
 					// We will force this setting id preventing prefixing and other regular processing.
-					'setting_id'       => 'pxg_secondary_color',
+					'setting_id'       => 'master_secondary_color',
 					// We don't want to refresh the preview window, even though we have no direct effect on it through this field.
 					'live'             => true,
 					'label'            => esc_html__( 'Secondary Color', 'customify' ),
 					'default'          => '#81d742',
 					'connected_fields' => array(),
 				),
-				'tertiary_color'             => array(
+				'master_tertiary_color'             => array(
 					'type'             => 'color',
 					// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
 					'setting_type'     => 'option',
 					// We will force this setting id preventing prefixing and other regular processing.
-					'setting_id'       => 'pxg_tertiary_color',
+					'setting_id'       => 'master_tertiary_color',
 					// We don't want to refresh the preview window, even though we have no direct effect on it through this field.
 					'live'             => true,
 					'label'            => esc_html__( 'Tertiary Color', 'customify' ),
 					'default'          => '#eeee22',
 					'connected_fields' => array(),
 				),
-				'quaternary_color'             => array(
+				'master_quaternary_color'             => array(
 					'type'             => 'color',
 					// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
 					'setting_type'     => 'option',
 					// We will force this setting id preventing prefixing and other regular processing.
-					'setting_id'       => 'pxg_quaternary_color',
+					'setting_id'       => 'master_quaternary_color',
 					// We don't want to refresh the preview window, even though we have no direct effect on it through this field.
 					'live'             => true,
 					'label'            => esc_html__( 'Quaternary Color', 'customify' ),
 					'default'          => '#eeee22',
 					'connected_fields' => array(),
 				),
-				'background_primary_color'   => array(
+				'master_background_primary_color'   => array(
 					'type'             => 'color',
 					// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
 					'setting_type'     => 'option',
 					// We will force this setting id preventing prefixing and other regular processing.
-					'setting_id'       => 'pxg_background_primary_color',
+					'setting_id'       => 'master_background_primary_color',
 					// We don't want to refresh the preview window, even though we have no direct effect on it through this field.
 					'live'             => true,
 					'label'            => esc_html__( 'Background Primary Color', 'customify' ),
 					'default'          => '#dd3333',
 					'connected_fields' => array(),
 				),
-				'background_secondary_color' => array(
+				'master_background_secondary_colors' => array(
 					'type'             => 'color',
 					// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
 					'setting_type'     => 'option',
 					// We will force this setting id preventing prefixing and other regular processing.
-					'setting_id'       => 'pxg_background_secondary_color',
+					'setting_id'       => 'master_background_secondary_color',
 					// We don't want to refresh the preview window, even though we have no direct effect on it through this field.
 					'live'             => true,
 					'label'            => esc_html__( 'Background Secondary Color', 'customify' ),
