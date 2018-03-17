@@ -52,7 +52,7 @@ class Pix_Customize_Preset_Control extends Pix_Customize_Control {
 						<span class="description customize-control-description"><?php echo $this->description; ?></span>
 					<?php } ?>
 
-					<div class="customify_preset radio">
+					<div class="customify_preset radio customize-control customize-control-radio">
 						<?php
 						foreach ( $this->choices as $choice_value => $choice_config ){
 							if ( ! isset( $choice_config['options']) || ! isset( $choice_config['label'] ) ) {
@@ -67,8 +67,13 @@ class Pix_Customize_Preset_Control extends Pix_Customize_Control {
 							$options = $this->convertChoiceOptionsIdsToSettingIds( $choice_config['options'] );
 							$data = ' data-options=\'' . json_encode( $options ) . '\''; ?>
 
-							<input <?php $this->link(); echo 'name="' .  $this->setting->id . '" type="radio" value="' . esc_attr( $choice_value ) . '" ' . selected( $this->value(), $choice_value, false ) . $data . $color .' >' . $label . '</input>';
-						} ?>
+							<span class="customize-inside-control-row">
+								<input <?php $this->link(); echo 'name="' . $this->setting->id . '" id="' . $choice_value . '" type="radio" value="' . esc_attr( $choice_value ) . '" ' . selected( $this->value(), $choice_value, false ) . $data . $color .' />'; ?>
+								<label for="<?php echo $choice_value; ?>">
+									<?php echo $label; ?>
+								</label>
+							</span>
+						<?php } ?>
 					</div>
 				</label>
 			<?php break;
