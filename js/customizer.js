@@ -369,7 +369,12 @@
                             // First determine if we need to apply certain filters before setting the new value
                             if (!_.isUndefined(connected_field_data.filters)) {
                                 _.each(connected_field_data.filters, function(filter_config) {
-                                    new_value = window[filter_config.callback](new_value);
+                                    // @todo The `filter_config` can also have `checks` each with `js_callback` that should be passed before applying.
+
+                                    if (!_.isUndefined(filter_config.js_callback) && !_.isUndefined(window[filter_config.js_callback])) {
+                                        // @todo The `filter_config` can also contain `arguments` that should pe passed to the callback
+                                        new_value = window[filter_config.js_callback](new_value);
+                                    }
                                 })
                             }
 
@@ -1605,7 +1610,7 @@
 
 
 // Reverses a hex color to either black or white
-function customifyInverseHexColorToBW (hex) {
+function customifyInverseHexColorToBlackOrWhite (hex) {
     return customifyInverseHexColor(hex, true);
 }
 
