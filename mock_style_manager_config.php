@@ -32,6 +32,74 @@ if ( ! function_exists('mock_style_manager_section') ) {
 					'default'      => 'royal',
 					'choices_type' => 'radio',
 					'choices'      => array(
+						'vasco'  => array(
+							'label'   => __( 'Vasco', 'customify' ),
+							'options' => array(
+								'sm_color_primary'   => '#38C3C8',
+								'sm_color_secondary' => '#F59828',
+								'sm_dark_primary'    => '#2b2b28',
+								'sm_dark_secondary'  => '#2B3D39',
+								'sm_dark_tertiary'   => '#65726F',
+								'sm_light_primary'   => '#F5F6F1',
+								'sm_light_secondary' => '#E6F7F7',
+							),
+						),
+						'felt'  => array(
+							'label'   => __( 'Felt', 'customify' ),
+							'options' => array(
+								'sm_color_primary'   => '#ff6000',
+								'sm_color_secondary' => '#FF9200',
+								'sm_dark_primary'    => '#1C1C1C',
+								'sm_dark_secondary'  => '#161616',
+								'sm_light_primary'   => '#FFFCFC',
+								'sm_light_secondary' => '#fff4e8',
+							),
+						),
+						'julia'  => array(
+							'label'   => __( 'Julia', 'customify' ),
+							'options' => array(
+								'sm_color_primary'   => '#3349B8',
+								'sm_color_secondary' => '#3393B8',
+								'sm_dark_primary'    => '#161616',
+								'sm_dark_secondary'  => '#383C50',
+								'sm_light_primary'   => '#f7f6f5',
+								'sm_light_secondary' => '#e7f2f8',
+							),
+						),
+						'julia_colored'  => array(
+							'label'   => __( 'Julia Colored', 'customify' ),
+							'options' => array(
+								'sm_dark_primary'   => '#3349B8',
+								'sm_dark_secondary' => '#3393B8',
+								'sm_color_primary'    => '#161616',
+								'sm_color_secondary'  => '#383C50',
+								'sm_light_primary'   => '#f7f6f5',
+								'sm_light_secondary' => '#e7f2f8',
+							),
+						),
+						'julia_inversed'  => array(
+							'label'   => __( 'Julia Inversed', 'customify' ),
+							'options' => array(
+								'sm_color_primary'   => '#3349B8',
+								'sm_color_secondary' => '#3393B8',
+								'sm_light_primary'    => '#161616',
+								'sm_light_secondary'  => '#383C50',
+								'sm_dark_primary'   => '#f7f6f5',
+								'sm_dark_secondary' => '#e7f2f8',
+							),
+						),
+						'gema'  => array(
+							'label'   => __( 'Gema Theme', 'customify' ),
+							'options' => array(
+								'sm_color_primary'   => '#E03A3A',
+								'sm_color_secondary'   => '#E03A3A',
+								'sm_dark_primary'    => '#000000',
+								'sm_dark_secondary'  => '#000000',
+								'sm_dark_tertiary'  => '#A3A3A1',
+								'sm_light_primary'   => '#FFFFFF',
+								'sm_light_secondary' => '#FFFFFF',
+							),
+						),
 						'patch'  => array(
 							'label'   => __( 'Patch Theme', 'customify' ),
 							'options' => array(
@@ -56,8 +124,8 @@ if ( ! function_exists('mock_style_manager_section') ) {
 								'sm_light_secondary' => '#FFFFFF',
 							),
 						),
-						'hive_switch'  => array(
-							'label'   => __( 'Hive Switch', 'customify' ),
+						'hive_inversed'  => array(
+							'label'   => __( 'Hive Inversed', 'customify' ),
 							'options' => array(
 								'sm_color_primary'   => '#ffeb00',
 								'sm_color_secondary'   => '#3200B2',
@@ -70,7 +138,7 @@ if ( ! function_exists('mock_style_manager_section') ) {
 							),
 						),
 						'hive_rotate'  => array(
-							'label'   => __( 'Hive Switch + Rotate', 'customify' ),
+							'label'   => __( 'Hive Swap Colors', 'customify' ),
 							'options' => array(
 								'sm_color_primary'   => '#3200B2',
 								'sm_color_secondary'   => '#ffeb00',
@@ -82,51 +150,21 @@ if ( ! function_exists('mock_style_manager_section') ) {
 								'sm_dark_tertiary' => '#FFFFFF',
 							),
 						),
-						'julia'  => array(
-							'label'   => __( 'Julia', 'customify' ),
+						'silk'  => array(
+							'label'   => __( 'Silk Theme', 'customify' ),
 							'options' => array(
-								'sm_color_primary'   => '#3349B8',
-								'sm_color_secondary' => '#3393B8',
-								'sm_dark_primary'    => '#161616',
-								'sm_dark_secondary'  => '#383C50',
-								'sm_light_primary'   => '#f7f6f5',
-								'sm_light_secondary' => '#e7f2f8',
+								'sm_color_primary'   => '#A33B61',
+								'sm_color_secondary'   => '#FCC9B0',
+								'sm_dark_primary'    => '#000000',
+								'sm_dark_secondary'  => '#000000',
+								'sm_dark_tertiary'  => '#A3A3A1',
+								'sm_light_primary'   => '#FFFFFF',
+								'sm_light_secondary' => '#FFFFFF',
 							),
 						),
-						'julia_inversed'  => array(
-							'label'   => __( 'Julia Inversed', 'customify' ),
-							'options' => array(
-								'sm_color_primary'   => '#3349B8',
-								'sm_color_secondary' => '#3393B8',
-								'sm_light_primary'    => '#161616',
-								'sm_light_secondary'  => '#383C50',
-								'sm_dark_primary'   => '#f7f6f5',
-								'sm_dark_secondary' => '#e7f2f8',
-							),
-						),
-						'felt'  => array(
-							'label'   => __( 'Felt', 'customify' ),
-							'options' => array(
-								'sm_color_primary'   => '#ff6000',
-								'sm_color_secondary' => '#FF9200',
-								'sm_dark_primary'    => '#1C1C1C',
-								'sm_dark_secondary'  => '#161616',
-								'sm_light_primary'   => '#FFFCFC',
-								'sm_light_secondary' => '#fff4e8',
-							),
-						),
-						'vasco'  => array(
-							'label'   => __( 'Vasco', 'customify' ),
-							'options' => array(
-								'sm_color_primary'   => '#38C3C8',
-								'sm_color_secondary' => '#F59828',
-								'sm_dark_primary'    => '#2b2b28',
-								'sm_dark_secondary'  => '#2B3D39',
-								'sm_dark_tertiary'   => '#65726F',
-								'sm_light_primary'   => '#F5F6F1',
-								'sm_light_secondary' => '#E6F7F7',
-							),
-						),
+						
+
+						
 						'royal'  => array(
 							'label'   => __( 'Royal', 'customify' ),
 							'options' => array(
@@ -173,7 +211,7 @@ if ( ! function_exists('mock_style_manager_section') ) {
 								'sm_color_primary'              => '#FE4A49',
 								'sm_dark_primary'            => '#FED766',
 								'sm_dark_secondary'             => '#009FB7',
-								'sm_light_primary'   => '#E6E6EA',
+								'sm_light_primary'   => '#faf9ff',
 								'sm_light_secondary' => '#F4F4F8',
 							),
 						),
