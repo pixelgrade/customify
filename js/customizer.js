@@ -7,6 +7,20 @@
 	wp.customize.bind('ready', function () {
 		var timeout = null;
 
+    wp.customize.previewer.bind('synced', function() {
+      var $previewIframe = $('#customize-preview');
+      var iframeWidth = $previewIframe.width();
+
+      if ( iframeWidth < 1000 && iframeWidth > 768 ) {
+        var percent = iframeWidth / 1000;
+        $previewIframe.find('iframe').css({
+          transform: 'scale(' + percent + ')',
+          'transform-origin': 'left top',
+          width: '1000px'
+        });
+      }
+    });
+
 		// add ace editors
 		$('.customify_ace_editor').each(function ( key, el ) {
 			var id = $(this).attr('id'),
