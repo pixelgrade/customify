@@ -5,23 +5,26 @@
 	var $window = $(window);
 
 	var scaleIframe = function() {
-		console.info('scaleIframe');
-    var $previewIframe = $('#customize-preview');
+    var $previewIframe = $('.wp-full-overlay');
+
+    $previewIframe.find( 'iframe' ).removeAttr( 'style' );
+
+    if ( api.previewedDevice.get() !== 'desktop' ) { return; }
+
     var iframeWidth = $previewIframe.width();
+    var windowWidth = $window.width();
     var windowHeight = $window.height();
 
-    if ( iframeWidth < 1000 && iframeWidth > 768 ) {
-      var percent = iframeWidth / 1000;
-      var height = windowHeight * 2 - windowHeight * percent;
-      $previewIframe.find('iframe').css({
-        transform: 'scale(' + percent + ')',
+    var scale = windowWidth / iframeWidth;
+
+    if (iframeWidth > 720) {
+      $previewIframe.find( 'iframe' ).css( {
+        width: iframeWidth * scale,
+        height: windowHeight * scale,
         'transform-origin': 'left top',
-        width: '1000px',
-        height: height+'px'
-      });
-    } else {
-      $previewIframe.removeAttr('css');
-    }
+        transform: 'scale(' + 1 / scale + ')'
+      } );
+		}
 	};
 
 	// when the customizer is ready prepare our fields events
@@ -31,6 +34,7 @@
     wp.customize.previewer.bind('synced', function() {
       scaleIframe();
 
+      api.previewedDevice.bind( scaleIframe );
       $window.on('resize', scaleIframe);
     });
 
