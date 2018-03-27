@@ -2,10 +2,41 @@
 	'use strict';
 
 	var api = wp.customize;
+	var $window = $(window);
+
+	var scaleIframe = function() {
+    var $previewIframe = $('.wp-full-overlay');
+
+    $previewIframe.find( 'iframe' ).removeAttr( 'style' );
+
+    if ( api.previewedDevice.get() !== 'desktop' ) { return; }
+
+    var iframeWidth = $previewIframe.width();
+    var windowWidth = $window.width();
+    var windowHeight = $window.height();
+
+    var scale = windowWidth / iframeWidth;
+
+    if (iframeWidth > 720) {
+      $previewIframe.find( 'iframe' ).css( {
+        width: iframeWidth * scale,
+        height: windowHeight * scale,
+        'transform-origin': 'left top',
+        transform: 'scale(' + 1 / scale + ')'
+      } );
+		}
+	};
 
 	// when the customizer is ready prepare our fields events
 	wp.customize.bind('ready', function () {
 		var timeout = null;
+
+    wp.customize.previewer.bind('synced', function() {
+      scaleIframe();
+
+      api.previewedDevice.bind( scaleIframe );
+      $window.on('resize', scaleIframe);
+    });
 
 		// add ace editors
 		$('.customify_ace_editor').each(function ( key, el ) {
