@@ -3,6 +3,14 @@
 
 	var api = wp.customize;
 
+	var isLight = function( color ) {
+		var colorArray = color.split('');
+    var red = parseInt((colorArray[1] + '' + colorArray[2]), 16);
+    var blue = parseInt((colorArray[3] + '' + colorArray[4]), 16);
+    var green = parseInt((colorArray[5] + '' + colorArray[6]), 16);
+    return (red*0.299 + green*0.587 + blue*0.114) > 186;
+  };
+
 	// when the customizer is ready prepare our fields events
 	wp.customize.bind('ready', function () {
 		var timeout = null;
@@ -28,7 +36,11 @@
           	$label.find('.preview__letter').css({'background': color});
 	        }
 	        if ( key === 'sm_light_primary' ) {
-            $labelInner.css({'background': color});
+            $labelInner.css({
+	            'background': color,
+              'color': isLight(color) ? 'black': 'white'
+            });
+            $label.find('.preview__letter').css({'color': color});
 	        }
         }
       }

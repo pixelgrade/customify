@@ -61,7 +61,7 @@ gulp.task('styles', function () {
         .pipe(gulp.dest(dest_CSS, {"mode": "0644"}))
 });
 
-gulp.task('styles-watch', function () {
+gulp.task('styles-watch', [ 'styles-dev' ], function () {
 	return gulp.watch(source_SCSS, ['styles']);
 });
 
