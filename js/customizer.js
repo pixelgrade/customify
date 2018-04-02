@@ -226,7 +226,7 @@
 		});
 
 		// presets with radio and other
-		$(document).on('click', '.customify_preset.radio input, .customify_preset.radio_buttons input, .awesome_presets input', function () {
+		$(document).on('click', '.customify_preset.radio input, .customify_preset.radio_buttons input, .customify_preset.color_palette input, .awesome_presets input', function () {
 			var this_option = this,//$(this).children('[value="' + $(this).val() + '"]');
 				data = $(this_option).data('options');
 
