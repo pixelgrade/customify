@@ -1810,27 +1810,54 @@ ul.font-options__options-list {
 	}
 }
 
+
+
+//------------------------------------*\
+//    STYLE MANAGER
+//------------------------------------*/
+
 .pix_customizer_setting {
 	.customize-inside-control-row {
+		position: relative;
 		width: 100% !important;
-		height: 64px;
 		margin-left: 0 !important;
 		text-indent: 0 !important;
-		position: relative;
-
 		background-size: cover;
 		background-position: 50% 50%;
-		border-radius: 4px;
+		height: 64px;
+		border-radius: 5px;
 		overflow: hidden;
 
-		//box-shadow: inset 0 1px 3px 0 rgba(0,0,0,0.5), 0 8px 8px 0 rgba(0,0,0,0.15), 0 4px 4px 0 rgba(0,0,0,0.15), 0 2px 2px 0 rgba(0,0,0,0.15);
-		box-shadow: inset 0 1px 3px 0 rgba(0, 0, 0, 0.15), inset 0 0 3px 0 rgba(0, 0, 0, 0.15);
+		&:before {
+			content: '';
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			z-index: 10;
 
+			box-shadow: inset 0 0 3px 0 rgba(0,0,0,0.15), inset 0 1px 3px 0 rgba(0,0,0,0.15);
+		}
+	
+		// Color Palette Hover
 		&:hover {
-			@for $i from 1 through 7 {
-				.palette .palette__item:nth-child(#{$i}) {
-					animation: fillBars #{0.1 * $i}s forwards;
+
+			&:before {
+				// Increase the inner shadow strongness
+				box-shadow: inset 0 2px 3px 0 rgba(0,0,0,0.15), inset 0 0 3px 0 rgba(0,0,0,0.15);
+			}
+
+			.palette {
+
+			}
+
+				.palette__item {
+					transform: translateY(0%);
 				}
+
+			label {
+				left: 10px;
 			}
 		}
 
@@ -1852,7 +1879,7 @@ ul.font-options__options-list {
 			margin-top: 0 !important;
 			align-items: center;
 
-			box-shadow: inset 0 1px 3px 0 rgba(0, 0, 0, 0.15), inset 0 0 3px 0 rgba(0, 0, 0, 0.15);
+			transition: all .3s ease;
 		}
 
 		.label__inner {
@@ -1869,44 +1896,39 @@ ul.font-options__options-list {
 			left: 0;
 			z-index: 1;
 			width: 100%;
-			height: 64px;
+			height: 100%;
 
-			border-radius: 4px;
-			box-shadow: inset 0 1px 3px 0 rgba(0, 0, 0, 0.15), inset 0 0 3px 0 rgba(0, 0, 0, 0.15);
-
-
-			overflow: hidden;
+			transition: all .2s ease;
 		}
 
-		.palette__item {
-			flex: 1;
-			opacity: 0;
-			margin-left: -1px;
-			transform: translateY(100%);
-		}
+			// Colors Bars
+			.palette__item {
+				flex: 1;
+				transform: translateY(100%);
 
-		@for $i from 1 through 7 {
-			.palette .palette__item:nth-child(#{$i}) {
-				animation: emptyBars #{1.6 - 0.2 * $i}s forwards;
+				transition: all .3s ease;
+
+				// Assume maximum 10 colors
+				@for $i from 1 through 10 {
+				  &:nth-child(#{$i}) {
+				    transition-delay: 0s + $i/20 - 1/20;
+
+				    // PLAYGROUND:
+				    // Size items based on color accent
+				    // Higher size for accent colors
+				    // Lower sizes for light colors
+				    
+				    // flex-grow: 1/$i * 10 + $i/10;
+				  }
+				}
 			}
-		}
 
-		.preview__letter {
-			display: inline-block;
-			padding: 3px 9px;
-			border-radius: 2px;
-			color: white;
-			margin-right: 5px;
-		}
+			.preview__letter {
+				display: inline-block;
+				padding: 3px 9px;
+				border-radius: 2px;
+				color: white;
+				margin-right: 5px;
+			}
 	}
-}
-
-@keyframes fillBars {
-	0% { opacity: 0; transform: translateY(100%); }
-	100% { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes emptyBars {
-	0% { opacity: 1; transform: translateY(0); }
-	100% { opacity: 0; transform: translateY(100%); }
 }
