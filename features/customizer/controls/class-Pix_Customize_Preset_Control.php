@@ -181,7 +181,7 @@ class Pix_Customize_Preset_Control extends Pix_Customize_Control {
 							<span class="customize-inside-control-row" style="background-image: url( <?php echo esc_url( $choice_config['preview']['background_image_url'] ); ?> );">
 								<input <?php $this->link(); echo 'name="' . $this->setting->id . '" id="' . $choice_value . '" type="radio" value="' . esc_attr( $choice_value ) . '" ' . selected( $this->value(), $choice_value, false ) . $data .' />'; ?>
 								<label for="<?php echo $choice_value; ?>">
-									<span class="label__inner" style="background: <?php echo $sm_light; ?>"><span class="preview__letter" style="background: <?php echo $sm_color; ?>"><?php echo $choice_config['preview']['sample_letter']; ?></span><?php echo $label; ?></span>
+									<span class="label__inner" style="color: <?php echo $this->lightOrDark( $sm_light )?>; background: <?php echo $sm_light; ?>;"><span class="preview__letter" style="background: <?php echo $sm_color; ?>"><?php echo $choice_config['preview']['sample_letter']; ?></span><?php echo $label; ?></span>
 								</label>
 								<div class="palette">
 									<?php foreach ( $choice_config['options'] as $color_name => $color_value ) {
@@ -305,6 +305,32 @@ class Pix_Customize_Preset_Control extends Pix_Customize_Control {
 		$g = hexdec($color[2].$color[3]);
 		$b = hexdec($color[4].$color[5]);
 		return (( $r*299 + $g*587 + $b*114 )/1000 > 130);
+	}
+
+	/**
+	 * Detect if we should use a light or dark color on a background color.
+	 *
+	 * Taken from WooCommerce: woocommerce/includes/wc-formatting-functions.php
+	 * @link http://woocommerce.wp-a2z.org/oik_api/wc_light_or_dark/
+	 *
+	 * @param mixed  $color Color.
+	 * @param string $dark  Darkest reference.
+	 *                      Defaults to '#000000'.
+	 * @param string $light Lightest reference.
+	 *                      Defaults to '#FFFFFF'.
+	 * @return string
+	 */
+	function lightOrDark( $color, $dark = '#000000', $light = '#FFFFFF' ) {
+
+		$hex = str_replace( '#', '', $color );
+
+		$c_r = hexdec( substr( $hex, 0, 2 ) );
+		$c_g = hexdec( substr( $hex, 2, 2 ) );
+		$c_b = hexdec( substr( $hex, 4, 2 ) );
+
+		$brightness = ( ( $c_r * 299 ) + ( $c_g * 587 ) + ( $c_b * 114 ) ) / 1000;
+
+		return $brightness > 180 ? $dark : $light;
 	}
 
 	/**
