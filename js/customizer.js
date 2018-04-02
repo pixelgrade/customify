@@ -7,35 +7,35 @@
 	wp.customize.bind('ready', function () {
 		var timeout = null;
 
-		$('.pix_customizer_setting .customize-inside-control-row').each( function(index, elem) {
-			var $control = $(elem);
-			$control.css('background-image', 'url("https://images.unsplash.com/photo-1492553397175-5f7ec0158903?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=f13108c72f87cf399a55260c6596694a&auto=format&fit=crop&w=3450&q=80")')
-			var palette = $control.find('input').data('options');
-			var $palette = $('<div class="palette" />');
-			var $label = $control.find('label');
-			var labelText = $label.text();
-
-			$label.html('<div class="label__inner"><span class="preview__letter">A</span> ' + labelText + ' </div>');
-
-			var $labelInner = $label.find('.label__inner');
-
-      for (var key in palette) {
-        if (palette.hasOwnProperty(key)) {
-        	var color = palette[key];
-          $palette.append('<div class="palette__item" style="background: '+ color +'"></div>');
-
-	        if ( key === 'sm_color_primary' ) {
-          	$label.find('.preview__letter').css({'background': color});
-	        }
-	        if ( key === 'sm_light_primary' ) {
-            $labelInner.css({'background': color});
-	        }
-        }
-      }
-
-      $control.append($palette);
-
-		});
+		// $('.pix_customizer_setting .customize-inside-control-row').each( function(index, elem) {
+		// 	var $control = $(elem);
+		// 	$control.css('background-image', 'url("https://images.unsplash.com/photo-1492553397175-5f7ec0158903?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=f13108c72f87cf399a55260c6596694a&auto=format&fit=crop&w=3450&q=80")')
+		// 	var palette = $control.find('input').data('options');
+		// 	var $palette = $('<div class="palette" />');
+		// 	var $label = $control.find('label');
+		// 	var labelText = $label.text();
+      //
+		// 	$label.html('<div class="label__inner"><span class="preview__letter">A</span> ' + labelText + ' </div>');
+      //
+		// 	var $labelInner = $label.find('.label__inner');
+      //
+      // for (var key in palette) {
+      //   if (palette.hasOwnProperty(key)) {
+      //   	var color = palette[key];
+      //     $palette.append('<div class="palette__item" style="background: '+ color +'"></div>');
+      //
+	   //      if ( key === 'sm_color_primary' ) {
+      //     	$label.find('.preview__letter').css({'background': color});
+	   //      }
+	   //      if ( key === 'sm_light_primary' ) {
+      //       $labelInner.css({'background': color});
+	   //      }
+      //   }
+      // }
+      //
+      // $control.append($palette);
+      //
+		// });
 
 		// add ace editors
 		$('.customify_ace_editor').each(function ( key, el ) {

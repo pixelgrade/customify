@@ -1,15 +1,18 @@
 <?php
-
-/**
- * Setup the Style Manager Customizer section and mock some color palettes.
- *
- * @param $config array This holds required keys for the plugin config like 'opt-name', 'panels', 'settings'
- * @return $config
- */
-
 if ( ! function_exists('mock_style_manager_section') ) {
 
+	/**
+	 * Setup the Style Manager Customizer section and mock some color palettes.
+	 *
+	 * @param $config array This holds required keys for the plugin config like 'opt-name', 'panels', 'settings'
+	 * @return $config
+	 */
 	function mock_style_manager_section( $config ) {
+		// If the theme hasn't declared support for style manager, bail.
+		if ( ! current_theme_supports( 'customizer_style_manager' ) ) {
+			return $config;
+		}
+
 		if ( ! isset( $config['sections']['style_manager_section'] ) ) {
 			$config['sections']['style_manager_section'] = array();
 		}
@@ -30,10 +33,13 @@ if ( ! function_exists('mock_style_manager_section') ) {
 					'label'        => __( 'Select a color palette:', 'customify' ),
 					'desc'         => __( 'Conveniently change the design of your site with color palettes. Easy as pie.', 'customify' ),
 					'default'      => 'royal',
-					'choices_type' => 'radio',
+					'choices_type' => 'color_palette',
 					'choices'      => array(
 						'vasco'  => array(
 							'label'   => __( 'Vasco', 'customify' ),
+							'preview' => array(
+								'background_image_url' => 'https://images.unsplash.com/photo-1492553397175-5f7ec0158903?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=f13108c72f87cf399a55260c6596694a&auto=format&fit=crop&w=3450&q=80',
+							),
 							'options' => array(
 								'sm_color_primary'   => '#38C3C8',
 								'sm_color_secondary' => '#F59828',
