@@ -86,6 +86,7 @@ if ( ! function_exists('mock_style_manager_section') ) {
 								'sm_light_secondary'  => '#383C50',
 								'sm_dark_primary'   => '#f7f6f5',
 								'sm_dark_secondary' => '#e7f2f8',
+								'sm_dark_tertiary' => '#e7f2f8',
 							),
 						),
 						'gema'  => array(
@@ -107,7 +108,7 @@ if ( ! function_exists('mock_style_manager_section') ) {
 								'sm_color_secondary'   => '#3200B2',
 								'sm_dark_primary'    => '#171617',
 								'sm_dark_secondary'  => '#3d3e40',
-								'sm_dark_tertiary'  => '#afafaf',
+								'sm_dark_tertiary'  => '#b5b5b5',
 								'sm_light_primary'   => '#FFFFFF',
 								'sm_light_secondary' => '#FFFFFF',
 							),
@@ -131,7 +132,7 @@ if ( ! function_exists('mock_style_manager_section') ) {
 								'sm_color_secondary'   => '#3200B2',
 								'sm_light_primary'    => '#171617',
 								'sm_light_secondary'  => '#363636',
-								'light_tertiary'  => '#afafaf',
+								'sm_light_tertiary'  => '#afafaf',
 								'sm_dark_primary'   => '#FFFFFF',
 								'sm_dark_secondary' => '#FFFFFF',
 								'sm_dark_tertiary' => '#FFFFFF',
@@ -144,7 +145,7 @@ if ( ! function_exists('mock_style_manager_section') ) {
 								'sm_color_secondary'   => '#ffeb00',
 								'sm_light_primary'    => '#171617',
 								'sm_light_secondary'  => '#363636',
-								'light_tertiary'  => '#afafaf',
+								'sm_light_tertiary'  => '#afafaf',
 								'sm_dark_primary'   => '#FFFFFF',
 								'sm_dark_secondary' => '#FFFFFF',
 								'sm_dark_tertiary' => '#FFFFFF',
@@ -165,6 +166,20 @@ if ( ! function_exists('mock_style_manager_section') ) {
 						
 
 						
+						'lilac'  => array(
+							'label'   => __( 'Lilac', 'customify' ),
+							'options' => array(
+								'sm_color_primary'   => '#DD8CA9',
+								'sm_color_secondary'   => '#8C9CDE',
+								'sm_dark_primary'   => '#303030',
+								'sm_dark_secondary' => '#303030',
+								'sm_dark_tertiary' => '#A3A3A1',
+								'sm_light_primary'    => '#ECEEED',
+								'sm_light_secondary'  => '#8C9CDE',
+								'sm_light_tertiary'  => '#afafaf',
+							),
+						),
+
 						'royal'  => array(
 							'label'   => __( 'Royal', 'customify' ),
 							'options' => array(
