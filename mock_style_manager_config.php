@@ -36,7 +36,7 @@ if ( ! function_exists('mock_style_manager_section') ) {
 					'choices_type' => 'color_palette',
 					'choices'      => array(
 						'vasco'  => array(
-							'label'   => __( 'Vasco', 'customify' ),
+							'label'   => __( 'Vasco Theme', 'customify' ),
 							'preview' => array(
 								'background_image_url' => 'https://images.unsplash.com/photo-1492553397175-5f7ec0158903?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=f13108c72f87cf399a55260c6596694a&auto=format&fit=crop&w=3450&q=80',
 							),
@@ -51,7 +51,7 @@ if ( ! function_exists('mock_style_manager_section') ) {
 							),
 						),
 						'felt'  => array(
-							'label'   => __( 'Felt', 'customify' ),
+							'label'   => __( 'Felt Theme', 'customify' ),
 							'options' => array(
 								'sm_color_primary'   => '#ff6000',
 								'sm_color_secondary' => '#FF9200',
@@ -62,7 +62,7 @@ if ( ! function_exists('mock_style_manager_section') ) {
 							),
 						),
 						'julia'  => array(
-							'label'   => __( 'Julia', 'customify' ),
+							'label'   => __( 'Julia Theme', 'customify' ),
 							'options' => array(
 								'sm_color_primary'   => '#3349B8',
 								'sm_color_secondary' => '#3393B8',
@@ -70,29 +70,6 @@ if ( ! function_exists('mock_style_manager_section') ) {
 								'sm_dark_secondary'  => '#383C50',
 								'sm_light_primary'   => '#f7f6f5',
 								'sm_light_secondary' => '#e7f2f8',
-							),
-						),
-						'julia_colored'  => array(
-							'label'   => __( 'Julia Colored', 'customify' ),
-							'options' => array(
-								'sm_dark_primary'   => '#3349B8',
-								'sm_dark_secondary' => '#3393B8',
-								'sm_color_primary'    => '#161616',
-								'sm_color_secondary'  => '#383C50',
-								'sm_light_primary'   => '#f7f6f5',
-								'sm_light_secondary' => '#e7f2f8',
-							),
-						),
-						'julia_inversed'  => array(
-							'label'   => __( 'Julia Inversed', 'customify' ),
-							'options' => array(
-								'sm_color_primary'   => '#3349B8',
-								'sm_color_secondary' => '#3393B8',
-								'sm_light_primary'    => '#161616',
-								'sm_light_secondary'  => '#383C50',
-								'sm_dark_primary'   => '#f7f6f5',
-								'sm_dark_secondary' => '#e7f2f8',
-								'sm_dark_tertiary' => '#e7f2f8',
 							),
 						),
 						'gema'  => array(
@@ -119,44 +96,6 @@ if ( ! function_exists('mock_style_manager_section') ) {
 								'sm_light_secondary' => '#FFFFFF',
 							),
 						),
-						'hive'  => array(
-							'label'   => __( 'Hive Theme', 'customify' ),
-							'options' => array(
-								'sm_color_primary'   => '#ffeb00',
-								'sm_color_secondary'   => '#3200B2',
-								'sm_dark_primary'    => '#171617',
-								'sm_dark_secondary'  => '#171617',
-								'sm_dark_tertiary'  => '#363636',
-								'sm_light_primary'   => '#FFFFFF',
-								'sm_light_secondary' => '#FFFFFF',
-							),
-						),
-						'hive_inversed'  => array(
-							'label'   => __( 'Hive Inversed', 'customify' ),
-							'options' => array(
-								'sm_color_primary'   => '#ffeb00',
-								'sm_color_secondary'   => '#3200B2',
-								'sm_light_primary'    => '#171617',
-								'sm_light_secondary'  => '#363636',
-								'sm_light_tertiary'  => '#afafaf',
-								'sm_dark_primary'   => '#FFFFFF',
-								'sm_dark_secondary' => '#FFFFFF',
-								'sm_dark_tertiary' => '#FFFFFF',
-							),
-						),
-						'hive_rotate'  => array(
-							'label'   => __( 'Hive Swap Colors', 'customify' ),
-							'options' => array(
-								'sm_color_primary'   => '#3200B2',
-								'sm_color_secondary'   => '#ffeb00',
-								'sm_light_primary'    => '#171617',
-								'sm_light_secondary'  => '#363636',
-								'sm_light_tertiary'  => '#afafaf',
-								'sm_dark_primary'   => '#FFFFFF',
-								'sm_dark_secondary' => '#FFFFFF',
-								'sm_dark_tertiary' => '#FFFFFF',
-							),
-						),
 						'silk'  => array(
 							'label'   => __( 'Silk Theme', 'customify' ),
 							'options' => array(
@@ -169,9 +108,18 @@ if ( ! function_exists('mock_style_manager_section') ) {
 								'sm_light_secondary' => '#FFFFFF',
 							),
 						),
-						
-
-						
+						'hive'  => array(
+							'label'   => __( 'Hive Theme', 'customify' ),
+							'options' => array(
+								'sm_color_primary'   => '#ffeb00',
+								'sm_color_secondary'   => '#3200B2',
+								'sm_dark_primary'    => '#171617',
+								'sm_dark_secondary'  => '#171617',
+								'sm_dark_tertiary'  => '#363636',
+								'sm_light_primary'   => '#FFFFFF',
+								'sm_light_secondary' => '#FFFFFF',
+							),
+						),
 						'lilac'  => array(
 							'label'   => __( 'Lilac', 'customify' ),
 							'options' => array(
@@ -185,47 +133,6 @@ if ( ! function_exists('mock_style_manager_section') ) {
 								'sm_light_tertiary'  => '#afafaf',
 							),
 						),
-
-						'royal'  => array(
-							'label'   => __( 'Royal', 'customify' ),
-							'options' => array(
-								'sm_color_primary'              => '#8eb2c5',
-								'sm_dark_primary'            => '#725c92',
-								'sm_dark_secondary'             => '#6f8089',
-								'sm_light_primary'   => '#615375',
-								'sm_light_secondary' => '#715375',
-							),
-						),
-						'lovely' => array(
-							'label'   => __( 'Lovely', 'customify' ),
-							'options' => array(
-								'sm_color_primary'              => '#2E6171',
-								'sm_dark_primary'            => '#556F7A',
-								'sm_dark_secondary'             => '#798086',
-								'sm_light_primary'   => '#B79FAD',
-								'sm_light_secondary' => '#D4AFCD',
-							),
-						),
-						'queen'  => array(
-							'label'   => __( 'Queen', 'customify' ),
-							'options' => array(
-								'sm_color_primary'              => '#7A918D',
-								'sm_dark_primary'            => '#93B1A7',
-								'sm_dark_secondary'             => '#99C2A2',
-								'sm_light_primary'   => '#C5EDAC',
-								'sm_light_secondary' => '#DBFEB8',
-							),
-						),
-						'carrot' => array(
-							'label'   => __( 'Carrot', 'customify' ),
-							'options' => array(
-								'sm_color_primary'              => '#FCECC9',
-								'sm_dark_primary'            => '#FCB0B3',
-								'sm_dark_secondary'             => '#F93943',
-								'sm_light_primary'   => '#7EB2DD',
-								'sm_light_secondary' => '#445E93',
-							),
-						),
 						'adler'  => array(
 							'label'   => __( 'Adler', 'customify' ),
 							'options' => array(
@@ -234,16 +141,6 @@ if ( ! function_exists('mock_style_manager_section') ) {
 								'sm_dark_secondary'             => '#009FB7',
 								'sm_light_primary'   => '#faf9ff',
 								'sm_light_secondary' => '#F4F4F8',
-							),
-						),
-						'velvet' => array(
-							'label'   => __( 'Velvet', 'customify' ),
-							'options' => array(
-								'sm_color_primary'              => '#65DEF1',
-								'sm_dark_primary'            => '#A8DCD1',
-								'sm_dark_secondary'             => '#DCE2C8',
-								'sm_light_primary'   => '#F96900',
-								'sm_light_secondary' => '#F17F29',
 							),
 						),
 
