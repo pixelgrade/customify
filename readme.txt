@@ -2,8 +2,8 @@
 Contributors: pixelgrade, euthelup, babbardel, vlad.olaru, cristianfrumusanu, raduconstantin
 Tags: customizer, css, editor, live, preview, customizer
 Requires at least: 4.7.0
-Tested up to: 4.9.1
-Stable tag: 1.5.7
+Tested up to: 4.9.4
+Stable tag: 1.6.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -35,7 +35,20 @@ With [Customify](https://github.com/pixelgrade/customify), developers can easily
 
 **Made with love by Pixelgrade**
 
+== Credits ==
+
+* [Select2](https://select2.github.io) JavaScript library - License: MIT
+* [CSSOM.js](https://github.com/NV/CSSOM) JavaScript library - License: MIT
+* [Ace Editor](https://ace.c9.io/) JavaScript editor - License: BSD
+* [jQuery React](https://github.com/natedavisolds/jquery-react) JavaScript jQuery plugin - License: MIT
+* Default [image](https://unsplash.com/photos/OgM4RKdr2kY) for Style Manager Color Palette control - License: (Unsplash)[https://unsplash.com/license]
+
 == Changelog ==
+
+= 1.6.0 =
+* Added Style Manager Customizer section with theme supports logic
+* Added connected fields logic for easy chaining of Customizer controls
+* Fixed a couple of styling inconsistencies regarding the Customizer
 
 = 1.5.7 =
 * Improved development logic for easier testing

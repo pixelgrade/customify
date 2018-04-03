@@ -178,7 +178,7 @@ class Pix_Customize_Preset_Control extends Pix_Customize_Control {
 							$options = $this->convertChoiceOptionsIdsToSettingIds( $choice_config['options'] );
 							$data = ' data-options=\'' . json_encode( $options ) . '\''; ?>
 
-							<span class="customize-inside-control-row" style="background-image: url( <?php echo esc_url( $choice_config['preview']['background_image_url'] ); ?> );">
+							<span class="customize-inside-control-row <?php echo ( (string) $this->value() === (string) $choice_value ? 'current-color-palette' : '' );?>" style="background-image: url( <?php echo esc_url( $choice_config['preview']['background_image_url'] ); ?> );">
 								<input <?php $this->link(); echo 'name="' . $this->setting->id . '" id="' . $choice_value . '" type="radio" value="' . esc_attr( $choice_value ) . '" ' . selected( $this->value(), $choice_value, false ) . $data .' />'; ?>
 								<label for="<?php echo $choice_value; ?>">
 									<span class="label__inner" style="color: <?php echo $this->lightOrDark( $sm_light )?>; background: <?php echo $sm_light; ?>;"><span class="preview__letter" style="background: <?php echo $sm_color; ?>"><?php echo $choice_config['preview']['sample_letter']; ?></span><?php echo $label; ?></span>
