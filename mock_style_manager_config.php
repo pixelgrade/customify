@@ -38,7 +38,7 @@ if ( ! function_exists('mock_style_manager_section') ) {
 						'vasco'  => array(
 							'label'   => __( 'Vasco Theme', 'customify' ),
 							'preview' => array(
-								'background_image_url' => 'https://images.unsplash.com/photo-1492553397175-5f7ec0158903?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=f13108c72f87cf399a55260c6596694a&auto=format&fit=crop&w=3450&q=80',
+								'background_image_url' => 'http://pxgcdn.com/images/style-manager/color-palettes/vasco-theme-palette.jpg',
 							),
 							'options' => array(
 								'sm_color_primary'   => '#38C3C8',
@@ -52,6 +52,9 @@ if ( ! function_exists('mock_style_manager_section') ) {
 						),
 						'felt'  => array(
 							'label'   => __( 'Felt Theme', 'customify' ),
+							'preview' => array(
+								'background_image_url' => 'http://pxgcdn.com/images/style-manager/color-palettes/felt-theme-palette.jpg',
+							),
 							'options' => array(
 								'sm_color_primary'   => '#ff6000',
 								'sm_color_secondary' => '#FF9200',
@@ -63,6 +66,9 @@ if ( ! function_exists('mock_style_manager_section') ) {
 						),
 						'julia'  => array(
 							'label'   => __( 'Julia Theme', 'customify' ),
+							'preview' => array(
+								'background_image_url' => 'http://pxgcdn.com/images/style-manager/color-palettes/julia-theme-palette.jpg',
+							),
 							'options' => array(
 								'sm_color_primary'   => '#3349B8',
 								'sm_color_secondary' => '#3393B8',
@@ -74,6 +80,9 @@ if ( ! function_exists('mock_style_manager_section') ) {
 						),
 						'gema'  => array(
 							'label'   => __( 'Gema Theme', 'customify' ),
+							'preview' => array(
+								'background_image_url' => 'http://pxgcdn.com/images/style-manager/color-palettes/gema-theme-palette.jpg',
+							),
 							'options' => array(
 								'sm_color_primary'   => '#E03A3A',
 								'sm_color_secondary'   => '#E03A3A',
@@ -86,6 +95,9 @@ if ( ! function_exists('mock_style_manager_section') ) {
 						),
 						'patch'  => array(
 							'label'   => __( 'Patch Theme', 'customify' ),
+							'preview' => array(
+								'background_image_url' => 'http://pxgcdn.com/images/style-manager/color-palettes/patch-theme-palette.jpg',
+							),
 							'options' => array(
 								'sm_color_primary'   => '#ffeb00',
 								'sm_color_secondary'   => '#3200B2',
@@ -98,6 +110,9 @@ if ( ! function_exists('mock_style_manager_section') ) {
 						),
 						'silk'  => array(
 							'label'   => __( 'Silk Theme', 'customify' ),
+							'preview' => array(
+								'background_image_url' => 'http://pxgcdn.com/images/style-manager/color-palettes/silk-theme-palette.jpg',
+							),
 							'options' => array(
 								'sm_color_primary'   => '#A33B61',
 								'sm_color_secondary'   => '#FCC9B0',
@@ -110,6 +125,9 @@ if ( ! function_exists('mock_style_manager_section') ) {
 						),
 						'hive'  => array(
 							'label'   => __( 'Hive Theme', 'customify' ),
+							'preview' => array(
+								'background_image_url' => 'http://pxgcdn.com/images/style-manager/color-palettes/hive-theme-palette.jpg',
+							),
 							'options' => array(
 								'sm_color_primary'   => '#ffeb00',
 								'sm_color_secondary'   => '#3200B2',
@@ -122,6 +140,9 @@ if ( ! function_exists('mock_style_manager_section') ) {
 						),
 						'lilac'  => array(
 							'label'   => __( 'Lilac', 'customify' ),
+							'preview' => array(
+								'background_image_url' => 'http://pxgcdn.com/images/style-manager/color-palettes/lilac-palette.jpg',
+							),
 							'options' => array(
 								'sm_color_primary'   => '#DD8CA9',
 								'sm_color_secondary'   => '#8C9CDE',
@@ -133,17 +154,6 @@ if ( ! function_exists('mock_style_manager_section') ) {
 								'sm_light_tertiary'  => '#afafaf',
 							),
 						),
-						'adler'  => array(
-							'label'   => __( 'Adler', 'customify' ),
-							'options' => array(
-								'sm_color_primary'              => '#FE4A49',
-								'sm_dark_primary'            => '#FED766',
-								'sm_dark_secondary'             => '#009FB7',
-								'sm_light_primary'   => '#faf9ff',
-								'sm_light_secondary' => '#F4F4F8',
-							),
-						),
-
 					),
 				),
 				'sm_color_primary'              => array(
