@@ -1836,6 +1836,7 @@ ul.font-options__options-list {
 			left: 0;
 			right: 0;
 			z-index: 10;
+			pointer-events: none;
 
 			box-shadow: inset 0 0 3px 0 rgba(0,0,0,0.15), inset 0 1px 3px 0 rgba(0,0,0,0.15);
 		}
