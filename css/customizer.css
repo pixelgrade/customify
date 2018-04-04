@@ -317,7 +317,7 @@
   border-style: solid;
   border-color: transparent transparent #fff transparent; }
 
-.font-options__head, .wp-full-overlay-sidebar-content .customize-control input[type=text]:not(#_customize-input-wpcom_custom_css_content_width_control),
+.font-options__head, .wp-full-overlay-sidebar-content .customize-control input[type=text]:not(#_customize-input-wpcom_custom_css_content_width_control):not(.wp-color-picker),
 .wp-full-overlay-sidebar-content .customize-control input[type=checkbox],
 .wp-full-overlay-sidebar-content .customize-control input[type=password],
 .wp-full-overlay-sidebar-content .customize-control input[type=color],
@@ -346,7 +346,7 @@
   line-height: 1.5;
   color: #416B7E;
   outline: 0; }
-  .font-options__head:focus, .wp-full-overlay-sidebar-content .customize-control input[type=text]:focus:not(#_customize-input-wpcom_custom_css_content_width_control),
+  .font-options__head:focus, .wp-full-overlay-sidebar-content .customize-control input[type=text]:focus:not(#_customize-input-wpcom_custom_css_content_width_control):not(.wp-color-picker),
   .wp-full-overlay-sidebar-content .customize-control input[type=checkbox]:focus,
   .wp-full-overlay-sidebar-content .customize-control input[type=password]:focus,
   .wp-full-overlay-sidebar-content .customize-control input[type=color]:focus,
@@ -397,6 +397,9 @@
     .wp-full-overlay-sidebar-content .customize-control input[type=radio]:checked:before {
       color: white;
       margin: -1px 0 0 -2px; }
+
+.wp-full-overlay-sidebar-content .customize-control .awesome_preset input[type=radio]:checked {
+  background: transparent; }
 
 .wp-full-overlay-sidebar-content .customize-control.customize-control-checkbox:not(#customize-control-jetpack_css_mode_control) label:not(:only-of-type),
 .wp-full-overlay-sidebar-content .customize-control.customize-control-checkbox:not(#customize-control-jetpack_css_mode_control) > .customize-inside-control-row:not(:only-of-type), .wp-full-overlay-sidebar-content .customize-control.customize-control-radio label:not(:only-of-type),
@@ -1253,8 +1256,7 @@ ul.font-options__options-list .select2-container--default .select2-selection--si
     left: 0;
     right: 0;
     z-index: 10;
-    box-shadow: inset 0 0 3px 0 rgba(0, 0, 0, 0.15), inset 0 1px 3px 0 rgba(0, 0, 0, 0.15);
-    pointer-events: none; }
+    box-shadow: inset 0 0 3px 0 rgba(0, 0, 0, 0.15), inset 0 1px 3px 0 rgba(0, 0, 0, 0.15); }
   .pix_customizer_setting .customize-inside-control-row:hover:before {
     box-shadow: inset 0 2px 3px 0 rgba(0, 0, 0, 0.15), inset 0 0 3px 0 rgba(0, 0, 0, 0.15); }
   .pix_customizer_setting .customize-inside-control-row:hover .palette__item {

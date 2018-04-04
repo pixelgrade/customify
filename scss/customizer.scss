@@ -677,7 +677,7 @@ $background-hover 	: #f5fcff;
 
 .wp-full-overlay-sidebar-content .customize-control {
 
-	input[type=text]:not(#_customize-input-wpcom_custom_css_content_width_control),
+	input[type=text]:not(#_customize-input-wpcom_custom_css_content_width_control):not(.wp-color-picker),
 	input[type=checkbox],
 	input[type=password],
 	input[type=color],
@@ -729,6 +729,10 @@ $background-hover 	: #f5fcff;
 			}
 		}
 	}
+
+    .awesome_preset input[type=radio]:checked {
+      background: transparent;
+    }
 
 	&.customize-control-checkbox:not(#customize-control-jetpack_css_mode_control),
 	&.customize-control-radio {
