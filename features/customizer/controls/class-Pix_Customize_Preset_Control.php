@@ -5,9 +5,9 @@
  * A simple Select2 Control
  */
 class Pix_Customize_Preset_Control extends Pix_Customize_Control {
-	public $type    = 'preset';
-	public $choices_type    = 'select';
-	public $description    = null;
+	public $type = 'preset';
+	public $choices_type = 'select';
+	public $description = null;
 
 	/**
 	 * Render the control's content.
@@ -68,8 +68,8 @@ class Pix_Customize_Preset_Control extends Pix_Customize_Control {
 							$data = ' data-options=\'' . json_encode( $options ) . '\''; ?>
 
 							<span class="customize-inside-control-row">
-								<input <?php $this->link(); echo 'name="' . $this->setting->id . '" id="' . $choice_value . '" type="radio" value="' . esc_attr( $choice_value ) . '" ' . selected( $this->value(), $choice_value, false ) . $data . $color .' />'; ?>
-								<label for="<?php echo $choice_value; ?>">
+								<input <?php $this->link(); echo 'name="' . $this->setting->id . '" id="' . esc_attr( $choice_value ) . '" type="radio" value="' . esc_attr( $choice_value ) . '" ' . selected( $this->value(), $choice_value, false ) . $data . $color .' />'; ?>
+								<label for="<?php echo esc_attr( $choice_value ); ?>">
 									<?php echo $label; ?>
 								</label>
 							</span>
@@ -128,7 +128,7 @@ class Pix_Customize_Preset_Control extends Pix_Customize_Control {
 					<div class="customify_preset color_palette customize-control customize-control-radio">
 						<?php
 						foreach ( $this->choices as $choice_value => $choice_config ){
-							if ( ! isset( $choice_config['options'] ) || ! isset( $choice_config['label'] ) ) {
+							if ( empty( $choice_config['options'] ) ) {
 								continue;
 							}
 
@@ -152,6 +152,10 @@ class Pix_Customize_Preset_Control extends Pix_Customize_Control {
 								$sm_color = $choice_config['options']['sm_color_secondary'];
 							} elseif ( isset( $choice_config['options']['sm_color_tertiary'] ) ) {
 								$sm_color = $choice_config['options']['sm_color_tertiary'];
+							} elseif ( isset( $choice_config['options']['sm_color_quaternary'] ) ) {
+								$sm_color = $choice_config['options']['sm_color_quaternary'];
+							} elseif ( isset( $choice_config['options']['sm_color_quinary'] ) ) {
+								$sm_color = $choice_config['options']['sm_color_quinary'];
 							}
 
 							// Determine a (primary) dark color with fallback for missing options
@@ -162,6 +166,10 @@ class Pix_Customize_Preset_Control extends Pix_Customize_Control {
 								$sm_dark = $choice_config['options']['sm_dark_secondary'];
 							} elseif ( isset( $choice_config['options']['sm_dark_tertiary'] ) ) {
 								$sm_dark = $choice_config['options']['sm_dark_tertiary'];
+							} elseif ( isset( $choice_config['options']['sm_dark_quaternary'] ) ) {
+								$sm_dark = $choice_config['options']['sm_dark_quaternary'];
+							} elseif ( isset( $choice_config['options']['sm_dark_quinary'] ) ) {
+								$sm_dark = $choice_config['options']['sm_dark_quinary'];
 							}
 
 							// Determine a (primary) light color with fallback for missing options
@@ -172,6 +180,10 @@ class Pix_Customize_Preset_Control extends Pix_Customize_Control {
 								$sm_light = $choice_config['options']['sm_light_secondary'];
 							} elseif ( isset( $choice_config['options']['sm_light_tertiary'] ) ) {
 								$sm_light = $choice_config['options']['sm_light_tertiary'];
+							} elseif ( isset( $choice_config['options']['sm_light_quaternary'] ) ) {
+								$sm_light = $choice_config['options']['sm_light_quaternary'];
+							} elseif ( isset( $choice_config['options']['sm_light_quinary'] ) ) {
+								$sm_light = $choice_config['options']['sm_light_quinary'];
 							}
 
 							$label = $choice_config['label'];
@@ -179,9 +191,9 @@ class Pix_Customize_Preset_Control extends Pix_Customize_Control {
 							$data = ' data-options=\'' . json_encode( $options ) . '\''; ?>
 
 							<span class="customize-inside-control-row <?php echo ( (string) $this->value() === (string) $choice_value ? 'current-color-palette' : '' );?>" style="background-image: url( <?php echo esc_url( $choice_config['preview']['background_image_url'] ); ?> );">
-								<input <?php $this->link(); echo 'name="' . $this->setting->id . '" id="' . $choice_value . '" type="radio" value="' . esc_attr( $choice_value ) . '" ' . selected( $this->value(), $choice_value, false ) . $data .' />'; ?>
-								<label for="<?php echo $choice_value; ?>">
-									<span class="label__inner" style="color: <?php echo $this->lightOrDark( $sm_light )?>; background: <?php echo $sm_light; ?>;"><span class="preview__letter" style="background: <?php echo $sm_color; ?>"><?php echo $choice_config['preview']['sample_letter']; ?></span><?php echo $label; ?></span>
+								<input <?php $this->link(); echo 'name="' . $this->setting->id . '" id="' . esc_attr( $choice_value ) . '" type="radio" value="' . esc_attr( $choice_value ) . '" ' . selected( $this->value(), $choice_value, false ) . $data .' />'; ?>
+								<label for="<?php echo esc_attr( $choice_value ); ?>">
+									<span class="label__inner" style="color: <?php echo esc_attr( $this->lightOrDark( $sm_light ) ); ?>; background: <?php echo esc_attr( $sm_light ); ?>;"><span class="preview__letter" style="background: <?php echo $sm_color; ?>"><?php echo $choice_config['preview']['sample_letter']; ?></span><?php echo esc_html( $label ); ?></span>
 								</label>
 								<div class="palette">
 									<?php foreach ( $choice_config['options'] as $color_name => $color_value ) {
