@@ -32,7 +32,7 @@ if ( ! function_exists('mock_style_manager_section') ) {
 					'live'         => true,
 					'label'        => __( 'Select a color palette:', 'customify' ),
 					'desc'         => __( 'Conveniently change the design of your site with color palettes. Easy as pie.', 'customify' ),
-					'default'      => 'royal',
+					'default'      => 'lilac',
 					'choices_type' => 'color_palette',
 					'choices'      => array(
 						'vasco'  => array(
