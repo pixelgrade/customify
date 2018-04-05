@@ -164,11 +164,9 @@
     padding-right: 15px;
     padding-left: 15px;
 
-    transition: all .1s; 
-
     color: #f5fcff;
     border: none;
-    border-radius: 4px;
+    border-radius: 4px; 
     background: #aed2e5;
     box-shadow: 0 2px 0 0 #8dbed7;
     text-shadow: none;
