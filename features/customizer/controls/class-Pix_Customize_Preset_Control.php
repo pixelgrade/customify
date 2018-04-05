@@ -5,9 +5,9 @@
  * A simple Select2 Control
  */
 class Pix_Customize_Preset_Control extends Pix_Customize_Control {
-	public $type    = 'preset';
-	public $choices_type    = 'select';
-	public $description    = null;
+	public $type = 'preset';
+	public $choices_type = 'select';
+	public $description = null;
 
 	/**
 	 * Render the control's content.
@@ -52,7 +52,7 @@ class Pix_Customize_Preset_Control extends Pix_Customize_Control {
 						<span class="description customize-control-description"><?php echo $this->description; ?></span>
 					<?php } ?>
 
-					<div class="customify_preset radio">
+					<div class="customify_preset radio customize-control customize-control-radio">
 						<?php
 						foreach ( $this->choices as $choice_value => $choice_config ){
 							if ( ! isset( $choice_config['options']) || ! isset( $choice_config['label'] ) ) {
@@ -67,8 +67,13 @@ class Pix_Customize_Preset_Control extends Pix_Customize_Control {
 							$options = $this->convertChoiceOptionsIdsToSettingIds( $choice_config['options'] );
 							$data = ' data-options=\'' . json_encode( $options ) . '\''; ?>
 
-							<input <?php $this->link(); echo 'name="' .  $this->setting->id . '" type="radio" value="' . esc_attr( $choice_value ) . '" ' . selected( $this->value(), $choice_value, false ) . $data . $color .' >' . $label . '</input>';
-						} ?>
+							<span class="customize-inside-control-row">
+								<input <?php $this->link(); echo 'name="' . $this->setting->id . '" id="' . esc_attr( $choice_value ) . '" type="radio" value="' . esc_attr( $choice_value ) . '" ' . selected( $this->value(), $choice_value, false ) . $data . $color .' />'; ?>
+								<label for="<?php echo esc_attr( $choice_value ); ?>">
+									<?php echo $label; ?>
+								</label>
+							</span>
+						<?php } ?>
 					</div>
 				</label>
 			<?php break;
@@ -107,6 +112,99 @@ class Pix_Customize_Preset_Control extends Pix_Customize_Control {
 						<?php } ?>
 					</div>
 				</label>
+				<?php break;
+			}
+
+			case 'color_palette' : { ?>
+				<label>
+					<?php if ( ! empty( $this->label ) ) { ?>
+						<span class="customize-control-title"><?php echo esc_html( $this->label ); ?></span>
+					<?php }
+
+					if ( ! empty( $this->description ) ) { ?>
+						<span class="description customize-control-description"><?php echo $this->description; ?></span>
+					<?php } ?>
+
+					<div class="customify_preset color_palette customize-control customize-control-radio">
+						<?php
+						foreach ( $this->choices as $choice_value => $choice_config ){
+							if ( empty( $choice_config['options'] ) ) {
+								continue;
+							}
+
+							// Make sure that the defaults are in place
+							$choice_config = wp_parse_args( $choice_config, array(
+								'label' => '',
+								'preview' => array(),
+							) );
+
+							// Make sure that the preview defaults are in place
+							$choice_config['preview'] = wp_parse_args( $choice_config['preview'], array(
+								'sample_letter' => 'A',
+								'background_image_url' => plugins_url( 'images/color_palette_image.jpg', PixCustomifyPlugin()->file ),
+							) );
+
+							// Determine a (primary) color with fallback for missing options
+							$sm_color = '#777777';
+							if ( isset( $choice_config['options']['sm_color_primary'] ) ) {
+								$sm_color = $choice_config['options']['sm_color_primary'];
+							} elseif ( isset( $choice_config['options']['sm_color_secondary'] ) ) {
+								$sm_color = $choice_config['options']['sm_color_secondary'];
+							} elseif ( isset( $choice_config['options']['sm_color_tertiary'] ) ) {
+								$sm_color = $choice_config['options']['sm_color_tertiary'];
+							} elseif ( isset( $choice_config['options']['sm_color_quaternary'] ) ) {
+								$sm_color = $choice_config['options']['sm_color_quaternary'];
+							} elseif ( isset( $choice_config['options']['sm_color_quinary'] ) ) {
+								$sm_color = $choice_config['options']['sm_color_quinary'];
+							}
+
+							// Determine a (primary) dark color with fallback for missing options
+							$sm_dark = '#000000';
+							if ( isset( $choice_config['options']['sm_dark_primary'] ) ) {
+								$sm_dark = $choice_config['options']['sm_dark_primary'];
+							} elseif ( isset( $choice_config['options']['sm_dark_secondary'] ) ) {
+								$sm_dark = $choice_config['options']['sm_dark_secondary'];
+							} elseif ( isset( $choice_config['options']['sm_dark_tertiary'] ) ) {
+								$sm_dark = $choice_config['options']['sm_dark_tertiary'];
+							} elseif ( isset( $choice_config['options']['sm_dark_quaternary'] ) ) {
+								$sm_dark = $choice_config['options']['sm_dark_quaternary'];
+							} elseif ( isset( $choice_config['options']['sm_dark_quinary'] ) ) {
+								$sm_dark = $choice_config['options']['sm_dark_quinary'];
+							}
+
+							// Determine a (primary) light color with fallback for missing options
+							$sm_light = '#FFFFFF';
+							if ( isset( $choice_config['options']['sm_light_primary'] ) ) {
+								$sm_light = $choice_config['options']['sm_light_primary'];
+							} elseif ( isset( $choice_config['options']['sm_light_secondary'] ) ) {
+								$sm_light = $choice_config['options']['sm_light_secondary'];
+							} elseif ( isset( $choice_config['options']['sm_light_tertiary'] ) ) {
+								$sm_light = $choice_config['options']['sm_light_tertiary'];
+							} elseif ( isset( $choice_config['options']['sm_light_quaternary'] ) ) {
+								$sm_light = $choice_config['options']['sm_light_quaternary'];
+							} elseif ( isset( $choice_config['options']['sm_light_quinary'] ) ) {
+								$sm_light = $choice_config['options']['sm_light_quinary'];
+							}
+
+							$label = $choice_config['label'];
+							$options = $this->convertChoiceOptionsIdsToSettingIds( $choice_config['options'] );
+							$data = ' data-options=\'' . json_encode( $options ) . '\''; ?>
+
+							<span class="customize-inside-control-row <?php echo ( (string) $this->value() === (string) $choice_value ? 'current-color-palette' : '' );?>" style="background-image: url( <?php echo esc_url( $choice_config['preview']['background_image_url'] ); ?> );">
+								<input <?php $this->link(); echo 'name="' . $this->setting->id . '" id="' . esc_attr( $choice_value ) . '" type="radio" value="' . esc_attr( $choice_value ) . '" ' . selected( $this->value(), $choice_value, false ) . $data .' />'; ?>
+								<label for="<?php echo esc_attr( $choice_value ); ?>">
+									<span class="label__inner" style="color: <?php echo esc_attr( $this->lightOrDark( $sm_light ) ); ?>; background: <?php echo esc_attr( $sm_light ); ?>;"><span class="preview__letter" style="background: <?php echo $sm_color; ?>"><?php echo $choice_config['preview']['sample_letter']; ?></span><?php echo esc_html( $label ); ?></span>
+								</label>
+								<div class="palette">
+									<?php foreach ( $choice_config['options'] as $color_name => $color_value ) {
+										echo '<div class="palette__item ' . esc_attr( $color_name ) . '" style="background: ' . esc_attr( $color_value ) . '"></div>' . PHP_EOL;
+									} ?>
+								</div>
+							</span>
+						<?php } ?>
+					</div>
+				</label>
+
 				<?php break;
 			}
 
@@ -219,6 +317,32 @@ class Pix_Customize_Preset_Control extends Pix_Customize_Control {
 		$g = hexdec($color[2].$color[3]);
 		$b = hexdec($color[4].$color[5]);
 		return (( $r*299 + $g*587 + $b*114 )/1000 > 130);
+	}
+
+	/**
+	 * Detect if we should use a light or dark color on a background color.
+	 *
+	 * Taken from WooCommerce: woocommerce/includes/wc-formatting-functions.php
+	 * @link http://woocommerce.wp-a2z.org/oik_api/wc_light_or_dark/
+	 *
+	 * @param mixed  $color Color.
+	 * @param string $dark  Darkest reference.
+	 *                      Defaults to '#000000'.
+	 * @param string $light Lightest reference.
+	 *                      Defaults to '#FFFFFF'.
+	 * @return string
+	 */
+	function lightOrDark( $color, $dark = '#000000', $light = '#FFFFFF' ) {
+
+		$hex = str_replace( '#', '', $color );
+
+		$c_r = hexdec( substr( $hex, 0, 2 ) );
+		$c_g = hexdec( substr( $hex, 2, 2 ) );
+		$c_b = hexdec( substr( $hex, 4, 2 ) );
+
+		$brightness = ( ( $c_r * 299 ) + ( $c_g * 587 ) + ( $c_b * 114 ) ) / 1000;
+
+		return $brightness > 180 ? $dark : $light;
 	}
 
 	/**

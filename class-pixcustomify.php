@@ -1714,7 +1714,9 @@ class PixCustomifyPlugin {
 
 			<?php
 			echo "(function ( sAdditional ){\n";
-			foreach ( $this->get_options() as $option_id => $option_config ) {
+
+			$options = $this->get_options();
+			foreach ( $options as $option_id => $option_config ) {
 				// If we have been explicitly given a setting ID we will use that
 				if ( ! empty( $option_config['setting_id'] ) ) {
 					$setting_id = $option_config['setting_id'];
@@ -1725,15 +1727,43 @@ class PixCustomifyPlugin {
 				if ( ! empty( $customizer_settings[ $setting_id ] ) && ! empty( $option_config['connected_fields'] ) ) {
 					// Pass through all the connected fields and make sure the id is in the final format
 					$connected_fields = array();
-					foreach ( $option_config['connected_fields'] as $connected_field_id ) {
-						$connected_fields[] = $options_name . '[' . $connected_field_id . ']';
+					foreach ( $option_config['connected_fields'] as $key => $connected_field_config ) {
+						$connected_field_data = array();
+
+						if ( is_string( $connected_field_config ) ) {
+							$connected_field_id = $connected_field_config;
+						} elseif ( is_array( $connected_field_config ) ) {
+							// We have a full blown connected field config
+							if ( is_string( $key ) ) {
+								$connected_field_id = $key;
+							} else {
+								continue;
+							}
+
+							// We will pass to JS all the configured connected field details.
+							$connected_field_data = $connected_field_config;
+						}
+
+						// Continue if we don't have a connected field ID to work with.
+						if ( empty( $connected_field_id ) ) {
+							continue;
+						}
+
+						// We will need to determine if the connected field specifies a setting ID or we need to determine it.
+						if ( ! empty( $options[ $connected_field_id ] ) && ! empty( $options[ $connected_field_id ]['setting_id'] ) ) {
+							$connected_field_data['setting_id'] = $options[ $connected_field_id ]['setting_id'];
+						} else {
+							$connected_field_data['setting_id'] = $options_name . '[' . $connected_field_id . ']';
+						}
+
+						$connected_fields[] = $connected_field_data;
 					}
 
 					printf(
 						"sAdditional[%s].%s = %s;\n",
 						wp_json_encode( $setting_id ),
 						'connected_fields',
-						wp_json_encode( $connected_fields )
+						wp_json_encode( $connected_fields, JSON_FORCE_OBJECT )
 					);
 				}
 			}
