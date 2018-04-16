@@ -2023,6 +2023,16 @@ ul.font-options__options-list .select2-container--default .select2-selection--si
 {
     opacity: 0;
 }
+.pix_customizer_setting .customize-inside-control-row input:checked + label .preview__letter--checked
+{
+    display: inline-block;
+
+    vertical-align: middle;
+}
+.pix_customizer_setting .customize-inside-control-row input:checked + label .preview__letter
+{
+    display: none;
+}
 .pix_customizer_setting .customize-inside-control-row label
 {
     position: absolute;
@@ -2116,13 +2126,27 @@ ul.font-options__options-list .select2-container--default .select2-selection--si
 {
     transition-delay: .45s;
 }
-.pix_customizer_setting .customize-inside-control-row .preview__letter
+.pix_customizer_setting .customize-inside-control-row .preview__letter,
+.pix_customizer_setting .customize-inside-control-row .preview__letter--checked
 {
+    font-style: normal;
+
     display: inline-block;
 
-    margin-right: 5px; 
-    padding: 3px 9px;
+    min-width: 26px;
+    min-height: 26px;
+    margin-right: 5px;
+    padding: 3px;
+
+    text-align: center;
+    vertical-align: baseline; 
 
     color: white;
     border-radius: 2px;
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+.pix_customizer_setting .customize-inside-control-row .preview__letter--checked
+{
+    display: none;
 }
