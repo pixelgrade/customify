@@ -2145,6 +2145,7 @@ ul.font-options__options-list .select2-container--default .select2-selection--si
     border-radius: 2px;
     background-repeat: no-repeat;
     background-position: center center;
+    background-size: 15px 15px;
 }
 .pix_customizer_setting .customize-inside-control-row .preview__letter--checked
 {
