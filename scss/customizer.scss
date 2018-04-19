@@ -1868,6 +1868,16 @@ ul.font-options__options-list {
 			opacity: 0;
 		}
 
+		input:checked + label {
+			.preview__letter--checked {
+				display: inline-block;
+				vertical-align: middle;
+			}
+			.preview__letter {
+				display: none;
+			}
+		}
+
 		label {
 			position: absolute;
 			display: flex;
@@ -1905,34 +1915,47 @@ ul.font-options__options-list {
 		}
 
 			// Colors Bars
-			.palette__item {
-				flex: 1;
-				transform: translateY(100%);
+		.palette__item {
+			flex: 1;
+			transform: translateY(100%);
 
-				transition: all .3s ease;
+			transition: all .3s ease;
 
-				// Assume maximum 10 colors
-				@for $i from 1 through 10 {
-				  &:nth-child(#{$i}) {
-				    transition-delay: 0s + $i/20 - 1/20;
+			// Assume maximum 10 colors
+			@for $i from 1 through 10 {
+			  &:nth-child(#{$i}) {
+				transition-delay: 0s + $i/20 - 1/20;
 
-				    // PLAYGROUND:
-				    // Size items based on color accent
-				    // Higher size for accent colors
-				    // Lower sizes for light colors
-				    
-				    // flex-grow: 1/$i * 10 + $i/10;
-				  }
-				}
+				// PLAYGROUND:
+				// Size items based on color accent
+				// Higher size for accent colors
+				// Lower sizes for light colors
+
+				// flex-grow: 1/$i * 10 + $i/10;
+			  }
 			}
+		}
 
-			.preview__letter {
-				display: inline-block;
-				padding: 3px 9px;
-				border-radius: 2px;
-				color: white;
-				margin-right: 5px;
-			}
+		.preview__letter,
+		.preview__letter--checked {
+			display: inline-block;
+			padding: 3px;
+			border-radius: 2px;
+			color: white;
+			margin-right: 5px;
+			min-height: 26px;
+			min-width: 26px;
+			text-align: center;
+			background-position: center center;
+			background-repeat: no-repeat;
+			background-size: 15px 15px;
+			font-style: normal;
+			vertical-align: baseline;
+		}
+
+		.preview__letter--checked {
+			display: none;
+		}
 	}
 }
 
