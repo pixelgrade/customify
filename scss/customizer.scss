@@ -1935,3 +1935,103 @@ ul.font-options__options-list {
 			}
 	}
 }
+
+#customize-control-sm_color_palette_control {
+
+	~ li {
+		visibility: hidden;
+
+		//display: block !important;
+		//float: left;
+		//clear: none;
+		//margin-left: -20px;
+		//width: 30px;
+		//height: 40px;
+
+		> span {
+			display: none;
+		}
+
+		.wp-picker-input-wrap,
+		.wp-picker-holder {
+			visibility: visible;
+		}
+
+		.wp-picker-container {
+			width: 100%;
+			float: left;
+			//border-radius: 50%;
+
+			button {
+				//width: 100px;
+				//height: 100px;
+				//border-radius: 50%;
+				//border: 4px solid #CCC;
+
+				&:before {
+					content: "";
+					display: block;
+					visibility: visible;
+					background-color: inherit;
+					width: 90px;
+					height: 90px;
+					border-radius: 50%;
+					border: 3px solid #DDD;
+				}
+			}
+		}
+	}
+
+	$x: 70px;
+	$y: 54px;
+
+	~ li .wp-picker-container button:before {
+		position: relative;
+	}
+
+	~ [id*="sm_color_primary"] .wp-picker-container button:before {
+
+	}
+
+	~ [id*="sm_color_secondary"] .wp-picker-container button:before {
+		top: -1 * $y;
+		right: -1 * $x;
+	}
+
+	~ [id*="sm_color_tertiary"] .wp-picker-container button:before {
+		top: -2 * $y;
+		right: -2 * $x;
+	}
+
+	~ [id*="sm_dark_primary"] .wp-picker-container button:before {
+		top: -1 * $y;
+	}
+
+	~ [id*="sm_dark_secondary"] .wp-picker-container button:before {
+		top: -2 * $y;
+		right: -1 * $x;
+	}
+
+	~ [id*="sm_dark_tertiary"] .wp-picker-container button:before {
+		top: -3 * $y;
+		right: -2 * $x;
+	}
+
+	~ [id*="sm_light_primary"] .wp-picker-container button:before {
+		top: -2 * $y;
+	}
+
+	~ [id*="sm_light_secondary"] .wp-picker-container button:before {
+		top: -3 * $y;
+		right: -1 * $x;
+	}
+
+	~ [id*="sm_light_tertiary"] .wp-picker-container button:before {
+		top: -4 * $y;
+		right: -2 * $x;
+	}
+
+	~ li[class*="button"] {
+		visibility: visible;
+	}
+}
