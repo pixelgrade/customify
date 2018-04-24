@@ -17,7 +17,7 @@
 
     var scale = windowWidth / iframeWidth;
 
-    if (iframeWidth > 720) {
+    if (iframeWidth > 720 && iframeWidth < 1100) {
       $previewIframe.find( 'iframe' ).css( {
         width: iframeWidth * scale,
         height: windowHeight * scale,
@@ -30,6 +30,10 @@
 	// when the customizer is ready prepare our fields events
 	wp.customize.bind('ready', function () {
 		var timeout = null;
+
+		$('.collapse-sidebar').on('click', function() {
+			setTimeout(scaleIframe, 300);
+		});
 
     wp.customize.previewer.bind('synced', function() {
       scaleIframe();
