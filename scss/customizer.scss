@@ -1961,15 +1961,10 @@ ul.font-options__options-list {
 
 #customize-control-sm_color_palette_control {
 
-	~ li {
+	~ li[id*="sm_color_"],
+	~ li[id*="sm_dark_"],
+	~ li[id*="sm_light_"] {
 		visibility: hidden;
-
-		//display: block !important;
-		//float: left;
-		//clear: none;
-		//margin-left: -20px;
-		//width: 30px;
-		//height: 40px;
 
 		> span {
 			display: none;
@@ -1993,6 +1988,7 @@ ul.font-options__options-list {
 
 				&:before {
 					content: "";
+					position: relative;
 					display: block;
 					visibility: visible;
 					background-color: inherit;
@@ -2007,10 +2003,6 @@ ul.font-options__options-list {
 
 	$x: 70px;
 	$y: 54px;
-
-	~ li .wp-picker-container button:before {
-		position: relative;
-	}
 
 	~ [id*="sm_color_primary"] .wp-picker-container button:before {
 
@@ -2052,9 +2044,5 @@ ul.font-options__options-list {
 	~ [id*="sm_light_tertiary"] .wp-picker-container button:before {
 		top: -4 * $y;
 		right: -2 * $x;
-	}
-
-	~ li[class*="button"] {
-		visibility: visible;
 	}
 }

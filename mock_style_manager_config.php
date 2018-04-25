@@ -258,25 +258,47 @@ if ( ! function_exists('mock_style_manager_section') ) {
 					'connected_fields' => array(),
 				),
 
-				'sm_swap_colors' => array(
-					'type'     => 'button',
-					'label'    => __( 'Swap Colors', 'customify' ),
-					'action'   => 'sm_swap_colors',
+				'sm_swap_colors'                => array(
+					'type'         => 'button',
+					'setting_type' => 'option',
+					'setting_id'   => 'sm_swap_colors',
+					'label'        => __( 'Swap Colors', 'customify' ),
+					'action'       => 'sm_swap_colors',
 				),
-				'sm_swap_dark_light' => array(
-					'type'     => 'button',
-					'label'    => __( 'Swap Dark ⇆ Light', 'customify' ),
-					'action'   => 'sm_swap_dark_light',
+				'sm_swap_dark_light'            => array(
+					'type'         => 'button',
+					'setting_type' => 'option',
+					'setting_id'   => 'sm_swap_dark_light',
+					'label'        => __( 'Swap Dark ⇆ Light', 'customify' ),
+					'action'       => 'sm_swap_dark_light',
 				),
-				'sm_swap_colors_dark' => array(
-					'type'     => 'button',
-					'label'    => __( 'Swap Colors ⇆ Dark', 'customify' ),
-					'action'   => 'sm_swap_colors_dark',
+				'sm_swap_colors_dark'           => array(
+					'type'         => 'button',
+					'setting_type' => 'option',
+					'setting_id'   => 'sm_swap_colors_dark',
+					'label'        => __( 'Swap Colors ⇆ Dark', 'customify' ),
+					'action'       => 'sm_swap_colors_dark',
 				),
 				'sm_swap_secondary_colors_dark' => array(
-					'type'     => 'button',
-					'label'    => __( 'Swap Secondary Color ⇆ Secondary Dark', 'customify' ),
-					'action'   => 'sm_swap_secondary_colors_dark',
+					'type'         => 'button',
+					'setting_type' => 'option',
+					'setting_id'   => 'sm_swap_secondary_colors_dark',
+					'label'        => __( 'Swap Secondary Color ⇆ Secondary Dark', 'customify' ),
+					'action'       => 'sm_swap_secondary_colors_dark',
+				),
+
+				'sm_palette_variation' => array(
+					'type'         => 'radio',
+					'setting_type' => 'option',
+					'setting_id'   => 'sm_palette_variation',
+					'label'        => __( 'Palette Variation', 'customify' ),
+					'default'      => 'default',
+					'live'         => true,
+					'choices'      => array(
+						'default' => __( 'Default', 'customify' ),
+						'dark' => __( 'Dark', 'customify' ),
+						'colorful' => __( 'Colorful', 'customify' ),
+					),
 				),
 
 			),
@@ -284,5 +306,43 @@ if ( ! function_exists('mock_style_manager_section') ) {
 
 		return $config;
 	}
+
 }
 add_filter( 'customify_filter_fields', 'mock_style_manager_section', 12, 1 );
+
+function alter_color_palette( $config ) {
+	$variation = get_option( 'sm_palette_variation' );
+	$new_config = $config;
+
+//	$options['sections']['style_manager_section'] = array_replace_recursive( $options['sections']['style_manager_section'], array(
+//		'options' => array(
+//			'sm_color_primary' => array(
+//				'connected_fields' => array(
+
+	switch ( $variation ) {
+		case 'dark':
+			$new_config['sections']['style_manager_section']['options']['sm_dark_primary']['connected_fields'] = $config['sections']['style_manager_section']['options']['sm_light_primary']['connected_fields'];
+			$new_config['sections']['style_manager_section']['options']['sm_dark_secondary']['connected_fields'] = $config['sections']['style_manager_section']['options']['sm_light_secondary']['connected_fields'];
+			$new_config['sections']['style_manager_section']['options']['sm_dark_tertiary']['connected_fields'] = $config['sections']['style_manager_section']['options']['sm_light_tertiary']['connected_fields'];
+			$new_config['sections']['style_manager_section']['options']['sm_light_primary']['connected_fields'] = $config['sections']['style_manager_section']['options']['sm_dark_primary']['connected_fields'];
+			$new_config['sections']['style_manager_section']['options']['sm_light_secondary']['connected_fields'] = $config['sections']['style_manager_section']['options']['sm_dark_secondary']['connected_fields'];
+			$new_config['sections']['style_manager_section']['options']['sm_light_tertiary']['connected_fields'] = $config['sections']['style_manager_section']['options']['sm_dark_tertiary']['connected_fields'];
+			break;
+		case 'colorful':
+			$new_config['sections']['style_manager_section']['options']['sm_color_primary']['connected_fields'] = $config['sections']['style_manager_section']['options']['sm_light_primary']['connected_fields'];
+			$new_config['sections']['style_manager_section']['options']['sm_color_secondary']['connected_fields'] = $config['sections']['style_manager_section']['options']['sm_light_secondary']['connected_fields'];
+			$new_config['sections']['style_manager_section']['options']['sm_color_tertiary']['connected_fields'] = $config['sections']['style_manager_section']['options']['sm_light_tertiary']['connected_fields'];
+			$new_config['sections']['style_manager_section']['options']['sm_dark_primary']['connected_fields'] = $config['sections']['style_manager_section']['options']['sm_color_primary']['connected_fields'];
+			$new_config['sections']['style_manager_section']['options']['sm_dark_secondary']['connected_fields'] = $config['sections']['style_manager_section']['options']['sm_color_secondary']['connected_fields'];
+			$new_config['sections']['style_manager_section']['options']['sm_dark_tertiary']['connected_fields'] = $config['sections']['style_manager_section']['options']['sm_color_tertiary']['connected_fields'];
+			$new_config['sections']['style_manager_section']['options']['sm_light_primary']['connected_fields'] = $config['sections']['style_manager_section']['options']['sm_dark_primary']['connected_fields'];
+			$new_config['sections']['style_manager_section']['options']['sm_light_secondary']['connected_fields'] = $config['sections']['style_manager_section']['options']['sm_dark_secondary']['connected_fields'];
+			$new_config['sections']['style_manager_section']['options']['sm_light_tertiary']['connected_fields'] = $config['sections']['style_manager_section']['options']['sm_dark_tertiary']['connected_fields'];
+			break;
+		default:
+			break;
+	}
+
+	return $new_config;
+}
+//add_filter( 'customify_filter_fields', 'alter_color_palette', 1000, 1 );
