@@ -20,7 +20,7 @@
 
 			var scale = windowWidth / iframeWidth;
 
-			if ( iframeWidth > 720 ) {
+			if ( iframeWidth > 720 && iframeWidth < 1100 ) {
 				$previewIframe.find( 'iframe' ).css( {
 					width: iframeWidth * scale,
 					height: windowHeight * scale,
@@ -161,6 +161,10 @@
 			var timeout = null;
 
 			handleColorPalettes();
+
+			$( '.collapse-sidebar' ).on( 'click', function() {
+				setTimeout( scaleIframe, 300 );
+			} );
 
 			wp.customize.previewer.bind( 'synced', function() {
 				scaleIframe();
