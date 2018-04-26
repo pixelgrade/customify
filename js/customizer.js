@@ -30,6 +30,65 @@
 			}
 		};
 
+		const updateCurrentPalette = ( label ) => {
+			const $palette = $( '.c-palette' );
+			const $current = $palette.find( '.colors.current' );
+			const $next = $palette.find( '.colors.next' );
+
+			label = label || 'Custom Style';
+			$palette.find( '.c-palette__name' ).text( label );
+
+			const settings = [
+				"sm_color_primary",
+				"sm_color_secondary",
+				"sm_color_tertiary",
+				"sm_dark_primary",
+				"sm_dark_secondary",
+				"sm_dark_tertiary",
+				"sm_light_primary",
+				"sm_light_secondary",
+				"sm_light_tertiary"
+			];
+
+			_.each( settings, function( setting_id ) {
+				const color = $next.find( '.' + setting_id ).css( 'color' );
+
+				$current.find( '.' + setting_id ).css({
+					'color': color
+				});
+			});
+
+			$palette.removeClass( 'animate' );
+
+			_.each( settings, function( setting_id ) {
+				const setting = wp.customize( setting_id );
+
+				if ( typeof setting !== "undefined" ) {
+					let value = setting();
+					$next.find( '.' + setting_id ).css({
+						'color': value
+					});
+				}
+			});
+
+			setTimeout(function() {
+				$palette.addClass( 'animate' );
+				$palette.find( '.c-palette__control' ).css( 'color', wp.customize( 'sm_color_primary' )() );
+			});
+		};
+
+		const bindPaletteEvents = () => {
+			const paletteControlSelector = '.c-palette__control';
+
+			$( 'body' ).on( 'click', paletteControlSelector, function() {
+				var $obj = $(this),
+					$target = $( $obj.data('target') );
+				$obj.siblings( paletteControlSelector ).removeClass( 'active' );
+				$obj.addClass( 'active' );
+				$target.prop( 'checked', true ).trigger( 'change' );
+			} );
+		};
+
 		const handleColorPalettes = () => {
 			// cache initial settings configuration to be able to update connected fields on variation change
 			window.settingsClone = $.extend(true, {}, wp.customize.settings.settings);
@@ -42,10 +101,10 @@
 
 			const resetSettings = settings => {
 				_.each( settings, function( setting_id ) {
-					const setting = wp.customize( setting_id ),
-						value = setting();
+					const setting = wp.customize( setting_id );
 
 					if ( typeof setting !== "undefined" ) {
+						let value = setting();
 						setting.set( value + "ff" );
 						setting.set( value );
 					}
@@ -94,20 +153,23 @@
 				unbindConnectedFields();
 
 				switch ( variation ) {
-					case 'dark':
+
+					// CBA
+					case 'light_dark_color':
 						swapConnectedFields( {
-							'sm_color_primary': 'sm_color_primary',
-							'sm_color_secondary': 'sm_color_secondary',
-							'sm_color_tertiary': 'sm_color_tertiary',
-							'sm_dark_primary': 'sm_light_primary',
-							'sm_dark_secondary': 'sm_light_secondary',
-							'sm_dark_tertiary': 'sm_light_tertiary',
-							'sm_light_primary': 'sm_dark_primary',
-							'sm_light_secondary': 'sm_dark_secondary',
-							'sm_light_tertiary': 'sm_dark_tertiary',
+							'sm_color_primary': 'sm_light_primary',
+							'sm_color_secondary': 'sm_light_secondary',
+							'sm_color_tertiary': 'sm_light_tertiary',
+							'sm_dark_primary': 'sm_dark_primary',
+							'sm_dark_secondary': 'sm_dark_secondary',
+							'sm_dark_tertiary': 'sm_dark_tertiary',
+							'sm_light_primary': 'sm_color_primary',
+							'sm_light_secondary': 'sm_color_secondary',
+							'sm_light_tertiary': 'sm_color_tertiary',
 						} );
 						break;
-					case 'colorful':
+					// CAB
+					case 'light_color_dark':
 						swapConnectedFields( {
 							'sm_color_primary': 'sm_light_primary',
 							'sm_color_secondary': 'sm_light_secondary',
@@ -120,6 +182,49 @@
 							'sm_light_tertiary': 'sm_dark_tertiary',
 						} );
 						break;
+					// BCA
+					case 'dark_light_color':
+						swapConnectedFields( {
+							'sm_color_primary': 'sm_dark_primary',
+							'sm_color_secondary': 'sm_dark_secondary',
+							'sm_color_tertiary': 'sm_dark_tertiary',
+							'sm_dark_primary': 'sm_light_primary',
+							'sm_dark_secondary': 'sm_light_secondary',
+							'sm_dark_tertiary': 'sm_light_tertiary',
+							'sm_light_primary': 'sm_color_primary',
+							'sm_light_secondary': 'sm_color_secondary',
+							'sm_light_tertiary': 'sm_color_tertiary',
+						} );
+						break;
+					// BAC
+					case 'dark_color_light':
+						swapConnectedFields( {
+							'sm_color_primary': 'sm_dark_primary',
+							'sm_color_secondary': 'sm_dark_secondary',
+							'sm_color_tertiary': 'sm_dark_tertiary',
+							'sm_dark_primary': 'sm_color_primary',
+							'sm_dark_secondary': 'sm_color_secondary',
+							'sm_dark_tertiary': 'sm_color_tertiary',
+							'sm_light_primary': 'sm_light_primary',
+							'sm_light_secondary': 'sm_light_secondary',
+							'sm_light_tertiary': 'sm_light_tertiary',
+						} );
+						break;
+					// ACB
+					case 'color_light_dark':
+						swapConnectedFields( {
+							'sm_color_primary': 'sm_color_primary',
+							'sm_color_secondary': 'sm_color_secondary',
+							'sm_color_tertiary': 'sm_color_tertiary',
+							'sm_dark_primary': 'sm_light_primary',
+							'sm_dark_secondary': 'sm_light_secondary',
+							'sm_dark_tertiary': 'sm_light_tertiary',
+							'sm_light_primary': 'sm_dark_primary',
+							'sm_light_secondary': 'sm_dark_secondary',
+							'sm_light_tertiary': 'sm_dark_tertiary',
+						} );
+						break;
+					// ABC
 					default:
 						swapConnectedFields( {
 							'sm_color_primary': 'sm_color_primary',
@@ -161,6 +266,7 @@
 			var timeout = null;
 
 			handleColorPalettes();
+			bindPaletteEvents();
 
 			$( '.collapse-sidebar' ).on( 'click', function() {
 				setTimeout( scaleIframe, 300 );
@@ -427,8 +533,20 @@
 				handlePresetChange( $( this ).children( '[value="' + $( this ).val() + '"]' ) );
 			} );
 
-			$( document ).on( 'click', '.customify_preset.radio input, .customify_preset.radio_buttons input, .awesome_presets input, .customify_preset.color_palette input', function() {
+			$( document ).on( 'click', '.customify_preset.radio input, .customify_preset.radio_buttons input, .awesome_presets input', function() {
 				handlePresetChange( this );
+			} );
+
+			$( document ).on( 'click', '.customify_preset.color_palette input', function() {
+				const $label = $( this ).next( 'label' ).clone();
+				let label;
+
+				$label.find( '.preview__letter' ).remove();
+				label = $label.text();
+				$label.remove();
+
+				handlePresetChange( this );
+				updateCurrentPalette( label );
 			} );
 
 			// bind our event on click

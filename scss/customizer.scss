@@ -1818,6 +1818,9 @@ ul.font-options__options-list {
 //    STYLE MANAGER
 //------------------------------------*/
 
+$palette_box_shadow: inset 0 0 3px 0 rgba(0,0,0,0.15), inset 0 1px 3px 0 rgba(0,0,0,0.15);
+$palette_box_shadow_stronger: inset 0 2px 3px 0 rgba(0,0,0,0.15), inset 0 0 3px 0 rgba(0,0,0,0.15);
+
 .pix_customizer_setting {
 	.customize-inside-control-row {
 		position: relative;
@@ -1840,7 +1843,7 @@ ul.font-options__options-list {
 			z-index: 10;
 			pointer-events: none;
 
-			box-shadow: inset 0 0 3px 0 rgba(0,0,0,0.15), inset 0 1px 3px 0 rgba(0,0,0,0.15);
+			box-shadow: $palette_box_shadow;
 		}
 	
 		// Color Palette Hover
@@ -1848,11 +1851,7 @@ ul.font-options__options-list {
 
 			&:before {
 				// Increase the inner shadow strongness
-				box-shadow: inset 0 2px 3px 0 rgba(0,0,0,0.15), inset 0 0 3px 0 rgba(0,0,0,0.15);
-			}
-
-			.palette {
-
+				box-shadow: $palette_box_shadow_stronger;
 			}
 
 				.palette__item {
@@ -1893,13 +1892,6 @@ ul.font-options__options-list {
 			align-items: center;
 
 			transition: all .3s ease;
-		}
-
-		.label__inner {
-			padding: 7px 12px 7px 7px;
-			z-index: 2;
-			border-radius: 3px;
-			box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
 		}
 
 		.palette {
@@ -1955,6 +1947,22 @@ ul.font-options__options-list {
 
 		.preview__letter--checked {
 			display: none;
+		}
+	}
+}
+
+[id*="sm_current_palette_control"] {
+	.customize-inside-control-row .palette__item[class] {
+		transform: none;
+	}
+
+	.variation-control {
+		display: flex;
+	}
+
+	.variation-control-item {
+		&.active {
+
 		}
 	}
 }
@@ -2044,5 +2052,343 @@ ul.font-options__options-list {
 	~ [id*="sm_light_tertiary"] .wp-picker-container button:before {
 		top: -4 * $y;
 		right: -2 * $x;
+	}
+}
+
+/// ------------------
+
+$palette_height: 64px;
+$palette_border-radius: 5px;
+
+.c-palette {
+	position: relative;
+	overflow: hidden;
+
+	.c-palette__label {
+		flex-grow: 1;
+	}
+}
+
+.c-palette:after {
+	height: $palette_height;
+	border-radius: $palette_border-radius;
+}
+
+.c-palette:after {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	box-shadow: $palette_box_shadow;
+	pointer-events: none;
+}
+
+.label__inner {
+	color: #000000;
+	background: #F5F6F1;
+
+	padding: 7px 12px 7px 7px;
+	z-index: 2;
+	border-radius: 3px;
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+}
+
+.c-palette__label {
+	display: flex;
+	align-items: center;
+	height: 40px;
+	padding: 12px;
+
+	color: black;
+	background: white;
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+}
+
+.colors {
+	position: relative;
+	display: flex;
+	align-items: stretch;
+	width: 100%;
+}
+
+.color {
+	display: flex;
+	flex-direction: column;
+
+	flex-grow: 1;
+	overflow: hidden;
+}
+
+.fill {
+	position: relative;
+	height: $palette_height;
+}
+
+.c-palette__overlay {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: $palette_height;
+
+	display: flex;
+	align-items: center;
+}
+
+.fill:before {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+}
+
+.fill:before {
+	content: "";
+	background: currentColor;
+}
+
+.picker {
+	position: relative;
+	top: 0;
+	left: 50%;
+
+	width: 80%;
+	margin-top: 1em;
+
+	border-radius: 50%;
+	transform: translateX(-50%);
+}
+
+.colors.next .picker > i {
+	display: block;
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	border-radius: 50%;
+	box-shadow: $palette_box_shadow;
+	pointer-events: none;
+	z-index: 20;
+}
+
+.picker:before,
+.picker:after {
+	content: "";
+	display: block;
+	background: currentColor;
+	border-radius: 50%;
+}
+
+.picker:before {
+	padding-top: 100%;
+}
+
+.picker:after {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+}
+
+.fill {
+	overflow: hidden;
+}
+
+.color:first-child .fill {
+	border-top-left-radius: $palette_border-radius;
+	border-bottom-left-radius: $palette_border-radius;
+}
+
+.color:last-child .fill {
+	border-top-right-radius: $palette_border-radius;
+	border-bottom-right-radius: $palette_border-radius;
+}
+
+$animation-duration: 1s;
+
+.colors.next {
+	position: absolute;
+	top: 0;
+	left: 0;
+
+	.fill:before {
+		transform: translateY(-100%);
+	}
+
+	.picker:before {
+		transform: translateY(-100%);
+		opacity: 0;
+	}
+
+	.picker:after {
+		opacity: 0;
+	}
+}
+
+.c-palette.animate {
+
+	.next {
+
+		.fill:before {
+			animation: fill $animation-duration cubic-bezier(0.215, 0.610, 0.355, 1.000) forwards;
+		}
+
+		.picker {
+			animation: picker-filter $animation-duration cubic-bezier(0.215, 0.610, 0.355, 1.000) forwards;
+		}
+
+		.picker:before {
+			animation: fill-picker-before $animation-duration cubic-bezier(0.215, 0.610, 0.355, 1.000) forwards;
+		}
+
+		.picker:after {
+			animation: fill-picker-after $animation-duration cubic-bezier(0.215, 0.610, 0.355, 1.000) forwards;
+		}
+	}
+
+	.current {
+		.fill,
+		.picker {
+			animation: fade-out $animation-duration forwards;
+		}
+	}
+
+	@function remove-nth($list, $index) {
+		$result: null;
+
+		@if type-of($index) != number {
+			@warn "$index: #{quote($index)} is not a number for `remove-nth`.";
+		} @else if $index == 0 {
+			@warn "List index 0 must be a non-zero integer for `remove-nth`.";
+		} @else if abs($index) > length($list) {
+			@warn "List index is #{$index} but list is only #{length($list)} item long for `remove-nth`.";
+		} @else {
+			$result: ();
+			$index: if($index < 0, length($list) + $index + 1, $index);
+
+			@for $i from 1 through length($list) {
+				@if $i != $index {
+					$result: append($result, nth($list, $i));
+				}
+			}
+		}
+
+		@return $result;
+	}
+
+	$list: 1, 2, 3, 4, 5, 6, 7, 8, 9;
+
+	@for $i from 1 through length($list) {
+		.color:nth-child(#{$i}) {
+
+			$random: random( length($list) );
+			$delay: nth($list, $random);
+			$list: remove-nth($list, $random);
+
+			.fill,
+			.fill:before,
+			.picker,
+			.picker:after,
+			.picker:before {
+				animation-delay: #{$delay * 0.05}s;
+			}
+		}
+	}
+}
+
+@keyframes fill {
+	30% { transform: translateY(0); }
+	100% { transform: translateY(0); }
+}
+
+@keyframes picker-filter {
+	0%   { filter: none; }
+	1%   { filter: url('#goo'); }
+	99%  { filter: url('#goo'); }
+	100% { filter: none; }
+}
+
+@keyframes fill-picker-before {
+	24%  { opacity: 0; transform: translateY(-130%); }
+	25%  { opacity: 1; transform: translateY(-130%); }
+	32%  { opacity: 1; transform: translateY(-130%); }
+	52%  { opacity: 1; transform: translateY(-130%); }
+	100% { opacity: 1; transform: translateY(-160%); }
+}
+
+@keyframes fill-picker-after {
+	24%  { opacity: 0; transform: translateY(-160%); }
+	25%  { opacity: 1; transform: translateY(-160%); }
+	32%  { opacity: 1; transform: translateY(-120%); }
+	100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fade-out {
+	90%  { opacity: 1; }
+	100% { opacity: 0; }
+}
+
+.label {
+	margin-right: auto;
+}
+
+.colors.next .picker {
+}
+
+.c-palette__blur {
+	display: none;
+}
+
+#customize-theme-controls [id*="sm_current_palette_control"] {
+	display: block;
+	margin: -12px -12px 19px;
+	width: auto;
+
+	.palette-container {
+		padding: 19px;
+		background: white;
+	}
+}
+
+.c-palette__name {
+	margin-right: auto;
+}
+
+.c-palette__control {
+	width: 2em;
+	height: 2em;
+	margin-left: 0.25em;
+
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	border-radius: 50%;
+
+	&, span {
+		transition: color .3s ease-in-out;
+	}
+
+	span {
+		color: rgba(0,0,0,0.25);
+		transform: scale(0.8);
+	}
+
+	&.active {
+		background: currentColor;
+
+		span {
+			color: white;
+		}
+	}
+}
+
+#customize-control-sm_color_palette_control {
+	~ li {
+		//display: none !important;
 	}
 }
