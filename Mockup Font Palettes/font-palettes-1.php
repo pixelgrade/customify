@@ -27,11 +27,12 @@
 				'font-size_points'			=> (14, 1.7], [50, 1.3], [80,1]),	// "Generate" the graph to be used for font-size and line-height
 				
 				// Define how fonts will look based on their size
-				'font-styles-intervals' => (
+				'font-styles' => (
 					'min' => 30,
 					'max' => 100,
 					
-					[0, 31] => (												// Use the following style from 0px to 31px (including)
+					array => (
+						'interval' => [0,14],									// Use the following style from 0px to 31px (including)
 						'font-weight'			=> 400,
 						'letter-spacing'		=> 0em,
 						'text-transform'		=> none
