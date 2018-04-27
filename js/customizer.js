@@ -95,7 +95,9 @@
 
 			const swapConnectedFields = swapMap => {
 				_.each( swapMap, function( to, from ) {
-					wp.customize.settings.settings[to]['connected_fields'] = window.settingsClone[from]['connected_fields'] || {};
+					if ( typeof wp.customize.settings.settings[to] !== "undefined" && typeof window.settingsClone[from] !== "undefined" ) {
+						wp.customize.settings.settings[to]['connected_fields'] = window.settingsClone[from]['connected_fields'] || {};
+					}
 				} );
 			};
 
@@ -259,6 +261,51 @@
 
 			// when variation is changed reload connected fields from cached version of customizer settings config
 			$( document ).on( 'change', '[name="_customize-radio-sm_palette_variation_control"]', reloadConnectedFields );
+
+			updateCurrentPalette();
+			bindPaletteEvents();
+
+			var $palette = $( '.c-palette' ),
+				$colors = $palette.find( '.colors.next .color' );
+
+			$colors.each( function( i, obj ) {
+				var $obj = $( obj ),
+					setting_id = $obj.data( 'setting' ),
+					setting = wp.customize( setting_id );
+
+				$obj.iris( {
+					change: function( event, ui ) {
+						var lastColor = setting(),
+							currentColor = ui.color.toString();
+
+						if ( lastColor !== currentColor ) {
+							$obj.css( 'color', currentColor );
+							$palette.find( '.c-palette__name' ).text( 'Custom Style' );
+						}
+					}
+				} );
+
+				$obj.on( 'click', function( e ) {
+					e.stopPropagation();
+					e.preventDefault();
+
+					var hidden = ! $obj.find( '.iris-picker' ).is( ":visible" );
+
+					if ( hidden ) {
+						$colors.not( $obj ).addClass( 'inactive' ).iris( 'hide' );
+						$obj.removeClass( 'inactive' );
+					} else {
+						$colors.removeClass( 'inactive' );
+					}
+
+					$obj.iris( 'color', $obj.css( 'color' ) );
+					$obj.iris( 'toggle' );
+				} );
+			} );
+
+			$( 'body' ).on( 'click', function() {
+				$colors.removeClass( 'inactive' ).iris( 'hide' );
+			} );
 		};
 
 		// when the customizer is ready prepare our fields events
@@ -266,7 +313,6 @@
 			var timeout = null;
 
 			handleColorPalettes();
-			bindPaletteEvents();
 
 			$( '.collapse-sidebar' ).on( 'click', function() {
 				setTimeout( scaleIframe, 300 );

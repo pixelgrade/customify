@@ -17,65 +17,11 @@ if ( ! function_exists('mock_style_manager_section') ) {
 			$config['sections']['style_manager_section'] = array();
 		}
 
-		$current_palette = '';
-		$current_palette_sets = [ 'current', 'next' ];
-		$current_palette_colors = [
-			'sm_color_primary',
-			'sm_color_secondary',
-			'sm_color_tertiary',
-			'sm_dark_primary',
-			'sm_dark_secondary',
-			'sm_dark_tertiary',
-			'sm_light_primary',
-			'sm_light_secondary',
-			'sm_light_tertiary',
-		];
-
-		foreach ( $current_palette_sets as $set ) {
-			$current_palette .= '<div class="colors ' . $set . '">';
-			foreach ( $current_palette_colors as $color ) {
-				$current_palette .=
-					'<div class="color ' . $color . '">' . PHP_EOL .
-						'<div class="fill"></div>' . PHP_EOL .
-						'<div class="picker"><i></i></div>' . PHP_EOL .
-					'</div>' . PHP_EOL;
-			}
-			$current_palette .= '</div>';
-		}
-
 		// The section might be already defined, thus we merge, not replace the entire section config.
 		$config['sections']['style_manager_section'] = array_replace_recursive( $config['sections']['style_manager_section'], array(
 			'title'   => esc_html__( 'Style Manager', 'customify' ),
 			'section_id' => 'style_manager_section', // We will force this section id preventing prefixing and other regular processing.
 			'options' => array(
-				'sm_current_palette' => array(
-					'type' => 'html',
-					'html' =>
-						'<div class="palette-container">' . PHP_EOL .
-							'<span class="customize-control-title">Current Color Palette:</span>' . PHP_EOL .
-							'<span class="description customize-control-description">Choose a color palette to start with. Adjust its style using the variation buttons below.</span>' . PHP_EOL .
-							'<div class="c-palette">' . PHP_EOL .
-								$current_palette .
-								'<div class="c-palette__overlay">' . PHP_EOL .
-									'<div class="c-palette__label">' .
-										'<div class="c-palette__name">' . 'Original Style' . '</div>' .
-										'<div class="c-palette__control active" data-target="#_customize-input-sm_palette_variation_control-radio-color_dark_light"><span class="dashicons dashicons-image-rotate"></span></div>' .
-										'<div class="c-palette__control" data-target="#_customize-input-sm_palette_variation_control-radio-color_light_dark"><span class="dashicons dashicons-image-filter"></span></div>' .
-										'<div class="c-palette__control" data-target="#_customize-input-sm_palette_variation_control-radio-light_dark_color"><span class="dashicons dashicons-admin-appearance"></span></div>' .
-									'</div>' . PHP_EOL .
-								'</div>' . PHP_EOL .
-							'</div>' . PHP_EOL .
-						'</div>' . PHP_EOL .
-						'<svg class="c-palette__blur" width="15em" height="15em" viewBox="0 0 15 15" xmlns="http://www.w3.org/2000/svg" version="1.1">' . PHP_EOL .
-							'<defs>' . PHP_EOL .
-								'<filter id="goo">' . PHP_EOL .
-									'<feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />' . PHP_EOL .
-									'<feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 50 -20" result="goo" />' . PHP_EOL .
-									'<feBlend in="SourceGraphic" in2="goo" />' . PHP_EOL .
-								'</filter>' . PHP_EOL .
-							'</defs>' . PHP_EOL .
-						'</svg>',
-				),
 				'sm_color_palette' => array(
 					'type'         => 'preset',
 					// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
@@ -366,3 +312,70 @@ if ( ! function_exists('mock_style_manager_section') ) {
 
 }
 add_filter( 'customify_filter_fields', 'mock_style_manager_section', 12, 1 );
+
+if ( ! function_exists('add_current_palette_control') ) {
+
+	function add_current_palette_control( $config ) {
+		// If the theme hasn't declared support for style manager, bail.
+		if ( ! current_theme_supports( 'customizer_style_manager' ) ) {
+			return $config;
+		}
+
+		if ( ! isset( $config['sections']['style_manager_section'] ) ) {
+			$config['sections']['style_manager_section'] = array();
+		}
+
+		$current_palette = '';
+		$current_palette_sets = [ 'current', 'next' ];
+
+		$current_palette_id = get_option( 'sm_color_palette' );
+		$current_palette_colors = $config['sections']['style_manager_section']['options']['sm_color_palette']['choices'][$current_palette_id]['options'];
+
+		foreach ( $current_palette_sets as $set ) {
+			$current_palette .= '<div class="colors ' . $set . '">';
+			foreach ( $current_palette_colors as $key => $color ) {
+				$current_palette .=
+					'<div class="color ' . $key . '" data-setting="' . $key . '">' . PHP_EOL .
+					'<div class="fill"></div>' . PHP_EOL .
+					'<div class="picker"><i></i></div>' . PHP_EOL .
+					'</div>' . PHP_EOL;
+			}
+			$current_palette .= '</div>';
+		}
+
+		// The section might be already defined, thus we merge, not replace the entire section config.
+		$config['sections']['style_manager_section']['options'] = array(
+			'sm_current_palette' => array(
+				'type' => 'html',
+				'html' =>
+					'<div class="palette-container">' . PHP_EOL .
+					'<span class="customize-control-title">Current Color Palette:</span>' . PHP_EOL .
+					'<span class="description customize-control-description">Choose a color palette to start with. Adjust its style using the variation buttons below.</span>' . PHP_EOL .
+					'<div class="c-palette">' . PHP_EOL .
+					$current_palette .
+					'<div class="c-palette__overlay">' . PHP_EOL .
+					'<div class="c-palette__label">' .
+					'<div class="c-palette__name">' . 'Original Style' . '</div>' .
+					'<div class="c-palette__control active" data-target="#_customize-input-sm_palette_variation_control-radio-color_dark_light"><span class="dashicons dashicons-image-rotate"></span></div>' .
+					'<div class="c-palette__control" data-target="#_customize-input-sm_palette_variation_control-radio-color_light_dark"><span class="dashicons dashicons-image-filter"></span></div>' .
+					'<div class="c-palette__control" data-target="#_customize-input-sm_palette_variation_control-radio-light_dark_color"><span class="dashicons dashicons-admin-appearance"></span></div>' .
+					'</div>' . PHP_EOL .
+					'</div>' . PHP_EOL .
+					'</div>' . PHP_EOL .
+					'</div>' . PHP_EOL .
+					'<svg class="c-palette__blur" width="15em" height="15em" viewBox="0 0 15 15" xmlns="http://www.w3.org/2000/svg" version="1.1">' . PHP_EOL .
+					'<defs>' . PHP_EOL .
+					'<filter id="goo">' . PHP_EOL .
+					'<feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />' . PHP_EOL .
+					'<feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 50 -20" result="goo" />' . PHP_EOL .
+					'<feBlend in="SourceGraphic" in2="goo" />' . PHP_EOL .
+					'</filter>' . PHP_EOL .
+					'</defs>' . PHP_EOL .
+					'</svg>',
+			),
+		) + $config['sections']['style_manager_section']['options'];
+
+		return $config;
+	}
+}
+add_filter( 'customify_filter_fields', 'add_current_palette_control', 20, 1 );

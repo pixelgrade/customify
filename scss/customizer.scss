@@ -2062,7 +2062,6 @@ $palette_border-radius: 5px;
 
 .c-palette {
 	position: relative;
-	overflow: hidden;
 
 	.c-palette__label {
 		flex-grow: 1;
@@ -2389,6 +2388,32 @@ $animation-duration: 1s;
 
 #customize-control-sm_color_palette_control {
 	~ li {
-		//display: none !important;
+		display: none !important;
 	}
+}
+.c-palette .iris-picker {
+	position: absolute;
+	top: 100%;
+	left: 0;
+	z-index: 100;
+	margin-top: 1em;
+}
+
+.color {
+	.picker {
+		transition: opacity .3s ease-in-out;
+		cursor: pointer;
+	}
+
+	&.inactive .picker {
+		opacity: 0.2;
+	}
+
+	&.inactive .picker:hover {
+		opacity: 1;
+	}
+}
+
+.c-palette__control {
+	cursor: pointer;
 }
