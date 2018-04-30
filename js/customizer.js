@@ -157,20 +157,22 @@
 				switch ( variation ) {
 
 					// CBA
+					// Color
 					case 'light_dark_color':
 						swapConnectedFields( {
 							'sm_color_primary': 'sm_light_primary',
 							'sm_color_secondary': 'sm_light_secondary',
 							'sm_color_tertiary': 'sm_light_tertiary',
-							'sm_dark_primary': 'sm_dark_primary',
-							'sm_dark_secondary': 'sm_dark_secondary',
-							'sm_dark_tertiary': 'sm_dark_tertiary',
+							'sm_dark_primary': 'sm_light_primary',
+							'sm_dark_secondary': 'sm_light_secondary',
+							'sm_dark_tertiary': 'sm_light_tertiary',
 							'sm_light_primary': 'sm_color_primary',
 							'sm_light_secondary': 'sm_color_secondary',
 							'sm_light_tertiary': 'sm_color_tertiary',
 						} );
 						break;
 					// CAB
+					// Dark Alt
 					case 'light_color_dark':
 						swapConnectedFields( {
 							'sm_color_primary': 'sm_light_primary',
@@ -185,6 +187,7 @@
 						} );
 						break;
 					// BCA
+					// Color Alt
 					case 'dark_light_color':
 						swapConnectedFields( {
 							'sm_color_primary': 'sm_dark_primary',
@@ -199,6 +202,7 @@
 						} );
 						break;
 					// BAC
+					// Alt
 					case 'dark_color_light':
 						swapConnectedFields( {
 							'sm_color_primary': 'sm_dark_primary',
@@ -213,6 +217,7 @@
 						} );
 						break;
 					// ACB
+					// Dark
 					case 'color_light_dark':
 						swapConnectedFields( {
 							'sm_color_primary': 'sm_color_primary',
@@ -227,6 +232,7 @@
 						} );
 						break;
 					// ABC
+					// Default
 					default:
 						swapConnectedFields( {
 							'sm_color_primary': 'sm_color_primary',
