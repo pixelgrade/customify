@@ -1,335 +1,11 @@
 (
 	function( $, exports, wp ) {
-		'use strict';
-
 		var api = wp.customize;
 		var $window = $( window );
-
-		var scaleIframe = function() {
-			var $previewIframe = $( '.wp-full-overlay' );
-
-			$previewIframe.find( 'iframe' ).removeAttr( 'style' );
-
-			if ( api.previewedDevice.get() !== 'desktop' ) {
-				return;
-			}
-
-			var iframeWidth = $previewIframe.width();
-			var windowWidth = $window.width();
-			var windowHeight = $window.height();
-
-			var scale = windowWidth / iframeWidth;
-
-			if ( iframeWidth > 720 && iframeWidth < 1100 ) {
-				$previewIframe.find( 'iframe' ).css( {
-					width: iframeWidth * scale,
-					height: windowHeight * scale,
-					'transform-origin': 'left top',
-					transform: 'scale(' + 1 / scale + ')'
-				} );
-			}
-		};
-
-		const updateCurrentPalette = ( label ) => {
-			const $palette = $( '.c-palette' );
-			const $current = $palette.find( '.colors.current' );
-			const $next = $palette.find( '.colors.next' );
-
-			label = label || 'Custom Style';
-			$palette.find( '.c-palette__name' ).text( label );
-
-			const settings = [
-				"sm_color_primary",
-				"sm_color_secondary",
-				"sm_color_tertiary",
-				"sm_dark_primary",
-				"sm_dark_secondary",
-				"sm_dark_tertiary",
-				"sm_light_primary",
-				"sm_light_secondary",
-				"sm_light_tertiary"
-			];
-
-			_.each( settings, function( setting_id ) {
-				const color = $next.find( '.' + setting_id ).css( 'color' );
-
-				$current.find( '.' + setting_id ).css({
-					'color': color
-				});
-			});
-
-			$palette.removeClass( 'animate' );
-
-			_.each( settings, function( setting_id ) {
-				const setting = wp.customize( setting_id );
-
-				if ( typeof setting !== "undefined" ) {
-					let value = setting();
-					$next.find( '.' + setting_id ).css({
-						'color': value
-					});
-				}
-			});
-
-			setTimeout(function() {
-				$palette.addClass( 'animate' );
-				$palette.find( '.c-palette__control' ).css( 'color', wp.customize( 'sm_color_primary' )() );
-			});
-		};
-
-		const bindPaletteEvents = () => {
-			const paletteControlSelector = '.c-palette__control';
-
-			$( 'body' ).on( 'click', paletteControlSelector, function() {
-				var $obj = $(this),
-					$target = $( $obj.data('target') );
-				$obj.siblings( paletteControlSelector ).removeClass( 'active' );
-				$obj.addClass( 'active' );
-				$target.prop( 'checked', true ).trigger( 'change' );
-			} );
-		};
-
-		const handleColorPalettes = () => {
-			// cache initial settings configuration to be able to update connected fields on variation change
-			window.settingsClone = $.extend(true, {}, wp.customize.settings.settings);
-
-			const swapConnectedFields = swapMap => {
-				_.each( swapMap, function( to, from ) {
-					if ( typeof wp.customize.settings.settings[to] !== "undefined" && typeof window.settingsClone[from] !== "undefined" ) {
-						wp.customize.settings.settings[to]['connected_fields'] = window.settingsClone[from]['connected_fields'] || {};
-					}
-				} );
-			};
-
-			const resetSettings = settings => {
-				_.each( settings, function( setting_id ) {
-					const setting = wp.customize( setting_id );
-
-					if ( typeof setting !== "undefined" ) {
-						let value = setting();
-						setting.set( value + "ff" );
-						setting.set( value );
-					}
-				});
-			};
-
-			// create a stack of callbacks bound to parent settings to be able to unbind them
-			// when altering the connected_fields attribute
-			window.connectedFieldsCallbacks = {};
-
-			const getConnectedFieldsCallback = function( parent_setting_data, parent_setting_id ) {
-				return function( new_value, old_value ) {
-					_.each( parent_setting_data.connected_fields, function( connected_field_data ) {
-						if ( _.isUndefined( connected_field_data.setting_id ) || ! _.isString( connected_field_data.setting_id ) ) {
-							return;
-						}
-						wp.customize( connected_field_data.setting_id ).set( new_value );
-					} );
-				}
-			};
-
-			const bindConnectedFields = function() {
-				_.each( wp.customize.settings.settings, function( parent_setting_data, parent_setting_id ) {
-					let parent_setting = wp.customize( parent_setting_id );
-					if ( typeof parent_setting_data.connected_fields !== "undefined" ) {
-						connectedFieldsCallbacks[parent_setting_id] = getConnectedFieldsCallback( parent_setting_data, parent_setting_id );
-						parent_setting.bind( connectedFieldsCallbacks[parent_setting_id] );
-					}
-				} );
-			};
-
-			const unbindConnectedFields = function() {
-				_.each( wp.customize.settings.settings, function( parent_setting_data, parent_setting_id ) {
-					let parent_setting = wp.customize( parent_setting_id );
-					if ( typeof parent_setting_data.connected_fields !== "undefined" && typeof connectedFieldsCallbacks[parent_setting_id] !== "undefined" ) {
-						parent_setting.unbind( connectedFieldsCallbacks[parent_setting_id] );
-					}
-					delete connectedFieldsCallbacks[parent_setting_id];
-				} );
-			};
-
-			// alter connected fields of the master colors controls depending on the selected palette variation
-			const reloadConnectedFields = () => {
-				const variation = wp.customize( 'sm_palette_variation' )();
-
-				unbindConnectedFields();
-
-				switch ( variation ) {
-
-					// CBA
-					// Color
-					case 'light_dark_color':
-						swapConnectedFields( {
-							'sm_color_primary': 'sm_light_primary',
-							'sm_color_secondary': 'sm_light_secondary',
-							'sm_color_tertiary': 'sm_light_tertiary',
-							'sm_dark_primary': 'sm_light_primary',
-							'sm_dark_secondary': 'sm_light_secondary',
-							'sm_dark_tertiary': 'sm_light_tertiary',
-							'sm_light_primary': 'sm_color_primary',
-							'sm_light_secondary': 'sm_color_secondary',
-							'sm_light_tertiary': 'sm_color_tertiary',
-						} );
-						break;
-					// CAB
-					// Dark Alt
-					case 'light_color_dark':
-						swapConnectedFields( {
-							'sm_color_primary': 'sm_light_primary',
-							'sm_color_secondary': 'sm_light_secondary',
-							'sm_color_tertiary': 'sm_light_tertiary',
-							'sm_dark_primary': 'sm_color_primary',
-							'sm_dark_secondary': 'sm_color_secondary',
-							'sm_dark_tertiary': 'sm_color_tertiary',
-							'sm_light_primary': 'sm_dark_primary',
-							'sm_light_secondary': 'sm_dark_secondary',
-							'sm_light_tertiary': 'sm_dark_tertiary',
-						} );
-						break;
-					// BCA
-					// Color Alt
-					case 'dark_light_color':
-						swapConnectedFields( {
-							'sm_color_primary': 'sm_dark_primary',
-							'sm_color_secondary': 'sm_dark_secondary',
-							'sm_color_tertiary': 'sm_dark_tertiary',
-							'sm_dark_primary': 'sm_light_primary',
-							'sm_dark_secondary': 'sm_light_secondary',
-							'sm_dark_tertiary': 'sm_light_tertiary',
-							'sm_light_primary': 'sm_color_primary',
-							'sm_light_secondary': 'sm_color_secondary',
-							'sm_light_tertiary': 'sm_color_tertiary',
-						} );
-						break;
-					// BAC
-					// Alt
-					case 'dark_color_light':
-						swapConnectedFields( {
-							'sm_color_primary': 'sm_dark_primary',
-							'sm_color_secondary': 'sm_dark_secondary',
-							'sm_color_tertiary': 'sm_dark_tertiary',
-							'sm_dark_primary': 'sm_color_primary',
-							'sm_dark_secondary': 'sm_color_secondary',
-							'sm_dark_tertiary': 'sm_color_tertiary',
-							'sm_light_primary': 'sm_light_primary',
-							'sm_light_secondary': 'sm_light_secondary',
-							'sm_light_tertiary': 'sm_light_tertiary',
-						} );
-						break;
-					// ACB
-					// Dark
-					case 'color_light_dark':
-						swapConnectedFields( {
-							'sm_color_primary': 'sm_color_primary',
-							'sm_color_secondary': 'sm_color_secondary',
-							'sm_color_tertiary': 'sm_color_tertiary',
-							'sm_dark_primary': 'sm_light_primary',
-							'sm_dark_secondary': 'sm_light_secondary',
-							'sm_dark_tertiary': 'sm_light_tertiary',
-							'sm_light_primary': 'sm_dark_primary',
-							'sm_light_secondary': 'sm_dark_secondary',
-							'sm_light_tertiary': 'sm_dark_tertiary',
-						} );
-						break;
-					// ABC
-					// Default
-					default:
-						swapConnectedFields( {
-							'sm_color_primary': 'sm_color_primary',
-							'sm_color_secondary': 'sm_color_secondary',
-							'sm_color_tertiary': 'sm_color_tertiary',
-							'sm_dark_primary': 'sm_dark_primary',
-							'sm_dark_secondary': 'sm_dark_secondary',
-							'sm_dark_tertiary': 'sm_dark_tertiary',
-							'sm_light_primary': 'sm_light_primary',
-							'sm_light_secondary': 'sm_light_secondary',
-							'sm_light_tertiary': 'sm_light_tertiary',
-						} );
-						break;
-				}
-
-				bindConnectedFields();
-
-				resetSettings( [
-					"sm_color_primary",
-					"sm_color_secondary",
-					"sm_color_tertiary",
-					"sm_dark_primary",
-					"sm_dark_secondary",
-					"sm_dark_tertiary",
-					"sm_light_primary",
-					"sm_light_secondary",
-					"sm_light_tertiary"
-				] );
-			};
-
-			reloadConnectedFields();
-
-			// when variation is changed reload connected fields from cached version of customizer settings config
-			$( document ).on( 'change', '[name="_customize-radio-sm_palette_variation_control"]', reloadConnectedFields );
-
-			updateCurrentPalette();
-			bindPaletteEvents();
-
-			var $palette = $( '.c-palette' ),
-				$colors = $palette.find( '.colors.next .color' );
-
-			$colors.each( function( i, obj ) {
-				var $obj = $( obj ),
-					setting_id = $obj.data( 'setting' ),
-					setting = wp.customize( setting_id );
-
-				$obj.iris( {
-					change: function( event, ui ) {
-						var lastColor = setting(),
-							currentColor = ui.color.toString();
-
-						if ( lastColor !== currentColor ) {
-							$obj.css( 'color', currentColor );
-							$palette.find( '.c-palette__name' ).text( 'Custom Style' );
-						}
-					}
-				} );
-
-				$obj.on( 'click', function( e ) {
-					e.stopPropagation();
-					e.preventDefault();
-
-					var hidden = ! $obj.find( '.iris-picker' ).is( ":visible" );
-
-					if ( hidden ) {
-						$colors.not( $obj ).addClass( 'inactive' ).iris( 'hide' );
-						$obj.removeClass( 'inactive' );
-					} else {
-						$colors.removeClass( 'inactive' );
-					}
-
-					$obj.iris( 'color', $obj.css( 'color' ) );
-					$obj.iris( 'toggle' );
-				} );
-			} );
-
-			$( 'body' ).on( 'click', function() {
-				$colors.removeClass( 'inactive' ).iris( 'hide' );
-			} );
-		};
 
 		// when the customizer is ready prepare our fields events
 		wp.customize.bind( 'ready', function() {
 			var timeout = null;
-
-			handleColorPalettes();
-
-			$( '.collapse-sidebar' ).on( 'click', function() {
-				setTimeout( scaleIframe, 300 );
-			} );
-
-			wp.customize.previewer.bind( 'synced', function() {
-				scaleIframe();
-
-				api.previewedDevice.bind( scaleIframe );
-				$window.on( 'resize', scaleIframe );
-			} );
 
 			// add ace editors
 			$( '.customify_ace_editor' ).each( function( key, el ) {
@@ -390,38 +66,6 @@
 
 				// Initialize range fields logic
 				customifyHandleRangeFields( this );
-			} );
-
-			function swap_values( setting_one, setting_two ) {
-				var color_primary = wp.customize( setting_one )();
-				var color_secondary = wp.customize( setting_two )();
-
-				api_set_setting_value( setting_one, color_secondary );
-				api_set_setting_value( setting_two, color_primary );
-			}
-
-			$( document ).on( 'click', '[data-action="sm_swap_colors"]', function( e ) {
-				e.preventDefault();
-				swap_values( 'sm_color_primary', 'sm_color_secondary' );
-			} );
-
-			$( document ).on( 'click', '[data-action="sm_swap_dark_light"]', function( e ) {
-				e.preventDefault();
-				swap_values( 'sm_dark_primary', 'sm_light_primary' );
-				swap_values( 'sm_dark_secondary', 'sm_light_secondary' );
-				swap_values( 'sm_dark_tertiary', 'sm_light_tertiary' );
-			} );
-
-			$( document ).on( 'click', '[data-action="sm_swap_colors_dark"]', function( e ) {
-				e.preventDefault();
-				swap_values( 'sm_color_primary', 'sm_dark_primary' );
-				swap_values( 'sm_color_secondary', 'sm_dark_secondary' );
-				swap_values( 'sm_color_tertiary', 'sm_dark_tertiary' );
-			} );
-
-			$( document ).on( 'click', '[data-action="sm_swap_secondary_colors_dark"]', function( e ) {
-				e.preventDefault();
-				swap_values( 'sm_color_secondary', 'sm_dark_secondary' );
 			} );
 
 			if ( $( 'button[data-action="reset_customify"]' ).length > 0 ) {
@@ -571,34 +215,24 @@
 				$input.trigger( 'change' );
 			} );
 
-			const handlePresetChange = ( option ) => {
-				const data = $( option ).data( 'options' );
+			$( 'body' ).on( 'customify:preset-change', function( e ) {
+				const data = $( e.target ).data( 'options' );
 
 				if ( ! _.isUndefined( data ) ) {
 					$.each( data, function( setting_id, value ) {
 						api_set_setting_value( setting_id, value );
 					} );
 				}
-			};
+			} );
 
-			$( document ).on( 'change', '.customify_preset.select', () => {
-				handlePresetChange( $( this ).children( '[value="' + $( this ).val() + '"]' ) );
+			$( document ).on( 'change', '.customify_preset.select', function() {
+				const $source = $( this );
+				const $target = $source.children( '[value="' + $source.val() + '"]' );
+				$target.trigger( 'customify:preset-change' );
 			} );
 
 			$( document ).on( 'click', '.customify_preset.radio input, .customify_preset.radio_buttons input, .awesome_presets input', function() {
-				handlePresetChange( this );
-			} );
-
-			$( document ).on( 'click', '.customify_preset.color_palette input', function() {
-				const $label = $( this ).next( 'label' ).clone();
-				let label;
-
-				$label.find( '.preview__letter' ).remove();
-				label = $label.text();
-				$label.remove();
-
-				handlePresetChange( this );
-				updateCurrentPalette( label );
+				$( this ).trigger( 'customify:preset-change' );
 			} );
 
 			// bind our event on click
