@@ -75,16 +75,22 @@
     const alterConnectedFields = swapMap => {
         _.each( swapMap, function( fromArray, to ) {
             if ( typeof wp.customize.settings.settings[to] !== "undefined" ) {
-                let newConnectedFields = new Array();
+                let newConnectedFields = [];
                 if ( fromArray instanceof Array ) {
                     _.each( fromArray, function( from ) {
                         if ( typeof window.settingsClone[from] !== "undefined" ) {
-                            newConnectedFields = newConnectedFields.concat( window.settingsClone[from]['connected_fields'] );
+                            let oldConnectedFields = Object.values( window.settingsClone[from]['connected_fields'] );
+                            newConnectedFields = newConnectedFields.concat( oldConnectedFields );
                         }
                     } );
+
+	                newConnectedFields = Object.keys( newConnectedFields ).map( function(key) {
+		                return newConnectedFields[key];
+	                });
                 } else {
                     newConnectedFields = window.settingsClone[fromArray]['connected_fields'];
                 }
+                console.log( newConnectedFields );
                 wp.customize.settings.settings[to]['connected_fields'] = newConnectedFields;
             }
         } );
@@ -163,6 +169,7 @@
 
                     if ( lastColor !== currentColor ) {
                         $obj.css( 'color', currentColor );
+	                    setting.set( currentColor );
                         $palette.find( '.c-palette__name' ).text( 'Custom Style' );
                     }
                 }
@@ -189,7 +196,7 @@
         $( 'body' ).on( 'click', function() {
             $colors.removeClass( 'inactive' ).iris( 'hide' );
         } );
-    }
+    };
 
     const onPaletteChange = function() {
         const $label = $( this ).next( 'label' ).clone();
@@ -201,7 +208,7 @@
 
         $( this ).trigger( 'customify:preset-change' );
         updateCurrentPalette( label );
-    }
+    };
 
     const handleColorPalettes = () => {
         initializeColorPalettes();
