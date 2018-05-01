@@ -328,8 +328,9 @@ if ( ! function_exists('add_current_palette_control') ) {
 		$current_palette = '';
 		$current_palette_sets = [ 'current', 'next' ];
 
-		$current_palette_id = get_option( 'sm_color_palette' );
-		$current_palette_colors = $config['sections']['style_manager_section']['options']['sm_color_palette']['choices'][$current_palette_id]['options'];
+		$palettes = $config['sections']['style_manager_section']['options']['sm_color_palette']['choices'];
+		$current_palette_id = key($palettes);
+		$current_palette_colors = $palettes[$current_palette_id]['options'];
 
 		foreach ( $current_palette_sets as $set ) {
 			$current_palette .= '<div class="colors ' . $set . '">';
