@@ -37,9 +37,14 @@ $background-hover 	: #f5fcff;
 //    RESETS
 //------------------------------------*/
 .wp-full-overlay-sidebar {
-	* {
-		box-sizing 			: border-box;
+	*, *:before, *:after {
+		box-sizing: border-box;
 	}
+}
+
+.iris-picker,
+.iris-picker * {
+	box-sizing: content-box;
 }
 
 @mixin clearfix {
@@ -1776,6 +1781,10 @@ ul.font-options__options-list {
 
 }
 
+.ui-tooltip {
+	z-index: 999999;
+}
+
 
 
 
@@ -2102,7 +2111,6 @@ $palette_border-radius: 5px;
 
 	color: black;
 	background: white;
-	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
 }
 
 .colors {
@@ -2434,6 +2442,44 @@ $animation-duration: 1s;
 	}
 }
 
+.c-palette__tooltip {
+	position: absolute;
+	bottom: 100%;
+	left: 50%;
+	z-index: 300;
+
+	margin-bottom: 5px;
+	padding: 4px 14px;
+
+	opacity: 0;
+	transform: translateX(-50%);
+	transition: opacity .2s ease-out;
+
+	color: white;
+	background-color: #606A72;
+	box-shadow: 0 2px 5px 0 rgba(0,0,0,0.15);
+
+	&:after {
+		content: "";
+
+		position: absolute;
+		top: 100%;
+		left: 50%;
+
+		display: block;
+		border: 5px solid transparent;
+		border-bottom-width: 0;
+		border-top-color: #606A72;
+
+		transform: translateX(-50%);
+	}
+
+	.c-palette__control:hover & {
+		opacity: 1;
+	}
+}
+
 .c-palette__control {
+	position: relative;
 	cursor: pointer;
 }

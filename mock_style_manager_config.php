@@ -357,9 +357,18 @@ if ( ! function_exists('add_current_palette_control') ) {
 					'<div class="c-palette__overlay">' . PHP_EOL .
 					'<div class="c-palette__label">' .
 					'<div class="c-palette__name">' . 'Original Style' . '</div>' .
-					'<div class="c-palette__control active" data-target="#_customize-input-sm_palette_variation_control-radio-color_dark_light" title="Light"><span class="dashicons dashicons-image-rotate"></span></div>' .
-					'<div class="c-palette__control" data-target="#_customize-input-sm_palette_variation_control-radio-color_light_dark" title="Dark"><span class="dashicons dashicons-image-filter"></span></div>' .
-					'<div class="c-palette__control" data-target="#_customize-input-sm_palette_variation_control-radio-light_dark_color" title="Colorful"><span class="dashicons dashicons-admin-appearance"></span></div>' .
+					'<div class="c-palette__control active" data-target="#_customize-input-sm_palette_variation_control-radio-color_dark_light">' .
+    					'<span class="dashicons dashicons-image-rotate"></span>' .
+    					'<div class="c-palette__tooltip">Light</div>' .
+				    '</div>' .
+					'<div class="c-palette__control" data-target="#_customize-input-sm_palette_variation_control-radio-color_light_dark">' .
+						'<span class="dashicons dashicons-image-filter"></span>'.
+						'<div class="c-palette__tooltip">Dark</div>' .
+					'</div>' .
+					'<div class="c-palette__control" data-target="#_customize-input-sm_palette_variation_control-radio-light_dark_color">' .
+						'<span class="dashicons dashicons-admin-appearance"></span>' .
+						'<div class="c-palette__tooltip">Colorful</div>' .
+					'</div>' .
 					'</div>' . PHP_EOL .
 					'</div>' . PHP_EOL .
 					'</div>' . PHP_EOL .

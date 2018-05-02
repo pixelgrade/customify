@@ -1,5 +1,9 @@
-.wp-full-overlay-sidebar * {
+.wp-full-overlay-sidebar *, .wp-full-overlay-sidebar *:before, .wp-full-overlay-sidebar *:after {
   box-sizing: border-box; }
+
+.iris-picker,
+.iris-picker * {
+  box-sizing: content-box; }
 
 .wp-full-overlay-sidebar-content .accordion-section-content {
   overflow: visible; }
@@ -1213,6 +1217,9 @@ ul.font-options__options-list .select2-container--default .select2-selection--si
 #available-widgets [class*=pixelgrade-promo-box] .widget .widget-title:before {
   content: "\f488"; }
 
+.ui-tooltip {
+  z-index: 999999; }
+
 .wp-customizer .widget-conditional .condition-control:after {
   content: " ";
   display: table;
@@ -1446,8 +1453,7 @@ ul.font-options__options-list .select2-container--default .select2-selection--si
   height: 40px;
   padding: 12px;
   color: black;
-  background: white;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15); }
+  background: white; }
 
 .colors {
   position: relative;
@@ -1606,48 +1612,48 @@ ul.font-options__options-list .select2-container--default .select2-selection--si
 .c-palette.animate .color:nth-child(4) .picker,
 .c-palette.animate .color:nth-child(4) .picker:after,
 .c-palette.animate .color:nth-child(4) .picker:before {
-  -webkit-animation-delay: 0.35s;
-          animation-delay: 0.35s; }
+  -webkit-animation-delay: 0.3s;
+          animation-delay: 0.3s; }
 
 .c-palette.animate .color:nth-child(5) .fill,
 .c-palette.animate .color:nth-child(5) .fill:before,
 .c-palette.animate .color:nth-child(5) .picker,
 .c-palette.animate .color:nth-child(5) .picker:after,
 .c-palette.animate .color:nth-child(5) .picker:before {
-  -webkit-animation-delay: 0.05s;
-          animation-delay: 0.05s; }
+  -webkit-animation-delay: 0.25s;
+          animation-delay: 0.25s; }
 
 .c-palette.animate .color:nth-child(6) .fill,
 .c-palette.animate .color:nth-child(6) .fill:before,
 .c-palette.animate .color:nth-child(6) .picker,
 .c-palette.animate .color:nth-child(6) .picker:after,
 .c-palette.animate .color:nth-child(6) .picker:before {
-  -webkit-animation-delay: 0.4s;
-          animation-delay: 0.4s; }
+  -webkit-animation-delay: 0.35s;
+          animation-delay: 0.35s; }
 
 .c-palette.animate .color:nth-child(7) .fill,
 .c-palette.animate .color:nth-child(7) .fill:before,
 .c-palette.animate .color:nth-child(7) .picker,
 .c-palette.animate .color:nth-child(7) .picker:after,
 .c-palette.animate .color:nth-child(7) .picker:before {
-  -webkit-animation-delay: 0.15s;
-          animation-delay: 0.15s; }
+  -webkit-animation-delay: 0.4s;
+          animation-delay: 0.4s; }
 
 .c-palette.animate .color:nth-child(8) .fill,
 .c-palette.animate .color:nth-child(8) .fill:before,
 .c-palette.animate .color:nth-child(8) .picker,
 .c-palette.animate .color:nth-child(8) .picker:after,
 .c-palette.animate .color:nth-child(8) .picker:before {
-  -webkit-animation-delay: 0.3s;
-          animation-delay: 0.3s; }
+  -webkit-animation-delay: 0.15s;
+          animation-delay: 0.15s; }
 
 .c-palette.animate .color:nth-child(9) .fill,
 .c-palette.animate .color:nth-child(9) .fill:before,
 .c-palette.animate .color:nth-child(9) .picker,
 .c-palette.animate .color:nth-child(9) .picker:after,
 .c-palette.animate .color:nth-child(9) .picker:before {
-  -webkit-animation-delay: 0.25s;
-          animation-delay: 0.25s; }
+  -webkit-animation-delay: 0.05s;
+          animation-delay: 0.05s; }
 
 @-webkit-keyframes fill {
   30% {
@@ -1865,5 +1871,34 @@ ul.font-options__options-list .select2-container--default .select2-selection--si
 .color.inactive .picker:hover {
   opacity: 1; }
 
+.c-palette__tooltip {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  z-index: 300;
+  margin-bottom: 5px;
+  padding: 4px 14px;
+  opacity: 0;
+  -webkit-transform: translateX(-50%);
+          transform: translateX(-50%);
+  transition: opacity .2s ease-out;
+  color: white;
+  background-color: #606A72;
+  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.15); }
+  .c-palette__tooltip:after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    display: block;
+    border: 5px solid transparent;
+    border-bottom-width: 0;
+    border-top-color: #606A72;
+    -webkit-transform: translateX(-50%);
+            transform: translateX(-50%); }
+  .c-palette__control:hover .c-palette__tooltip {
+    opacity: 1; }
+
 .c-palette__control {
+  position: relative;
   cursor: pointer; }
