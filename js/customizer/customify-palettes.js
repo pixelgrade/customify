@@ -79,8 +79,11 @@
                 if ( fromArray instanceof Array ) {
                     _.each( fromArray, function( from ) {
                         if ( typeof window.settingsClone[from] !== "undefined" ) {
-                            let oldConnectedFields = Object.values( window.settingsClone[from]['connected_fields'] );
-                            newConnectedFields = newConnectedFields.concat( oldConnectedFields );
+                            let oldConnectedFields;
+                            if ( ! _.isUndefined( window.settingsClone[from]['connected_fields'] ) ) {
+	                            oldConnectedFields = Object.values( window.settingsClone[from]['connected_fields'] );
+                                newConnectedFields = newConnectedFields.concat( oldConnectedFields );
+                            }
                         }
                     } );
 
@@ -90,7 +93,6 @@
                 } else {
                     newConnectedFields = window.settingsClone[fromArray]['connected_fields'];
                 }
-                console.log( newConnectedFields );
                 wp.customize.settings.settings[to]['connected_fields'] = newConnectedFields;
             }
         } );

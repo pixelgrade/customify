@@ -36,7 +36,7 @@ if ( ! function_exists('mock_style_manager_section') ) {
 					'choices_type' => 'color_palette',
 					'choices'      => array(
 						'vasco'  => array(
-							'label'   => __( 'Vasco Theme', 'customify' ),
+							'label'   => __( 'Vasco', 'customify' ),
 							'preview' => array(
 								'background_image_url' => 'http://pxgcdn.com/images/style-manager/color-palettes/vasco-theme-palette.jpg',
 							),
@@ -53,7 +53,7 @@ if ( ! function_exists('mock_style_manager_section') ) {
 							),
 						),
 						'felt'  => array(
-							'label'   => __( 'Felt Theme', 'customify' ),
+							'label'   => __( 'Felt', 'customify' ),
 							'preview' => array(
 								'background_image_url' => 'http://pxgcdn.com/images/style-manager/color-palettes/felt-theme-palette.jpg',
 							),
@@ -70,7 +70,7 @@ if ( ! function_exists('mock_style_manager_section') ) {
 							),
 						),
 						'julia'  => array(
-							'label'   => __( 'Julia Theme', 'customify' ),
+							'label'   => __( 'Julia', 'customify' ),
 							'preview' => array(
 								'background_image_url' => 'http://pxgcdn.com/images/style-manager/color-palettes/julia-theme-palette.jpg',
 							),
@@ -87,7 +87,7 @@ if ( ! function_exists('mock_style_manager_section') ) {
 							),
 						),
 						'gema'  => array(
-							'label'   => __( 'Gema Theme', 'customify' ),
+							'label'   => __( 'Gema', 'customify' ),
 							'preview' => array(
 								'background_image_url' => 'http://pxgcdn.com/images/style-manager/color-palettes/gema-theme-palette.jpg',
 							),
@@ -104,7 +104,7 @@ if ( ! function_exists('mock_style_manager_section') ) {
 							),
 						),
 						'patch'  => array(
-							'label'   => __( 'Patch Theme', 'customify' ),
+							'label'   => __( 'Patch', 'customify' ),
 							'preview' => array(
 								'background_image_url' => 'http://pxgcdn.com/images/style-manager/color-palettes/patch-theme-palette.jpg',
 							),
@@ -121,7 +121,7 @@ if ( ! function_exists('mock_style_manager_section') ) {
 							),
 						),
 						'silk'  => array(
-							'label'   => __( 'Silk Theme', 'customify' ),
+							'label'   => __( 'Silk', 'customify' ),
 							'preview' => array(
 								'background_image_url' => 'http://pxgcdn.com/images/style-manager/color-palettes/silk-theme-palette.jpg',
 							),
@@ -138,7 +138,7 @@ if ( ! function_exists('mock_style_manager_section') ) {
 							),
 						),
 						'hive'  => array(
-							'label'   => __( 'Hive Theme', 'customify' ),
+							'label'   => __( 'Hive', 'customify' ),
 							'preview' => array(
 								'background_image_url' => 'http://pxgcdn.com/images/style-manager/color-palettes/hive-theme-palette.jpg',
 							),
