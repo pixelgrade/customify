@@ -552,7 +552,7 @@ class PixCustomifyPlugin {
 			$this_value = $this->get_option( $option_id );
 			if ( ! empty( $options['css'] ) ) {
 				foreach ( $options['css'] as $key => $properties_set ) { ?>
-					<style id="dynamic_setting_<?php echo $option_id . '_property_' . str_replace( '-', '_', $properties_set['property'] ); ?>"
+					<style id="dynamic_setting_<?php echo sanitize_html_class( $option_id ) . '_property_' . str_replace( '-', '_', $properties_set['property'] ); ?>"
 					       type="text/css"><?php
 
 					if ( isset( $properties_set['media'] ) && ! empty( $properties_set['media'] ) ) {
@@ -589,7 +589,7 @@ class PixCustomifyPlugin {
 					}
 
 					$display = true; ?>
-					<style id="dynamic_setting_<?php echo $key; ?>" type="text/css"><?php
+					<style id="dynamic_setting_<?php echo sanitize_html_class( $key ); ?>" type="text/css"><?php
 						$property_settings = $property['property'];
 						$property_value    = $property['value'];
 						$media_q .= "\t" . $this->proccess_css_property( $property_settings, $property_value );?>
@@ -1022,7 +1022,7 @@ class PixCustomifyPlugin {
 			(function ($) {
 				$(window).load(function () {
 					/**
-					 * @param iframe_id the id of the frame you whant to append the style
+					 * @param iframe_id the id of the frame you want to append the style
 					 * @param style_element the style element you want to append
 					 */
 					var append_script_to_iframe = function (ifrm_id, scriptEl) {
@@ -1288,6 +1288,12 @@ class PixCustomifyPlugin {
 				$setting_id = $options_name . '[' . $option_id . ']';
 			}
 
+			// Add the option config to the localized array so we can pass the info to JS.
+			$this->localized['settings'][ $setting_id ] = $option_config;
+
+			// Generate a safe option ID (not the final setting ID) to us in HTML attributes like ID or class
+			$this->localized['settings'][ $setting_id ]['html_safe_option_id'] = sanitize_html_class( $option_id );
+
 			$this->register_field( $section_id, $setting_id, $option_config, $wp_customize );
 		}
 
@@ -1319,8 +1325,6 @@ class PixCustomifyPlugin {
 			'section'  => $section_id,
 			'settings' => $setting_id,
 		);
-
-		$this->localized['settings'][ $setting_id ] = $field_config;
 
 		// sanitize settings
 		if ( ! empty( $field_config['live'] ) || $field_config['type'] === 'font' ) {

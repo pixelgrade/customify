@@ -238,7 +238,7 @@ class Customify_Font_Selector {
 				$value = array( 'font_family' => $value );
 			}
 
-			//Handle special logic for when the $value array is not an associative array
+			// Handle special logic for when the $value array is not an associative array
 			if ( ! $local_plugin->is_assoc( $value ) ) {
 				$value = $local_plugin->process_a_not_associative_font_default( $value );
 			}
@@ -404,7 +404,7 @@ class Customify_Font_Selector {
 		$CSS = ob_get_clean();
 
 		if ( isset( $GLOBALS['wp_customize'] ) ) { ?>
-			<style id="customify_font_output_for_<?php echo $field; ?>">
+			<style id="customify_font_output_for_<?php echo sanitize_html_class( $field ); ?>">
 				<?php echo $CSS ?>
 			</style><?php
 			return;

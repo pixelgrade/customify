@@ -48,8 +48,6 @@ if ( ! function_exists('mock_style_manager_section') ) {
 								'sm_dark_secondary'  => '#2B3D39',
 								'sm_dark_tertiary'   => '#65726F',
 								'sm_light_primary'   => '#F5F6F1',
-								'sm_light_secondary' => '#FFFFFF',
-								'sm_light_tertiary'  => '#FFFFFF',
 							),
 						),
 						'felt'  => array(
@@ -332,11 +330,17 @@ if ( ! function_exists('add_current_palette_control') ) {
 		$current_palette_id = key($palettes);
 		$current_palette_colors = $palettes[$current_palette_id]['options'];
 
+		$master_color_controls_ids = get_all_master_color_controls_ids( $config['sections']['style_manager_section']['options'] );
+
 		foreach ( $current_palette_sets as $set ) {
 			$current_palette .= '<div class="colors ' . $set . '">';
-			foreach ( $current_palette_colors as $key => $color ) {
+			foreach ( $master_color_controls_ids as $setting_id ) {
+				$setting_hidden_class = '';
+				if ( ! isset( $current_palette_colors[ $setting_id ] ) ) {
+					$setting_hidden_class = ' hidden ';
+				}
 				$current_palette .=
-					'<div class="color ' . $key . '" data-setting="' . $key . '">' . PHP_EOL .
+					'<div class="color ' . $setting_id . $setting_hidden_class .'" data-setting="' . $setting_id . '">' . PHP_EOL .
 					'<div class="fill"></div>' . PHP_EOL .
 					'<div class="picker"><i></i></div>' . PHP_EOL .
 					'</div>' . PHP_EOL;
@@ -389,3 +393,15 @@ if ( ! function_exists('add_current_palette_control') ) {
 	}
 }
 add_filter( 'customify_filter_fields', 'add_current_palette_control', 20, 1 );
+
+function get_all_master_color_controls_ids( $options ) {
+	$master_color_controls = array();
+
+	foreach ( $options as $option_id => $option_settings ) {
+		if ( 'color' === $option_settings['type'] ) {
+			$master_color_controls[] = $option_settings['id'];
+		}
+	}
+
+	return $master_color_controls;
+}

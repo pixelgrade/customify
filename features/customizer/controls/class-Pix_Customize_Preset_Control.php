@@ -189,6 +189,8 @@ class Pix_Customize_Preset_Control extends Pix_Customize_Control {
                         $options = $this->convertChoiceOptionsIdsToSettingIds( $choice_config['options'] );
                         $data = ' data-options=\'' . json_encode( $options ) . '\'';
 
+	                    $customizer_config = PixCustomifyPlugin()->get_customizer_config();
+
                         ?>
 
                         <span class="customize-inside-control-row <?php echo ( (string) $this->value() === (string) $choice_value ? 'current-color-palette' : '' );?>" style="background-image: url( <?php echo esc_url( $choice_config['preview']['background_image_url'] ); ?> );">
