@@ -169,6 +169,10 @@
                     const lastColor = setting();
                     const currentColor = ui.color.toString();
 
+                    if ( 'sm_color_primary' === $obj.data( 'setting' ) ) {
+	                    $( '.c-palette__control' ).css( 'color', currentColor );
+                    }
+
                     if ( lastColor !== currentColor ) {
                         $obj.css( 'color', currentColor );
 	                    setting.set( currentColor );
