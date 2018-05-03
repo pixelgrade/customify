@@ -60,10 +60,8 @@ $background-hover 	: #f5fcff;
 	overflow: visible;
 }
 
-
-
 .control-section:not(.control-section-themes) .customize-control {
-	padding: 0px;
+	padding: 0;
     width:100%;
 	min-height: initial;
 }
@@ -2397,7 +2395,7 @@ $animation-duration: 1s;
 #sub-accordion-section-style_manager_section {
 	display: flex !important;
 	flex-direction: column;
-	padding: 12px 0 !important;
+	padding: 12px 0 0 !important;
 	overflow: hidden;
 
 	> * {
@@ -2413,10 +2411,14 @@ $animation-duration: 1s;
 		margin-top: -19px;
 		padding-top: 19px;
 		margin-bottom: 0;
+	}
 
-		~ li {
-			display: none !important;
-		}
+	&:not(.advanced) #customize-control-sm_color_palette_control ~ li:not([id="customize-control-sm_toggle_advanced_settings_control"]) {
+		display: none !important;
+	}
+
+	&.advanced #customize-control-sm_color_palette_control {
+		display: none !important;
 	}
 }
 .c-palette .iris-picker {
@@ -2482,4 +2484,13 @@ $animation-duration: 1s;
 .c-palette__control {
 	position: relative;
 	cursor: pointer;
+}
+
+#customize-control-sm_toggle_advanced_settings_control {
+	margin-bottom: 0;
+	opacity: 0;
+
+	button {
+		width: 100%;
+	}
 }

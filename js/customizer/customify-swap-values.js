@@ -4,8 +4,8 @@
         var color_primary = wp.customize( setting_one )();
         var color_secondary = wp.customize( setting_two )();
 
-        api_set_setting_value( setting_one, color_secondary );
-        api_set_setting_value( setting_two, color_primary );
+	    wp.customize( setting_one ).set( color_secondary );
+	    wp.customize( setting_two ).set( color_primary );
     }
 
     wp.customize.bind( 'ready', function() {
@@ -33,6 +33,11 @@
         $document.on( 'click', '[data-action="sm_swap_secondary_colors_dark"]', function( e ) {
             e.preventDefault();
             swap_values( 'sm_color_secondary', 'sm_dark_secondary' );
+        } );
+
+        $document.on( 'click', '[data-action="sm_toggle_advanced_settings"]', function( e ) {
+            e.preventDefault();
+            $( '#sub-accordion-section-style_manager_section' ).toggleClass( 'advanced' );
         } );
 
     } );

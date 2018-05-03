@@ -48,6 +48,7 @@ if ( ! function_exists('mock_style_manager_section') ) {
 								'sm_dark_secondary'  => '#2B3D39',
 								'sm_dark_tertiary'   => '#65726F',
 								'sm_light_primary'   => '#F5F6F1',
+								'sm_light_secondary' => '#FFFFFF',
 							),
 						),
 						'felt'  => array(
@@ -273,7 +274,6 @@ if ( ! function_exists('mock_style_manager_section') ) {
 					'default'          => '#ffffff',
 					'connected_fields' => array(),
 				),
-
 				'sm_swap_colors'                => array(
 					'type'         => 'button',
 					'setting_type' => 'option',
@@ -302,6 +302,13 @@ if ( ! function_exists('mock_style_manager_section') ) {
 					'label'        => __( 'Swap Secondary Color ⇆ Secondary Dark', 'customify' ),
 					'action'       => 'sm_swap_secondary_colors_dark',
 				),
+				'sm_advanced_toggle' => array(
+					'type'         => 'button',
+					'setting_type' => 'option',
+					'setting_id'   => 'sm_toggle_advanced_settings',
+					'label'        => __( 'Toggle Advanced Settings', 'customify' ),
+					'action'       => 'sm_toggle_advanced_settings',
+				),
 			),
 		) );
 
@@ -326,24 +333,18 @@ if ( ! function_exists('add_current_palette_control') ) {
 		$current_palette = '';
 		$current_palette_sets = [ 'current', 'next' ];
 
-		$palettes = $config['sections']['style_manager_section']['options']['sm_color_palette']['choices'];
-		$current_palette_id = key($palettes);
-		$current_palette_colors = $palettes[$current_palette_id]['options'];
-
 		$master_color_controls_ids = get_all_master_color_controls_ids( $config['sections']['style_manager_section']['options'] );
 
 		foreach ( $current_palette_sets as $set ) {
 			$current_palette .= '<div class="colors ' . $set . '">';
 			foreach ( $master_color_controls_ids as $setting_id ) {
-				$setting_hidden_class = '';
-				if ( ! isset( $current_palette_colors[ $setting_id ] ) ) {
-					$setting_hidden_class = ' hidden ';
+				if ( ! empty( $config["sections"]["style_manager_section"]["options"][$setting_id]['connected_fields'] ) ) {
+					$current_palette .=
+						'<div class="color ' . $setting_id . '" data-setting="' . $setting_id . '">' . PHP_EOL .
+						'<div class="fill"></div>' . PHP_EOL .
+						'<div class="picker"><i></i></div>' . PHP_EOL .
+						'</div>' . PHP_EOL;
 				}
-				$current_palette .=
-					'<div class="color ' . $setting_id . $setting_hidden_class .'" data-setting="' . $setting_id . '">' . PHP_EOL .
-					'<div class="fill"></div>' . PHP_EOL .
-					'<div class="picker"><i></i></div>' . PHP_EOL .
-					'</div>' . PHP_EOL;
 			}
 			$current_palette .= '</div>';
 		}
@@ -399,7 +400,7 @@ function get_all_master_color_controls_ids( $options ) {
 
 	foreach ( $options as $option_id => $option_settings ) {
 		if ( 'color' === $option_settings['type'] ) {
-			$master_color_controls[] = $option_settings['id'];
+			$master_color_controls[] = $option_id;
 		}
 	}
 
