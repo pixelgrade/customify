@@ -90,7 +90,9 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 		$this->settings = $settings;
 		$this->CSSID    = $this->get_CSS_ID();
 		$this->load_google_fonts();
-		//$this->generate_google_fonts_json();
+
+		// This is intentionally commented as it is only used in development to refresh the Google Fonts list
+//		$this->generate_google_fonts_json();
 
 		// Since 4.7 all the customizer data is saved in a post type named changeset.
 		// This is how we get it.
