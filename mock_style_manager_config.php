@@ -331,7 +331,7 @@ if ( ! function_exists('add_current_palette_control') ) {
 		}
 
 		$current_palette = '';
-		$current_palette_sets = [ 'current', 'next' ];
+		$current_palette_sets = array( 'current', 'next' );
 
 		$master_color_controls_ids = get_all_master_color_controls_ids( $config['sections']['style_manager_section']['options'] );
 
