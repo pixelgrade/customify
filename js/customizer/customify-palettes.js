@@ -116,7 +116,11 @@
                 if ( _.isUndefined( connected_field_data ) || _.isUndefined( connected_field_data.setting_id ) || ! _.isString( connected_field_data.setting_id ) ) {
                     return;
                 }
-                wp.customize( connected_field_data.setting_id ).set( new_value );
+                const setting = wp.customize( connected_field_data.setting_id );
+                if ( _.isUndefined( setting ) ) {
+                    return;
+                }
+                setting.set( new_value );
             } );
         }
     };
@@ -143,7 +147,8 @@
 
     // alter connected fields of the master colors controls depending on the selected palette variation
     const reloadConnectedFields = () => {
-        const variation = wp.customize( 'sm_palette_variation' )();
+        const setting = wp.customize( 'sm_palette_variation' );
+        const variation = setting();
 
         if ( ! window.variations.hasOwnProperty( variation ) ) {
             return;
