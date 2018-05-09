@@ -31,9 +31,9 @@
 				api(key, function (setting) {
 
 					setting.bind(function (to) {
-						var properties = [];
 
 						$.each(el.css, function (counter, property_config) {
+							var properties = [];
 
 							properties[property_config.property] = property_config.selector;
 							if (typeof property_config.callback_filter !== "undefined") {
