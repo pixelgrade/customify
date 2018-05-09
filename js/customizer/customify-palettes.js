@@ -60,8 +60,7 @@
         const variation = wp.customize( 'sm_palette_variation' )();
 
         $( paletteControlSelector ).removeClass( 'active' );
-        $( paletteControlSelector ).filter( '[data-target*="' + variation + '"]' ).addClass( 'active' );
-
+        $( paletteControlSelector ).filter( '.variation-' + variation ).addClass( 'active' );
         $( 'body' ).on( 'click', paletteControlSelector, function() {
             var $obj = $( this ),
                 $target = $( $obj.data( 'target' ) );

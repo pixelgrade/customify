@@ -109,13 +109,13 @@ if ( ! function_exists('mock_style_manager_section') ) {
 							),
 							'options' => array(
 								'sm_color_primary'   => '#ffeb00',
-								'sm_color_secondary' => '#3200B2',
-								'sm_color_tertiary'  => '#3200B2',
+								'sm_color_secondary' => '#fcd92a',
+								'sm_color_tertiary'  => '#f7d345',
 								'sm_dark_primary'    => '#171617',
 								'sm_dark_secondary'  => '#3d3e40',
 								'sm_dark_tertiary'   => '#b5b5b5',
 								'sm_light_primary'   => '#FFFFFF',
-								'sm_light_secondary' => '#FFFFFF',
+								'sm_light_secondary' => '#f4f4f4',
 								'sm_light_tertiary'  => '#FFFFFF',
 							),
 						),
@@ -177,17 +177,17 @@ if ( ! function_exists('mock_style_manager_section') ) {
 					'setting_type' => 'option',
 					'setting_id'   => 'sm_palette_variation',
 					'label'        => __( 'Palette Variation', 'customify' ),
-					'default'      => 'color_dark_light',
+					'default'      => 'light',
 					'live'         => true,
 					'choices'      => array(
-						'color_dark_light'  => __( 'Default', 'customify' ),
-						'dark_color_light'  => __( 'Alt', 'customify' ),
+						'light'  => __( 'light', 'customify' ),
+						'light_alt'  => __( 'light_alt', 'customify' ),
 
-						'color_light_dark'  => __( 'Dark', 'customify' ),
-						'light_color_dark'  => __( 'Dark Alt', 'customify' ),
+						'dark'  => __( 'dark', 'customify' ),
+						'dark_alt'  => __( 'dark_alt', 'customify' ),
 
-						'light_dark_color'  => __( 'Color', 'customify' ),
-						'dark_light_color'  => __( 'Color Alt', 'customify' ),
+						'colorful'  => __( 'colorful', 'customify' ),
+						'colorful_alt'  => __( 'colorful_alt', 'customify' ),
 					),
 				),
 				'sm_color_primary'              => array(
@@ -360,21 +360,21 @@ if ( ! function_exists('add_current_palette_control') ) {
 					'<div class="c-palette">' . PHP_EOL .
 					$current_palette .
 					'<div class="c-palette__overlay">' . PHP_EOL .
-					'<div class="c-palette__label">' .
-					'<div class="c-palette__name">' . 'Original Style' . '</div>' .
-					'<div class="c-palette__control active" data-target="#_customize-input-sm_palette_variation_control-radio-color_dark_light">' .
-    					'<span class="dashicons dashicons-image-rotate"></span>' .
-    					'<div class="c-palette__tooltip">Light</div>' .
-				    '</div>' .
-					'<div class="c-palette__control" data-target="#_customize-input-sm_palette_variation_control-radio-color_light_dark">' .
-						'<span class="dashicons dashicons-image-filter"></span>'.
-						'<div class="c-palette__tooltip">Dark</div>' .
-					'</div>' .
-					'<div class="c-palette__control" data-target="#_customize-input-sm_palette_variation_control-radio-light_dark_color">' .
-						'<span class="dashicons dashicons-admin-appearance"></span>' .
-						'<div class="c-palette__tooltip">Colorful</div>' .
-					'</div>' .
-					'</div>' . PHP_EOL .
+						'<div class="c-palette__label">' .
+							'<div class="c-palette__name">' . 'Original Style' . '</div>' .
+							'<div class="c-palette__control variation-light active" data-target="#_customize-input-sm_palette_variation_control-radio-light">' .
+		                        '<span class="dashicons dashicons-image-rotate"></span>' .
+		                        '<div class="c-palette__tooltip">Light</div>' .
+						    '</div>' .
+							'<div class="c-palette__control variation-dark" data-target="#_customize-input-sm_palette_variation_control-radio-dark">' .
+								'<span class="dashicons dashicons-image-filter"></span>'.
+								'<div class="c-palette__tooltip">Dark</div>' .
+							'</div>' .
+							'<div class="c-palette__control variation-colorful" data-target="#_customize-input-sm_palette_variation_control-radio-colorful">' .
+								'<span class="dashicons dashicons-admin-appearance"></span>' .
+								'<div class="c-palette__tooltip">Colorful</div>' .
+							'</div>' .
+						'</div>' . PHP_EOL .
 					'</div>' . PHP_EOL .
 					'</div>' . PHP_EOL .
 					'</div>' . PHP_EOL .

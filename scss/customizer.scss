@@ -2161,6 +2161,7 @@ $palette_border-radius: 5px;
 	left: 50%;
 
 	width: 80%;
+	max-width: 3em;
 	margin-top: 1em;
 
 	border-radius: 50%;
@@ -2426,7 +2427,30 @@ $animation-duration: 1s;
 	top: 100%;
 	left: 0;
 	z-index: 100;
+
 	margin-top: 1em;
+	border: 0;
+
+	box-shadow: black 0 3px 12px -4px;
+
+	.iris-square-handle {
+		border-color: transparent;
+		left: -6px;
+		top: -6px;
+
+		&:after {
+			position: absolute;
+			bottom: 0;
+			right: 0;
+			left: 0;
+			top: 0;
+			border: 2px solid white;
+		}
+	}
+
+	.iris-square-value {
+		box-shadow: none !important;
+	}
 }
 
 .color {
@@ -2494,3 +2518,7 @@ $animation-duration: 1s;
 		width: 100%;
 	}
 }
+
+//.wp-full-overlay-sidebar {
+//	overflow: hidden;
+//}

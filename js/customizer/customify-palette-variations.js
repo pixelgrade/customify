@@ -1,5 +1,5 @@
 window.variations = {
-    'color_dark_light': {
+    'light': {
         'sm_color_primary': 'sm_color_primary',
         'sm_color_secondary': 'sm_color_secondary',
         'sm_color_tertiary': 'sm_color_tertiary',
@@ -10,7 +10,7 @@ window.variations = {
         'sm_light_secondary': 'sm_light_secondary',
         'sm_light_tertiary': 'sm_light_tertiary',
     },
-    'color_light_dark': {
+    'dark': {
         'sm_color_primary': 'sm_color_primary',
         'sm_color_secondary': 'sm_color_secondary',
         'sm_color_tertiary': 'sm_color_tertiary',
@@ -21,7 +21,7 @@ window.variations = {
         'sm_light_secondary': 'sm_dark_secondary',
         'sm_light_tertiary': 'sm_dark_tertiary',
     },
-    'light_dark_color': {
+    'colorful': {
         'sm_color_primary': 'sm_light_primary',
         'sm_color_secondary': 'sm_light_secondary',
         'sm_color_tertiary': 'sm_light_tertiary',
@@ -32,7 +32,7 @@ window.variations = {
         'sm_light_secondary': ['sm_color_secondary', 'sm_dark_secondary'],
         'sm_light_tertiary': ['sm_color_tertiary', 'sm_dark_tertiary'],
     },
-    'light_color_dark': {
+    'dark_alt': {
         'sm_color_primary': 'sm_light_primary',
         'sm_color_secondary': 'sm_light_secondary',
         'sm_color_tertiary': 'sm_light_tertiary',
@@ -43,7 +43,7 @@ window.variations = {
         'sm_light_secondary': 'sm_dark_secondary',
         'sm_light_tertiary': 'sm_dark_tertiary',
     },
-    'dark_light_color': {
+    'colorful_alt': {
         'sm_color_primary': 'sm_dark_primary',
         'sm_color_secondary': 'sm_dark_secondary',
         'sm_color_tertiary': 'sm_dark_tertiary',
@@ -54,7 +54,7 @@ window.variations = {
         'sm_light_secondary': 'sm_color_secondary',
         'sm_light_tertiary': 'sm_color_tertiary',
     },
-    'dark_color_light': {
+    'light_alt': {
         'sm_color_primary': 'sm_dark_primary',
         'sm_color_secondary': 'sm_dark_secondary',
         'sm_color_tertiary': 'sm_dark_tertiary',
@@ -64,5 +64,5 @@ window.variations = {
         'sm_light_primary': 'sm_light_primary',
         'sm_light_secondary': 'sm_light_secondary',
         'sm_light_tertiary': 'sm_light_tertiary',
-    }
+    },
 };
