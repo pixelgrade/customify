@@ -126,6 +126,14 @@ class PixCustomifyPlugin {
 	public $file;
 
 	/**
+	 * Style Manager class object.
+	 * @var Customify_Style_Manager
+	 * @access  public
+	 * @since   1.0.0
+	 */
+	public $style_manager = null;
+
+	/**
 	 * Minimal Required PHP Version
 	 * @var string
 	 * @access  private
@@ -156,6 +164,12 @@ class PixCustomifyPlugin {
 		$this->config = $this->get_config();
 		// Load the plugin's settings from the DB
 		$this->plugin_settings = get_option( $this->config['settings-key'] );
+
+		/* Initialize the Style Manager logic. */
+		require_once( $this->plugin_basepath . 'includes/class-customify-style-manager.php' );
+		if ( is_null( $this->style_manager ) ) {
+			$this->style_manager = Customify_Style_Manager::instance( $this );
+		}
 
 		// Register all the needed hooks
 		$this->register_hooks();
@@ -282,6 +296,10 @@ class PixCustomifyPlugin {
 		}
 
 		$this->localized['theme_fonts'] = $this->theme_fonts = Customify_Font_Selector::instance()->get_theme_fonts();
+	}
+
+	public function get_version() {
+		return $this->_version;
 	}
 
 	/**
