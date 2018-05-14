@@ -1928,9 +1928,9 @@ class PixCustomifyPlugin {
 	}
 
 	/**
-	 * A public function to retreat an option's value
-	 * If there is a value and return it
-	 * Otherwise try to get the default parameter or the default from config
+	 * A public function to get an option's value.
+	 * If there is a value and return it.
+	 * Otherwise try to get the default parameter or the default from config.
 	 *
 	 * @param $option
 	 * @param mixed $default Optional.

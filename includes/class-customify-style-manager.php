@@ -22,9 +22,17 @@ class Customify_Style_Manager {
 	 * External REST API endpoints used for communicating with the Pixelgrade Cloud.
 	 * @var array
 	 * @access public
-	 * @since    1.3.7
+	 * @since    1.7.0
 	 */
 	public static $externalApiEndpoints;
+
+	/**
+	 * The current design assets config.
+	 * @var     array
+	 * @access  public
+	 * @since   1.7.0
+	 */
+	public $design_assets = null;
 
 	/**
 	 * Constructor.
@@ -36,10 +44,10 @@ class Customify_Style_Manager {
 	protected function __construct( $parent = null ) {
 		$this->parent = $parent;
 
-		// Make sure our constants are in place
+		// Make sure our constants are in place, if not already defined.
 		defined( 'PIXELGRADE_CLOUD__API_BASE' ) || define( 'PIXELGRADE_CLOUD__API_BASE', 'https://cloud.pixelgrade.com/' );
 
-		// Save the external API endpoints in a easy to get property
+		// Save the external API endpoints in a easy to get property.
 		self::$externalApiEndpoints = apply_filters( 'customify_style_manager_external_api_endpoints', array(
 			'cloud' => array(
 				'getDesignAssets'      => array(
@@ -49,6 +57,7 @@ class Customify_Style_Manager {
 			),
 		) );
 
+		// Hook up.
 		$this->add_hooks();
 	}
 
@@ -57,8 +66,12 @@ class Customify_Style_Manager {
 	 * @since 1.7.0
 	 */
 	public function add_hooks() {
+		// Handle the Customizer Style Manager config.
 		add_filter( 'customify_filter_fields', array( $this, 'style_manager_section_config' ), 12, 1 );
 		add_filter( 'customify_filter_fields', array( $this, 'add_current_color_palette_control' ), 20, 1 );
+
+		// Handle the logic on settings update/save.
+		add_action( 'customize_save_after', array( $this, 'update_custom_palette_in_use' ), 10, 1 );
 	}
 
 	/**
@@ -266,7 +279,7 @@ class Customify_Style_Manager {
 		foreach ( $current_palette_sets as $set ) {
 			$current_palette .= '<div class="colors ' . $set . '">';
 			foreach ( $master_color_controls_ids as $setting_id ) {
-				if ( ! empty( $config["sections"]["style_manager_section"]["options"][$setting_id]['connected_fields'] ) ) {
+				if ( ! empty( $config['sections']['style_manager_section']['options'][ $setting_id ]['connected_fields'] ) ) {
 					$current_palette .=
 						'<div class="color ' . $setting_id . '" data-setting="' . $setting_id . '">' . PHP_EOL .
 						'<div class="fill"></div>' . PHP_EOL .
@@ -341,33 +354,57 @@ class Customify_Style_Manager {
 	}
 
 	/**
-	 * Get the design assets data.
+	 * Get the design assets configuration.
+	 *
+	 * @since 1.7.0
+	 *
+	 * @param bool $skip_cache Optional. Whether to use the cached config or fetch a new one.
+	 * @return array
+	 */
+	protected function get_design_assets( $skip_cache = false ) {
+		if ( ! is_null( $this->design_assets ) ) {
+			return $this->design_assets;
+		}
+
+		$this->design_assets = apply_filters( 'customify_style_manage_get_design_assets', $this->maybe_fetch_design_assets() );
+
+		return $this->design_assets;
+	}
+
+	/**
+	 * Fetch the design assets data from the Pixelgrade Cloud.
+	 *
+	 * Caches the data for 12 hours. Use local defaults if not available.
+	 *
 	 * @since 1.7.0
 	 *
 	 * @param bool $skip_cache Optional. Whether to use the cached data or fetch a new one.
 	 * @return array|false
 	 */
-	protected function get_design_assets( $skip_cache = false ) {
+	protected function maybe_fetch_design_assets( $skip_cache = false ) {
+		$skip_cache = true;
 		// First try and get the cached data
 		$data = get_option( $this->_get_design_assets_cache_key() );
 		$expire_timestamp = get_option( $this->_get_design_assets_cache_key() . '_timestamp' );
 
 		// The data isn't set, is expired or we were instructed to skip the cache; we need to fetch fresh data
 		if ( true === $skip_cache || false === $data || false === $expire_timestamp || $expire_timestamp < time() ) {
+			$request_data = apply_filters( 'customify_pixelgrade_cloud_request_data', array(
+				'site_url' => home_url('/'),
+				// We are only interested in data needed to identify the theme and eventually deliver only design assets suitable for it.
+				'theme_data' => $this->get_active_theme_data(),
+				// We are only interested in data needed to identify the plugin version and eventually deliver design assets suitable for it.
+				'site_data' => $this->get_site_data(),
+			) );
+
 			$request_args = array(
 				'method' => self::$externalApiEndpoints['cloud']['getDesignAssets']['method'],
 				'timeout'   => 4,
 				'blocking'  => true,
-				'body'      => array(
-					'site_url' => home_url('/'),
-					// We are only interested in data needed to identify the theme and eventually deliver only design assets suitable for it.
-					'theme_data' => $this->get_theme_data(),
-					// We are only interested in data needed to identify the plugin version and eventually deliver design assets suitable for it.
-					'site_data' => $this->get_site_data(),
-				),
+				'body'      => $request_data,
 				'sslverify' => false,
 			);
-			// Get the user's licenses from the server
+			// Get the design assets from the cloud.
 			$response = wp_remote_request( self::$externalApiEndpoints['cloud']['getDesignAssets']['url'], $request_args );
 			if ( is_wp_error( $response ) ) {
 				return false;
@@ -540,7 +577,14 @@ class Customify_Style_Manager {
 		return apply_filters( 'customify_style_manager_default_color_palettes', $default_color_palettes );
 	}
 
-	protected function get_theme_data() {
+	/**
+	 * Get the active theme data.
+	 *
+	 * @since 1.7.0
+	 *
+	 * @return array
+	 */
+	public function get_active_theme_data() {
 		$theme_data = array();
 
 		$slug = basename( get_template_directory() );
@@ -565,21 +609,108 @@ class Customify_Style_Manager {
 		return apply_filters( 'customify_style_manager_get_theme_data', $theme_data );
 	}
 
-	protected function get_site_data() {
+	/**
+	 * Get the site data.
+	 *
+	 * @since 1.7.0
+	 *
+	 * @return array
+	 */
+	public function get_site_data() {
 		$site_data = array(
 			'url' => home_url('/'),
 			'is_ssl' => is_ssl(),
+		);
+
+		$site_data['wp'] = array(
+			'version' => get_bloginfo('version'),
 		);
 
 		$site_data['customify'] = array(
 			'version' => PixCustomifyPlugin()->get_version(),
 		);
 
+		$site_data['color_palettes'] = array(
+			'current' => $this->get_current_color_palette(),
+			'variation' => $this->get_current_color_palette_variation(),
+			'custom' => $this->is_using_custom_color_palette(),
+		);
+
 		return apply_filters( 'customify_style_manager_get_site_data', $site_data );
 	}
 
 	/**
+	 * Get the current color palette ID or false if none is selected.
+	 *
+	 * @since 1.7.0
+	 *
+	 * @return string|false
+	 */
+	protected function get_current_color_palette() {
+		return get_option( 'sm_color_palette', false );
+	}
+
+	/**
+	 * Get the current color palette variation ID or false if none is selected.
+	 *
+	 * @since 1.7.0
+	 *
+	 * @return string|false
+	 */
+	protected function get_current_color_palette_variation() {
+		return get_option( 'sm_palette_variation', false );
+	}
+
+	/**
+	 * Determine if the selected color palette has been customized and remeber this in an option.
+	 *
+	 * @since 1.7.0
+	 *
+	 * @return bool
+	 */
+	public function update_custom_palette_in_use() {
+		$current_palette = $this->get_current_color_palette();
+		if ( empty( $current_palette ) ) {
+			return false;
+		}
+
+		$color_palettes = $this->get_color_palettes();
+		if ( ! isset( $color_palettes[ $current_palette ] ) || empty( $color_palettes[ $current_palette ]['options'] ) ) {
+			return false;
+		}
+
+		$is_custom_palette = false;
+		// If any of the current master colors has a different value than the one provided by the color palette,
+		// it means a custom color palette is in use.
+		$current_palette_options = $color_palettes[ $current_palette ]['options'];
+		foreach ( $current_palette_options as $setting_id => $value ) {
+			if ( $value != get_option( $setting_id, false ) ) {
+				$is_custom_palette = true;
+				break;
+			}
+		}
+
+		update_option( 'sm_is_custom_palette', $is_custom_palette );
+
+		do_action( 'customify_style_manager_updated_custom_palette_in_use', $is_custom_palette, $this );
+
+		return true;
+	}
+
+	/**
+	 * Determine if a custom color palette is in use.
+	 *
+	 * @since 1.7.0
+	 *
+	 * @return bool
+	 */
+	protected function is_using_custom_color_palette(){
+		return boolval( get_option( 'sm_is_custom_palette', false ) );
+	}
+
+	/**
 	 * Get all the defined Style Manager master color field ids.
+	 *
 	 * @since 1.7.0
 	 *
 	 * @param array $options
@@ -635,5 +766,4 @@ class Customify_Style_Manager {
 
 		_doing_it_wrong( __FUNCTION__, esc_html( __( 'Cheatin&#8217; huh?' ) ),  null );
 	} // End __wakeup ()
-
 }
