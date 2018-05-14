@@ -50,9 +50,13 @@ class Customify_Style_Manager {
 		// Save the external API endpoints in a easy to get property.
 		self::$externalApiEndpoints = apply_filters( 'customify_style_manager_external_api_endpoints', array(
 			'cloud' => array(
-				'getDesignAssets'      => array(
+				'getDesignAssets' => array(
 					'method' => 'GET',
-					'url' => PIXELGRADE_CLOUD__API_BASE . 'wp-json/pixcloud/v1/front/design_assets',
+					'url'    => PIXELGRADE_CLOUD__API_BASE . 'wp-json/pixcloud/v1/front/design_assets',
+				),
+				'stats'           => array(
+					'method' => 'POST',
+					'url'    => PIXELGRADE_CLOUD__API_BASE . 'wp-json/pixcloud/v1/front/stats',
 				),
 			),
 		) );
@@ -72,6 +76,10 @@ class Customify_Style_Manager {
 
 		// Handle the logic on settings update/save.
 		add_action( 'customize_save_after', array( $this, 'update_custom_palette_in_use' ), 10, 1 );
+
+		// Handle the logic for user feedback.
+		add_action( 'customize_controls_print_footer_scripts', array( $this, 'output_user_feedback_modal' ) );
+		add_action( 'wp_ajax_customify_style_manager_user_feedback', array( $this, 'user_feedback_callback' ) );
 	}
 
 	/**
@@ -395,7 +403,7 @@ class Customify_Style_Manager {
 				'theme_data' => $this->get_active_theme_data(),
 				// We are only interested in data needed to identify the plugin version and eventually deliver design assets suitable for it.
 				'site_data' => $this->get_site_data(),
-			) );
+			), $this );
 
 			$request_args = array(
 				'method' => self::$externalApiEndpoints['cloud']['getDesignAssets']['method'],
@@ -411,7 +419,7 @@ class Customify_Style_Manager {
 			}
 			$response_data = json_decode( wp_remote_retrieve_body( $response ), true );
 			// Bail in case of decode error or failure to retrieve data
-			if ( null === $response_data || empty( $response_data['data'] ) || 'success' !== $response_data['code'] ) {
+			if ( null === $response_data || empty( $response_data['data'] ) || empty( $response_data['code'] ) || 'success' !== $response_data['code'] ) {
 				return false;
 			}
 
@@ -726,6 +734,138 @@ class Customify_Style_Manager {
 		}
 
 		return $master_color_controls;
+	}
+
+	public function output_user_feedback_modal() {
+		update_option( 'style_manager_user_feedback_provided', false );
+		$opt = get_option( 'style_manager_user_feedback_provided' );
+		// Only output if the user didn't provide feedback.
+		if ( empty( $opt ) ) { ?>
+			<div id="style-manager-user-feedback-modal">
+				<div class="modal">
+					<div class="modal-dialog" role="document">
+						<div class="modal-content">
+							<form id="style-manager-user-feedback" action="#" method="post">
+								<input type="hidden" name="type" value="1_to_5" />
+								<div class="modal-header">
+									<a href="#" class="close button button--naked gray" data-dismiss="modal" aria-label="Close">Close</a>
+								</div>
+								<div class="modal-body full">
+									<div class="box box--light box--large">
+										<div class="first-step">
+											<h3 class="modal-title">How would you rate your experience with using Color Palettes?</h3>
+											<label>
+												<input type="radio" name="rating" value="1" required />
+												<span>1</span>
+											</label>
+											<label>
+												<input type="radio" name="rating" value="2" required />
+												<span>2</span>
+											</label>
+											<label>
+												<input type="radio" name="rating" value="3" required />
+												<span>3</span>
+											</label>
+											<label>
+												<input type="radio" name="rating" value="4" required />
+												<span>4</span>
+											</label>
+											<label>
+												<input type="radio" name="rating" value="5" required />
+												<span>5</span>
+											</label>
+										</div>
+										<div class="second-step hidden">
+											<p>What makes you give <span class="rating-placeholder">5</span>*? I hope you’ll answer and help us do better:</p>
+											<div class="not-floating-labels">
+												<div class="form-row field">
+												<textarea name="message" placeholder="Your message.."
+												          id="style-manager-user-feedback-message" rows="6" oninvalid="this.setCustomValidity('May we have a little more info about your experience?')" oninput="setCustomValidity('')" required></textarea>
+												</div>
+											</div>
+											<div class="box box--light box--large">
+												<button id="style-manager-user-feedback_btn" class="button button--purple button--medium button--full" type="submit"><?php _e( 'Submit my feedback', 'customify' ); ?></button>
+
+											</div>
+										</div>
+										<div class="thanks-step hidden">
+											<h3 class="modal-title">Thanks for your feedback!</h3>
+											<p>This will help us improve the product. Stay awesome! 🤗</p>
+										</div>
+										<div class="error-step hidden">
+											<h3 class="modal-title">We've hit a snag!</h3>
+											<p>We couldn't record your feedback and we would truly appreciate it if you would try it again at a latter time. Stay awesome! 🤗</p>
+										</div>
+									</div>
+								</div>
+								<div class="modal-footer full">
+
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- End Modal -->
+
+			<!-- Modal Backdrop (Shadow) -->
+			<div class="modal-backdrop"></div>
+		<?php }
+	}
+
+	/**
+	 * Callback for the user feedback AJAX call.
+	 */
+	public function user_feedback_callback() {
+		check_ajax_referer( 'customify_style_manager_user_feedback', 'nonce' );
+
+		if ( empty( $_POST['type'] ) ) {
+			wp_send_json_error( esc_html__( 'No type provided', 'customify' ) );
+		}
+
+		if ( empty( $_POST['rating'] ) ) {
+			wp_send_json_error( esc_html__( 'No rating provided', 'customify' ) );
+		}
+
+		$type = sanitize_text_field( $_POST['type'] );
+		$rating = intval( $_POST['rating'] );
+		$message = '';
+		if ( ! empty( $_POST['message'] ) ) {
+			$message = wp_kses_post( $_POST['message'] );
+		}
+
+		$request_data = apply_filters( 'customify_pixelgrade_cloud_request_data', array(
+			'site_url'          => home_url( '/' ),
+			'satisfaction_data' => array(
+				'type'    => $type,
+				'rating'  => $rating,
+				'message' => $message,
+			),
+		), $this );
+
+		$request_args = array(
+			'method' => self::$externalApiEndpoints['cloud']['stats']['method'],
+			'timeout'   => 5,
+			'blocking'  => true,
+			'body'      => $request_data,
+			'sslverify' => false,
+		);
+
+		// Send the feedback.
+		$response = wp_remote_request( self::$externalApiEndpoints['cloud']['stats']['url'], $request_args );
+		if ( is_wp_error( $response ) ) {
+			wp_send_json_error( esc_html__( 'Sorry, something went wrong and we couldn\'t save your feedback.', 'customify' ) );
+		}
+		$response_data = json_decode( wp_remote_retrieve_body( $response ), true );
+		// Bail in case of decode error or failure to retrieve data
+		if ( null === $response_data || empty( $response_data['code'] ) || 'success' !== $response_data['code'] ) {
+			wp_send_json_error( esc_html__( 'Sorry, something went wrong and we couldn\'t save your feedback.', 'customify' ) );
+		}
+
+		// We need to remember that the user provided feedback (and at what timestamp).
+		update_option( 'style_manager_user_feedback_provided', time(), true );
+
+		wp_send_json_success( esc_html__( 'Thank you for your feedback.', 'customify' ) );
 	}
 
 	/**

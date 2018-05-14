@@ -19,7 +19,7 @@
         // create a stack of callbacks bound to parent settings to be able to unbind them
         // when altering the connected_fields attribute
         window.connectedFieldsCallbacks = {};
-    }
+    };
 
     const updateCurrentPalette = ( label ) => {
         const $palette = $( '.c-palette' );
@@ -63,7 +63,7 @@
         $( paletteControlSelector ).filter( '[data-target*="' + variation + '"]' ).addClass( 'active' );
 
         $( 'body' ).on( 'click', paletteControlSelector, function() {
-            var $obj = $( this ),
+            let $obj = $( this ),
                 $target = $( $obj.data( 'target' ) );
 
             $obj.siblings( paletteControlSelector ).removeClass( 'active' );
@@ -190,7 +190,7 @@
                 e.stopPropagation();
                 e.preventDefault();
 
-                var hidden = ! $obj.find( '.iris-picker' ).is( ":visible" );
+                let hidden = ! $obj.find( '.iris-picker' ).is( ":visible" );
 
                 if ( hidden ) {
                     $colors.not( $obj ).addClass( 'inactive' ).iris( 'hide' );

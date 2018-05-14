@@ -296,6 +296,10 @@ class PixCustomifyPlugin {
 		}
 
 		$this->localized['theme_fonts'] = $this->theme_fonts = Customify_Font_Selector::instance()->get_theme_fonts();
+
+		$this->localized['ajax_url'] = admin_url( 'admin-ajax.php' );
+		$this->localized['style_manager_user_feedback_nonce'] = wp_create_nonce( 'customify_style_manager_user_feedback' );
+		$this->localized['style_manager_user_feedback_provided'] = $this->get_option( 'style_manager_user_feedback_provided', false );
 	}
 
 	public function get_version() {
