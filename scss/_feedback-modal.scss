@@ -1,5 +1,5 @@
 /* ==========================================================================
-   #MODAL
+   #FEEDBACK MODAL
    ========================================================================== */
 
 // Modals
@@ -60,8 +60,12 @@ body.modal-open
 #style-manager-user-feedback-modal {
   // Container that the modal scrolls within
   .modal {
-    position: fixed;
-    top: 50px;
+    position: relative;
+    height: 100%;
+    display: flex;
+    align-items: center;
+
+    top: 0;
     right: 0;
     bottom: 0;
     left: 0;
@@ -80,6 +84,12 @@ body.modal-open
     // When fading in the modal, animate it to slide down
     transition: all .3s ease;
     transform: translate(0, -10%);
+
+    // Font Styling
+    font-family: 'Galano Grotesque Alt';
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 1.7;
   }
 
   // Shell div to position the modal with bottom padding
@@ -147,7 +157,17 @@ body.modal-open
     // border-bottom: $modal-header-border-width solid $modal-header-border-color;
 
     .close {
-      top: -10px;
+      &.button {
+        top: -10px;
+      }
+
+      &.icon {
+        opacity: 0.5;
+      }
+
+      &:hover {
+        opacity: 1;
+      }
     }
   }
 
@@ -175,8 +195,9 @@ body.modal-open
       padding: 0;
 
       .box {
-        padding-top: $modal-header-padding/2;
+        padding-top: 0;
         padding-bottom: 0;
+        margin-top: 0;
       }
 
       + .modal-footer.full {
@@ -194,6 +215,7 @@ body.modal-open
 
     // Variations for Cancel Subscription Screen
     .box {
+
       .button:last-child {
         margin-bottom: 0;
       }
@@ -255,3 +277,151 @@ body.modal-open
     }
   }
 }
+
+// Specific Styling for Feedback Modal
+#style-manager-user-feedback {
+  .modal-body {
+    .box {
+      flex-direction: column;
+
+      > * {
+        width: 100%;
+      }
+    }
+
+    p {
+      font-size: 16px;
+      margin-bottom: 20px;
+    }
+
+    textarea {
+      width: 100%;
+      margin: 0;
+      padding: 11px 18px;
+      border: 1px solid #dddddd;
+      border-radius: 4px;
+      box-shadow: none;
+      font-family: 'Galano Grotesque Alt';
+      font-size: 16px;
+      line-height: 26px;
+      color: #473850;
+    }
+  }
+
+  .modal-title {
+    margin-top: 0;
+    margin-bottom: 34px;
+
+    font-family: 'Galano Classic';
+    font-weight: 600;
+    font-size: 28px;
+    line-height: 1.4;
+    text-align: center;
+  }
+  
+
+  // Button Style
+  .button {
+    text-decoration: none;
+    cursor: pointer;
+    -webkit-font-smoothing: antialiased;
+    position: relative;
+    transition-duration: .2s;
+    transition-timing-function: cubic-bezier(0, 0, 0.58, 1);
+    transition-property: transform,background,background-color,color,box-shadow;
+
+    display: inline-block;
+    padding: 15px 50px;
+    border-radius: 2px;
+    font-family: "Galano Classic", sans-serif;
+    font-size: 16px;
+    line-height: 23px;
+    font-weight: 600;
+    text-align: center;
+    background-color: #9660c6;
+    color: #ffffff;
+    border-radius: 4px;
+
+    box-shadow: none;
+    height: auto;
+    width: 100%;
+    margin-top: 20px;
+
+    &:hover {
+      background-color: #9660c6;
+      color: #ffffff;
+      transform: scale(1.05) translateY(-3px);
+      box-shadow: 0 10px 20px -10px rgba(0, 0, 0, 0.7);
+    }
+  }
+
+  // Steps
+  .first-step {
+
+  }
+
+  .second-step {
+    margin-top: 18px;
+  }
+
+  .thanks-step,
+  .error-step {
+    text-align: center;
+
+    .modal-title {
+      margin-bottom: 0;
+    }
+
+    p:last-child {
+      margin-bottom: 10px;
+    }
+  }
+}
+
+// Scorecard System
+.scorecard {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-evenly;
+
+  color: $purple-light;
+  font-family: "Galano Classic";  
+  font-size: 18px;  
+  font-weight: 600; 
+  text-align: center;
+
+
+  > span {
+      // line-height: 39px;  
+  }
+
+  > label {
+    font-size: 20px;
+
+    span {
+      display: block;
+      width: 46px;
+      border: 2px solid $purple-light;
+      line-height: 46px;
+      border-radius: 100%;
+      background: #FFF;
+
+      transition: all 0.25s ease;
+
+      &:hover {
+
+      }
+    }
+
+    input[type="radio"] {
+      display: none;
+    }
+
+    span:hover, 
+    input[type="radio"]:checked ~ span {
+      background: $purple-light;
+      color: #FFF;
+    }
+  }
+}
+

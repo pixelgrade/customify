@@ -748,45 +748,47 @@ class Customify_Style_Manager {
 							<form id="style-manager-user-feedback" action="#" method="post">
 								<input type="hidden" name="type" value="1_to_5" />
 								<div class="modal-header">
-									<a href="#" class="close button button--naked gray" data-dismiss="modal" aria-label="Close">Close</a>
+									<button type="button" class="close icon media-modal-close" data-dismiss="modal" aria-label="Close"><span class="media-modal-icon"><span class="screen-reader-text">Close media panel</span></span></button>
+									<!-- <a href="#" class="close button button--naked gray" data-dismiss="modal" aria-label="Close">Close</a> -->
 								</div>
 								<div class="modal-body full">
-									<div class="box box--light box--large">
+									<div class="box box--large">
 										<div class="first-step">
-											<h3 class="modal-title">How would you rate your experience with using Color Palettes?</h3>
-											<label>
-												<input type="radio" name="rating" value="1" required />
-												<span>1</span>
-											</label>
-											<label>
-												<input type="radio" name="rating" value="2" required />
-												<span>2</span>
-											</label>
-											<label>
-												<input type="radio" name="rating" value="3" required />
-												<span>3</span>
-											</label>
-											<label>
-												<input type="radio" name="rating" value="4" required />
-												<span>4</span>
-											</label>
-											<label>
-												<input type="radio" name="rating" value="5" required />
-												<span>5</span>
-											</label>
+											<h2 class="modal-title">How would you rate your experience with using Color Palettes?</h2>
+											<div class="scorecard">
+												<span>Worst</span>
+												<label>
+													<input type="radio" name="rating" value="1" required />
+													<span>1</span>
+												</label>
+												<label>
+													<input type="radio" name="rating" value="2" required />
+													<span>2</span>
+												</label>
+												<label>
+													<input type="radio" name="rating" value="3" required />
+													<span>3</span>
+												</label>
+												<label>
+													<input type="radio" name="rating" value="4" required />
+													<span>4</span>
+												</label>
+												<label>
+													<input type="radio" name="rating" value="5" required />
+													<span>5</span>
+												</label>
+												<span>Best</span>
+											</div>
 										</div>
 										<div class="second-step hidden">
-											<p>What makes you give <span class="rating-placeholder">5</span>*? I hope you’ll answer and help us do better:</p>
+											<p><strong>What makes you give <span class="rating-placeholder">5</span>*?</strong> I hope you’ll answer and help us do better:</p>
 											<div class="not-floating-labels">
 												<div class="form-row field">
 												<textarea name="message" placeholder="Your message.."
-												          id="style-manager-user-feedback-message" rows="6" oninvalid="this.setCustomValidity('May we have a little more info about your experience?')" oninput="setCustomValidity('')" required></textarea>
+												          id="style-manager-user-feedback-message" rows="4" oninvalid="this.setCustomValidity('May we have a little more info about your experience?')" oninput="setCustomValidity('')" required></textarea>
 												</div>
 											</div>
-											<div class="box box--light box--large">
-												<button id="style-manager-user-feedback_btn" class="button button--purple button--medium button--full" type="submit"><?php _e( 'Submit my feedback', 'customify' ); ?></button>
-
-											</div>
+											<button id="style-manager-user-feedback_btn" class="button" type="submit"><?php _e( 'Submit my feedback', 'customify' ); ?></button>
 										</div>
 										<div class="thanks-step hidden">
 											<h3 class="modal-title">Thanks for your feedback!</h3>
@@ -805,11 +807,11 @@ class Customify_Style_Manager {
 						</div>
 					</div>
 				</div>
+				<!-- End Modal -->
+				<!-- Modal Backdrop (Shadow) -->
+				<div class="modal-backdrop"></div>
 			</div>
-			<!-- End Modal -->
 
-			<!-- Modal Backdrop (Shadow) -->
-			<div class="modal-backdrop"></div>
 		<?php }
 	}
 
