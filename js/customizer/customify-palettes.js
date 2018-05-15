@@ -60,8 +60,7 @@
         const variation = wp.customize( 'sm_color_palette_variation' )();
 
         $( paletteControlSelector ).removeClass( 'active' );
-        $( paletteControlSelector ).filter( '[data-target*="' + variation + '"]' ).addClass( 'active' );
-
+        $( paletteControlSelector ).filter( '.variation-' + variation ).addClass( 'active' );
         $( 'body' ).on( 'click', paletteControlSelector, function() {
             let $obj = $( this ),
                 $target = $( $obj.data( 'target' ) );
@@ -186,15 +185,26 @@
                 }
             } );
 
+	        $obj.find( '.iris-picker' ).on( 'click', function( e ) {
+		        e.stopPropagation();
+		        e.preventDefault();
+            } );
+
             $obj.on( 'click', ( e ) => {
                 e.stopPropagation();
                 e.preventDefault();
 
-                let hidden = ! $obj.find( '.iris-picker' ).is( ":visible" );
+                const hidden = ! $obj.find( '.iris-picker' ).is( ":visible" );
 
                 if ( hidden ) {
                     $colors.not( $obj ).addClass( 'inactive' ).iris( 'hide' );
                     $obj.removeClass( 'inactive' );
+
+	                const $iris = $obj.find( '.iris-picker' );
+	                const paletteWidth = $palette.outerWidth();
+	                const irisWidth = $iris.outerWidth();
+
+	                $iris.css( 'left', ( paletteWidth - irisWidth ) * i / ( $colors.length - 1 ) );
                 } else {
                     $colors.removeClass( 'inactive' );
                 }
