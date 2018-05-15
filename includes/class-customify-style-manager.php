@@ -430,16 +430,23 @@ class Customify_Style_Manager {
 	 * @return array|false
 	 */
 	protected function maybe_fetch_design_assets( $skip_cache = false ) {
+		// First try and get the cached data
+		$data = get_option( $this->_get_design_assets_cache_key() );
+
+		// For performance reasons, we will ONLY fetch remotely when in the WP ADMIN area or via an ADMIN AJAX call, regardless of settings.
+		if ( ! is_admin() ) {
+			return  $data;
+		}
+
+		// Get the cache data expiration timestamp.
+		$expire_timestamp = get_option( $this->_get_design_assets_cache_key() . '_timestamp' );
+
 		// We don't force skip the cache for AJAX requests for performance reasons.
 		if ( ! wp_doing_ajax() && defined('CUSTOMIFY_SM_ALWAYS_FETCH_DESIGN_ASSETS' ) && true === CUSTOMIFY_SM_ALWAYS_FETCH_DESIGN_ASSETS ) {
 			$skip_cache = true;
 		}
 
-		// First try and get the cached data
-		$data = get_option( $this->_get_design_assets_cache_key() );
-		$expire_timestamp = get_option( $this->_get_design_assets_cache_key() . '_timestamp' );
-
-		// The data isn't set, is expired or we were instructed to skip the cache; we need to fetch fresh data
+		// The data isn't set, is expired or we were instructed to skip the cache; we need to fetch fresh data.
 		if ( true === $skip_cache || false === $data || false === $expire_timestamp || $expire_timestamp < time() ) {
 			$request_data = apply_filters( 'customify_pixelgrade_cloud_request_data', array(
 				'site_url' => home_url('/'),
@@ -472,9 +479,9 @@ class Customify_Style_Manager {
 
 			$data = apply_filters( 'customify_style_manager_fetch_design_assets', $response_data['data'] );
 
-			// Cache the data in an option for 12 hours
+			// Cache the data in an option for 6 hours
 			update_option( $this->_get_design_assets_cache_key() , $data, true );
-			update_option( $this->_get_design_assets_cache_key() . '_timestamp' , time() + 12 * HOUR_IN_SECONDS, true );
+			update_option( $this->_get_design_assets_cache_key() . '_timestamp' , time() + 6 * HOUR_IN_SECONDS, true );
 		}
 
 		return $data;
@@ -759,7 +766,7 @@ class Customify_Style_Manager {
 			}
 		}
 
-		update_option( 'sm_is_custom_color_palette', $is_custom_palette );
+		update_option( 'sm_is_custom_color_palette', $is_custom_palette, true );
 
 		do_action( 'customify_style_manager_updated_custom_palette_in_use', $is_custom_palette, $this );
 
