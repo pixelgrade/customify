@@ -3,7 +3,7 @@ Contributors: pixelgrade, euthelup, babbardel, vlad.olaru, cristianfrumusanu, ra
 Tags: customizer, css, editor, live, preview, customizer
 Requires at least: 4.7.0
 Tested up to: 4.9.5
-Stable tag: 1.6.5
+Stable tag: 1.7.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -44,6 +44,10 @@ With [Customify](https://github.com/pixelgrade/customify), developers can easily
 * Default [image](https://unsplash.com/photos/OgM4RKdr2kY) for Style Manager Color Palette control - License: (Unsplash)[https://unsplash.com/license]
 
 == Changelog ==
+
+= 1.7.0 =
+* Added **Dynamic Color Palettes** for a smoother experience
+* Fixed issue with the Style Manager crashing the Customizer when not using a theme with support for it.
 
 = 1.6.5 =
 * Added **Color Palettes Variations** to the Style Manager Customizer section
