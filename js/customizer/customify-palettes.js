@@ -23,6 +23,11 @@
 
     const updateCurrentPalette = ( label ) => {
         const $palette = $( '.c-palette' );
+
+        if ( ! $palette.length ) {
+            return;
+        }
+
         const $current = $palette.find( '.colors.current' );
         const $next = $palette.find( '.colors.next' );
 
@@ -171,6 +176,11 @@
 
     const createCurrentPaletteControls = () => {
         const $palette = $( '.c-palette' );
+
+        if ( ! $palette.length ) {
+            return;
+        }
+
         const $colors = $palette.find( '.colors.next .color' );
 
         $colors.each( ( i, obj ) => {
