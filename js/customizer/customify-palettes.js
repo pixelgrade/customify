@@ -147,6 +147,10 @@
     // alter connected fields of the master colors controls depending on the selected palette variation
     const reloadConnectedFields = () => {
         const setting = wp.customize( 'sm_color_palette_variation' );
+
+        if ( typeof setting === "undefined" ) {
+            return;
+        }
         const variation = setting();
 
         if ( ! window.variations.hasOwnProperty( variation ) ) {
