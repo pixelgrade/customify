@@ -57,10 +57,15 @@
 
     const bindVariationChange = () => {
         const paletteControlSelector = '.c-palette__control';
+        const $paletteControl = $( paletteControlSelector );
         const variation = wp.customize( 'sm_color_palette_variation' )();
 
-        $( paletteControlSelector ).removeClass( 'active' );
-        $( paletteControlSelector ).filter( '.variation-' + variation ).addClass( 'active' );
+        if ( _.isUndefined( variation ) || ! $paletteControl.length ) {
+            return;
+        }
+
+        $paletteControl.removeClass( 'active' );
+        $paletteControl.filter( '.variation-' + variation ).addClass( 'active' );
         $( 'body' ).on( 'click', paletteControlSelector, function() {
             let $obj = $( this ),
                 $target = $( $obj.data( 'target' ) );
@@ -148,9 +153,10 @@
     const reloadConnectedFields = () => {
         const setting = wp.customize( 'sm_color_palette_variation' );
 
-        if ( typeof setting === "undefined" ) {
+        if ( _.isUndefined( setting ) ) {
             return;
         }
+
         const variation = setting();
 
         if ( ! window.variations.hasOwnProperty( variation ) ) {
