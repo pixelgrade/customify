@@ -414,7 +414,7 @@ class Customify_Style_Manager {
 			return $this->design_assets;
 		}
 
-		$this->design_assets = apply_filters( 'customify_style_manage_get_design_assets', $this->maybe_fetch_design_assets() );
+		$this->design_assets = apply_filters( 'customify_style_manager_maybe_fetch_design_assets', $this->maybe_fetch_design_assets( $skip_cache ) );
 
 		return $this->design_assets;
 	}
@@ -430,6 +430,11 @@ class Customify_Style_Manager {
 	 * @return array|false
 	 */
 	protected function maybe_fetch_design_assets( $skip_cache = false ) {
+		// We don't force skip the cache for AJAX requests for performance reasons.
+		if ( ! wp_doing_ajax() && defined('CUSTOMIFY_SM_ALWAYS_FETCH_DESIGN_ASSETS' ) && true === CUSTOMIFY_SM_ALWAYS_FETCH_DESIGN_ASSETS ) {
+			$skip_cache = true;
+		}
+
 		// First try and get the cached data
 		$data = get_option( $this->_get_design_assets_cache_key() );
 		$expire_timestamp = get_option( $this->_get_design_assets_cache_key() . '_timestamp' );
@@ -465,9 +470,9 @@ class Customify_Style_Manager {
 				return $data;
 			}
 
-			$data = $response_data['data'];
+			$data = apply_filters( 'customify_style_manager_fetch_design_assets', $response_data['data'] );
 
-			// Cache the data in a option for 12 hours
+			// Cache the data in an option for 12 hours
 			update_option( $this->_get_design_assets_cache_key() , $data, true );
 			update_option( $this->_get_design_assets_cache_key() . '_timestamp' , time() + 12 * HOUR_IN_SECONDS, true );
 		}
@@ -802,10 +807,9 @@ class Customify_Style_Manager {
 		if ( ! $this->is_supported() ) {
 			return;
 		}
-		
-		$opt = get_option( 'style_manager_user_feedback_provided' );
+
 		// Only output if the user didn't provide feedback.
-		if ( empty( $opt ) ) { ?>
+		if ( ! $this->user_provided_feedback() ) { ?>
 			<div id="style-manager-user-feedback-modal">
 				<div class="modal">
 					<div class="modal-dialog" role="document">
@@ -878,6 +882,29 @@ class Customify_Style_Manager {
 			</div>
 
 		<?php }
+	}
+
+	/**
+	 * @param bool|int $timestamp_limit Optional. Timestamp to compare the time the user provided feedback.
+	 *                              If the provided timestamp is earlier than the time the user provided feedback, returns false.
+	 *
+	 * @return bool
+	 */
+	public function user_provided_feedback( $timestamp_limit = false ) {
+		if ( defined( 'CUSTOMIFY_SM_ALWAYS_ASK_FOR_FEEDBACK' ) && true === CUSTOMIFY_SM_ALWAYS_ASK_FOR_FEEDBACK ) {
+			return false;
+		}
+
+		$user_provided_feedback = get_option( 'style_manager_user_feedback_provided' );
+		if ( empty( $user_provided_feedback ) ) {
+			return false;
+		}
+
+		if ( ! empty( $timestamp ) && is_int( $timestamp ) && $timestamp_limit > $user_provided_feedback ) {
+			return  false;
+		}
+
+		return true;
 	}
 
 	/**
