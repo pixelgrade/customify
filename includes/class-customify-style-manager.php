@@ -81,6 +81,31 @@ class Customify_Style_Manager {
 		// Handle the logic for user feedback.
 		add_action( 'customize_controls_print_footer_scripts', array( $this, 'output_user_feedback_modal' ) );
 		add_action( 'wp_ajax_customify_style_manager_user_feedback', array( $this, 'user_feedback_callback' ) );
+
+		// Scripts enqueued in the Customizer
+		add_action( 'customize_controls_init', array( $this, 'register_admin_customizer_scripts' ), 10 );
+		add_action( 'customize_controls_enqueue_scripts', array( $this, 'enqueue_admin_customizer_scripts' ), 10 );
+	}
+
+	/**
+	 * Register Customizer admin scripts
+	 */
+	function register_admin_customizer_scripts() {
+		wp_register_script( $this->parent->get_slug() . '-swap-values', plugins_url( 'js/customizer/customify-swap-values.js', $this->parent->file ), array( 'jquery' ), $this->parent->get_version() );
+		wp_register_script( $this->parent->get_slug() . '-palette-variations', plugins_url( 'js/customizer/customify-palette-variations.js', $this->parent->file ), array( 'jquery' ), $this->parent->get_version() );
+		wp_register_script( $this->parent->get_slug() . '-palettes', plugins_url( 'js/customizer/customify-palettes.js', $this->parent->file ), array( 'jquery', $this->parent->get_slug() . '-palette-variations', $this->parent->get_slug() . '-swap-values' ), $this->parent->get_version() );
+	}
+
+	/**
+	 * Enqueue Customizer admin scripts
+	 */
+	function enqueue_admin_customizer_scripts() {
+		// If there is no style manager support, bail early.
+		if ( ! $this->is_supported() ) {
+			return;
+		}
+
+		wp_enqueue_script( $this->parent->get_slug() . '-palettes' );
 	}
 
 	/**

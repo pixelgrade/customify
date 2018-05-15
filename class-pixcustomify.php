@@ -222,8 +222,8 @@ class PixCustomifyPlugin {
 		add_action( 'customize_controls_init', array( $this, 'register_admin_customizer_styles' ), 10 );
 		add_action( 'customize_controls_enqueue_scripts', array( $this, 'enqueue_admin_customizer_styles' ), 10 );
 		// Scripts enqueued in the Customizer
-		add_action( 'customize_controls_init', array( $this, 'register_admin_customizer_scripts' ), 10 );
-		add_action( 'customize_controls_enqueue_scripts', array( $this, 'enqueue_admin_customizer_scripts' ), 10 );
+		add_action( 'customize_controls_init', array( $this, 'register_admin_customizer_scripts' ), 15 );
+		add_action( 'customize_controls_enqueue_scripts', array( $this, 'enqueue_admin_customizer_scripts' ), 15 );
 
 		// Scripts enqueued only in the theme preview
 		add_action( 'customize_preview_init', array( $this, 'customizer_live_preview_register_scripts' ), 10 );
@@ -306,6 +306,10 @@ class PixCustomifyPlugin {
 		return $this->_version;
 	}
 
+	public function get_slug() {
+		return $this->plugin_slug;
+	}
+
 	/**
 	 * Fired when the plugin is activated.
 	 * @since    1.0.0
@@ -361,10 +365,6 @@ class PixCustomifyPlugin {
 		wp_register_script( 'jquery-react', plugins_url( 'js/jquery-react.js', $this->file ), array( 'jquery' ), $this->_version );
 
 		wp_register_script( 'customify-scale', plugins_url( 'js/customizer/customify-scale.js', $this->file ), array( 'jquery' ), $this->_version );
-		wp_register_script( 'customify-swap-values', plugins_url( 'js/customizer/customify-swap-values.js', $this->file ), array( 'jquery' ), $this->_version );
-
-		wp_register_script( 'customify-palette-variations', plugins_url( 'js/customizer/customify-palette-variations.js', $this->file ), array( 'jquery' ), $this->_version );
-		wp_register_script( 'customify-palettes', plugins_url( 'js/customizer/customify-palettes.js', $this->file ), array( 'jquery', 'customify-palette-variations' ), $this->_version );
 
 		wp_register_script( $this->plugin_slug . '-customizer-scripts', plugins_url( 'js/customizer.js', $this->file ), array(
 			'jquery',
@@ -373,8 +373,6 @@ class PixCustomifyPlugin {
 			'customize-controls',
 
 			'customify-scale',
-			'customify-swap-values',
-			'customify-palettes',
 		), $this->_version );
 	}
 
