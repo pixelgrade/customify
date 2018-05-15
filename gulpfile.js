@@ -40,7 +40,7 @@ var options = {
 // styles related
 gulp.task('styles-dev', function () {
 	return gulp.src(source_SCSS)
-		.pipe(sass({'sourcemap': false, style: 'compact'}))
+		.pipe(sass({'sourcemap': true, outputStyle: 'expanded'}))
 			.on('error', function (e) {
 				console.log(e.message);
 			})
@@ -55,7 +55,7 @@ gulp.task('styles-dev', function () {
 
 gulp.task('styles', function () {
 	return gulp.src(source_SCSS)
-		.pipe(sass({'sourcemap': true, style: 'expanded'}))
+		.pipe(sass({'sourcemap': false, outputStyle: 'compressed'}))
 		.pipe(prefix("last 1 version", "> 1%", "ie 8", "ie 7"))
 		.pipe(csscomb())
         .pipe(gulp.dest(dest_CSS, {"mode": "0644"}))
