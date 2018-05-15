@@ -86,7 +86,7 @@ body.modal-open
     transform: translate(0, -10%);
 
     // Font Styling
-    font-family: 'Galano Grotesque Alt';
+    font-family: 'Galano Grotesque Alt', -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;
     font-weight: 400;
     font-size: 16px;
     line-height: 1.7;
@@ -121,6 +121,10 @@ body.modal-open
       font-weight: 500;
       color: $purple-light;
       border-bottom: 1px solid $purple-light;
+    }
+
+    > form {
+      margin-bottom: 20px;
     }
   }
 
@@ -282,7 +286,14 @@ body.modal-open
 #style-manager-user-feedback {
   .modal-body {
     .box {
+      position: relative;
       flex-direction: column;
+      display: flex;
+      flex-wrap: nowrap;
+      align-items: center;
+      margin: 20px 0;
+      padding: 16px 52px;
+      border-radius: 4px;
 
       > * {
         width: 100%;
@@ -301,7 +312,7 @@ body.modal-open
       border: 1px solid #dddddd;
       border-radius: 4px;
       box-shadow: none;
-      font-family: 'Galano Grotesque Alt';
+      font-family: 'Galano Grotesque Alt', -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;
       font-size: 16px;
       line-height: 26px;
       color: #473850;
@@ -312,7 +323,7 @@ body.modal-open
     margin-top: 0;
     margin-bottom: 34px;
 
-    font-family: 'Galano Classic';
+    font-family: 'Galano Classic', -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;
     font-weight: 600;
     font-size: 28px;
     line-height: 1.4;
@@ -333,7 +344,7 @@ body.modal-open
     display: inline-block;
     padding: 15px 50px;
     border-radius: 2px;
-    font-family: "Galano Classic", sans-serif;
+    font-family: "Galano Classic", -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;
     font-size: 16px;
     line-height: 23px;
     font-weight: 600;
@@ -385,7 +396,7 @@ body.modal-open
   justify-content: space-evenly;
 
   color: $purple-light;
-  font-family: "Galano Classic";  
+  font-family: "Galano Classic", -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;  
   font-size: 18px;  
   font-weight: 600; 
   text-align: center;
