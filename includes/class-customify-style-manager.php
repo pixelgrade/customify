@@ -67,6 +67,7 @@ class Customify_Style_Manager {
 
 	/**
 	 * Initiate our hooks
+	 *
 	 * @since 1.7.0
 	 */
 	public function add_hooks() {
@@ -83,6 +84,19 @@ class Customify_Style_Manager {
 	}
 
 	/**
+	 * Determine if Style Manager is supported.
+	 *
+	 * @since 1.7.0
+	 *
+	 * @return bool
+	 */
+	public function is_supported() {
+		$has_support = boolval( current_theme_supports( 'customizer_style_manager' ) );
+
+		return apply_filters( 'customify_style_manager_is_supported', $has_support );
+	}
+
+	/**
 	 * Setup the Style Manager Customizer section config.
 	 *
 	 * @since 1.7.0
@@ -91,8 +105,8 @@ class Customify_Style_Manager {
 	 * @return array
 	 */
 	public function style_manager_section_config( $config ) {
-		// If the current active theme hasn't declared support for style manager, bail.
-		if ( ! current_theme_supports( 'customizer_style_manager' ) ) {
+		// If there is no style manager support, bail early.
+		if ( ! $this->is_supported() ) {
 			return $config;
 		}
 
@@ -264,14 +278,15 @@ class Customify_Style_Manager {
 
 	/**
 	 * Add the current color palette control to the Style Manager section.
+	 *
 	 * @since 1.7.0
 	 *
 	 * @param array $config
 	 * @return array
 	 */
 	public function add_current_color_palette_control( $config ) {
-		// If the theme hasn't declared support for style manager, bail.
-		if ( ! current_theme_supports( 'customizer_style_manager' ) ) {
+		// If there is no style manager support, bail early.
+		if ( ! $this->is_supported() ) {
 			return $config;
 		}
 
@@ -298,7 +313,6 @@ class Customify_Style_Manager {
 			$current_palette .= '</div>';
 		}
 
-		// The section might be already defined, thus we merge, not replace the entire section config.
 		$config['sections']['style_manager_section']['options'] = array(
 			'sm_current_palette' => array(
 				'type' => 'html',
@@ -390,7 +404,6 @@ class Customify_Style_Manager {
 	 * @return array|false
 	 */
 	protected function maybe_fetch_design_assets( $skip_cache = false ) {
-		$skip_cache = true;
 		// First try and get the cached data
 		$data = get_option( $this->_get_design_assets_cache_key() );
 		$expire_timestamp = get_option( $this->_get_design_assets_cache_key() . '_timestamp' );
@@ -414,13 +427,16 @@ class Customify_Style_Manager {
 			);
 			// Get the design assets from the cloud.
 			$response = wp_remote_request( self::$externalApiEndpoints['cloud']['getDesignAssets']['url'], $request_args );
+			// Bail in case of decode error or failure to retrieve data.
+			// We will return the data already available.
 			if ( is_wp_error( $response ) ) {
-				return false;
+				return $data;
 			}
 			$response_data = json_decode( wp_remote_retrieve_body( $response ), true );
-			// Bail in case of decode error or failure to retrieve data
+			// Bail in case of decode error or failure to retrieve data.
+			// We will return the data already available.
 			if ( null === $response_data || empty( $response_data['data'] ) || empty( $response_data['code'] ) || 'success' !== $response_data['code'] ) {
-				return false;
+				return $data;
 			}
 
 			$data = $response_data['data'];
@@ -433,12 +449,20 @@ class Customify_Style_Manager {
 		return $data;
 	}
 
+	/**
+	 * Get the design assets cache key.
+	 *
+	 * @since 1.7.0
+	 *
+	 * @return string
+	 */
 	protected function _get_design_assets_cache_key() {
 		return 'customify_style_manager_design_assets';
 	}
 
 	/**
 	 * Get the default (hard-coded) color palettes configuration.
+	 *
 	 * @since 1.7.0
 	 *
 	 * @return array
@@ -670,13 +694,18 @@ class Customify_Style_Manager {
 	}
 
 	/**
-	 * Determine if the selected color palette has been customized and remeber this in an option.
+	 * Determine if the selected color palette has been customized and remember this in an option.
 	 *
 	 * @since 1.7.0
 	 *
 	 * @return bool
 	 */
 	public function update_custom_palette_in_use() {
+		// If there is no style manager support, bail early.
+		if ( ! $this->is_supported() ) {
+			return false;
+		}
+
 		$current_palette = $this->get_current_color_palette();
 		if ( empty( $current_palette ) ) {
 			return false;
@@ -692,13 +721,13 @@ class Customify_Style_Manager {
 		// it means a custom color palette is in use.
 		$current_palette_options = $color_palettes[ $current_palette ]['options'];
 		foreach ( $current_palette_options as $setting_id => $value ) {
-			if ( $value != get_option( $setting_id, false ) ) {
+			if ( $value != get_option( $setting_id ) ) {
 				$is_custom_palette = true;
 				break;
 			}
 		}
 
-		update_option( 'sm_is_custom_palette', $is_custom_palette );
+		update_option( 'sm_is_custom_color_palette', $is_custom_palette );
 
 		do_action( 'customify_style_manager_updated_custom_palette_in_use', $is_custom_palette, $this );
 
@@ -713,7 +742,7 @@ class Customify_Style_Manager {
 	 * @return bool
 	 */
 	protected function is_using_custom_color_palette(){
-		return boolval( get_option( 'sm_is_custom_palette', false ) );
+		return boolval( get_option( 'sm_is_custom_color_palette', false ) );
 	}
 
 	/**
@@ -736,7 +765,17 @@ class Customify_Style_Manager {
 		return $master_color_controls;
 	}
 
+	/**
+	 * Output the user feedback modal markup, if we need to.
+	 *
+	 * @since 1.7.0
+	 */
 	public function output_user_feedback_modal() {
+		// If there is no style manager support, bail early.
+		if ( ! $this->is_supported() ) {
+			return;
+		}
+
 		update_option( 'style_manager_user_feedback_provided', false );
 		$opt = get_option( 'style_manager_user_feedback_provided' );
 		// Only output if the user didn't provide feedback.
@@ -817,6 +856,8 @@ class Customify_Style_Manager {
 
 	/**
 	 * Callback for the user feedback AJAX call.
+	 *
+	 * @since 1.7.0
 	 */
 	public function user_feedback_callback() {
 		check_ajax_referer( 'customify_style_manager_user_feedback', 'nonce' );
