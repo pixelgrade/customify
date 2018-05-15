@@ -1975,47 +1975,53 @@ $palette_box_shadow_stronger: inset 0 2px 3px 0 rgba(0,0,0,0.15), inset 0 0 3px 
 	}
 }
 
-#customize-control-sm_color_palette_control {
+[id="customize-control-sm_color_primary_control"],
+[id="customize-control-sm_dark_primary_control"],
+[id="customize-control-sm_light_primary_control"],
+[id="customize-control-sm_color_secondary_control"],
+[id="customize-control-sm_dark_secondary_control"],
+[id="customize-control-sm_light_secondary_control"],
+[id="customize-control-sm_color_tertiary_control"],
+[id="customize-control-sm_dark_tertiary_control"],
+[id="customize-control-sm_light_tertiary_control"] {
+	visibility: hidden;
 
-	~ li[id*="sm_color_"],
-	~ li[id*="sm_dark_"],
-	~ li[id*="sm_light_"] {
-		visibility: hidden;
+	> span {
+		display: none;
+	}
 
-		> span {
-			display: none;
-		}
+	.wp-picker-input-wrap,
+	.wp-picker-holder {
+		visibility: visible;
+	}
 
-		.wp-picker-input-wrap,
-		.wp-picker-holder {
-			visibility: visible;
-		}
+	.wp-picker-container {
+		width: 100%;
+		float: left;
+		//border-radius: 50%;
 
-		.wp-picker-container {
-			width: 100%;
-			float: left;
+		button {
+			//width: 100px;
+			//height: 100px;
 			//border-radius: 50%;
+			//border: 4px solid #CCC;
 
-			button {
-				//width: 100px;
-				//height: 100px;
-				//border-radius: 50%;
-				//border: 4px solid #CCC;
-
-				&:before {
-					content: "";
-					position: relative;
-					display: block;
-					visibility: visible;
-					background-color: inherit;
-					width: 90px;
-					height: 90px;
-					border-radius: 50%;
-					border: 3px solid #DDD;
-				}
+			&:before {
+				content: "";
+				position: relative;
+				display: block;
+				visibility: visible;
+				background-color: inherit;
+				width: 90px;
+				height: 90px;
+				border-radius: 50%;
+				border: 3px solid #DDD;
 			}
 		}
 	}
+}
+
+#customize-control-sm_color_palette_control {
 
 	$x: 70px;
 	$y: 54px;

@@ -2563,38 +2563,74 @@ ul.font-options__options-list .select2-container--default .select2-selection--si
     display: flex;
 }
 
-#customize-control-sm_color_palette_control ~ li[id*='sm_color_'],
-#customize-control-sm_color_palette_control ~ li[id*='sm_dark_'],
-#customize-control-sm_color_palette_control ~ li[id*='sm_light_']
+[id='customize-control-sm_color_primary_control'],
+[id='customize-control-sm_dark_primary_control'],
+[id='customize-control-sm_light_primary_control'],
+[id='customize-control-sm_color_secondary_control'],
+[id='customize-control-sm_dark_secondary_control'],
+[id='customize-control-sm_light_secondary_control'],
+[id='customize-control-sm_color_tertiary_control'],
+[id='customize-control-sm_dark_tertiary_control'],
+[id='customize-control-sm_light_tertiary_control']
 {
     visibility: hidden;
 }
-#customize-control-sm_color_palette_control ~ li[id*='sm_color_'] > span,
-#customize-control-sm_color_palette_control ~ li[id*='sm_dark_'] > span,
-#customize-control-sm_color_palette_control ~ li[id*='sm_light_'] > span
+[id='customize-control-sm_color_primary_control'] > span,
+[id='customize-control-sm_dark_primary_control'] > span,
+[id='customize-control-sm_light_primary_control'] > span,
+[id='customize-control-sm_color_secondary_control'] > span,
+[id='customize-control-sm_dark_secondary_control'] > span,
+[id='customize-control-sm_light_secondary_control'] > span,
+[id='customize-control-sm_color_tertiary_control'] > span,
+[id='customize-control-sm_dark_tertiary_control'] > span,
+[id='customize-control-sm_light_tertiary_control'] > span
 {
     display: none;
 }
-#customize-control-sm_color_palette_control ~ li[id*='sm_color_'] .wp-picker-input-wrap,
-#customize-control-sm_color_palette_control ~ li[id*='sm_color_'] .wp-picker-holder,
-#customize-control-sm_color_palette_control ~ li[id*='sm_dark_'] .wp-picker-input-wrap,
-#customize-control-sm_color_palette_control ~ li[id*='sm_dark_'] .wp-picker-holder,
-#customize-control-sm_color_palette_control ~ li[id*='sm_light_'] .wp-picker-input-wrap,
-#customize-control-sm_color_palette_control ~ li[id*='sm_light_'] .wp-picker-holder
+[id='customize-control-sm_color_primary_control'] .wp-picker-input-wrap,
+[id='customize-control-sm_color_primary_control'] .wp-picker-holder,
+[id='customize-control-sm_dark_primary_control'] .wp-picker-input-wrap,
+[id='customize-control-sm_dark_primary_control'] .wp-picker-holder,
+[id='customize-control-sm_light_primary_control'] .wp-picker-input-wrap,
+[id='customize-control-sm_light_primary_control'] .wp-picker-holder,
+[id='customize-control-sm_color_secondary_control'] .wp-picker-input-wrap,
+[id='customize-control-sm_color_secondary_control'] .wp-picker-holder,
+[id='customize-control-sm_dark_secondary_control'] .wp-picker-input-wrap,
+[id='customize-control-sm_dark_secondary_control'] .wp-picker-holder,
+[id='customize-control-sm_light_secondary_control'] .wp-picker-input-wrap,
+[id='customize-control-sm_light_secondary_control'] .wp-picker-holder,
+[id='customize-control-sm_color_tertiary_control'] .wp-picker-input-wrap,
+[id='customize-control-sm_color_tertiary_control'] .wp-picker-holder,
+[id='customize-control-sm_dark_tertiary_control'] .wp-picker-input-wrap,
+[id='customize-control-sm_dark_tertiary_control'] .wp-picker-holder,
+[id='customize-control-sm_light_tertiary_control'] .wp-picker-input-wrap,
+[id='customize-control-sm_light_tertiary_control'] .wp-picker-holder
 {
     visibility: visible;
 }
-#customize-control-sm_color_palette_control ~ li[id*='sm_color_'] .wp-picker-container,
-#customize-control-sm_color_palette_control ~ li[id*='sm_dark_'] .wp-picker-container,
-#customize-control-sm_color_palette_control ~ li[id*='sm_light_'] .wp-picker-container
+[id='customize-control-sm_color_primary_control'] .wp-picker-container,
+[id='customize-control-sm_dark_primary_control'] .wp-picker-container,
+[id='customize-control-sm_light_primary_control'] .wp-picker-container,
+[id='customize-control-sm_color_secondary_control'] .wp-picker-container,
+[id='customize-control-sm_dark_secondary_control'] .wp-picker-container,
+[id='customize-control-sm_light_secondary_control'] .wp-picker-container,
+[id='customize-control-sm_color_tertiary_control'] .wp-picker-container,
+[id='customize-control-sm_dark_tertiary_control'] .wp-picker-container,
+[id='customize-control-sm_light_tertiary_control'] .wp-picker-container
 {
     float: left; 
 
     width: 100%;
 }
-#customize-control-sm_color_palette_control ~ li[id*='sm_color_'] .wp-picker-container button:before,
-#customize-control-sm_color_palette_control ~ li[id*='sm_dark_'] .wp-picker-container button:before,
-#customize-control-sm_color_palette_control ~ li[id*='sm_light_'] .wp-picker-container button:before
+[id='customize-control-sm_color_primary_control'] .wp-picker-container button:before,
+[id='customize-control-sm_dark_primary_control'] .wp-picker-container button:before,
+[id='customize-control-sm_light_primary_control'] .wp-picker-container button:before,
+[id='customize-control-sm_color_secondary_control'] .wp-picker-container button:before,
+[id='customize-control-sm_dark_secondary_control'] .wp-picker-container button:before,
+[id='customize-control-sm_light_secondary_control'] .wp-picker-container button:before,
+[id='customize-control-sm_color_tertiary_control'] .wp-picker-container button:before,
+[id='customize-control-sm_dark_tertiary_control'] .wp-picker-container button:before,
+[id='customize-control-sm_light_tertiary_control'] .wp-picker-container button:before
 {
     position: relative;
 
@@ -2916,8 +2952,8 @@ ul.font-options__options-list .select2-container--default .select2-selection--si
 .c-palette.animate .color:nth-child(1) .picker:after,
 .c-palette.animate .color:nth-child(1) .picker:before
 {
-    -webkit-animation-delay: .3s;
-            animation-delay: .3s;
+    -webkit-animation-delay: .05s;
+            animation-delay: .05s;
 }
 
 .c-palette.animate .color:nth-child(2) .fill,
@@ -2926,8 +2962,8 @@ ul.font-options__options-list .select2-container--default .select2-selection--si
 .c-palette.animate .color:nth-child(2) .picker:after,
 .c-palette.animate .color:nth-child(2) .picker:before
 {
-    -webkit-animation-delay: .15s;
-            animation-delay: .15s;
+    -webkit-animation-delay: .1s;
+            animation-delay: .1s;
 }
 
 .c-palette.animate .color:nth-child(3) .fill,
@@ -2946,8 +2982,8 @@ ul.font-options__options-list .select2-container--default .select2-selection--si
 .c-palette.animate .color:nth-child(4) .picker:after,
 .c-palette.animate .color:nth-child(4) .picker:before
 {
-    -webkit-animation-delay: .2s;
-            animation-delay: .2s;
+    -webkit-animation-delay: .15s;
+            animation-delay: .15s;
 }
 
 .c-palette.animate .color:nth-child(5) .fill,
@@ -2956,8 +2992,8 @@ ul.font-options__options-list .select2-container--default .select2-selection--si
 .c-palette.animate .color:nth-child(5) .picker:after,
 .c-palette.animate .color:nth-child(5) .picker:before
 {
-    -webkit-animation-delay: .1s;
-            animation-delay: .1s;
+    -webkit-animation-delay: .4s;
+            animation-delay: .4s;
 }
 
 .c-palette.animate .color:nth-child(6) .fill,
@@ -2966,8 +3002,8 @@ ul.font-options__options-list .select2-container--default .select2-selection--si
 .c-palette.animate .color:nth-child(6) .picker:after,
 .c-palette.animate .color:nth-child(6) .picker:before
 {
-    -webkit-animation-delay: .35s;
-            animation-delay: .35s;
+    -webkit-animation-delay: .25s;
+            animation-delay: .25s;
 }
 
 .c-palette.animate .color:nth-child(7) .fill,
@@ -2976,8 +3012,8 @@ ul.font-options__options-list .select2-container--default .select2-selection--si
 .c-palette.animate .color:nth-child(7) .picker:after,
 .c-palette.animate .color:nth-child(7) .picker:before
 {
-    -webkit-animation-delay: .25s;
-            animation-delay: .25s;
+    -webkit-animation-delay: .2s;
+            animation-delay: .2s;
 }
 
 .c-palette.animate .color:nth-child(8) .fill,
@@ -2986,8 +3022,8 @@ ul.font-options__options-list .select2-container--default .select2-selection--si
 .c-palette.animate .color:nth-child(8) .picker:after,
 .c-palette.animate .color:nth-child(8) .picker:before
 {
-    -webkit-animation-delay: .05s;
-            animation-delay: .05s;
+    -webkit-animation-delay: .35s;
+            animation-delay: .35s;
 }
 
 .c-palette.animate .color:nth-child(9) .fill,
@@ -2996,8 +3032,8 @@ ul.font-options__options-list .select2-container--default .select2-selection--si
 .c-palette.animate .color:nth-child(9) .picker:after,
 .c-palette.animate .color:nth-child(9) .picker:before
 {
-    -webkit-animation-delay: .4s;
-            animation-delay: .4s;
+    -webkit-animation-delay: .3s;
+            animation-delay: .3s;
 }
 
 @-webkit-keyframes fill
