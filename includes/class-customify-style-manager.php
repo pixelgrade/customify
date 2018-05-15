@@ -67,6 +67,7 @@ class Customify_Style_Manager {
 
 	/**
 	 * Initiate our hooks
+	 *
 	 * @since 1.7.0
 	 */
 	public function add_hooks() {
@@ -80,6 +81,44 @@ class Customify_Style_Manager {
 		// Handle the logic for user feedback.
 		add_action( 'customize_controls_print_footer_scripts', array( $this, 'output_user_feedback_modal' ) );
 		add_action( 'wp_ajax_customify_style_manager_user_feedback', array( $this, 'user_feedback_callback' ) );
+
+		// Scripts enqueued in the Customizer
+		add_action( 'customize_controls_init', array( $this, 'register_admin_customizer_scripts' ), 10 );
+		add_action( 'customize_controls_enqueue_scripts', array( $this, 'enqueue_admin_customizer_scripts' ), 10 );
+	}
+
+	/**
+	 * Register Customizer admin scripts
+	 */
+	function register_admin_customizer_scripts() {
+		wp_register_script( $this->parent->get_slug() . '-swap-values', plugins_url( 'js/customizer/customify-swap-values.js', $this->parent->file ), array( 'jquery' ), $this->parent->get_version() );
+		wp_register_script( $this->parent->get_slug() . '-palette-variations', plugins_url( 'js/customizer/customify-palette-variations.js', $this->parent->file ), array( 'jquery' ), $this->parent->get_version() );
+		wp_register_script( $this->parent->get_slug() . '-palettes', plugins_url( 'js/customizer/customify-palettes.js', $this->parent->file ), array( 'jquery', $this->parent->get_slug() . '-palette-variations', $this->parent->get_slug() . '-swap-values' ), $this->parent->get_version() );
+	}
+
+	/**
+	 * Enqueue Customizer admin scripts
+	 */
+	function enqueue_admin_customizer_scripts() {
+		// If there is no style manager support, bail early.
+		if ( ! $this->is_supported() ) {
+			return;
+		}
+
+		wp_enqueue_script( $this->parent->get_slug() . '-palettes' );
+	}
+
+	/**
+	 * Determine if Style Manager is supported.
+	 *
+	 * @since 1.7.0
+	 *
+	 * @return bool
+	 */
+	public function is_supported() {
+		$has_support = boolval( current_theme_supports( 'customizer_style_manager' ) );
+
+		return apply_filters( 'customify_style_manager_is_supported', $has_support );
 	}
 
 	/**
@@ -91,8 +130,8 @@ class Customify_Style_Manager {
 	 * @return array
 	 */
 	public function style_manager_section_config( $config ) {
-		// If the current active theme hasn't declared support for style manager, bail.
-		if ( ! current_theme_supports( 'customizer_style_manager' ) ) {
+		// If there is no style manager support, bail early.
+		if ( ! $this->is_supported() ) {
 			return $config;
 		}
 
@@ -113,28 +152,28 @@ class Customify_Style_Manager {
 					'setting_id'   => 'sm_color_palette',
 					// We don't want to refresh the preview window, even though we have no direct effect on it through this field.
 					'live'         => true,
-					'label'        => __( 'Select a color palette:', 'customify' ),
-					'desc'         => __( 'Conveniently change the design of your site with color palettes. Easy as pie.', 'customify' ),
+					'label'        => esc_html__( 'Select a color palette:', 'customify' ),
+					'desc'         => esc_html__( 'Conveniently change the design of your site with color palettes. Easy as pie.', 'customify' ),
 					'default'      => 'lilac',
 					'choices_type' => 'color_palette',
 					'choices'      => $this->get_color_palettes(),
 				),
-				'sm_palette_variation' => array(
+				'sm_color_palette_variation' => array(
 					'type'         => 'radio',
 					'setting_type' => 'option',
-					'setting_id'   => 'sm_palette_variation',
-					'label'        => __( 'Palette Variation', 'customify' ),
-					'default'      => 'color_dark_light',
+					'setting_id'   => 'sm_color_palette_variation',
+					'label'        => esc_html__( 'Palette Variation', 'customify' ),
+					'default'      => 'light',
 					'live'         => true,
 					'choices'      => array(
-						'color_dark_light'  => __( 'Default', 'customify' ),
-						'dark_color_light'  => __( 'Alt', 'customify' ),
+						'light'     => esc_html__( 'light', 'customify' ),
+						'light_alt' => esc_html__( 'light_alt', 'customify' ),
 
-						'color_light_dark'  => __( 'Dark', 'customify' ),
-						'light_color_dark'  => __( 'Dark Alt', 'customify' ),
+						'dark'     => esc_html__( 'dark', 'customify' ),
+						'dark_alt' => esc_html__( 'dark_alt', 'customify' ),
 
-						'light_dark_color'  => __( 'Color', 'customify' ),
-						'dark_light_color'  => __( 'Color Alt', 'customify' ),
+						'colorful'     => esc_html__( 'colorful', 'customify' ),
+						'colorful_alt' => esc_html__( 'colorful_alt', 'customify' ),
 					),
 				),
 				'sm_color_primary'              => array(
@@ -225,35 +264,35 @@ class Customify_Style_Manager {
 					'type'         => 'button',
 					'setting_type' => 'option',
 					'setting_id'   => 'sm_swap_colors',
-					'label'        => __( 'Swap Colors', 'customify' ),
+					'label'        => esc_html__( 'Swap Colors', 'customify' ),
 					'action'       => 'sm_swap_colors',
 				),
 				'sm_swap_dark_light'            => array(
 					'type'         => 'button',
 					'setting_type' => 'option',
 					'setting_id'   => 'sm_swap_dark_light',
-					'label'        => __( 'Swap Dark ⇆ Light', 'customify' ),
+					'label'        => esc_html__( 'Swap Dark ⇆ Light', 'customify' ),
 					'action'       => 'sm_swap_dark_light',
 				),
 				'sm_swap_colors_dark'           => array(
 					'type'         => 'button',
 					'setting_type' => 'option',
 					'setting_id'   => 'sm_swap_colors_dark',
-					'label'        => __( 'Swap Colors ⇆ Dark', 'customify' ),
+					'label'        => esc_html__( 'Swap Colors ⇆ Dark', 'customify' ),
 					'action'       => 'sm_swap_colors_dark',
 				),
 				'sm_swap_secondary_colors_dark' => array(
 					'type'         => 'button',
 					'setting_type' => 'option',
 					'setting_id'   => 'sm_swap_secondary_colors_dark',
-					'label'        => __( 'Swap Secondary Color ⇆ Secondary Dark', 'customify' ),
+					'label'        => esc_html__( 'Swap Secondary Color ⇆ Secondary Dark', 'customify' ),
 					'action'       => 'sm_swap_secondary_colors_dark',
 				),
 				'sm_advanced_toggle' => array(
 					'type'         => 'button',
 					'setting_type' => 'option',
 					'setting_id'   => 'sm_toggle_advanced_settings',
-					'label'        => __( 'Toggle Advanced Settings', 'customify' ),
+					'label'        => esc_html__( 'Toggle Advanced Settings', 'customify' ),
 					'action'       => 'sm_toggle_advanced_settings',
 				),
 			),
@@ -264,14 +303,15 @@ class Customify_Style_Manager {
 
 	/**
 	 * Add the current color palette control to the Style Manager section.
+	 *
 	 * @since 1.7.0
 	 *
 	 * @param array $config
 	 * @return array
 	 */
 	public function add_current_color_palette_control( $config ) {
-		// If the theme hasn't declared support for style manager, bail.
-		if ( ! current_theme_supports( 'customizer_style_manager' ) ) {
+		// If there is no style manager support, bail early.
+		if ( ! $this->is_supported() ) {
 			return $config;
 		}
 
@@ -300,44 +340,44 @@ class Customify_Style_Manager {
 
 		// The section might be already defined, thus we merge, not replace the entire section config.
 		$config['sections']['style_manager_section']['options'] = array(
-			'sm_current_palette' => array(
-				'type' => 'html',
-				'html' =>
-					'<div class="palette-container">' . PHP_EOL .
-					'<span class="customize-control-title">Current Color Palette:</span>' . PHP_EOL .
-					'<span class="description customize-control-description">Choose a color palette to start with. Adjust its style using the variation buttons below.</span>' . PHP_EOL .
-					'<div class="c-palette">' . PHP_EOL .
-					$current_palette .
-					'<div class="c-palette__overlay">' . PHP_EOL .
-					'<div class="c-palette__label">' .
-					'<div class="c-palette__name">' . 'Original Style' . '</div>' .
-					'<div class="c-palette__control active" data-target="#_customize-input-sm_palette_variation_control-radio-color_dark_light">' .
-					'<span class="dashicons dashicons-image-rotate"></span>' .
-					'<div class="c-palette__tooltip">Light</div>' .
-					'</div>' .
-					'<div class="c-palette__control" data-target="#_customize-input-sm_palette_variation_control-radio-color_light_dark">' .
-					'<span class="dashicons dashicons-image-filter"></span>'.
-					'<div class="c-palette__tooltip">Dark</div>' .
-					'</div>' .
-					'<div class="c-palette__control" data-target="#_customize-input-sm_palette_variation_control-radio-light_dark_color">' .
-					'<span class="dashicons dashicons-admin-appearance"></span>' .
-					'<div class="c-palette__tooltip">Colorful</div>' .
-					'</div>' .
-					'</div>' . PHP_EOL .
-					'</div>' . PHP_EOL .
-					'</div>' . PHP_EOL .
-					'</div>' . PHP_EOL .
-					'<svg class="c-palette__blur" width="15em" height="15em" viewBox="0 0 15 15" xmlns="http://www.w3.org/2000/svg" version="1.1">' . PHP_EOL .
-					'<defs>' . PHP_EOL .
-					'<filter id="goo">' . PHP_EOL .
-					'<feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />' . PHP_EOL .
-					'<feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 50 -20" result="goo" />' . PHP_EOL .
-					'<feBlend in="SourceGraphic" in2="goo" />' . PHP_EOL .
-					'</filter>' . PHP_EOL .
-					'</defs>' . PHP_EOL .
-					'</svg>',
-			),
-		) + $config['sections']['style_manager_section']['options'];
+              'sm_current_color_palette' => array(
+                  'type' => 'html',
+                  'html' =>
+                      '<div class="palette-container">' . PHP_EOL .
+                      '<span class="customize-control-title">Current Color Palette:</span>' . PHP_EOL .
+                      '<span class="description customize-control-description">Choose a color palette to start with. Adjust its style using the variation buttons below.</span>' . PHP_EOL .
+                      '<div class="c-palette">' . PHP_EOL .
+                      $current_palette .
+                      '<div class="c-palette__overlay">' . PHP_EOL .
+                      '<div class="c-palette__label">' .
+                      '<div class="c-palette__name">' . 'Original Style' . '</div>' .
+                      '<div class="c-palette__control variation-light active" data-target="#_customize-input-sm_color_palette_variation_control-radio-light">' .
+                      '<span class="dashicons dashicons-image-rotate"></span>' .
+                      '<div class="c-palette__tooltip">Light</div>' .
+                      '</div>' .
+                      '<div class="c-palette__control variation-dark" data-target="#_customize-input-sm_color_palette_variation_control-radio-dark">' .
+                      '<span class="dashicons dashicons-image-filter"></span>'.
+                      '<div class="c-palette__tooltip">Dark</div>' .
+                      '</div>' .
+                      '<div class="c-palette__control variation-colorful" data-target="#_customize-input-sm_color_palette_variation_control-radio-colorful">' .
+                      '<span class="dashicons dashicons-admin-appearance"></span>' .
+                      '<div class="c-palette__tooltip">Colorful</div>' .
+                      '</div>' .
+                      '</div>' . PHP_EOL .
+                      '</div>' . PHP_EOL .
+                      '</div>' . PHP_EOL .
+                      '</div>' . PHP_EOL .
+                      '<svg class="c-palette__blur" width="15em" height="15em" viewBox="0 0 15 15" xmlns="http://www.w3.org/2000/svg" version="1.1">' . PHP_EOL .
+                      '<defs>' . PHP_EOL .
+                      '<filter id="goo">' . PHP_EOL .
+                      '<feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />' . PHP_EOL .
+                      '<feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 50 -20" result="goo" />' . PHP_EOL .
+                      '<feBlend in="SourceGraphic" in2="goo" />' . PHP_EOL .
+                      '</filter>' . PHP_EOL .
+                      '</defs>' . PHP_EOL .
+                      '</svg>',
+              ),
+          ) + $config['sections']['style_manager_section']['options'];
 
 		return $config;
 	}
@@ -390,7 +430,6 @@ class Customify_Style_Manager {
 	 * @return array|false
 	 */
 	protected function maybe_fetch_design_assets( $skip_cache = false ) {
-		$skip_cache = true;
 		// First try and get the cached data
 		$data = get_option( $this->_get_design_assets_cache_key() );
 		$expire_timestamp = get_option( $this->_get_design_assets_cache_key() . '_timestamp' );
@@ -414,13 +453,16 @@ class Customify_Style_Manager {
 			);
 			// Get the design assets from the cloud.
 			$response = wp_remote_request( self::$externalApiEndpoints['cloud']['getDesignAssets']['url'], $request_args );
+			// Bail in case of decode error or failure to retrieve data.
+			// We will return the data already available.
 			if ( is_wp_error( $response ) ) {
-				return false;
+				return $data;
 			}
 			$response_data = json_decode( wp_remote_retrieve_body( $response ), true );
-			// Bail in case of decode error or failure to retrieve data
+			// Bail in case of decode error or failure to retrieve data.
+			// We will return the data already available.
 			if ( null === $response_data || empty( $response_data['data'] ) || empty( $response_data['code'] ) || 'success' !== $response_data['code'] ) {
-				return false;
+				return $data;
 			}
 
 			$data = $response_data['data'];
@@ -433,12 +475,20 @@ class Customify_Style_Manager {
 		return $data;
 	}
 
+	/**
+	 * Get the design assets cache key.
+	 *
+	 * @since 1.7.0
+	 *
+	 * @return string
+	 */
 	protected function _get_design_assets_cache_key() {
 		return 'customify_style_manager_design_assets';
 	}
 
 	/**
 	 * Get the default (hard-coded) color palettes configuration.
+	 *
 	 * @since 1.7.0
 	 *
 	 * @return array
@@ -446,138 +496,139 @@ class Customify_Style_Manager {
 	protected function get_default_color_palettes_config() {
 		$default_color_palettes = array(
 			'vasco'  => array(
-				'label'   => __( 'Vasco', 'customify' ),
+				'label'   => esc_html__( 'Restful Beach', 'customify' ),
 				'preview' => array(
 					'background_image_url' => 'http://pxgcdn.com/images/style-manager/color-palettes/vasco-theme-palette.jpg',
 				),
 				'options' => array(
 					'sm_color_primary'   => '#38C3C8',
 					'sm_color_secondary' => '#F59828',
-					'sm_color_tertiary'  => '#F59828',
+					'sm_color_tertiary'  => '#FB551C',
 					'sm_dark_primary'    => '#2b2b28',
 					'sm_dark_secondary'  => '#2B3D39',
 					'sm_dark_tertiary'   => '#65726F',
 					'sm_light_primary'   => '#F5F6F1',
-					'sm_light_secondary' => '#FFFFFF',
+					'sm_light_secondary' => '#E6F7F7',
+					'sm_light_tertiary'  => '#FAEDE8',
 				),
 			),
 			'felt'  => array(
-				'label'   => __( 'Felt', 'customify' ),
+				'label'   => esc_html__( 'Warm Summer', 'customify' ),
 				'preview' => array(
 					'background_image_url' => 'http://pxgcdn.com/images/style-manager/color-palettes/felt-theme-palette.jpg',
 				),
 				'options' => array(
 					'sm_color_primary'   => '#ff6000',
 					'sm_color_secondary' => '#FF9200',
-					'sm_color_tertiary'  => '#FF9200',
+					'sm_color_tertiary'  => '#FF7019',
 					'sm_dark_primary'    => '#1C1C1C',
 					'sm_dark_secondary'  => '#161616',
 					'sm_dark_tertiary'   => '#161616',
 					'sm_light_primary'   => '#FFFCFC',
-					'sm_light_secondary' => '#fff4e8',
-					'sm_light_tertiary'  => '#fff4e8',
+					'sm_light_secondary' => '#FFF4E8',
+					'sm_light_tertiary'  => '#F7F3F0',
 				),
 			),
 			'julia'  => array(
-				'label'   => __( 'Julia', 'customify' ),
+				'label'   => esc_html__( 'Serenity', 'customify' ),
 				'preview' => array(
 					'background_image_url' => 'http://pxgcdn.com/images/style-manager/color-palettes/julia-theme-palette.jpg',
 				),
 				'options' => array(
 					'sm_color_primary'   => '#3349B8',
 					'sm_color_secondary' => '#3393B8',
-					'sm_color_tertiary'  => '#3393B8',
+					'sm_color_tertiary'  => '#C18866',
 					'sm_dark_primary'    => '#161616',
 					'sm_dark_secondary'  => '#383C50',
 					'sm_dark_tertiary'   => '#383C50',
 					'sm_light_primary'   => '#f7f6f5',
-					'sm_light_secondary' => '#e7f2f8',
-					'sm_light_tertiary'  => '#e7f2f8',
+					'sm_light_secondary' => '#E7F2F8',
+					'sm_light_tertiary'  => '#F7ECE6',
 				),
 			),
 			'gema'  => array(
-				'label'   => __( 'Gema', 'customify' ),
+				'label'   => esc_html__( 'Burning Red', 'customify' ),
 				'preview' => array(
 					'background_image_url' => 'http://pxgcdn.com/images/style-manager/color-palettes/gema-theme-palette.jpg',
 				),
 				'options' => array(
 					'sm_color_primary'   => '#E03A3A',
-					'sm_color_secondary' => '#E03A3A',
-					'sm_color_tertiary'  => '#E03A3A',
+					'sm_color_secondary' => '#F75034',
+					'sm_color_tertiary'  => '#AD2D2D',
 					'sm_dark_primary'    => '#000000',
 					'sm_dark_secondary'  => '#000000',
 					'sm_dark_tertiary'   => '#A3A3A1',
 					'sm_light_primary'   => '#FFFFFF',
-					'sm_light_secondary' => '#FFFFFF',
-					'sm_light_tertiary'  => '#FFFFFF',
+					'sm_light_secondary' => '#F7F5F5',
+					'sm_light_tertiary'  => '#F7F2F2',
 				),
 			),
 			'patch'  => array(
-				'label'   => __( 'Patch', 'customify' ),
+				'label'   => esc_html__( 'Fresh Lemon', 'customify' ),
 				'preview' => array(
 					'background_image_url' => 'http://pxgcdn.com/images/style-manager/color-palettes/patch-theme-palette.jpg',
 				),
 				'options' => array(
 					'sm_color_primary'   => '#ffeb00',
-					'sm_color_secondary' => '#3200B2',
-					'sm_color_tertiary'  => '#3200B2',
+					'sm_color_secondary' => '#19CDFF',
+					'sm_color_tertiary'  => '#0BE8DD',
 					'sm_dark_primary'    => '#171617',
 					'sm_dark_secondary'  => '#3d3e40',
 					'sm_dark_tertiary'   => '#b5b5b5',
 					'sm_light_primary'   => '#FFFFFF',
-					'sm_light_secondary' => '#FFFFFF',
-					'sm_light_tertiary'  => '#FFFFFF',
+					'sm_light_secondary' => '#E8FAFF',
+					'sm_light_tertiary'  => '#F2FFFE',
 				),
 			),
 			'silk'  => array(
-				'label'   => __( 'Silk', 'customify' ),
+				'label'   => esc_html__( 'Floral Bloom', 'customify' ),
 				'preview' => array(
 					'background_image_url' => 'http://pxgcdn.com/images/style-manager/color-palettes/silk-theme-palette.jpg',
 				),
 				'options' => array(
 					'sm_color_primary'   => '#A33B61',
 					'sm_color_secondary' => '#FCC9B0',
-					'sm_color_tertiary'  => '#FCC9B0',
+					'sm_color_tertiary'  => '#C9648A',
 					'sm_dark_primary'    => '#000000',
 					'sm_dark_secondary'  => '#000000',
 					'sm_dark_tertiary'   => '#A3A3A1',
 					'sm_light_primary'   => '#FFFFFF',
-					'sm_light_secondary' => '#FFFFFF',
-					'sm_light_tertiary'  => '#FFFFFF',
+					'sm_light_secondary' => '#F7F5F6',
+					'sm_light_tertiary'  => '#F7F0F3',
 				),
 			),
 			'hive'  => array(
-				'label'   => __( 'Hive', 'customify' ),
+				'label'   => esc_html__( 'Powerful', 'customify' ),
 				'preview' => array(
 					'background_image_url' => 'http://pxgcdn.com/images/style-manager/color-palettes/hive-theme-palette.jpg',
 				),
 				'options' => array(
 					'sm_color_primary'   => '#ffeb00',
 					'sm_color_secondary' => '#3200B2',
-					'sm_color_tertiary'  => '#3200B2',
+					'sm_color_tertiary'  => '#740AC9',
 					'sm_dark_primary'    => '#171617',
 					'sm_dark_secondary'  => '#171617',
 					'sm_dark_tertiary'   => '#363636',
 					'sm_light_primary'   => '#FFFFFF',
-					'sm_light_secondary' => '#FFFFFF',
-					'sm_light_tertiary'  => '#FFFFFF',
+					'sm_light_secondary' => '#F2F5F7',
+					'sm_light_tertiary'  => '#F5F2F7',
 				),
 			),
 			'lilac'  => array(
-				'label'   => __( 'Lilac', 'customify' ),
+				'label'   => esc_html__( 'Soft Lilac', 'customify' ),
 				'preview' => array(
 					'background_image_url' => 'http://pxgcdn.com/images/style-manager/color-palettes/lilac-palette.jpg',
 				),
 				'options' => array(
 					'sm_color_primary'   => '#DD8CA9',
 					'sm_color_secondary' => '#8C9CDE',
-					'sm_color_tertiary'  => '#8C9CDE',
-					'sm_dark_primary'    => '#303030',
+					'sm_color_tertiary'  => '#E3B4A6',
+					'sm_dark_primary'    => '#1A1A1A',
 					'sm_dark_secondary'  => '#303030',
 					'sm_dark_tertiary'   => '#A3A3A1',
-					'sm_light_primary'   => '#ECEEED',
-					'sm_light_secondary' => '#FFE9E5',
-					'sm_light_tertiary'  => '#FFE9E5',
+					'sm_light_primary'   => '#F0F2F1',
+					'sm_light_secondary' => '#CED5F2',
+					'sm_light_tertiary'  => '#F7E1DA',
 				),
 			),
 		);
@@ -666,17 +717,22 @@ class Customify_Style_Manager {
 	 * @return string|false
 	 */
 	protected function get_current_color_palette_variation() {
-		return get_option( 'sm_palette_variation', false );
+		return get_option( 'sm_color_palette_variation', false );
 	}
 
 	/**
-	 * Determine if the selected color palette has been customized and remeber this in an option.
+	 * Determine if the selected color palette has been customized and remember this in an option.
 	 *
 	 * @since 1.7.0
 	 *
 	 * @return bool
 	 */
 	public function update_custom_palette_in_use() {
+		// If there is no style manager support, bail early.
+		if ( ! $this->is_supported() ) {
+			return false;
+		}
+
 		$current_palette = $this->get_current_color_palette();
 		if ( empty( $current_palette ) ) {
 			return false;
@@ -692,13 +748,13 @@ class Customify_Style_Manager {
 		// it means a custom color palette is in use.
 		$current_palette_options = $color_palettes[ $current_palette ]['options'];
 		foreach ( $current_palette_options as $setting_id => $value ) {
-			if ( $value != get_option( $setting_id, false ) ) {
+			if ( $value != get_option( $setting_id ) ) {
 				$is_custom_palette = true;
 				break;
 			}
 		}
 
-		update_option( 'sm_is_custom_palette', $is_custom_palette );
+		update_option( 'sm_is_custom_color_palette', $is_custom_palette );
 
 		do_action( 'customify_style_manager_updated_custom_palette_in_use', $is_custom_palette, $this );
 
@@ -713,7 +769,7 @@ class Customify_Style_Manager {
 	 * @return bool
 	 */
 	protected function is_using_custom_color_palette(){
-		return boolval( get_option( 'sm_is_custom_palette', false ) );
+		return boolval( get_option( 'sm_is_custom_color_palette', false ) );
 	}
 
 	/**
@@ -736,8 +792,17 @@ class Customify_Style_Manager {
 		return $master_color_controls;
 	}
 
+	/**
+	 * Output the user feedback modal markup, if we need to.
+	 *
+	 * @since 1.7.0
+	 */
 	public function output_user_feedback_modal() {
-		update_option( 'style_manager_user_feedback_provided', false );
+		// If there is no style manager support, bail early.
+		if ( ! $this->is_supported() ) {
+			return;
+		}
+		
 		$opt = get_option( 'style_manager_user_feedback_provided' );
 		// Only output if the user didn't provide feedback.
 		if ( empty( $opt ) ) { ?>
@@ -817,6 +882,8 @@ class Customify_Style_Manager {
 
 	/**
 	 * Callback for the user feedback AJAX call.
+	 *
+	 * @since 1.7.0
 	 */
 	public function user_feedback_callback() {
 		check_ajax_referer( 'customify_style_manager_user_feedback', 'nonce' );

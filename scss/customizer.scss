@@ -1959,7 +1959,7 @@ $palette_box_shadow_stronger: inset 0 2px 3px 0 rgba(0,0,0,0.15), inset 0 0 3px 
 	}
 }
 
-[id*="sm_current_palette_control"] {
+[id*="sm_current_color_palette_control"] {
 	.customize-inside-control-row .palette__item[class] {
 		transform: none;
 	}
@@ -1975,47 +1975,53 @@ $palette_box_shadow_stronger: inset 0 2px 3px 0 rgba(0,0,0,0.15), inset 0 0 3px 
 	}
 }
 
-#customize-control-sm_color_palette_control {
+[id="customize-control-sm_color_primary_control"],
+[id="customize-control-sm_dark_primary_control"],
+[id="customize-control-sm_light_primary_control"],
+[id="customize-control-sm_color_secondary_control"],
+[id="customize-control-sm_dark_secondary_control"],
+[id="customize-control-sm_light_secondary_control"],
+[id="customize-control-sm_color_tertiary_control"],
+[id="customize-control-sm_dark_tertiary_control"],
+[id="customize-control-sm_light_tertiary_control"] {
+	visibility: hidden;
 
-	~ li[id*="sm_color_"],
-	~ li[id*="sm_dark_"],
-	~ li[id*="sm_light_"] {
-		visibility: hidden;
+	> span {
+		display: none;
+	}
 
-		> span {
-			display: none;
-		}
+	.wp-picker-input-wrap,
+	.wp-picker-holder {
+		visibility: visible;
+	}
 
-		.wp-picker-input-wrap,
-		.wp-picker-holder {
-			visibility: visible;
-		}
+	.wp-picker-container {
+		width: 100%;
+		float: left;
+		//border-radius: 50%;
 
-		.wp-picker-container {
-			width: 100%;
-			float: left;
+		button {
+			//width: 100px;
+			//height: 100px;
 			//border-radius: 50%;
+			//border: 4px solid #CCC;
 
-			button {
-				//width: 100px;
-				//height: 100px;
-				//border-radius: 50%;
-				//border: 4px solid #CCC;
-
-				&:before {
-					content: "";
-					position: relative;
-					display: block;
-					visibility: visible;
-					background-color: inherit;
-					width: 90px;
-					height: 90px;
-					border-radius: 50%;
-					border: 3px solid #DDD;
-				}
+			&:before {
+				content: "";
+				position: relative;
+				display: block;
+				visibility: visible;
+				background-color: inherit;
+				width: 90px;
+				height: 90px;
+				border-radius: 50%;
+				border: 3px solid #DDD;
 			}
 		}
 	}
+}
+
+#customize-control-sm_color_palette_control {
 
 	$x: 70px;
 	$y: 54px;
@@ -2162,6 +2168,7 @@ $palette_border-radius: 5px;
 	left: 50%;
 
 	width: 80%;
+	max-width: 3em;
 	margin-top: 1em;
 
 	border-radius: 50%;
@@ -2350,7 +2357,7 @@ $animation-duration: 1s;
 	display: none;
 }
 
-#customize-theme-controls [id*="sm_current_palette_control"] {
+#customize-theme-controls [id*="sm_current_color_palette_control"] {
 	display: block;
 	margin: -12px -12px 19px;
 	width: auto;
@@ -2427,7 +2434,30 @@ $animation-duration: 1s;
 	top: 100%;
 	left: 0;
 	z-index: 100;
+
 	margin-top: 1em;
+	border: 0;
+
+	box-shadow: black 0 3px 12px -4px;
+
+	.iris-square-handle {
+		border-color: transparent;
+		left: -6px;
+		top: -6px;
+
+		&:after {
+			position: absolute;
+			bottom: 0;
+			right: 0;
+			left: 0;
+			top: 0;
+			border: 2px solid white;
+		}
+	}
+
+	.iris-square-value {
+		box-shadow: none !important;
+	}
 }
 
 .color {
@@ -2495,3 +2525,7 @@ $animation-duration: 1s;
 		width: 100%;
 	}
 }
+
+//.wp-full-overlay-sidebar {
+//	overflow: hidden;
+//}

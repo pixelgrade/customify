@@ -344,6 +344,14 @@
                         }
                     } )
                 }
+                const colorPaletteVariationSetting = api( 'sm_color_palette_variation' );
+                if ( !_.isUndefined(colorPaletteVariationSetting) ) {
+                    colorPaletteVariationSetting.bind( function( new_value, old_value ) {
+                        if ( new_value != old_value ) {
+                            styleManagerColorPaletteChanged = true;
+                        }
+                    } )
+                }
 
                 // Handle the modal submit.
                 $styleManagerUserFeedbackForm.on('submit', function (event) {

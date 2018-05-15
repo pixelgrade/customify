@@ -23,6 +23,11 @@
 
     const updateCurrentPalette = ( label ) => {
         const $palette = $( '.c-palette' );
+
+        if ( ! $palette.length ) {
+            return;
+        }
+
         const $current = $palette.find( '.colors.current' );
         const $next = $palette.find( '.colors.next' );
 
@@ -57,11 +62,15 @@
 
     const bindVariationChange = () => {
         const paletteControlSelector = '.c-palette__control';
-        const variation = wp.customize( 'sm_palette_variation' )();
+        const $paletteControl = $( paletteControlSelector );
+        const variation = wp.customize( 'sm_color_palette_variation' )();
 
-        $( paletteControlSelector ).removeClass( 'active' );
-        $( paletteControlSelector ).filter( '[data-target*="' + variation + '"]' ).addClass( 'active' );
+        if ( _.isUndefined( variation ) || ! $paletteControl.length ) {
+            return;
+        }
 
+        $paletteControl.removeClass( 'active' );
+        $paletteControl.filter( '.variation-' + variation ).addClass( 'active' );
         $( 'body' ).on( 'click', paletteControlSelector, function() {
             let $obj = $( this ),
                 $target = $( $obj.data( 'target' ) );
@@ -147,7 +156,12 @@
 
     // alter connected fields of the master colors controls depending on the selected palette variation
     const reloadConnectedFields = () => {
-        const setting = wp.customize( 'sm_palette_variation' );
+        const setting = wp.customize( 'sm_color_palette_variation' );
+
+        if ( _.isUndefined( setting ) ) {
+            return;
+        }
+
         const variation = setting();
 
         if ( ! window.variations.hasOwnProperty( variation ) ) {
@@ -162,6 +176,11 @@
 
     const createCurrentPaletteControls = () => {
         const $palette = $( '.c-palette' );
+
+        if ( ! $palette.length ) {
+            return;
+        }
+
         const $colors = $palette.find( '.colors.next .color' );
 
         $colors.each( ( i, obj ) => {
@@ -186,15 +205,26 @@
                 }
             } );
 
+	        $obj.find( '.iris-picker' ).on( 'click', function( e ) {
+		        e.stopPropagation();
+		        e.preventDefault();
+            } );
+
             $obj.on( 'click', ( e ) => {
                 e.stopPropagation();
                 e.preventDefault();
 
-                let hidden = ! $obj.find( '.iris-picker' ).is( ":visible" );
+                const hidden = ! $obj.find( '.iris-picker' ).is( ":visible" );
 
                 if ( hidden ) {
                     $colors.not( $obj ).addClass( 'inactive' ).iris( 'hide' );
                     $obj.removeClass( 'inactive' );
+
+	                const $iris = $obj.find( '.iris-picker' );
+	                const paletteWidth = $palette.outerWidth();
+	                const irisWidth = $iris.outerWidth();
+
+	                $iris.css( 'left', ( paletteWidth - irisWidth ) * i / ( $colors.length - 1 ) );
                 } else {
                     $colors.removeClass( 'inactive' );
                 }
@@ -229,7 +259,7 @@
         bindVariationChange();
 
         // when variation is changed reload connected fields from cached version of customizer settings config
-        $( document ).on( 'change', '[name="_customize-radio-sm_palette_variation_control"]', reloadConnectedFields );
+        $( document ).on( 'change', '[name="_customize-radio-sm_color_palette_variation_control"]', reloadConnectedFields );
         $( document ).on( 'click', '.customify_preset.color_palette input', onPaletteChange );
     };
 
