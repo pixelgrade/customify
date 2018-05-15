@@ -119,10 +119,10 @@ class Customify_Style_Manager {
 					'choices_type' => 'color_palette',
 					'choices'      => $this->get_color_palettes(),
 				),
-				'sm_palette_variation' => array(
+				'sm_color_palette_variation' => array(
 					'type'         => 'radio',
 					'setting_type' => 'option',
-					'setting_id'   => 'sm_palette_variation',
+					'setting_id'   => 'sm_color_palette_variation',
 					'label'        => __( 'Palette Variation', 'customify' ),
 					'default'      => 'color_dark_light',
 					'live'         => true,
@@ -311,15 +311,15 @@ class Customify_Style_Manager {
 					'<div class="c-palette__overlay">' . PHP_EOL .
 					'<div class="c-palette__label">' .
 					'<div class="c-palette__name">' . 'Original Style' . '</div>' .
-					'<div class="c-palette__control active" data-target="#_customize-input-sm_palette_variation_control-radio-color_dark_light">' .
+					'<div class="c-palette__control active" data-target="#_customize-input-sm_color_palette_variation_control-radio-color_dark_light">' .
 					'<span class="dashicons dashicons-image-rotate"></span>' .
 					'<div class="c-palette__tooltip">Light</div>' .
 					'</div>' .
-					'<div class="c-palette__control" data-target="#_customize-input-sm_palette_variation_control-radio-color_light_dark">' .
+					'<div class="c-palette__control" data-target="#_customize-input-sm_color_palette_variation_control-radio-color_light_dark">' .
 					'<span class="dashicons dashicons-image-filter"></span>'.
 					'<div class="c-palette__tooltip">Dark</div>' .
 					'</div>' .
-					'<div class="c-palette__control" data-target="#_customize-input-sm_palette_variation_control-radio-light_dark_color">' .
+					'<div class="c-palette__control" data-target="#_customize-input-sm_color_palette_variation_control-radio-light_dark_color">' .
 					'<span class="dashicons dashicons-admin-appearance"></span>' .
 					'<div class="c-palette__tooltip">Colorful</div>' .
 					'</div>' .
@@ -666,7 +666,7 @@ class Customify_Style_Manager {
 	 * @return string|false
 	 */
 	protected function get_current_color_palette_variation() {
-		return get_option( 'sm_palette_variation', false );
+		return get_option( 'sm_color_palette_variation', false );
 	}
 
 	/**

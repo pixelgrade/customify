@@ -57,7 +57,7 @@
 
     const bindVariationChange = () => {
         const paletteControlSelector = '.c-palette__control';
-        const variation = wp.customize( 'sm_palette_variation' )();
+        const variation = wp.customize( 'sm_color_palette_variation' )();
 
         $( paletteControlSelector ).removeClass( 'active' );
         $( paletteControlSelector ).filter( '[data-target*="' + variation + '"]' ).addClass( 'active' );
@@ -147,7 +147,7 @@
 
     // alter connected fields of the master colors controls depending on the selected palette variation
     const reloadConnectedFields = () => {
-        const setting = wp.customize( 'sm_palette_variation' );
+        const setting = wp.customize( 'sm_color_palette_variation' );
         const variation = setting();
 
         if ( ! window.variations.hasOwnProperty( variation ) ) {
@@ -229,7 +229,7 @@
         bindVariationChange();
 
         // when variation is changed reload connected fields from cached version of customizer settings config
-        $( document ).on( 'change', '[name="_customize-radio-sm_palette_variation_control"]', reloadConnectedFields );
+        $( document ).on( 'change', '[name="_customize-radio-sm_color_palette_variation_control"]', reloadConnectedFields );
         $( document ).on( 'click', '.customify_preset.color_palette input', onPaletteChange );
     };
 
