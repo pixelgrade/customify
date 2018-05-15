@@ -116,7 +116,7 @@ class Customify_Style_Manager {
 	 * @return bool
 	 */
 	public function is_supported() {
-		$has_support = boolval( current_theme_supports( 'customizer_style_manager' ) );
+		$has_support = (bool) current_theme_supports( 'customizer_style_manager' );
 
 		return apply_filters( 'customify_style_manager_is_supported', $has_support );
 	}
@@ -781,7 +781,7 @@ class Customify_Style_Manager {
 	 * @return bool
 	 */
 	protected function is_using_custom_color_palette(){
-		return boolval( get_option( 'sm_is_custom_color_palette', false ) );
+		return (bool) get_option( 'sm_is_custom_color_palette', false );
 	}
 
 	/**
