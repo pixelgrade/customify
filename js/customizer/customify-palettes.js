@@ -19,10 +19,15 @@
         // create a stack of callbacks bound to parent settings to be able to unbind them
         // when altering the connected_fields attribute
         window.connectedFieldsCallbacks = {};
-    }
+    };
 
     const updateCurrentPalette = ( label ) => {
         const $palette = $( '.c-palette' );
+
+        if ( ! $palette.length ) {
+            return;
+        }
+
         const $current = $palette.find( '.colors.current' );
         const $next = $palette.find( '.colors.next' );
 
@@ -57,12 +62,17 @@
 
     const bindVariationChange = () => {
         const paletteControlSelector = '.c-palette__control';
-        const variation = wp.customize( 'sm_palette_variation' )();
+        const $paletteControl = $( paletteControlSelector );
+        const variation = wp.customize( 'sm_color_palette_variation' )();
 
-        $( paletteControlSelector ).removeClass( 'active' );
-        $( paletteControlSelector ).filter( '.variation-' + variation ).addClass( 'active' );
+        if ( _.isUndefined( variation ) || ! $paletteControl.length ) {
+            return;
+        }
+
+        $paletteControl.removeClass( 'active' );
+        $paletteControl.filter( '.variation-' + variation ).addClass( 'active' );
         $( 'body' ).on( 'click', paletteControlSelector, function() {
-            var $obj = $( this ),
+            let $obj = $( this ),
                 $target = $( $obj.data( 'target' ) );
 
             $obj.siblings( paletteControlSelector ).removeClass( 'active' );
@@ -146,7 +156,12 @@
 
     // alter connected fields of the master colors controls depending on the selected palette variation
     const reloadConnectedFields = () => {
-        const setting = wp.customize( 'sm_palette_variation' );
+        const setting = wp.customize( 'sm_color_palette_variation' );
+
+        if ( _.isUndefined( setting ) ) {
+            return;
+        }
+
         const variation = setting();
 
         if ( ! window.variations.hasOwnProperty( variation ) ) {
@@ -161,6 +176,11 @@
 
     const createCurrentPaletteControls = () => {
         const $palette = $( '.c-palette' );
+
+        if ( ! $palette.length ) {
+            return;
+        }
+
         const $colors = $palette.find( '.colors.next .color' );
 
         $colors.each( ( i, obj ) => {
@@ -239,7 +259,7 @@
         bindVariationChange();
 
         // when variation is changed reload connected fields from cached version of customizer settings config
-        $( document ).on( 'change', '[name="_customize-radio-sm_palette_variation_control"]', reloadConnectedFields );
+        $( document ).on( 'change', '[name="_customize-radio-sm_color_palette_variation_control"]', reloadConnectedFields );
         $( document ).on( 'click', '.customify_preset.color_palette input', onPaletteChange );
     };
 

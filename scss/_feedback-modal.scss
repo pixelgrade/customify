@@ -1,0 +1,439 @@
+/* ==========================================================================
+   #FEEDBACK MODAL
+   ========================================================================== */
+
+// Modals
+$zindex-modal:              1050 !default;
+$zindex-modal-backdrop:     1040 !default;
+$white:  #fff !default;
+$black:  #000 !default;
+$gray-200: #e9ecef !default;
+$purple-light: #9660C6 !default;
+
+// Padding applied to the modal body
+$modal-inner-padding:         30px !default;
+
+$modal-dialog-margin:         10px !default;
+$modal-dialog-margin-y-sm-up: 30px !default;
+
+$modal-title-line-height:     1.5 !default;
+
+$modal-content-bg:            $white !default;
+$modal-content-border-color:  rgba($black,.2) !default;
+$modal-content-border-width:  1px;
+$modal-backdrop-bg:           #000 !default;
+$modal-backdrop-opacity:      .8 !default;
+$modal-header-border-color:   $gray-200 !default;
+$modal-footer-border-color:   $modal-header-border-color !default;
+$modal-header-border-width:   $modal-content-border-width !default;
+$modal-footer-border-width:   $modal-header-border-width !default;
+$modal-header-padding:        48px !default;
+
+$modal-lg:                    800px !default;
+$modal-md:                    655px !default;
+$modal-sm:                    300px !default;
+
+$modal-transition:            transform .3s ease-out !default;
+
+// .modal-open      - body class for killing the scroll
+// .modal           - container to scroll within
+// .modal-dialog    - positioning shell for the actual modal
+// .modal-content   - actual modal w/ bg and corners and stuff
+
+
+// Kill the scroll on the body
+body.modal-open {
+  overflow: hidden;
+}
+
+body.modal-open
+#style-manager-user-feedback-modal
+.modal {
+  overflow-x: hidden;
+  overflow-y: auto;
+  visibility: visible;
+  opacity: 1;
+
+  transform: translate(0, 0);
+}
+
+#style-manager-user-feedback-modal {
+  height: 100%;
+  // Container that the modal scrolls within
+  .modal {
+    position: relative;
+    height: 100%;
+    display: flex;
+    align-items: center;
+
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: $zindex-modal;
+    // display: none;
+    opacity: 0;
+    visibility: hidden;
+    overflow: hidden;
+    // Prevent Chrome on Windows from adding a focus outline. For details, see
+    // https://github.com/twbs/bootstrap/pull/10951.
+    outline: 0;
+    // We deliberately don't use `-webkit-overflow-scrolling: touch;` due to a
+    // gnarly iOS Safari bug: https://bugs.webkit.org/show_bug.cgi?id=158342
+    // See also https://github.com/twbs/bootstrap/issues/17695
+
+    // When fading in the modal, animate it to slide down
+    transition: all .3s ease;
+    transform: translate(0, -10%);
+
+    // Font Styling
+    font-family: 'Galano Grotesque Alt', -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 1.7;
+  }
+
+  // Shell div to position the modal with bottom padding
+  .modal-dialog {
+    position: relative;
+    width: auto;
+    margin: $modal-dialog-margin;
+    text-align: left;
+  }
+
+  // Actual modal
+  .modal-content {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    background-color: $modal-content-bg;
+    background-clip: padding-box;
+    border: none;
+    border-radius: 4px;
+    box-shadow: 0 4px 4px 0 rgba(42, 54, 52, 0.10), 0 8px 8px 0 rgba(42, 54, 52, 0.10), 0 16px 16px 0 rgba(42, 54, 52, 0.10), 0 16px 32px 0 rgba(42, 54, 52, 0.10), 0 32px 64px 0 rgba(42, 54, 52, 0.10), 0 64px 128px 0 rgba(42, 54, 52, 0.10);
+    // Remove focus outline from opened modal
+    outline: 0;
+
+    p {
+      color: $black;
+    }
+
+    p a {
+      font-weight: 500;
+      color: $purple-light;
+      border-bottom: 1px solid $purple-light;
+    }
+
+    > form {
+      margin-bottom: 20px;
+    }
+  }
+
+  // Modal background
+  .modal-backdrop {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: $zindex-modal-backdrop;
+    background-color: $modal-backdrop-bg;
+
+    opacity: 0;
+    visibility: hidden;
+
+    transition: all 0.3s ease;
+
+    .modal-open
+    & {
+      opacity: $modal-backdrop-opacity;
+      visibility: visible;
+    }
+  }
+
+  // Modal header
+  // Top section of the modal w/ title and dismiss
+  .modal-header {
+    display: flex;
+    align-items: flex-start; // vertically center it
+    justify-content: space-between; // Put modal header elements (title and dismiss) on opposite ends
+    // padding: $modal-header-padding $modal-header-padding 0 $modal-header-padding; // Old
+    padding: $modal-inner-padding $modal-header-padding $modal-dialog-margin $modal-header-padding;
+    // border-bottom: $modal-header-border-width solid $modal-header-border-color;
+
+    .close {
+      &.button {
+        top: -10px;
+      }
+
+      &.icon {
+        opacity: 0.5;
+      }
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
+
+  // Title text within header
+  .modal-title {
+    margin-bottom: $modal-dialog-margin;
+    line-height: $modal-title-line-height;
+
+    &.modal-title--small {
+      font-weight: 500;
+    }
+  }
+
+  // Modal body
+  // Where all modal content resides (sibling of .modal-header and .modal-footer)
+  .modal-body {
+    position: relative;
+    // Enable `flex-grow: 1` so that the body take up as much space as possible
+    // when should there be a fixed height on `.modal-dialog`.
+    flex: 1 1 auto;
+    padding: $modal-inner-padding $modal-inner-padding 0 $modal-inner-padding;
+
+    // Variations for Cancel Subscription Screen
+    &.full {
+      padding: 0;
+
+      .box {
+        padding-top: 0;
+        padding-bottom: 0;
+        margin-top: 0;
+      }
+
+      + .modal-footer.full {
+        .box {
+          padding-top: 18px;
+        }
+      }
+    }
+  }
+
+  // Footer (for actions)
+  .modal-footer {
+    padding: $modal-inner-padding;
+    text-align: center;
+
+    // Variations for Cancel Subscription Screen
+    .box {
+
+      .button:last-child {
+        margin-bottom: 0;
+      }
+    }
+
+    &.full {
+      padding: 0;
+    }
+  }
+
+  // Measure scrollbar width for padding body during modal show/hide
+  .modal-scrollbar-measure {
+    position: absolute;
+    top: -9999px;
+    width: 50px;
+    height: 50px;
+    overflow: scroll;
+  }
+
+  .modal-state {
+    display: none;
+  }
+
+  // Show/Hide Modal
+  .modal-state:checked + .modal {
+    // display: block;
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .modal-state:checked + .modal .modal__inner {
+    top: 0;
+  }
+}
+
+// Scale up the modal
+@media (min-width: 576px) {
+  #style-manager-user-feedback-modal {
+    // Automatically set modal's width for larger viewports
+    .modal-dialog {
+      max-width: $modal-md;
+      margin: $modal-dialog-margin-y-sm-up auto;
+    }
+
+    .modal-content {
+      // box-shadow: $modal-content-box-shadow-xs;
+    }
+
+    .modal-sm {
+      max-width: $modal-sm;
+    }
+  }
+}
+
+@media (min-width: 576px) {
+  #style-manager-user-feedback-modal {
+    .modal-lg {
+      max-width: $modal-lg;
+    }
+  }
+}
+
+// Specific Styling for Feedback Modal
+#style-manager-user-feedback {
+  .modal-body {
+    .box {
+      position: relative;
+      flex-direction: column;
+      display: flex;
+      flex-wrap: nowrap;
+      align-items: center;
+      margin: 20px 0;
+      padding: 16px 52px;
+      border-radius: 4px;
+
+      > * {
+        width: 100%;
+      }
+    }
+
+    p {
+      font-size: 16px;
+      margin-bottom: 20px;
+    }
+
+    textarea {
+      width: 100%;
+      margin: 0;
+      padding: 11px 18px;
+      border: 1px solid #dddddd;
+      border-radius: 4px;
+      box-shadow: none;
+      font-family: 'Galano Grotesque Alt', -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;
+      font-size: 16px;
+      line-height: 26px;
+      color: #473850;
+    }
+  }
+
+  .modal-title {
+    margin-top: 0;
+    margin-bottom: 34px;
+
+    font-family: 'Galano Classic', -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;
+    font-weight: 600;
+    font-size: 28px;
+    line-height: 1.4;
+    text-align: center;
+  }
+  
+
+  // Button Style
+  .button {
+    text-decoration: none;
+    cursor: pointer;
+    -webkit-font-smoothing: antialiased;
+    position: relative;
+    transition-duration: .2s;
+    transition-timing-function: cubic-bezier(0, 0, 0.58, 1);
+    transition-property: transform,background,background-color,color,box-shadow;
+
+    display: inline-block;
+    padding: 15px 50px;
+    border-radius: 2px;
+    font-family: "Galano Classic", -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;
+    font-size: 16px;
+    line-height: 23px;
+    font-weight: 600;
+    text-align: center;
+    background-color: #9660c6;
+    color: #ffffff;
+    border-radius: 4px;
+
+    box-shadow: none;
+    height: auto;
+    width: 100%;
+    margin-top: 20px;
+
+    &:hover {
+      background-color: #9660c6;
+      color: #ffffff;
+      transform: scale(1.05) translateY(-3px);
+      box-shadow: 0 10px 20px -10px rgba(0, 0, 0, 0.7);
+    }
+  }
+
+  // Steps
+  .first-step {
+
+  }
+
+  .second-step {
+    margin-top: 18px;
+  }
+
+  .thanks-step,
+  .error-step {
+    text-align: center;
+
+    .modal-title {
+      margin-bottom: 0;
+    }
+
+    p:last-child {
+      margin-bottom: 10px;
+    }
+  }
+}
+
+// Scorecard System
+.scorecard {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-evenly;
+
+  color: $purple-light;
+  font-family: "Galano Classic", -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;  
+  font-size: 18px;  
+  font-weight: 600; 
+  text-align: center;
+
+
+  > span {
+      // line-height: 39px;  
+  }
+
+  > label {
+    font-size: 20px;
+
+    span {
+      display: block;
+      width: 46px;
+      border: 2px solid $purple-light;
+      line-height: 46px;
+      border-radius: 100%;
+      background: #FFF;
+
+      transition: all 0.25s ease;
+
+      &:hover {
+
+      }
+    }
+
+    input[type="radio"] {
+      display: none;
+    }
+
+    span:hover, 
+    input[type="radio"]:checked ~ span {
+      background: $purple-light;
+      color: #FFF;
+    }
+  }
+}
+
