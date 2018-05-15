@@ -775,8 +775,7 @@ class Customify_Style_Manager {
 		if ( ! $this->is_supported() ) {
 			return;
 		}
-
-		update_option( 'style_manager_user_feedback_provided', false );
+		
 		$opt = get_option( 'style_manager_user_feedback_provided' );
 		// Only output if the user didn't provide feedback.
 		if ( empty( $opt ) ) { ?>
