@@ -13,7 +13,7 @@
 add_theme_support( 'customizer_style_manager' );
 
 add_filter( 'customify_filter_fields', 'storefront_add_customify_options', 11, 1 );
-add_filter( 'customify_filter_fields', 'pixelgrade_add_customify_style_manager_section', 12, 1 );
+add_filter( 'customify_filter_fields', 'pixelgrade_add_customify_style_manager_section_storefront', 12, 1 );
 
 function storefront_add_customify_options( $options ) {
 	$brighten_factor       = 25;
@@ -645,6 +645,8 @@ function storefront_add_customify_options( $options ) {
 		)
 	);
 
+	$value = json_encode( $options );
+
 	return $options;
 }
 
@@ -655,7 +657,7 @@ function storefront_add_customify_options( $options ) {
  *
  * @return array
  */
-function pixelgrade_add_customify_style_manager_section( $options ) {
+function pixelgrade_add_customify_style_manager_section_storefront( $options ) {
 	// If the theme hasn't declared support for style manager, bail.
 	if ( ! current_theme_supports( 'customizer_style_manager' ) ) {
 		return $options;
@@ -727,6 +729,8 @@ function pixelgrade_add_customify_style_manager_section( $options ) {
 			),
 		),
 	) );
+
+	$value = json_encode( $options );
 
 	return $options;
 }

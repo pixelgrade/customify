@@ -280,12 +280,12 @@ class PixCustomifyPlugin {
 	 */
 	function load_plugin_configs() {
 
-		// allow themes or other plugins to filter the config
+		// Allow themes or other plugins to filter the config.
 		$this->customizer_config = apply_filters( 'customify_filter_fields', $this->customizer_config );
 		$this->opt_name          = $this->localized['options_name'] = $this->customizer_config['opt-name'];
 		$this->options_list      = $this->get_options();
 
-		// Load the current options values
+		// Load the current options values.
 		$this->current_values = $this->get_current_values();
 
 		if ( $this->import_button_exists() ) {
