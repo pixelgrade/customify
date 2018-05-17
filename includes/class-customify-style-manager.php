@@ -94,6 +94,12 @@ class Customify_Style_Manager {
 		// Maybe the theme has instructed us to do things like removing sections or controls.
 		add_action( 'customize_register', array( $this, 'maybe_process_external_theme_config_extras' ), 11 );
 
+		// Determine if we should use the config in the theme root and skip the external config.
+		if ( defined('CUSTOMIFY_SM_LOAD_THEME_ROOT_CONFIG') && true === CUSTOMIFY_SM_LOAD_THEME_ROOT_CONFIG ) {
+			add_filter( 'customify_style_manager_maybe_fetch_design_assets', array( $this, 'maybe_load_external_config_from_theme_root' ), 10, 1 );
+			add_filter( 'customize_controls_print_styles', array( $this, 'maybe_output_json_external_config_from_theme_root' ), 0 );
+		}
+
 		/*
 		 * Handle the logic on settings update/save.
 		 */
@@ -550,8 +556,6 @@ class Customify_Style_Manager {
 			return;
 		}
 
-		global $wp_registered_sidebars;
-
 		// Maybe remove panels
 		if ( ! empty( $this->external_theme_config['config']['remove_panels'] ) ) {
 			// Standardize it.
@@ -896,6 +900,64 @@ class Customify_Style_Manager {
 		);
 
 		return apply_filters( 'customify_style_manager_default_color_palettes', $default_color_palettes );
+	}
+
+	/**
+	 * Include the customify "external" config file in the theme root and overwrite the existing theme configs.
+	 *
+	 * @param array $design_assets
+	 *
+	 * @return array
+	 */
+	public function maybe_load_external_config_from_theme_root( $design_assets ) {
+		$file_name = 'customify_theme_root.php';
+
+		// First gather details about the current (parent) theme.
+		$theme = wp_get_theme( get_template() );
+		// Bail if for some strange reason we couldn't find the theme.
+		if ( ! $theme->exists() ) {
+			return $design_assets;
+		}
+
+		$file = trailingslashit( $theme->get_template_directory() ) . $file_name;
+		if ( ! file_exists( $file ) ) {
+			return $design_assets;
+		}
+
+		// We expect to get from the file include a $config variable with the entire Customify (partial) config.
+		include $file;
+
+		if ( ! isset( $config ) || ! is_array( $config ) || empty( $config['sections'] ) ) {
+			// Alert the developers that things are not alright.
+			_doing_it_wrong( __METHOD__, 'The Customify theme root config is not good! Please check it! We will not apply it.', null );
+
+			return $design_assets;
+		}
+
+		// Construct the pseudo-external theme config.
+		if ( empty( $design_assets['themes_config'] ) ) {
+			$design_assets['themes_config'] = array();
+		}
+		$design_assets['themes_config']['theme_root'] = array(
+			'name' => $theme->get('Name'),
+			'slug' => $theme->get_stylesheet(),
+			'txtd' => $theme->get('TextDomain'),
+			'loose_match' => true,
+			'config' => $config,
+		);
+
+		return $design_assets;
+	}
+
+	/**
+	 * Output the theme root JSON in the Customizer page source.
+	 */
+	public function maybe_output_json_external_config_from_theme_root() {
+		if ( ! empty( $this->external_theme_config['config'] ) ) {
+			// Also output the JSON in a special hidden div for easy copy pasting.
+			// Also remove any multiple tabs.
+			echo PHP_EOL . '<!--' . PHP_EOL . 'Just copy&paste this:' . PHP_EOL . PHP_EOL . trim( str_replace( '\t\t', '', json_encode( $this->external_theme_config['config'] ) ) ) . PHP_EOL . PHP_EOL . '-->' . PHP_EOL;
+		}
 	}
 
 	/**
