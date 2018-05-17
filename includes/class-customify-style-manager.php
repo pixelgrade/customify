@@ -935,15 +935,19 @@ class Customify_Style_Manager {
 		}
 
 		// Construct the pseudo-external theme config.
-		if ( empty( $design_assets['themes_config'] ) ) {
-			$design_assets['themes_config'] = array();
-		}
-		$design_assets['themes_config']['theme_root'] = array(
-			'name' => $theme->get('Name'),
-			'slug' => $theme->get_stylesheet(),
-			'txtd' => $theme->get('TextDomain'),
-			'loose_match' => true,
-			'config' => $config,
+		// Start with a clean slate.
+		$design_assets['theme_configs'] = array();
+
+		$design_assets['theme_configs']['theme_root'] = array(
+			'id'            => 1,
+			'name'          => $theme->get( 'Name' ),
+			'slug'          => $theme->get_stylesheet(),
+			'txtd'          => $theme->get( 'TextDomain' ),
+			'loose_match'   => true,
+			'config'        => $config,
+			'created'       => '2018-05-16 15:13:58',
+			'last_modified' => '2018-05-16 15:13:58',
+			'hashid'        => 'theme_root',
 		);
 
 		return $design_assets;
