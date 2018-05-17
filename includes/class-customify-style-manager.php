@@ -79,24 +79,35 @@ class Customify_Style_Manager {
 	 * @since 1.7.0
 	 */
 	public function add_hooks() {
-		// Handle the Customizer Style Manager base config.
+		/*
+		 * Handle the Customizer Style Manager base config.
+		 */
 		add_filter( 'customify_filter_fields', array( $this, 'style_manager_section_base_config' ), 12, 1 );
-		add_filter( 'customify_filter_fields', array( $this, 'add_current_color_palette_control' ), 20, 1 );
+		// This needs to come after the external theme config has been applied
+		add_filter( 'customify_filter_fields', array( $this, 'add_current_color_palette_control' ), 110, 1 );
 
-		// Handle the external theme configuration logic. We use a late priority to be able to overwrite if we have to.
+		/*
+		 * Handle the external theme configuration logic. We use a late priority to be able to overwrite if we have to.
+		 */
 		add_filter( 'customify_filter_fields', array( $this, 'maybe_activate_external_theme_config' ), 10, 1 );
 		add_filter( 'customify_filter_fields', array( $this, 'maybe_apply_external_theme_config' ), 100, 1 );
 		// Maybe the theme has instructed us to do things like removing sections or controls.
 		add_action( 'customize_register', array( $this, 'maybe_process_external_theme_config_extras' ), 11 );
 
-		// Handle the logic on settings update/save.
+		/*
+		 * Handle the logic on settings update/save.
+		 */
 		add_action( 'customize_save_after', array( $this, 'update_custom_palette_in_use' ), 10, 1 );
 
-		// Handle the logic for user feedback.
+		/*
+		 * Handle the logic for user feedback.
+		 */
 		add_action( 'customize_controls_print_footer_scripts', array( $this, 'output_user_feedback_modal' ) );
 		add_action( 'wp_ajax_customify_style_manager_user_feedback', array( $this, 'user_feedback_callback' ) );
 
-		// Scripts enqueued in the Customizer
+		/*
+		 * Scripts enqueued in the Customizer.
+		 */
 		add_action( 'customize_controls_init', array( $this, 'register_admin_customizer_scripts' ), 10 );
 		add_action( 'customize_controls_enqueue_scripts', array( $this, 'enqueue_admin_customizer_scripts' ), 10 );
 	}
@@ -542,25 +553,25 @@ class Customify_Style_Manager {
 		global $wp_registered_sidebars;
 
 		// Maybe remove panels
-		if ( ! empty( $this->external_theme_config['remove_panels'] ) ) {
+		if ( ! empty( $this->external_theme_config['config']['remove_panels'] ) ) {
 			// Standardize it.
-			if ( is_string( $this->external_theme_config['remove_panels'] ) ) {
-				$this->external_theme_config['remove_panels'] = array( $this->external_theme_config['remove_panels'] );
+			if ( is_string( $this->external_theme_config['config']['remove_panels'] ) ) {
+				$this->external_theme_config['config']['remove_panels'] = array( $this->external_theme_config['config']['remove_panels'] );
 			}
 
-			foreach ( $this->external_theme_config['remove_panels'] as $panel_id ) {
+			foreach ( $this->external_theme_config['config']['remove_panels'] as $panel_id ) {
 				$wp_customize->remove_panel( $panel_id );
 			}
 		}
 
 		// Maybe remove sections
-		if ( ! empty( $this->external_theme_config['remove_sections'] ) ) {
+		if ( ! empty( $this->external_theme_config['config']['remove_sections'] ) ) {
 			// Standardize it.
-			if ( is_string( $this->external_theme_config['remove_sections'] ) ) {
-				$this->external_theme_config['remove_sections'] = array( $this->external_theme_config['remove_sections'] );
+			if ( is_string( $this->external_theme_config['config']['remove_sections'] ) ) {
+				$this->external_theme_config['config']['remove_sections'] = array( $this->external_theme_config['config']['remove_sections'] );
 			}
 
-			foreach ( $this->external_theme_config['remove_sections'] as $section_id ) {
+			foreach ( $this->external_theme_config['config']['remove_sections'] as $section_id ) {
 
 				if ( 'widgets' === $section_id ) {
 					global $wp_registered_sidebars;
@@ -576,25 +587,25 @@ class Customify_Style_Manager {
 		}
 
 		// Maybe remove settings
-		if ( ! empty( $this->external_theme_config['remove_settings'] ) ) {
+		if ( ! empty( $this->external_theme_config['config']['remove_settings'] ) ) {
 			// Standardize it.
-			if ( is_string( $this->external_theme_config['remove_settings'] ) ) {
-				$this->external_theme_config['remove_settings'] = array( $this->external_theme_config['remove_settings'] );
+			if ( is_string( $this->external_theme_config['config']['remove_settings'] ) ) {
+				$this->external_theme_config['config']['remove_settings'] = array( $this->external_theme_config['config']['remove_settings'] );
 			}
 
-			foreach ( $this->external_theme_config['remove_settings'] as $setting_id ) {
+			foreach ( $this->external_theme_config['config']['remove_settings'] as $setting_id ) {
 				$wp_customize->remove_setting( $setting_id );
 			}
 		}
 
 		// Maybe remove controls
-		if ( ! empty( $this->external_theme_config['remove_controls'] ) ) {
+		if ( ! empty( $this->external_theme_config['config']['remove_controls'] ) ) {
 			// Standardize it.
-			if ( is_string( $this->external_theme_config['remove_controls'] ) ) {
-				$this->external_theme_config['remove_controls'] = array( $this->external_theme_config['remove_controls'] );
+			if ( is_string( $this->external_theme_config['config']['remove_controls'] ) ) {
+				$this->external_theme_config['config']['remove_controls'] = array( $this->external_theme_config['config']['remove_controls'] );
 			}
 
-			foreach ( $this->external_theme_config['remove_controls'] as $control_id ) {
+			foreach ( $this->external_theme_config['config']['remove_controls'] as $control_id ) {
 				$wp_customize->remove_control( $control_id );
 			}
 		}
