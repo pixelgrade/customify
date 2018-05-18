@@ -42,3 +42,154 @@ function pixcloud_adjust_color_brightness( $hex, $steps ) {
 
 	return '#' . $r_hex . $g_hex . $b_hex;
 }
+
+/**
+ * Negate the value.
+ *
+ * @param int|float $value
+ * @return int|float
+ */
+function pixcloud_negate( $value ) {
+	if ( ! is_numeric( $value ) ) {
+		return $value;
+	}
+
+	return - $value;
+}
+
+/**
+ * Ensure that value is at least the $min value.
+ *
+ * @param int|float $value
+ * @param int|float $min
+ * @return int|float
+ */
+function pixcloud_min( $value, $min ) {
+	if ( ! is_numeric( $value ) || ! is_numeric( $min ) ) {
+		return $value;
+	}
+
+	if ( $value < $min ) {
+		return  $min;
+	}
+
+	return $value;
+}
+
+/**
+ * Ensure that value is at most the $max value.
+ *
+ * @param int|float $value
+ * @param int|float $max
+ * @return int|float
+ */
+function pixcloud_max( $value, $max ) {
+	if ( ! is_numeric( $value ) || ! is_numeric( $max ) ) {
+		return $value;
+	}
+
+	if ( $value > $max ) {
+		return  $max;
+	}
+
+	return $value;
+}
+
+/**
+ * Ensure that value is between $min and $max.
+ *
+ * @param int|float $value
+ * @param int|float $min
+ * @param int|float $max
+ * @return int|float
+ */
+function pixcloud_min_max( $value, $min, $max ) {
+	if ( ! is_numeric( $value ) || ! is_numeric( $min ) || ! is_numeric( $max ) ) {
+		return $value;
+	}
+
+	if ( $value < $min ) {
+		$value = $min;
+	}
+
+	if ( $value > $max ) {
+		$value = $max;
+	}
+
+	return $value;
+}
+
+/**
+ * Add something to the value.
+ *
+ * @param int|float $value
+ * @param int|float $add
+ * @return int|float
+ */
+function pixcloud_add( $value, $add ) {
+	if ( ! is_numeric( $value ) || ! is_numeric( $add ) ) {
+		return $value;
+	}
+
+	return $value + $add;
+}
+
+/**
+ * Substract something from the value.
+ *
+ * @param int|float $value
+ * @param int|float $substract
+ * @return int|float
+ */
+function pixcloud_substract( $value, $substract ) {
+	if ( ! is_numeric( $value ) || ! is_numeric( $substract ) ) {
+		return $value;
+	}
+
+	return $value - $substract;
+}
+
+/**
+ * Multiply the value.
+ *
+ * @param int|float $value
+ * @param int|float $multiply
+ * @return int|float
+ */
+function pixcloud_multiply( $value, $multiply ) {
+	if ( ! is_numeric( $value ) || ! is_numeric( $multiply ) ) {
+		return $value;
+	}
+
+	return $value * $multiply;
+}
+
+/**
+ * Divide the value.
+ *
+ * @param int|float $value
+ * @param int|float $divide
+ * @return int|float
+ */
+function pixcloud_divide( $value, $divide ) {
+	if ( ! is_numeric( $value ) || ! is_numeric( $divide ) || empty( $divide ) ) {
+		return $value;
+	}
+
+	return $value / $divide;
+}
+
+/**
+ * Divide the value and get the remainder.
+ *
+ * @param int|float $value
+ * @param int|float $divide
+ * @return int|float
+ */
+function pixcloud_modulo( $value, $divide ) {
+	if ( ! is_numeric( $value ) || ! is_numeric( $divide ) || empty( $divide ) ) {
+		return $value;
+	}
+
+	return $value % $divide;
+}
