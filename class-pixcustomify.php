@@ -1328,6 +1328,7 @@ class PixCustomifyPlugin {
 			}
 
 			// Add the option config to the localized array so we can pass the info to JS.
+			// @todo Maybe we should ensure that the connected_fields configs passed here follow the same format and logic as the ones in ::customize_pane_settings_additional_data() thus maybe having the data in the same place.
 			$this->localized['settings'][ $setting_id ] = $option_config;
 
 			// Generate a safe option ID (not the final setting ID) to us in HTML attributes like ID or class
@@ -1803,8 +1804,12 @@ class PixCustomifyPlugin {
 							continue;
 						}
 
-						// We will need to determine if the connected field specifies a setting ID or we need to determine it.
-						if ( ! empty( $options[ $connected_field_id ] ) && ! empty( $options[ $connected_field_id ]['setting_id'] ) ) {
+						// If the connected setting is not one of our's, we will use it's ID as it is.
+						if ( ! array_key_exists( $connected_field_id, $options ) ) {
+							$connected_field_data['setting_id'] = $connected_field_id;
+						}
+						// If the connected setting specifies a setting ID, we will not prefix it and use it as it is.
+						elseif ( ! empty( $options[ $connected_field_id ] ) && ! empty( $options[ $connected_field_id ]['setting_id'] ) ) {
 							$connected_field_data['setting_id'] = $options[ $connected_field_id ]['setting_id'];
 						} else {
 							$connected_field_data['setting_id'] = $options_name . '[' . $connected_field_id . ']';
