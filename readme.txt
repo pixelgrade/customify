@@ -3,7 +3,7 @@ Contributors: pixelgrade, euthelup, babbardel, vlad.olaru, cristianfrumusanu, ra
 Tags: customizer, css, editor, live, preview, customizer
 Requires at least: 4.7.0
 Tested up to: 4.9.5
-Stable tag: 1.6.0
+Stable tag: 1.7.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -45,8 +45,21 @@ With [Customify](https://github.com/pixelgrade/customify), developers can easily
 
 == Changelog ==
 
+= 1.7.0 =
+* Added **Dynamic Color Palettes** for a smoother experience
+* Fixed issue with the Style Manager crashing the Customizer when not using a theme with support for it.
+
+= 1.6.5 =
+* Added **Color Palettes Variations** to the Style Manager Customizer section
+* Improved Color Palettes logic to better handle differences between various color palettes
+* Improved master color connected fields logic to allow for a smoother experience
+* Updated Google Fonts list
+* Fixed some issues with the connected fields logic
+* Fixed some Customizer preview scaling issues
+* Fixed a potential bug with the options' CSS config (multiple configs with the same property but with different selectors)
+
 = 1.6.0 =
-* Added Style Manager Customizer section with theme supports logic
+* Added **Style Manager** Customizer section with theme supports logic
 * Added connected fields logic for easy chaining of Customizer controls
 * Fixed a couple of styling inconsistencies regarding the Customizer
 

@@ -11,43 +11,36 @@
 		$.each(customify_settings.settings, function (key, el) {
 
 			if (el.type === "font") {
-				var sliced_id = key.slice(0, -1);
-				sliced_id = sliced_id.replace(customify_settings.options_name + '[', '');
-
 				api(key, function (setting) {
 					setting.bind(function (to) {
-						var $values = maybeJsonParse(to);
+						let $values = maybeJsonParse(to);
 
 						if (typeof $values.font_family !== "undefined") {
 							maybeLoadFontFamily($values);
 						}
 
-						var vls = get_CSS_values(this.id, $values);
-						var CSS = get_CSS_code(this.id, vls);
-						var field_style = $('#customify_font_output_for_' + sliced_id);
+						let vls = get_CSS_values(this.id, $values),
+						    CSS = get_CSS_code(this.id, vls),
+                            field_style = $('#customify_font_output_for_' + el.html_safe_option_id);
 
 						field_style.html(CSS);
 					});
 				});
 
 			} else if (typeof wp_settings[key] !== "undefined" && typeof el.css !== "undefined" && typeof el.live !== 'undefined' && el.live === true) {
-
-				var sliced_id = key.slice(0, -1);
-				sliced_id = sliced_id.replace(customify_settings.options_name + '[', '');
-
 				api(key, function (setting) {
 
 					setting.bind(function (to) {
-						var properties = [];
 
 						$.each(el.css, function (counter, property_config) {
+							var properties = [];
 
 							properties[property_config.property] = property_config.selector;
 							if (typeof property_config.callback_filter !== "undefined") {
 								properties['callback'] = property_config.callback_filter;
 							}
 
-							var css_update_args = {
+							let css_update_args = {
 								properties: properties,
 								propertyValue: to
 							};
@@ -56,8 +49,11 @@
 								css_update_args.unit = this.unit;
 							}
 
-							var req_Exp_for_multiple_replace = new RegExp('-', 'g');
-							$('#dynamic_setting_' + sliced_id + '_property_' + property_config.property.replace(req_Exp_for_multiple_replace, '_')).cssUpdate(css_update_args);
+							// Replace all dashes with underscores thus making the CSS property safe to us in a HTML ID.
+							let regex_for_multiple_replace = new RegExp('-', 'g'),
+                                cssStyleSelector = '.dynamic_setting_' + el.html_safe_option_id + '_property_' + property_config.property.replace(regex_for_multiple_replace, '_');
+
+							$(cssStyleSelector).cssUpdate(css_update_args);
 						});
 
 					});
@@ -71,7 +67,8 @@
 				if ($.inArray(el.type, ['text', 'textarea', 'ace_editor']) > -1) {
 					wp.customize(key, function (value) {
 						value.bind(function (text) {
-							var sanitizer = document.createElement('div');
+							let sanitizer = document.createElement('div');
+
 							sanitizer.innerHTML = text;
 							$(field_class).html(text);
 						});

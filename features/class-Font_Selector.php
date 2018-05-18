@@ -238,7 +238,7 @@ class Customify_Font_Selector {
 				$value = array( 'font_family' => $value );
 			}
 
-			//Handle special logic for when the $value array is not an associative array
+			// Handle special logic for when the $value array is not an associative array
 			if ( ! $local_plugin->is_assoc( $value ) ) {
 				$value = $local_plugin->process_a_not_associative_font_default( $value );
 			}
@@ -313,7 +313,7 @@ class Customify_Font_Selector {
 			$output = call_user_func( $font['callback'], $value, $font );
 			echo $output;
 		} else {
-			echo $font['selector'] . " {";
+			echo $font['selector'] . " {" . PHP_EOL;
 
 			// First handle the case where we have the font-family in the selected variant (usually this means a custom font from our Fonto plugin)
 			if ( ! empty( $selected_variant ) && is_array( $selected_variant ) && ! empty( $selected_variant['font-family'] ) ) {
@@ -404,7 +404,7 @@ class Customify_Font_Selector {
 		$CSS = ob_get_clean();
 
 		if ( isset( $GLOBALS['wp_customize'] ) ) { ?>
-			<style id="customify_font_output_for_<?php echo $field; ?>">
+			<style id="customify_font_output_for_<?php echo sanitize_html_class( $field ); ?>">
 				<?php echo $CSS ?>
 			</style><?php
 			return;
@@ -455,7 +455,7 @@ class Customify_Font_Selector {
 	}
 
 	function display_property( $property, $value, $unit = '' ) {
-		echo "\n" . $property . ": " . $value . $unit . ";\n";
+		echo $property . ": " . $value . $unit . ";\n";
 	}
 
 	// well weight sometimes comes from google as 600italic which in CSS syntax should come in two separate properties
@@ -465,11 +465,11 @@ class Customify_Font_Selector {
 		if ( strpos( $value, 'italic' ) !== false ) {
 
 			$value = str_replace( 'italic', '', $value );
-			echo "\n" . 'font-weight' . ": " . $value . ";\n";
-			echo "\n" . 'font-style' . ": italic;\n";
+			echo 'font-weight' . ": " . $value . ";\n";
+			echo 'font-style' . ": italic;\n";
 			$has_style = true;
 		} else {
-			echo "\n" . 'font-weight' . ": " . $value . ";\n";
+			echo 'font-weight' . ": " . $value . ";\n";
 		}
 
 
