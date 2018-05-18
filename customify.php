@@ -23,12 +23,15 @@ if ( ! defined('EXT')) {
 	define('EXT', '.php');
 }
 
-require 'core/bootstrap'.EXT;
+require 'core/bootstrap' . EXT;
 
-$config = include 'plugin-config'.EXT;
+// Include our helper array class.
+require 'includes/class-customify-array' . EXT;
+
+$config = include 'plugin-config' . EXT;
 
 // set textdomain
-pixcustomify::settextdomain('customify');
+pixcustomify::settextdomain( 'customify' );
 
 // Ensure Test Data
 // ----------------

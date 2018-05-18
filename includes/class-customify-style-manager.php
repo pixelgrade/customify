@@ -35,6 +35,14 @@ class Customify_Style_Manager {
 	public $design_assets = null;
 
 	/**
+	 * The external theme config.
+	 * @var     array
+	 * @access  public
+	 * @since   1.7.5
+	 */
+	public $external_theme_config = null;
+
+	/**
 	 * Constructor.
 	 *
 	 * @since 1.7.0
@@ -71,18 +79,41 @@ class Customify_Style_Manager {
 	 * @since 1.7.0
 	 */
 	public function add_hooks() {
-		// Handle the Customizer Style Manager config.
-		add_filter( 'customify_filter_fields', array( $this, 'style_manager_section_config' ), 12, 1 );
-		add_filter( 'customify_filter_fields', array( $this, 'add_current_color_palette_control' ), 20, 1 );
+		/*
+		 * Handle the Customizer Style Manager base config.
+		 */
+		add_filter( 'customify_filter_fields', array( $this, 'style_manager_section_base_config' ), 12, 1 );
+		// This needs to come after the external theme config has been applied
+		add_filter( 'customify_filter_fields', array( $this, 'add_current_color_palette_control' ), 110, 1 );
 
-		// Handle the logic on settings update/save.
+		/*
+		 * Handle the external theme configuration logic. We use a late priority to be able to overwrite if we have to.
+		 */
+		add_filter( 'customify_filter_fields', array( $this, 'maybe_activate_external_theme_config' ), 10, 1 );
+		add_filter( 'customify_filter_fields', array( $this, 'maybe_apply_external_theme_config' ), 100, 1 );
+		// Maybe the theme has instructed us to do things like removing sections or controls.
+		add_action( 'customize_register', array( $this, 'maybe_process_external_theme_config_extras' ), 11 );
+
+		// Determine if we should use the config in the theme root and skip the external config.
+		if ( defined('CUSTOMIFY_SM_LOAD_THEME_ROOT_CONFIG') && true === CUSTOMIFY_SM_LOAD_THEME_ROOT_CONFIG ) {
+			add_filter( 'customify_style_manager_maybe_fetch_design_assets', array( $this, 'maybe_load_external_config_from_theme_root' ), 10, 1 );
+			add_filter( 'customize_controls_print_styles', array( $this, 'maybe_output_json_external_config_from_theme_root' ), 0 );
+		}
+
+		/*
+		 * Handle the logic on settings update/save.
+		 */
 		add_action( 'customize_save_after', array( $this, 'update_custom_palette_in_use' ), 10, 1 );
 
-		// Handle the logic for user feedback.
+		/*
+		 * Handle the logic for user feedback.
+		 */
 		add_action( 'customize_controls_print_footer_scripts', array( $this, 'output_user_feedback_modal' ) );
 		add_action( 'wp_ajax_customify_style_manager_user_feedback', array( $this, 'user_feedback_callback' ) );
 
-		// Scripts enqueued in the Customizer
+		/*
+		 * Scripts enqueued in the Customizer.
+		 */
 		add_action( 'customize_controls_init', array( $this, 'register_admin_customizer_scripts' ), 10 );
 		add_action( 'customize_controls_enqueue_scripts', array( $this, 'enqueue_admin_customizer_scripts' ), 10 );
 	}
@@ -122,14 +153,17 @@ class Customify_Style_Manager {
 	}
 
 	/**
-	 * Setup the Style Manager Customizer section config.
+	 * Setup the Style Manager Customizer section base config.
+	 *
+	 * This handles the base configuration for the controls in the Style Manager section. We expect other parties (e.g. the theme),
+	 * to come and fill up the missing details (e.g. connected fields).
 	 *
 	 * @since 1.7.0
 	 *
 	 * @param array $config This holds required keys for the plugin config like 'opt-name', 'panels', 'settings'
 	 * @return array
 	 */
-	public function style_manager_section_config( $config ) {
+	public function style_manager_section_base_config( $config ) {
 		// If there is no style manager support, bail early.
 		if ( ! $this->is_supported() ) {
 			return $config;
@@ -143,6 +177,7 @@ class Customify_Style_Manager {
 		$config['sections']['style_manager_section'] = array_replace_recursive( $config['sections']['style_manager_section'], array(
 			'title'   => esc_html__( 'Style Manager', 'customify' ),
 			'section_id' => 'style_manager_section', // We will force this section id preventing prefixing and other regular processing.
+			'priority' => 1,
 			'options' => array(
 				'sm_color_palette' => array(
 					'type'         => 'preset',
@@ -383,7 +418,206 @@ class Customify_Style_Manager {
 	}
 
 	/**
+	 * Maybe activate an external theme config.
+	 *
+	 * If the conditions are met, activate an external theme config by declaring support for the style manager and saving the config.
+	 *
+	 * @since 1.7.5
+	 *
+	 * @param array $config This holds required keys for the plugin config like 'opt-name', 'panels', 'settings'
+	 * @return array
+	 */
+	public function maybe_activate_external_theme_config( $config ) {
+		// If somebody else already declared support for the Style Manager, we stop and let them have it.
+		if ( $this->is_supported() ) {
+			return $config;
+		}
+
+		$external_theme_config = false;
+
+		// First gather details about the current (parent) theme.
+		$theme = wp_get_theme( get_template() );
+		// Bail if for some strange reason we couldn't find the theme.
+		if ( ! $theme->exists() ) {
+			return $config;
+		}
+
+		// Now determine if we have a theme config for the current theme.
+		$design_assets = $this->get_design_assets();
+		if ( empty( $design_assets['theme_configs'] ) || ! is_array( $design_assets['theme_configs'] ) ) {
+			return $config;
+		}
+
+		$theme_configs = $design_assets['theme_configs'];
+
+		// We will go through every theme config and determine it's match score
+		foreach ( $theme_configs as $hashid => $theme_config ) {
+			// Loose matching means that the theme doesn't have to match all the conditions.
+			$loose_match = false;
+			if ( ! empty( $theme_config['loose_match'] ) ) {
+				$loose_match = true;
+			}
+
+			$matches = 0;
+			$total = 0;
+			if ( ! empty( $theme_config['name'] ) && $theme_config['name'] == $theme->get('Name') ) {
+				$matches++;
+				$total++;
+			}
+			if ( ! empty( $theme_config['slug'] ) && $theme_config['slug'] == $theme->get_stylesheet() ) {
+				$matches++;
+				$total++;
+			}
+			if ( ! empty( $theme_config['txtd'] ) && $theme_config['txtd'] == $theme->get('TextDomain') ) {
+				$matches++;
+				$total++;
+			}
+
+			$theme_configs[ $hashid ]['match_score'] = 0;
+			if ( true === $loose_match ) {
+				$theme_configs[ $hashid ]['match_score'] = $matches;
+			} elseif( $matches === $total ) {
+				$theme_configs[ $hashid ]['match_score'] = $matches;
+			}
+		}
+
+		// Now we will order the theme configs by match scores, descending and get the highest matching candidate, if any.
+		$theme_configs = Customify_Array::array_orderby( $theme_configs, 'match_score', SORT_DESC );
+		$external_theme_config = array_shift( $theme_configs );
+		// If we've ended up with a theme config with a zero match score, bail.
+		if ( empty( $external_theme_config['match_score'] ) || empty( $external_theme_config['config']['sections'] ) ) {
+			return $config;
+		}
+
+		// Now we have a theme config to work with. Save it for later use.
+		$this->external_theme_config = $external_theme_config;
+
+		// Declare support for the Style Manager if there is such a section in the config
+		if ( isset( $external_theme_config['config']['sections']['style_manager_section'] ) ) {
+			add_theme_support( 'customizer_style_manager' );
+		}
+
+		return $config;
+	}
+
+	/**
+	 * Maybe apply an external theme config.
+	 *
+	 * If the conditions are met, apply an external theme config. Right now we are only handling sections and their controls.
+	 *
+	 * @since 1.7.5
+	 *
+	 * @param array $config This holds required keys for the plugin config like 'opt-name', 'panels', 'settings'
+	 * @return array
+	 */
+	public function maybe_apply_external_theme_config( $config ) {
+		// Bail if we have no external theme config data.
+		if ( empty( $this->external_theme_config ) ) {
+			return $config;
+		}
+
+		// Apply the theme config.
+		// If we are dealing with the Customify default config, we need a clean slate, sort of.
+		if ( 'customify_defaults' === $config['opt-name'] ) {
+			// We will save the Style Manager config so we can merge with it. But the rest goes away.
+			$style_manager_section = array();
+			if ( isset( $config['sections']['style_manager_section'] ) ) {
+				$style_manager_section = $config['sections']['style_manager_section'];
+			}
+
+			$config['opt-name'] = get_template() . '_options';
+			if ( ! empty( $this->external_theme_config['config']['opt-name'] ) ) {
+				$config['opt-name'] = $this->external_theme_config['config']['opt-name'];
+			}
+
+			$config['sections'] = array(
+				'style_manager_section' => $style_manager_section,
+			);
+		}
+
+		// Now merge things.
+		$config['sections'] = Customify_Array::array_merge_recursive_distinct( $config['sections'],$this->external_theme_config['config']['sections'] );
+
+		return $config;
+	}
+
+	/**
+	 * Maybe process certain "commands" from the external theme config.
+	 *
+	 * Mainly things like removing sections, controls, etc.
+	 *
+	 * @since 1.7.5
+	 *
+	 * @param WP_Customize_Manager $wp_customize
+	 */
+	public function maybe_process_external_theme_config_extras( $wp_customize ) {
+		// Bail if we have no external theme config data.
+		if ( empty( $this->external_theme_config ) ) {
+			return;
+		}
+
+		// Maybe remove panels
+		if ( ! empty( $this->external_theme_config['config']['remove_panels'] ) ) {
+			// Standardize it.
+			if ( is_string( $this->external_theme_config['config']['remove_panels'] ) ) {
+				$this->external_theme_config['config']['remove_panels'] = array( $this->external_theme_config['config']['remove_panels'] );
+			}
+
+			foreach ( $this->external_theme_config['config']['remove_panels'] as $panel_id ) {
+				$wp_customize->remove_panel( $panel_id );
+			}
+		}
+
+		// Maybe remove sections
+		if ( ! empty( $this->external_theme_config['config']['remove_sections'] ) ) {
+			// Standardize it.
+			if ( is_string( $this->external_theme_config['config']['remove_sections'] ) ) {
+				$this->external_theme_config['config']['remove_sections'] = array( $this->external_theme_config['config']['remove_sections'] );
+			}
+
+			foreach ( $this->external_theme_config['config']['remove_sections'] as $section_id ) {
+
+				if ( 'widgets' === $section_id ) {
+					global $wp_registered_sidebars;
+
+					foreach ( $wp_registered_sidebars as $widget => $settings ) {
+						$wp_customize->remove_section( 'sidebar-widgets-' . $widget );
+					}
+					continue;
+				}
+
+				$wp_customize->remove_section( $section_id );
+			}
+		}
+
+		// Maybe remove settings
+		if ( ! empty( $this->external_theme_config['config']['remove_settings'] ) ) {
+			// Standardize it.
+			if ( is_string( $this->external_theme_config['config']['remove_settings'] ) ) {
+				$this->external_theme_config['config']['remove_settings'] = array( $this->external_theme_config['config']['remove_settings'] );
+			}
+
+			foreach ( $this->external_theme_config['config']['remove_settings'] as $setting_id ) {
+				$wp_customize->remove_setting( $setting_id );
+			}
+		}
+
+		// Maybe remove controls
+		if ( ! empty( $this->external_theme_config['config']['remove_controls'] ) ) {
+			// Standardize it.
+			if ( is_string( $this->external_theme_config['config']['remove_controls'] ) ) {
+				$this->external_theme_config['config']['remove_controls'] = array( $this->external_theme_config['config']['remove_controls'] );
+			}
+
+			foreach ( $this->external_theme_config['config']['remove_controls'] as $control_id ) {
+				$wp_customize->remove_control( $control_id );
+			}
+		}
+	}
+
+	/**
 	 * Get the color palettes configuration.
+	 *
 	 * @since 1.7.0
 	 *
 	 * @param bool $skip_cache Optional. Whether to use the cached config or fetch a new one.
@@ -399,6 +633,26 @@ class Customify_Style_Manager {
 		}
 
 		return apply_filters( 'customify_get_color_palettes', $color_palettes_config );
+	}
+
+	/**
+	 * Get the themes configuration.
+	 *
+	 * @since 1.7.5
+	 *
+	 * @param bool $skip_cache Optional. Whether to use the cached config or fetch a new one.
+	 * @return array
+	 */
+	protected function get_theme_configs( $skip_cache = false ) {
+		// Get the design assets data.
+		$design_assets = $this->get_design_assets( $skip_cache );
+		if ( false === $design_assets || empty( $design_assets['theme_configs'] ) ) {
+			$theme_configs = $this->get_default_color_palettes_config();
+		} else {
+			$theme_configs = $design_assets['theme_configs'];
+		}
+
+		return apply_filters( 'customify_get_theme_configs', $theme_configs );
 	}
 
 	/**
@@ -646,6 +900,68 @@ class Customify_Style_Manager {
 		);
 
 		return apply_filters( 'customify_style_manager_default_color_palettes', $default_color_palettes );
+	}
+
+	/**
+	 * Include the customify "external" config file in the theme root and overwrite the existing theme configs.
+	 *
+	 * @param array $design_assets
+	 *
+	 * @return array
+	 */
+	public function maybe_load_external_config_from_theme_root( $design_assets ) {
+		$file_name = 'customify_theme_root.php';
+
+		// First gather details about the current (parent) theme.
+		$theme = wp_get_theme( get_template() );
+		// Bail if for some strange reason we couldn't find the theme.
+		if ( ! $theme->exists() ) {
+			return $design_assets;
+		}
+
+		$file = trailingslashit( $theme->get_template_directory() ) . $file_name;
+		if ( ! file_exists( $file ) ) {
+			return $design_assets;
+		}
+
+		// We expect to get from the file include a $config variable with the entire Customify (partial) config.
+		include $file;
+
+		if ( ! isset( $config ) || ! is_array( $config ) || empty( $config['sections'] ) ) {
+			// Alert the developers that things are not alright.
+			_doing_it_wrong( __METHOD__, 'The Customify theme root config is not good! Please check it! We will not apply it.', null );
+
+			return $design_assets;
+		}
+
+		// Construct the pseudo-external theme config.
+		// Start with a clean slate.
+		$design_assets['theme_configs'] = array();
+
+		$design_assets['theme_configs']['theme_root'] = array(
+			'id'            => 1,
+			'name'          => $theme->get( 'Name' ),
+			'slug'          => $theme->get_stylesheet(),
+			'txtd'          => $theme->get( 'TextDomain' ),
+			'loose_match'   => true,
+			'config'        => $config,
+			'created'       => '2018-05-16 15:13:58',
+			'last_modified' => '2018-05-16 15:13:58',
+			'hashid'        => 'theme_root',
+		);
+
+		return $design_assets;
+	}
+
+	/**
+	 * Output the theme root JSON in the Customizer page source.
+	 */
+	public function maybe_output_json_external_config_from_theme_root() {
+		if ( ! empty( $this->external_theme_config['config'] ) ) {
+			// Also output the JSON in a special hidden div for easy copy pasting.
+			// Also remove any multiple tabs.
+			echo PHP_EOL . '<!--' . PHP_EOL . 'Just copy&paste this:' . PHP_EOL . PHP_EOL . trim( str_replace( '\t\t', '', json_encode( $this->external_theme_config['config'] ) ) ) . PHP_EOL . PHP_EOL . '-->' . PHP_EOL;
+		}
 	}
 
 	/**

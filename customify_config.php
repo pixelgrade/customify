@@ -350,4 +350,4 @@ if ( ! function_exists('add_customify_base_options') ) {
 		return $config;
 	}
 }
-add_filter( 'customify_filter_fields', 'add_customify_base_options' );
+add_filter( 'customify_filter_fields', 'add_customify_base_options', 5, 1 );

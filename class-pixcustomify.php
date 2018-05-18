@@ -280,12 +280,12 @@ class PixCustomifyPlugin {
 	 */
 	function load_plugin_configs() {
 
-		// allow themes or other plugins to filter the config
+		// Allow themes or other plugins to filter the config.
 		$this->customizer_config = apply_filters( 'customify_filter_fields', $this->customizer_config );
 		$this->opt_name          = $this->localized['options_name'] = $this->customizer_config['opt-name'];
 		$this->options_list      = $this->get_options();
 
-		// Load the current options values
+		// Load the current options values.
 		$this->current_values = $this->get_current_values();
 
 		if ( $this->import_button_exists() ) {
@@ -944,11 +944,62 @@ class PixCustomifyPlugin {
 
 		$this_property_output = $css_property['selector'] . ' { ' . $css_property['property'] . ': ' . $this_value . $unit . "; }" . PHP_EOL;
 
-		if ( isset( $css_property['callback_filter'] ) && function_exists( $css_property['callback_filter'] ) ) {
+		// Handle the value filter callback.
+		if ( isset( $css_property['filter_value_cb'] ) ) {
+			$this_value = $this->maybe_apply_filter( $css_property['filter_value_cb'], $this_value );
+		}
+
+		// Handle output callback.
+		if ( isset( $css_property['callback_filter'] ) && is_callable( $css_property['callback_filter'] ) ) {
 			$this_property_output = call_user_func( $css_property['callback_filter'], $this_value, $css_property['selector'], $css_property['property'], $unit );
 		}
 
 		return $this_property_output;
+	}
+
+	/**
+	 * Apply a filter (config) to a value.
+	 *
+	 * We currently handle filters like these:
+	 *  // Elaborate filter config
+	 *  array(
+	 *      'callback' => 'is_post_type_archive',
+	 *      // The arguments we should pass to the check function.
+	 *      // Think post types, taxonomies, or nothing if that is the case.
+	 *      // It can be an array of values or a single value.
+	 *      'args' => array(
+	 *          'jetpack-portfolio',
+	 *      ),
+	 *  ),
+	 *  // Simple filter - just the function name
+	 *  'is_404',
+	 *
+	 * @param array|string $filter
+	 * @param mixed $value The value to apply the filter to.
+	 *
+	 * @return mixed The filtered value.
+	 */
+	public function maybe_apply_filter( $filter, $value ) {
+		// Let's get some obvious things off the table.
+		// On invalid data, we just return what we've received.
+		if ( empty( $filter ) ) {
+			return $value;
+		}
+
+		// First, we handle the shorthand version: just a function name
+		if ( is_string( $filter ) && is_callable( $filter ) ) {
+			$value = call_user_func( $filter );
+		} elseif ( is_array( $filter ) && ! empty( $filter['callback'] ) && is_callable( $filter['callback'] ) ) {
+			if ( empty( $filter['args'] ) ) {
+				$filter['args'] = array();
+			}
+			// The value is always the first argument.
+			$filter['args'] = array( $value ) + $filter['args'];
+
+			$value = call_user_func_array( $filter['callback'], $filter['args'] );
+		}
+
+		return $value;
 	}
 
 	protected function process_custom_background_field_output( $option_id, $options ) {
