@@ -254,7 +254,6 @@
     const handleColorPalettes = () => {
         initializeColorPalettes();
         createCurrentPaletteControls();
-        reloadConnectedFields();
         updateCurrentPalette();
         bindVariationChange();
 
