@@ -1,9 +1,9 @@
 === Customify - A Theme Customizer Booster ===
-Contributors: pixelgrade, euthelup, babbardel, vlad.olaru, cristianfrumusanu, raduconstantin
+Contributors: pixelgrade, euthelup, babbardel, vlad.olaru, cristianfrumusanu, raduconstantin, razvanonofrei
 Tags: customizer, css, editor, live, preview, customizer
 Requires at least: 4.7.0
 Tested up to: 4.9.5
-Stable tag: 1.7.0
+Stable tag: 1.7.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
