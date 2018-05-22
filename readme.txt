@@ -45,6 +45,9 @@ With [Customify](https://github.com/pixelgrade/customify), developers can easily
 
 == Changelog ==
 
+= 1.7.1 =
+* Fixed issue with ==Color Palettes== overwriting custom colors in Live Preview
+
 = 1.7.0 =
 * Added **Dynamic Color Palettes** for a smoother experience
 * Fixed issue with the Style Manager crashing the Customizer when not using a theme with support for it.
