@@ -1045,7 +1045,7 @@ class Customify_Style_Manager {
 	 * @return string|false
 	 */
 	protected function get_current_color_palette_variation() {
-		return get_option( 'sm_color_palette_variation', false );
+		return get_option( 'sm_color_palette_variation', 'light' );
 	}
 
 	/**
