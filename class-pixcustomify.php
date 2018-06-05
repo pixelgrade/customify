@@ -573,7 +573,7 @@ class PixCustomifyPlugin {
 					// We need to use a class because we may have multiple <style>s with the same "ID" for example
 					// when targeting the same property but with different selectors.
 					?>
-					<style class="dynamic_setting_<?php echo sanitize_html_class( $option_id ) . '_property_' . str_replace( '-', '_', $properties_set['property'] ); ?>"
+					<style class="dynamic_setting_<?php echo sanitize_html_class( $option_id ) . '_property_' . str_replace( '-', '_', $properties_set['property'] ) . '_' . $key; ?>"
 					       type="text/css"><?php
 
 					if ( isset( $properties_set['media'] ) && ! empty( $properties_set['media'] ) ) {
