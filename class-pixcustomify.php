@@ -44,13 +44,6 @@ class PixCustomifyPlugin {
 	 */
 	protected $plugin_screen_hook_suffix = null;
 
-	/**
-	 * Path to the plugin.
-	 * @since    1.0.0
-	 * @var      string
-	 */
-	protected $plugin_basepath = null;
-
 	public $display_admin_menu = false;
 
 	private $config;
@@ -147,9 +140,6 @@ class PixCustomifyPlugin {
 		//the current plugin version
 		$this->_version = $version;
 
-		// Remember our base path
-		$this->plugin_basepath = plugin_dir_path( $file );
-
 		if ( $this->php_version_check() ) {
 			// Only load and run the init function if we know PHP version can parse it.
 			$this->init();
@@ -166,7 +156,7 @@ class PixCustomifyPlugin {
 		$this->plugin_settings = get_option( $this->config['settings-key'] );
 
 		/* Initialize the Style Manager logic. */
-		require_once( $this->plugin_basepath . 'includes/class-customify-style-manager.php' );
+		require_once( $this->get_base_path() . 'includes/class-customify-style-manager.php' );
 		if ( is_null( $this->style_manager ) ) {
 			$this->style_manager = Customify_Style_Manager::instance( $this );
 		}
@@ -364,7 +354,7 @@ class PixCustomifyPlugin {
 		wp_register_script( 'customify_select2', plugins_url( 'js/select2/js/select2.js', $this->file ), array( 'jquery' ), $this->_version );
 		wp_register_script( 'jquery-react', plugins_url( 'js/jquery-react.js', $this->file ), array( 'jquery' ), $this->_version );
 
-		wp_register_script( 'customify-scale', plugins_url( 'js/customizer/customify-scale.js', $this->file ), array( 'jquery' ), $this->_version );
+		wp_register_script( 'customify-scale', plugins_url( 'js/customizer/scale.js', $this->file ), array( 'jquery' ), $this->_version );
 
 		wp_register_script( $this->plugin_slug . '-customizer-scripts', plugins_url( 'js/customizer.js', $this->file ), array(
 			'jquery',
@@ -1830,6 +1820,10 @@ class PixCustomifyPlugin {
 			?>
 		</script>
 		<?php
+	}
+
+	public function get_file() {
+		return $this->file;
 	}
 
 	public function get_base_path() {
