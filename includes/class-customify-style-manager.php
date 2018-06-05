@@ -1023,6 +1023,12 @@ class Customify_Style_Manager {
 			'custom' => $this->is_using_custom_color_palette(),
 		);
 
+		// If there isn't a color palette selected, there is not point in having variation or custom.
+		if ( empty( $site_data['color_palettes']['current'] ) ) {
+			$site_data['color_palettes']['variation'] = false;
+			$site_data['color_palettes']['custom'] = false;
+		}
+
 		return apply_filters( 'customify_style_manager_get_site_data', $site_data );
 	}
 
@@ -1045,7 +1051,7 @@ class Customify_Style_Manager {
 	 * @return string|false
 	 */
 	protected function get_current_color_palette_variation() {
-		return get_option( 'sm_color_palette_variation', false );
+		return get_option( 'sm_color_palette_variation', 'light' );
 	}
 
 	/**

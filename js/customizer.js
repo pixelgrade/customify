@@ -1324,7 +1324,7 @@
 
 					subsets = maybeJsonParse( subsets );
 
-					if ( Object.keys( subsets ).length < 2 ) {
+					if ( typeof subsets != 'undefined' && Object.keys( subsets ).length < 2 ) {
 						font_subsets.parent().hide();
 					} else {
 						font_subsets.parent().show();
