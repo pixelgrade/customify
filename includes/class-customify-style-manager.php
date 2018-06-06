@@ -32,14 +32,6 @@ class Customify_Style_Manager {
 	public $parent = null;
 
 	/**
-	 * External REST API endpoints used for communicating with the Pixelgrade Cloud.
-	 * @var     array
-	 * @access  public
-	 * @since   1.7.0
-	 */
-	public static $externalApiEndpoints;
-
-	/**
 	 * The color palettes object.
 	 * @var     null|Customify_Color_Palettes
 	 * @access  public
@@ -54,6 +46,14 @@ class Customify_Style_Manager {
 	 * @since   1.7.5
 	 */
 	protected $theme_configs = null;
+
+	/**
+	 * The Cloud API object.
+	 * @var     null|Customify_Cloud_Api
+	 * @access  public
+	 * @since   1.7.5
+	 */
+	protected $cloud_api = null;
 
 	/**
 	 * Constructor.
@@ -85,6 +85,12 @@ class Customify_Style_Manager {
 		 */
 		require_once 'class-customify-color-palettes.php';
 		$this->color_palettes = Customify_Color_Palettes::instance();
+
+		/**
+		 * Initialize the Cloud API logic.
+		 */
+		require_once 'lib/class-customify-cloud-api.php';
+		$this->cloud_api = new Customify_Cloud_Api();
 
 		// Hook up.
 		$this->add_hooks();
@@ -312,25 +318,17 @@ class Customify_Style_Manager {
 			$message = wp_kses_post( $_POST['message'] );
 		}
 
-		$request_data = apply_filters( 'customify_pixelgrade_cloud_request_data', array(
+		$request_data = array(
 			'site_url'          => home_url( '/' ),
 			'satisfaction_data' => array(
 				'type'    => $type,
 				'rating'  => $rating,
 				'message' => $message,
 			),
-		), $this );
-
-		$request_args = array(
-			'method' => self::$externalApiEndpoints['cloud']['stats']['method'],
-			'timeout'   => 5,
-			'blocking'  => true,
-			'body'      => $request_data,
-			'sslverify' => false,
 		);
 
 		// Send the feedback.
-		$response = wp_remote_request( self::$externalApiEndpoints['cloud']['stats']['url'], $request_args );
+		$response = $this->cloud_api->send_stats( $request_data, true );
 		if ( is_wp_error( $response ) ) {
 			wp_send_json_error( esc_html__( 'Sorry, something went wrong and we couldn\'t save your feedback.', 'customify' ) );
 		}

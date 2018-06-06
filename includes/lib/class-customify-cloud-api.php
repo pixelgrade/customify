@@ -71,7 +71,7 @@ class Customify_Cloud_Api {
 			'theme_data' => $this->get_active_theme_data(),
 			// We are only interested in data needed to identify the plugin version and eventually deliver design assets suitable for it.
 			'site_data' => $this->get_site_data(),
-		), $this );
+		) );
 
 		$request_args = array(
 			'method' => self::$externalApiEndpoints['cloud']['getDesignAssets']['method'],
@@ -151,6 +151,42 @@ class Customify_Cloud_Api {
 		);
 
 		return apply_filters( 'customify_style_manager_get_site_data', $site_data );
+	}
+
+	/**
+	 * Send stats to the Pixelgrade Cloud.
+	 *
+	 * @since 1.7.5
+	 *
+	 * @param array $request_data The data to be sent.
+	 * @param bool $blocking Optional. Whether this should be a blocking request. Defaults to false.
+	 *
+	 * @return array|false
+	 */
+	public function send_stats( $request_data = array(), $blocking = false ) {
+		if ( empty( $request_data ) ) {
+			// This is what we send by default.
+			$request_data = array(
+				'site_url' => home_url('/'),
+				// We are only interested in data needed to identify the theme and eventually deliver only design assets suitable for it.
+				'theme_data' => $this->get_active_theme_data(),
+				// We are only interested in data needed to identify the plugin version and eventually deliver design assets suitable for it.
+				'site_data' => $this->get_site_data(),
+			);
+		}
+
+		$request_data = apply_filters( 'customify_pixelgrade_cloud_request_data', $request_data );
+
+		$request_args = array(
+			'method' => self::$externalApiEndpoints['cloud']['stats']['method'],
+			'timeout'   => 5,
+			'blocking'  => $blocking,
+			'body'      => $request_data,
+			'sslverify' => false,
+		);
+
+		// Make the request and return the response.
+		return wp_remote_request( self::$externalApiEndpoints['cloud']['stats']['url'], $request_args );
 	}
 }
 

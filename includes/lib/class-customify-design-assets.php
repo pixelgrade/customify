@@ -67,6 +67,7 @@ class Customify_Design_Assets {
 	 * @since 1.7.5
 	 *
 	 * @param bool $skip_cache Optional. Whether to use the cached config or fetch a new one.
+	 *
 	 * @return array
 	 */
 	public function get( $skip_cache = false ) {
@@ -92,6 +93,7 @@ class Customify_Design_Assets {
 	 * @since 1.7.5
 	 *
 	 * @param bool $skip_cache Optional. Whether to use the cached data or fetch a new one.
+	 *
 	 * @return array|false
 	 */
 	protected function maybe_fetch( $skip_cache = false ) {

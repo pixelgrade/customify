@@ -51,7 +51,7 @@ class Customify_Color_Palettes {
 		/*
 		 * Handle the Customizer Style Manager section config.
 		 */
-		add_filter( 'customify_filter_fields', array( $this, 'add_style_manager_section_master_colors_config' ), 13, 1 );
+		add_filter( 'customify_filter_fields', array( $this, 'add_style_manager_section_master_colors_config' ), 12, 1 );
 		// This needs to come after the external theme config has been applied
 		add_filter( 'customify_filter_fields', array( $this, 'add_current_color_palette_control' ), 110, 1 );
 
@@ -162,6 +162,7 @@ class Customify_Color_Palettes {
 					'setting_id'   => 'sm_color_palette',
 					// We don't want to refresh the preview window, even though we have no direct effect on it through this field.
 					'live'         => true,
+					'priority'     => 10,
 					'label'        => esc_html__( 'Select a color palette:', 'customify' ),
 					'desc'         => esc_html__( 'Conveniently change the design of your site with color palettes. Easy as pie.', 'customify' ),
 					'default'      => 'lilac',
@@ -175,6 +176,7 @@ class Customify_Color_Palettes {
 					'label'        => esc_html__( 'Palette Variation', 'customify' ),
 					'default'      => 'light',
 					'live'         => true,
+					'priority'     => 10.5,
 					'choices'      => array(
 						'light'     => esc_html__( 'light', 'customify' ),
 						'light_alt' => esc_html__( 'light_alt', 'customify' ),
@@ -194,6 +196,7 @@ class Customify_Color_Palettes {
 					'setting_id'       => 'sm_color_primary',
 					// We don't want to refresh the preview window, even though we have no direct effect on it through this field.
 					'live'             => true,
+					'priority'     => 20,
 					'label'            => esc_html__( 'Color Primary', 'customify' ),
 					'default'          => '#ffeb00',
 					'connected_fields' => array(),
@@ -203,6 +206,7 @@ class Customify_Color_Palettes {
 					'setting_type'     => 'option',
 					'setting_id'       => 'sm_color_secondary',
 					'live'             => true,
+					'priority'     => 20.1,
 					'label'            => esc_html__( 'Color Secondary', 'customify' ),
 					'default'          => '#00ecff',
 					'connected_fields' => array(),
@@ -212,6 +216,7 @@ class Customify_Color_Palettes {
 					'setting_type'     => 'option',
 					'setting_id'       => 'sm_color_tertiary',
 					'live'             => true,
+					'priority'     => 20.2,
 					'label'            => esc_html__( 'Color Tertiary', 'customify' ),
 					'default'          => '#00ecff',
 					'connected_fields' => array(),
@@ -221,6 +226,7 @@ class Customify_Color_Palettes {
 					'setting_type'     => 'option',
 					'setting_id'       => 'sm_dark_primary',
 					'live'             => true,
+					'priority'     => 20.3,
 					'label'            => esc_html__( 'Dark Primary', 'customify' ),
 					'default'          => '#171617',
 					'connected_fields' => array(),
@@ -230,6 +236,7 @@ class Customify_Color_Palettes {
 					'setting_type'     => 'option',
 					'setting_id'       => 'sm_dark_secondary',
 					'live'             => true,
+					'priority'     => 20.4,
 					'label'            => esc_html__( 'Dark Secondary', 'customify' ),
 					'default'          => '#383c50',
 					'connected_fields' => array(),
@@ -239,6 +246,7 @@ class Customify_Color_Palettes {
 					'setting_type'     => 'option',
 					'setting_id'       => 'sm_dark_tertiary',
 					'live'             => true,
+					'priority'     => 20.5,
 					'label'            => esc_html__( 'Dark Tertiary', 'customify' ),
 					'default'          => '#65726F',
 					'connected_fields' => array(),
@@ -248,6 +256,7 @@ class Customify_Color_Palettes {
 					'setting_type'     => 'option',
 					'setting_id'       => 'sm_light_primary',
 					'live'             => true,
+					'priority'     => 20.6,
 					'label'            => esc_html__( 'Light Primary', 'customify' ),
 					'default'          => '#ffffff',
 					'connected_fields' => array(),
@@ -257,6 +266,7 @@ class Customify_Color_Palettes {
 					'setting_type'     => 'option',
 					'setting_id'       => 'sm_light_secondary',
 					'live'             => true,
+					'priority'     => 20.7,
 					'label'            => esc_html__( 'Light Secondary', 'customify' ),
 					'default'          => '#ffffff',
 					'connected_fields' => array(),
@@ -266,6 +276,7 @@ class Customify_Color_Palettes {
 					'setting_type'     => 'option',
 					'setting_id'       => 'sm_light_tertiary',
 					'live'             => true,
+					'priority'     => 20.8,
 					'label'            => esc_html__( 'Light Tertiary', 'customify' ),
 					'default'          => '#ffffff',
 					'connected_fields' => array(),
@@ -274,6 +285,7 @@ class Customify_Color_Palettes {
 					'type'         => 'button',
 					'setting_type' => 'option',
 					'setting_id'   => 'sm_swap_colors',
+					'priority'     => 30,
 					'label'        => esc_html__( 'Swap Colors', 'customify' ),
 					'action'       => 'sm_swap_colors',
 				),
@@ -281,6 +293,7 @@ class Customify_Color_Palettes {
 					'type'         => 'button',
 					'setting_type' => 'option',
 					'setting_id'   => 'sm_swap_dark_light',
+					'priority'     => 30.1,
 					'label'        => esc_html__( 'Swap Dark ⇆ Light', 'customify' ),
 					'action'       => 'sm_swap_dark_light',
 				),
@@ -288,6 +301,7 @@ class Customify_Color_Palettes {
 					'type'         => 'button',
 					'setting_type' => 'option',
 					'setting_id'   => 'sm_swap_colors_dark',
+					'priority'     => 30.2,
 					'label'        => esc_html__( 'Swap Colors ⇆ Dark', 'customify' ),
 					'action'       => 'sm_swap_colors_dark',
 				),
@@ -295,6 +309,7 @@ class Customify_Color_Palettes {
 					'type'         => 'button',
 					'setting_type' => 'option',
 					'setting_id'   => 'sm_swap_secondary_colors_dark',
+					'priority'     => 30.3,
 					'label'        => esc_html__( 'Swap Secondary Color ⇆ Secondary Dark', 'customify' ),
 					'action'       => 'sm_swap_secondary_colors_dark',
 				),
@@ -302,6 +317,7 @@ class Customify_Color_Palettes {
 					'type'         => 'button',
 					'setting_type' => 'option',
 					'setting_id'   => 'sm_toggle_advanced_settings',
+					'priority'     => 30.4,
 					'label'        => esc_html__( 'Toggle Advanced Settings', 'customify' ),
 					'action'       => 'sm_toggle_advanced_settings',
 				),
@@ -605,7 +621,7 @@ class Customify_Color_Palettes {
 
 		update_option( 'sm_is_custom_color_palette', $is_custom_palette, true );
 
-		do_action( 'customify_style_manager_updated_custom_palette_in_use', $is_custom_palette, $this );
+		do_action( 'customify_style_manager_updated_custom_palette_in_use', $is_custom_palette );
 
 		return true;
 	}
