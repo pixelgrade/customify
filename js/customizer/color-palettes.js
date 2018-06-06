@@ -82,10 +82,12 @@
     };
 
     const alterConnectedFields = swapMap => {
+	    let optionsToShow = [];
         _.each( swapMap, function( fromArray, to ) {
             if ( typeof wp.customize.settings.settings[to] !== "undefined" ) {
                 let newConnectedFields = [];
                 if ( fromArray instanceof Array ) {
+
                     _.each( fromArray, function( from ) {
                         if ( typeof window.settingsClone[from] !== "undefined" ) {
                             let oldConnectedFields;
@@ -99,12 +101,18 @@
 	                newConnectedFields = Object.keys( newConnectedFields ).map( function(key) {
 		                return newConnectedFields[key];
 	                });
-                } else {
-                    newConnectedFields = window.settingsClone[fromArray]['connected_fields'];
                 }
                 wp.customize.settings.settings[to]['connected_fields'] = newConnectedFields;
+
+
+	            if ( fromArray instanceof Array && fromArray.length && newConnectedFields.length ) {
+		            optionsToShow.push( to );
+	            }
             }
         } );
+
+	    let optionsSelector = '.' + optionsToShow.join( ', .' );
+	    $( '.c-palette .color' ).addClass( 'hidden' ).filter( optionsSelector ).removeClass( 'hidden' );
     };
 
     const resetSettings = settings => {
@@ -171,7 +179,6 @@
         unbindConnectedFields();
         alterConnectedFields( variations[variation] );
         bindConnectedFields();
-        resetSettings( settings );
     };
 
     const createCurrentPaletteControls = () => {
@@ -254,12 +261,16 @@
     const handleColorPalettes = () => {
         initializeColorPalettes();
         createCurrentPaletteControls();
-        reloadConnectedFields();
+	    reloadConnectedFields();
         updateCurrentPalette();
         bindVariationChange();
 
         // when variation is changed reload connected fields from cached version of customizer settings config
-        $( document ).on( 'change', '[name="_customize-radio-sm_color_palette_variation_control"]', reloadConnectedFields );
+        $( document ).on( 'change', '[name="_customize-radio-sm_color_palette_variation_control"]', function() {
+            reloadConnectedFields();
+	        resetSettings( settings );
+        });
+
         $( document ).on( 'click', '.customify_preset.color_palette input', onPaletteChange );
     };
 

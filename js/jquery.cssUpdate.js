@@ -81,8 +81,8 @@
 			var self = this,
 				properties = settings.properties,
 				new_value = settings.propertyValue,
-			// if there is a negative property ... keep it negative
-			is_negative = self.is_negative_property(property_name, properties, selectorText);
+				// if there is a negative property ... keep it negative
+				sign = settings['negative_value'] ? '-' : '';
 
 			var unit = '';
 
@@ -96,32 +96,11 @@
 
 			if ( typeof window[settings.properties.callback] === "function" ) {
 				window[settings.properties.callback](new_value, selectorText, property_name, unit);
+				return '';
 			}
 
-			return is_negative + new_value + unit;
+			return sign + new_value + unit;
 		},
-
-		/**
-		 * Check is the current property has a negative selector in our config
-		 * if this is true return the sign "-" which will be put in front of the value
-		 * @param property
-		 * @param current_properties
-		 * @param selectorText
-		 * @returns {string}
-		 */
-		is_negative_property: function(property, current_properties, selectorText){
-			if ( current_properties.hasOwnProperty(property) ) {
-
-				if ( current_properties[property].hasOwnProperty('negative_selector') ) {
-
-                    if (current_properties[property].negative_selector == selectorText) {
-                        return '-';
-                    }
-                }
-			}
-
-			return '';
-		}
 	};
 
 	// Plugin wrapper

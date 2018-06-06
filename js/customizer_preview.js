@@ -42,7 +42,8 @@
 
 							let css_update_args = {
 								properties: properties,
-								propertyValue: to
+								propertyValue: to,
+								negative_value: property_config.hasOwnProperty( 'negative_value' ) ? property_config['negative_value'] : false
 							};
 
 							if (typeof this.unit !== 'undefined') {
@@ -51,7 +52,7 @@
 
 							// Replace all dashes with underscores thus making the CSS property safe to us in a HTML ID.
 							let regex_for_multiple_replace = new RegExp('-', 'g'),
-                                cssStyleSelector = '.dynamic_setting_' + el.html_safe_option_id + '_property_' + property_config.property.replace(regex_for_multiple_replace, '_');
+                                cssStyleSelector = '.dynamic_setting_' + el.html_safe_option_id + '_property_' + property_config.property.replace(regex_for_multiple_replace, '_') + '_' + counter;
 
 							$(cssStyleSelector).cssUpdate(css_update_args);
 						});
