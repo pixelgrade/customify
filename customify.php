@@ -26,7 +26,7 @@ if ( ! defined('EXT')) {
 require 'core/bootstrap' . EXT;
 
 // Include our helper array class.
-require 'includes/class-customify-array' . EXT;
+require 'includes/lib/class-customify-array' . EXT;
 
 $config = include 'plugin-config' . EXT;
 
@@ -59,7 +59,7 @@ function PixCustomifyPlugin() {
 	 * The core plugin class that is used to define internationalization,
 	 * admin-specific hooks, and public-facing site hooks.
 	 */
-	require_once( plugin_dir_path( __FILE__ ) . 'class-pixcustomify.php' );
+	require_once plugin_dir_path( __FILE__ ) . 'class-pixcustomify.php';
 
 	$instance = PixCustomifyPlugin::instance( __FILE__, '1.7.0' );
 

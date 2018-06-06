@@ -118,7 +118,7 @@ class Customify_Style_Manager {
 	 * Register Customizer admin scripts.
 	 */
 	function register_admin_customizer_scripts() {
-
+		wp_register_script( PixCustomifyPlugin()->get_slug() . '-style-manager', plugins_url( 'js/customizer/style-manager.js', PixCustomifyPlugin()->get_file() ), array( 'jquery' ), PixCustomifyPlugin()->get_version() );
 	}
 
 	/**
@@ -131,7 +131,7 @@ class Customify_Style_Manager {
 		}
 
 		// Enqueue the needed scripts, already registered.
-//		wp_enqueue_script( $this->parent->get_slug() . '-palettes' );
+		wp_enqueue_script( PixCustomifyPlugin()->get_slug() . '-style-manager' );
 	}
 
 	/**

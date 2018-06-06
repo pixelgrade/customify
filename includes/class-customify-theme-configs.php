@@ -122,7 +122,7 @@ class Customify_Theme_Configs {
 		$theme_configs = array();
 
 		// Make sure that the Design Assets class is loaded.
-		require_once PixCustomifyPlugin()->get_base_path() . 'includes/class-customify-design-assets.php';
+		require_once 'lib/class-customify-design-assets.php';
 
 		// Get the design assets data.
 		$design_assets = Customify_Design_Assets::instance()->get( $skip_cache );

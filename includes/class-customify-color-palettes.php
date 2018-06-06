@@ -51,7 +51,7 @@ class Customify_Color_Palettes {
 		/*
 		 * Handle the Customizer Style Manager section config.
 		 */
-		add_filter( 'customify_filter_fields', array( $this, 'style_manager_section_master_colors_config' ), 13, 1 );
+		add_filter( 'customify_filter_fields', array( $this, 'add_style_manager_section_master_colors_config' ), 13, 1 );
 		// This needs to come after the external theme config has been applied
 		add_filter( 'customify_filter_fields', array( $this, 'add_current_color_palette_control' ), 110, 1 );
 
@@ -104,7 +104,7 @@ class Customify_Color_Palettes {
 	 */
 	public function get_color_palettes( $skip_cache = false ) {
 		// Make sure that the Design Assets class is loaded.
-		require_once PixCustomifyPlugin()->get_base_path() . 'includes/class-customify-design-assets.php';
+		require_once 'lib/class-customify-design-assets.php';
 
 		// Get the design assets data.
 		$design_assets = Customify_Design_Assets::instance()->get( $skip_cache );
@@ -141,7 +141,7 @@ class Customify_Color_Palettes {
 	 *
 	 * @return array
 	 */
-	public function style_manager_section_master_colors_config( $config ) {
+	public function add_style_manager_section_master_colors_config( $config ) {
 		// If there is no style manager support, bail early.
 		if ( ! $this->is_supported() ) {
 			return $config;

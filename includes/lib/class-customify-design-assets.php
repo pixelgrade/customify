@@ -57,7 +57,7 @@ class Customify_Design_Assets {
 		/**
 		 * Initialize the Cloud API logic.
 		 */
-		require_once PixCustomifyPlugin()->get_base_path() . 'includes/class-customify-cloud-api.php';
+		require_once 'class-customify-cloud-api.php';
 		$this->cloud_api = new Customify_Cloud_Api();
 	}
 
@@ -145,6 +145,8 @@ class Customify_Design_Assets {
 	/**
 	 * Include the customify "external" config file in the theme root and overwrite the existing theme configs.
 	 *
+	 * @since 1.7.5
+	 *
 	 * @param array $design_assets
 	 *
 	 * @return array
@@ -185,8 +187,8 @@ class Customify_Design_Assets {
 			'txtd'          => $theme->get( 'TextDomain' ),
 			'loose_match'   => true,
 			'config'        => $config,
-			'created'       => '2018-05-16 15:13:58',
-			'last_modified' => '2018-05-16 15:13:58',
+			'created'       => date('Y-m-d H:i:s'),
+			'last_modified' => date('Y-m-d H:i:s'),
 			'hashid'        => 'theme_root',
 		);
 
