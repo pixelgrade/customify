@@ -362,13 +362,11 @@ class Customify_Style_Manager {
 		foreach ( $current_palette_sets as $set ) {
 			$current_palette .= '<div class="colors ' . $set . '">';
 			foreach ( $master_color_controls_ids as $setting_id ) {
-				if ( ! empty( $config['sections']['style_manager_section']['options'][ $setting_id ]['connected_fields'] ) ) {
-					$current_palette .=
-						'<div class="color ' . $setting_id . '" data-setting="' . $setting_id . '">' . PHP_EOL .
-						'<div class="fill"></div>' . PHP_EOL .
-						'<div class="picker"><i></i></div>' . PHP_EOL .
-						'</div>' . PHP_EOL;
-				}
+                $current_palette .=
+                    '<div class="color ' . $setting_id . '" data-setting="' . $setting_id . '">' . PHP_EOL .
+                    '<div class="fill"></div>' . PHP_EOL .
+                    '<div class="picker"><i></i></div>' . PHP_EOL .
+                    '</div>' . PHP_EOL;
 			}
 			$current_palette .= '</div>';
 		}

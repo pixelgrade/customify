@@ -45,6 +45,10 @@ With [Customify](https://github.com/pixelgrade/customify), developers can easily
 
 == Changelog ==
 
+= 1.7.2 =
+* Fixed issue with **Color Palettes** working only after choosing one variation
+* Fixed bug preventing some options to live update the Customizer preview
+
 = 1.7.1 =
 * Fixed issue with **Color Palettes** overwriting custom colors in Live Preview
 

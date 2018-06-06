@@ -58,7 +58,6 @@
 				$.each(css, function(i, property){
 					if ( property.hasOwnProperty( 'style' ) ) {
 						var property_name = property.style[0];
-						console.log( css[i].selectorText, property_name, self.updateCssRule(property_name, self.settings, css[i].selectorText) );
 						css[i].style[property_name] = self.updateCssRule(property_name, self.settings, css[i].selectorText);
 					}
 				});
