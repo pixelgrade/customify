@@ -314,7 +314,70 @@
 				}
 			)();
 
+			// Bind any connected fields, except those in the Style Manager.
+            // Those are handled by the appropriate Style Manager component (Color Palettes, Font Palettes, etc ).
+            bindConnectedFields();
+
 		} );
+
+        const getConnectedFieldsCallback = function( parent_setting_data, parent_setting_id ) {
+            return function( new_value, old_value ) {
+                _.each( parent_setting_data.connected_fields, function( connected_field_data ) {
+                    if ( _.isUndefined( connected_field_data ) || _.isUndefined( connected_field_data.setting_id ) || ! _.isString( connected_field_data.setting_id ) ) {
+                        return;
+                    }
+                    const setting = wp.customize( connected_field_data.setting_id );
+                    if ( _.isUndefined( setting ) ) {
+                        return;
+                    }
+                    setting.set( new_value );
+                } );
+            }
+        };
+
+        const bindConnectedFields = function() {
+            _.each( wp.customize.settings.settings, function( parent_setting_data, parent_setting_id ) {
+                // We don't want to handle the binding of the Style Manager settings
+                if ( typeof ColorPalettes !== "undefined"
+                    && typeof ColorPalettes.masterColorSettings !== "undefined"
+                    && _.contains( ColorPalettes.masterColorSettings, parent_setting_id ) ) {
+                    return;
+                }
+                if ( typeof FontPalettes !== "undefined"
+                    && typeof FontPalettes.masterColorSettings !== "undefined"
+                    && _.contains( FontPalettes.masterColorSettings, parent_setting_id ) ) {
+                    return;
+                }
+
+                let parent_setting = wp.customize( parent_setting_id );
+                if ( typeof parent_setting_data.connected_fields !== "undefined" ) {
+                    connectedFieldsCallbacks[parent_setting_id] = getConnectedFieldsCallback( parent_setting_data, parent_setting_id );
+                    parent_setting.bind( connectedFieldsCallbacks[parent_setting_id] );
+                }
+            } );
+        };
+
+        const unbindConnectedFields = function() {
+            _.each( wp.customize.settings.settings, function( parent_setting_data, parent_setting_id ) {
+                // We don't want to handle the binding of the Style Manager settings
+                if ( typeof ColorPalettes !== "undefined"
+                    && typeof ColorPalettes.masterColorSettings !== "undefined"
+                    && _.contains( ColorPalettes.masterColorSettings, parent_setting_id ) ) {
+                    return;
+                }
+                if ( typeof FontPalettes !== "undefined"
+                    && typeof FontPalettes.masterColorSettings !== "undefined"
+                    && _.contains( FontPalettes.masterColorSettings, parent_setting_id ) ) {
+                    return;
+                }
+
+                let parent_setting = wp.customize( parent_setting_id );
+                if ( typeof parent_setting_data.connected_fields !== "undefined" && typeof connectedFieldsCallbacks[parent_setting_id] !== "undefined" ) {
+                    parent_setting.unbind( connectedFieldsCallbacks[parent_setting_id] );
+                }
+                delete connectedFieldsCallbacks[parent_setting_id];
+            } );
+        };
 
 		const customifyHandleRangeFields = function( el ) {
 
@@ -1227,7 +1290,7 @@
 
 					subsets = maybeJsonParse( subsets );
 
-					if ( typeof subsets != 'undefined' && Object.keys( subsets ).length < 2 ) {
+					if ( typeof subsets != 'undefined' && Object.keys( subsets ).length < 2 || font_subsets.data('disabled') !== undefined ) {
 						font_subsets.parent().hide();
 					} else {
 						font_subsets.parent().show();

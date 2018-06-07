@@ -1,6 +1,6 @@
-( function( $, exports, wp ) {
+let ColorPalettes = ( function( $, exports, wp ) {
 
-    const settings = [
+    const masterColorSettings = [
         "sm_color_primary",
         "sm_color_secondary",
         "sm_color_tertiary",
@@ -35,7 +35,7 @@
         $palette.find( '.c-color-palette__name' ).text( label );
 
         // apply the last animate set of colors to the "current" color palette
-        _.each( settings, function( setting_id ) {
+        _.each( masterColorSettings, function( setting_id ) {
             const color = $next.find( '.' + setting_id ).css( 'color' );
             $current.find( '.' + setting_id ).css( 'color', color );
         });
@@ -45,7 +45,7 @@
         $palette.removeClass( 'animate' );
 
         // update the colors in the "next" palette with the new values
-        _.each( settings, function( setting_id ) {
+        _.each( masterColorSettings, function( setting_id ) {
             const setting = wp.customize( setting_id );
 
             if ( typeof setting !== "undefined" ) {
@@ -111,8 +111,10 @@
             }
         } );
 
-	    let optionsSelector = '.' + optionsToShow.join( ', .' );
-	    $( '.c-color-palette .color' ).addClass( 'hidden' ).filter( optionsSelector ).removeClass( 'hidden' );
+        if ( optionsToShow.length ) {
+            let optionsSelector = '.' + optionsToShow.join(', .');
+            $('.c-color-palette .color').addClass('hidden').filter(optionsSelector).removeClass('hidden');
+        }
     };
 
     const resetSettings = settings => {
@@ -143,22 +145,30 @@
     };
 
     const bindConnectedFields = function() {
-        _.each( wp.customize.settings.settings, function( parent_setting_data, parent_setting_id ) {
-            let parent_setting = wp.customize( parent_setting_id );
-            if ( typeof parent_setting_data.connected_fields !== "undefined" ) {
-                connectedFieldsCallbacks[parent_setting_id] = getConnectedFieldsCallback( parent_setting_data, parent_setting_id );
-                parent_setting.bind( connectedFieldsCallbacks[parent_setting_id] );
+        _.each( masterColorSettings, function( parent_setting_id ) {
+            if ( typeof wp.customize.settings.settings[parent_setting_id] !== "undefined" ) {
+                let parent_setting_data = wp.customize.settings.settings[parent_setting_id];
+                let parent_setting = wp.customize(parent_setting_id);
+
+                if (typeof parent_setting_data.connected_fields !== "undefined") {
+                    connectedFieldsCallbacks[parent_setting_id] = getConnectedFieldsCallback(parent_setting_data, parent_setting_id);
+                    parent_setting.bind(connectedFieldsCallbacks[parent_setting_id]);
+                }
             }
         } );
     };
 
     const unbindConnectedFields = function() {
-        _.each( wp.customize.settings.settings, function( parent_setting_data, parent_setting_id ) {
-            let parent_setting = wp.customize( parent_setting_id );
-            if ( typeof parent_setting_data.connected_fields !== "undefined" && typeof connectedFieldsCallbacks[parent_setting_id] !== "undefined" ) {
-                parent_setting.unbind( connectedFieldsCallbacks[parent_setting_id] );
+        _.each( masterColorSettings, function( parent_setting_id ) {
+            if ( typeof wp.customize.settings.settings[parent_setting_id] !== "undefined" ) {
+                let parent_setting_data = wp.customize.settings.settings[parent_setting_id];
+                let parent_setting = wp.customize(parent_setting_id);
+
+                if (typeof parent_setting_data.connected_fields !== "undefined" && typeof connectedFieldsCallbacks[parent_setting_id] !== "undefined") {
+                    parent_setting.unbind(connectedFieldsCallbacks[parent_setting_id]);
+                }
+                delete connectedFieldsCallbacks[parent_setting_id];
             }
-            delete connectedFieldsCallbacks[parent_setting_id];
         } );
     };
 
@@ -172,12 +182,12 @@
 
         const variation = setting();
 
-        if ( ! window.variations.hasOwnProperty( variation ) ) {
+        if ( ! window.colorPalettesVariations.hasOwnProperty( variation ) ) {
             return;
         }
 
         unbindConnectedFields();
-        alterConnectedFields( variations[variation] );
+        alterConnectedFields( colorPalettesVariations[variation] );
         bindConnectedFields();
     };
 
@@ -268,12 +278,16 @@
         // when variation is changed reload connected fields from cached version of customizer settings config
         $( document ).on( 'change', '[name="_customize-radio-sm_color_palette_variation_control"]', function() {
             reloadConnectedFields();
-	        resetSettings( settings );
+	        resetSettings( masterColorSettings );
         });
 
         $( document ).on( 'click', '.customify_preset.color_palette input', onPaletteChange );
     };
 
     wp.customize.bind( 'ready', handleColorPalettes );
+
+    return {
+        masterColorSettings: masterColorSettings
+    };
 
 } )( jQuery, window, wp );

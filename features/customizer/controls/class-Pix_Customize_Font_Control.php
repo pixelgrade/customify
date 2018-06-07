@@ -296,11 +296,11 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 
 	function display_font_subset_field( $current_value ) {
 		$display = 'none';
-		if ( $this->subsets && ! empty( $current_value->subsets ) && ! empty( $this->fields['subsets'] ) ) {
+		if ( $this->subsets && ! empty( $current_value->subsets ) ) {
 			$display = 'inline-block';
 		} ?>
 		<li class="customify_subsets_wrapper customize-control font-options__option" style="display: <?php echo $display; ?>;">
-			<select multiple class="customify_font_subsets" data-field="selected_subsets">
+			<select multiple class="customify_font_subsets" data-field="selected_subsets" <?php echo ( isset( $this->fields['subsets'] ) && false === $this->fields['subsets'] ) ? 'data-disabled' : ''; ?>>
 				<?php
 				$selected = array();
 				if ( isset( $current_value->selected_subsets ) ) {

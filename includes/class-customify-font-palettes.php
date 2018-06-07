@@ -422,7 +422,7 @@ class Customify_Font_Palettes {
 					),
 				),
 
-				'fonts' => array(
+				'fonts_logic' => array(
 					// Primary is used for main headings [Display, H1, H2, H3]
 					'sm_font_primary' => array(
 						// Font loaded when a palette is selected
@@ -430,7 +430,7 @@ class Customify_Font_Palettes {
 						// Load all these fonts weights.
 						'font-weights'     => array( 400 ),
 						// "Generate" the graph to be used for font-size and line-height.
-						'font-size_points' => array(
+						'font-size_line-height_points' => array(
 							array( 14, 1.7 ),
 							array( 50, 1.3 ),
 							array( 80, 1 ),
@@ -468,7 +468,7 @@ class Customify_Font_Palettes {
 					'sm_font_secondary' => array(
 						'font-family'      => 'HK Grotesk',
 						'font-weights'     => array( 400, 500, 700 ),
-						'font-size_points' => array(
+						'font-size_line-height_points' => array(
 							array( 14, 1.7 ),
 							array( 50, 1.3 ),
 							array( 80, 1 ),
@@ -500,7 +500,7 @@ class Customify_Font_Palettes {
 					'sm_font_body' => array(
 						'font-family'      => 'PT Serif',
 						'font-weights'     => array( 400, '400italic', 700, '700italic' ),
-						'font-size_points' => array(
+						'font-size_line-height_points' => array(
 							array( 15, 1.7 ),
 							array( 17, 1.6 ),
 							array( 18, 1.5 ),

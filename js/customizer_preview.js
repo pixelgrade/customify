@@ -15,15 +15,17 @@
 					setting.bind(function (to) {
 						let $values = maybeJsonParse(to);
 
-						if (typeof $values.font_family !== "undefined") {
-							maybeLoadFontFamily($values);
-						}
+                        if (typeof $values !== "undefined" ) {
+                            if (typeof $values.font_family !== "undefined") {
+                                maybeLoadFontFamily($values);
+                            }
 
-						let vls = get_CSS_values(this.id, $values),
-						    CSS = get_CSS_code(this.id, vls),
-                            field_style = $('#customify_font_output_for_' + el.html_safe_option_id);
+                            let vls = get_CSS_values(this.id, $values),
+                                CSS = get_CSS_code(this.id, vls),
+                                field_style = $('#customify_font_output_for_' + el.html_safe_option_id);
 
-						field_style.html(CSS);
+                            field_style.html(CSS);
+                        }
 					});
 				});
 

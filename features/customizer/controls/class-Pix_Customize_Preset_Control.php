@@ -228,7 +228,7 @@ class Pix_Customize_Preset_Control extends Pix_Customize_Control {
 				<div class="customify_preset font_palette customize-control customize-control-radio">
 					<?php
 					foreach ( $this->choices as $choice_value => $choice_config ){
-						if ( empty( $choice_config['fonts'] ) ) {
+						if ( empty( $choice_config['options'] ) && empty( $choice_config['fonts_logic'] ) ) {
 							continue;
 						}
 
@@ -245,8 +245,18 @@ class Pix_Customize_Preset_Control extends Pix_Customize_Control {
 						) );
 
 						$label = $choice_config['label'];
-						$options = $this->convertChoiceOptionsIdsToSettingIds( $choice_config['fonts'] );
+
+						if ( empty( $choice_config['options'] ) ) {
+							$choice_config['options'] = array();
+						}
+						$options = $this->convertChoiceOptionsIdsToSettingIds( $choice_config['options'] );
 						$data = ' data-options=\'' . json_encode( $options ) . '\'';
+
+						if ( empty( $choice_config['fonts_logic'] ) ) {
+							$choice_config['fonts_logic'] = array();
+						}
+						$fonts = $this->convertChoiceOptionsIdsToSettingIds( $choice_config['fonts_logic'] );
+						$data .= ' data-fonts_logic=\'' . json_encode( $fonts ) . '\'';
 
 						$customizer_config = PixCustomifyPlugin()->get_customizer_config();
 
@@ -262,7 +272,7 @@ class Pix_Customize_Preset_Control extends Pix_Customize_Control {
                                 </span>
                             </label>
                             <div class="palette">
-                                <?php foreach ( $choice_config['fonts'] as $font_name => $font_value ) {
+                                <?php foreach ( $choice_config['fonts_logic'] as $font_name => $font_value ) {
 	                                if ( ! empty( $customizer_config['sections']['style_manager_section']['options'][$font_name]['connected_fields'] ) ) {
 		                                echo '<div class="palette__item ' . esc_attr( $font_name ) . '" style=""></div>' . PHP_EOL;
 	                                }

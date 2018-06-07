@@ -1,6 +1,6 @@
-( function( $, exports, wp ) {
+let FontPalettes = ( function( $, exports, wp ) {
 
-    const settings = [
+    const masterFontSettings = [
         'sm_font_primary',
         'sm_font_secondary',
         'sm_font_body'
@@ -29,7 +29,7 @@
         $palette.find( '.c-font-palette__name' ).text( label );
 
         // apply the last animate set of fonts to the "current" font palette
-        _.each( settings, function( setting_id ) {
+        _.each( masterFontSettings, function( setting_id ) {
             const font = $next.find( '.' + setting_id ).css( 'font' );
             $current.find( '.' + setting_id ).css( 'font', font );
         });
@@ -39,7 +39,7 @@
         $palette.removeClass( 'animate' );
 
         // update the fonts in the "next" palette with the new values
-        _.each( settings, function( setting_id ) {
+        _.each( masterFontSettings, function( setting_id ) {
             const setting = wp.customize( setting_id );
 
             if ( typeof setting !== "undefined" ) {
@@ -105,8 +105,10 @@
             }
         } );
 
-	    let optionsSelector = '.' + optionsToShow.join( ', .' );
-	    $( '.c-font-palette .font' ).addClass( 'hidden' ).filter( optionsSelector ).removeClass( 'hidden' );
+        if ( optionsToShow.length ) {
+            let optionsSelector = '.' + optionsToShow.join(', .');
+            $('.c-font-palette .font').addClass('hidden').filter(optionsSelector).removeClass('hidden');
+        }
     };
 
     const resetSettings = settings => {
@@ -127,32 +129,46 @@
                 if ( _.isUndefined( connected_field_data ) || _.isUndefined( connected_field_data.setting_id ) || ! _.isString( connected_field_data.setting_id ) ) {
                     return;
                 }
+
                 const setting = wp.customize( connected_field_data.setting_id );
                 if ( _.isUndefined( setting ) ) {
                     return;
                 }
+
+                // Process the font logic for the master font control to get the value that should be applied to the connected (font) fields.
+
+
+
                 setting.set( new_value );
             } );
         }
     };
 
     const bindConnectedFields = function() {
-        _.each( wp.customize.settings.settings, function( parent_setting_data, parent_setting_id ) {
-            let parent_setting = wp.customize( parent_setting_id );
-            if ( typeof parent_setting_data.connected_fields !== "undefined" ) {
-                connectedFieldsCallbacks[parent_setting_id] = getConnectedFieldsCallback( parent_setting_data, parent_setting_id );
-                parent_setting.bind( connectedFieldsCallbacks[parent_setting_id] );
+        _.each( masterFontSettings, function( parent_setting_id ) {
+            if ( typeof wp.customize.settings.settings[parent_setting_id] !== "undefined" ) {
+                let parent_setting_data = wp.customize.settings.settings[parent_setting_id];
+                let parent_setting = wp.customize( parent_setting_id );
+
+                if ( typeof parent_setting_data.connected_fields !== "undefined" ) {
+                    connectedFieldsCallbacks[parent_setting_id] = getConnectedFieldsCallback( parent_setting_data, parent_setting_id );
+                    parent_setting.bind( connectedFieldsCallbacks[parent_setting_id] );
+                }
             }
         } );
     };
 
     const unbindConnectedFields = function() {
-        _.each( wp.customize.settings.settings, function( parent_setting_data, parent_setting_id ) {
-            let parent_setting = wp.customize( parent_setting_id );
-            if ( typeof parent_setting_data.connected_fields !== "undefined" && typeof connectedFieldsCallbacks[parent_setting_id] !== "undefined" ) {
-                parent_setting.unbind( connectedFieldsCallbacks[parent_setting_id] );
+        _.each( masterFontSettings, function( parent_setting_id ) {
+            if ( typeof wp.customize.settings.settings[parent_setting_id] !== "undefined" ) {
+                let parent_setting_data = wp.customize.settings.settings[parent_setting_id];
+                let parent_setting = wp.customize(parent_setting_id);
+
+                if (typeof parent_setting_data.connected_fields !== "undefined" && typeof connectedFieldsCallbacks[parent_setting_id] !== "undefined") {
+                    parent_setting.unbind(connectedFieldsCallbacks[parent_setting_id]);
+                }
+                delete connectedFieldsCallbacks[parent_setting_id];
             }
-            delete connectedFieldsCallbacks[parent_setting_id];
         } );
     };
 
@@ -166,12 +182,12 @@
 
         const variation = setting();
 
-        if ( ! window.variations.hasOwnProperty( variation ) ) {
+        if ( ! window.fontPalettesVariations.hasOwnProperty( variation ) ) {
             return;
         }
 
         unbindConnectedFields();
-        alterConnectedFields( variations[variation] );
+        alterConnectedFields( fontPalettesVariations[variation] );
         bindConnectedFields();
     };
 
@@ -193,8 +209,29 @@
         label = $label.text();
         $label.remove();
 
+        // Take the fonts config for each setting and distribute it to each (master) setting.
+        const data = $( this ).data( 'fonts_logic' );
+        if ( ! _.isUndefined( data ) ) {
+            $.each( data, function( setting_id, config ) {
+                set_field_fonts_logic_config( setting_id, config );
+            } );
+        }
+
+        // In case this palette has values (options) attached to it, let it happen.
         $( this ).trigger( 'customify:preset-change' );
         updateCurrentPalette( label );
+    };
+
+    const set_field_fonts_logic_config = function( setting_id, config ) {
+        wp.customize.settings.settings[setting_id].fonts_logic = config;
+
+        // We also need to trigger a fake setting value change since the master font controls don't usually hold a (usable) value.
+        const setting = wp.customize( setting_id );
+        if ( _.isUndefined( setting ) ) {
+            return;
+        }
+
+        setting.set( 'sdfsdfsdfsdfsdfsdfsd');
     };
 
     const handleFontPalettes = () => {
@@ -207,12 +244,16 @@
         // when variation is changed reload connected fields from cached version of customizer settings config
         $( document ).on( 'change', '[name="_customize-radio-sm_font_palette_variation_control"]', function() {
             reloadConnectedFields();
-	        resetSettings( settings );
+	        resetSettings( masterFontSettings );
         });
 
         $( document ).on( 'click', '.customify_preset.font_palette input', onPaletteChange );
     };
 
     wp.customize.bind( 'ready', handleFontPalettes );
+
+    return {
+        masterFontSettings: masterFontSettings
+    };
 
 } )( jQuery, window, wp );
