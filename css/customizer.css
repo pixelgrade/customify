@@ -1255,16 +1255,16 @@ li#customize-control-site_logo .actions
 }#customize-control-sm_color_palette_control ~ [id*='sm_light_tertiary'] .wp-picker-container button:before
 {
     top: -216px;right: -140px;
-}.c-palette
+}.c-color-palette
 {
     position: relative;
-}.c-palette .c-palette__label
+}.c-color-palette .c-color-palette__label
 {
     -ms-flex-positive: 1;flex-grow: 1;
-}.c-palette:after
+}.c-color-palette:after
 {
     height: 64px;border-radius: 5px;
-}.c-palette:after
+}.c-color-palette:after
 {position: absolute;top: 0;right: 0;left: 0;display: block;
 
     content: '';pointer-events: none;box-shadow: inset 0 0 3px 0 rgba(0,0,0,.15),inset 0 1px 3px 0 rgba(0,0,0,.15);
@@ -1272,7 +1272,7 @@ li#customize-control-site_logo .actions
 {z-index: 2;padding: 7px 12px 7px 7px;
 
     color: #000;border-radius: 3px;background: #f5f6f1;box-shadow: 0 2px 5px rgba(0,0,0,.15);
-}.c-palette__label
+}.c-color-palette__label
 {
     display: -ms-flexbox                                                        ;display: flex;height: 40px;padding: 12px;color: black;background: white;-ms-flex-align: center;align-items: center;
 }.colors
@@ -1284,7 +1284,7 @@ li#customize-control-site_logo .actions
 }.fill
 {
     position: relative;height: 64px;
-}.c-palette__overlay
+}.c-color-palette__overlay
 {
     position: absolute;top: 0;right: 0;left: 0;display: -ms-flexbox;display: flex;height: 64px;-ms-flex-align: center;align-items: center;
 }.fill:before
@@ -1332,83 +1332,83 @@ li#customize-control-site_logo .actions
 }.colors.next .picker:after
 {
     opacity: 0;
-}.c-palette.animate .next .fill:before
+}.c-color-palette.animate .next .fill:before
 {
     -webkit-animation: fill 1s cubic-bezier(.215, .61, .355, 1) forwards                        ;animation: fill 1s cubic-bezier(.215, .61, .355, 1) forwards;
-}.c-palette.animate .next .picker
+}.c-color-palette.animate .next .picker
 {
     -webkit-animation: picker-filter 1s cubic-bezier(.215, .61, .355, 1) forwards                        ;animation: picker-filter 1s cubic-bezier(.215, .61, .355, 1) forwards;
-}.c-palette.animate .next .picker:before
+}.c-color-palette.animate .next .picker:before
 {
     -webkit-animation: fill-picker-before 1s cubic-bezier(.215, .61, .355, 1) forwards                        ;animation: fill-picker-before 1s cubic-bezier(.215, .61, .355, 1) forwards;
-}.c-palette.animate .next .picker:after
+}.c-color-palette.animate .next .picker:after
 {
     -webkit-animation: fill-picker-after 1s cubic-bezier(.215, .61, .355, 1) forwards                        ;animation: fill-picker-after 1s cubic-bezier(.215, .61, .355, 1) forwards;
-}.c-palette.animate .current .fill,
-.c-palette.animate .current .picker
+}.c-color-palette.animate .current .fill,
+.c-color-palette.animate .current .picker
 {
     -webkit-animation: fade-out 1s forwards                        ;animation: fade-out 1s forwards;
-}.c-palette.animate .color:nth-child(1) .fill,
-.c-palette.animate .color:nth-child(1) .fill:before,
-.c-palette.animate .color:nth-child(1) .picker,
-.c-palette.animate .color:nth-child(1) .picker:after,
-.c-palette.animate .color:nth-child(1) .picker:before
+}.c-color-palette.animate .color:nth-child(1) .fill,
+.c-color-palette.animate .color:nth-child(1) .fill:before,
+.c-color-palette.animate .color:nth-child(1) .picker,
+.c-color-palette.animate .color:nth-child(1) .picker:after,
+.c-color-palette.animate .color:nth-child(1) .picker:before
 {
     -webkit-animation-delay: .4s                        ;animation-delay: .4s;
-}.c-palette.animate .color:nth-child(2) .fill,
-.c-palette.animate .color:nth-child(2) .fill:before,
-.c-palette.animate .color:nth-child(2) .picker,
-.c-palette.animate .color:nth-child(2) .picker:after,
-.c-palette.animate .color:nth-child(2) .picker:before
+}.c-color-palette.animate .color:nth-child(2) .fill,
+.c-color-palette.animate .color:nth-child(2) .fill:before,
+.c-color-palette.animate .color:nth-child(2) .picker,
+.c-color-palette.animate .color:nth-child(2) .picker:after,
+.c-color-palette.animate .color:nth-child(2) .picker:before
 {
     -webkit-animation-delay: .2s                        ;animation-delay: .2s;
-}.c-palette.animate .color:nth-child(3) .fill,
-.c-palette.animate .color:nth-child(3) .fill:before,
-.c-palette.animate .color:nth-child(3) .picker,
-.c-palette.animate .color:nth-child(3) .picker:after,
-.c-palette.animate .color:nth-child(3) .picker:before
+}.c-color-palette.animate .color:nth-child(3) .fill,
+.c-color-palette.animate .color:nth-child(3) .fill:before,
+.c-color-palette.animate .color:nth-child(3) .picker,
+.c-color-palette.animate .color:nth-child(3) .picker:after,
+.c-color-palette.animate .color:nth-child(3) .picker:before
 {
     -webkit-animation-delay: .45s                        ;animation-delay: .45s;
-}.c-palette.animate .color:nth-child(4) .fill,
-.c-palette.animate .color:nth-child(4) .fill:before,
-.c-palette.animate .color:nth-child(4) .picker,
-.c-palette.animate .color:nth-child(4) .picker:after,
-.c-palette.animate .color:nth-child(4) .picker:before
+}.c-color-palette.animate .color:nth-child(4) .fill,
+.c-color-palette.animate .color:nth-child(4) .fill:before,
+.c-color-palette.animate .color:nth-child(4) .picker,
+.c-color-palette.animate .color:nth-child(4) .picker:after,
+.c-color-palette.animate .color:nth-child(4) .picker:before
 {
     -webkit-animation-delay: .1s                        ;animation-delay: .1s;
-}.c-palette.animate .color:nth-child(5) .fill,
-.c-palette.animate .color:nth-child(5) .fill:before,
-.c-palette.animate .color:nth-child(5) .picker,
-.c-palette.animate .color:nth-child(5) .picker:after,
-.c-palette.animate .color:nth-child(5) .picker:before
+}.c-color-palette.animate .color:nth-child(5) .fill,
+.c-color-palette.animate .color:nth-child(5) .fill:before,
+.c-color-palette.animate .color:nth-child(5) .picker,
+.c-color-palette.animate .color:nth-child(5) .picker:after,
+.c-color-palette.animate .color:nth-child(5) .picker:before
 {
     -webkit-animation-delay: .3s                        ;animation-delay: .3s;
-}.c-palette.animate .color:nth-child(6) .fill,
-.c-palette.animate .color:nth-child(6) .fill:before,
-.c-palette.animate .color:nth-child(6) .picker,
-.c-palette.animate .color:nth-child(6) .picker:after,
-.c-palette.animate .color:nth-child(6) .picker:before
+}.c-color-palette.animate .color:nth-child(6) .fill,
+.c-color-palette.animate .color:nth-child(6) .fill:before,
+.c-color-palette.animate .color:nth-child(6) .picker,
+.c-color-palette.animate .color:nth-child(6) .picker:after,
+.c-color-palette.animate .color:nth-child(6) .picker:before
 {
     -webkit-animation-delay: .05s                        ;animation-delay: .05s;
-}.c-palette.animate .color:nth-child(7) .fill,
-.c-palette.animate .color:nth-child(7) .fill:before,
-.c-palette.animate .color:nth-child(7) .picker,
-.c-palette.animate .color:nth-child(7) .picker:after,
-.c-palette.animate .color:nth-child(7) .picker:before
+}.c-color-palette.animate .color:nth-child(7) .fill,
+.c-color-palette.animate .color:nth-child(7) .fill:before,
+.c-color-palette.animate .color:nth-child(7) .picker,
+.c-color-palette.animate .color:nth-child(7) .picker:after,
+.c-color-palette.animate .color:nth-child(7) .picker:before
 {
     -webkit-animation-delay: .35s                        ;animation-delay: .35s;
-}.c-palette.animate .color:nth-child(8) .fill,
-.c-palette.animate .color:nth-child(8) .fill:before,
-.c-palette.animate .color:nth-child(8) .picker,
-.c-palette.animate .color:nth-child(8) .picker:after,
-.c-palette.animate .color:nth-child(8) .picker:before
+}.c-color-palette.animate .color:nth-child(8) .fill,
+.c-color-palette.animate .color:nth-child(8) .fill:before,
+.c-color-palette.animate .color:nth-child(8) .picker,
+.c-color-palette.animate .color:nth-child(8) .picker:after,
+.c-color-palette.animate .color:nth-child(8) .picker:before
 {
     -webkit-animation-delay: .15s                        ;animation-delay: .15s;
-}.c-palette.animate .color:nth-child(9) .fill,
-.c-palette.animate .color:nth-child(9) .fill:before,
-.c-palette.animate .color:nth-child(9) .picker,
-.c-palette.animate .color:nth-child(9) .picker:after,
-.c-palette.animate .color:nth-child(9) .picker:before
+}.c-color-palette.animate .color:nth-child(9) .fill,
+.c-color-palette.animate .color:nth-child(9) .fill:before,
+.c-color-palette.animate .color:nth-child(9) .picker,
+.c-color-palette.animate .color:nth-child(9) .picker:after,
+.c-color-palette.animate .color:nth-child(9) .picker:before
 {
     -webkit-animation-delay: .25s                        ;animation-delay: .25s;
 }@-webkit-keyframes fill
@@ -1564,34 +1564,34 @@ li#customize-control-site_logo .actions
 }.label
 {
     margin-right: auto;
-}.c-palette__blur
+}.c-color-palette__blur
 {
     display: none;
 }#customize-theme-controls [id*='sm_current_color_palette_control']
 {
     display: block;width: auto;margin: -12px -12px 19px;
-}#customize-theme-controls [id*='sm_current_color_palette_control'] .palette-container
+}#customize-theme-controls [id*='sm_current_color_palette_control'] .color-palette-container
 {
     padding: 19px;background: white;
-}.c-palette__name
+}.c-color-palette__name
 {
     margin-right: auto;
-}.c-palette__control
+}.c-color-palette__control
 {display: -ms-flexbox;display: flex;
 
     width: 2em;height: 2em;margin-left: .25em;border-radius: 50%;-ms-flex-pack: center;justify-content: center;-ms-flex-align: center;align-items: center;
-}.c-palette__control,
-.c-palette__control span
+}.c-color-palette__control,
+.c-color-palette__control span
 {
     transition: color .3s ease-in-out;
-}.c-palette__control span
+}.c-color-palette__control span
 {-webkit-transform: scale(.8)                                        ;transform: scale(.8);
 
     color: rgba(0,0,0,.25);
-}.c-palette__control.active
+}.c-color-palette__control.active
 {
     background: currentColor;
-}.c-palette__control.active span
+}.c-color-palette__control.active span
 {
     color: white;
 }#sub-accordion-section-style_manager_section
@@ -1610,17 +1610,17 @@ li#customize-control-site_logo .actions
 }#sub-accordion-section-style_manager_section.advanced #customize-control-sm_color_palette_control
 {
     display: none !important;
-}.c-palette .iris-picker
+}.c-color-palette .iris-picker
 {
     position: absolute;z-index: 100;top: 100%;left: 0;margin-top: 1em;border: 0;box-shadow: black 0 3px 12px -4px;
-}.c-palette .iris-picker .iris-square-handle
+}.c-color-palette .iris-picker .iris-square-handle
 {top: -6px;left: -6px;
 
     border-color: transparent;
-}.c-palette .iris-picker .iris-square-handle:after
+}.c-color-palette .iris-picker .iris-square-handle:after
 {
     position: absolute;top: 0;right: 0;bottom: 0;left: 0;border: 2px solid white;
-}.c-palette .iris-picker .iris-square-value
+}.c-color-palette .iris-picker .iris-square-value
 {
     box-shadow: none !important;
 }.color .picker
@@ -1632,17 +1632,17 @@ li#customize-control-site_logo .actions
 }.color.inactive .picker:hover
 {
     opacity: 1;
-}.c-palette__tooltip
+}.c-color-palette__tooltip
 {
     position: absolute;z-index: 300;bottom: 100%;left: 50%;margin-bottom: 5px;padding: 4px 14px;transition: opacity .2s ease-out;-webkit-transform: translateX(-50%);transform: translateX(-50%);opacity: 0;color: white;background-color: #606a72;box-shadow: 0 2px 5px 0 rgba(0,0,0,.15);
-}.c-palette__tooltip:after
+}.c-color-palette__tooltip:after
 {position: absolute;top: 100%;left: 50%;display: block;
 
     content: '';-webkit-transform: translateX(-50%);transform: translateX(-50%);border: 5px solid transparent;border-top-color: #606a72;border-bottom-width: 0;
-}.c-palette__control:hover .c-palette__tooltip
+}.c-color-palette__control:hover .c-color-palette__tooltip
 {
     opacity: 1;
-}.c-palette__control
+}.c-color-palette__control
 {
     position: relative;cursor: pointer;
 }#customize-control-sm_toggle_advanced_settings_control

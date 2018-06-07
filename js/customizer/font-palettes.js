@@ -1,18 +1,12 @@
 ( function( $, exports, wp ) {
 
     const settings = [
-        "sm_color_primary",
-        "sm_color_secondary",
-        "sm_color_tertiary",
-        "sm_dark_primary",
-        "sm_dark_secondary",
-        "sm_dark_tertiary",
-        "sm_light_primary",
-        "sm_light_secondary",
-        "sm_light_tertiary"
+        'sm_font_primary',
+        'sm_font_secondary',
+        'sm_font_body'
     ];
 
-    const initializeColorPalettes = () => {
+    const initializeFontPalettes = () => {
         // cache initial settings configuration to be able to update connected fields on variation change
         window.settingsClone = $.extend(true, {}, wp.customize.settings.settings);
 
@@ -22,48 +16,48 @@
     };
 
     const updateCurrentPalette = ( label ) => {
-        const $palette = $( '.c-color-palette' );
+        const $palette = $( '.c-font-palette' );
 
         if ( ! $palette.length ) {
             return;
         }
 
-        const $current = $palette.find( '.colors.current' );
-        const $next = $palette.find( '.colors.next' );
+        const $current = $palette.find( '.fonts.current' );
+        const $next = $palette.find( '.fonts.next' );
 
         label = label || 'Custom Style';
-        $palette.find( '.c-color-palette__name' ).text( label );
+        $palette.find( '.c-font-palette__name' ).text( label );
 
-        // apply the last animate set of colors to the "current" color palette
+        // apply the last animate set of fonts to the "current" font palette
         _.each( settings, function( setting_id ) {
-            const color = $next.find( '.' + setting_id ).css( 'color' );
-            $current.find( '.' + setting_id ).css( 'color', color );
+            const font = $next.find( '.' + setting_id ).css( 'font' );
+            $current.find( '.' + setting_id ).css( 'font', font );
         });
 
-        // removing the "animate" class will put the "next" color palette out view
-        // so we can update the colors in it
+        // removing the "animate" class will put the "next" font palette out view
+        // so we can update the fonts in it
         $palette.removeClass( 'animate' );
 
-        // update the colors in the "next" palette with the new values
+        // update the fonts in the "next" palette with the new values
         _.each( settings, function( setting_id ) {
             const setting = wp.customize( setting_id );
 
             if ( typeof setting !== "undefined" ) {
-                $next.find( '.' + setting_id ).css( 'color', setting() );
+                $next.find( '.' + setting_id ).css( 'font', setting() );
             }
         });
 
-        // trigger transition to new color palette
+        // trigger transition to new font palette
         setTimeout(function() {
             $palette.addClass( 'animate' );
-            $palette.find( '.c-color-palette__control' ).css( 'color', wp.customize( 'sm_color_primary' )() );
+            $palette.find( '.c-font-palette__control' ).css( 'font', wp.customize( 'sm_font_primary' )() );
         });
     };
 
     const bindVariationChange = () => {
-        const paletteControlSelector = '.c-color-palette__control';
+        const paletteControlSelector = '.c-font-palette__control';
         const $paletteControl = $( paletteControlSelector );
-        const variation = wp.customize( 'sm_color_palette_variation' )();
+        const variation = wp.customize( 'sm_font_palette_variation' )();
 
         if ( _.isUndefined( variation ) || ! $paletteControl.length ) {
             return;
@@ -112,7 +106,7 @@
         } );
 
 	    let optionsSelector = '.' + optionsToShow.join( ', .' );
-	    $( '.c-color-palette .color' ).addClass( 'hidden' ).filter( optionsSelector ).removeClass( 'hidden' );
+	    $( '.c-font-palette .font' ).addClass( 'hidden' ).filter( optionsSelector ).removeClass( 'hidden' );
     };
 
     const resetSettings = settings => {
@@ -162,9 +156,9 @@
         } );
     };
 
-    // alter connected fields of the master colors controls depending on the selected palette variation
+    // alter connected fields of the master fonts controls depending on the selected palette variation
     const reloadConnectedFields = () => {
-        const setting = wp.customize( 'sm_color_palette_variation' );
+        const setting = wp.customize( 'sm_font_palette_variation' );
 
         if ( _.isUndefined( setting ) ) {
             return;
@@ -182,68 +176,13 @@
     };
 
     const createCurrentPaletteControls = () => {
-        const $palette = $( '.c-color-palette' );
+        const $palette = $( '.c-font-palette' );
 
         if ( ! $palette.length ) {
             return;
         }
 
-        const $colors = $palette.find( '.colors.next .color' );
-
-        $colors.each( ( i, obj ) => {
-            const $obj = $( obj );
-            const setting_id = $obj.data( 'setting' );
-            const setting = wp.customize( setting_id );
-
-            $obj.iris( {
-                change: ( event, ui ) => {
-                    const lastColor = setting();
-                    const currentColor = ui.color.toString();
-
-                    if ( 'sm_color_primary' === $obj.data( 'setting' ) ) {
-	                    $( '.c-color-palette__control' ).css( 'color', currentColor );
-                    }
-
-                    if ( lastColor !== currentColor ) {
-                        $obj.css( 'color', currentColor );
-	                    setting.set( currentColor );
-                        $palette.find( '.c-color-palette__name' ).text( 'Custom Style' );
-                    }
-                }
-            } );
-
-	        $obj.find( '.iris-picker' ).on( 'click', function( e ) {
-		        e.stopPropagation();
-		        e.preventDefault();
-            } );
-
-            $obj.on( 'click', ( e ) => {
-                e.stopPropagation();
-                e.preventDefault();
-
-                const hidden = ! $obj.find( '.iris-picker' ).is( ":visible" );
-
-                if ( hidden ) {
-                    $colors.not( $obj ).addClass( 'inactive' ).iris( 'hide' );
-                    $obj.removeClass( 'inactive' );
-
-	                const $iris = $obj.find( '.iris-picker' );
-	                const paletteWidth = $palette.outerWidth();
-	                const irisWidth = $iris.outerWidth();
-
-	                $iris.css( 'left', ( paletteWidth - irisWidth ) * i / ( $colors.length - 1 ) );
-                } else {
-                    $colors.removeClass( 'inactive' );
-                }
-
-                $obj.iris( 'color', $obj.css( 'color' ) );
-                $obj.iris( 'toggle' );
-            } );
-        } );
-
-        $( 'body' ).on( 'click', function() {
-            $colors.removeClass( 'inactive' ).iris( 'hide' );
-        } );
+        const $fonts = $palette.find( '.fonts.next .font' );
     };
 
     const onPaletteChange = function() {
@@ -258,22 +197,22 @@
         updateCurrentPalette( label );
     };
 
-    const handleColorPalettes = () => {
-        initializeColorPalettes();
+    const handleFontPalettes = () => {
+        initializeFontPalettes();
         createCurrentPaletteControls();
 	    reloadConnectedFields();
         updateCurrentPalette();
         bindVariationChange();
 
         // when variation is changed reload connected fields from cached version of customizer settings config
-        $( document ).on( 'change', '[name="_customize-radio-sm_color_palette_variation_control"]', function() {
+        $( document ).on( 'change', '[name="_customize-radio-sm_font_palette_variation_control"]', function() {
             reloadConnectedFields();
 	        resetSettings( settings );
         });
 
-        $( document ).on( 'click', '.customify_preset.color_palette input', onPaletteChange );
+        $( document ).on( 'click', '.customify_preset.font_palette input', onPaletteChange );
     };
 
-    wp.customize.bind( 'ready', handleColorPalettes );
+    wp.customize.bind( 'ready', handleFontPalettes );
 
 } )( jQuery, window, wp );

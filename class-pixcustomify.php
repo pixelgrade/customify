@@ -354,7 +354,7 @@ class PixCustomifyPlugin {
 		wp_register_script( 'customify_select2', plugins_url( 'js/select2/js/select2.js', $this->file ), array( 'jquery' ), $this->_version );
 		wp_register_script( 'jquery-react', plugins_url( 'js/jquery-react.js', $this->file ), array( 'jquery' ), $this->_version );
 
-		wp_register_script( 'customify-scale', plugins_url( 'js/customizer/scale.js', $this->file ), array( 'jquery' ), $this->_version );
+		wp_register_script( 'customify-scale', plugins_url( 'js/customizer/scale-iframe.js', $this->file ), array( 'jquery' ), $this->_version );
 
 		wp_register_script( $this->plugin_slug . '-customizer-scripts', plugins_url( 'js/customizer.js', $this->file ), array(
 			'jquery',

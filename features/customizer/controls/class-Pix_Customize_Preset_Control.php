@@ -140,7 +140,7 @@ class Pix_Customize_Preset_Control extends Pix_Customize_Control {
                         // Make sure that the preview defaults are in place
                         $choice_config['preview'] = wp_parse_args( $choice_config['preview'], array(
                             'sample_letter' => 'A',
-                            'background_image_url' => plugins_url( 'images/color_palette_image.jpg', PixCustomifyPlugin()->file ),
+                            'background_image_url' => plugins_url( 'images/color_palette_image.jpg', PixCustomifyPlugin()->get_file() ),
                         ) );
 
                         // Determine a (primary) color with fallback for missing options
@@ -198,13 +198,13 @@ class Pix_Customize_Preset_Control extends Pix_Customize_Control {
                             <label for="<?php echo esc_attr( $choice_value ); ?>">
                                 <span class="label__inner" style="color: <?php echo esc_attr( $this->lightOrDark( $sm_light ) ); ?>; background: <?php echo esc_attr( $sm_light ); ?>;">
                                     <i class="preview__letter" style="background: <?php echo $sm_color; ?>"><?php echo $choice_config['preview']['sample_letter']; ?></i>
-                                    <i class="preview__letter--checked" style="background-color: <?php echo $sm_color; ?>; background-image: url('<?php echo plugins_url( 'images/check.svg', PixCustomifyPlugin()->file ); ?>')"></i>
+                                    <i class="preview__letter--checked" style="background-color: <?php echo $sm_color; ?>; background-image: url('<?php echo plugins_url( 'images/check.svg', PixCustomifyPlugin()->get_file() ); ?>')"></i>
                                     <?php echo esc_html( $label ); ?>
                                 </span>
                             </label>
                             <div class="palette">
                                 <?php foreach ( $choice_config['options'] as $color_name => $color_value ) {
-		                            if ( ! empty( $customizer_config["sections"]["style_manager_section"]["options"][$color_name]['connected_fields'] ) ) {
+		                            if ( ! empty( $customizer_config['sections']['style_manager_section']['options'][$color_name]['connected_fields'] ) ) {
 			                            echo '<div class="palette__item ' . esc_attr( $color_name ) . '" style="background: ' . esc_attr( $color_value ) . '"></div>' . PHP_EOL;
 		                            }
                                 } ?>
@@ -212,6 +212,65 @@ class Pix_Customize_Preset_Control extends Pix_Customize_Control {
                         </span>
                     <?php } ?>
                 </div>
+
+				<?php break;
+			}
+
+			case 'font_palette' : { ?>
+				<?php if ( ! empty( $this->label ) ) { ?>
+					<span class="customize-control-title"><?php echo esc_html( $this->label ); ?></span>
+				<?php }
+
+				if ( ! empty( $this->description ) ) { ?>
+					<span class="description customize-control-description"><?php echo $this->description; ?></span>
+				<?php } ?>
+
+				<div class="customify_preset font_palette customize-control customize-control-radio">
+					<?php
+					foreach ( $this->choices as $choice_value => $choice_config ){
+						if ( empty( $choice_config['fonts'] ) ) {
+							continue;
+						}
+
+						// Make sure that the defaults are in place
+						$choice_config = wp_parse_args( $choice_config, array(
+							'label' => '',
+							'preview' => array(),
+						) );
+
+						// Make sure that the preview defaults are in place
+						$choice_config['preview'] = wp_parse_args( $choice_config['preview'], array(
+							'sample_letter' => 'A',
+							'background_image_url' => plugins_url( 'images/color_palette_image.jpg', PixCustomifyPlugin()->get_file() ),
+						) );
+
+						$label = $choice_config['label'];
+						$options = $this->convertChoiceOptionsIdsToSettingIds( $choice_config['fonts'] );
+						$data = ' data-options=\'' . json_encode( $options ) . '\'';
+
+						$customizer_config = PixCustomifyPlugin()->get_customizer_config();
+
+						?>
+
+						<span class="customize-inside-control-row <?php echo ( (string) $this->value() === (string) $choice_value ? 'current-font-palette' : '' );?>" style="background-image: url( <?php echo esc_url( $choice_config['preview']['background_image_url'] ); ?> );">
+                            <input <?php $this->link(); echo 'name="' . $this->setting->id . '" id="' . esc_attr( $choice_value ) . '" type="radio" value="' . esc_attr( $choice_value ) . '" ' . selected( $this->value(), $choice_value, false ) . $data .' />'; ?>
+							<label for="<?php echo esc_attr( $choice_value ); ?>">
+                                <span class="label__inner" style="">
+                                    <i class="preview__letter" style=""><?php echo $choice_config['preview']['sample_letter']; ?></i>
+                                    <i class="preview__letter--checked" style="background-image: url('<?php echo plugins_url( 'images/check.svg', PixCustomifyPlugin()->get_file() ); ?>')"></i>
+	                                <?php echo esc_html( $label ); ?>
+                                </span>
+                            </label>
+                            <div class="palette">
+                                <?php foreach ( $choice_config['fonts'] as $font_name => $font_value ) {
+	                                if ( ! empty( $customizer_config['sections']['style_manager_section']['options'][$font_name]['connected_fields'] ) ) {
+		                                echo '<div class="palette__item ' . esc_attr( $font_name ) . '" style=""></div>' . PHP_EOL;
+	                                }
+                                } ?>
+                            </div>
+                        </span>
+					<?php } ?>
+				</div>
 
 				<?php break;
 			}

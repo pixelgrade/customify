@@ -17,7 +17,7 @@ class Customify_Color_Palettes {
 
 	/**
 	 * Holds the only instance of this class.
-	 * @var     null|Customify_Color_Palettes
+	 * @var     null|Customify_Font_Palettes
 	 * @access  protected
 	 * @since   1.7.5
 	 */
@@ -53,7 +53,7 @@ class Customify_Color_Palettes {
 		 */
 		add_filter( 'customify_filter_fields', array( $this, 'add_style_manager_section_master_colors_config' ), 12, 1 );
 		// This needs to come after the external theme config has been applied
-		add_filter( 'customify_filter_fields', array( $this, 'add_current_color_palette_control' ), 110, 1 );
+		add_filter( 'customify_filter_fields', array( $this, 'add_current_palette_control' ), 110, 1 );
 
 		/*
 		 * Scripts enqueued in the Customizer.
@@ -69,7 +69,7 @@ class Customify_Color_Palettes {
 		/**
 		 * Add color palettes usage to site data.
 		 */
-		add_filter( 'customify_style_manager_get_site_data', array( $this, 'add_color_palettes_to_site_data' ), 10, 1 );
+		add_filter( 'customify_style_manager_get_site_data', array( $this, 'add_palettes_to_site_data' ), 10, 1 );
 	}
 
 	/**
@@ -102,14 +102,14 @@ class Customify_Color_Palettes {
 	 *
 	 * @return array
 	 */
-	public function get_color_palettes( $skip_cache = false ) {
+	public function get_palettes( $skip_cache = false ) {
 		// Make sure that the Design Assets class is loaded.
 		require_once 'lib/class-customify-design-assets.php';
 
 		// Get the design assets data.
 		$design_assets = Customify_Design_Assets::instance()->get( $skip_cache );
 		if ( false === $design_assets || empty( $design_assets['color_palettes'] ) ) {
-			$color_palettes_config = $this->get_default_color_palettes_config();
+			$color_palettes_config = $this->get_default_config();
 		} else {
 			$color_palettes_config = $design_assets['color_palettes'];
 		}
@@ -167,7 +167,7 @@ class Customify_Color_Palettes {
 					'desc'         => esc_html__( 'Conveniently change the design of your site with color palettes. Easy as pie.', 'customify' ),
 					'default'      => 'lilac',
 					'choices_type' => 'color_palette',
-					'choices'      => $this->get_color_palettes(),
+					'choices'      => $this->get_palettes(),
 				),
 				'sm_color_palette_variation' => array(
 					'type'         => 'radio',
@@ -336,7 +336,7 @@ class Customify_Color_Palettes {
 	 *
 	 * @return array
 	 */
-	public function add_current_color_palette_control( $config ) {
+	public function add_current_palette_control( $config ) {
 		// If there is no style manager support, bail early.
 		if ( ! $this->is_supported() ) {
 			return $config;
@@ -370,31 +370,31 @@ class Customify_Color_Palettes {
               'sm_current_color_palette' => array(
                   'type' => 'html',
                   'html' =>
-                      '<div class="palette-container">' . PHP_EOL .
+                      '<div class="color-palette-container">' . PHP_EOL .
                       '<span class="customize-control-title">Current Color Palette:</span>' . PHP_EOL .
                       '<span class="description customize-control-description">Choose a color palette to start with. Adjust its style using the variation buttons below.</span>' . PHP_EOL .
-                      '<div class="c-palette">' . PHP_EOL .
+                      '<div class="c-color-palette">' . PHP_EOL .
                       $current_palette .
-                      '<div class="c-palette__overlay">' . PHP_EOL .
-                      '<div class="c-palette__label">' .
-                      '<div class="c-palette__name">' . 'Original Style' . '</div>' .
-                      '<div class="c-palette__control variation-light active" data-target="#_customize-input-sm_color_palette_variation_control-radio-light">' .
+                      '<div class="c-color-palette__overlay">' . PHP_EOL .
+                      '<div class="c-color-palette__label">' .
+                      '<div class="c-color-palette__name">' . 'Original Style' . '</div>' .
+                      '<div class="c-color-palette__control variation-light active" data-target="#_customize-input-sm_color_palette_variation_control-radio-light">' .
                       '<span class="dashicons dashicons-image-rotate"></span>' .
-                      '<div class="c-palette__tooltip">Light</div>' .
+                      '<div class="c-color-palette__tooltip">Light</div>' .
                       '</div>' .
-                      '<div class="c-palette__control variation-dark" data-target="#_customize-input-sm_color_palette_variation_control-radio-dark">' .
+                      '<div class="c-color-palette__control variation-dark" data-target="#_customize-input-sm_color_palette_variation_control-radio-dark">' .
                       '<span class="dashicons dashicons-image-filter"></span>'.
-                      '<div class="c-palette__tooltip">Dark</div>' .
+                      '<div class="c-color-palette__tooltip">Dark</div>' .
                       '</div>' .
-                      '<div class="c-palette__control variation-colorful" data-target="#_customize-input-sm_color_palette_variation_control-radio-colorful">' .
+                      '<div class="c-color-palette__control variation-colorful" data-target="#_customize-input-sm_color_palette_variation_control-radio-colorful">' .
                       '<span class="dashicons dashicons-admin-appearance"></span>' .
-                      '<div class="c-palette__tooltip">Colorful</div>' .
+                      '<div class="c-color-palette__tooltip">Colorful</div>' .
                       '</div>' .
                       '</div>' . PHP_EOL .
                       '</div>' . PHP_EOL .
                       '</div>' . PHP_EOL .
                       '</div>' . PHP_EOL .
-                      '<svg class="c-palette__blur" width="15em" height="15em" viewBox="0 0 15 15" xmlns="http://www.w3.org/2000/svg" version="1.1">' . PHP_EOL .
+                      '<svg class="c-color-palette__blur" width="15em" height="15em" viewBox="0 0 15 15" xmlns="http://www.w3.org/2000/svg" version="1.1">' . PHP_EOL .
                       '<defs>' . PHP_EOL .
                       '<filter id="goo">' . PHP_EOL .
                       '<feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />' . PHP_EOL .
@@ -412,14 +412,14 @@ class Customify_Color_Palettes {
 	/**
 	 * Get the default (hard-coded) color palettes configuration.
 	 *
-	 * This is only a fallback config in case we can't communicate with the cloud.
+	 * This is only a fallback config in case we can't communicate with the cloud, the first time.
 	 *
 	 * @since 1.7.5
 	 *
 	 * @return array
 	 */
-	protected function get_default_color_palettes_config() {
-		$default_color_palettes = array(
+	protected function get_default_config() {
+		$default_config = array(
 			'vasco'  => array(
 				'label'   => esc_html__( 'Restful Beach', 'customify' ),
 				'preview' => array(
@@ -542,7 +542,7 @@ class Customify_Color_Palettes {
 			'lilac'  => array(
 				'label'   => esc_html__( 'Soft Lilac', 'customify' ),
 				'preview' => array(
-					'background_image_url' => 'http://pxgcdn.com/images/style-manager/color-palettes/lilac-palette.jpg',
+					'background_image_url' => 'http://pxgcdn.com/images/style-manager/color-palettes/lilac-color-palette.jpg',
 				),
 				'options' => array(
 					'sm_color_primary'   => '#DD8CA9',
@@ -558,7 +558,7 @@ class Customify_Color_Palettes {
 			),
 		);
 
-		return apply_filters( 'customify_style_manager_default_color_palettes', $default_color_palettes );
+		return apply_filters( 'customify_style_manager_default_color_palettes', $default_config );
 	}
 
 
@@ -570,7 +570,7 @@ class Customify_Color_Palettes {
 	 *
 	 * @return string|false
 	 */
-	protected function get_current_color_palette() {
+	protected function get_current_palette() {
 		return get_option( 'sm_color_palette', false );
 	}
 
@@ -581,7 +581,7 @@ class Customify_Color_Palettes {
 	 *
 	 * @return string|false
 	 */
-	protected function get_current_color_palette_variation() {
+	protected function get_current_palette_variation() {
 		return get_option( 'sm_color_palette_variation', false );
 	}
 
@@ -598,12 +598,12 @@ class Customify_Color_Palettes {
 			return false;
 		}
 
-		$current_palette = $this->get_current_color_palette();
+		$current_palette = $this->get_current_palette();
 		if ( empty( $current_palette ) ) {
 			return false;
 		}
 
-		$color_palettes = $this->get_color_palettes();
+		$color_palettes = $this->get_palettes();
 		if ( ! isset( $color_palettes[ $current_palette ] ) || empty( $color_palettes[ $current_palette ]['options'] ) ) {
 			return false;
 		}
@@ -633,7 +633,7 @@ class Customify_Color_Palettes {
 	 *
 	 * @return bool
 	 */
-	protected function is_using_custom_color_palette(){
+	protected function is_using_custom_palette(){
 		return (bool) get_option( 'sm_is_custom_color_palette', false );
 	}
 
@@ -667,16 +667,16 @@ class Customify_Color_Palettes {
 	 *
 	 * @return array
 	 */
-	public function add_color_palettes_to_site_data( $site_data ) {
+	public function add_palettes_to_site_data( $site_data ) {
 		if ( empty( $site_data['color_palettes'] ) ) {
 			$site_data['color_palettes'] = array();
 		}
 
 		// If others have added data before us, we will merge with it.
 		$site_data['color_palettes'] = array_merge( $site_data['color_palettes'], array(
-			'current' => $this->get_current_color_palette(),
-			'variation' => $this->get_current_color_palette_variation(),
-			'custom' => $this->is_using_custom_color_palette(),
+			'current' => $this->get_current_palette(),
+			'variation' => $this->get_current_palette_variation(),
+			'custom' => $this->is_using_custom_palette(),
 		) );
 
 		return $site_data;
@@ -690,7 +690,7 @@ class Customify_Color_Palettes {
 	 * @since  1.7.5
 	 * @static
 	 *
-	 * @return Customify_Color_Palettes Main Customify_Color_Palettes instance
+	 * @return Customify_Font_Palettes Main Customify_Color_Palettes instance
 	 */
 	public static function instance() {
 

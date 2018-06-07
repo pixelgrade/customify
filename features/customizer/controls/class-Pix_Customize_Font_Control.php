@@ -37,6 +37,8 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 	public function __construct( $manager, $id, $args = array() ) {
 		global $wp_customize;
 
+		parent::__construct( $manager, $id, $args );
+
 		self::$std_fonts = apply_filters( 'customify_filter_standard_fonts_list', array(
 			"Arial, Helvetica, sans-serif"                         => "Arial, Helvetica, sans-serif",
 			"'Arial Black', Gadget, sans-serif"                    => "'Arial Black', Gadget, sans-serif",
@@ -57,37 +59,6 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 			"Verdana, Geneva, sans-serif"                          => "Verdana, Geneva, sans-serif",
 		) );
 
-		$keys = array_keys( get_object_vars( $this ) );
-		foreach ( $keys as $key ) {
-			if ( isset( $args[ $key ] ) ) {
-				$this->$key = $args[ $key ];
-			}
-		}
-
-		$this->manager = $manager;
-		$this->id      = $id;
-		if ( empty( $this->active_callback ) ) {
-			$this->active_callback = array( $this, 'active_callback' );
-		}
-		self::$instance_count += 1;
-		$this->instance_number = self::$instance_count;
-
-		// Process settings.
-		if ( empty( $this->settings ) ) {
-			$this->settings = $id;
-		}
-
-		$settings = array();
-		if ( is_array( $this->settings ) ) {
-			foreach ( $this->settings as $key => $setting ) {
-				$settings[ $key ] = $this->manager->get_setting( $setting );
-			}
-		} else {
-			$this->setting       = $this->manager->get_setting( $this->settings );
-			$settings['default'] = $this->setting;
-		}
-
-		$this->settings = $settings;
 		$this->CSSID    = $this->get_CSS_ID();
 		$this->load_google_fonts();
 
@@ -294,15 +265,12 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 	}
 
 	function display_font_weight_field( $current_value ) {
-
 		$display = 'none';
-
 		if ( ! $this->load_all_weights && $this->font_weight ) {
 			$display = 'inline-block';
 		} ?>
-		<li class="customify_weights_wrapper customize-control font-options__option"
-		    style="display: <?php echo $display; ?>">
-			<select class="customify_font_weight" data-field="selected_variants" <?php echo ! empty( $current_value->selected_variants ) ? 'data-default="' . $current_value->selected_variants . '"' : null; ?>>
+		<li class="customify_weights_wrapper customize-control font-options__option" style="display: <?php echo $display; ?>;">
+			<select class="customify_font_weight" data-field="selected_variants" <?php echo ! empty( $current_value->selected_variants ) ? 'data-default="' . $current_value->selected_variants . '"' : ''; echo ( isset( $this->fields['font-weight'] ) && false === $this->fields['font-weight'] ) ? 'data-disabled' : ''; ?>>
 				<?php
 				$selected = array();
 				if ( isset( $current_value->selected_variants ) ) {
@@ -328,11 +296,10 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 
 	function display_font_subset_field( $current_value ) {
 		$display = 'none';
-		if ( $this->subsets && ! empty( $current_value->subsets ) ) {
+		if ( $this->subsets && ! empty( $current_value->subsets ) && ! empty( $this->fields['subsets'] ) ) {
 			$display = 'inline-block';
 		} ?>
-		<li class="customify_subsets_wrapper customize-control font-options__option"
-		    style="display: <?php echo $display; ?>">
+		<li class="customify_subsets_wrapper customize-control font-options__option" style="display: <?php echo $display; ?>;">
 			<select multiple class="customify_font_subsets" data-field="selected_subsets">
 				<?php
 				$selected = array();

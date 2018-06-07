@@ -62,7 +62,7 @@
 			} );
 
 			// for each range input add a value preview output
-			$( '.accordion-section-content[id*="' + customify_settings.options_name + '"]' ).each( function() {
+			$( '.accordion-section-content[id*="' + customify_settings.options_name + '"], #sub-accordion-section-style_manager_section' ).each( function() {
 
 				// Initialize range fields logic
 				customifyHandleRangeFields( this );
@@ -1171,7 +1171,7 @@
 
 					variants = maybeJsonParse( variants );
 
-					if ( customify_settings.settings[id].load_all_weights || typeof variants === "undefined" || Object.keys( variants ).length < 2 ) {
+					if ( customify_settings.settings[id].load_all_weights || typeof variants === "undefined" || Object.keys( variants ).length < 2 || font_weights.data('disabled') !== undefined ) {
 						font_weights.parent().hide();
 					} else {
 						font_weights.parent().show();

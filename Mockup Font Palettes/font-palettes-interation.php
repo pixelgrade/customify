@@ -32,7 +32,7 @@ $config = [
 					'max' => 100,
 					
 					[
-						'interval' => [0,14],									// Use the following style from 0px to 31px [including]
+						'interval' => [0,31],									// Use the following style from 0px to 31px [including]
 						'font-weight'			=> 400,
 						'letter-spacing'		=> '0em',
 						'text-transform'		=> 'none'

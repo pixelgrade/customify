@@ -32,6 +32,14 @@ class Customify_Style_Manager {
 	public $parent = null;
 
 	/**
+	 * The external theme configs object.
+	 * @var     null|Customify_Theme_Configs
+	 * @access  public
+	 * @since   1.7.5
+	 */
+	protected $theme_configs = null;
+
+	/**
 	 * The color palettes object.
 	 * @var     null|Customify_Color_Palettes
 	 * @access  public
@@ -40,12 +48,12 @@ class Customify_Style_Manager {
 	protected $color_palettes = null;
 
 	/**
-	 * The external theme configs object.
-	 * @var     null|Customify_Theme_Configs
+	 * The font palettes object.
+	 * @var     null|Customify_Font_Palettes
 	 * @access  public
 	 * @since   1.7.5
 	 */
-	protected $theme_configs = null;
+	protected $font_palettes = null;
 
 	/**
 	 * The Cloud API object.
@@ -85,6 +93,12 @@ class Customify_Style_Manager {
 		 */
 		require_once 'class-customify-color-palettes.php';
 		$this->color_palettes = Customify_Color_Palettes::instance();
+
+		/**
+		 * Initialize the Font Palettes logic.
+		 */
+		require_once 'class-customify-font-palettes.php';
+		$this->font_palettes = Customify_Font_Palettes::instance();
 
 		/**
 		 * Initialize the Cloud API logic.
