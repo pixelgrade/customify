@@ -123,25 +123,95 @@ let FontPalettes = ( function( $, exports, wp ) {
         });
     };
 
-    const getConnectedFieldsCallback = function( parent_setting_data, parent_setting_id ) {
-        return function( new_value, old_value ) {
-            _.each( parent_setting_data.connected_fields, function( connected_field_data ) {
-                if ( _.isUndefined( connected_field_data ) || _.isUndefined( connected_field_data.setting_id ) || ! _.isString( connected_field_data.setting_id ) ) {
+    const getConnectedFieldsCallback = function (parent_setting_data, parent_setting_id) {
+        return function (new_value, old_value) {
+            _.each(parent_setting_data.connected_fields, function (connected_field_data) {
+                if (_.isUndefined(connected_field_data) || _.isUndefined(connected_field_data.setting_id) || !_.isString(connected_field_data.setting_id) || _.isUndefined(parent_setting_data.fonts_logic)) {
                     return;
                 }
 
-                const setting = wp.customize( connected_field_data.setting_id );
-                if ( _.isUndefined( setting ) ) {
+                const setting = wp.customize(connected_field_data.setting_id);
+                if (_.isUndefined(setting)) {
                     return;
                 }
 
-                // Process the font logic for the master font control to get the value that should be applied to the connected (font) fields.
+                /* ======================
+                 * Process the font logic for the master (parent) font control to get the value that should be applied to the connected (font) fields.
+                 */
+                let newFontData = {};
+                let fonts_logic = parent_setting_data.fonts_logic;
 
+                /* ===========
+                 * We need to determine the 6 subfields values to be able to determine the value of the font field.
+                 */
 
+                // The font family is straight forward as it comes directly from the parent field font logic configuration.
+                if (typeof fonts_logic.font_family !== "undefined") {
+                    newFontData['font_family'] = fonts_logic.font_family;
+                }
 
-                setting.set( new_value );
-            } );
+                // The selected variants (subsets) also come straight from the font logic right now.
+                if (typeof fonts_logic.font_weights !== "undefined") {
+                    newFontData['variants'] = fonts_logic.font_weights;
+                }
+
+                if (typeof connected_field_data.font_size !== "undefined" && false !== connected_field_data.font_size) {
+                    newFontData['font_size'] = connected_field_data.font_size;
+
+                    // The font weight (selected_variants), letter spacing and text transform all come together from the font styles (intervals).
+                    // We just need to find the one that best matches the connected field given font size (if given).
+                    // Please bear in mind that we expect the font logic styles to be preprocessed, without any overlapping and using numerical keys.
+                    if (typeof fonts_logic.font_styles !== "undefined" && _.isArray( fonts_logic.font_styles ) && fonts_logic.font_styles.length > 0) {
+                        let idx = 0;
+                        while ( idx < fonts_logic.font_styles.length-1 &&  typeof fonts_logic['font-styles'][idx].end !== "undefined" &&  fonts_logic.font_styles[idx].end <= connected_field_data.font_size ) {
+                            idx++;
+                        }
+
+                        // We will apply what we've got.
+                        if (typeof fonts_logic.font_styles[idx].font_weight !== "undefined") {
+                            newFontData['selected_variants'] = fonts_logic.font_styles[idx].font_weight;
+                        }
+                        if (typeof fonts_logic.font_styles[idx].letter_spacing !== "undefined") {
+                            newFontData['letter_spacing'] = fonts_logic.font_styles[idx].letter_spacing;
+                        }
+                        if (typeof fonts_logic.font_styles[idx].text_transform !== "undefined") {
+                            newFontData['text_transform'] = fonts_logic.font_styles[idx].text_transform;
+                        }
+                    }
+
+                    // The line height is determined by getting the value of the polynomial function determined by points.
+                    if ( typeof fonts_logic.font_size_to_line_height_points !== "undefined" && _.isArray(fonts_logic.font_size_to_line_height_points)) {
+                        let f = interpolatingPolynomial(fonts_logic.font_size_to_line_height_points);
+                        newFontData['line_height'] = Number(f(connected_field_data.font_size)).toPrecision(2);
+                    }
+                }
+
+                let serializedNewFontData = CustomifyFontSelectFields.encodeValues(newFontData);
+                setting.set(serializedNewFontData);
+            });
         }
+    };
+
+    // Neville's algorithm for polynomial interpolation.
+    const interpolatingPolynomial = function (points) {
+        var n = points.length - 1, p;
+
+        p = function (i, j, x) {
+            if (i === j) {
+                return points[i][1];
+            }
+
+            return ((points[j][0] - x) * p(i, j - 1, x) +
+                (x - points[i][0]) * p(i + 1, j, x)) /
+                (points[j][0] - points[i][0]);
+        };
+
+        return function (x) {
+            if (points.length === 0) {
+                return 0;
+            }
+            return p(0, n, x);
+        };
     };
 
     const bindConnectedFields = function() {
@@ -230,8 +300,8 @@ let FontPalettes = ( function( $, exports, wp ) {
         if ( _.isUndefined( setting ) ) {
             return;
         }
-
-        setting.set( 'sdfsdfsdfsdfsdfsdfsd');
+        // We can't use setting.set() because it will do nothing when trying to set the same value.
+        setting.callbacks.fireWith( setting, [ setting(), setting() ] );
     };
 
     const handleFontPalettes = () => {

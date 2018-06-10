@@ -49,6 +49,10 @@ class Customify_Font_Palettes {
 	 */
 	public function add_hooks() {
 		/*
+		 * Handle the font palettes preprocessing of fonts logic.
+		 */
+		add_filter( 'customify_get_font_palettes', array( $this, 'preprocess_config' ), 10, 1 );
+		/*
 		 * Handle the Customizer Style Manager section config.
 		 */
 		add_filter( 'customify_filter_fields', array( $this, 'add_style_manager_section_master_fonts_config' ), 12, 1 );
@@ -78,7 +82,12 @@ class Customify_Font_Palettes {
 	public function register_admin_customizer_scripts() {
 		wp_register_script( PixCustomifyPlugin()->get_slug() . '-font-swap-values', plugins_url( 'js/customizer/font-swap-values.js', PixCustomifyPlugin()->get_file() ), array( 'jquery' ), PixCustomifyPlugin()->get_version() );
 		wp_register_script( PixCustomifyPlugin()->get_slug() . '-font-palettes-variations', plugins_url( 'js/customizer/font-palettes-variations.js', PixCustomifyPlugin()->get_file() ), array( 'jquery' ), PixCustomifyPlugin()->get_version() );
-		wp_register_script( PixCustomifyPlugin()->get_slug() . '-font-palettes', plugins_url( 'js/customizer/font-palettes.js', PixCustomifyPlugin()->get_file() ), array( 'jquery', PixCustomifyPlugin()->get_slug() . '-font-palettes-variations', PixCustomifyPlugin()->get_slug() . '-swap-values' ), PixCustomifyPlugin()->get_version() );
+		wp_register_script( PixCustomifyPlugin()->get_slug() . '-font-palettes', plugins_url( 'js/customizer/font-palettes.js', PixCustomifyPlugin()->get_file() ), array(
+			'jquery',
+			PixCustomifyPlugin()->get_slug() . '-font-palettes-variations',
+			PixCustomifyPlugin()->get_slug() . '-swap-values',
+			PixCustomifyPlugin()->get_slug() . '-fontselectfields',
+		), PixCustomifyPlugin()->get_version() );
 	}
 
 	/**
@@ -91,6 +100,142 @@ class Customify_Font_Palettes {
 		}
 
 		wp_enqueue_script( PixCustomifyPlugin()->get_slug() . '-font-palettes' );
+	}
+
+	/**
+	 * Preprocess the font palettes configuration.
+	 *
+	 * Things like transforming font_size_line_height_points to a polynomial function for easy use client side,
+	 * or processing the styles intervals and making sure that we get to a state where there are no overlaps and the order is right.
+	 *
+	 * @since 1.7.5
+	 *
+	 * @param array $config
+	 *
+	 * @return array
+	 */
+	public function preprocess_config( $config ) {
+		if ( empty( $config ) ) {
+			return $config;
+		}
+
+		foreach ( $config as $palette_id => $palette_config ) {
+			$config[ $palette_id ] = $this->preprocess_palette_config( $palette_config );
+		}
+
+		return $config;
+	}
+
+	private function preprocess_palette_config( $palette_config ) {
+		if ( empty( $palette_config ) ) {
+			return $palette_config;
+		}
+
+		global $wp_customize;
+		// We only need to do the fonts logic preprocess when we are in the Customizer.
+		if ( ! empty( $wp_customize ) && $wp_customize instanceof WP_Customize_Manager && ! empty( $palette_config['fonts_logic'] ) ) {
+			$palette_config['fonts_logic'] = $this->preprocess_fonts_logic_config( $palette_config['fonts_logic'] );
+		}
+
+		return $palette_config;
+	}
+
+	private function preprocess_fonts_logic_config( $fonts_logic_config ) {
+		if ( empty( $fonts_logic_config ) ) {
+			return $fonts_logic_config;
+		}
+
+		foreach ( $fonts_logic_config as $font_setting_id => $font_logic ) {
+			// Process the font_styles_intervals and make sure that they are in the right order and not overlapping.
+			if ( ! empty( $font_logic['font_styles_intervals'] ) && is_array( $font_logic['font_styles_intervals'] ) ) {
+				$font_styles = array( array_shift( $font_logic['font_styles_intervals'] ) );
+				// Make sure that the interval has a start
+				if ( ! isset( $font_styles[0]['start'] ) ) {
+					$font_styles[0]['start'] = 0;
+				}
+
+				foreach ( $font_logic['font_styles_intervals'] as $font_styles_interval ) {
+					// Make sure that the interval has a start
+					if ( ! isset( $font_styles_interval['start'] ) ) {
+						$font_styles_interval['start'] = 0;
+					}
+					// Go through the current font_styles and determine the place where this interval should fit in.
+					for ( $i = 0; $i < count( $font_styles ); $i++ ) {
+						// Determine if the new interval overlaps with this existing one.
+						if ( ! isset( $font_styles[$i]['end'] ) ) {
+							// Since this interval is without end, there is nothing after it.
+							// We need to adjust the old interval end.
+							if ( $font_styles[ $i ]['start'] < $font_styles_interval['start'] ) {
+								$font_styles[ $i ]['end'] = $font_styles_interval['start'];
+							} else {
+								if ( ! isset( $font_styles_interval['end'] ) ) {
+									// We need to delete the old interval altogether.
+									unset($font_styles[ $i ]);
+									$i--;
+									continue;
+								} else {
+									// Adjust the old interval and insert in front of it.
+									$font_styles[ $i ]['end'] = $font_styles_interval['end'];
+									$font_styles = array_slice( $font_styles, 0, $i ) + array( $font_styles_interval );
+									break;
+								}
+							}
+						} else {
+							if ( $font_styles[ $i ]['end'] > $font_styles_interval['start'] ) {
+								// We need to shrink this interval and make room for the new interval.
+								$font_styles[ $i ]['end'] = $font_styles_interval['start'];
+							} else {
+								// There is not overlap. Move to the next one.
+								continue;
+							}
+
+							if ( ! isset( $font_styles_interval['end'] ) ) {
+								// Everything after the existing interval is gone and the new one takes precedence.
+								array_splice( $font_styles, $i + 1, count( $font_styles ), array( $font_styles_interval ) );
+								break;
+							} else {
+								// Now go forward and see where the end of the new interval fits in.
+								for ( $j = $i + 1; $j < count( $font_styles ); $j ++ ) {
+									if ( $font_styles[ $j ]['start'] < $font_styles_interval['end'] ) {
+										// We have an overlapping after-interval.
+										if ( ! isset( $font_styles[ $j ]['end'] ) ) {
+											// Since this interval is without end, there is nothing after it.
+											$font_styles[ $j ]['start'] = $font_styles_interval['end'];
+											break;
+										} elseif ( $font_styles[ $j ]['end'] <= $font_styles_interval['end'] ) {
+											// We need to delete this interval since it is completely overwritten by the new one.
+											unset( $font_styles[ $j ] );
+											$j --;
+											continue;
+										} else {
+											// The new interval partially overlaps with the old one. Adjust.
+											$font_styles[ $j ]['end'] = $font_styles_interval['end'];
+											break;
+										}
+									} else {
+										// We can insert the new interval since this interval is after it
+										break;
+									}
+								}
+
+								// Insert the new interval.
+								array_splice( $font_styles, $j, 0, array( $font_styles_interval ) );
+								break;
+							}
+						}
+					}
+
+					// If we have reached the end of the list, we will insert it at the end.
+					if (  $i === count( $font_styles ) ) {
+						array_push( $font_styles, $font_styles_interval );
+					}
+				}
+
+				$fonts_logic_config[ $font_setting_id ]['font_styles'] = $font_styles;
+			}
+		}
+
+		return $fonts_logic_config;
 	}
 
 	/**
@@ -426,37 +571,37 @@ class Customify_Font_Palettes {
 					// Primary is used for main headings [Display, H1, H2, H3]
 					'sm_font_primary' => array(
 						// Font loaded when a palette is selected
-						'font-family'      => 'Young Serif',
+						'font_family'      => 'Young Serif',
 						// Load all these fonts weights.
-						'font-weights'     => array( 400 ),
+						'font_weights'     => array( 400 ),
 						// "Generate" the graph to be used for font-size and line-height.
-						'font-size_line-height_points' => array(
+						'font_size_line_height_points' => array(
 							array( 14, 1.7 ),
 							array( 50, 1.3 ),
 							array( 80, 1 ),
 						),
 
-						// Define how fonts will look based on their size
-						'font-styles'      => array(
-							'min' => 30,
-							'max' => 100,
+						'font_size_min' => 30,
+						'font_size_max' => 100,
 
+						// Define how fonts will look based on the font size.
+						'font_styles_intervals'      => array(
 							array(
 								'start'          => 0,
-								'end'            => 31,
+								'end'            => 30,
 								'font-weight'    => 400,
 								'letter-spacing' => '0em',
 								'text-transform' => 'none',
 							),
 							array(
-								'start'          => 32,
-								'end'            => 43,
+								'start'          => 20,
+								'end'            => 50,
 								'weight'         => 400,
 								'letter-spacing' => '0em',
 								'text-transform' => 'none',
 							),
 							array(
-								'start'          => 44,
+								'start'          => 40,
 								'weight'         => 400,
 								'letter-spacing' => '0em',
 								'text-transform' => 'none',
@@ -466,14 +611,14 @@ class Customify_Font_Palettes {
 
 					// Secondary font is used for smaller headings [H4, H5, H6], including meta details
 					'sm_font_secondary' => array(
-						'font-family'      => 'HK Grotesk',
-						'font-weights'     => array( 400, 500, 700 ),
-						'font-size_line-height_points' => array(
+						'font_family'      => 'HK Grotesk',
+						'font_weights'     => array( 400, 500, 700 ),
+						'font_size_line_height_points' => array(
 							array( 14, 1.7 ),
 							array( 50, 1.3 ),
 							array( 80, 1 ),
 						),
-						'font-styles'      => array(
+						'font_styles_intervals'      => array(
 							array(
 								'end'            => 14,
 								'weight'         => 400,
@@ -498,16 +643,16 @@ class Customify_Font_Palettes {
 
 					// Used for Body Font [eg. entry-content]
 					'sm_font_body' => array(
-						'font-family'      => 'PT Serif',
-						'font-weights'     => array( 400, '400italic', 700, '700italic' ),
-						'font-size_line-height_points' => array(
+						'font_family'      => 'PT Serif',
+						'font_weights'     => array( 400, '400italic', 700, '700italic' ),
+						'font_size_line_height_points' => array(
 							array( 15, 1.7 ),
 							array( 17, 1.6 ),
 							array( 18, 1.5 ),
 						),
 
 						// Define how fonts will look based on their size
-						'font-styles'      => array(
+						'font_styles_intervals'      => array(
 							array(
 								'start'          => 0,
 								'weight'         => 400,
