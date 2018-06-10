@@ -163,7 +163,9 @@ let FontPalettes = ( function( $, exports, wp ) {
                     // Please bear in mind that we expect the font logic styles to be preprocessed, without any overlapping and using numerical keys.
                     if (typeof fonts_logic.font_styles !== "undefined" && _.isArray( fonts_logic.font_styles ) && fonts_logic.font_styles.length > 0) {
                         let idx = 0;
-                        while ( idx < fonts_logic.font_styles.length-1 &&  typeof fonts_logic['font-styles'][idx].end !== "undefined" &&  fonts_logic.font_styles[idx].end <= connected_field_data.font_size ) {
+                        while ( idx < fonts_logic.font_styles.length-1 &&
+                                typeof fonts_logic.font_styles[idx].end !== "undefined" &&
+                                fonts_logic.font_styles[idx].end <= connected_field_data.font_size ) {
                             idx++;
                         }
 

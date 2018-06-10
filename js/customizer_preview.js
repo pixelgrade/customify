@@ -130,7 +130,7 @@
 				}
 
 				// google fonts also have the italic string inside, split that
-				if (variants !== null && variants.indexOf('italic') !== -1) {
+				if (variants !== null && _.isString( variants ) && variants.indexOf('italic') !== -1) {
 					store['font-style'] = 'italic';
 					variants = variants.replace('italic', '');
 				}

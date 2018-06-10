@@ -231,6 +231,17 @@ class Customify_Font_Palettes {
 					}
 				}
 
+				// We need to do a last pass and ensure no breaks in the intervals. We need them to be continuous.
+				// We will extend intervals to their next neighbour.
+				if ( count( $font_styles ) > 1 ) {
+					// The first interval should start at zero, just in case.
+					$font_styles[0]['start'] = 0;
+					for( $i = 1; $i < count( $font_styles ); $i++ ) {
+						// Extend the previous interval, just in case.
+						$font_styles[ $i-1 ]['end'] = $font_styles[ $i ]['start'];
+					}
+				}
+
 				$fonts_logic_config[ $font_setting_id ]['font_styles'] = $font_styles;
 			}
 		}
@@ -575,7 +586,7 @@ class Customify_Font_Palettes {
 						// Load all these fonts weights.
 						'font_weights'     => array( 400 ),
 						// "Generate" the graph to be used for font-size and line-height.
-						'font_size_line_height_points' => array(
+						'font_size_to_line_height_points' => array(
 							array( 14, 1.7 ),
 							array( 50, 1.3 ),
 							array( 80, 1 ),
@@ -589,22 +600,22 @@ class Customify_Font_Palettes {
 							array(
 								'start'          => 0,
 								'end'            => 30,
-								'font-weight'    => 400,
-								'letter-spacing' => '0em',
-								'text-transform' => 'none',
+								'font_weight'    => 400,
+								'letter_spacing' => '0em',
+								'text_transform' => 'none',
 							),
 							array(
 								'start'          => 20,
 								'end'            => 50,
-								'weight'         => 400,
-								'letter-spacing' => '0em',
-								'text-transform' => 'none',
+								'font_weight'    => 400,
+								'letter_spacing' => '0em',
+								'text_transform' => 'none',
 							),
 							array(
 								'start'          => 40,
-								'weight'         => 400,
-								'letter-spacing' => '0em',
-								'text-transform' => 'none',
+								'font_weight'    => 400,
+								'letter_spacing' => '0em',
+								'text_transform' => 'none',
 							),
 						),
 					),
@@ -613,7 +624,7 @@ class Customify_Font_Palettes {
 					'sm_font_secondary' => array(
 						'font_family'      => 'HK Grotesk',
 						'font_weights'     => array( 400, 500, 700 ),
-						'font_size_line_height_points' => array(
+						'font_size_to_line_height_points' => array(
 							array( 14, 1.7 ),
 							array( 50, 1.3 ),
 							array( 80, 1 ),
@@ -621,22 +632,22 @@ class Customify_Font_Palettes {
 						'font_styles_intervals'      => array(
 							array(
 								'end'            => 14,
-								'weight'         => 400,
-								'letter-spacing' => '0.08em',
-								'text-transform' => 'uppercase',
+								'font_weight'    => 400,
+								'letter_spacing' => '0.08em',
+								'text_transform' => 'uppercase',
 							),
 							array(
 								'start'          => 14,
 								'end'            => 19,
 								'weight'         => 700,
-								'letter-spacing' => '0.07em',
-								'text-transform' => 'uppercase',
+								'letter_spacing' => '0.07em',
+								'text_transform' => 'uppercase',
 							),
 							array(
 								'start'          => 19,
-								'weight'         => 500,
-								'letter-spacing' => 0,
-								'text-transform' => 'none',
+								'font_weight'    => 500,
+								'letter_spacing' => 0,
+								'text_transform' => 'none',
 							),
 						),
 					),
@@ -645,7 +656,7 @@ class Customify_Font_Palettes {
 					'sm_font_body' => array(
 						'font_family'      => 'PT Serif',
 						'font_weights'     => array( 400, '400italic', 700, '700italic' ),
-						'font_size_line_height_points' => array(
+						'font_size_to_line_height_points' => array(
 							array( 15, 1.7 ),
 							array( 17, 1.6 ),
 							array( 18, 1.5 ),
@@ -656,8 +667,8 @@ class Customify_Font_Palettes {
 							array(
 								'start'          => 0,
 								'weight'         => 400,
-								'letter-spacing' => 0,
-								'text-transform' => 'none',
+								'letter_spacing' => 0,
+								'text_transform' => 'none',
 							),
 						),
 					),
