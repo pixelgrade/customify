@@ -330,7 +330,22 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 
 	function display_font_size_field( $current_value ) {
 		if ( ! empty( $this->fields['font-size'] ) ) {
-			$fs_val = empty( $current_value->font_size ) ? 0 : $current_value->font_size; ?>
+			$fs_val = empty( $current_value->font_size ) ? 0 : $current_value->font_size;
+			// If the current val also contains the unit, we need to take that into account.
+			if ( ! is_numeric( $fs_val ) ) {
+				// We will get everything in front that is a valid part of a number (float including).
+				preg_match("/^([\d.\-+]+)/i", $fs_val, $match);
+
+				if ( ! empty( $match ) && isset( $match[0] ) ) {
+					if ( ! PixCustomifyPlugin()->is_assoc( $this->fields['font-size'] ) ) {
+						$this->fields['font-size'][3] = substr( $fs_val, strlen( $match[0] ) );
+					} else {
+						$this->fields['font-size']['unit'] = substr( $fs_val, strlen( $match[0] ) );
+					}
+					$fs_val = $match[0];
+				}
+			}
+			?>
 			<li class="customify_font_size_wrapper customize-control font-options__option">
 				<label><?php esc_html_e( 'Font Size', 'customify' ); ?></label>
 				<input type="range"
@@ -342,7 +357,22 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 
 	function display_line_height_field( $current_value ) {
 		if ( ! empty( $this->fields['line-height'] ) ) {
-			$lh_val = isset( $current_value->line_height ) ? $current_value->line_height : 0 ; ?>
+			$lh_val = isset( $current_value->line_height ) ? $current_value->line_height : 0 ;
+			// If the current val also contains the unit, we need to take that into account.
+			if ( ! is_numeric( $lh_val ) ) {
+				// We will get everything in front that is a valid part of a number (float including).
+				preg_match("/^([\d.\-+]+)/i", $lh_val, $match);
+
+				if ( ! empty( $match ) && isset( $match[0] ) ) {
+					if ( ! PixCustomifyPlugin()->is_assoc( $this->fields['line-height'] ) ) {
+						$this->fields['line-height'][3] = substr( $lh_val, strlen( $match[0] ) );
+					} else {
+						$this->fields['line-height']['unit'] = substr( $lh_val, strlen( $match[0] ) );
+					}
+					$lh_val = $match[0];
+				}
+			}
+			?>
 			<li class="customify_line_height_wrapper customize-control font-options__option">
 				<label><?php esc_html_e( 'Line height', 'customify' ); ?></label>
 				<input type="range"
@@ -355,7 +385,22 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 	function display_letter_spacing_field( $current_value ) {
 
 		if ( ! empty( $this->fields['letter-spacing'] ) ) {
-			$ls_val = isset( $current_value->letter_spacing ) ? $current_value->letter_spacing : 0; ?>
+			$ls_val = isset( $current_value->letter_spacing ) ? $current_value->letter_spacing : 0;
+			// If the current val also contains the unit, we need to take that into account.
+			if ( ! is_numeric( $ls_val ) ) {
+				// We will get everything in front that is a valid part of a number (float including).
+				preg_match("/^([\d.\-+]+)/i", $ls_val, $match);
+
+				if ( ! empty( $match ) && isset( $match[0] ) ) {
+					if ( ! PixCustomifyPlugin()->is_assoc( $this->fields['letter-spacing'] ) ) {
+						$this->fields['letter-spacing'][3] = substr( $ls_val, strlen( $match[0] ) );
+					} else {
+						$this->fields['letter-spacing']['unit'] = substr( $ls_val, strlen( $match[0] ) );
+					}
+					$ls_val = $match[0];
+				}
+			}
+			?>
 			<li class="customify_letter_spacing_wrapper customize-control font-options__option">
 				<label><?php esc_html_e( 'Letter Spacing', 'customify' ); ?></label>
 				<input type="range"

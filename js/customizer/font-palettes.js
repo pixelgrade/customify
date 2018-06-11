@@ -1,18 +1,22 @@
 let FontPalettes = ( function( $, exports, wp ) {
 
-    const masterFontSettings = [
+    const masterSettingIds = [
         'sm_font_primary',
         'sm_font_secondary',
         'sm_font_body'
     ];
 
-    const initializeFontPalettes = () => {
-        // cache initial settings configuration to be able to update connected fields on variation change
-        window.settingsClone = $.extend(true, {}, wp.customize.settings.settings);
+    const initializePalettes = () => {
+        // Cache initial settings configuration to be able to update connected fields on variation change.
+        if ( typeof window.settingsClone === "undefined" ) {
+            window.settingsClone = $.extend(true, {}, wp.customize.settings.settings);
+        }
 
-        // create a stack of callbacks bound to parent settings to be able to unbind them
-        // when altering the connected_fields attribute
-        window.connectedFieldsCallbacks = {};
+        // Create a stack of callbacks bound to parent settings to be able to unbind them
+        // when altering the connected_fields attribute.
+        if ( typeof window.connectedFieldsCallbacks === "undefined" ) {
+            window.connectedFieldsCallbacks = {};
+        }
     };
 
     const updateCurrentPalette = ( label ) => {
@@ -29,7 +33,7 @@ let FontPalettes = ( function( $, exports, wp ) {
         $palette.find( '.c-font-palette__name' ).text( label );
 
         // apply the last animate set of fonts to the "current" font palette
-        _.each( masterFontSettings, function( setting_id ) {
+        _.each( masterSettingIds, function( setting_id ) {
             const font = $next.find( '.' + setting_id ).css( 'font' );
             $current.find( '.' + setting_id ).css( 'font', font );
         });
@@ -39,7 +43,7 @@ let FontPalettes = ( function( $, exports, wp ) {
         $palette.removeClass( 'animate' );
 
         // update the fonts in the "next" palette with the new values
-        _.each( masterFontSettings, function( setting_id ) {
+        _.each( masterSettingIds, function( setting_id ) {
             const setting = wp.customize( setting_id );
 
             if ( typeof setting !== "undefined" ) {
@@ -130,7 +134,7 @@ let FontPalettes = ( function( $, exports, wp ) {
                     return;
                 }
 
-                const setting = wp.customize(connected_field_data.setting_id);
+                let setting = wp.customize(connected_field_data.setting_id);
                 if (_.isUndefined(setting)) {
                     return;
                 }
@@ -196,7 +200,7 @@ let FontPalettes = ( function( $, exports, wp ) {
 
     // Neville's algorithm for polynomial interpolation.
     const interpolatingPolynomial = function (points) {
-        var n = points.length - 1, p;
+        let n = points.length - 1, p;
 
         p = function (i, j, x) {
             if (i === j) {
@@ -217,7 +221,7 @@ let FontPalettes = ( function( $, exports, wp ) {
     };
 
     const bindConnectedFields = function() {
-        _.each( masterFontSettings, function( parent_setting_id ) {
+        _.each( masterSettingIds, function( parent_setting_id ) {
             if ( typeof wp.customize.settings.settings[parent_setting_id] !== "undefined" ) {
                 let parent_setting_data = wp.customize.settings.settings[parent_setting_id];
                 let parent_setting = wp.customize( parent_setting_id );
@@ -231,7 +235,7 @@ let FontPalettes = ( function( $, exports, wp ) {
     };
 
     const unbindConnectedFields = function() {
-        _.each( masterFontSettings, function( parent_setting_id ) {
+        _.each( masterSettingIds, function( parent_setting_id ) {
             if ( typeof wp.customize.settings.settings[parent_setting_id] !== "undefined" ) {
                 let parent_setting_data = wp.customize.settings.settings[parent_setting_id];
                 let parent_setting = wp.customize(parent_setting_id);
@@ -244,7 +248,7 @@ let FontPalettes = ( function( $, exports, wp ) {
         } );
     };
 
-    // alter connected fields of the master fonts controls depending on the selected palette variation
+    // Alter connected fields of the master fonts controls depending on the selected palette variation.
     const reloadConnectedFields = () => {
         const setting = wp.customize( 'sm_font_palette_variation' );
 
@@ -264,17 +268,17 @@ let FontPalettes = ( function( $, exports, wp ) {
     };
 
     const createCurrentPaletteControls = () => {
-        const $palette = $( '.c-font-palette' );
+        let $palette = $( '.c-font-palette' );
 
         if ( ! $palette.length ) {
             return;
         }
 
-        const $fonts = $palette.find( '.fonts.next .font' );
+        let $fonts = $palette.find( '.fonts.next .font' );
     };
 
     const onPaletteChange = function() {
-        const $label = $( this ).next( 'label' ).clone();
+        let $label = $( this ).next( 'label' ).clone();
         let label;
 
         $label.find( '.preview__letter' ).remove();
@@ -282,7 +286,7 @@ let FontPalettes = ( function( $, exports, wp ) {
         $label.remove();
 
         // Take the fonts config for each setting and distribute it to each (master) setting.
-        const data = $( this ).data( 'fonts_logic' );
+        let data = $( this ).data( 'fonts_logic' );
         if ( ! _.isUndefined( data ) ) {
             $.each( data, function( setting_id, config ) {
                 set_field_fonts_logic_config( setting_id, config );
@@ -298,16 +302,21 @@ let FontPalettes = ( function( $, exports, wp ) {
         wp.customize.settings.settings[setting_id].fonts_logic = config;
 
         // We also need to trigger a fake setting value change since the master font controls don't usually hold a (usable) value.
-        const setting = wp.customize( setting_id );
+        let setting = wp.customize( setting_id );
         if ( _.isUndefined( setting ) ) {
             return;
         }
-        // We can't use setting.set() because it will do nothing when trying to set the same value.
-        setting.callbacks.fireWith( setting, [ setting(), setting() ] );
+
+        // We will set the entire config as the master font field value just because it ensures us that,
+        // when new info arrives, the setting callbacks will be fired (.set() doesn't do anything if the new value is the same as the old).
+        // Also some entries will be used to set the master font subfields (mainly font family).
+        // This value is not used in any other way!
+        let serializedNewFontData = CustomifyFontSelectFields.encodeValues(config);
+        setting.set(serializedNewFontData);
     };
 
-    const handleFontPalettes = () => {
-        initializeFontPalettes();
+    const handlePalettes = () => {
+        initializePalettes();
         createCurrentPaletteControls();
 	    reloadConnectedFields();
         updateCurrentPalette();
@@ -316,16 +325,16 @@ let FontPalettes = ( function( $, exports, wp ) {
         // when variation is changed reload connected fields from cached version of customizer settings config
         $( document ).on( 'change', '[name="_customize-radio-sm_font_palette_variation_control"]', function() {
             reloadConnectedFields();
-	        resetSettings( masterFontSettings );
+	        resetSettings( masterSettingIds );
         });
 
         $( document ).on( 'click', '.customify_preset.font_palette input', onPaletteChange );
     };
 
-    wp.customize.bind( 'ready', handleFontPalettes );
+    wp.customize.bind( 'ready', handlePalettes );
 
     return {
-        masterFontSettings: masterFontSettings
+        masterSettingIds: masterSettingIds
     };
 
 } )( jQuery, window, wp );

@@ -1,6 +1,6 @@
 let ColorPalettes = ( function( $, exports, wp ) {
 
-    const masterColorSettings = [
+    const masterSettingIds = [
         "sm_color_primary",
         "sm_color_secondary",
         "sm_color_tertiary",
@@ -12,13 +12,17 @@ let ColorPalettes = ( function( $, exports, wp ) {
         "sm_light_tertiary"
     ];
 
-    const initializeColorPalettes = () => {
-        // cache initial settings configuration to be able to update connected fields on variation change
-        window.settingsClone = $.extend(true, {}, wp.customize.settings.settings);
+    const initializePalettes = () => {
+        // Cache initial settings configuration to be able to update connected fields on variation change.
+        if ( typeof window.settingsClone === "undefined" ) {
+            window.settingsClone = $.extend(true, {}, wp.customize.settings.settings);
+        }
 
-        // create a stack of callbacks bound to parent settings to be able to unbind them
-        // when altering the connected_fields attribute
-        window.connectedFieldsCallbacks = {};
+        // Create a stack of callbacks bound to parent settings to be able to unbind them
+        // when altering the connected_fields attribute.
+        if ( typeof window.connectedFieldsCallbacks === "undefined" ) {
+            window.connectedFieldsCallbacks = {};
+        }
     };
 
     const updateCurrentPalette = ( label ) => {
@@ -35,7 +39,7 @@ let ColorPalettes = ( function( $, exports, wp ) {
         $palette.find( '.c-color-palette__name' ).text( label );
 
         // apply the last animate set of colors to the "current" color palette
-        _.each( masterColorSettings, function( setting_id ) {
+        _.each( masterSettingIds, function( setting_id ) {
             const color = $next.find( '.' + setting_id ).css( 'color' );
             $current.find( '.' + setting_id ).css( 'color', color );
         });
@@ -45,7 +49,7 @@ let ColorPalettes = ( function( $, exports, wp ) {
         $palette.removeClass( 'animate' );
 
         // update the colors in the "next" palette with the new values
-        _.each( masterColorSettings, function( setting_id ) {
+        _.each( masterSettingIds, function( setting_id ) {
             const setting = wp.customize( setting_id );
 
             if ( typeof setting !== "undefined" ) {
@@ -145,7 +149,7 @@ let ColorPalettes = ( function( $, exports, wp ) {
     };
 
     const bindConnectedFields = function() {
-        _.each( masterColorSettings, function( parent_setting_id ) {
+        _.each( masterSettingIds, function( parent_setting_id ) {
             if ( typeof wp.customize.settings.settings[parent_setting_id] !== "undefined" ) {
                 let parent_setting_data = wp.customize.settings.settings[parent_setting_id];
                 let parent_setting = wp.customize(parent_setting_id);
@@ -159,7 +163,7 @@ let ColorPalettes = ( function( $, exports, wp ) {
     };
 
     const unbindConnectedFields = function() {
-        _.each( masterColorSettings, function( parent_setting_id ) {
+        _.each( masterSettingIds, function( parent_setting_id ) {
             if ( typeof wp.customize.settings.settings[parent_setting_id] !== "undefined" ) {
                 let parent_setting_data = wp.customize.settings.settings[parent_setting_id];
                 let parent_setting = wp.customize(parent_setting_id);
@@ -268,8 +272,8 @@ let ColorPalettes = ( function( $, exports, wp ) {
         updateCurrentPalette( label );
     };
 
-    const handleColorPalettes = () => {
-        initializeColorPalettes();
+    const handlePalettes = () => {
+        initializePalettes();
         createCurrentPaletteControls();
 	    reloadConnectedFields();
         updateCurrentPalette();
@@ -278,16 +282,16 @@ let ColorPalettes = ( function( $, exports, wp ) {
         // when variation is changed reload connected fields from cached version of customizer settings config
         $( document ).on( 'change', '[name="_customize-radio-sm_color_palette_variation_control"]', function() {
             reloadConnectedFields();
-	        resetSettings( masterColorSettings );
+	        resetSettings( masterSettingIds );
         });
 
         $( document ).on( 'click', '.customify_preset.color_palette input', onPaletteChange );
     };
 
-    wp.customize.bind( 'ready', handleColorPalettes );
+    wp.customize.bind( 'ready', handlePalettes );
 
     return {
-        masterColorSettings: masterColorSettings
+        masterSettingIds: masterSettingIds
     };
 
 } )( jQuery, window, wp );

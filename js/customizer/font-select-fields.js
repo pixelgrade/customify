@@ -26,13 +26,13 @@ let CustomifyFontSelectFields = ( function( $, exports, wp ) {
                     wrapper = $( e.target ).closest( wrapperSelector );
 
                 // Update the weight subfield with the new options given by the selected font family.
-                update_weight_field( new_option, wrapper );
+                updateWeightField( new_option, wrapper );
 
                 // Update the subset subfield with the new options given by the selected font family.
-                update_subset_field( new_option, wrapper );
+                updateSubsetField( new_option, wrapper );
 
                 // Serialize subfield values and refresh the fonts in the preview window.
-                self_update_value( wrapper );
+                selfUpdateValue( wrapper );
             } );
 
             // Initialize the select2 field for the font weight
@@ -44,7 +44,7 @@ let CustomifyFontSelectFields = ( function( $, exports, wp ) {
 
                 // all this fuss is for the case when the font doesn't come with variants from PHP, like a theme_font
                 if ( this.options.length === 0 ) {
-                    var wrapper = $( el ).closest( wrapperSelector ),
+                    let wrapper = $( el ).closest( wrapperSelector ),
                         font = wrapper.find( fontFamilySelector ),
                         option = font[0].options[font[0].selectedIndex],
                         variants = maybeJsonParse( $( option ).data( 'variants' ) ),
@@ -80,7 +80,7 @@ let CustomifyFontSelectFields = ( function( $, exports, wp ) {
                     let wrapper = $( e.target ).closest( wrapperSelector );
 
                     // Serialize subfield values and refresh the fonts in the preview window.
-                    self_update_value( wrapper );
+                    selfUpdateValue( wrapper );
                 } );
             } );
 
@@ -93,7 +93,7 @@ let CustomifyFontSelectFields = ( function( $, exports, wp ) {
                     let wrapper = $( e.target ).closest( wrapperSelector );
 
                     // Serialize subfield values and refresh the fonts in the preview window.
-                    self_update_value( wrapper );
+                    selfUpdateValue( wrapper );
                 } );
 
             let rangers = $fontFamilyFields.parents( wrapperSelector ).find( 'input[type=range]' ),
@@ -105,7 +105,7 @@ let CustomifyFontSelectFields = ( function( $, exports, wp ) {
                     let wrapper = $( e.target ).closest( wrapperSelector );
 
                     // Serialize subfield values and refresh the fonts in the preview window.
-                    self_update_value( wrapper );
+                    selfUpdateValue( wrapper );
                 } );
             }
 
@@ -115,7 +115,7 @@ let CustomifyFontSelectFields = ( function( $, exports, wp ) {
                     let wrapper = $( e.target ).closest( wrapperSelector );
 
                     // Serialize subfield values and refresh the fonts in the preview window.
-                    self_update_value( wrapper );
+                    selfUpdateValue( wrapper );
 
                     wp.customize.previewer.send( 'font-changed' );
                 } );
@@ -124,7 +124,7 @@ let CustomifyFontSelectFields = ( function( $, exports, wp ) {
             // When the previewer window is ready, render the fonts
             var self = this;
             wp.customize.previewer.bind( 'ready', function() {
-                self.render_fonts();
+                self.renderFonts();
             } );
 
             // Handle the reverse value direction, when the customize setting is updated and the subfields need to update their values.
@@ -138,7 +138,7 @@ let CustomifyFontSelectFields = ( function( $, exports, wp ) {
                     if ( ! updatingValue[this.id] ) {
                         value_holder.val( newValue );
 
-                        load_font_value( wrapper );
+                        loadFontValue( wrapper );
                     }
                 } )
             } )
@@ -150,7 +150,7 @@ let CustomifyFontSelectFields = ( function( $, exports, wp ) {
          * @param option
          * @param wraper
          */
-        function update_weight_field( option, wraper ) {
+        function updateWeightField( option, wraper ) {
             let variants = $( option ).data( 'variants' ),
                 font_weights = wraper.find( fontWeightSelector ),
                 selected_variant = font_weights.data( 'default' ),
@@ -185,7 +185,7 @@ let CustomifyFontSelectFields = ( function( $, exports, wp ) {
                 let wrapper = $( e.target ).closest( wrapperSelector );
 
                 // Serialize subfield values and refresh the fonts in the preview window.
-                self_update_value( wrapper );
+                selfUpdateValue( wrapper );
             } );
         }
 
@@ -194,7 +194,7 @@ let CustomifyFontSelectFields = ( function( $, exports, wp ) {
          * @param option
          * @param wraper
          */
-        function update_subset_field( option, wraper ) {
+        function updateSubsetField( option, wraper ) {
             let subsets = $( option ).data( 'subsets' ),
                 font_subsets = wraper.find( fontSubsetsSelector ),
                 new_subsets = [],
@@ -215,7 +215,7 @@ let CustomifyFontSelectFields = ( function( $, exports, wp ) {
 
             subsets = maybeJsonParse( subsets );
 
-            if ( typeof subsets != 'undefined' && Object.keys( subsets ).length < 2 || font_subsets.data('disabled') !== undefined ) {
+            if ( typeof subsets !== "undefined" && Object.keys( subsets ).length < 2 || font_subsets.data('disabled') !== undefined ) {
                 font_subsets.parent().hide();
             } else {
                 font_subsets.parent().show();
@@ -229,7 +229,7 @@ let CustomifyFontSelectFields = ( function( $, exports, wp ) {
                 };
 
                 // current_subsets
-                if ( typeof current_value !== 'undefined' && current_value !== null && current_value.indexOf( subset ) !== - 1 ) {
+                if ( typeof current_value !== "undefined" && current_value !== null && current_value.indexOf( subset ) !== - 1 ) {
                     new_subsets[index].selected = true;
                 }
             } );
@@ -242,11 +242,11 @@ let CustomifyFontSelectFields = ( function( $, exports, wp ) {
                 let wrapper = $( e.target ).closest( wrapperSelector );
 
                 // Serialize subfield values and refresh the fonts in the preview window.
-                self_update_value( wrapper );
+                selfUpdateValue( wrapper );
             } );
         }
 
-        function get_value( wrapper ) {
+        function getValue( wrapper ) {
             let value_holder = wrapper.children( valueHolderSelector );
 
             if ( value_holder.length ) {
@@ -256,7 +256,7 @@ let CustomifyFontSelectFields = ( function( $, exports, wp ) {
             return [];
         }
 
-        function update_value( wrapper, value ) {
+        function updateValue( wrapper, value ) {
             let value_holder = wrapper.children( valueHolderSelector ),
                 setting_id = $( value_holder ).data( 'customize-setting-link' ),
                 setting = wp.customize( setting_id );
@@ -279,7 +279,7 @@ let CustomifyFontSelectFields = ( function( $, exports, wp ) {
          * This function is a custom value serializer for our entire font field
          * It collects values and saves them (encoded) into the `.customify_font_values` input's value
          */
-        function self_update_value( wrapper ) {
+        function selfUpdateValue( wrapper ) {
             let options_list = $( wrapper ).find( '.font-options__options-list' ),
                 inputs = options_list.find( '[data-field]' ),
                 value_holder = wrapper.children( valueHolderSelector ),
@@ -328,7 +328,6 @@ let CustomifyFontSelectFields = ( function( $, exports, wp ) {
                     }
                 }
 
-
                 if ( ! _.isUndefined( field ) && ! _.isUndefined( value ) && ! _.isNull( value ) && value !== '' ) {
                     newFontData[field] = value;
                 }
@@ -351,7 +350,7 @@ let CustomifyFontSelectFields = ( function( $, exports, wp ) {
         /**
          * This function is a reverse of update_font_value(), initializing the entire font field controls based on the value stored in the hidden input.
          */
-        function load_font_value( wrapper ) {
+        function loadFontValue( wrapper ) {
             let options_list = $( wrapper ).find( '.font-options__options-list' ),
                 inputs = options_list.find( '[data-field]' ),
                 value_holder = wrapper.children( valueHolderSelector ),
@@ -379,7 +378,7 @@ let CustomifyFontSelectFields = ( function( $, exports, wp ) {
             loadingValue[setting_id] = false;
         }
 
-        var maybeJsonParse = function( value ) {
+        const maybeJsonParse = function( value ) {
             let parsed;
 
             //try and parse it, with decodeURIComponent
@@ -394,20 +393,20 @@ let CustomifyFontSelectFields = ( function( $, exports, wp ) {
             return parsed;
         };
 
-        var encodeValues = function( obj ) {
+        const encodeValues = function( obj ) {
             return encodeURIComponent( JSON.stringify( obj ) );
         };
 
-        function render_fonts() {
+        const renderFonts = function() {
             $( '.customify_font_family' ).select2().trigger( 'change' )
-        }
+        };
 
         return {
-            render_fonts: render_fonts,
+            renderFonts: renderFonts,
             init: init,
-            get_value: get_value,
-            update_value: update_value,
-            self_update_value: self_update_value,
+            getValue: getValue,
+            updateValue: updateValue,
+            selfUpdateValue: selfUpdateValue,
             encodeValues: encodeValues,
         };
 } )( jQuery, window, wp );

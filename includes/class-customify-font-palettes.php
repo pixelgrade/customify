@@ -359,14 +359,8 @@ class Customify_Font_Palettes {
 					),
 					// Sub Fields Configuration
 					'fields'   => array(
-						// This is the configuration for the range slider.
-						'font-size'       => array(
-							'min'  => 8,
-							'max'  => 90,
-							'step' => 1,
-							'unit' => 'px',
-						),
 						// These subfields are disabled because they are calculated through the font palette logic.
+						'font-size'       => false,
 						'font-weight'     => false,
 						'line-height'     => false,
 						'letter-spacing'  => false,
@@ -393,14 +387,8 @@ class Customify_Font_Palettes {
 					),
 					// Sub Fields Configuration
 					'fields'   => array(
-						// This is the configuration for the range slider.
-						'font-size'       => array(
-							'min'  => 8,
-							'max'  => 90,
-							'step' => 1,
-							'unit' => 'px',
-						),
 						// These subfields are disabled because they are calculated through the font palette logic.
+						'font-size'       => false,
 						'font-weight'     => false,
 						'line-height'     => false,
 						'letter-spacing'  => false,
@@ -427,14 +415,8 @@ class Customify_Font_Palettes {
 					),
 					// Sub Fields Configuration
 					'fields'   => array(
-						// This is the configuration for the range slider.
-						'font-size'       => array(
-							'min'  => 8,
-							'max'  => 100,
-							'step' => 1,
-							'unit' => 'px',
-						),
 						// These subfields are disabled because they are calculated through the font palette logic.
+						'font-size'       => false,
 						'font-weight'     => false,
 						'line-height'     => false,
 						'letter-spacing'  => false,
@@ -581,10 +563,12 @@ class Customify_Font_Palettes {
 				'fonts_logic' => array(
 					// Primary is used for main headings [Display, H1, H2, H3]
 					'sm_font_primary' => array(
+						// Define the font type ('google' or 'theme_font'). By default it's 'google'.
+						'type' => 'google',
 						// Font loaded when a palette is selected
-						'font_family'      => 'Young Serif',
+						'font_family'      => 'Open Sans',
 						// Load all these fonts weights.
-						'font_weights'     => array( 400 ),
+						'font_weights'     => array( 'regular' ),
 						// "Generate" the graph to be used for font-size and line-height.
 						'font_size_to_line_height_points' => array(
 							array( 14, 1.7 ),
@@ -592,28 +576,36 @@ class Customify_Font_Palettes {
 							array( 80, 1 ),
 						),
 
-						'font_size_min' => 30,
-						'font_size_max' => 100,
+						// These are not used right now.
+//						'font_size_min' => 30,
+//						'font_size_max' => 100,
 
 						// Define how fonts will look based on the font size.
+						// The current logic is as follows:
+						// - for an interval, if the start is missing, it is assumed to be 0;
+						// - for an interval, if the end is missing, it is assumed to be infinity;
+						// - later intervals overwrite earlier ones and apply their own styles; so the order in which you define intervals might influence things;
+						// - if there are gaps between intervals, we will "extend" the first interval to the start of it's next neighbour;
+						// - neighbouring intervals will have, in the end, the same end and start, and on the border, the first interval will apply
+						//   i.e. end takes precedence over start.
 						'font_styles_intervals'      => array(
 							array(
 								'start'          => 0,
 								'end'            => 30,
-								'font_weight'    => 400,
+								'font_weight'    => 'regular',
 								'letter_spacing' => '0em',
 								'text_transform' => 'none',
 							),
 							array(
 								'start'          => 20,
 								'end'            => 50,
-								'font_weight'    => 400,
+								'font_weight'    => 'regular',
 								'letter_spacing' => '0em',
 								'text_transform' => 'none',
 							),
 							array(
 								'start'          => 40,
-								'font_weight'    => 400,
+								'font_weight'    => 'regular',
 								'letter_spacing' => '0em',
 								'text_transform' => 'none',
 							),
@@ -622,7 +614,132 @@ class Customify_Font_Palettes {
 
 					// Secondary font is used for smaller headings [H4, H5, H6], including meta details
 					'sm_font_secondary' => array(
-						'font_family'      => 'HK Grotesk',
+						'font_family'      => 'Roboto',
+						'font_weights'     => array( 'regular', 500, 700 ),
+						'font_size_to_line_height_points' => array(
+							array( 14, 1.7 ),
+							array( 50, 1.3 ),
+							array( 80, 1 ),
+						),
+						'font_styles_intervals'      => array(
+							array(
+								'end'            => 14,
+								'font_weight'    => 'regular',
+								'letter_spacing' => '0.08em',
+								'text_transform' => 'uppercase',
+							),
+							array(
+								'start'          => 14,
+								'end'            => 19,
+								'weight'         => 700,
+								'letter_spacing' => '0.07em',
+								'text_transform' => 'uppercase',
+							),
+							array(
+								'start'          => 19,
+								'font_weight'    => 500,
+								'letter_spacing' => 0,
+								'text_transform' => 'none',
+							),
+						),
+					),
+
+					// Used for Body Font [eg. entry-content]
+					'sm_font_body' => array(
+						'font_family'      => 'PT Serif',
+						'font_weights'     => array( 'regular', '400italic', 700, '700italic' ),
+						'font_size_to_line_height_points' => array(
+							array( 15, 1.7 ),
+							array( 17, 1.6 ),
+							array( 18, 1.5 ),
+						),
+
+						// Define how fonts will look based on their size
+						'font_styles_intervals'      => array(
+							array(
+								'start'          => 0,
+								'weight'         => 'regular',
+								'letter_spacing' => 0,
+								'text_transform' => 'none',
+							),
+						),
+					),
+				),
+			),
+			'vasco' => array(
+				'label'   => esc_html__( 'Vasco', 'customify' ),
+				'preview' => array(
+					// Font Palette Name
+					'title'            => esc_html__( 'Vasco', 'customify' ),
+					'description'      => esc_html__( 'Just awesome.', 'customify' ),
+
+					// Use the following options to style the preview card fonts
+					// Including font-family, size, line-height, weight, letter-spacing and text transform
+					'title_font'       => array(
+						'font' => 'font_primary',
+						'size' => 26,
+					),
+					'description_font' => array(
+						'font' => 'font_body',
+						'size' => 14,
+					),
+				),
+
+				'fonts_logic' => array(
+					// Primary is used for main headings [Display, H1, H2, H3]
+					'sm_font_primary' => array(
+						// Define the font type ('google', 'theme_font', 'system'). By default it's 'google'.
+						'type' => 'google',
+						// Font loaded when a palette is selected
+						'font_family'      => 'Playfair Display',
+						// Load all these fonts weights.
+						'font_weights'     => array( 'regular',700,900 ),
+						// "Generate" the graph to be used for font-size and line-height.
+						'font_size_to_line_height_points' => array(
+							array( 14, 2 ),
+							array( 40, 1.6 ),
+							array( 60, 1.1 ),
+						),
+
+						// These are not used right now.
+//						'font_size_min' => 30,
+//						'font_size_max' => 100,
+
+						// Define how fonts will look based on the font size.
+						// The current logic is as follows:
+						// - for an interval, if the start is missing, it is assumed to be 0;
+						// - for an interval, if the end is missing, it is assumed to be infinity;
+						// - later intervals overwrite earlier ones and apply their own styles; so the order in which you define intervals might influence things;
+						// - if there are gaps between intervals, we will "extend" the first interval to the start of it's next neighbour;
+						// - neighbouring intervals will have, in the end, the same end and start, and on the border, the first interval will apply
+						//   i.e. end takes precedence over start.
+						'font_styles_intervals'      => array(
+							array(
+								'start'          => 0,
+								'end'            => 20,
+								'font_weight'    => 'regular',
+								'letter_spacing' => '0em',
+								'text_transform' => 'none',
+							),
+							array(
+								'start'          => 20,
+								'end'            => 50,
+								'font_weight'    => 700,
+								'letter_spacing' => '0em',
+								'text_transform' => 'uppercase',
+							),
+							array(
+								'start'          => 30,
+								'font_weight'    => 900,
+								'letter_spacing' => '0em',
+								'text_transform' => 'uppercase',
+							),
+						),
+					),
+
+					// Secondary font is used for smaller headings [H4, H5, H6], including meta details
+					'sm_font_secondary' => array(
+						'font_family'      => 'Noto Serif',
 						'font_weights'     => array( 400, 500, 700 ),
 						'font_size_to_line_height_points' => array(
 							array( 14, 1.7 ),
@@ -654,7 +771,8 @@ class Customify_Font_Palettes {
 
 					// Used for Body Font [eg. entry-content]
 					'sm_font_body' => array(
-						'font_family'      => 'PT Serif',
+						'type' => 'google',
+						'font_family'      => 'Roboto Slab',
 						'font_weights'     => array( 400, '400italic', 700, '700italic' ),
 						'font_size_to_line_height_points' => array(
 							array( 15, 1.7 ),
@@ -666,7 +784,7 @@ class Customify_Font_Palettes {
 						'font_styles_intervals'      => array(
 							array(
 								'start'          => 0,
-								'weight'         => 400,
+								'weight'         => '400italic',
 								'letter_spacing' => 0,
 								'text_transform' => 'none',
 							),

@@ -339,13 +339,13 @@
             _.each( wp.customize.settings.settings, function( parent_setting_data, parent_setting_id ) {
                 // We don't want to handle the binding of the Style Manager settings
                 if ( typeof ColorPalettes !== "undefined"
-                    && typeof ColorPalettes.masterColorSettings !== "undefined"
-                    && _.contains( ColorPalettes.masterColorSettings, parent_setting_id ) ) {
+                    && typeof ColorPalettes.masterSettingIds !== "undefined"
+                    && _.contains( ColorPalettes.masterSettingIds, parent_setting_id ) ) {
                     return;
                 }
                 if ( typeof FontPalettes !== "undefined"
-                    && typeof FontPalettes.masterColorSettings !== "undefined"
-                    && _.contains( FontPalettes.masterColorSettings, parent_setting_id ) ) {
+                    && typeof FontPalettes.masterSettingIds !== "undefined"
+                    && _.contains( FontPalettes.masterSettingIds, parent_setting_id ) ) {
                     return;
                 }
 
@@ -361,13 +361,13 @@
             _.each( wp.customize.settings.settings, function( parent_setting_data, parent_setting_id ) {
                 // We don't want to handle the binding of the Style Manager settings
                 if ( typeof ColorPalettes !== "undefined"
-                    && typeof ColorPalettes.masterColorSettings !== "undefined"
-                    && _.contains( ColorPalettes.masterColorSettings, parent_setting_id ) ) {
+                    && typeof ColorPalettes.masterSettingIds !== "undefined"
+                    && _.contains( ColorPalettes.masterSettingIds, parent_setting_id ) ) {
                     return;
                 }
                 if ( typeof FontPalettes !== "undefined"
-                    && typeof FontPalettes.masterColorSettings !== "undefined"
-                    && _.contains( FontPalettes.masterColorSettings, parent_setting_id ) ) {
+                    && typeof FontPalettes.masterSettingIds !== "undefined"
+                    && _.contains( FontPalettes.masterSettingIds, parent_setting_id ) ) {
                     return;
                 }
 
