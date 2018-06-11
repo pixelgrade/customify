@@ -426,22 +426,22 @@ class Customify_Font_Palettes {
 					),
 					'connected_fields' => array(),
 				),
-				'sm_swap_fonts'                => array(
-					'type'         => 'button',
-					'setting_type' => 'option',
-					'setting_id'   => 'sm_swap_fonts',
-					'priority'     => 9,
-					'label'        => esc_html__( 'Swap Fonts', 'customify' ),
-					'action'       => 'sm_swap_fonts',
-				),
-				'sm_swap_primary_secondary'            => array(
-					'type'         => 'button',
-					'setting_type' => 'option',
-					'setting_id'   => 'sm_swap_primary_secondary',
-					'priority'     => 9.1,
-					'label'        => esc_html__( 'Swap Primary ⇆ Secondary', 'customify' ),
-					'action'       => 'sm_swap_dark_light',
-				),
+//				'sm_swap_fonts'                => array(
+//					'type'         => 'button',
+//					'setting_type' => 'option',
+//					'setting_id'   => 'sm_swap_fonts',
+//					'priority'     => 9,
+//					'label'        => esc_html__( 'Swap Fonts', 'customify' ),
+//					'action'       => 'sm_swap_fonts',
+//				),
+//				'sm_swap_primary_secondary'            => array(
+//					'type'         => 'button',
+//					'setting_type' => 'option',
+//					'setting_id'   => 'sm_swap_primary_secondary',
+//					'priority'     => 9.1,
+//					'label'        => esc_html__( 'Swap Primary ⇆ Secondary', 'customify' ),
+//					'action'       => 'sm_swap_dark_light',
+//				),
 			),
 		) );
 
