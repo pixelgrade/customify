@@ -2413,7 +2413,8 @@ $animation-duration: 1s;
 	}
 
 	#customize-control-sm_color_palette_control {
-		flex-basis: 0;
+		// flex-basis: 0;
+		flex-shrink: 0;
 		flex-grow: 1;
 		overflow-y: scroll;
 		margin-top: -19px;
