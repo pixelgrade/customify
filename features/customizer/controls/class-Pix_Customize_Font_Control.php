@@ -572,9 +572,6 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 	 * before rage about file_get_content + json file think about the security avoided with this simple call
 	 */
 	protected function generate_google_fonts_json() {
-
-		$fonts_path = plugin_dir_path( __FILE__ ) . 'resources/google.fonts.php';
-
 		$new_array = array();
 		foreach ( self::$google_fonts as $key => $font ) {
 			// unset unused data
