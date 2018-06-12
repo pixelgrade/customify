@@ -902,7 +902,7 @@ class Customify_Font_Palettes {
 								'start'          => 0,
 								'font_weight'    => 400,
 								'letter_spacing' => '0em',
-								'text_transform' => 'uppercase',
+								'text_transform' => 'none',
 							),
 						),
 					),
