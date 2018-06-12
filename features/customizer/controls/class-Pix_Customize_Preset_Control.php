@@ -194,8 +194,8 @@ class Pix_Customize_Preset_Control extends Pix_Customize_Control {
                         ?>
 
                         <span class="customize-inside-control-row <?php echo ( (string) $this->value() === (string) $choice_value ? 'current-color-palette' : '' );?>" style="background-image: url( <?php echo esc_url( $choice_config['preview']['background_image_url'] ); ?> );">
-                            <input <?php $this->link(); echo 'name="' . $this->setting->id . '" id="' . esc_attr( $choice_value ) . '" type="radio" value="' . esc_attr( $choice_value ) . '" ' . selected( $this->value(), $choice_value, false ) . $data .' />'; ?>
-                            <label for="<?php echo esc_attr( $choice_value ); ?>">
+                            <input <?php $this->link(); echo 'name="' . $this->setting->id . '" id="' . esc_attr( $choice_value ) . '-color-palette" type="radio" value="' . esc_attr( $choice_value ) . '" ' . selected( $this->value(), $choice_value, false ) . $data .' />'; ?>
+                            <label for="<?php echo esc_attr( $choice_value ) . '-color-palette'; ?>">
                                 <span class="label__inner" style="color: <?php echo esc_attr( $this->lightOrDark( $sm_light ) ); ?>; background: <?php echo esc_attr( $sm_light ); ?>;">
                                     <i class="preview__letter" style="background: <?php echo $sm_color; ?>"><?php echo $choice_config['preview']['sample_letter']; ?></i>
                                     <i class="preview__letter--checked" style="background-color: <?php echo $sm_color; ?>; background-image: url('<?php echo plugins_url( 'images/check.svg', PixCustomifyPlugin()->get_file() ); ?>')"></i>
@@ -263,8 +263,8 @@ class Pix_Customize_Preset_Control extends Pix_Customize_Control {
 						?>
 
 						<span class="customize-inside-control-row <?php echo ( (string) $this->value() === (string) $choice_value ? 'current-font-palette' : '' );?>" style="background-image: url( <?php echo esc_url( $choice_config['preview']['background_image_url'] ); ?> );">
-                            <input <?php $this->link(); echo 'name="' . $this->setting->id . '" id="' . esc_attr( $choice_value ) . '" type="radio" value="' . esc_attr( $choice_value ) . '" ' . selected( $this->value(), $choice_value, false ) . $data .' />'; ?>
-							<label for="<?php echo esc_attr( $choice_value ); ?>">
+                            <input <?php $this->link(); echo 'name="' . $this->setting->id . '" id="' . esc_attr( $choice_value ) . '-font-palette" type="radio" value="' . esc_attr( $choice_value ) . '" ' . selected( $this->value(), $choice_value, false ) . $data .' />'; ?>
+							<label for="<?php echo esc_attr( $choice_value ) . '-font-palette'; ?>">
                                 <span class="label__inner" style="">
                                     <i class="preview__letter" style=""><?php echo $choice_config['preview']['sample_letter']; ?></i>
                                     <i class="preview__letter--checked" style="background-image: url('<?php echo plugins_url( 'images/check.svg', PixCustomifyPlugin()->get_file() ); ?>')"></i>

@@ -153,7 +153,7 @@ let CustomifyFontSelectFields = ( function( $, exports, wp ) {
         function updateWeightField( option, wraper ) {
             let variants = $( option ).data( 'variants' ),
                 font_weights = wraper.find( fontWeightSelector ),
-                selected_variant = font_weights.data( 'default' ),
+                selected_variant = font_weights.val() ? font_weights.val() : font_weights.data( 'default' ),
                 new_variants = [],
                 id = wraper.find( valueHolderSelector ).data( 'customizeSettingLink' );
 
@@ -370,7 +370,21 @@ let CustomifyFontSelectFields = ( function( $, exports, wp ) {
 
                 // In the case of select2, only the original selects have the data field, thus excluding select2 created select DOM elements
                 if ( typeof field !== "undefined" && field !== "" && typeof value[field] !== "undefined" ) {
-                    $( el ).val( value[field] ).trigger( 'change' );
+                    // If the value contains also the unit (it is not a number) we need to split it and change the subfield accordingly.
+                    let cleanValue = value[field],
+                        unit = '';
+                    // We will do this only for numerical fields.
+                    if ( _.contains( ['letter_spacing','line_height', 'font_size'], field ) && isNaN( cleanValue ) ) {
+                        let matches = cleanValue.match(/^([\d.\-+]+)(.+)/i);
+                        if ( matches !== null && typeof matches[1] !== "undefined" ) {
+                            cleanValue = matches[1];
+                            unit = matches[2];
+                            if ( unit !== '' ) {
+                                $( el ).attr( 'unit', unit );
+                            }
+                        }
+                    }
+                    $( el ).val( cleanValue ).trigger( 'change' );
                 }
             } );
 
