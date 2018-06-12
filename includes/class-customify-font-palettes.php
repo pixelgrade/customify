@@ -740,6 +740,92 @@ class Customify_Font_Palettes {
 					),
 				),
 			),
+			'hive' => array(
+				'label'   => esc_html__( 'Hive', 'customify' ),
+				'preview' => array(
+					// Font Palette Name
+					'title'            => esc_html__( 'Hive', 'customify' ),
+					'description'      => esc_html__( 'A graceful nature, truly tasteful and polished.', 'customify' ),
+
+					// Use the following options to style the preview card fonts
+					// Including font-family, size, line-height, weight, letter-spacing and text transform
+					'title_font'       => array(
+						'font' => 'font_primary',
+						'size' => 36,
+					),
+					'description_font' => array(
+						'font' => 'font_body',
+						'size' => 18,
+					),
+				),
+
+				'fonts_logic' => array(
+					// Primary is used for main headings [Display, H1, H2, H3]
+					'sm_font_primary' => array(
+						// Define the font type ('google' or 'theme_font'). By default it's 'google'.
+						'type' => 'google',
+						// Font loaded when a palette is selected
+						'font_family'      => 'Playfair Display',
+						// Load all these fonts weights.
+						'font_weights'     => array( 400, '400italic', 700, '700italic', 900, '900italic' ),
+						// "Generate" the graph to be used for font-size and line-height.
+						'font_size_to_line_height_points' => array(
+							array( 20, 1.55 ),
+							array( 28, 1.5 ),
+							array( 40, 1.35 ),
+							array( 54, 1.1 ),
+						),
+
+						// Define how fonts will look based on the font size.
+						'font_styles_intervals'      => array(
+							array(
+								'start'          => 0,
+								'font_weight'    => 400,
+								'letter_spacing' => '0em',
+								'text_transform' => 'none',
+							),
+						),
+					),
+
+					// Secondary font is used for smaller headings [H4, H5, H6], including meta details
+					'sm_font_secondary' => array(
+						'font_family'      => 'Droid Serif',
+						'font_weights'     => array( 400, '400italic', 700, '700italic' ),
+						'font_size_to_line_height_points' => array(
+							array( 13, 1.33 ),
+							array( 18, 1.5 ),
+						),
+						'font_styles_intervals'      => array(
+							array(
+								'start'          => 0,
+								'font_weight'    => 400,
+								'letter_spacing' => '0em',
+								'text_transform' => 'uppercase',
+							),
+						),
+					),
+
+					// Used for Body Font [eg. entry-content]
+					'sm_font_body' => array(
+						'font_family'      => 'Droid Serif',
+						'font_weights'     => array( 400, '400italic', 700, '700italic' ),
+						'font_size_to_line_height_points' => array(
+							array( 13, 1.4 ),
+							array( 18, 1.5 ),
+						),
+
+						// Define how fonts will look based on their size
+						'font_styles_intervals'      => array(
+							array(
+								'start'          => 0,
+								'weight'         => 400,
+								'letter_spacing' => 0,
+								'text_transform' => 'none',
+							),
+						),
+					),
+				),
+			),
 			'vasco' => array(
 				'label'   => esc_html__( 'Not Vasco', 'customify' ),
 				'preview' => array(
