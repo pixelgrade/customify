@@ -547,6 +547,7 @@ class Customify_Font_Palettes {
 					// Font Palette Name
 					'title'            => esc_html__( 'Gema', 'customify' ),
 					'description'      => esc_html__( 'A graceful nature, truly tasteful and polished.', 'customify' ),
+					'background_image_url' => 'http://pxgcdn.com/images/style-manager/color-palettes/gema-theme-palette.jpg',
 
 					// Use the following options to style the preview card fonts
 					// Including font-family, size, line-height, weight, letter-spacing and text transform
@@ -647,6 +648,7 @@ class Customify_Font_Palettes {
 					// Font Palette Name
 					'title'            => esc_html__( 'Julia', 'customify' ),
 					'description'      => esc_html__( 'A graceful nature, truly tasteful and polished.', 'customify' ),
+					'background_image_url' => 'http://pxgcdn.com/images/style-manager/color-palettes/julia-theme-palette.jpg',
 
 					// Use the following options to style the preview card fonts
 					// Including font-family, size, line-height, weight, letter-spacing and text transform
@@ -740,12 +742,100 @@ class Customify_Font_Palettes {
 					),
 				),
 			),
+			'patch' => array(
+				'label'   => esc_html__( 'Patch', 'customify' ),
+				'preview' => array(
+					// Font Palette Name
+					'title'            => esc_html__( 'Patch', 'customify' ),
+					'description'      => esc_html__( 'A graceful nature, truly tasteful and polished.', 'customify' ),
+					'background_image_url' => 'http://pxgcdn.com/images/style-manager/color-palettes/patch-theme-palette.jpg',
+
+					// Use the following options to style the preview card fonts
+					// Including font-family, size, line-height, weight, letter-spacing and text transform
+					'title_font'       => array(
+						'font' => 'font_primary',
+						'size' => 26,
+					),
+					'description_font' => array(
+						'font' => 'font_body',
+						'size' => 16,
+					),
+				),
+
+				'fonts_logic' => array(
+					// Primary is used for main headings [Display, H1, H2, H3]
+					'sm_font_primary' => array(
+						// Define the font type ('google' or 'theme_font'). By default it's 'google'.
+						'type' => 'google',
+						// Font loaded when a palette is selected
+						'font_family'      => 'Oswald',
+						// Load all these fonts weights.
+						'font_weights'     => array( 300, 400, 700),
+						// "Generate" the graph to be used for font-size and line-height.
+						'font_size_to_line_height_points' => array(
+							array( 20, 1.55 ),
+							array( 26, 1.45 ),
+							array( 56, 1.25 ),
+						),
+
+						// Define how fonts will look based on the font size.
+						'font_styles_intervals'      => array(
+							array(
+								'start'          => 0,
+								'font_weight'    => 400,
+								'letter_spacing' => '0.04em',
+								'text_transform' => 'uppercase',
+							),
+						),
+					),
+
+					// Secondary font is used for smaller headings [H4, H5, H6], including meta details
+					'sm_font_secondary' => array(
+						'font_family'      => 'Roboto',
+						'font_weights'     => array( 300, '300italic', 400, '400italic', 500, '500italic' ),
+						'font_size_to_line_height_points' => array(
+							array( 11, 1.625 ),
+							array( 18, 1.4 ),
+						),
+						'font_styles_intervals'      => array(
+							array(
+								'start'          => 0,
+								'font_weight'    => 500,
+								'letter_spacing' => '0em',
+								'text_transform' => 'uppercase',
+							),
+						),
+					),
+
+					// Used for Body Font [eg. entry-content]
+					'sm_font_body' => array(
+						'font_family'      => 'Roboto',
+						'font_weights'     => array( 300, '300italic', 400, '400italic', 500, '500italic' ),
+						'font_size_to_line_height_points' => array(
+							array( 14, 1.45 ),
+							array( 16, 1.625 ),
+							array( 18, 1.75 ),
+						),
+
+						// Define how fonts will look based on their size
+						'font_styles_intervals'      => array(
+							array(
+								'start'          => 0,
+								'weight'         => 400,
+								'letter_spacing' => 0,
+								'text_transform' => 'none',
+							),
+						),
+					),
+				),
+			),
 			'hive' => array(
 				'label'   => esc_html__( 'Hive', 'customify' ),
 				'preview' => array(
 					// Font Palette Name
 					'title'            => esc_html__( 'Hive', 'customify' ),
 					'description'      => esc_html__( 'A graceful nature, truly tasteful and polished.', 'customify' ),
+					'background_image_url' => 'http://pxgcdn.com/images/style-manager/color-palettes/hive-theme-palette.jpg',
 
 					// Use the following options to style the preview card fonts
 					// Including font-family, size, line-height, weight, letter-spacing and text transform
@@ -832,6 +922,7 @@ class Customify_Font_Palettes {
 					// Font Palette Name
 					'title'            => esc_html__( 'Not Vasco', 'customify' ),
 					'description'      => esc_html__( 'Just awesome.', 'customify' ),
+					'background_image_url' => 'http://pxgcdn.com/images/style-manager/color-palettes/vasco-theme-palette.jpg',
 
 					// Use the following options to style the preview card fonts
 					// Including font-family, size, line-height, weight, letter-spacing and text transform
