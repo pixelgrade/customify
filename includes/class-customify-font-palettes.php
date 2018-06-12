@@ -604,7 +604,7 @@ class Customify_Font_Palettes {
 					// Secondary font is used for smaller headings [H4, H5, H6], including meta details
 					'sm_font_secondary' => array(
 						'font_family'      => 'Montserrat',
-						'font_weights'     => array( 'regular' ),
+						'font_weights'     => array( 200, 400 ),
 						'font_size_to_line_height_points' => array(
 							array( 10, 1.6 ),
 							array( 12, 1.5 ),
@@ -615,6 +615,12 @@ class Customify_Font_Palettes {
 								'start'          => 0,
 								'font_weight'    => 200,
 								'letter_spacing' => '0.03em',
+								'text_transform' => 'uppercase',
+							),
+							array(
+								'start'          => 13,
+								'font_weight'    => 400,
+								'letter_spacing' => '0.015em',
 								'text_transform' => 'uppercase',
 							),
 						),
@@ -693,7 +699,7 @@ class Customify_Font_Palettes {
 					// Secondary font is used for smaller headings [H4, H5, H6], including meta details
 					'sm_font_secondary' => array(
 						'font_family'      => 'Montserrat',
-						'font_weights'     => array( 'regular' ),
+						'font_weights'     => array( 'regular', 600 ),
 						'font_size_to_line_height_points' => array(
 							array( 14, 1.2 ),
 							array( 16, 1.2 )
@@ -701,18 +707,18 @@ class Customify_Font_Palettes {
 						'font_styles_intervals'      => array(
 							array(
 								'start'            => 0,
-								'font_weight'    => 'regular',
-								'letter_spacing' => '0.15em',
+								'font_weight'    => 600,
+								'letter_spacing' => '0.154em',
 								'text_transform' => 'uppercase',
 							),
 							array(
-								'start'            => 20,
+								'start'            => 13,
 								'font_weight'    => 'regular',
 								'letter_spacing' => '0em',
 								'text_transform' => 'uppercase',
 							),
 							array(
-								'start'            => 35,
+								'start'            => 17, // (? Buttons vs Navigation at 16px)
 								'font_weight'    => 'regular',
 								'letter_spacing' => '0em',
 								'text_transform' => 'none',
@@ -800,6 +806,12 @@ class Customify_Font_Palettes {
 						'font_styles_intervals'      => array(
 							array(
 								'start'          => 0,
+								'font_weight'    => 400,
+								'letter_spacing' => '0.04em',
+								'text_transform' => 'uppercase',
+							),
+							array(
+								'start'          => 12,
 								'font_weight'    => 500,
 								'letter_spacing' => '0em',
 								'text_transform' => 'uppercase',
@@ -863,7 +875,7 @@ class Customify_Font_Palettes {
 							array( 20, 1.55 ),
 							array( 28, 1.5 ),
 							array( 40, 1.35 ),
-							array( 54, 1.1 ),
+							array( 65, 1.15 ),
 						),
 
 						// Define how fonts will look based on the font size.
