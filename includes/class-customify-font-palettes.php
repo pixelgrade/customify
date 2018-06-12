@@ -334,9 +334,9 @@ class Customify_Font_Palettes {
 					'live'         => true,
 					'priority'     => 5.5,
 					'choices'      => array(
-						'light'     => esc_html__( 'light', 'customify' ),
-						'regular'     => esc_html__( 'regular', 'customify' ),
-						'big' => esc_html__( 'big', 'customify' ),
+						'light'     => esc_html__( 'not light', 'customify' ),
+						'regular'     => esc_html__( 'not regular', 'customify' ),
+						'big' => esc_html__( 'not big', 'customify' ),
 					),
 				),
 				'sm_font_primary'              => array(
@@ -426,22 +426,22 @@ class Customify_Font_Palettes {
 					),
 					'connected_fields' => array(),
 				),
-//				'sm_swap_fonts'                => array(
-//					'type'         => 'button',
-//					'setting_type' => 'option',
-//					'setting_id'   => 'sm_swap_fonts',
-//					'priority'     => 9,
-//					'label'        => esc_html__( 'Swap Fonts', 'customify' ),
-//					'action'       => 'sm_swap_fonts',
-//				),
-//				'sm_swap_primary_secondary'            => array(
-//					'type'         => 'button',
-//					'setting_type' => 'option',
-//					'setting_id'   => 'sm_swap_primary_secondary',
-//					'priority'     => 9.1,
-//					'label'        => esc_html__( 'Swap Primary ⇆ Secondary', 'customify' ),
-//					'action'       => 'sm_swap_dark_light',
-//				),
+				'sm_swap_fonts'                => array(
+					'type'         => 'button',
+					'setting_type' => 'option',
+					'setting_id'   => 'sm_swap_fonts',
+					'priority'     => 9,
+					'label'        => esc_html__( 'Swap Fonts', 'customify' ),
+					'action'       => 'sm_swap_fonts',
+				),
+				'sm_swap_primary_secondary'            => array(
+					'type'         => 'button',
+					'setting_type' => 'option',
+					'setting_id'   => 'sm_swap_primary_secondary',
+					'priority'     => 9.1,
+					'label'        => esc_html__( 'Swap Primary ⇆ Secondary', 'customify' ),
+					'action'       => 'sm_swap_dark_light',
+				),
 			),
 		) );
 
@@ -541,12 +541,114 @@ class Customify_Font_Palettes {
 	 */
 	protected function get_default_config() {
 		$default_config = array(
+			'gema' => array(
+				'label'   => esc_html__( 'Gema', 'customify' ),
+				'preview' => array(
+					// Font Palette Name
+					'title'            => esc_html__( 'Gema', 'customify' ),
+					'description'      => esc_html__( 'A graceful nature, truly tasteful and polished.', 'customify' ),
+					'background_image_url' => 'http://pxgcdn.com/images/style-manager/color-palettes/gema-theme-palette.jpg',
+
+					// Use the following options to style the preview card fonts
+					// Including font-family, size, line-height, weight, letter-spacing and text transform
+					'title_font'       => array(
+						'font' => 'font_primary',
+						'size' => 32,
+					),
+					'description_font' => array(
+						'font' => 'font_body',
+						'size' => 16,
+					),
+				),
+
+				'fonts_logic' => array(
+					// Primary is used for main headings [Display, H1, H2, H3]
+					'sm_font_primary' => array(
+						// Define the font type ('google' or 'theme_font'). By default it's 'google'.
+						'type' => 'google',
+						// Font loaded when a palette is selected
+						'font_family'      => 'Montserrat',
+						// Load all these fonts weights.
+						'font_weights'     => array( 100, 300, 700 ),
+						// "Generate" the graph to be used for font-size and line-height.
+						'font_size_to_line_height_points' => array(
+							array( 17, 1.7 ),
+							array( 20, 1.3 ),
+							array( 32, 1.3 ),
+							array( 48, 1.2 ),
+						),
+
+						// Define how fonts will look based on the font size.
+						'font_styles_intervals'      => array(
+							array(
+								'start'          => 10,
+								'font_weight'    => 300,
+								'letter_spacing' => '0.03em',
+								'text_transform' => 'uppercase',
+							),
+							array(
+								'start'          => 12,
+								'font_weight'    => 700,
+								'letter_spacing' => '0em',
+								'text_transform' => 'uppercase',
+							),
+							array(
+								'start'          => 18,
+								'font_weight'    => 100,
+								'letter_spacing' => '0.03em',
+								'text_transform' => 'uppercase',
+							),
+						),
+					),
+
+					// Secondary font is used for smaller headings [H4, H5, H6], including meta details
+					'sm_font_secondary' => array(
+						'font_family'      => 'Montserrat',
+						'font_weights'     => array( 'regular' ),
+						'font_size_to_line_height_points' => array(
+							array( 10, 1.6 ),
+							array( 12, 1.5 ),
+							array( 18, 1.5 )
+						),
+						'font_styles_intervals'      => array(
+							array(
+								'start'          => 0,
+								'font_weight'    => 200,
+								'letter_spacing' => '0.03em',
+								'text_transform' => 'uppercase',
+							),
+						),
+					),
+
+					// Used for Body Font [eg. entry-content]
+					'sm_font_body' => array(
+						'font_family'      => 'Montserrat',
+						'font_weights'     => array( 200, '200italic', 700, '700italic' ),
+						'font_size_to_line_height_points' => array(
+							array( 15, 1.7 ),
+							array( 16, 1.8 ),
+							array( 18, 1.7 ),
+						),
+
+						// Define how fonts will look based on their size
+						'font_styles_intervals'      => array(
+							array(
+								'start'          => 0,
+								'weight'         => 200,
+								'letter_spacing' => 0,
+								'text_transform' => 'none',
+							),
+						),
+					),
+				),
+			),
 			'julia' => array(
 				'label'   => esc_html__( 'Julia', 'customify' ),
 				'preview' => array(
 					// Font Palette Name
 					'title'            => esc_html__( 'Julia', 'customify' ),
 					'description'      => esc_html__( 'A graceful nature, truly tasteful and polished.', 'customify' ),
+					'background_image_url' => 'http://pxgcdn.com/images/style-manager/color-palettes/julia-theme-palette.jpg',
 
 					// Use the following options to style the preview card fonts
 					// Including font-family, size, line-height, weight, letter-spacing and text transform
@@ -566,46 +668,22 @@ class Customify_Font_Palettes {
 						// Define the font type ('google' or 'theme_font'). By default it's 'google'.
 						'type' => 'google',
 						// Font loaded when a palette is selected
-						'font_family'      => 'Open Sans',
+						'font_family'      => 'Lora',
 						// Load all these fonts weights.
-						'font_weights'     => array( 'regular' ),
+						'font_weights'     => array( 'bold' ),
 						// "Generate" the graph to be used for font-size and line-height.
 						'font_size_to_line_height_points' => array(
-							array( 14, 1.7 ),
-							array( 50, 1.3 ),
-							array( 80, 1 ),
+							array( 24, 1.25 ),
+							array( 44, 1.2 ),
+							array( 66, 1.15 ),
 						),
 
-						// These are not used right now.
-//						'font_size_min' => 30,
-//						'font_size_max' => 100,
-
 						// Define how fonts will look based on the font size.
-						// The current logic is as follows:
-						// - for an interval, if the start is missing, it is assumed to be 0;
-						// - for an interval, if the end is missing, it is assumed to be infinity;
-						// - later intervals overwrite earlier ones and apply their own styles; so the order in which you define intervals might influence things;
-						// - if there are gaps between intervals, we will "extend" the first interval to the start of it's next neighbour;
-						// - neighbouring intervals will have, in the end, the same end and start, and on the border, the first interval will apply
-						//   i.e. end takes precedence over start.
 						'font_styles_intervals'      => array(
 							array(
 								'start'          => 0,
 								'end'            => 30,
-								'font_weight'    => 'regular',
-								'letter_spacing' => '0em',
-								'text_transform' => 'none',
-							),
-							array(
-								'start'          => 20,
-								'end'            => 50,
-								'font_weight'    => 'regular',
-								'letter_spacing' => '0em',
-								'text_transform' => 'none',
-							),
-							array(
-								'start'          => 40,
-								'font_weight'    => 'regular',
+								'font_weight'    => 'bold',
 								'letter_spacing' => '0em',
 								'text_transform' => 'none',
 							),
@@ -614,31 +692,29 @@ class Customify_Font_Palettes {
 
 					// Secondary font is used for smaller headings [H4, H5, H6], including meta details
 					'sm_font_secondary' => array(
-						'font_family'      => 'Roboto',
-						'font_weights'     => array( 'regular', 500, 700 ),
+						'font_family'      => 'Montserrat',
+						'font_weights'     => array( 'regular' ),
 						'font_size_to_line_height_points' => array(
-							array( 14, 1.7 ),
-							array( 50, 1.3 ),
-							array( 80, 1 ),
+							array( 14, 1.2 ),
+							array( 16, 1.2 )
 						),
 						'font_styles_intervals'      => array(
 							array(
-								'end'            => 14,
+								'start'            => 0,
 								'font_weight'    => 'regular',
-								'letter_spacing' => '0.08em',
+								'letter_spacing' => '0.15em',
 								'text_transform' => 'uppercase',
 							),
 							array(
-								'start'          => 14,
-								'end'            => 19,
-								'weight'         => 700,
-								'letter_spacing' => '0.07em',
+								'start'            => 20,
+								'font_weight'    => 'regular',
+								'letter_spacing' => '0em',
 								'text_transform' => 'uppercase',
 							),
 							array(
-								'start'          => 19,
-								'font_weight'    => 500,
-								'letter_spacing' => 0,
+								'start'            => 35,
+								'font_weight'    => 'regular',
+								'letter_spacing' => '0em',
 								'text_transform' => 'none',
 							),
 						),
@@ -666,12 +742,187 @@ class Customify_Font_Palettes {
 					),
 				),
 			),
-			'vasco' => array(
-				'label'   => esc_html__( 'Vasco', 'customify' ),
+			'patch' => array(
+				'label'   => esc_html__( 'Patch', 'customify' ),
 				'preview' => array(
 					// Font Palette Name
-					'title'            => esc_html__( 'Vasco', 'customify' ),
+					'title'            => esc_html__( 'Patch', 'customify' ),
+					'description'      => esc_html__( 'A graceful nature, truly tasteful and polished.', 'customify' ),
+					'background_image_url' => 'http://pxgcdn.com/images/style-manager/color-palettes/patch-theme-palette.jpg',
+
+					// Use the following options to style the preview card fonts
+					// Including font-family, size, line-height, weight, letter-spacing and text transform
+					'title_font'       => array(
+						'font' => 'font_primary',
+						'size' => 26,
+					),
+					'description_font' => array(
+						'font' => 'font_body',
+						'size' => 16,
+					),
+				),
+
+				'fonts_logic' => array(
+					// Primary is used for main headings [Display, H1, H2, H3]
+					'sm_font_primary' => array(
+						// Define the font type ('google' or 'theme_font'). By default it's 'google'.
+						'type' => 'google',
+						// Font loaded when a palette is selected
+						'font_family'      => 'Oswald',
+						// Load all these fonts weights.
+						'font_weights'     => array( 300, 400, 700),
+						// "Generate" the graph to be used for font-size and line-height.
+						'font_size_to_line_height_points' => array(
+							array( 20, 1.55 ),
+							array( 26, 1.45 ),
+							array( 56, 1.25 ),
+						),
+
+						// Define how fonts will look based on the font size.
+						'font_styles_intervals'      => array(
+							array(
+								'start'          => 0,
+								'font_weight'    => 400,
+								'letter_spacing' => '0.04em',
+								'text_transform' => 'uppercase',
+							),
+						),
+					),
+
+					// Secondary font is used for smaller headings [H4, H5, H6], including meta details
+					'sm_font_secondary' => array(
+						'font_family'      => 'Roboto',
+						'font_weights'     => array( 300, '300italic', 400, '400italic', 500, '500italic' ),
+						'font_size_to_line_height_points' => array(
+							array( 11, 1.625 ),
+							array( 18, 1.4 ),
+						),
+						'font_styles_intervals'      => array(
+							array(
+								'start'          => 0,
+								'font_weight'    => 500,
+								'letter_spacing' => '0em',
+								'text_transform' => 'uppercase',
+							),
+						),
+					),
+
+					// Used for Body Font [eg. entry-content]
+					'sm_font_body' => array(
+						'font_family'      => 'Roboto',
+						'font_weights'     => array( 300, '300italic', 400, '400italic', 500, '500italic' ),
+						'font_size_to_line_height_points' => array(
+							array( 14, 1.45 ),
+							array( 16, 1.625 ),
+							array( 18, 1.75 ),
+						),
+
+						// Define how fonts will look based on their size
+						'font_styles_intervals'      => array(
+							array(
+								'start'          => 0,
+								'weight'         => 400,
+								'letter_spacing' => 0,
+								'text_transform' => 'none',
+							),
+						),
+					),
+				),
+			),
+			'hive' => array(
+				'label'   => esc_html__( 'Hive', 'customify' ),
+				'preview' => array(
+					// Font Palette Name
+					'title'            => esc_html__( 'Hive', 'customify' ),
+					'description'      => esc_html__( 'A graceful nature, truly tasteful and polished.', 'customify' ),
+					'background_image_url' => 'http://pxgcdn.com/images/style-manager/color-palettes/hive-theme-palette.jpg',
+
+					// Use the following options to style the preview card fonts
+					// Including font-family, size, line-height, weight, letter-spacing and text transform
+					'title_font'       => array(
+						'font' => 'font_primary',
+						'size' => 36,
+					),
+					'description_font' => array(
+						'font' => 'font_body',
+						'size' => 18,
+					),
+				),
+
+				'fonts_logic' => array(
+					// Primary is used for main headings [Display, H1, H2, H3]
+					'sm_font_primary' => array(
+						// Define the font type ('google' or 'theme_font'). By default it's 'google'.
+						'type' => 'google',
+						// Font loaded when a palette is selected
+						'font_family'      => 'Playfair Display',
+						// Load all these fonts weights.
+						'font_weights'     => array( 400, '400italic', 700, '700italic', 900, '900italic' ),
+						// "Generate" the graph to be used for font-size and line-height.
+						'font_size_to_line_height_points' => array(
+							array( 20, 1.55 ),
+							array( 28, 1.5 ),
+							array( 40, 1.35 ),
+							array( 54, 1.1 ),
+						),
+
+						// Define how fonts will look based on the font size.
+						'font_styles_intervals'      => array(
+							array(
+								'start'          => 0,
+								'font_weight'    => 400,
+								'letter_spacing' => '0em',
+								'text_transform' => 'none',
+							),
+						),
+					),
+
+					// Secondary font is used for smaller headings [H4, H5, H6], including meta details
+					'sm_font_secondary' => array(
+						'font_family'      => 'Droid Serif',
+						'font_weights'     => array( 400, '400italic', 700, '700italic' ),
+						'font_size_to_line_height_points' => array(
+							array( 13, 1.33 ),
+							array( 18, 1.5 ),
+						),
+						'font_styles_intervals'      => array(
+							array(
+								'start'          => 0,
+								'font_weight'    => 400,
+								'letter_spacing' => '0em',
+								'text_transform' => 'uppercase',
+							),
+						),
+					),
+
+					// Used for Body Font [eg. entry-content]
+					'sm_font_body' => array(
+						'font_family'      => 'Droid Serif',
+						'font_weights'     => array( 400, '400italic', 700, '700italic' ),
+						'font_size_to_line_height_points' => array(
+							array( 13, 1.4 ),
+							array( 18, 1.5 ),
+						),
+
+						// Define how fonts will look based on their size
+						'font_styles_intervals'      => array(
+							array(
+								'start'          => 0,
+								'weight'         => 400,
+								'letter_spacing' => 0,
+								'text_transform' => 'none',
+							),
+						),
+					),
+				),
+			),
+			'vasco' => array(
+				'label'   => esc_html__( 'Not Vasco', 'customify' ),
+				'preview' => array(
+					// Font Palette Name
+					'title'            => esc_html__( 'Not Vasco', 'customify' ),
 					'description'      => esc_html__( 'Just awesome.', 'customify' ),
+					'background_image_url' => 'http://pxgcdn.com/images/style-manager/color-palettes/vasco-theme-palette.jpg',
 
 					// Use the following options to style the preview card fonts
 					// Including font-family, size, line-height, weight, letter-spacing and text transform
