@@ -21,6 +21,17 @@
         window.connectedFieldsCallbacks = {};
     };
 
+	const hexDigits = new Array("0","1","2","3","4","5","6","7","8","9","a","b","c","d","e","f");
+
+	function rgb2hex(rgb) {
+		rgb = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
+		return "#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]);
+	}
+
+	function hex(x) {
+		return isNaN(x) ? "00" : hexDigits[(x - x % 16) / 16] + hexDigits[x % 16];
+	}
+
     const updateCurrentPalette = ( label ) => {
         const $palette = $( '.c-palette' );
 
@@ -37,7 +48,8 @@
         // apply the last animate set of colors to the "current" color palette
         _.each( settings, function( setting_id ) {
             const color = $next.find( '.' + setting_id ).css( 'color' );
-            $current.find( '.' + setting_id ).css( 'color', color );
+            $current.find( '.color.' + setting_id ).css( 'color', color );
+            $palette.find( 'input.' + setting_id ).val( rgb2hex( color ) );
         });
 
         // removing the "animate" class will put the "next" color palette out view
@@ -183,6 +195,7 @@
 
     const createCurrentPaletteControls = () => {
         const $palette = $( '.c-palette' );
+        const $fields = $palette.find( '.c-palette__fields' ).find( 'input' );
 
         if ( ! $palette.length ) {
             return;
@@ -193,9 +206,12 @@
         $colors.each( ( i, obj ) => {
             const $obj = $( obj );
             const setting_id = $obj.data( 'setting' );
+            const $input = $fields.filter( '.' + setting_id );
             const setting = wp.customize( setting_id );
 
-            $obj.iris( {
+            $obj.data( 'target', $input );
+
+            $input.iris( {
                 change: ( event, ui ) => {
                     const lastColor = setting();
                     const currentColor = ui.color.toString();
@@ -217,32 +233,60 @@
 		        e.preventDefault();
             } );
 
-            $obj.on( 'click', ( e ) => {
+	        $obj.on( 'click', ( e ) => {
                 e.stopPropagation();
                 e.preventDefault();
 
-                const hidden = ! $obj.find( '.iris-picker' ).is( ":visible" );
-
-                if ( hidden ) {
-                    $colors.not( $obj ).addClass( 'inactive' ).iris( 'hide' );
-                    $obj.removeClass( 'inactive' );
-
-	                const $iris = $obj.find( '.iris-picker' );
-	                const paletteWidth = $palette.outerWidth();
-	                const irisWidth = $iris.outerWidth();
-
-	                $iris.css( 'left', ( paletteWidth - irisWidth ) * i / ( $colors.length - 1 ) );
+                if ( $input.is( ':visible' ) ) {
+                    $input.iris( 'hide' );
+                    $input.hide();
+                    $colors.removeClass( 'active inactive' );
                 } else {
-                    $colors.removeClass( 'inactive' );
+                    $colors.not( $obj ).each( function( i, obj ) {
+                        $( obj ).data( 'target' ).not( $input ).hide();
+                    } );
+                    $input.show().focus();
                 }
+            } );
 
-                $obj.iris( 'color', $obj.css( 'color' ) );
-                $obj.iris( 'toggle' );
+	        $input.on( 'click', ( e ) => {
+		        e.stopPropagation();
+		        e.preventDefault();
+	        } );
+
+	        $input.on( 'focus', ( e ) => {
+
+		        $colors.each( ( i, obj ) => {
+		            $( obj ).data( 'target' ).not( $input ).iris( 'hide' );
+		        } );
+
+		        $colors.not( $obj ).addClass( 'inactive' ).removeClass( 'active' );
+		        $obj.addClass( 'active' ).removeClass( 'inactive' );
+
+                $colors.not( $obj ).each( function( i, obj ) {
+                    $( obj ).data( 'target' ).iris( 'hide' );
+                } );
+
+                const $iris = $input.next( '.iris-picker' );
+                const paletteWidth = $palette.outerWidth();
+                const $visibleColors = $colors.filter( ':visible' );
+                const index = $visibleColors.index( $obj );
+
+                $iris.css( 'left', ( paletteWidth - 200 ) * index / ( $visibleColors.length - 1 ) );
+
+                $input.iris( 'color', $obj.css( 'color' ) );
+                $input.iris( 'show' );
             } );
         } );
 
         $( 'body' ).on( 'click', function() {
-            $colors.removeClass( 'inactive' ).iris( 'hide' );
+            $colors.removeClass( 'active inactive' );
+	        $colors.each( function( i, obj ) {
+	            const $input = $( obj ).data( 'target' );
+
+		        $input.iris( 'hide' );
+		        $input.hide();
+	        } );
         } );
     };
 

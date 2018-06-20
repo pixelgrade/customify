@@ -2331,7 +2331,8 @@ $animation-duration: 1s;
 	25%  { opacity: 1; transform: translateY(-130%); }
 	32%  { opacity: 1; transform: translateY(-130%); }
 	52%  { opacity: 1; transform: translateY(-130%); }
-	100% { opacity: 1; transform: translateY(-160%); }
+	99%  { opacity: 1; transform: translateY(-160%); }
+	100% { opacity: 0; transform: translateY(-160%); }
 }
 
 @keyframes fill-picker-after {
@@ -2461,13 +2462,29 @@ $animation-duration: 1s;
 }
 
 .color {
+
 	.picker {
-		transition: opacity .3s ease-in-out;
+		border: 2px solid transparent;
+		transition: opacity .3s ease-in-out, border-color .3s ease-in-out;
 		cursor: pointer;
+	}
+
+	.picker i {
+		transition: box-shadow .3s ease-in-out;
 	}
 
 	&.inactive .picker {
 		opacity: 0.2;
+	}
+
+	&.active .picker {
+		border-color: #73C5EE;
+	}
+
+	.colors &.active {
+		i {
+			box-shadow: inset 0 0 3px 0 transparent, inset 0 1px 3px 0 transparent;
+		}
 	}
 
 	&.inactive .picker:hover {
@@ -2515,6 +2532,10 @@ $animation-duration: 1s;
 .c-palette__control {
 	position: relative;
 	cursor: pointer;
+}
+
+input.c-palette__input[class] {
+	margin-top: 1em;
 }
 
 #customize-control-sm_toggle_advanced_settings_control {

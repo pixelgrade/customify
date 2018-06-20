@@ -365,11 +365,19 @@ class Customify_Style_Manager {
                 $current_palette .=
                     '<div class="color ' . $setting_id . '" data-setting="' . $setting_id . '">' . PHP_EOL .
                     '<div class="fill"></div>' . PHP_EOL .
-                    '<div class="picker"><i></i></div>' . PHP_EOL .
+                    '<div class="picker">' .
+                        '<i></i>'.
+                    '</div>' . PHP_EOL .
                     '</div>' . PHP_EOL;
 			}
 			$current_palette .= '</div>';
 		}
+
+		$current_palette .= '<div class="c-palette__fields">';
+		foreach ( $master_color_controls_ids as $setting_id ) {
+			$current_palette .= '<input id="current-palette-' . $setting_id . '" class="c-palette__input ' . $setting_id . '" type="text">';
+		}
+		$current_palette .= '</div>';
 
 		// The section might be already defined, thus we merge, not replace the entire section config.
 		$config['sections']['style_manager_section']['options'] = array(
