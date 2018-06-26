@@ -250,12 +250,12 @@ class PixCustomifyPlugin {
 	}
 
 	/**
-	 * Initialize Configs, Options and Values methods
+	 * Initialize Configs, Options and Values methods.
 	 */
 	function init_plugin_configs() {
 		$this->customizer_config = get_option( 'pixcustomify_config' );
 
-		// no option so go for default
+		// no option so go for default.
 		if ( empty( $this->customizer_config ) ) {
 			$this->customizer_config = $this->get_config_option( 'default_options' );
 		}
@@ -266,12 +266,15 @@ class PixCustomifyPlugin {
 	}
 
 	/**
-	 * Load the plugin configuration and options
+	 * Load the plugin configuration and options.
 	 */
 	function load_plugin_configs() {
 
 		// Allow themes or other plugins to filter the config.
 		$this->customizer_config = apply_filters( 'customify_filter_fields', $this->customizer_config );
+		// We apply a second filter for those that wish to work with the final config and not rely on a a huge priority number.
+		$this->customizer_config = apply_filters( 'customify_final_config', $this->customizer_config );
+
 		$this->opt_name          = $this->localized['options_name'] = $this->customizer_config['opt-name'];
 		$this->options_list      = $this->get_options();
 
@@ -2150,7 +2153,7 @@ class PixCustomifyPlugin {
 		$controller->init();
 	}
 
-	function get_options_configs() {
+	public function get_options_configs() {
 		return $this->options_list;
 	}
 

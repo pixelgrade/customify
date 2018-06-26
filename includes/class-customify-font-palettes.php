@@ -49,7 +49,7 @@ class Customify_Font_Palettes {
 	 */
 	public function add_hooks() {
 		/*
-		 * Handle the font palettes preprocessing of fonts logic.
+		 * Handle the font palettes preprocessing.
 		 */
 		add_filter( 'customify_get_font_palettes', array( $this, 'preprocess_config' ), 10, 1 );
 		/*
@@ -58,6 +58,7 @@ class Customify_Font_Palettes {
 		add_filter( 'customify_filter_fields', array( $this, 'add_style_manager_section_master_fonts_config' ), 12, 1 );
 		// This needs to come after the external theme config has been applied
 //		add_filter( 'customify_filter_fields', array( $this, 'add_current_palette_control' ), 110, 1 );
+		add_filter( 'customify_final_config', array( $this, 'standardize_connected_fields' ), 10, 1 );
 
 		/*
 		 * Scripts enqueued in the Customizer.
@@ -126,6 +127,15 @@ class Customify_Font_Palettes {
 		return $config;
 	}
 
+	/**
+	 * Preprocess a font palette config before using it.
+	 *
+	 * @since 1.7.5
+	 *
+	 * @param array $palette_config
+	 *
+	 * @return array
+	 */
 	private function preprocess_palette_config( $palette_config ) {
 		if ( empty( $palette_config ) ) {
 			return $palette_config;
@@ -140,6 +150,15 @@ class Customify_Font_Palettes {
 		return $palette_config;
 	}
 
+	/**
+	 * Before using a font logic config, preprocess it to allow for standardization, fill up of missing info, etc.
+	 *
+	 * @since 1.7.5
+	 *
+	 * @param array $fonts_logic_config
+	 *
+	 * @return array
+	 */
 	private function preprocess_fonts_logic_config( $fonts_logic_config ) {
 		if ( empty( $fonts_logic_config ) ) {
 			return $fonts_logic_config;
@@ -528,6 +547,103 @@ class Customify_Font_Palettes {
           ) + $config['sections']['style_manager_section']['options'];
 
 		return $config;
+	}
+
+	/**
+	 * Process any configured connected fields that relate to fonts and standardize their config.
+	 *
+	 * Think things like filling up the default font_size if not present.
+	 *
+	 * @since 1.7.5
+	 *
+	 * @param array $config
+	 *
+	 * @return array
+	 */
+	public function standardize_connected_fields( $config ) {
+		// If there is no style manager support, bail early.
+		if ( ! $this->is_supported() ) {
+			return $config;
+		}
+
+		$style_manager_options = $config['sections']['style_manager_section']['options'];
+		$master_font_controls_ids = $this->get_all_master_font_controls_ids( $style_manager_options );
+		if ( empty( $master_font_controls_ids ) ) {
+			return $config;
+		}
+
+		foreach ( $master_font_controls_ids as $id ) {
+			if ( ! empty( $style_manager_options[ $id ]['connected_fields'] ) ) {
+				$connected_fields_config = array();
+				foreach ( $style_manager_options[ $id ]['connected_fields'] as $key => $value ) {
+					// If we have a shorthand connected field config, change it to a standard one.
+					if ( ! is_array( $value ) ) {
+						$key = $value;
+						$value = array();
+					}
+
+					$option_config = $this->get_option_config( $key, $config );
+					if ( empty( $option_config ) ) {
+						continue;
+					}
+
+					// If we didn't get a font_size we will try and grab the default value for the connected field.
+					if ( ! isset( $value['font_size'] ) ) {
+						if ( isset( $option_config['default']['font-size'] ) ) {
+							$value['font_size'] = $option_config['default']['font-size'];
+						} else {
+							$value['font_size'] = false;
+						}
+					}
+
+					$connected_fields_config[ $key ] = $value;
+				}
+
+				$config['sections']['style_manager_section']['options'][ $id ]['connected_fields'] = $connected_fields_config;
+			}
+		}
+
+		return $config;
+	}
+
+	/**
+	 * Get the Customify configuration of a certain option.
+	 *
+	 * @param string $option_id
+	 *
+	 * @return array|false The option config or false on failure.
+	 */
+	private function get_option_config( $option_id, $config ) {
+		// We need to search for the option configured under the given id (the array key)
+		if ( isset ( $config['panels'] ) ) {
+			foreach ( $config['panels'] as $panel_id => $panel_settings ) {
+				if ( isset( $panel_settings['sections'] ) ) {
+					foreach ( $panel_settings['sections'] as $section_id => $section_settings ) {
+						if ( isset( $section_settings['options'] ) ) {
+							foreach ( $section_settings['options'] as $id => $option_config ) {
+								if ( $id === $option_id ) {
+									return $option_config;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		if ( isset ( $config['sections'] ) ) {
+			foreach ( $config['sections'] as $section_id => $section_settings ) {
+				if ( isset( $section_settings['options'] ) ) {
+					foreach ( $section_settings['options'] as $id => $option_config ) {
+						if ( $id === $option_id ) {
+							return $option_config;
+						}
+					}
+				}
+			}
+		}
+
+		return false;
 	}
 
 	/**
