@@ -316,6 +316,51 @@ let ColorPalettes = ( function( $, exports, wp ) {
         updateCurrentPalette( label );
     };
 
+    const buildColorMatrix = () => {
+        const $matrix = $( '.sm_color_matrix' );
+
+        $matrix.empty();
+
+	    _.each( masterSettingIds, function( setting_id ) {
+	        const $bucket = $( '<div class="' + setting_id + '">' ).appendTo( $matrix );
+            const color = wp.customize( setting_id )();
+		    _.each( wp.customize.settings.settings[setting_id]['connected_fields'], function( connected_field ) {
+		        const $color = $( '<div class="' + connected_field.setting_id + '">' ).appendTo( $bucket );
+		        $color.css( 'color', color );
+            } );
+	    });
+    };
+
+    const moveConnectedFields = ( settings, from, to, ratio ) => {
+
+	    if ( ! _.isUndefined( settings[to] ) &&
+	         ! _.isUndefined( settings[from] ) &&
+	         ! _.isUndefined( settings[to]['connected_fields'] ) &&
+	         ! _.isUndefined( settings[from]['connected_fields'] ) ) {
+
+		    const oldFromConnectedFields = Object.values( settings[from]['connected_fields'] );
+		    const oldToConnectedFields = Object.values( settings[to]['connected_fields'] );
+		    const oldConnectedFields = oldFromConnectedFields.concat( oldToConnectedFields );
+		    const count = ratio * oldConnectedFields.length;
+
+		    let newToConnectedFields = oldConnectedFields.slice( 0, count );
+		    let newFromConnectedFields = oldConnectedFields.slice( count );
+
+		    newToConnectedFields = Object.keys( newToConnectedFields ).map( function(key) {
+			    return newToConnectedFields[key];
+		    });
+
+		    newFromConnectedFields = Object.keys( newFromConnectedFields ).map( function(key) {
+			    return newFromConnectedFields[key];
+		    });
+
+		    settings[to]['connected_fields'] = newToConnectedFields;
+		    settings[from]['connected_fields'] = newFromConnectedFields;
+	    }
+
+	    return settings;
+	};
+
     const handlePalettes = () => {
         initializePalettes();
         createCurrentPaletteControls();
@@ -330,6 +375,36 @@ let ColorPalettes = ( function( $, exports, wp ) {
         });
 
         $( document ).on( 'click', '.customify_preset.color_palette input', onPaletteChange );
+
+        const $darkColorPrimary = $('input[id*="sm_dark_color_primary_slider"]');
+        const $darkColorSecondary = $('input[id*="sm_dark_color_secondary_slider"]');
+        const $darkColorTertiary = $('input[id*="sm_dark_color_tertiary_slider"]');
+
+        const $sliders = $darkColorPrimary.add( $darkColorSecondary ).add( $darkColorTertiary );
+
+	    buildColorMatrix();
+
+	    $( document ).on( 'input', $sliders, _.debounce(function() {
+	    	const primaryRatio = $darkColorPrimary.val() / 100;
+	    	const secondaryRatio = $darkColorSecondary.val() / 100;
+	    	const tertiaryRatio = $darkColorTertiary.val() / 100;
+
+	    	let tempSettings = window.settingsClone;
+
+		    unbindConnectedFields();
+
+		    tempSettings = moveConnectedFields( tempSettings, 'sm_dark_primary', 'sm_color_primary', primaryRatio );
+		    tempSettings = moveConnectedFields( tempSettings, 'sm_dark_secondary', 'sm_color_secondary', secondaryRatio );
+		    tempSettings = moveConnectedFields( tempSettings, 'sm_dark_tertiary', 'sm_color_tertiary', tertiaryRatio );
+
+		    _.each( masterSettingIds, function( setting_id ) {
+			    wp.customize.settings.settings[setting_id]['connected_fields'] = tempSettings[setting_id]['connected_fields'];
+		    } );
+
+		    bindConnectedFields();
+		    buildColorMatrix();
+		    resetSettings( masterSettingIds );
+	    }, 10) );
     };
 
     wp.customize.bind( 'ready', handlePalettes );

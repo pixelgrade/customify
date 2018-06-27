@@ -29,7 +29,7 @@
 					});
 				});
 
-			} else if (typeof wp_settings[key] !== "undefined" && typeof el.css !== "undefined" && typeof el.live !== 'undefined' && el.live === true) {
+			} else if (typeof wp_settings !== "undefined" && typeof wp_settings[key] !== "undefined" && typeof el.css !== "undefined" && typeof el.live !== 'undefined' && el.live === true) {
 				api(key, function (setting) {
 
 					setting.bind(function (to) {
