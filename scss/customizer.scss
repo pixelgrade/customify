@@ -2550,3 +2550,28 @@ input.c-palette__input[class] {
 //.wp-full-overlay-sidebar {
 //	overflow: hidden;
 //}
+
+.sm_color_matrix {
+	display: flex;
+	flex-wrap: wrap;
+	margin-top: -15px;
+	margin-left: -15px;
+
+	> * {
+		display: flex;
+		flex-wrap: wrap;
+		align-content: flex-start;
+		flex: 0 0 percentage(1/3);
+		padding-top: 15px;
+		padding-left: 15px;
+
+		> * {
+			width: 15px;
+			height: 15px;
+			margin: 2px;
+			background-color: currentColor;
+			border-radius: 50%;
+			border: 1px solid #ccc;
+		}
+	}
+}

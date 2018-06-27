@@ -381,43 +381,89 @@ class Customify_Style_Manager {
 
 		// The section might be already defined, thus we merge, not replace the entire section config.
 		$config['sections']['style_manager_section']['options'] = array(
-              'sm_current_color_palette' => array(
-                  'type' => 'html',
-                  'html' =>
-                      '<div class="palette-container">' . PHP_EOL .
-                      '<span class="customize-control-title">Current Color Palette:</span>' . PHP_EOL .
-                      '<span class="description customize-control-description">Choose a color palette to start with. Adjust its style using the variation buttons below.</span>' . PHP_EOL .
-                      '<div class="c-palette">' . PHP_EOL .
-                      $current_palette .
-                      '<div class="c-palette__overlay">' . PHP_EOL .
-                      '<div class="c-palette__label">' .
-                      '<div class="c-palette__name">' . 'Original Style' . '</div>' .
-                      '<div class="c-palette__control variation-light active" data-target="#_customize-input-sm_color_palette_variation_control-radio-light">' .
-                      '<span class="dashicons dashicons-image-rotate"></span>' .
-                      '<div class="c-palette__tooltip">Light</div>' .
-                      '</div>' .
-                      '<div class="c-palette__control variation-dark" data-target="#_customize-input-sm_color_palette_variation_control-radio-dark">' .
-                      '<span class="dashicons dashicons-image-filter"></span>'.
-                      '<div class="c-palette__tooltip">Dark</div>' .
-                      '</div>' .
-                      '<div class="c-palette__control variation-colorful" data-target="#_customize-input-sm_color_palette_variation_control-radio-colorful">' .
-                      '<span class="dashicons dashicons-admin-appearance"></span>' .
-                      '<div class="c-palette__tooltip">Colorful</div>' .
-                      '</div>' .
-                      '</div>' . PHP_EOL .
-                      '</div>' . PHP_EOL .
-                      '</div>' . PHP_EOL .
-                      '</div>' . PHP_EOL .
-                      '<svg class="c-palette__blur" width="15em" height="15em" viewBox="0 0 15 15" xmlns="http://www.w3.org/2000/svg" version="1.1">' . PHP_EOL .
-                      '<defs>' . PHP_EOL .
-                      '<filter id="goo">' . PHP_EOL .
-                      '<feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />' . PHP_EOL .
-                      '<feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 50 -20" result="goo" />' . PHP_EOL .
-                      '<feBlend in="SourceGraphic" in2="goo" />' . PHP_EOL .
-                      '</filter>' . PHP_EOL .
-                      '</defs>' . PHP_EOL .
-                      '</svg>',
-              ),
+            'sm_current_color_palette' => array(
+                'type' => 'html',
+                'html' =>
+                    '<div class="palette-container">' . PHP_EOL .
+                        '<span class="customize-control-title">Current Color Palette:</span>' . PHP_EOL .
+                        '<span class="description customize-control-description">Choose a color palette to start with. Adjust its style using the variation buttons below.</span>' . PHP_EOL .
+                        '<div class="c-palette">' . PHP_EOL .
+                            $current_palette .
+                            '<div class="c-palette__overlay">' . PHP_EOL .
+                                '<div class="c-palette__label">' .
+                                    '<div class="c-palette__name">' . 'Original Style' . '</div>' .
+                                    '<div class="c-palette__control variation-light active" data-target="#_customize-input-sm_color_palette_variation_control-radio-light">' .
+                                        '<span class="dashicons dashicons-image-rotate"></span>' .
+                                        '<div class="c-palette__tooltip">Light</div>' .
+                                    '</div>' .
+                                    '<div class="c-palette__control variation-dark" data-target="#_customize-input-sm_color_palette_variation_control-radio-dark">' .
+                                        '<span class="dashicons dashicons-image-filter"></span>'.
+                                        '<div class="c-palette__tooltip">Dark</div>' .
+                                    '</div>' .
+                                    '<div class="c-palette__control variation-colorful" data-target="#_customize-input-sm_color_palette_variation_control-radio-colorful">' .
+                                        '<span class="dashicons dashicons-admin-appearance"></span>' .
+                                        '<div class="c-palette__tooltip">Colorful</div>' .
+                                    '</div>' .
+                                '</div>' . PHP_EOL .
+                            '</div>' . PHP_EOL .
+                        '</div>' . PHP_EOL .
+                    '</div>' . PHP_EOL .
+                    '<svg class="c-palette__blur" width="15em" height="15em" viewBox="0 0 15 15" xmlns="http://www.w3.org/2000/svg" version="1.1">' . PHP_EOL .
+                        '<defs>' . PHP_EOL .
+                            '<filter id="goo">' . PHP_EOL .
+                                '<feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />' . PHP_EOL .
+                                '<feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 50 -20" result="goo" />' . PHP_EOL .
+                                '<feBlend in="SourceGraphic" in2="goo" />' . PHP_EOL .
+                            '</filter>' . PHP_EOL .
+                        '</defs>' . PHP_EOL .
+                    '</svg>',
+            ),
+            'sm_color_matrix' => array(
+                'type' => 'html',
+                'html' => '<div class="sm_color_matrix"></div>'
+            ),
+            'sm_dark_color_primary_slider' => array(
+	            'type'        => 'range',
+	            'label'       => esc_html__( 'Dark to Color (primary)', 'customify' ),
+	            'desc'        => '',
+	            'live'        => true,
+	            'default'     => 50, // this should be set by the theme (previously 1300)
+	            'input_attrs' => array(
+		            'min'          => 0,
+		            'max'          => 100,
+		            'step'         => 1,
+		            'data-preview' => true,
+	            ),
+	            'css'         => array(),
+            ),
+            'sm_dark_color_secondary_slider' => array(
+	            'type'        => 'range',
+	            'label'       => esc_html__( 'Dark to Color (secondary)', 'customify' ),
+	            'desc'        => '',
+	            'live'        => true,
+	            'default'     => 50, // this should be set by the theme (previously 1300)
+	            'input_attrs' => array(
+		            'min'          => 0,
+		            'max'          => 100,
+		            'step'         => 1,
+		            'data-preview' => true,
+	            ),
+	            'css'         => array(),
+            ),
+            'sm_dark_color_tertiary_slider' => array(
+	            'type'        => 'range',
+	            'label'       => esc_html__( 'Dark to Color (tertiary)', 'customify' ),
+	            'desc'        => '',
+	            'live'        => true,
+	            'default'     => 50, // this should be set by the theme (previously 1300)
+	            'input_attrs' => array(
+		            'min'          => 0,
+		            'max'          => 100,
+		            'step'         => 1,
+		            'data-preview' => true,
+	            ),
+	            'css'         => array(),
+            ),
           ) + $config['sections']['style_manager_section']['options'];
 
 		return $config;
