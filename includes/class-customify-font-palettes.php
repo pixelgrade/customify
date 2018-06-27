@@ -755,8 +755,7 @@ class Customify_Font_Palettes {
 						// Define how fonts will look based on their size
 						'font_styles_intervals'      => array(
 							array(
-								'start'          => 0,
-								'weight'         => 200,
+								'font_weight'    => 200,
 								'letter_spacing' => 0,
 								'text_transform' => 'none',
 							),
@@ -856,7 +855,7 @@ class Customify_Font_Palettes {
 						'font_styles_intervals'      => array(
 							array(
 								'start'          => 0,
-								'weight'         => 'regular',
+								'font_weight'    => 'regular',
 								'letter_spacing' => 0,
 								'text_transform' => 'none',
 							),
@@ -949,7 +948,7 @@ class Customify_Font_Palettes {
 						'font_styles_intervals'      => array(
 							array(
 								'start'          => 0,
-								'weight'         => 400,
+								'font_weight'    => 400,
 								'letter_spacing' => 0,
 								'text_transform' => 'none',
 							),
@@ -1007,7 +1006,7 @@ class Customify_Font_Palettes {
 
 					// Secondary font is used for smaller headings [H4, H5, H6], including meta details
 					'sm_font_secondary' => array(
-						'font_family'      => 'Droid Serif',
+						'font_family'      => 'Noto Serif',
 						'font_weights'     => array( 400, '400italic', 700, '700italic' ),
 						'font_size_to_line_height_points' => array(
 							array( 13, 1.33 ),
@@ -1025,7 +1024,7 @@ class Customify_Font_Palettes {
 
 					// Used for Body Font [eg. entry-content]
 					'sm_font_body' => array(
-						'font_family'      => 'Droid Serif',
+						'font_family'      => 'Noto Serif',
 						'font_weights'     => array( 400, '400italic', 700, '700italic' ),
 						'font_size_to_line_height_points' => array(
 							array( 13, 1.4 ),
@@ -1036,7 +1035,7 @@ class Customify_Font_Palettes {
 						'font_styles_intervals'      => array(
 							array(
 								'start'          => 0,
-								'weight'         => 400,
+								'font_weight'    => 400,
 								'letter_spacing' => 0,
 								'text_transform' => 'none',
 							),
@@ -1135,7 +1134,7 @@ class Customify_Font_Palettes {
 							array(
 								'start'          => 14,
 								'end'            => 19,
-								'weight'         => 700,
+								'font_weight'    => 700,
 								'letter_spacing' => '0.07em',
 								'text_transform' => 'uppercase',
 							),
@@ -1163,7 +1162,7 @@ class Customify_Font_Palettes {
 						'font_styles_intervals'      => array(
 							array(
 								'start'          => 0,
-								'weight'         => '400italic',
+								'font_weight'    => '400italic',
 								'letter_spacing' => 0,
 								'text_transform' => 'none',
 							),
@@ -1264,8 +1263,12 @@ class Customify_Font_Palettes {
 	public function get_all_master_font_controls_ids( $options ) {
 		$master_font_controls = array();
 
+		if ( empty( $options ) ) {
+			return $master_font_controls;
+		}
+
 		foreach ( $options as $option_id => $option_settings ) {
-			if ( 'font' === $option_settings['type'] ) {
+			if ( ! empty( $option_settings['type'] ) && 'font' === $option_settings['type'] ) {
 				$master_font_controls[] = $option_id;
 			}
 		}

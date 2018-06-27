@@ -376,7 +376,7 @@ class Customify_Color_Palettes {
 			                                                          'sm_current_color_palette' => array(
 				                                                          'type' => 'html',
 				                                                          'html' =>
-					                                                          '<div class="palette-container">' . PHP_EOL .
+					                                                          '<div class="color-palette-container">' . PHP_EOL .
 					                                                          '<span class="customize-control-title">Current Color Palette:</span>' . PHP_EOL .
 					                                                          '<span class="description customize-control-description">Choose a color palette to start with. Adjust its style using the variation buttons below.</span>' . PHP_EOL .
 					                                                          '<div class="c-color-palette">' . PHP_EOL .
@@ -389,7 +389,7 @@ class Customify_Color_Palettes {
 					                                                          '<div class="c-color-palette__tooltip">Light</div>' .
 					                                                          '</div>' .
 					                                                          '<div class="c-color-palette__control variation-dark" data-target="#_customize-input-sm_color_palette_variation_control-radio-dark">' .
-					                                                          '<span class="dashicons dashicons-image-filter"></span>'.
+					                                                          '<span class="dashicons dashicons-image-filter"></span>' .
 					                                                          '<div class="c-color-palette__tooltip">Dark</div>' .
 					                                                          '</div>' .
 					                                                          '<div class="c-color-palette__control variation-colorful" data-target="#_customize-input-sm_color_palette_variation_control-radio-colorful">' .
@@ -655,8 +655,12 @@ class Customify_Color_Palettes {
 	public function get_all_master_color_controls_ids( $options ) {
 		$master_color_controls = array();
 
+		if ( empty( $options ) ) {
+			return $master_color_controls;
+		}
+
 		foreach ( $options as $option_id => $option_settings ) {
-			if ( 'color' === $option_settings['type'] ) {
+			if ( ! empty( $option_settings['type'] ) && 'color' === $option_settings['type'] ) {
 				$master_color_controls[] = $option_id;
 			}
 		}
