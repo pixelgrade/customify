@@ -422,6 +422,20 @@ class Customify_Style_Manager {
                 'type' => 'html',
                 'html' => '<div class="sm_color_matrix"></div>'
             ),
+            'sm_dark_color_master_slider' => array(
+	            'type'        => 'range',
+	            'label'       => esc_html__( 'Dark to Color (master)', 'customify' ),
+	            'desc'        => '',
+	            'live'        => true,
+	            'default'     => 50, // this should be set by the theme (previously 1300)
+	            'input_attrs' => array(
+		            'min'          => 0,
+		            'max'          => 100,
+		            'step'         => 1,
+		            'data-preview' => true,
+	            ),
+	            'css'         => array(),
+            ),
             'sm_dark_color_primary_slider' => array(
 	            'type'        => 'range',
 	            'label'       => esc_html__( 'Dark to Color (primary)', 'customify' ),
