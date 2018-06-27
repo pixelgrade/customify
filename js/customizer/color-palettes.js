@@ -353,6 +353,57 @@ let ColorPalettes = ( function( $, exports, wp ) {
 	    return settings;
 	};
 
+    const disperseColorConnectedFields = ( settings, dispersion, focus ) => {
+	    const primaryConnectedFields = Object.values( settings['sm_color_primary']['connected_fields'] );
+	    const secondaryConnectedFields = Object.values( settings['sm_color_secondary']['connected_fields'] );
+	    const tertiaryConnectedFields = Object.values( settings['sm_color_tertiary']['connected_fields'] );
+
+	    console.log(primaryConnectedFields,secondaryConnectedFields,tertiaryConnectedFields);
+
+	    //  A1              A2              A3             A4
+	    //  |--- primary ---|-- secondary --|-- tertiary --|
+	    //          B1                B2
+	    //          |----- focus -----|
+
+	    const b1 = focus * ( 1 - dispersion );
+	    const b2 = focus + ( 1 - focus ) * dispersion;
+	    const a1 = 0;
+	    const a2 = 0.334;
+	    const a3 = 0.667;
+	    const a4 = 1;
+
+	    let primaryWidth = 0;
+	    let secondaryWidth = 0;
+	    let tertiaryWidth = 0;
+
+	    if ( ! ( b1 > a2 || b2 < a1 ) ) {
+		    primaryWidth = Math.min(a2, b2) - Math.max(a1, b1);
+	    }
+
+	    if ( ! ( b1 > a3 || b2 < a2 ) ) {
+	    	secondaryWidth = Math.min(a3, b2) - Math.max(a2, b1);
+	    }
+
+	    if ( ! ( b1 > a4 || b2 < a3 ) ) {
+	    	tertiaryWidth = Math.min(a4, b2) - Math.max(a3, b1)
+	    }
+
+	    const connectedFields = primaryConnectedFields.concat( secondaryConnectedFields ).concat( tertiaryConnectedFields );
+	    const totalWidth = primaryWidth + secondaryWidth + tertiaryWidth;
+	    const primaryFieldsCount = connectedFields.length * primaryWidth / totalWidth;
+	    const secondaryFieldsCount = connectedFields.length * secondaryWidth / totalWidth;
+
+	    const newPrimaryConnectedFields = connectedFields.slice(0, primaryFieldsCount);
+	    const newSecondaryConnectedFields = connectedFields.slice(primaryFieldsCount, primaryFieldsCount + secondaryFieldsCount);
+	    const newTertiaryConnectedFields = connectedFields.slice(primaryFieldsCount + secondaryFieldsCount);
+
+	    settings['sm_color_primary']['connected_fields'] = newPrimaryConnectedFields;
+	    settings['sm_color_secondary']['connected_fields'] = newSecondaryConnectedFields;
+	    settings['sm_color_tertiary']['connected_fields'] = newTertiaryConnectedFields;
+
+    	return settings;
+    };
+
     const handlePalettes = () => {
         initializePalettes();
         createCurrentPaletteControls();
@@ -373,18 +424,25 @@ let ColorPalettes = ( function( $, exports, wp ) {
         const $darkColorSecondary = $('input[id*="sm_dark_color_secondary_slider"]');
         const $darkColorTertiary = $('input[id*="sm_dark_color_tertiary_slider"]');
 
-        const $sliders = $darkColorPrimary.add( $darkColorSecondary ).add( $darkColorTertiary );
+        const $colorDispersionRange = $('input[id*="sm_colors_dispersion"]');
+        const $colorFocusPoint = $('input[id*="sm_colors_focus_point"]');
+
+        const $darkSliders = $darkColorPrimary.add( $darkColorSecondary ).add( $darkColorTertiary );
+        const $sliders = $darkSliders.add( $colorDispersionRange ).add( $colorFocusPoint );
 
 	    buildColorMatrix();
 
 	    $darkColorMaster.on( 'input', function() {
-	        $sliders.val( $darkColorMaster.val() ).trigger( 'input' );
+	        $darkSliders.val( $darkColorMaster.val() ).trigger( 'input' );
 	    } );
 
 	    const onSliderChange = () => {
 		    const primaryRatio = $darkColorPrimary.val() / 100;
 		    const secondaryRatio = $darkColorSecondary.val() / 100;
 		    const tertiaryRatio = $darkColorTertiary.val() / 100;
+
+		    const colorDispersion = $colorDispersionRange.val() / 100;
+		    const focusPoint = $colorFocusPoint.val() / 100;
 
 		    let tempSettings = window.settingsClone;
 
@@ -393,6 +451,8 @@ let ColorPalettes = ( function( $, exports, wp ) {
 		    tempSettings = moveConnectedFields( tempSettings, 'sm_dark_primary', 'sm_color_primary', primaryRatio );
 		    tempSettings = moveConnectedFields( tempSettings, 'sm_dark_secondary', 'sm_color_secondary', secondaryRatio );
 		    tempSettings = moveConnectedFields( tempSettings, 'sm_dark_tertiary', 'sm_color_tertiary', tertiaryRatio );
+
+		    tempSettings = disperseColorConnectedFields( tempSettings, colorDispersion, focusPoint );
 
 		    _.each( masterSettingIds, function( setting_id ) {
 			    wp.customize.settings.settings[setting_id]['connected_fields'] = tempSettings[setting_id]['connected_fields'];

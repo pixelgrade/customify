@@ -470,6 +470,34 @@ class Customify_Color_Palettes {
                   ),
                   'css'         => array(),
               ),
+              'sm_colors_dispersion' => array(
+                  'type'        => 'range',
+                  'label'       => esc_html__( 'Colors dispersion range', 'customify' ),
+                  'desc'        => '',
+                  'live'        => true,
+                  'default'     => 100, // this should be set by the theme (previously 1300)
+                  'input_attrs' => array(
+                      'min'          => 0,
+                      'max'          => 100,
+                      'step'         => 1,
+                      'data-preview' => true,
+                  ),
+                  'css'         => array(),
+              ),
+              'sm_colors_focus_point' => array(
+                  'type'        => 'range',
+                  'label'       => esc_html__( 'Colors focus point', 'customify' ),
+                  'desc'        => '',
+                  'live'        => true,
+                  'default'     => 50, // this should be set by the theme (previously 1300)
+                  'input_attrs' => array(
+                      'min'          => 0,
+                      'max'          => 100,
+                      'step'         => 1,
+                      'data-preview' => true,
+                  ),
+                  'css'         => array(),
+              ),
           ) + $config['sections']['style_manager_section']['options'];
 
 		return $config;
