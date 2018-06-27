@@ -1,6 +1,6 @@
 ;(function ($, window, document, undefined) {
 
-	var fonts_cache = [];
+	const fonts_cache = [];
 
 	$(document).ready(function () {
 		var api = parent.wp.customize,
@@ -15,15 +15,17 @@
 					setting.bind(function (to) {
 						let $values = maybeJsonParse(to);
 
-						if (typeof $values.font_family !== "undefined") {
-							maybeLoadFontFamily($values);
-						}
+                        if (typeof $values !== "undefined" ) {
+                            if (typeof $values.font_family !== "undefined") {
+                                maybeLoadFontFamily($values);
+                            }
 
-						let vls = get_CSS_values(this.id, $values),
-						    CSS = get_CSS_code(this.id, vls),
-                            field_style = $('#customify_font_output_for_' + el.html_safe_option_id);
+                            let vls = get_CSS_values(this.id, $values),
+                                CSS = get_CSS_code(this.id, vls),
+                                field_style = $('#customify_font_output_for_' + el.html_safe_option_id);
 
-						field_style.html(CSS);
+                            field_style.html(CSS);
+                        }
 					});
 				});
 
@@ -33,7 +35,7 @@
 					setting.bind(function (to) {
 
 						$.each(el.css, function (counter, property_config) {
-							var properties = [];
+							let properties = [];
 
 							properties[property_config.property] = property_config.selector;
 							if (typeof property_config.callback_filter !== "undefined") {
@@ -101,17 +103,17 @@
 
 		function load_webfont_once() {
 			if (typeof WebFont === "undefined") {
-				var tk = document.createElement('script');
+				let tk = document.createElement('script');
 				tk.src = '//ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
 				tk.type = 'text/javascript';
-				var s = document.getElementsByTagName('script')[0];
+				let s = document.getElementsByTagName('script')[0];
 				s.parentNode.insertBefore(tk, s);
 			}
 		}
 
-		var get_CSS_values = function (ID, $values) {
+		const get_CSS_values = function (ID, $values) {
 
-			var store = {};
+			let store = {};
 
 			if (typeof $values.font_family !== "undefined") {
 				store['font-family'] = $values.font_family;
@@ -119,7 +121,7 @@
 
 			if (typeof $values.selected_variants !== "undefined") {
 
-				var variants = null;
+				let variants = null;
 
 				if (typeof $values.selected_variants !== "undefined" && $values.selected_variants !== null) {
 					variants = $values.selected_variants;
@@ -128,7 +130,7 @@
 				}
 
 				// google fonts also have the italic string inside, split that
-				if (variants !== null && variants.indexOf('italic') !== -1) {
+				if (variants !== null && _.isString( variants ) && variants.indexOf('italic') !== -1) {
 					store['font-style'] = 'italic';
 					variants = variants.replace('italic', '');
 				}
@@ -143,15 +145,27 @@
 			}
 
 			if (typeof $values.font_size !== "undefined") {
-				store['font-size'] = $values.font_size + get_field_unit(ID, 'font-size');
+				store['font-size'] = $values.font_size;
+                // If the value already contains a unit, go with that.
+                if ( ! isNaN($values.font_size) ) {
+                    store['font-size'] += get_field_unit(ID, 'font-size');
+                }
 			}
 
 			if (typeof $values.letter_spacing !== "undefined") {
-				store['letter-spacing'] = $values.letter_spacing + get_field_unit(ID, 'letter-spacing');
+				store['letter-spacing'] = $values.letter_spacing;
+                // If the value already contains a unit, go with that.
+                if ( ! isNaN($values.letter_spacing) ) {
+                    store['letter-spacing'] += get_field_unit(ID, 'letter-spacing');
+                }
 			}
 
 			if (typeof $values.line_height !== "undefined") {
-				store['line-height'] = $values.line_height + get_field_unit(ID, 'line-height');
+				store['line-height'] = $values.line_height;
+                // If the value already contains a unit, go with that.
+                if ( ! isNaN($values.line_height) ) {
+                    store['line-height'] += get_field_unit(ID, 'line-height');
+                }
 			}
 
 			if (typeof $values.text_align !== "undefined") {
@@ -168,10 +182,10 @@
 			return store;
 		};
 
-		var get_CSS_code = function (ID, $values) {
+		const get_CSS_code = function (ID, $values) {
 
-			var field = customify_settings.settings[ID];
-			var output = '';
+			let field = customify_settings.settings[ID];
+			let output = '';
 
 			if (typeof window !== "undefined" && typeof field.callback !== "undefined" && typeof window[field.callback] === "function") {
 				output = window[field.callback]($values, field);
@@ -179,15 +193,15 @@
 				output = field.selector + "{\n";
 				$.each($values, function (k, v) {
 					output += k + ': ' + v + ";\n";
-				})
+				});
 				output += "}\n";
 			}
 
 			return output;
 		};
 
-		var get_field_unit = function (ID, field) {
-			var unit = 'px';
+		const get_field_unit = function (ID, field) {
+			let unit = 'px';
 			if (typeof customify_settings.settings[ID] === "undefined" || typeof customify_settings.settings[ID].fields[field] === "undefined") {
 				return unit;
 			}
@@ -198,17 +212,22 @@
 				// in case of an associative array
 				return customify_settings.settings[ID].fields[field][3];
 			}
-		}
+		};
 
-		var maybeLoadFontFamily = function (font) {
+		const maybeLoadFontFamily = function (font) {
 
 			if (typeof WebFont === "undefined") {
-				var tk = document.createElement('script');
+				let tk = document.createElement('script');
 				tk.src = '//ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
 				tk.type = 'text/javascript';
-				var s = document.getElementsByTagName('script')[0];
+				let s = document.getElementsByTagName('script')[0];
 				s.parentNode.insertBefore(tk, s);
 			}
+
+			// If the font type is not defined, we assume is a Google font.
+            if ( typeof font.type === "undefined" ) {
+                font.type = 'google';
+            }
 
 			if (font.type === 'theme_font') {
 				WebFont.load({
@@ -218,16 +237,20 @@
 					}
 				});
 			} else if (font.type === 'google') {
-				var family = font.font_family,
+				let family = font.font_family,
 					variants = null,
 					subsets = null;
 
 				if (typeof font.variants !== "undefined") {
 					variants = maybeJsonParse(font.variants);
 
+					if ( typeof variants === "string" || typeof variants === "number") {
+                        variants = [ variants ];
+                    }
+
 					$.each(variants, function (k, v) {
 
-						if (k === "0") {
+						if (k == 0) {
 							family = family + ':';
 						}
 
@@ -280,10 +303,14 @@
 			} else {
 				// else what?
 			}
-		}
+		};
 
-		var maybeJsonParse = function (value) {
-			var parsed;
+		const maybeJsonParse = function (value) {
+			let parsed;
+
+			if ( typeof value !== "string" ) {
+			    return value;
+            }
 
 			//try and parse it, with decodeURIComponent
 			try {

@@ -165,7 +165,7 @@ class Customify_Font_Selector {
 
 				//Handle special logic for when the $value array is not an associative array
 				if ( ! $local_plugin->is_assoc( $value ) ) {
-					$value = $local_plugin->process_a_not_associative_font_default( $value );
+					$value = $local_plugin->standardize_non_associative_font_default( $value );
 				}
 
 				if ( isset( $value['font_family'] ) && isset( $value['type'] ) && $value['type'] == 'google' ) {
@@ -240,7 +240,7 @@ class Customify_Font_Selector {
 
 			// Handle special logic for when the $value array is not an associative array
 			if ( ! $local_plugin->is_assoc( $value ) ) {
-				$value = $local_plugin->process_a_not_associative_font_default( $value );
+				$value = $local_plugin->standardize_non_associative_font_default( $value );
 			}
 
 			$this->output_font_style( $key, $font, $value );
@@ -373,17 +373,29 @@ class Customify_Font_Selector {
 			}
 
 			if ( ! empty( $value['font_size'] ) ) {
-				$unit = $this->get_field_unit( $font, 'font-size' );
+				// If the value already contains a unit, go with that.
+				$unit = '';
+				if ( is_numeric( $value['font_size'] ) ) {
+					$unit = $this->get_field_unit( $font, 'font-size' );
+				}
 				$this->display_property( 'font-size', $value['font_size'], $unit );
 			}
 
 			if ( isset( $value['line_height'] ) ) {
-				$unit = $this->get_field_unit( $font, 'line-height' );
+				// If the value already contains a unit, go with that.
+				$unit = '';
+				if ( is_numeric( $value['line_height'] ) ) {
+					$unit = $this->get_field_unit( $font, 'line-height' );
+				}
 				$this->display_property( 'line-height', $value['line_height'], $unit );
 			}
 
 			if ( isset( $value['letter_spacing'] ) ) {
-				$unit = $this->get_field_unit( $font, 'letter-spacing' );
+				// If the value already contains a unit, go with that.
+				$unit = '';
+				if ( is_numeric( $value['letter_spacing'] ) ) {
+					$unit = $this->get_field_unit( $font, 'letter-spacing' );
+				}
 				$this->display_property( 'letter-spacing', $value['letter_spacing'], $unit );
 			}
 

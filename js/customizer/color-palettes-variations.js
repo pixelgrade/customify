@@ -1,4 +1,4 @@
-window.variations = {
+window.colorPalettesVariations = {
     'light': {
         'sm_color_primary': ['sm_color_primary'],
         'sm_color_secondary': ['sm_color_secondary'],

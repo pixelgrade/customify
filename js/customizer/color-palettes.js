@@ -1,6 +1,6 @@
-( function( $, exports, wp ) {
+let ColorPalettes = ( function( $, exports, wp ) {
 
-    const settings = [
+    const masterSettingIds = [
         "sm_color_primary",
         "sm_color_secondary",
         "sm_color_tertiary",
@@ -12,13 +12,17 @@
         "sm_light_tertiary"
     ];
 
-    const initializeColorPalettes = () => {
-        // cache initial settings configuration to be able to update connected fields on variation change
-        window.settingsClone = $.extend(true, {}, wp.customize.settings.settings);
+    const initializePalettes = () => {
+        // Cache initial settings configuration to be able to update connected fields on variation change.
+        if ( typeof window.settingsClone === "undefined" ) {
+            window.settingsClone = $.extend(true, {}, wp.customize.settings.settings);
+        }
 
-        // create a stack of callbacks bound to parent settings to be able to unbind them
-        // when altering the connected_fields attribute
-        window.connectedFieldsCallbacks = {};
+        // Create a stack of callbacks bound to parent settings to be able to unbind them
+        // when altering the connected_fields attribute.
+        if ( typeof window.connectedFieldsCallbacks === "undefined" ) {
+            window.connectedFieldsCallbacks = {};
+        }
     };
 
 	const hexDigits = new Array("0","1","2","3","4","5","6","7","8","9","a","b","c","d","e","f");
@@ -33,7 +37,7 @@
 	}
 
     const updateCurrentPalette = ( label ) => {
-        const $palette = $( '.c-palette' );
+        const $palette = $( '.c-color-palette' );
 
         if ( ! $palette.length ) {
             return;
@@ -43,10 +47,10 @@
         const $next = $palette.find( '.colors.next' );
 
         label = label || 'Custom Style';
-        $palette.find( '.c-palette__name' ).text( label );
+        $palette.find( '.c-color-palette__name' ).text( label );
 
         // apply the last animate set of colors to the "current" color palette
-        _.each( settings, function( setting_id ) {
+        _.each( masterSettingIds, function( setting_id ) {
             const color = $next.find( '.' + setting_id ).css( 'color' );
             $current.find( '.color.' + setting_id ).css( 'color', color );
             $palette.find( 'input.' + setting_id ).val( rgb2hex( color ) );
@@ -57,7 +61,7 @@
         $palette.removeClass( 'animate' );
 
         // update the colors in the "next" palette with the new values
-        _.each( settings, function( setting_id ) {
+        _.each( masterSettingIds, function( setting_id ) {
             const setting = wp.customize( setting_id );
 
             if ( typeof setting !== "undefined" ) {
@@ -68,12 +72,12 @@
         // trigger transition to new color palette
         setTimeout(function() {
             $palette.addClass( 'animate' );
-            $palette.find( '.c-palette__control' ).css( 'color', wp.customize( 'sm_color_primary' )() );
+            $palette.find( '.c-color-palette__control' ).css( 'color', wp.customize( 'sm_color_primary' )() );
         });
     };
 
     const bindVariationChange = () => {
-        const paletteControlSelector = '.c-palette__control';
+        const paletteControlSelector = '.c-color-palette__control';
         const $paletteControl = $( paletteControlSelector );
         const variation = wp.customize( 'sm_color_palette_variation' )();
 
@@ -123,8 +127,10 @@
             }
         } );
 
-	    let optionsSelector = '.' + optionsToShow.join( ', .' );
-	    $( '.c-palette .color' ).addClass( 'hidden' ).filter( optionsSelector ).removeClass( 'hidden' );
+        if ( optionsToShow.length ) {
+            let optionsSelector = '.' + optionsToShow.join(', .');
+            $('.c-color-palette .color').addClass('hidden').filter(optionsSelector).removeClass('hidden');
+        }
     };
 
     const resetSettings = settings => {
@@ -155,22 +161,30 @@
     };
 
     const bindConnectedFields = function() {
-        _.each( wp.customize.settings.settings, function( parent_setting_data, parent_setting_id ) {
-            let parent_setting = wp.customize( parent_setting_id );
-            if ( typeof parent_setting_data.connected_fields !== "undefined" ) {
-                connectedFieldsCallbacks[parent_setting_id] = getConnectedFieldsCallback( parent_setting_data, parent_setting_id );
-                parent_setting.bind( connectedFieldsCallbacks[parent_setting_id] );
+        _.each( masterSettingIds, function( parent_setting_id ) {
+            if ( typeof wp.customize.settings.settings[parent_setting_id] !== "undefined" ) {
+                let parent_setting_data = wp.customize.settings.settings[parent_setting_id];
+                let parent_setting = wp.customize(parent_setting_id);
+
+                if (typeof parent_setting_data.connected_fields !== "undefined") {
+                    connectedFieldsCallbacks[parent_setting_id] = getConnectedFieldsCallback(parent_setting_data, parent_setting_id);
+                    parent_setting.bind(connectedFieldsCallbacks[parent_setting_id]);
+                }
             }
         } );
     };
 
     const unbindConnectedFields = function() {
-        _.each( wp.customize.settings.settings, function( parent_setting_data, parent_setting_id ) {
-            let parent_setting = wp.customize( parent_setting_id );
-            if ( typeof parent_setting_data.connected_fields !== "undefined" && typeof connectedFieldsCallbacks[parent_setting_id] !== "undefined" ) {
-                parent_setting.unbind( connectedFieldsCallbacks[parent_setting_id] );
+        _.each( masterSettingIds, function( parent_setting_id ) {
+            if ( typeof wp.customize.settings.settings[parent_setting_id] !== "undefined" ) {
+                let parent_setting_data = wp.customize.settings.settings[parent_setting_id];
+                let parent_setting = wp.customize(parent_setting_id);
+
+                if (typeof parent_setting_data.connected_fields !== "undefined" && typeof connectedFieldsCallbacks[parent_setting_id] !== "undefined") {
+                    parent_setting.unbind(connectedFieldsCallbacks[parent_setting_id]);
+                }
+                delete connectedFieldsCallbacks[parent_setting_id];
             }
-            delete connectedFieldsCallbacks[parent_setting_id];
         } );
     };
 
@@ -184,18 +198,18 @@
 
         const variation = setting();
 
-        if ( ! window.variations.hasOwnProperty( variation ) ) {
+        if ( ! window.colorPalettesVariations.hasOwnProperty( variation ) ) {
             return;
         }
 
         unbindConnectedFields();
-        alterConnectedFields( variations[variation] );
+        alterConnectedFields( colorPalettesVariations[variation] );
         bindConnectedFields();
     };
 
     const createCurrentPaletteControls = () => {
-        const $palette = $( '.c-palette' );
-        const $fields = $palette.find( '.c-palette__fields' ).find( 'input' );
+        const $palette = $( '.c-color-palette' );
+        const $fields = $palette.find( '.c-color-palette__fields' ).find( 'input' );
 
         if ( ! $palette.length ) {
             return;
@@ -217,13 +231,13 @@
                     const currentColor = ui.color.toString();
 
                     if ( 'sm_color_primary' === $obj.data( 'setting' ) ) {
-	                    $( '.c-palette__control' ).css( 'color', currentColor );
+	                    $( '.c-color-palette__control' ).css( 'color', currentColor );
                     }
 
                     if ( lastColor !== currentColor ) {
                         $obj.css( 'color', currentColor );
 	                    setting.set( currentColor );
-                        $palette.find( '.c-palette__name' ).text( 'Custom Style' );
+                        $palette.find( '.c-color-palette__name' ).text( 'Custom Style' );
                     }
                 }
             } );
@@ -307,7 +321,7 @@
 
         $matrix.empty();
 
-	    _.each( settings, function( setting_id ) {
+	    _.each( masterSettingIds, function( setting_id ) {
 	        const $bucket = $( '<div class="' + setting_id + '">' ).appendTo( $matrix );
             const color = wp.customize( setting_id )();
 		    _.each( wp.customize.settings.settings[setting_id]['connected_fields'], function( connected_field ) {
@@ -339,8 +353,8 @@
 	    return settings;
 	};
 
-    const handleColorPalettes = () => {
-        initializeColorPalettes();
+    const handlePalettes = () => {
+        initializePalettes();
         createCurrentPaletteControls();
 	    reloadConnectedFields();
         updateCurrentPalette();
@@ -349,7 +363,7 @@
         // when variation is changed reload connected fields from cached version of customizer settings config
         $( document ).on( 'change', '[name="_customize-radio-sm_color_palette_variation_control"]', function() {
             reloadConnectedFields();
-	        resetSettings( settings );
+	        resetSettings( masterSettingIds );
         });
 
         $( document ).on( 'click', '.customify_preset.color_palette input', onPaletteChange );
@@ -367,7 +381,7 @@
 	        $sliders.val( $darkColorMaster.val() ).trigger( 'input' );
 	    } );
 
-	    const onSliderChange = _.debounce( function() {
+	    const onSliderChange = () => {
 		    const primaryRatio = $darkColorPrimary.val() / 100;
 		    const secondaryRatio = $darkColorSecondary.val() / 100;
 		    const tertiaryRatio = $darkColorTertiary.val() / 100;
@@ -380,18 +394,22 @@
 		    tempSettings = moveConnectedFields( tempSettings, 'sm_dark_secondary', 'sm_color_secondary', secondaryRatio );
 		    tempSettings = moveConnectedFields( tempSettings, 'sm_dark_tertiary', 'sm_color_tertiary', tertiaryRatio );
 
-		    _.each( settings, function( setting_id ) {
+		    _.each( masterSettingIds, function( setting_id ) {
 			    wp.customize.settings.settings[setting_id]['connected_fields'] = tempSettings[setting_id]['connected_fields'];
 		    } );
 
 		    bindConnectedFields();
 		    buildColorMatrix();
-		    resetSettings( settings );
-	    }, 10 );
+		    resetSettings( masterSettingIds );
+	    };
 
 	    $sliders.on( 'input', onSliderChange );
     };
 
-	wp.customize.bind( 'ready', handleColorPalettes );
+    wp.customize.bind( 'ready', handlePalettes );
+
+    return {
+        masterSettingIds: masterSettingIds
+    };
 
 } )( jQuery, window, wp );

@@ -2206,21 +2206,21 @@ ul.font-options__options-list .select2-container--default .select2-selection--si
   right: -140px;
 }
 
-.c-palette {
+.c-color-palette {
   position: relative;
 }
 
-.c-palette .c-palette__label {
+.c-color-palette .c-color-palette__label {
   -ms-flex-positive: 1;
       flex-grow: 1;
 }
 
-.c-palette:after {
+.c-color-palette:after {
   height: 64px;
   border-radius: 5px;
 }
 
-.c-palette:after {
+.c-color-palette:after {
   content: "";
   display: block;
   position: absolute;
@@ -2240,7 +2240,7 @@ ul.font-options__options-list .select2-container--default .select2-selection--si
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
 }
 
-.c-palette__label {
+.c-color-palette__label {
   display: -ms-flexbox;
   display: flex;
   -ms-flex-align: center;
@@ -2275,7 +2275,7 @@ ul.font-options__options-list .select2-container--default .select2-selection--si
   height: 64px;
 }
 
-.c-palette__overlay {
+.c-color-palette__overlay {
   position: absolute;
   top: 0;
   left: 0;
@@ -2380,111 +2380,111 @@ ul.font-options__options-list .select2-container--default .select2-selection--si
   opacity: 0;
 }
 
-.c-palette.animate .next .fill:before {
+.c-color-palette.animate .next .fill:before {
   -webkit-animation: fill 1s cubic-bezier(0.215, 0.61, 0.355, 1) forwards;
           animation: fill 1s cubic-bezier(0.215, 0.61, 0.355, 1) forwards;
 }
 
-.c-palette.animate .next .picker {
+.c-color-palette.animate .next .picker {
   -webkit-animation: picker-filter 1s cubic-bezier(0.215, 0.61, 0.355, 1) forwards;
           animation: picker-filter 1s cubic-bezier(0.215, 0.61, 0.355, 1) forwards;
 }
 
-.c-palette.animate .next .picker:before {
+.c-color-palette.animate .next .picker:before {
   -webkit-animation: fill-picker-before 1s cubic-bezier(0.215, 0.61, 0.355, 1) forwards;
           animation: fill-picker-before 1s cubic-bezier(0.215, 0.61, 0.355, 1) forwards;
 }
 
-.c-palette.animate .next .picker:after {
+.c-color-palette.animate .next .picker:after {
   -webkit-animation: fill-picker-after 1s cubic-bezier(0.215, 0.61, 0.355, 1) forwards;
           animation: fill-picker-after 1s cubic-bezier(0.215, 0.61, 0.355, 1) forwards;
 }
 
-.c-palette.animate .current .fill,
-.c-palette.animate .current .picker {
+.c-color-palette.animate .current .fill,
+.c-color-palette.animate .current .picker {
   -webkit-animation: fade-out 1s forwards;
           animation: fade-out 1s forwards;
 }
 
-.c-palette.animate .color:nth-child(1) .fill,
-.c-palette.animate .color:nth-child(1) .fill:before,
-.c-palette.animate .color:nth-child(1) .picker,
-.c-palette.animate .color:nth-child(1) .picker:after,
-.c-palette.animate .color:nth-child(1) .picker:before {
-  -webkit-animation-delay: 0.45s;
-          animation-delay: 0.45s;
-}
-
-.c-palette.animate .color:nth-child(2) .fill,
-.c-palette.animate .color:nth-child(2) .fill:before,
-.c-palette.animate .color:nth-child(2) .picker,
-.c-palette.animate .color:nth-child(2) .picker:after,
-.c-palette.animate .color:nth-child(2) .picker:before {
-  -webkit-animation-delay: 0.1s;
-          animation-delay: 0.1s;
-}
-
-.c-palette.animate .color:nth-child(3) .fill,
-.c-palette.animate .color:nth-child(3) .fill:before,
-.c-palette.animate .color:nth-child(3) .picker,
-.c-palette.animate .color:nth-child(3) .picker:after,
-.c-palette.animate .color:nth-child(3) .picker:before {
-  -webkit-animation-delay: 0.2s;
-          animation-delay: 0.2s;
-}
-
-.c-palette.animate .color:nth-child(4) .fill,
-.c-palette.animate .color:nth-child(4) .fill:before,
-.c-palette.animate .color:nth-child(4) .picker,
-.c-palette.animate .color:nth-child(4) .picker:after,
-.c-palette.animate .color:nth-child(4) .picker:before {
-  -webkit-animation-delay: 0.05s;
-          animation-delay: 0.05s;
-}
-
-.c-palette.animate .color:nth-child(5) .fill,
-.c-palette.animate .color:nth-child(5) .fill:before,
-.c-palette.animate .color:nth-child(5) .picker,
-.c-palette.animate .color:nth-child(5) .picker:after,
-.c-palette.animate .color:nth-child(5) .picker:before {
-  -webkit-animation-delay: 0.25s;
-          animation-delay: 0.25s;
-}
-
-.c-palette.animate .color:nth-child(6) .fill,
-.c-palette.animate .color:nth-child(6) .fill:before,
-.c-palette.animate .color:nth-child(6) .picker,
-.c-palette.animate .color:nth-child(6) .picker:after,
-.c-palette.animate .color:nth-child(6) .picker:before {
-  -webkit-animation-delay: 0.4s;
-          animation-delay: 0.4s;
-}
-
-.c-palette.animate .color:nth-child(7) .fill,
-.c-palette.animate .color:nth-child(7) .fill:before,
-.c-palette.animate .color:nth-child(7) .picker,
-.c-palette.animate .color:nth-child(7) .picker:after,
-.c-palette.animate .color:nth-child(7) .picker:before {
+.c-color-palette.animate .color:nth-child(1) .fill,
+.c-color-palette.animate .color:nth-child(1) .fill:before,
+.c-color-palette.animate .color:nth-child(1) .picker,
+.c-color-palette.animate .color:nth-child(1) .picker:after,
+.c-color-palette.animate .color:nth-child(1) .picker:before {
   -webkit-animation-delay: 0.3s;
           animation-delay: 0.3s;
 }
 
-.c-palette.animate .color:nth-child(8) .fill,
-.c-palette.animate .color:nth-child(8) .fill:before,
-.c-palette.animate .color:nth-child(8) .picker,
-.c-palette.animate .color:nth-child(8) .picker:after,
-.c-palette.animate .color:nth-child(8) .picker:before {
+.c-color-palette.animate .color:nth-child(2) .fill,
+.c-color-palette.animate .color:nth-child(2) .fill:before,
+.c-color-palette.animate .color:nth-child(2) .picker,
+.c-color-palette.animate .color:nth-child(2) .picker:after,
+.c-color-palette.animate .color:nth-child(2) .picker:before {
+  -webkit-animation-delay: 0.15s;
+          animation-delay: 0.15s;
+}
+
+.c-color-palette.animate .color:nth-child(3) .fill,
+.c-color-palette.animate .color:nth-child(3) .fill:before,
+.c-color-palette.animate .color:nth-child(3) .picker,
+.c-color-palette.animate .color:nth-child(3) .picker:after,
+.c-color-palette.animate .color:nth-child(3) .picker:before {
+  -webkit-animation-delay: 0.4s;
+          animation-delay: 0.4s;
+}
+
+.c-color-palette.animate .color:nth-child(4) .fill,
+.c-color-palette.animate .color:nth-child(4) .fill:before,
+.c-color-palette.animate .color:nth-child(4) .picker,
+.c-color-palette.animate .color:nth-child(4) .picker:after,
+.c-color-palette.animate .color:nth-child(4) .picker:before {
+  -webkit-animation-delay: 0.05s;
+          animation-delay: 0.05s;
+}
+
+.c-color-palette.animate .color:nth-child(5) .fill,
+.c-color-palette.animate .color:nth-child(5) .fill:before,
+.c-color-palette.animate .color:nth-child(5) .picker,
+.c-color-palette.animate .color:nth-child(5) .picker:after,
+.c-color-palette.animate .color:nth-child(5) .picker:before {
+  -webkit-animation-delay: 0.2s;
+          animation-delay: 0.2s;
+}
+
+.c-color-palette.animate .color:nth-child(6) .fill,
+.c-color-palette.animate .color:nth-child(6) .fill:before,
+.c-color-palette.animate .color:nth-child(6) .picker,
+.c-color-palette.animate .color:nth-child(6) .picker:after,
+.c-color-palette.animate .color:nth-child(6) .picker:before {
+  -webkit-animation-delay: 0.1s;
+          animation-delay: 0.1s;
+}
+
+.c-color-palette.animate .color:nth-child(7) .fill,
+.c-color-palette.animate .color:nth-child(7) .fill:before,
+.c-color-palette.animate .color:nth-child(7) .picker,
+.c-color-palette.animate .color:nth-child(7) .picker:after,
+.c-color-palette.animate .color:nth-child(7) .picker:before {
+  -webkit-animation-delay: 0.25s;
+          animation-delay: 0.25s;
+}
+
+.c-color-palette.animate .color:nth-child(8) .fill,
+.c-color-palette.animate .color:nth-child(8) .fill:before,
+.c-color-palette.animate .color:nth-child(8) .picker,
+.c-color-palette.animate .color:nth-child(8) .picker:after,
+.c-color-palette.animate .color:nth-child(8) .picker:before {
   -webkit-animation-delay: 0.35s;
           animation-delay: 0.35s;
 }
 
-.c-palette.animate .color:nth-child(9) .fill,
-.c-palette.animate .color:nth-child(9) .fill:before,
-.c-palette.animate .color:nth-child(9) .picker,
-.c-palette.animate .color:nth-child(9) .picker:after,
-.c-palette.animate .color:nth-child(9) .picker:before {
-  -webkit-animation-delay: 0.15s;
-          animation-delay: 0.15s;
+.c-color-palette.animate .color:nth-child(9) .fill,
+.c-color-palette.animate .color:nth-child(9) .fill:before,
+.c-color-palette.animate .color:nth-child(9) .picker,
+.c-color-palette.animate .color:nth-child(9) .picker:after,
+.c-color-palette.animate .color:nth-child(9) .picker:before {
+  -webkit-animation-delay: 0.45s;
+          animation-delay: 0.45s;
 }
 
 @-webkit-keyframes fill {
@@ -2681,7 +2681,7 @@ ul.font-options__options-list .select2-container--default .select2-selection--si
   margin-right: auto;
 }
 
-.c-palette__blur {
+.c-color-palette__blur {
   display: none;
 }
 
@@ -2691,16 +2691,16 @@ ul.font-options__options-list .select2-container--default .select2-selection--si
   width: auto;
 }
 
-#customize-theme-controls [id*="sm_current_color_palette_control"] .palette-container {
+#customize-theme-controls [id*="sm_current_color_palette_control"] .color-palette-container {
   padding: 19px;
   background: white;
 }
 
-.c-palette__name {
+.c-color-palette__name {
   margin-right: auto;
 }
 
-.c-palette__control {
+.c-color-palette__control {
   width: 2em;
   height: 2em;
   margin-left: 0.25em;
@@ -2713,21 +2713,21 @@ ul.font-options__options-list .select2-container--default .select2-selection--si
   border-radius: 50%;
 }
 
-.c-palette__control, .c-palette__control span {
+.c-color-palette__control, .c-color-palette__control span {
   transition: color .3s ease-in-out;
 }
 
-.c-palette__control span {
+.c-color-palette__control span {
   color: rgba(0, 0, 0, 0.25);
   -webkit-transform: scale(0.8);
           transform: scale(0.8);
 }
 
-.c-palette__control.active {
+.c-color-palette__control.active {
   background: currentColor;
 }
 
-.c-palette__control.active span {
+.c-color-palette__control.active span {
   color: white;
 }
 
@@ -2748,8 +2748,8 @@ ul.font-options__options-list .select2-container--default .select2-selection--si
 }
 
 #sub-accordion-section-style_manager_section #customize-control-sm_color_palette_control {
-  -ms-flex-preferred-size: 0;
-      flex-basis: 0;
+  -ms-flex-negative: 0;
+      flex-shrink: 0;
   -ms-flex-positive: 1;
       flex-grow: 1;
   overflow-y: scroll;
@@ -2766,7 +2766,7 @@ ul.font-options__options-list .select2-container--default .select2-selection--si
   display: none !important;
 }
 
-.c-palette .iris-picker {
+.c-color-palette .iris-picker {
   position: absolute;
   top: 100%;
   left: 0;
@@ -2776,13 +2776,13 @@ ul.font-options__options-list .select2-container--default .select2-selection--si
   box-shadow: black 0 3px 12px -4px;
 }
 
-.c-palette .iris-picker .iris-square-handle {
+.c-color-palette .iris-picker .iris-square-handle {
   border-color: transparent;
   left: -6px;
   top: -6px;
 }
 
-.c-palette .iris-picker .iris-square-handle:after {
+.c-color-palette .iris-picker .iris-square-handle:after {
   position: absolute;
   bottom: 0;
   right: 0;
@@ -2791,7 +2791,7 @@ ul.font-options__options-list .select2-container--default .select2-selection--si
   border: 2px solid white;
 }
 
-.c-palette .iris-picker .iris-square-value {
+.c-color-palette .iris-picker .iris-square-value {
   box-shadow: none !important;
 }
 
@@ -2821,7 +2821,7 @@ ul.font-options__options-list .select2-container--default .select2-selection--si
   opacity: 1;
 }
 
-.c-palette__tooltip {
+.c-color-palette__tooltip {
   position: absolute;
   bottom: 100%;
   left: 50%;
@@ -2837,7 +2837,7 @@ ul.font-options__options-list .select2-container--default .select2-selection--si
   box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.15);
 }
 
-.c-palette__tooltip:after {
+.c-color-palette__tooltip:after {
   content: "";
   position: absolute;
   top: 100%;
@@ -2850,16 +2850,16 @@ ul.font-options__options-list .select2-container--default .select2-selection--si
           transform: translateX(-50%);
 }
 
-.c-palette__control:hover .c-palette__tooltip {
+.c-color-palette__control:hover .c-color-palette__tooltip {
   opacity: 1;
 }
 
-.c-palette__control {
+.c-color-palette__control {
   position: relative;
   cursor: pointer;
 }
 
-input.c-palette__input[class] {
+input.c-color-palette__input[class] {
   margin-top: 1em;
 }
 

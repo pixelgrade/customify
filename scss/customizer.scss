@@ -2074,20 +2074,20 @@ $palette_box_shadow_stronger: inset 0 2px 3px 0 rgba(0,0,0,0.15), inset 0 0 3px 
 $palette_height: 64px;
 $palette_border-radius: 5px;
 
-.c-palette {
+.c-color-palette {
 	position: relative;
 
-	.c-palette__label {
+	.c-color-palette__label {
 		flex-grow: 1;
 	}
 }
 
-.c-palette:after {
+.c-color-palette:after {
 	height: $palette_height;
 	border-radius: $palette_border-radius;
 }
 
-.c-palette:after {
+.c-color-palette:after {
 	content: "";
 	display: block;
 	position: absolute;
@@ -2108,7 +2108,7 @@ $palette_border-radius: 5px;
 	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
 }
 
-.c-palette__label {
+.c-color-palette__label {
 	display: flex;
 	align-items: center;
 	height: 40px;
@@ -2138,7 +2138,7 @@ $palette_border-radius: 5px;
 	height: $palette_height;
 }
 
-.c-palette__overlay {
+.c-color-palette__overlay {
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -2243,7 +2243,7 @@ $animation-duration: 1s;
 	}
 }
 
-.c-palette.animate {
+.c-color-palette.animate {
 
 	.next {
 
@@ -2354,7 +2354,7 @@ $animation-duration: 1s;
 .colors.next .picker {
 }
 
-.c-palette__blur {
+.c-color-palette__blur {
 	display: none;
 }
 
@@ -2363,17 +2363,17 @@ $animation-duration: 1s;
 	margin: -12px -12px 19px;
 	width: auto;
 
-	.palette-container {
+	.color-palette-container {
 		padding: 19px;
 		background: white;
 	}
 }
 
-.c-palette__name {
+.c-color-palette__name {
 	margin-right: auto;
 }
 
-.c-palette__control {
+.c-color-palette__control {
 	width: 2em;
 	height: 2em;
 	margin-left: 0.25em;
@@ -2414,7 +2414,8 @@ $animation-duration: 1s;
 	}
 
 	#customize-control-sm_color_palette_control {
-		flex-basis: 0;
+		// flex-basis: 0;
+		flex-shrink: 0;
 		flex-grow: 1;
 		overflow-y: scroll;
 		margin-top: -19px;
@@ -2430,7 +2431,7 @@ $animation-duration: 1s;
 		display: none !important;
 	}
 }
-.c-palette .iris-picker {
+.c-color-palette .iris-picker {
 	position: absolute;
 	top: 100%;
 	left: 0;
@@ -2492,7 +2493,7 @@ $animation-duration: 1s;
 	}
 }
 
-.c-palette__tooltip {
+.c-color-palette__tooltip {
 	position: absolute;
 	bottom: 100%;
 	left: 50%;
@@ -2524,17 +2525,17 @@ $animation-duration: 1s;
 		transform: translateX(-50%);
 	}
 
-	.c-palette__control:hover & {
+	.c-color-palette__control:hover & {
 		opacity: 1;
 	}
 }
 
-.c-palette__control {
+.c-color-palette__control {
 	position: relative;
 	cursor: pointer;
 }
 
-input.c-palette__input[class] {
+input.c-color-palette__input[class] {
 	margin-top: 1em;
 }
 

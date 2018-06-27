@@ -44,13 +44,6 @@ class PixCustomifyPlugin {
 	 */
 	protected $plugin_screen_hook_suffix = null;
 
-	/**
-	 * Path to the plugin.
-	 * @since    1.0.0
-	 * @var      string
-	 */
-	protected $plugin_basepath = null;
-
 	public $display_admin_menu = false;
 
 	private $config;
@@ -147,9 +140,6 @@ class PixCustomifyPlugin {
 		//the current plugin version
 		$this->_version = $version;
 
-		// Remember our base path
-		$this->plugin_basepath = plugin_dir_path( $file );
-
 		if ( $this->php_version_check() ) {
 			// Only load and run the init function if we know PHP version can parse it.
 			$this->init();
@@ -166,7 +156,7 @@ class PixCustomifyPlugin {
 		$this->plugin_settings = get_option( $this->config['settings-key'] );
 
 		/* Initialize the Style Manager logic. */
-		require_once( $this->plugin_basepath . 'includes/class-customify-style-manager.php' );
+		require_once( $this->get_base_path() . 'includes/class-customify-style-manager.php' );
 		if ( is_null( $this->style_manager ) ) {
 			$this->style_manager = Customify_Style_Manager::instance( $this );
 		}
@@ -260,12 +250,12 @@ class PixCustomifyPlugin {
 	}
 
 	/**
-	 * Initialize Configs, Options and Values methods
+	 * Initialize Configs, Options and Values methods.
 	 */
 	function init_plugin_configs() {
 		$this->customizer_config = get_option( 'pixcustomify_config' );
 
-		// no option so go for default
+		// no option so go for default.
 		if ( empty( $this->customizer_config ) ) {
 			$this->customizer_config = $this->get_config_option( 'default_options' );
 		}
@@ -276,12 +266,15 @@ class PixCustomifyPlugin {
 	}
 
 	/**
-	 * Load the plugin configuration and options
+	 * Load the plugin configuration and options.
 	 */
 	function load_plugin_configs() {
 
 		// Allow themes or other plugins to filter the config.
 		$this->customizer_config = apply_filters( 'customify_filter_fields', $this->customizer_config );
+		// We apply a second filter for those that wish to work with the final config and not rely on a a huge priority number.
+		$this->customizer_config = apply_filters( 'customify_final_config', $this->customizer_config );
+
 		$this->opt_name          = $this->localized['options_name'] = $this->customizer_config['opt-name'];
 		$this->options_list      = $this->get_options();
 
@@ -364,13 +357,15 @@ class PixCustomifyPlugin {
 		wp_register_script( 'customify_select2', plugins_url( 'js/select2/js/select2.js', $this->file ), array( 'jquery' ), $this->_version );
 		wp_register_script( 'jquery-react', plugins_url( 'js/jquery-react.js', $this->file ), array( 'jquery' ), $this->_version );
 
-		wp_register_script( 'customify-scale', plugins_url( 'js/customizer/customify-scale.js', $this->file ), array( 'jquery' ), $this->_version );
+		wp_register_script( 'customify-scale', plugins_url( 'js/customizer/scale-iframe.js', $this->file ), array( 'jquery' ), $this->_version );
+		wp_register_script( 'customify-fontselectfields', plugins_url( 'js/customizer/font-select-fields.js', $this->file ), array( 'jquery' ), $this->_version );
 
 		wp_register_script( $this->plugin_slug . '-customizer-scripts', plugins_url( 'js/customizer.js', $this->file ), array(
 			'jquery',
 			'customify_select2',
 			'underscore',
 			'customize-controls',
+			'customify-fontselectfields',
 
 			'customify-scale',
 		), $this->_version );
@@ -1832,6 +1827,10 @@ class PixCustomifyPlugin {
 		<?php
 	}
 
+	public function get_file() {
+		return $this->file;
+	}
+
 	public function get_base_path() {
 		return plugin_dir_path( $this->file );
 	}
@@ -2154,7 +2153,7 @@ class PixCustomifyPlugin {
 		$controller->init();
 	}
 
-	function get_options_configs() {
+	public function get_options_configs() {
 		return $this->options_list;
 	}
 

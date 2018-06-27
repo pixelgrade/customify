@@ -41,7 +41,7 @@
 			$( '.customify_select2' ).select2();
 
 			setTimeout( function() {
-				customifyFontSelect.init( this );
+                CustomifyFontSelectFields.init();
 			}, 333 );
 
 			prepare_typography_field();
@@ -62,7 +62,7 @@
 			} );
 
 			// for each range input add a value preview output
-			$( '.accordion-section-content[id*="' + customify_settings.options_name + '"]' ).each( function() {
+			$( '.accordion-section-content[id*="' + customify_settings.options_name + '"], #sub-accordion-section-style_manager_section' ).each( function() {
 
 				// Initialize range fields logic
 				customifyHandleRangeFields( this );
@@ -314,104 +314,70 @@
 				}
 			)();
 
-			// Handle the Style Manager user feedback logic.
-            var $styleManagerUserFeedbackModal = $('#style-manager-user-feedback-modal');
-            if ( $styleManagerUserFeedbackModal.length ) {
-                var $styleManagerUserFeedbackForm = $styleManagerUserFeedbackModal.find('form'),
-                    $styleManagerUserFeedbackCloseBtn = $styleManagerUserFeedbackModal.find('.close'),
-                    $styleManagerUserFeedbackFirstStep = $styleManagerUserFeedbackModal.find('.first-step'),
-                    $styleManagerUserFeedbackSecondStep = $styleManagerUserFeedbackModal.find('.second-step'),
-                    $styleManagerUserFeedbackThanksStep = $styleManagerUserFeedbackModal.find('.thanks-step'),
-                    $styleManagerUserFeedbackErrorStep = $styleManagerUserFeedbackModal.find('.error-step'),
-                    styleManagerUserFeedbackModalShown = false,
-                    styleManagerColorPaletteChanged = false;
+			// Bind any connected fields, except those in the Style Manager.
+            // Those are handled by the appropriate Style Manager component (Color Palettes, Font Palettes, etc ).
+            bindConnectedFields();
 
-                // Handle when to open the modal.
-                api.bind('saved', function () {
-                    // We will only show the modal once per Customizer session.
-                    if (!styleManagerUserFeedbackModalShown && styleManagerColorPaletteChanged) {
-                        $('body').addClass('modal-open');
-                        styleManagerUserFeedbackModalShown = true;
-                    }
-                });
-
-                // Handle the color palette changed info update.
-                const colorPaletteSetting = api( 'sm_color_palette' );
-                if ( !_.isUndefined(colorPaletteSetting) ) {
-                    colorPaletteSetting.bind( function( new_value, old_value ) {
-                        if ( new_value != old_value ) {
-                            styleManagerColorPaletteChanged = true;
-                        }
-                    } )
-                }
-                const colorPaletteVariationSetting = api( 'sm_color_palette_variation' );
-                if ( !_.isUndefined(colorPaletteVariationSetting) ) {
-                    colorPaletteVariationSetting.bind( function( new_value, old_value ) {
-                        if ( new_value != old_value ) {
-                            styleManagerColorPaletteChanged = true;
-                        }
-                    } )
-                }
-
-                // Handle the modal submit.
-                $styleManagerUserFeedbackForm.on('submit', function (event) {
-                    event.preventDefault();
-
-                    let $form = $(event.target);
-
-                    let data = {
-                        action: 'customify_style_manager_user_feedback',
-                        nonce: customify_settings.style_manager_user_feedback_nonce,
-                        type: $form.find('input[name=type]').val(),
-                        rating: $form.find('input[name=rating]:checked').val(),
-                        message: $form.find('textarea[name=message]').val()
-                    };
-
-                    $.post(
-                        customify_settings.ajax_url,
-                        data,
-                        function (response) {
-                            if (true === response.success) {
-                                $styleManagerUserFeedbackFirstStep.hide();
-                                $styleManagerUserFeedbackSecondStep.hide();
-                                $styleManagerUserFeedbackThanksStep.show();
-                                $styleManagerUserFeedbackErrorStep.hide();
-                            } else {
-                                $styleManagerUserFeedbackFirstStep.hide();
-                                $styleManagerUserFeedbackSecondStep.hide();
-                                $styleManagerUserFeedbackThanksStep.hide();
-                                $styleManagerUserFeedbackErrorStep.show();
-                            }
-                        }
-                    );
-                });
-
-                $styleManagerUserFeedbackForm.find('input[name=rating]').on('change', function (event) {
-                    // Leave everything in working order
-                    setTimeout(function () {
-                        $styleManagerUserFeedbackSecondStep.show();
-                    }, 300);
-
-                    let rating = $styleManagerUserFeedbackForm.find('input[name=rating]:checked').val();
-
-                    $styleManagerUserFeedbackForm.find('.rating-placeholder').text(rating);
-                });
-
-                $styleManagerUserFeedbackCloseBtn.on('click', function (event) {
-                    event.preventDefault();
-
-                    $('body').removeClass('modal-open');
-
-                    // Leave everything in working order
-                    setTimeout(function () {
-                        $styleManagerUserFeedbackFirstStep.show();
-                        $styleManagerUserFeedbackSecondStep.hide();
-                        $styleManagerUserFeedbackThanksStep.hide();
-                        $styleManagerUserFeedbackErrorStep.hide();
-                    }, 300);
-                });
-            }
 		} );
+
+        const getConnectedFieldsCallback = function( parent_setting_data, parent_setting_id ) {
+            return function( new_value, old_value ) {
+                _.each( parent_setting_data.connected_fields, function( connected_field_data ) {
+                    if ( _.isUndefined( connected_field_data ) || _.isUndefined( connected_field_data.setting_id ) || ! _.isString( connected_field_data.setting_id ) ) {
+                        return;
+                    }
+                    const setting = wp.customize( connected_field_data.setting_id );
+                    if ( _.isUndefined( setting ) ) {
+                        return;
+                    }
+                    setting.set( new_value );
+                } );
+            }
+        };
+
+        const bindConnectedFields = function() {
+            _.each( wp.customize.settings.settings, function( parent_setting_data, parent_setting_id ) {
+                // We don't want to handle the binding of the Style Manager settings
+                if ( typeof ColorPalettes !== "undefined"
+                    && typeof ColorPalettes.masterSettingIds !== "undefined"
+                    && _.contains( ColorPalettes.masterSettingIds, parent_setting_id ) ) {
+                    return;
+                }
+                if ( typeof FontPalettes !== "undefined"
+                    && typeof FontPalettes.masterSettingIds !== "undefined"
+                    && _.contains( FontPalettes.masterSettingIds, parent_setting_id ) ) {
+                    return;
+                }
+
+                let parent_setting = wp.customize( parent_setting_id );
+                if ( typeof parent_setting_data.connected_fields !== "undefined" ) {
+                    connectedFieldsCallbacks[parent_setting_id] = getConnectedFieldsCallback( parent_setting_data, parent_setting_id );
+                    parent_setting.bind( connectedFieldsCallbacks[parent_setting_id] );
+                }
+            } );
+        };
+
+        const unbindConnectedFields = function() {
+            _.each( wp.customize.settings.settings, function( parent_setting_data, parent_setting_id ) {
+                // We don't want to handle the binding of the Style Manager settings
+                if ( typeof ColorPalettes !== "undefined"
+                    && typeof ColorPalettes.masterSettingIds !== "undefined"
+                    && _.contains( ColorPalettes.masterSettingIds, parent_setting_id ) ) {
+                    return;
+                }
+                if ( typeof FontPalettes !== "undefined"
+                    && typeof FontPalettes.masterSettingIds !== "undefined"
+                    && _.contains( FontPalettes.masterSettingIds, parent_setting_id ) ) {
+                    return;
+                }
+
+                let parent_setting = wp.customize( parent_setting_id );
+                if ( typeof parent_setting_data.connected_fields !== "undefined" && typeof connectedFieldsCallbacks[parent_setting_id] !== "undefined" ) {
+                    parent_setting.unbind( connectedFieldsCallbacks[parent_setting_id] );
+                }
+                delete connectedFieldsCallbacks[parent_setting_id];
+            } );
+        };
 
 		const customifyHandleRangeFields = function( el ) {
 
@@ -1106,390 +1072,6 @@
 			}
 		)( jQuery );
 
-		// This is for the Font control
-		var customifyFontSelect = (
-			function() {
-				const
-					wrapperSelector = '.font-options__wrapper',
-					valueHolderSelector = '.customify_font_values',
-					fontFamilySelector = '.customify_font_family',
-					fontWeightSelector = '.customify_font_weight',
-					fontSubsetsSelector = '.customify_font_subsets',
-					selectPlaceholder = "Select a font family",
-					weightPlaceholder = "Select a font weight",
-					subsetPlaceholder = "Extra Subsets";
-
-				// We will use this to remember that we are self-updating the field from the subfields.
-				// We will save this info for each setting ID.
-				var updatingValue = {},
-					loadingValue = {};
-
-				function init( wpapi ) {
-					let $fontFamilyFields = $( fontFamilySelector );
-
-					// Initialize the select2 field for the font family
-					$fontFamilyFields.select2( {
-						placeholder: selectPlaceholder
-					} ).on( 'change', function( e ) {
-						let new_option = $( e.target ).find( 'option:selected' ),
-							wrapper = $( e.target ).closest( wrapperSelector );
-
-						// Update the weight subfield with the new options given by the selected font family.
-						update_weight_field( new_option, wrapper );
-
-						// Update the subset subfield with the new options given by the selected font family.
-						update_subset_field( new_option, wrapper );
-
-						// Serialize subfield values and refresh the fonts in the preview window.
-						update_font_value( wrapper );
-					} );
-
-					// Initialize the select2 field for the font weight
-					$( fontWeightSelector ).each( function( i, el ) {
-
-						let select2_args = {
-							placeholder: weightPlaceholder
-						};
-
-						// all this fuss is for the case when the font doesn't come with variants from PHP, like a theme_font
-						if ( this.options.length === 0 ) {
-							var wrapper = $( el ).closest( wrapperSelector ),
-								font = wrapper.find( fontFamilySelector ),
-								option = font[0].options[font[0].selectedIndex],
-								variants = maybeJsonParse( $( option ).data( 'variants' ) ),
-								data = [],
-								selecter_variants = $( el ).data( 'default' ) || null;
-
-							if ( typeof variants === "undefined" ) {
-								$( this ).hide();
-								return;
-							}
-
-							$.each( variants, function( index, weight ) {
-								let this_value = {
-									id: weight,
-									text: weight
-								};
-
-								if ( selecter_variants !== null && weight == selecter_variants ) {
-									this_value.selected = true;
-								}
-
-								data.push( this_value );
-							} );
-
-							if ( data !== [] ) {
-								select2_args.data = data;
-							}
-						}
-
-						$( this ).select2(
-							select2_args
-						).on( 'change', function( e ) {
-							let wrapper = $( e.target ).closest( wrapperSelector );
-
-							// Serialize subfield values and refresh the fonts in the preview window.
-							update_font_value( wrapper );
-						} );
-					} );
-
-					// Initialize the select2 field for the font subsets
-					$( fontSubsetsSelector )
-					.select2( {
-						placeholder: subsetPlaceholder
-					} )
-					.on( 'change', function( e ) {
-						let wrapper = $( e.target ).closest( wrapperSelector );
-
-						// Serialize subfield values and refresh the fonts in the preview window.
-						update_font_value( wrapper );
-					} );
-
-					let rangers = $fontFamilyFields.parents( wrapperSelector ).find( 'input[type=range]' ),
-						selects = $fontFamilyFields.parents( wrapperSelector ).find( 'select' ).not( "select[class*=' select2'],select[class^='select2']" );
-
-					// Initialize the all the regular selects in the font controls
-					if ( selects.length > 0 ) {
-						selects.on( 'change', function( e ) {
-							let wrapper = $( e.target ).closest( wrapperSelector );
-
-							// Serialize subfield values and refresh the fonts in the preview window.
-							update_font_value( wrapper );
-						} );
-					}
-
-					// Initialize the all the range fields in the font controls
-					if ( rangers.length > 0 ) {
-						rangers.on( 'change', function( e ) {
-							let wrapper = $( e.target ).closest( wrapperSelector );
-
-							// Serialize subfield values and refresh the fonts in the preview window.
-							update_font_value( wrapper );
-
-							wp.customize.previewer.send( 'font-changed' );
-						} );
-					}
-
-					// When the previewer window is ready, render the fonts
-					var self = this;
-					wp.customize.previewer.bind( 'ready', function() {
-						self.render_fonts();
-					} );
-
-					// Handle the reverse value direction, when the customize setting is updated and the subfields need to update their values.
-					$fontFamilyFields.each( function( i, el ) {
-						let wrapper = $( el ).closest( wrapperSelector ),
-							value_holder = wrapper.children( valueHolderSelector ),
-							setting_id = $( value_holder ).data( 'customize-setting-link' ),
-							setting = wp.customize( setting_id );
-
-						setting.bind( function( newValue, oldValue ) {
-							if ( ! updatingValue[this.id] ) {
-								value_holder.val( newValue );
-
-								load_font_value( wrapper );
-							}
-						} )
-					} )
-				}
-
-				/**
-				 * This function updates the data in font weight selector from the given <option> element
-				 *
-				 * @param option
-				 * @param wraper
-				 */
-				function update_weight_field( option, wraper ) {
-					let variants = $( option ).data( 'variants' ),
-						font_weights = wraper.find( fontWeightSelector ),
-						selected_variant = font_weights.data( 'default' ),
-						new_variants = [],
-						id = wraper.find( valueHolderSelector ).data( 'customizeSettingLink' );
-
-					variants = maybeJsonParse( variants );
-
-					if ( customify_settings.settings[id].load_all_weights || typeof variants === "undefined" || Object.keys( variants ).length < 2 ) {
-						font_weights.parent().hide();
-					} else {
-						font_weights.parent().show();
-					}
-
-					// we need to turn the data array into a specific form like [{id:"id", text:"Text"}]
-					$.each( variants, function( index, variant ) {
-						new_variants[index] = {
-							'id': variant,
-							'text': variant
-						};
-
-						if ( selected_variant == variant ) {
-							new_variants[index].selected = true;
-						}
-					} );
-
-					// We need to clear the old select2 field and reinitialize it.
-					$( font_weights ).select2().empty();
-					$( font_weights ).select2( {
-						data: new_variants
-					} ).on( 'change', function( e ) {
-						let wrapper = $( e.target ).closest( wrapperSelector );
-
-						// Serialize subfield values and refresh the fonts in the preview window.
-						update_font_value( wrapper );
-					} );
-				}
-
-				/**
-				 *  This function updates the data in font subset selector from the given <option> element
-				 * @param option
-				 * @param wraper
-				 */
-				function update_subset_field( option, wraper ) {
-					let subsets = $( option ).data( 'subsets' ),
-						font_subsets = wraper.find( fontSubsetsSelector ),
-						new_subsets = [],
-						type = $( option ).data( 'type' );
-
-					if ( type !== 'google' ) {
-						font_subsets.parent().hide();
-						return;
-					}
-
-					let current_value = wraper.children( valueHolderSelector ).val();
-
-					current_value = maybeJsonParse( current_value );
-					if ( _.isUndefined( current_value.selected_subsets ) ) {
-						return;
-					}
-					current_value = current_value.selected_subsets;
-
-					subsets = maybeJsonParse( subsets );
-
-					if ( typeof subsets != 'undefined' && Object.keys( subsets ).length < 2 ) {
-						font_subsets.parent().hide();
-					} else {
-						font_subsets.parent().show();
-					}
-
-					// we need to turn the data array into a specific form like [{id:"id", text:"Text"}]
-					$.each( subsets, function( index, subset ) {
-						new_subsets[index] = {
-							'id': subset,
-							'text': subset
-						};
-
-						// current_subsets
-						if ( typeof current_value !== 'undefined' && current_value !== null && current_value.indexOf( subset ) !== - 1 ) {
-							new_subsets[index].selected = true;
-						}
-					} );
-
-					// We need to clear the old select2 field and reinitialize it.
-					$( font_subsets ).select2().empty();
-					$( font_subsets ).select2( {
-						data: new_subsets
-					} ).on( 'change', function( e ) {
-						let wrapper = $( e.target ).closest( wrapperSelector );
-
-						// Serialize subfield values and refresh the fonts in the preview window.
-						update_font_value( wrapper );
-					} );
-				}
-
-				/**
-				 * This function is a custom value serializer for our entire font field
-				 * It collects values and saves them (encoded) into the `.customify_font_values` input's value
-				 */
-				function update_font_value( wraper ) {
-					let options_list = $( wraper ).find( '.font-options__options-list' ),
-						inputs = options_list.find( '[data-field]' ),
-						value_holder = wraper.children( valueHolderSelector ),
-						setting_id = $( value_holder ).data( 'customize-setting-link' ),
-						setting = wp.customize( setting_id ),
-						newFontData = {};
-
-					// If we are already self-updating this and we haven't finished, we need to stop here to prevent infinite loops
-					// This call might have come from a subfield detecting the change the triggering a further update_font_value()
-					if ( true === updatingValue[setting_id] ) {
-						return;
-					}
-
-					// If we are loading this setting value and haven't finished, there is no point in updating it as this would cause infinite loops.
-					if ( true === loadingValue[setting_id] ) {
-						return;
-					}
-
-					// Mark the fact that we are self-updating the field value
-					updatingValue[setting_id] = true;
-
-					inputs.each( function( key, el ) {
-						let field = $( el ).data( 'field' ),
-							value = $( el ).val();
-
-						if ( 'font_family' === field ) {
-							// the font family also holds the type
-							let selected_opt = $( el.options[el.selectedIndex] ),
-								type = selected_opt.data( 'type' ),
-								subsets = selected_opt.data( 'subsets' ),
-								variants = selected_opt.data( 'variants' );
-
-							if ( ! _.isUndefined( type ) ) {
-								newFontData['type'] = type;
-								if ( type === 'theme_font' ) {
-									newFontData['src'] = selected_opt.data( 'src' );
-								}
-							}
-
-							if ( ! _.isUndefined( variants ) ) {
-								newFontData['variants'] = maybeJsonParse( variants );
-							}
-
-							if ( ! _.isUndefined( subsets ) ) {
-								newFontData['subsets'] = maybeJsonParse( subsets );
-							}
-						}
-
-
-						if ( ! _.isUndefined( field ) && ! _.isUndefined( value ) && ! _.isNull( value ) && value !== '' ) {
-							newFontData[field] = value;
-						}
-					} );
-
-					// Serialize the newly gathered font data
-					let serializedNewFontData = encodeValues( newFontData );
-					// Set the serialized value in the hidden field.
-					value_holder.val( serializedNewFontData );
-					// Update also the Customizer setting value.
-					setting.set( serializedNewFontData );
-
-
-					// Finished with the field value self-updating.
-					updatingValue[setting_id] = false;
-
-					return newFontData;
-				}
-
-				/**
-				 * This function is a reverse of update_font_value(), initializing the entire font field controls based on the value stored in the hidden input.
-				 */
-				function load_font_value( wrapper ) {
-					let options_list = $( wrapper ).find( '.font-options__options-list' ),
-						inputs = options_list.find( '[data-field]' ),
-						value_holder = wrapper.children( valueHolderSelector ),
-						value = maybeJsonParse( value_holder.val() ),
-						setting_id = $( value_holder ).data( 'customize-setting-link' );
-
-					// If we are already loading this setting value and haven't finished, there is no point in starting again.
-					if ( true === loadingValue[setting_id] ) {
-						return;
-					}
-
-					// Mark the fact that we are loading the field value
-					loadingValue[setting_id] = true;
-
-					inputs.each( function( key, el ) {
-						let field = $( el ).data( 'field' );
-
-						// In the case of select2, only the original selects have the data field, thus excluding select2 created select DOM elements
-						if ( typeof field !== "undefined" && field !== "" && typeof value[field] !== "undefined" ) {
-							$( el ).val( value[field] ).trigger( 'change' );
-						}
-					} );
-
-					// Finished with the field value loading.
-					loadingValue[setting_id] = false;
-				}
-
-				var maybeJsonParse = function( value ) {
-					let parsed;
-
-					//try and parse it, with decodeURIComponent
-					try {
-						parsed = JSON.parse( decodeURIComponent( value ) );
-					} catch ( e ) {
-
-						// in case of an error, treat is as a string
-						parsed = value;
-					}
-
-					return parsed;
-				};
-
-				function encodeValues( obj ) {
-					return encodeURIComponent( JSON.stringify( obj ) );
-				}
-
-				function render_fonts() {
-					$( '.customify_font_family' ).select2().trigger( 'change' )
-				}
-
-				return {
-					render_fonts: render_fonts,
-					init: init,
-					update_font_value: update_font_value
-				};
-			}
-		)();
-
 		var Queue = function() {
 			var lastPromise = null;
 			var queueDeferred = null;
@@ -1672,142 +1254,3 @@
 		};
 	}
 )( jQuery, window, wp );
-
-
-// Reverses a hex color to either black or white
-function customifyInverseHexColorToBlackOrWhite( hex ) {
-	return customifyInverseHexColor( hex, true );
-}
-
-// Taken from here: https://stackoverflow.com/a/35970186/6260836
-function customifyInverseHexColor( hex, bw ) {
-	if ( hex.indexOf( '#' ) === 0 ) {
-		hex = hex.slice( 1 );
-	}
-	// convert 3-digit hex to 6-digits.
-	if ( hex.length === 3 ) {
-		hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
-	}
-	if ( hex.length !== 6 ) {
-		throw new Error( 'Invalid HEX color.' );
-	}
-	var r = parseInt( hex.slice( 0, 2 ), 16 ),
-		g = parseInt( hex.slice( 2, 4 ), 16 ),
-		b = parseInt( hex.slice( 4, 6 ), 16 );
-	if ( bw ) {
-		// http://stackoverflow.com/a/3943023/112731
-		return (
-			       r * 0.299 + g * 0.587 + b * 0.114
-		       ) > 186
-			? '#000000'
-			: '#FFFFFF';
-	}
-	// invert color components
-	r = (
-		255 - r
-	).toString( 16 );
-	g = (
-		255 - g
-	).toString( 16 );
-	b = (
-		255 - b
-	).toString( 16 );
-	// pad each with zeros and return
-	return "#" + customifyPadZero( r ) + customifyPadZero( g ) + customifyPadZero( b );
-}
-
-function customifyPadZero( str, len ) {
-	len = len || 2;
-	var zeros = new Array( len ).join( '0' );
-	return (
-		zeros + str
-	).slice( - len );
-}
-
-// Shading, Blending and Converting colors
-// Taken from here: https://github.com/PimpTrizkit/PJs/wiki/12.-Shade,-Blend-and-Convert-a-Web-Color-(pSBC.js)
-const pSBC = function( p, from, to ) {
-	if ( typeof(
-			p
-		) != "number" || p < - 1 || p > 1 || typeof(
-			from
-		) != "string" || (
-		     from[0] != 'r' && from[0] != '#'
-	     ) || (
-		     to && typeof(
-			     to
-		     ) != "string"
-	     ) ) {
-		return null;
-	} //ErrorCheck
-	if ( ! this.pSBCr ) {
-		this.pSBCr = ( d ) => {
-			let l = d.length, RGB = {};
-			if ( l > 9 ) {
-				d = d.split( "," );
-				if ( d.length < 3 || d.length > 4 ) {
-					return null;
-				}//ErrorCheck
-				RGB[0] = i( d[0].split( "(" )[1] ), RGB[1] = i( d[1] ), RGB[2] = i( d[2] ), RGB[3] = d[3] ? parseFloat( d[3] ) : - 1;
-			} else {
-				if ( l == 8 || l == 6 || l < 4 ) {
-					return null;
-				} //ErrorCheck
-				if ( l < 6 ) {
-					d = "#" + d[1] + d[1] + d[2] + d[2] + d[3] + d[3] + (
-						l > 4 ? d[4] + "" + d[4] : ""
-					);
-				} //3 or 4 digit
-				d = i( d.slice( 1 ), 16 ), RGB[0] = d >> 16 & 255, RGB[1] = d >> 8 & 255, RGB[2] = d & 255, RGB[3] = - 1;
-				if ( l == 9 || l == 5 ) {
-					RGB[3] = r( (
-						            RGB[2] / 255
-					            ) * 10000 ) / 10000, RGB[2] = RGB[1], RGB[1] = RGB[0], RGB[0] = d >> 24 & 255;
-				}
-			}
-			return RGB;
-		}
-	}
-	var i = parseInt, r = Math.round, h = from.length > 9, h = typeof(
-			to
-		) == "string" ? to.length > 9 ? true : to == "c" ? ! h : false : h, b = p < 0, p = b ? p * - 1 : p,
-		to = to && to != "c" ? to : b ? "#000000" : "#FFFFFF", f = this.pSBCr( from ), t = this.pSBCr( to );
-	if ( ! f || ! t ) {
-		return null;
-	} //ErrorCheck
-	if ( h ) {
-		return "rgb" + (
-			f[3] > - 1 || t[3] > - 1 ? "a(" : "("
-		) + r( (
-			       t[0] - f[0]
-		       ) * p + f[0] ) + "," + r( (
-			       t[1] - f[1]
-		       ) * p + f[1] ) + "," + r( (
-			       t[2] - f[2]
-		       ) * p + f[2] ) + (
-			       f[3] < 0 && t[3] < 0 ? ")" : "," + (
-			       f[3] > - 1 && t[3] > - 1 ? r( (
-				                                     (
-					                                     t[3] - f[3]
-				                                     ) * p + f[3]
-			                                     ) * 10000 ) / 10000 : t[3] < 0 ? f[3] : t[3]
-		       ) + ")"
-		       );
-	} else {
-		return "#" + (
-		       0x100000000 + r( (
-			                        t[0] - f[0]
-		                        ) * p + f[0] ) * 0x1000000 + r( (
-			                                                        t[1] - f[1]
-		                                                        ) * p + f[1] ) * 0x10000 + r( (
-			                                                                                      t[2] - f[2]
-		                                                                                      ) * p + f[2] ) * 0x100 + (
-			       f[3] > - 1 && t[3] > - 1 ? r( (
-				                                     (
-					                                     t[3] - f[3]
-				                                     ) * p + f[3]
-			                                     ) * 255 ) : t[3] > - 1 ? r( t[3] * 255 ) : f[3] > - 1 ? r( f[3] * 255 ) : 255
-		       )
-		).toString( 16 ).slice( 1, f[3] > - 1 || t[3] > - 1 ? undefined : - 2 );
-	}
-};
