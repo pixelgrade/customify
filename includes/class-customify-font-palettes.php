@@ -871,7 +871,7 @@ class Customify_Font_Palettes {
 						// Font loaded when a palette is selected
 						'font_family'      => 'Lora',
 						// Load all these fonts weights.
-						'font_weights'     => array( 'bold' ),
+						'font_weights'     => array( 700 ),
 						// "Generate" the graph to be used for font-size and line-height.
 						'font_size_to_line_height_points' => array(
 							array( 24, 1.25 ),
@@ -883,8 +883,7 @@ class Customify_Font_Palettes {
 						'font_styles_intervals'      => array(
 							array(
 								'start'          => 0,
-								'end'            => 30,
-								'font_weight'    => 'bold',
+								'font_weight'    => 700,
 								'letter_spacing' => '0em',
 								'text_transform' => 'none',
 							),
@@ -901,19 +900,31 @@ class Customify_Font_Palettes {
 						),
 						'font_styles_intervals'      => array(
 							array(
-								'start'            => 0,
+								'start'          => 0,
 								'font_weight'    => 600,
 								'letter_spacing' => '0.154em',
 								'text_transform' => 'uppercase',
 							),
 							array(
-								'start'            => 13,
+								'start'          => 13,
 								'font_weight'    => 'regular',
 								'letter_spacing' => '0em',
 								'text_transform' => 'uppercase',
 							),
 							array(
-								'start'            => 17, // (? Buttons vs Navigation at 16px)
+								'start'          => 14,
+								'font_weight'    => 'regular',
+								'letter_spacing' => '0.1em',
+								'text_transform' => 'uppercase',
+							),
+							array(
+								'start'          => 16,
+								'font_weight'    => 'regular',
+								'letter_spacing' => '0em',
+								'text_transform' => 'uppercase',
+							),
+							array(
+								'start'          => 17,
 								'font_weight'    => 'regular',
 								'letter_spacing' => '0em',
 								'text_transform' => 'none',
