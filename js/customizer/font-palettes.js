@@ -169,7 +169,7 @@ let FontPalettes = ( function( $, exports, wp ) {
                         let idx = 0;
                         while ( idx < fonts_logic.font_styles.length-1 &&
                                 typeof fonts_logic.font_styles[idx].end !== "undefined" &&
-                                fonts_logic.font_styles[idx].end <= connected_field_data.font_size ) {
+                                fonts_logic.font_styles[idx].end <= connected_field_data.font_size.value ) {
                             idx++;
                         }
 
@@ -188,7 +188,7 @@ let FontPalettes = ( function( $, exports, wp ) {
                     // The line height is determined by getting the value of the polynomial function determined by points.
                     if ( typeof fonts_logic.font_size_to_line_height_points !== "undefined" && _.isArray(fonts_logic.font_size_to_line_height_points)) {
                         let f = interpolatingPolynomial(fonts_logic.font_size_to_line_height_points);
-                        newFontData['line_height'] = Number(f(connected_field_data.font_size)).toPrecision(2);
+                        newFontData['line_height'] = { value: Number(f(connected_field_data.font_size.value)).toPrecision(2) };
                     }
                 }
 

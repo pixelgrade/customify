@@ -375,15 +375,27 @@ let CustomifyFontSelectFields = ( function( $, exports, wp ) {
                         unit = '';
                     // We will do this only for numerical fields.
                     if ( _.contains( ['letter_spacing','line_height', 'font_size'], field ) && isNaN( cleanValue ) ) {
-                        let matches = cleanValue.match(/^([\d.\-+]+)(.+)/i);
-                        if ( matches !== null && typeof matches[1] !== "undefined" ) {
-                            cleanValue = matches[1];
-                            unit = matches[2];
-                            if ( unit !== '' ) {
-                                $( el ).attr( 'unit', unit );
+                        // If we have a standardized value field (as array), use that.
+                        if ( typeof cleanValue.value !== "undefined" ) {
+                            if ( typeof cleanValue.unit !== "undefined" ) {
+                                unit = cleanValue.unit;
+                            }
+
+                            cleanValue = cleanValue.value;
+                        } else {
+                            // Treat the case when the value is a string.
+                            let matches = cleanValue.match(/^([\d.\-+]+)(.+)/i);
+                            if (matches !== null && typeof matches[1] !== "undefined") {
+                                cleanValue = matches[1];
+                                unit = matches[2];
                             }
                         }
                     }
+
+                    if ( unit !== '' ) {
+                        $( el ).attr( 'unit', unit );
+                    }
+
                     $( el ).val( cleanValue ).trigger( 'change' );
                 }
             } );

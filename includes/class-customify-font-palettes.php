@@ -51,7 +51,8 @@ class Customify_Font_Palettes {
 		/*
 		 * Handle the font palettes preprocessing.
 		 */
-		add_filter( 'customify_get_font_palettes', array( $this, 'preprocess_config' ), 10, 1 );
+		add_filter( 'customify_get_font_palettes', array( $this, 'preprocess_config' ), 5, 1 );
+
 		/*
 		 * Handle the Customizer Style Manager section config.
 		 */
@@ -165,6 +166,17 @@ class Customify_Font_Palettes {
 		}
 
 		foreach ( $fonts_logic_config as $font_setting_id => $font_logic ) {
+			if ( empty( $font_logic['font_family'] ) ) {
+				// If we don't have a font family we can't do much with this config - remove it.
+				unset( $fonts_logic_config[ $font_setting_id ] );
+				continue;
+			}
+
+			if ( empty( $font_logic['type'] ) ) {
+				// Default to 'google'
+				$fonts_logic_config[ $font_setting_id ]['type'] = 'google';
+			}
+
 			// Process the font_styles_intervals and make sure that they are in the right order and not overlapping.
 			if ( ! empty( $font_logic['font_styles_intervals'] ) && is_array( $font_logic['font_styles_intervals'] ) ) {
 				$font_styles = array( array_shift( $font_logic['font_styles_intervals'] ) );
@@ -251,13 +263,23 @@ class Customify_Font_Palettes {
 				}
 
 				// We need to do a last pass and ensure no breaks in the intervals. We need them to be continuous.
-				// We will extend intervals to their next neighbour.
+				// We will extend intervals to their next (right-hand) neighbour to achieve continuity.
 				if ( count( $font_styles ) > 1 ) {
 					// The first interval should start at zero, just in case.
 					$font_styles[0]['start'] = 0;
 					for( $i = 1; $i < count( $font_styles ); $i++ ) {
 						// Extend the previous interval, just in case.
 						$font_styles[ $i-1 ]['end'] = $font_styles[ $i ]['start'];
+					}
+				}
+
+				// The last interval should not have an end.
+				unset( $font_styles[ count( $font_styles )-1 ]['end'] );
+
+				// Finally, go through each font style and standardize it.
+				foreach( $font_styles as $key => $value ) {
+					if ( isset( $value['letter_spacing'] ) ) {
+						$font_styles[ $key ]['letter_spacing'] = $this->maybe_standardize_value( $value['letter_spacing'] );
 					}
 				}
 
@@ -590,9 +612,22 @@ class Customify_Font_Palettes {
 					// If we didn't get a font_size we will try and grab the default value for the connected field.
 					if ( ! isset( $value['font_size'] ) ) {
 						if ( isset( $option_config['default']['font-size'] ) ) {
-							$value['font_size'] = $option_config['default']['font-size'];
+							$value['font_size'] = array( 'value' => $option_config['default']['font-size'] );
 						} else {
 							$value['font_size'] = false;
+						}
+					}
+
+					// Handle the case when the received font_size value is a number with a unit - split them.
+					$value['font_size'] = $this->maybe_standardize_value( $value['font_size'] );
+
+					// If we don't have an unit, maybe we can make an educated guess.
+					// If the value is bellow 9, then probably we are talking about ems, else pxs.
+					if ( ! empty( $value['font_size'] ) && ! empty( $value['font_size']['value'] ) && ! isset( $value['font_size']['unit'] ) ) {
+						if ( $value['font_size']['value'] < 9 ) {
+							$value['font_size']['unit'] = 'em';
+						} else {
+							$value['font_size']['unit'] = 'px';
 						}
 					}
 
@@ -604,6 +639,51 @@ class Customify_Font_Palettes {
 		}
 
 		return $config;
+	}
+
+	/**
+	 * Standardize a numerical value for a font CSS property.
+	 *
+	 * The standard format is an associative array with the following entries:
+	 *  - 'value': holds the actual numerical value (int or float)
+	 *  - 'unit : optional; it holds the unit that should be used for the value
+	 *
+	 * @param mixed $value
+	 *
+	 * @return array|bool
+	 */
+	private function maybe_standardize_value( $value ) {
+		$new_value = false;
+
+		if ( false === $value ) {
+			return $new_value;
+		}
+
+		if ( is_array( $value ) ) {
+			$new_value = $value;
+		}
+
+		if ( is_string( $value ) ) {
+			if ( is_numeric( $value ) ) {
+				$new_value = array( 'value' => (float) $value );
+			} else {
+				// We will get everything in front that is a valid part of a number (float including).
+				preg_match("/^([\d.\-+]+)/i", $value, $match);
+
+				if ( ! empty( $match ) && isset( $match[0] ) ) {
+					$new_value = array(
+						'value' => (float) $match[0],
+						'unit' => substr( $value, strlen( $match[0] ) ),
+					);
+				}
+			}
+		}
+
+		if ( is_numeric( $value ) ) {
+			$new_value = array( 'value' => $value );
+		}
+
+		return $new_value;
 	}
 
 	/**
