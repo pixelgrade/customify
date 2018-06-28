@@ -396,6 +396,17 @@ let CustomifyFontSelectFields = ( function( $, exports, wp ) {
                         $( el ).attr( 'unit', unit );
                     }
 
+                    // If this field has a min/max attribute we need to make sure that those attributes allow for the value we are trying to impose.
+                    // But only for numerical values.
+                    if ( ! isNaN( cleanValue ) ) {
+                        if ( $(el).attr('min') && $(el).attr('min') > cleanValue ) {
+                            $(el).attr('min', cleanValue );
+                        }
+                        if ( $(el).attr('max') && $(el).attr('max') < cleanValue ) {
+                            $(el).attr('max', cleanValue );
+                        }
+                    }
+
                     $( el ).val( cleanValue ).trigger( 'change' );
                 }
             } );

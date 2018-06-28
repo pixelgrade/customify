@@ -374,29 +374,62 @@ class Customify_Font_Selector {
 
 			if ( ! empty( $value['font_size'] ) ) {
 				// If the value already contains a unit, go with that.
+				// We also handle receiving the value in a standardized format ( array with 'value' and 'unit').
+				$font_size = $value['font_size'];
 				$unit = '';
 				if ( is_numeric( $value['font_size'] ) ) {
 					$unit = $this->get_field_unit( $font, 'font-size' );
+				} elseif ( is_array( $value['font_size'] ) ) {
+					if ( isset( $value['font_size']['unit'] ) ) {
+						$unit = $value['font_size']['unit'];
+					}
+
+					if ( isset( $value['font_size']['value'] ) ) {
+						$font_size = $value['font_size']['value'];
+					}
 				}
-				$this->display_property( 'font-size', $value['font_size'], $unit );
+
+				$this->display_property( 'font-size', $font_size, $unit );
 			}
 
 			if ( isset( $value['line_height'] ) ) {
 				// If the value already contains a unit, go with that.
+				// We also handle receiving the value in a standardized format ( array with 'value' and 'unit').
+				$line_height = $value['line_height'];
 				$unit = '';
 				if ( is_numeric( $value['line_height'] ) ) {
 					$unit = $this->get_field_unit( $font, 'line-height' );
+				} elseif ( is_array( $value['line_height'] ) ) {
+					if ( isset( $value['line_height']['unit'] ) ) {
+						$unit = $value['line_height']['unit'];
+					}
+
+					if ( isset( $value['line_height']['value'] ) ) {
+						$line_height = $value['line_height']['value'];
+					}
 				}
-				$this->display_property( 'line-height', $value['line_height'], $unit );
+
+				$this->display_property( 'line-height', $line_height, $unit );
 			}
 
 			if ( isset( $value['letter_spacing'] ) ) {
 				// If the value already contains a unit, go with that.
+				// We also handle receiving the value in a standardized format ( array with 'value' and 'unit').
+				$letter_spacing = $value['letter_spacing'];
 				$unit = '';
 				if ( is_numeric( $value['letter_spacing'] ) ) {
 					$unit = $this->get_field_unit( $font, 'letter-spacing' );
+				} elseif ( is_array( $value['letter_spacing'] ) ) {
+					if ( isset( $value['letter_spacing']['unit'] ) ) {
+						$unit = $value['letter_spacing']['unit'];
+					}
+
+					if ( isset( $value['letter_spacing']['value'] ) ) {
+						$letter_spacing = $value['letter_spacing']['value'];
+					}
 				}
-				$this->display_property( 'letter-spacing', $value['letter_spacing'], $unit );
+
+				$this->display_property( 'letter-spacing', $letter_spacing, $unit );
 			}
 
 			if ( ! empty( $value['text_align'] ) ) {

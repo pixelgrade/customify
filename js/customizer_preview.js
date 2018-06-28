@@ -157,6 +157,8 @@
                     } else {
                         store['font-size'] += get_field_unit(ID, 'font-size');
                     }
+                } else {
+                    store['font-size'] += get_field_unit(ID, 'font-size');
                 }
 			}
 
@@ -173,6 +175,8 @@
                     } else {
                         store['letter-spacing'] += get_field_unit(ID, 'letter-spacing');
                     }
+                } else {
+                    store['letter-spacing'] += get_field_unit(ID, 'letter-spacing');
                 }
 			}
 
@@ -189,6 +193,8 @@
                     } else {
                         store['line-height'] += get_field_unit(ID, 'line-height');
                     }
+                } else {
+                    store['line-height'] += get_field_unit(ID, 'line-height');
                 }
 			}
 

@@ -6,6 +6,8 @@ let FontPalettes = ( function( $, exports, wp ) {
         'sm_font_body'
     ];
 
+    const defaultFontType = 'google';
+
     const initializePalettes = () => {
         // Cache initial settings configuration to be able to update connected fields on variation change.
         if ( typeof window.settingsClone === "undefined" ) {
@@ -148,6 +150,14 @@ let FontPalettes = ( function( $, exports, wp ) {
                 /* ===========
                  * We need to determine the 6 subfields values to be able to determine the value of the font field.
                  */
+
+                // The font type is straight forward as it comes directly from the parent field font logic configuration.
+                if (typeof fonts_logic.type !== "undefined") {
+                    newFontData['type'] = fonts_logic.type;
+                } else {
+                    // We use the default
+                    newFontData['type'] = defaultFontType;
+                }
 
                 // The font family is straight forward as it comes directly from the parent field font logic configuration.
                 if (typeof fonts_logic.font_family !== "undefined") {
