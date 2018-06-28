@@ -971,11 +971,12 @@ class Customify_Font_Palettes {
 						// Font loaded when a palette is selected
 						'font_family'      => 'Oswald',
 						// Load all these fonts weights.
-						'font_weights'     => array( 300, 400, 700),
+						'font_weights'     => array( 300, 400, 500 ),
 						// "Generate" the graph to be used for font-size and line-height.
 						'font_size_to_line_height_points' => array(
-							array( 20, 1.55 ),
+							array( 20, 1.15 ),
 							array( 26, 1.45 ),
+							array( 30, 1.25 ),
 							array( 56, 1.25 ),
 						),
 
@@ -983,7 +984,25 @@ class Customify_Font_Palettes {
 						'font_styles_intervals'      => array(
 							array(
 								'start'          => 0,
+								'font_weight'    => 500,
+								'letter_spacing' => '0.04em',
+								'text_transform' => 'uppercase',
+							),
+							array(
+								'start'          => 24,
+								'font_weight'    => 300,
+								'letter_spacing' => '0.06em',
+								'text_transform' => 'uppercase',
+							),
+							array(
+								'start'          => 25,
 								'font_weight'    => 400,
+								'letter_spacing' => '0.04em',
+								'text_transform' => 'uppercase',
+							),
+							array(
+								'start'          => 26,
+								'font_weight'    => 500,
 								'letter_spacing' => '0.04em',
 								'text_transform' => 'uppercase',
 							),
@@ -992,24 +1011,31 @@ class Customify_Font_Palettes {
 
 					// Secondary font is used for smaller headings [H4, H5, H6], including meta details
 					'sm_font_secondary' => array(
-						'font_family'      => 'Roboto',
-						'font_weights'     => array( 300, '300italic', 400, '400italic', 500, '500italic' ),
+						'font_family'      => 'Oswald',
+						'font_weights'     => array( 200, '200italic', 500, '500italic' ),
 						'font_size_to_line_height_points' => array(
-							array( 11, 1.625 ),
-							array( 18, 1.4 ),
+							array( 14, 1.625 ),
+							array( 22, 1.55 ),
+							array( 24, 1.625 ),
 						),
 						'font_styles_intervals'      => array(
 							array(
 								'start'          => 0,
-								'font_weight'    => 400,
-								'letter_spacing' => '0.04em',
+								'font_weight'    => 500,
+								'letter_spacing' => '0.01em',
 								'text_transform' => 'uppercase',
 							),
 							array(
-								'start'          => 12,
+								'start'          => 20,
 								'font_weight'    => 500,
 								'letter_spacing' => '0em',
 								'text_transform' => 'uppercase',
+							),
+							array(
+								'start'          => 24,
+								'font_weight'    => 200,
+								'letter_spacing' => '0em',
+								'text_transform' => 'none',
 							),
 						),
 					),
@@ -1019,7 +1045,7 @@ class Customify_Font_Palettes {
 						'font_family'      => 'Roboto',
 						'font_weights'     => array( 300, '300italic', 400, '400italic', 500, '500italic' ),
 						'font_size_to_line_height_points' => array(
-							array( 14, 1.45 ),
+							array( 10, 1.6 ),
 							array( 16, 1.625 ),
 							array( 18, 1.75 ),
 						),
@@ -1028,7 +1054,21 @@ class Customify_Font_Palettes {
 						'font_styles_intervals'      => array(
 							array(
 								'start'          => 0,
-								'font_weight'    => 400,
+								'end'            => 10.9,
+								'font_weight'    => 500,
+								'letter_spacing' => '0.03em',
+								'text_transform' => 'none',
+							),
+							array(
+								'start'          => 10.9,
+								'end'            => 12,
+								'font_weight'    => 500,
+								'letter_spacing' => '0.02em',
+								'text_transform' => 'uppercase',
+							),
+							array(
+								'start'          => 12,
+								'font_weight'    => 300,
 								'letter_spacing' => 0,
 								'text_transform' => 'none',
 							),
