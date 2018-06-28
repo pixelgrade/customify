@@ -415,6 +415,7 @@ class Customify_Color_Palettes {
                   'html' => '<div class="sm_color_matrix"></div>'
               ),
               'sm_dark_color_master_slider' => array(
+	              'setting_id'  => 'sm_dark_color_master_slider',
 	              'type'        => 'range',
 	              'label'       => esc_html__( 'Dark to Color (master)', 'customify' ),
 	              'desc'        => '',
@@ -429,6 +430,7 @@ class Customify_Color_Palettes {
 	              'css'         => array(),
               ),
               'sm_dark_color_primary_slider' => array(
+	              'setting_id'  => 'sm_dark_color_primary_slider',
                   'type'        => 'range',
                   'label'       => esc_html__( 'Dark to Color (primary)', 'customify' ),
                   'desc'        => '',
@@ -443,6 +445,7 @@ class Customify_Color_Palettes {
                   'css'         => array(),
               ),
               'sm_dark_color_secondary_slider' => array(
+	              'setting_id'  => 'sm_dark_color_secondary_slider',
                   'type'        => 'range',
                   'label'       => esc_html__( 'Dark to Color (secondary)', 'customify' ),
                   'desc'        => '',
@@ -457,6 +460,7 @@ class Customify_Color_Palettes {
                   'css'         => array(),
               ),
               'sm_dark_color_tertiary_slider' => array(
+	              'setting_id'  => 'sm_dark_color_tertiary_slider',
                   'type'        => 'range',
                   'label'       => esc_html__( 'Dark to Color (tertiary)', 'customify' ),
                   'desc'        => '',
@@ -471,13 +475,14 @@ class Customify_Color_Palettes {
                   'css'         => array(),
               ),
               'sm_colors_dispersion' => array(
+	              'setting_id'  => 'sm_colors_dispersion',
                   'type'        => 'range',
                   'label'       => esc_html__( 'Colors dispersion range', 'customify' ),
                   'desc'        => '',
                   'live'        => true,
                   'default'     => 100, // this should be set by the theme (previously 1300)
                   'input_attrs' => array(
-                      'min'          => 0,
+                      'min'          => 1,
                       'max'          => 100,
                       'step'         => 1,
                       'data-preview' => true,
@@ -485,6 +490,7 @@ class Customify_Color_Palettes {
                   'css'         => array(),
               ),
               'sm_colors_focus_point' => array(
+	              'setting_id'  => 'sm_colors_focus_point',
                   'type'        => 'range',
                   'label'       => esc_html__( 'Colors focus point', 'customify' ),
                   'desc'        => '',
