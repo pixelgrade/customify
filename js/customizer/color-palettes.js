@@ -97,42 +97,6 @@ let ColorPalettes = ( function( $, exports, wp ) {
         } );
     };
 
-    const alterConnectedFields = swapMap => {
-	    let optionsToShow = [];
-        _.each( swapMap, function( fromArray, to ) {
-            if ( typeof wp.customize.settings.settings[to] !== "undefined" ) {
-                let newConnectedFields = [];
-                if ( fromArray instanceof Array ) {
-
-                    _.each( fromArray, function( from ) {
-                        if ( typeof window.settingsClone[from] !== "undefined" ) {
-                            let oldConnectedFields;
-                            if ( ! _.isUndefined( window.settingsClone[from]['connected_fields'] ) ) {
-	                            oldConnectedFields = Object.values( window.settingsClone[from]['connected_fields'] );
-                                newConnectedFields = newConnectedFields.concat( oldConnectedFields );
-                            }
-                        }
-                    } );
-
-	                newConnectedFields = Object.keys( newConnectedFields ).map( function(key) {
-		                return newConnectedFields[key];
-	                });
-                }
-                wp.customize.settings.settings[to]['connected_fields'] = newConnectedFields;
-
-
-	            if ( fromArray instanceof Array && fromArray.length && newConnectedFields.length ) {
-		            optionsToShow.push( to );
-	            }
-            }
-        } );
-
-        if ( optionsToShow.length ) {
-            let optionsSelector = '.' + optionsToShow.join(', .');
-            $('.c-color-palette .color').addClass('hidden').filter(optionsSelector).removeClass('hidden');
-        }
-    };
-
     const resetSettings = settings => {
         _.each( settings, function( setting_id ) {
             const setting = wp.customize( setting_id );
@@ -189,22 +153,20 @@ let ColorPalettes = ( function( $, exports, wp ) {
     };
 
     // alter connected fields of the master colors controls depending on the selected palette variation
-    const reloadConnectedFields = () => {
-        const setting = wp.customize( 'sm_color_palette_variation' );
+    const getCurrentVariation = () => {
+	    const setting = wp.customize( 'sm_color_palette_variation' );
 
-        if ( _.isUndefined( setting ) ) {
-            return;
-        }
+	    if ( _.isUndefined( setting ) ) {
+		    return false;
+	    }
 
-        const variation = setting();
+	    const variation = setting();
 
-        if ( ! window.colorPalettesVariations.hasOwnProperty( variation ) ) {
-            return;
-        }
+	    if ( ! window.colorPalettesVariations.hasOwnProperty( variation ) ) {
+	    	return false;
+	    }
 
-        unbindConnectedFields();
-        alterConnectedFields( colorPalettesVariations[variation] );
-        bindConnectedFields();
+	    return variation;
     };
 
     const createCurrentPaletteControls = () => {
@@ -331,6 +293,71 @@ let ColorPalettes = ( function( $, exports, wp ) {
 	    });
     };
 
+	const alterConnectedFields = swapMap => {
+		_.each( swapMap, function( fromArray, to ) {
+			if ( typeof wp.customize.settings.settings[to] !== "undefined" ) {
+				let newConnectedFields = [];
+				if ( fromArray instanceof Array ) {
+
+					_.each( fromArray, function( from ) {
+						if ( typeof window.settingsClone[from] !== "undefined" ) {
+							let oldConnectedFields;
+							if ( ! _.isUndefined( window.settingsClone[from]['connected_fields'] ) ) {
+								oldConnectedFields = Object.values( window.settingsClone[from]['connected_fields'] );
+								newConnectedFields = newConnectedFields.concat( oldConnectedFields );
+							}
+						}
+					} );
+
+					newConnectedFields = Object.keys( newConnectedFields ).map( function(key) {
+						return newConnectedFields[key];
+					});
+				}
+				wp.customize.settings.settings[to]['connected_fields'] = newConnectedFields;
+			}
+		} );
+	};
+
+    const toggleVisibleOptions = ( settings ) => {
+        let optionsToShow = [];
+
+        _.each( masterSettingIds, function( settingId ) {
+        	const connectedFields = settings[settingId]['connected_fields'];
+        	if ( ! _.isUndefined( connectedFields ) && connectedFields.length ) {
+        		optionsToShow.push( settingId );
+	        }
+        } );
+
+        if ( optionsToShow.length ) {
+            let optionsSelector = '.' + optionsToShow.join(', .');
+            $( '.c-color-palette .color' ).addClass( 'hidden' ).filter( optionsSelector ).removeClass( 'hidden' );
+        }
+    };
+
+	const alterFields = (settings, swapMap) => {
+
+        var newSettings = JSON.parse(JSON.stringify(settings));
+        var oldSettings = JSON.parse(JSON.stringify(settings));
+
+		_.each( swapMap, function( fromArray, to ) {
+			if ( typeof newSettings[to] !== "undefined" ) {
+				let newConnectedFields = [];
+				if ( fromArray instanceof Array ) {
+					_.each( fromArray, function( from ) {
+						let oldConnectedFields;
+						if ( _.isUndefined( oldSettings[from]['connected_fields'] ) ) {
+							oldSettings[from]['connected_fields'] = [];
+						}
+						oldConnectedFields = Object.values( oldSettings[from]['connected_fields'] );
+						newConnectedFields = newConnectedFields.concat( oldConnectedFields );
+					} );
+				}
+				newSettings[to]['connected_fields'] = newConnectedFields;
+			}
+		} );
+		return _.clone(newSettings);
+	};
+
     const moveConnectedFields = ( settings, from, to, ratio ) => {
 
 	    if ( ! _.isUndefined( settings[to] ) &&
@@ -346,6 +373,13 @@ let ColorPalettes = ( function( $, exports, wp ) {
 		    let newToConnectedFields = oldConnectedFields.slice( 0, count );
 		    let newFromConnectedFields = oldConnectedFields.slice( count );
 
+		    newToConnectedFields = Object.keys( newToConnectedFields ).map( function(key) {
+			    return newToConnectedFields[key];
+		    });
+		    newToConnectedFields = Object.keys( newToConnectedFields ).map( function(key) {
+			    return newToConnectedFields[key];
+		    });
+
 		    settings[to]['connected_fields'] = newToConnectedFields;
 		    settings[from]['connected_fields'] = newFromConnectedFields;
 	    }
@@ -354,11 +388,22 @@ let ColorPalettes = ( function( $, exports, wp ) {
 	};
 
     const disperseColorConnectedFields = ( settings, dispersion, focus ) => {
+
+    	if ( _.isUndefined( settings['sm_color_primary']['connected_fields'] ) ) {
+		    settings['sm_color_primary']['connected_fields'] = [];
+	    }
+
+    	if ( _.isUndefined( settings['sm_color_secondary']['connected_fields'] ) ) {
+		    settings['sm_color_secondary']['connected_fields'] = [];
+	    }
+
+    	if ( _.isUndefined( settings['sm_color_tertiary']['connected_fields'] ) ) {
+		    settings['sm_color_tertiary']['connected_fields'] = [];
+	    }
+
 	    const primaryConnectedFields = Object.values( settings['sm_color_primary']['connected_fields'] );
 	    const secondaryConnectedFields = Object.values( settings['sm_color_secondary']['connected_fields'] );
 	    const tertiaryConnectedFields = Object.values( settings['sm_color_tertiary']['connected_fields'] );
-
-	    console.log(primaryConnectedFields,secondaryConnectedFields,tertiaryConnectedFields);
 
 	    //  A1              A2              A3             A4
 	    //  |--- primary ---|-- secondary --|-- tertiary --|
@@ -393,9 +438,19 @@ let ColorPalettes = ( function( $, exports, wp ) {
 	    const primaryFieldsCount = connectedFields.length * primaryWidth / totalWidth;
 	    const secondaryFieldsCount = connectedFields.length * secondaryWidth / totalWidth;
 
-	    const newPrimaryConnectedFields = connectedFields.slice(0, primaryFieldsCount);
-	    const newSecondaryConnectedFields = connectedFields.slice(primaryFieldsCount, primaryFieldsCount + secondaryFieldsCount);
-	    const newTertiaryConnectedFields = connectedFields.slice(primaryFieldsCount + secondaryFieldsCount);
+	    let newPrimaryConnectedFields = connectedFields.slice(0, primaryFieldsCount);
+	    let newSecondaryConnectedFields = connectedFields.slice(primaryFieldsCount, primaryFieldsCount + secondaryFieldsCount);
+	    let newTertiaryConnectedFields = connectedFields.slice(primaryFieldsCount + secondaryFieldsCount);
+
+	    newPrimaryConnectedFields = Object.keys( newPrimaryConnectedFields ).map( function(key) {
+		    return newPrimaryConnectedFields[key];
+	    });
+	    newSecondaryConnectedFields = Object.keys( newSecondaryConnectedFields ).map( function(key) {
+		    return newSecondaryConnectedFields[key];
+	    });
+	    newTertiaryConnectedFields = Object.keys( newTertiaryConnectedFields ).map( function(key) {
+		    return newTertiaryConnectedFields[key];
+	    });
 
 	    settings['sm_color_primary']['connected_fields'] = newPrimaryConnectedFields;
 	    settings['sm_color_secondary']['connected_fields'] = newSecondaryConnectedFields;
@@ -407,13 +462,13 @@ let ColorPalettes = ( function( $, exports, wp ) {
     const handlePalettes = () => {
         initializePalettes();
         createCurrentPaletteControls();
-	    reloadConnectedFields();
+	    // reloadConnectedFields();
         updateCurrentPalette();
         bindVariationChange();
 
         // when variation is changed reload connected fields from cached version of customizer settings config
         $( document ).on( 'change', '[name="_customize-radio-sm_color_palette_variation_control"]', function() {
-            reloadConnectedFields();
+            // reloadConnectedFields();
 	        resetSettings( masterSettingIds );
         });
 
@@ -444,7 +499,7 @@ let ColorPalettes = ( function( $, exports, wp ) {
 		    const colorDispersion = $colorDispersionRange.val() / 100;
 		    const focusPoint = $colorFocusPoint.val() / 100;
 
-		    let tempSettings = window.settingsClone;
+		    let tempSettings = _.clone(window.settingsClone);
 
 		    unbindConnectedFields();
 
@@ -454,9 +509,15 @@ let ColorPalettes = ( function( $, exports, wp ) {
 
 		    tempSettings = disperseColorConnectedFields( tempSettings, colorDispersion, focusPoint );
 
-		    _.each( masterSettingIds, function( setting_id ) {
-			    wp.customize.settings.settings[setting_id]['connected_fields'] = tempSettings[setting_id]['connected_fields'];
-		    } );
+		    const variation = getCurrentVariation();
+
+		    if ( variation ) {
+			    tempSettings = _.clone( alterFields( tempSettings, colorPalettesVariations[variation] ) );
+		    }
+
+		    toggleVisibleOptions( tempSettings );
+
+		    wp.customize.settings.settings = tempSettings;
 
 		    bindConnectedFields();
 		    buildColorMatrix();
