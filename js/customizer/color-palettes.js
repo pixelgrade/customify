@@ -169,18 +169,6 @@ let ColorPalettes = ( function( $, exports, wp ) {
 	    return variation;
     };
 
-	const reloadConnectedFields = () => {
-        const variation = getCurrentVariation();
-
-        if ( ! variation ) {
-        	return;
-        }
-
-        unbindConnectedFields();
-        alterConnectedFields( colorPalettesVariations[variation] );
-        bindConnectedFields();
-    };
-
     const createCurrentPaletteControls = () => {
         const $palette = $( '.c-color-palette' );
         const $fields = $palette.find( '.c-color-palette__fields' ).find( 'input' );
@@ -330,18 +318,21 @@ let ColorPalettes = ( function( $, exports, wp ) {
 		} );
 	};
 
-    const toggleVisibleOptions = () => {
-//        let optionsToShow = [];
+    const toggleVisibleOptions = ( settings ) => {
+        let optionsToShow = [];
 
-//        if ( fromArray instanceof Array && fromArray.length && newConnectedFields.length ) {
-//            optionsToShow.push( to );
-//        }
+        _.each( masterSettingIds, function( settingId ) {
+        	const connectedFields = settings[settingId]['connected_fields'];
+        	if ( ! _.isUndefined( connectedFields ) && connectedFields.length ) {
+        		optionsToShow.push( settingId );
+	        }
+        } );
 
-//        if ( optionsToShow.length ) {
-//            let optionsSelector = '.' + optionsToShow.join(', .');
-//            $('.c-color-palette .color').addClass('hidden').filter(optionsSelector).removeClass('hidden');
-//        }
-    }
+        if ( optionsToShow.length ) {
+            let optionsSelector = '.' + optionsToShow.join(', .');
+            $( '.c-color-palette .color' ).addClass( 'hidden' ).filter( optionsSelector ).removeClass( 'hidden' );
+        }
+    };
 
 	const alterFields = (settings, swapMap) => {
 
@@ -359,13 +350,12 @@ let ColorPalettes = ( function( $, exports, wp ) {
 						}
 						oldConnectedFields = Object.values( oldSettings[from]['connected_fields'] );
 						newConnectedFields = newConnectedFields.concat( oldConnectedFields );
-                        console.log( to, from, oldSettings[from]['connected_fields'] );
 					} );
 				}
 				newSettings[to]['connected_fields'] = newConnectedFields;
 			}
 		} );
-		return settings;
+		return _.clone(newSettings);
 	};
 
     const moveConnectedFields = ( settings, from, to, ratio ) => {
@@ -520,13 +510,14 @@ let ColorPalettes = ( function( $, exports, wp ) {
 		    tempSettings = disperseColorConnectedFields( tempSettings, colorDispersion, focusPoint );
 
 		    const variation = getCurrentVariation();
-            let newSettings = JSON.parse(JSON.stringify(tempSettings));
 
 		    if ( variation ) {
-		        newSettings = _.clone( alterFields( tempSettings, colorPalettesVariations[variation] ) );
+			    tempSettings = _.clone( alterFields( tempSettings, colorPalettesVariations[variation] ) );
 		    }
 
-		    wp.customize.settings.settings = newSettings;
+		    toggleVisibleOptions( tempSettings );
+
+		    wp.customize.settings.settings = tempSettings;
 
 		    bindConnectedFields();
 		    buildColorMatrix();
