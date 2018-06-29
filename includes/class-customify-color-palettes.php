@@ -531,20 +531,26 @@ class Customify_Color_Palettes {
 
 		$average = ( $primary_count + $secondary_count + $tertiary_count ) / $n;
 
-		$diff_primary = abs( $primary_count - $average );
-		$diff_secondary = abs( $secondary_count - $average );
-		$diff_tertiary = abs( $tertiary_count - $average );
+		$diff_primary = pow( $primary_count - $average, 2 );
+		$diff_secondary = pow( $secondary_count - $average, 2 );
+		$diff_tertiary = pow( $tertiary_count - $average, 2 );
 
 		$diff_average = ( $diff_primary + $diff_secondary + $diff_tertiary ) / $n; // presupun ca e intre 0 si total * 2 / 3
 
-		$min = 0; // dispersion = 1
-		$max = 2 * ($n - 1) * $average / $n; // dispersion = 0;
+		$diff1 = pow( $total_count - $average, 2);
+		$diff2 = pow( $average, 2);
+		$diff3 = $diff2;
 
-		if ( $diff_average === 0 ) {
+		$min = 0; // dispersion = 1
+		$max = ($diff1 + $diff2 + $diff3) / 3;
+		// $max = 2 * ($n - 1) * $average / $n; // dispersion = 0;
+
+		// avoid division by zero
+		if ( $max === 0 ) {
 			return 100;
 		}
 
-		return 100 * (1 - $diff_average / $max);
+		return 100 * ($diff_average / max($primary_count, $secondary_count, $tertiary_count));
 	}
 
 	private function get_color_focus_slider_default_value( $options ) {
@@ -552,6 +558,11 @@ class Customify_Color_Palettes {
 		$secondary_count = count($options['sm_color_secondary']['connected_fields']);
 		$tertiary_count = count($options['sm_color_tertiary']['connected_fields']);
 		$total_count = $primary_count + $secondary_count + $tertiary_count;
+
+		// avoid division by zero
+		if ( $total_count === 0 ) {
+			return 50;
+		}
 
 		$focus_point = (0 * $primary_count + 0.5 * $secondary_count + 1 * $tertiary_count ) / $total_count;
 

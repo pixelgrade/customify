@@ -2411,8 +2411,8 @@ ul.font-options__options-list .select2-container--default .select2-selection--si
 .c-color-palette.animate .color:nth-child(1) .picker,
 .c-color-palette.animate .color:nth-child(1) .picker:after,
 .c-color-palette.animate .color:nth-child(1) .picker:before {
-  -webkit-animation-delay: 0.3s;
-          animation-delay: 0.3s;
+  -webkit-animation-delay: 0.05s;
+          animation-delay: 0.05s;
 }
 
 .c-color-palette.animate .color:nth-child(2) .fill,
@@ -2420,8 +2420,8 @@ ul.font-options__options-list .select2-container--default .select2-selection--si
 .c-color-palette.animate .color:nth-child(2) .picker,
 .c-color-palette.animate .color:nth-child(2) .picker:after,
 .c-color-palette.animate .color:nth-child(2) .picker:before {
-  -webkit-animation-delay: 0.15s;
-          animation-delay: 0.15s;
+  -webkit-animation-delay: 0.3s;
+          animation-delay: 0.3s;
 }
 
 .c-color-palette.animate .color:nth-child(3) .fill,
@@ -2429,8 +2429,8 @@ ul.font-options__options-list .select2-container--default .select2-selection--si
 .c-color-palette.animate .color:nth-child(3) .picker,
 .c-color-palette.animate .color:nth-child(3) .picker:after,
 .c-color-palette.animate .color:nth-child(3) .picker:before {
-  -webkit-animation-delay: 0.4s;
-          animation-delay: 0.4s;
+  -webkit-animation-delay: 0.1s;
+          animation-delay: 0.1s;
 }
 
 .c-color-palette.animate .color:nth-child(4) .fill,
@@ -2438,8 +2438,8 @@ ul.font-options__options-list .select2-container--default .select2-selection--si
 .c-color-palette.animate .color:nth-child(4) .picker,
 .c-color-palette.animate .color:nth-child(4) .picker:after,
 .c-color-palette.animate .color:nth-child(4) .picker:before {
-  -webkit-animation-delay: 0.05s;
-          animation-delay: 0.05s;
+  -webkit-animation-delay: 0.25s;
+          animation-delay: 0.25s;
 }
 
 .c-color-palette.animate .color:nth-child(5) .fill,
@@ -2447,8 +2447,8 @@ ul.font-options__options-list .select2-container--default .select2-selection--si
 .c-color-palette.animate .color:nth-child(5) .picker,
 .c-color-palette.animate .color:nth-child(5) .picker:after,
 .c-color-palette.animate .color:nth-child(5) .picker:before {
-  -webkit-animation-delay: 0.2s;
-          animation-delay: 0.2s;
+  -webkit-animation-delay: 0.4s;
+          animation-delay: 0.4s;
 }
 
 .c-color-palette.animate .color:nth-child(6) .fill,
@@ -2456,8 +2456,8 @@ ul.font-options__options-list .select2-container--default .select2-selection--si
 .c-color-palette.animate .color:nth-child(6) .picker,
 .c-color-palette.animate .color:nth-child(6) .picker:after,
 .c-color-palette.animate .color:nth-child(6) .picker:before {
-  -webkit-animation-delay: 0.1s;
-          animation-delay: 0.1s;
+  -webkit-animation-delay: 0.35s;
+          animation-delay: 0.35s;
 }
 
 .c-color-palette.animate .color:nth-child(7) .fill,
@@ -2465,8 +2465,8 @@ ul.font-options__options-list .select2-container--default .select2-selection--si
 .c-color-palette.animate .color:nth-child(7) .picker,
 .c-color-palette.animate .color:nth-child(7) .picker:after,
 .c-color-palette.animate .color:nth-child(7) .picker:before {
-  -webkit-animation-delay: 0.25s;
-          animation-delay: 0.25s;
+  -webkit-animation-delay: 0.2s;
+          animation-delay: 0.2s;
 }
 
 .c-color-palette.animate .color:nth-child(8) .fill,
@@ -2474,8 +2474,8 @@ ul.font-options__options-list .select2-container--default .select2-selection--si
 .c-color-palette.animate .color:nth-child(8) .picker,
 .c-color-palette.animate .color:nth-child(8) .picker:after,
 .c-color-palette.animate .color:nth-child(8) .picker:before {
-  -webkit-animation-delay: 0.35s;
-          animation-delay: 0.35s;
+  -webkit-animation-delay: 0.45s;
+          animation-delay: 0.45s;
 }
 
 .c-color-palette.animate .color:nth-child(9) .fill,
@@ -2483,8 +2483,8 @@ ul.font-options__options-list .select2-container--default .select2-selection--si
 .c-color-palette.animate .color:nth-child(9) .picker,
 .c-color-palette.animate .color:nth-child(9) .picker:after,
 .c-color-palette.animate .color:nth-child(9) .picker:before {
-  -webkit-animation-delay: 0.45s;
-          animation-delay: 0.45s;
+  -webkit-animation-delay: 0.15s;
+          animation-delay: 0.15s;
 }
 
 @-webkit-keyframes fill {
@@ -2895,10 +2895,145 @@ input.c-color-palette__input[class] {
 }
 
 .sm_color_matrix > * > * {
-  width: 15px;
-  height: 15px;
-  margin: 2px;
   background-color: currentColor;
   border-radius: 50%;
   border: 1px solid #ccc;
+  -webkit-animation-duration: 0.75s;
+          animation-duration: 0.75s;
+  -webkit-animation-name: bounceIn;
+          animation-name: bounceIn;
+}
+
+.sm_color_matrix > * {
+  display: grid;
+  grid-auto-rows: 2px;
+  grid-auto-columns: 2px;
+}
+
+.sm_color_matrix > * > :nth-child(1) {
+  grid-area: 16 / 12 / span 12 / span 12;
+}
+
+.sm_color_matrix > * > :nth-child(2) {
+  grid-area: 26 / 24 / span 4 / span 4;
+}
+
+.sm_color_matrix > * > :nth-child(3) {
+  grid-area: 13 / 24 / span 4 / span 4;
+}
+
+.sm_color_matrix > * > :nth-child(4) {
+  grid-area: 8 / 8 / span 8 / span 8;
+}
+
+.sm_color_matrix > * > :nth-child(5) {
+  grid-area: 32 / 8 / span 4 / span 4;
+}
+
+.sm_color_matrix > * > :nth-child(6) {
+  grid-area: 30 / 16 / span 8 / span 8;
+}
+
+.sm_color_matrix > * > :nth-child(7) {
+  grid-area: 4 / 20 / span 8 / span 8;
+}
+
+.sm_color_matrix > * > :nth-child(8) {
+  grid-area: 17 / 26 / span 8 / span 8;
+}
+
+.sm_color_matrix > * > :nth-child(9) {
+  grid-area: 22 / 2 / span 8 / span 8;
+}
+
+.sm_color_matrix > * > :nth-child(10) {
+  grid-area: 28 / 11 / span 2 / span 2;
+}
+
+.sm_color_matrix > * > :nth-child(11) {
+  grid-area: 9 / 31 / span 6 / span 6;
+}
+
+.sm_color_matrix > * > :nth-child(11) {
+  grid-area: 26 / 30 / span 9 / span 9;
+}
+
+.sm_color_matrix > * > :nth-child(12) {
+  grid-area: 17 / 7 / span 4 / span 4;
+}
+
+.sm_color_matrix > * > :nth-child(13) {
+  grid-area: 19 / 36 / span 6 / span 6;
+}
+
+.sm_color_matrix > * > :nth-child(14) {
+  grid-area: 12 / 18 / span 2 / span 2;
+}
+
+@-webkit-keyframes bounceIn {
+  0%, 20%, 40%, 60%, 80%, 100% {
+    -webkit-animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+            animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+  }
+  0% {
+    opacity: 0;
+    -webkit-transform: scale3d(0.3, 0.3, 0.3);
+            transform: scale3d(0.3, 0.3, 0.3);
+  }
+  20% {
+    -webkit-transform: scale3d(1.1, 1.1, 1.1);
+            transform: scale3d(1.1, 1.1, 1.1);
+  }
+  40% {
+    -webkit-transform: scale3d(0.9, 0.9, 0.9);
+            transform: scale3d(0.9, 0.9, 0.9);
+  }
+  60% {
+    opacity: 1;
+    -webkit-transform: scale3d(1.03, 1.03, 1.03);
+            transform: scale3d(1.03, 1.03, 1.03);
+  }
+  80% {
+    -webkit-transform: scale3d(0.97, 0.97, 0.97);
+            transform: scale3d(0.97, 0.97, 0.97);
+  }
+  100% {
+    opacity: 1;
+    -webkit-transform: scale3d(1, 1, 1);
+            transform: scale3d(1, 1, 1);
+  }
+}
+
+@keyframes bounceIn {
+  0%, 20%, 40%, 60%, 80%, 100% {
+    -webkit-animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+            animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+  }
+  0% {
+    opacity: 0;
+    -webkit-transform: scale3d(0.3, 0.3, 0.3);
+            transform: scale3d(0.3, 0.3, 0.3);
+  }
+  20% {
+    -webkit-transform: scale3d(1.1, 1.1, 1.1);
+            transform: scale3d(1.1, 1.1, 1.1);
+  }
+  40% {
+    -webkit-transform: scale3d(0.9, 0.9, 0.9);
+            transform: scale3d(0.9, 0.9, 0.9);
+  }
+  60% {
+    opacity: 1;
+    -webkit-transform: scale3d(1.03, 1.03, 1.03);
+            transform: scale3d(1.03, 1.03, 1.03);
+  }
+  80% {
+    -webkit-transform: scale3d(0.97, 0.97, 0.97);
+            transform: scale3d(0.97, 0.97, 0.97);
+  }
+  100% {
+    opacity: 1;
+    -webkit-transform: scale3d(1, 1, 1);
+            transform: scale3d(1, 1, 1);
+  }
 }

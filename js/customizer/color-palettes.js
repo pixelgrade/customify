@@ -83,7 +83,8 @@ let ColorPalettes = ( function( $, exports, wp ) {
         // trigger transition to new color palette
         setTimeout(function() {
             $palette.addClass( 'animate' );
-            $palette.find( '.c-color-palette__control' ).css( 'color', wp.customize( 'sm_color_primary' )() );
+            var color = $next.first( ':visible' ).css( 'color' );
+            $palette.find( '.c-color-palette__control' ).css( 'color', color );
         });
     };
 
@@ -272,15 +273,36 @@ let ColorPalettes = ( function( $, exports, wp ) {
     const buildColorMatrix = () => {
         const $matrix = $( '.sm_color_matrix' );
 
-        $matrix.empty();
+        if ( ! $matrix.children().length ) {
+            _.each( masterSettingIds, function( setting_id ) {
+                const $bucket = $( '<div class="' + setting_id + '">' ).appendTo( $matrix );
+            } );
+        }
 
 	    _.each( masterSettingIds, function( setting_id ) {
-	        const $bucket = $( '<div class="' + setting_id + '">' ).appendTo( $matrix );
+            const $bucket = $matrix.children( '.' + setting_id );
             const color = wp.customize( setting_id )();
+            let classes = [];
+
+            $bucket.css( 'color', color );
+
 		    _.each( wp.customize.settings.settings[setting_id]['connected_fields'], function( connected_field ) {
-		        const $color = $( '<div title="' + connected_field.setting_id + '">' ).appendTo( $bucket );
-		        $color.css( 'color', color );
+                const field_id = connected_field.setting_id;
+                const fieldClassName = field_id.replace( '[', '_' ).replace( ']', '' );
+                classes.push( fieldClassName );
+
+                if ( ! $bucket.children( '.' + fieldClassName ).length ) {
+                    const $color = $( '<div title="' + field_id + '" class="' + fieldClassName + '">' ).appendTo( $bucket );
+                }
             } );
+
+            let className =  '.' + classes.join( ', .' );
+
+            if ( classes.length ) {
+                $bucket.children().not( className ).remove();
+            } else {
+                $bucket.children().remove();
+            }
 	    });
     };
 
@@ -300,7 +322,7 @@ let ColorPalettes = ( function( $, exports, wp ) {
         }
     };
 
-	const alterFields = (settings, swapMap) => {
+	const alterFields = ( settings, swapMap ) => {
 
         var newSettings = JSON.parse(JSON.stringify(settings));
         var oldSettings = JSON.parse(JSON.stringify(settings));
@@ -326,12 +348,19 @@ let ColorPalettes = ( function( $, exports, wp ) {
 		return _.clone(newSettings);
 	};
 
-    const moveConnectedFields = ( settings, from, to, ratio ) => {
+    const moveConnectedFields = ( oldSettings, from, to, ratio ) => {
 
-	    if ( ! _.isUndefined( settings[to] ) &&
-	         ! _.isUndefined( settings[from] ) &&
-	         ! _.isUndefined( settings[to]['connected_fields'] ) &&
-	         ! _.isUndefined( settings[from]['connected_fields'] ) ) {
+        let settings = _.clone( oldSettings );
+
+	    if ( ! _.isUndefined( settings[to] ) && ! _.isUndefined( settings[from] ) ) {
+
+            if ( _.isUndefined( settings[from]['connected_fields'] ) ) {
+                settings[from]['connected_fields'] = [];
+            }
+
+            if ( _.isUndefined( settings[to]['connected_fields'] ) ) {
+                settings[to]['connected_fields'] = [];
+            }
 
 		    const oldFromConnectedFields = Object.values( settings[from]['connected_fields'] );
 		    const oldToConnectedFields = Object.values( settings[to]['connected_fields'] );
@@ -355,7 +384,9 @@ let ColorPalettes = ( function( $, exports, wp ) {
 	    return settings;
 	};
 
-    const disperseColorConnectedFields = ( settings, dispersion, focus ) => {
+    const disperseColorConnectedFields = ( oldSettings, dispersion, focus ) => {
+
+        let settings = _.clone(oldSettings);
 
     	if ( _.isUndefined( settings['sm_color_primary']['connected_fields'] ) ) {
 		    settings['sm_color_primary']['connected_fields'] = [];
@@ -378,8 +409,8 @@ let ColorPalettes = ( function( $, exports, wp ) {
 	    //          B1                B2
 	    //          |----- focus -----|
 
-	    const b1 = focus * ( 1 - dispersion );
-	    const b2 = focus + ( 1 - focus ) * dispersion;
+	    const b1 = Math.max(0, focus - dispersion / 2 );
+	    const b2 = Math.min(1, focus + dispersion / 2 );
 	    const a1 = 0;
 	    const a2 = 0.334;
 	    const a3 = 0.667;
@@ -423,7 +454,7 @@ let ColorPalettes = ( function( $, exports, wp ) {
 		const colorDispersion = $( color_dispersion_selector ).val() / 100;
 		const focusPoint = $( color_focus_point_selector ).val() / 100;
 
-		let tempSettings = _.clone(window.settingsClone);
+		let tempSettings = JSON.parse(JSON.stringify(window.settingsClone));
 
 		unbindConnectedFields();
 
@@ -481,7 +512,7 @@ let ColorPalettes = ( function( $, exports, wp ) {
 	    createCurrentPaletteControls();
 	    updateCurrentPalette();
 	    reloadConnectedFields();
-	    buildColorMatrix()
+	    buildColorMatrix();
 	    bindEvents();
     } );
 
