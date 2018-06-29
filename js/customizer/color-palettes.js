@@ -88,7 +88,6 @@ let ColorPalettes = ( function( $, exports, wp ) {
     };
 
     const resetSettings = settings => {
-    	console.log('dadada');
         _.each( settings, function( setting_id ) {
             const setting = wp.customize( setting_id );
 
@@ -392,8 +391,8 @@ let ColorPalettes = ( function( $, exports, wp ) {
 
 	    const totalWidth = primaryWidth + secondaryWidth + tertiaryWidth;
 	    const connectedFields = primaryConnectedFields.concat( secondaryConnectedFields ).concat( tertiaryConnectedFields );
-	    const primaryFieldsCount = connectedFields.length * primaryWidth / totalWidth;
-	    const secondaryFieldsCount = connectedFields.length * secondaryWidth / totalWidth;
+	    const primaryFieldsCount = Math.round(connectedFields.length * primaryWidth / totalWidth);
+	    const secondaryFieldsCount = Math.round(connectedFields.length * secondaryWidth / totalWidth);
 
 	    let newPrimaryConnectedFields = connectedFields.slice(0, primaryFieldsCount);
 	    let newSecondaryConnectedFields = connectedFields.slice(primaryFieldsCount, primaryFieldsCount + secondaryFieldsCount);
@@ -428,10 +427,10 @@ let ColorPalettes = ( function( $, exports, wp ) {
 
 		unbindConnectedFields();
 
-		tempSettings = disperseColorConnectedFields( tempSettings, colorDispersion, focusPoint );
 		tempSettings = moveConnectedFields( tempSettings, 'sm_dark_primary', 'sm_color_primary', primaryRatio );
 		tempSettings = moveConnectedFields( tempSettings, 'sm_dark_secondary', 'sm_color_secondary', secondaryRatio );
 		tempSettings = moveConnectedFields( tempSettings, 'sm_dark_tertiary', 'sm_color_tertiary', tertiaryRatio );
+		tempSettings = disperseColorConnectedFields( tempSettings, colorDispersion, focusPoint );
 
 		tempSettings = alterFields( tempSettings, colorPalettesVariations[variation] );
 
@@ -482,6 +481,7 @@ let ColorPalettes = ( function( $, exports, wp ) {
 	    createCurrentPaletteControls();
 	    updateCurrentPalette();
 	    reloadConnectedFields();
+	    buildColorMatrix()
 	    bindEvents();
     } );
 
