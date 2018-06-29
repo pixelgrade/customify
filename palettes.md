@@ -1,6 +1,9 @@
 # Color Palettes Integration Guide
 
-## 1. Add Style Manager support to the theme
+## 1. Add color controls for all elements on the page
+
+## 2. Add Style Manager section with master controls
+### 2.1. Add Style Manager support to the theme
 In your function.php file add the following line of code to add support for the Style Manager section.
 This is usually done 
 ```php
@@ -14,7 +17,7 @@ endif;
 add_action( 'after_setup_theme', 'themename_setup' );
 ``` 
 
-## 2. Add a function to filter the Style Manager config
+### 2.2. Add a function to filter the Style Manager config
 ```php
 /**
  * Add the Style Manager cross-theme Customizer section.
@@ -38,7 +41,7 @@ function pixelgrade_add_customify_style_manager_section( $options ) {
 add_filter( 'customify_filter_fields', 'pixelgrade_add_customify_style_manager_section', 12, 1 );
 ```
 
-### Extend Style Manager fields with proper defaults and connected fields
+### 2.3. Extend Style Manager fields with proper defaults and connected fields
 ```php
 // The section might be already defined, thus we merge, not replace the entire section config.
 $options['sections']['style_manager_section'] = array_replace_recursive( $options['sections']['style_manager_section'], array(
@@ -55,7 +58,7 @@ $options['sections']['style_manager_section'] = array_replace_recursive( $option
         
 ```
 
-### Create a default Color Palette for the current Theme
+### 2.4. Create a default Color Palette for the current Theme
 Color values listed in the options attribute should match the ones that we've just set for the options in the Style Manager section (or rather the other way around)
 ```php
 function themename_add_default_color_palette( $color_palettes ) {
