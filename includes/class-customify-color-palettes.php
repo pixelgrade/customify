@@ -414,12 +414,28 @@ class Customify_Color_Palettes {
                   'type' => 'html',
                   'html' => '<div class="sm_color_matrix"></div>'
               ),
+              'sm_dark_color_master_slider' => array(
+	              'setting_id'  => 'sm_dark_color_master_slider',
+	              'type'        => 'range',
+	              'label'       => esc_html__( 'Dark to Color (master)', 'customify' ),
+	              'desc'        => '',
+	              'live'        => true,
+	              'default'     => 50, // this should be set by the theme (previously 1300)
+	              'input_attrs' => array(
+		              'min'          => 0,
+		              'max'          => 100,
+		              'step'         => 1,
+		              'data-preview' => true,
+	              ),
+	              'css'         => array(),
+              ),
               'sm_dark_color_primary_slider' => array(
+	              'setting_id'  => 'sm_dark_color_primary_slider',
                   'type'        => 'range',
                   'label'       => esc_html__( 'Dark to Color (primary)', 'customify' ),
                   'desc'        => '',
                   'live'        => true,
-                  'default'     => 50, // this should be set by the theme (previously 1300)
+                  'default'     => $this->get_dark_to_color_slider_default_value( $config['sections']['style_manager_section']['options'], 'sm_dark_primary', 'sm_color_primary' ),
                   'input_attrs' => array(
                       'min'          => 0,
                       'max'          => 100,
@@ -429,11 +445,12 @@ class Customify_Color_Palettes {
                   'css'         => array(),
               ),
               'sm_dark_color_secondary_slider' => array(
+	              'setting_id'  => 'sm_dark_color_secondary_slider',
                   'type'        => 'range',
                   'label'       => esc_html__( 'Dark to Color (secondary)', 'customify' ),
                   'desc'        => '',
                   'live'        => true,
-                  'default'     => 50, // this should be set by the theme (previously 1300)
+	              'default'     => $this->get_dark_to_color_slider_default_value( $config['sections']['style_manager_section']['options'], 'sm_dark_secondary', 'sm_color_secondary' ), // this should be set by the theme (previously 1300)
                   'input_attrs' => array(
                       'min'          => 0,
                       'max'          => 100,
@@ -443,11 +460,42 @@ class Customify_Color_Palettes {
                   'css'         => array(),
               ),
               'sm_dark_color_tertiary_slider' => array(
+	              'setting_id'  => 'sm_dark_color_tertiary_slider',
                   'type'        => 'range',
                   'label'       => esc_html__( 'Dark to Color (tertiary)', 'customify' ),
                   'desc'        => '',
                   'live'        => true,
-                  'default'     => 50, // this should be set by the theme (previously 1300)
+	              'default'     => $this->get_dark_to_color_slider_default_value( $config['sections']['style_manager_section']['options'], 'sm_dark_tertiary', 'sm_color_tertiary' ), // this should be set by the theme (previously 1300)
+                  'input_attrs' => array(
+                      'min'          => 0,
+                      'max'          => 100,
+                      'step'         => 1,
+                      'data-preview' => true,
+                  ),
+                  'css'         => array(),
+              ),
+              'sm_colors_dispersion' => array(
+	              'setting_id'  => 'sm_colors_dispersion',
+                  'type'        => 'range',
+                  'label'       => esc_html__( 'Colors dispersion range', 'customify' ),
+                  'desc'        => '',
+                  'live'        => true,
+                  'default'     => $this->get_color_dispersion_slider_default_value( $config['sections']['style_manager_section']['options'] ),
+                  'input_attrs' => array(
+                      'min'          => 1,
+                      'max'          => 100,
+                      'step'         => 1,
+                      'data-preview' => true,
+                  ),
+                  'css'         => array(),
+              ),
+              'sm_colors_focus_point' => array(
+	              'setting_id'  => 'sm_colors_focus_point',
+                  'type'        => 'range',
+                  'label'       => esc_html__( 'Colors focus point', 'customify' ),
+                  'desc'        => '',
+                  'live'        => true,
+                  'default'     => $this->get_color_focus_slider_default_value( $config['sections']['style_manager_section']['options'] ),
                   'input_attrs' => array(
                       'min'          => 0,
                       'max'          => 100,
@@ -459,6 +507,66 @@ class Customify_Color_Palettes {
           ) + $config['sections']['style_manager_section']['options'];
 
 		return $config;
+	}
+
+	private function get_dark_to_color_slider_default_value( $options, $dark_id, $color_id ) {
+		$dark_count = count($options[$dark_id]['connected_fields']);
+		$color_count = count($options[$color_id]['connected_fields']);
+		$total_count = $dark_count + $color_count;
+
+		if ( $total_count === 0 ) {
+			return 0;
+		}
+
+		return 100 * $color_count / $total_count;
+	}
+
+
+	private function get_color_dispersion_slider_default_value( $options ) {
+		$primary_count = count($options['sm_color_primary']['connected_fields']);
+		$secondary_count = count($options['sm_color_secondary']['connected_fields']);
+		$tertiary_count = count($options['sm_color_tertiary']['connected_fields']);
+		$total_count = $primary_count + $secondary_count + $tertiary_count;
+		$n = 3;
+
+		$average = ( $primary_count + $secondary_count + $tertiary_count ) / $n;
+
+		$diff_primary = pow( $primary_count - $average, 2 );
+		$diff_secondary = pow( $secondary_count - $average, 2 );
+		$diff_tertiary = pow( $tertiary_count - $average, 2 );
+
+		$diff_average = ( $diff_primary + $diff_secondary + $diff_tertiary ) / $n; // presupun ca e intre 0 si total * 2 / 3
+
+		$diff1 = pow( $total_count - $average, 2);
+		$diff2 = pow( $average, 2);
+		$diff3 = $diff2;
+
+		$min = 0; // dispersion = 1
+		$max = ($diff1 + $diff2 + $diff3) / 3;
+		// $max = 2 * ($n - 1) * $average / $n; // dispersion = 0;
+
+		// avoid division by zero
+		if ( $max === 0 ) {
+			return 100;
+		}
+
+		return 100 * ($diff_average / max($primary_count, $secondary_count, $tertiary_count));
+	}
+
+	private function get_color_focus_slider_default_value( $options ) {
+		$primary_count = count($options['sm_color_primary']['connected_fields']);
+		$secondary_count = count($options['sm_color_secondary']['connected_fields']);
+		$tertiary_count = count($options['sm_color_tertiary']['connected_fields']);
+		$total_count = $primary_count + $secondary_count + $tertiary_count;
+
+		// avoid division by zero
+		if ( $total_count === 0 ) {
+			return 50;
+		}
+
+		$focus_point = (0 * $primary_count + 0.5 * $secondary_count + 1 * $tertiary_count ) / $total_count;
+
+		return $focus_point * 100;
 	}
 
 	/**

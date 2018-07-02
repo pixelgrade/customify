@@ -97,7 +97,7 @@ $background-hover 	: #f5fcff;
 	&:focus, &:hover {
 		background: $background-hover;
 	}
-	
+
 	// "X" Icon
 	&:before {
 		top: 0px;
@@ -136,7 +136,7 @@ $background-hover 	: #f5fcff;
 		margin-right: -$container-spacing;
 		// margin-left: -$container-spacing;
 	}
-	
+
 	.control-panel-content {
 		.control-section:nth-child(2),
 		.control-section:nth-child(3) {
@@ -220,8 +220,8 @@ $background-hover 	: #f5fcff;
 .wp-core-ui {
 
 	// Primary & Secondary Buttons
-	 .button:not(.theme-details):not(.collapse-sidebar):not(.wp-color-result), 
-	 .button-primary, 
+	 .button:not(.theme-details):not(.collapse-sidebar):not(.wp-color-result),
+	 .button-primary,
 	 .button-secondary {
 	 	width: auto;
 	 	// padding: 6px 20px;
@@ -271,7 +271,7 @@ $background-hover 	: #f5fcff;
 				box-shadow: 0px 2px 0px 0px #8db5ca !important;
 
 				&.has-next-sibling {
-					border-right: none; 
+					border-right: none;
 				}
 			}
 		 }
@@ -738,7 +738,7 @@ $background-hover 	: #f5fcff;
 	&.customize-control-checkbox:not(#customize-control-jetpack_css_mode_control),
 	&.customize-control-radio {
 
-		// Split into two columns only when 
+		// Split into two columns only when
 		// there is more than one label
 		label:not(:only-of-type),
 		// WordPress 4.9 Class
@@ -1524,8 +1524,8 @@ input.customify_font_tooltip {
 	display: none;
 }
 
-.font-options__option select, 
-.font-options__option input, 
+.font-options__option select,
+.font-options__option input,
 .select2-container {
 	// width: 100% !important; // am pus important pentru ca exista un inline de 100px
 }
@@ -1548,8 +1548,8 @@ ul.font-options__options-list {
 		 }
 	}
 
-	.select2-container--default 
-		.select2-selection--single 
+	.select2-container--default
+		.select2-selection--single
 			.select2-selection__rendered {
 			    color: inherit;
 			    line-height: initial;
@@ -1682,7 +1682,7 @@ ul.font-options__options-list {
 				color: #39474D;
 
 				&:after {
-					content: "\f142"; // Change arrow style to be more consistent 
+					content: "\f142"; // Change arrow style to be more consistent
 				    transform: rotate(180deg);
 
 				}
@@ -1747,7 +1747,7 @@ ul.font-options__options-list {
 		    color: #9660c6; // Branding Icons
 		}
 	}
-	
+
 	// Slideshow
 	[class*=pixelgrade-featured-posts-slideshow] .widget .widget-title:before {
 		 content: "\f233"; // images-alt2
@@ -1762,7 +1762,7 @@ ul.font-options__options-list {
 	[class*=featured-posts-grid] .widget .widget-title:before {
 		 content: "\f180";
 	}
-	
+
 	// List Posts
 	[class*=featured-posts-list] .widget .widget-title:before {
 		 content: "\f164";
@@ -1853,7 +1853,7 @@ $palette_box_shadow_stronger: inset 0 2px 3px 0 rgba(0,0,0,0.15), inset 0 0 3px 
 
 			box-shadow: $palette_box_shadow;
 		}
-	
+
 		// Color Palette Hover
 		&:hover {
 
@@ -2567,12 +2567,71 @@ input.c-color-palette__input[class] {
 		padding-left: 15px;
 
 		> * {
-			width: 15px;
-			height: 15px;
-			margin: 2px;
+			// width: 15px;
+			// height: 15px;
+			// margin: 2px;
 			background-color: currentColor;
 			border-radius: 50%;
 			border: 1px solid #ccc;
+			animation-duration: 0.75s;
+			animation-name: bounceIn;
 		}
 	}
+}
+
+.sm_color_matrix > * {
+	display: grid;
+	grid-auto-rows: 2px;
+	grid-auto-columns: 2px;
+
+
+
+	> :nth-child(1) { grid-area: 16 / 12 / span 12 / span 12; }
+	> :nth-child(2) { grid-area: 26 / 24 / span 4 / span 4; }
+	> :nth-child(3) { grid-area: 13 / 24 / span 4 / span 4; }
+	> :nth-child(4) { grid-area: 8 / 8 / span 8 / span 8; }
+	> :nth-child(5) { grid-area: 32 / 8 / span 4 / span 4; }
+	> :nth-child(6) { grid-area: 30 / 16 / span 8 / span 8; }
+	> :nth-child(7) { grid-area: 4 / 20 / span 8 / span 8; }
+	> :nth-child(8) { grid-area: 17 / 26 / span 8 / span 8; }
+	> :nth-child(9) { grid-area: 22 / 2 / span 8 / span 8; }
+	> :nth-child(10) { grid-area: 28 / 11 / span 2 / span 2; }
+	> :nth-child(11) { grid-area: 9 / 31 / span 6 / span 6; }
+	> :nth-child(11) { grid-area: 26 / 30 / span 9 / span 9; }
+	> :nth-child(12) { grid-area: 17 / 7 / span 4 / span 4; }
+	> :nth-child(13) { grid-area: 19 / 36 / span 6 / span 6; }
+	> :nth-child(14) { grid-area: 12 / 18 / span 2 / span 2; }
+}
+
+@keyframes bounceIn {
+  0%, 20%, 40%, 60%, 80%, 100% {
+    animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+  }
+
+  0% {
+    opacity: 0;
+    transform: scale3d(0.3, 0.3, 0.3);
+  }
+
+  20% {
+    transform: scale3d(1.1, 1.1, 1.1);
+  }
+
+  40% {
+    transform: scale3d(0.9, 0.9, 0.9);
+  }
+
+  60% {
+    opacity: 1;
+    transform: scale3d(1.03, 1.03, 1.03);
+  }
+
+  80% {
+    transform: scale3d(0.97, 0.97, 0.97);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale3d(1, 1, 1);
+  }
 }
