@@ -1286,18 +1286,6 @@ class PixCustomifyPlugin {
 			return;
 		}
 
-		// Merge the section settings with the defaults
-		$section_args = wp_parse_args( $section_config, array(
-			'priority'   => 10,
-			'panel'      => $panel_id,
-			'capability' => 'edit_theme_options',
-			'theme_supports' => '',
-			'title'      => esc_html__( 'Title Section is required', 'customify' ),
-			'description' => '',
-			'type' => 'default',
-			'description_hidden' => false,
-		) );
-
 		// If we have been explicitly given a section ID we will use that
 		if ( ! empty( $section_config['section_id'] ) ) {
 			$section_id = $section_config['section_id'];
@@ -1305,8 +1293,22 @@ class PixCustomifyPlugin {
 			$section_id = $options_name . '[' . $section_key . ']';
 		}
 
-		// Add the new section to the Customizer
-		$wp_customize->add_section( $section_id, $section_args );
+		// Add the new section to the Customizer, but only if it is not already added.
+		if ( ! $wp_customize->get_section( $section_id ) ) {
+			// Merge the section settings with the defaults
+			$section_args = wp_parse_args( $section_config, array(
+				'priority'   => 10,
+				'panel'      => $panel_id,
+				'capability' => 'edit_theme_options',
+				'theme_supports' => '',
+				'title'      => esc_html__( 'Title Section is required', 'customify' ),
+				'description' => '',
+				'type' => 'default',
+				'description_hidden' => false,
+			) );
+
+			$wp_customize->add_section( $section_id, $section_args );
+		}
 
 		// Now go through each section option and add the fields
 		foreach ( $section_config['options'] as $option_id => $option_config ) {
@@ -1515,7 +1517,8 @@ class PixCustomifyPlugin {
 				$control_class_name = 'Pix_Customize_Background_Control';
 				break;
 
-			case 'cropped_media':
+			case 'cropped_image':
+			case 'cropped_media': // 'cropped_media' no longer works
 				if ( isset( $field_config['width'] ) ) {
 					$control_args['width'] = $field_config['width'];
 				}
@@ -1530,6 +1533,10 @@ class PixCustomifyPlugin {
 
 				if ( isset( $field_config['flex_height'] ) ) {
 					$control_args['flex_height'] = $field_config['flex_height'];
+				}
+
+				if ( isset( $field_config['button_labels'] ) ) {
+					$control_args['button_labels'] = $field_config['button_labels'];
 				}
 
 				$control_class_name = 'WP_Customize_Cropped_Image_Control';
