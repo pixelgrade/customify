@@ -2005,7 +2005,7 @@ class PixCustomifyPlugin {
 	public function get_option( $option, $default = null, $alt_opt_name = null ) {
 		// If the development constant CUSTOMIFY_DEV_FORCE_DEFAULTS has been defined we will not retrieve anything from the database
 		// Always go with the default
-		if ( defined( 'CUSTOMIFY_DEV_FORCE_DEFAULTS' ) && true === CUSTOMIFY_DEV_FORCE_DEFAULTS ) {
+		if ( defined( 'CUSTOMIFY_DEV_FORCE_DEFAULTS' ) && true === CUSTOMIFY_DEV_FORCE_DEFAULTS && ! $this->skip_dev_mode_force_defaults( $option ) ) {
 			$return = null;
 		} else {
 			$return = $this->get_value( $option, $alt_opt_name );
@@ -2229,14 +2229,55 @@ class PixCustomifyPlugin {
 		$options_key = $this->customizer_config['opt-name'];
 		if ( ! empty( $options_key ) ) {
 			// Remove any Customify data thus preventing it from saving
-			foreach ( $data as $key => $value ) {
-				if ( false !== strpos( $key, $options_key ) ) {
-					unset( $data[$key] );
+			foreach ( $data as $option_id => $value ) {
+				if ( false !== strpos( $option_id, $options_key ) && ! $this->skip_dev_mode_force_defaults( $option_id ) ) {
+					unset( $data[ $option_id ] );
 				}
 			}
 		}
 
 		return $data;
+	}
+
+	/**
+	 * Determine if we should NOT enforce the CUSTOMIFY_DEV_FORCE_DEFAULTS behavior on a certain option.
+	 *
+	 * @param string $option_id
+	 *
+	 * @return bool
+	 */
+	private function skip_dev_mode_force_defaults( $option_id ) {
+		// Preprocess the $option_id.
+		if ( false !== strpos( $option_id, '::' ) ) {
+			$option_id = substr( $option_id, strpos( $option_id, '::' ) + 2 );
+		}
+		if ( false !== strpos( $option_id, '[' ) ) {
+			$option_id = explode( '[', $option_id );
+			$option_id = rtrim( $option_id[1], ']' );
+		}
+
+		$option_config = $this->get_option_customizer_config( $option_id );
+		if ( empty( $option_config ) ) {
+			return false;
+		}
+
+		// We will skip certain field types that generally don't have a default value.
+		if ( ! empty( $option_config['type'] ) ) {
+			switch ( $option_config['type'] ) {
+				case 'cropped_image':
+				case 'cropped_media':
+				case 'image':
+				case 'media':
+				case 'custom_background':
+				case 'upload':
+					return true;
+					break;
+				default:
+					break;
+			}
+		}
+
+		return false;
 	}
 
 	public function prevent_changeset_save_in_devmode_notification() { ?>
