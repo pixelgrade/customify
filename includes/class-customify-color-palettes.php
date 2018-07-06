@@ -375,6 +375,7 @@ class Customify_Color_Palettes {
 		$config['sections']['style_manager_section']['options'] = array(
               'sm_current_color_palette' => array(
                   'type' => 'html',
+                  'setting_id' => 'sm_current_color_palette',
                   'html' =>
                       '<div class="color-palette-container">' . PHP_EOL .
                       '<span class="customize-control-title">Current Color Palette:</span>' . PHP_EOL .
@@ -412,6 +413,7 @@ class Customify_Color_Palettes {
               ),
               'sm_color_matrix' => array(
                   'type' => 'html',
+                  'setting_id' => 'sm_color_matrix',
                   'html' => '<div class="sm_color_matrix"></div>'
               ),
               'sm_dark_color_master_slider' => array(

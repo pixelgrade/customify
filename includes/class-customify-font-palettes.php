@@ -475,10 +475,10 @@ class Customify_Font_Palettes {
 					'label'        => esc_html__( 'Swap Fonts', 'customify' ),
 					'action'       => 'sm_swap_fonts',
 				),
-				'sm_swap_primary_secondary'            => array(
+				'sm_swap_primary_secondary_fonts'            => array(
 					'type'         => 'button',
 					'setting_type' => 'option',
-					'setting_id'   => 'sm_swap_primary_secondary',
+					'setting_id'   => 'sm_swap_primary_secondary_fonts',
 					'priority'     => 9.1,
 					'label'        => esc_html__( 'Swap Primary ⇆ Secondary', 'customify' ),
 					'action'       => 'sm_swap_dark_light',
