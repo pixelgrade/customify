@@ -1826,6 +1826,8 @@ ul.font-options__options-list {
 //    STYLE MANAGER
 //------------------------------------*/
 
+// COLOR PALETTES SECTION //
+
 $palette_box_shadow: inset 0 0 3px 0 rgba(0,0,0,0.15), inset 0 1px 3px 0 rgba(0,0,0,0.15);
 $palette_box_shadow_stronger: inset 0 2px 3px 0 rgba(0,0,0,0.15), inset 0 0 3px 0 rgba(0,0,0,0.15);
 
@@ -2633,5 +2635,59 @@ input.c-color-palette__input[class] {
   100% {
     opacity: 1;
     transform: scale3d(1, 1, 1);
+  }
+}
+#customize-theme-controls {
+  li#accordion-panel-style_manager_panel > h3.accordion-section-title:before {
+    position: relative;
+    float: right;
+    content: "\f155";
+    color: #f8bc30;
+    font-family: dashicons;
+    padding: 1px;
+    margin-right: 28px;
+    font-size: 18px;
+  }
+
+  li#accordion-panel-theme_options_panel {
+    & > h3.accordion-section-title {
+      border-bottom: 1px solid #ddd;
+      border-left: none;
+      border-right: none;
+      margin: 0 0 15px 0;
+
+      &:before {
+        position: relative;
+        float: right;
+        content: "\f538";
+        color: #aed2e5;
+        font-family: dashicons;
+        padding: 1px;
+        margin-right: 28px;
+        font-size: 18px;
+      }
+    }
+  }
+
+  li#accordion-section-sm_color_palettes_section > h3.accordion-section-title:before {
+    position: relative;
+    float: right;
+    content: "\f100";
+    color: #aed2e5;
+    font-family: dashicons;
+    padding: 3px;
+    margin-right: 5px;
+  }
+
+  // FONT PALETTES SECTION //
+
+  li#accordion-section-sm_font_palettes_section > h3.accordion-section-title:before {
+    position: relative;
+    float: right;
+    content: "\f122";
+    color: #aed2e5;
+    font-family: dashicons;
+    padding: 3px;
+    margin-right: 5px;
   }
 }

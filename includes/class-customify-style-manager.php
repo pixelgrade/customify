@@ -258,7 +258,7 @@ class Customify_Style_Manager {
 		);
 
 		$color_palettes_section_config = array(
-			'title' => 'Colors',
+			'title' => __( 'Colors', 'pixcustomify' ),
 			'section_id' => 'sm_color_palettes_section',
 			'priority' => 10,
 			'options' => array(),
@@ -286,7 +286,7 @@ class Customify_Style_Manager {
 		);
 
 		$font_palettes_section_config = array(
-			'title' => 'Fonts',
+			'title' => __( 'Fonts', 'pixcustomify' ),
 			'section_id' => 'sm_font_palettes_section',
 			'priority' => 20,
 			'options' => array(),
@@ -310,7 +310,7 @@ class Customify_Style_Manager {
 
 		// The Style Manager panel.
 		$config['panels']['style_manager_panel'] = array(
-			'priority'    => 10,
+			'priority'    => 22,
 			'capability'  => 'edit_theme_options',
 			'panel_id'    => 'style_manager_panel',
 			'title'       => __( 'Style Manager', 'pixcustomify' ),
@@ -323,7 +323,7 @@ class Customify_Style_Manager {
 
 		// The Theme Options panel.
 		$config['panels']['theme_options_panel'] = array(
-			'priority'    => 11,
+			'priority'    => 23,
 			'capability'  => 'edit_theme_options',
 			'panel_id'    => 'theme_options_panel',
 			'title'       => __( 'Theme Options', 'pixcustomify' ),
