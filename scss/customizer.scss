@@ -2700,4 +2700,11 @@ input.c-color-palette__input[class] {
 			}
 		}
 
+	  // Theme Options Spacing between Sections
+	  li[id$="[general]"], li[id$="[footer_section]"] {
+	    border-bottom: 1px solid #ddd;
+	    border-left: none;
+	    border-right: none;
+	    margin: 0 0 15px 0;
+	  }
 }
