@@ -2658,6 +2658,7 @@ input.c-color-palette__input[class] {
 #customize-theme-controls {
 
 	// Style Manager Section
+	// ----------------------------------------	
 	li#accordion-panel-style_manager_panel {
 		@include section_icon("\f155");
 
@@ -2666,6 +2667,7 @@ input.c-color-palette__input[class] {
 		color: #f8bc30; // Yellow color
 		}
 	}
+
 		// Style Manager → Colors / Fonts Panels
 		li#accordion-section-sm_color_palettes_section {
 			@include section_icon("\f100");
@@ -2689,8 +2691,8 @@ input.c-color-palette__input[class] {
 		}
 
 
-
 	// Theme Options Section
+	// ----------------------------------------
 	li#accordion-panel-theme_options_panel {
 		@include section_icon("\f538");
 
@@ -2701,6 +2703,7 @@ input.c-color-palette__input[class] {
 		  margin: 0 0 15px 0;
 		}
 	}
+	
 		// Theme Options Spacing between Sections
 		li[id$="[general]"], 
 		li[id$="[footer_section]"] {
