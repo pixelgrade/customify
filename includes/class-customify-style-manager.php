@@ -319,6 +319,7 @@ class Customify_Style_Manager {
 				'sm_color_palettes_section' => $color_palettes_section_config,
 				'sm_font_palettes_section' => $font_palettes_section_config,
 			),
+			'auto_expand_sole_section' => true, // If there is only one section in the panel, auto-expand it.
 		);
 
 		// The Theme Options panel.
@@ -331,7 +332,21 @@ class Customify_Style_Manager {
 			'sections' => $other_theme_sections_config,
 		);
 
+		// Finally, remove the switch theme panel from the Customizer.
+		add_action( 'customize_register', array( $this, 'remove_switch_theme_panel' ), 10 );
+
 		return $config;
+	}
+
+	/**
+	 * Remove the switch/preview theme panel.
+	 *
+	 * @since 1.7.4
+	 *
+	 * @param WP_Customize_Manager $wp_customize
+	 */
+	public function remove_switch_theme_panel( $wp_customize ) {
+		$wp_customize->remove_panel( 'themes' );
 	}
 
 	/**
