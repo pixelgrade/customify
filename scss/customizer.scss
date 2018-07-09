@@ -2690,4 +2690,12 @@ input.c-color-palette__input[class] {
     padding: 3px;
     margin-right: 5px;
   }
+
+  // THEME OPTIONS SPACING BETWEEN SECTIONS //
+  li[id$="[general]"], li[id$="[footer_section]"] {
+    border-bottom: 1px solid #ddd;
+    border-left: none;
+    border-right: none;
+    margin: 0 0 15px 0;
+  }
 }
