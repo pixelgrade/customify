@@ -2408,8 +2408,8 @@ ul.font-options__options-list .select2-container--default .select2-selection--si
 .c-color-palette.animate .color:nth-child(1) .picker,
 .c-color-palette.animate .color:nth-child(1) .picker:after,
 .c-color-palette.animate .color:nth-child(1) .picker:before {
-  -webkit-animation-delay: 0.25s;
-          animation-delay: 0.25s;
+  -webkit-animation-delay: 0.4s;
+          animation-delay: 0.4s;
 }
 
 .c-color-palette.animate .color:nth-child(2) .fill,
@@ -2417,8 +2417,8 @@ ul.font-options__options-list .select2-container--default .select2-selection--si
 .c-color-palette.animate .color:nth-child(2) .picker,
 .c-color-palette.animate .color:nth-child(2) .picker:after,
 .c-color-palette.animate .color:nth-child(2) .picker:before {
-  -webkit-animation-delay: 0.35s;
-          animation-delay: 0.35s;
+  -webkit-animation-delay: 0.2s;
+          animation-delay: 0.2s;
 }
 
 .c-color-palette.animate .color:nth-child(3) .fill,
@@ -2426,8 +2426,8 @@ ul.font-options__options-list .select2-container--default .select2-selection--si
 .c-color-palette.animate .color:nth-child(3) .picker,
 .c-color-palette.animate .color:nth-child(3) .picker:after,
 .c-color-palette.animate .color:nth-child(3) .picker:before {
-  -webkit-animation-delay: 0.4s;
-          animation-delay: 0.4s;
+  -webkit-animation-delay: 0.25s;
+          animation-delay: 0.25s;
 }
 
 .c-color-palette.animate .color:nth-child(4) .fill,
@@ -2444,8 +2444,8 @@ ul.font-options__options-list .select2-container--default .select2-selection--si
 .c-color-palette.animate .color:nth-child(5) .picker,
 .c-color-palette.animate .color:nth-child(5) .picker:after,
 .c-color-palette.animate .color:nth-child(5) .picker:before {
-  -webkit-animation-delay: 0.15s;
-          animation-delay: 0.15s;
+  -webkit-animation-delay: 0.1s;
+          animation-delay: 0.1s;
 }
 
 .c-color-palette.animate .color:nth-child(6) .fill,
@@ -2453,8 +2453,8 @@ ul.font-options__options-list .select2-container--default .select2-selection--si
 .c-color-palette.animate .color:nth-child(6) .picker,
 .c-color-palette.animate .color:nth-child(6) .picker:after,
 .c-color-palette.animate .color:nth-child(6) .picker:before {
-  -webkit-animation-delay: 0.1s;
-          animation-delay: 0.1s;
+  -webkit-animation-delay: 0.05s;
+          animation-delay: 0.05s;
 }
 
 .c-color-palette.animate .color:nth-child(7) .fill,
@@ -2471,8 +2471,8 @@ ul.font-options__options-list .select2-container--default .select2-selection--si
 .c-color-palette.animate .color:nth-child(8) .picker,
 .c-color-palette.animate .color:nth-child(8) .picker:after,
 .c-color-palette.animate .color:nth-child(8) .picker:before {
-  -webkit-animation-delay: 0.2s;
-          animation-delay: 0.2s;
+  -webkit-animation-delay: 0.15s;
+          animation-delay: 0.15s;
 }
 
 .c-color-palette.animate .color:nth-child(9) .fill,
@@ -2480,8 +2480,8 @@ ul.font-options__options-list .select2-container--default .select2-selection--si
 .c-color-palette.animate .color:nth-child(9) .picker,
 .c-color-palette.animate .color:nth-child(9) .picker:after,
 .c-color-palette.animate .color:nth-child(9) .picker:before {
-  -webkit-animation-delay: 0.05s;
-          animation-delay: 0.05s;
+  -webkit-animation-delay: 0.35s;
+          animation-delay: 0.35s;
 }
 
 @-webkit-keyframes fill {
@@ -3064,6 +3064,10 @@ input.c-color-palette__input[class] {
   -webkit-font-smoothing: antialiased;
 }
 
+#customize-theme-controls li#accordion-section-sm_color_palettes_section h3.accordion-section-title {
+  border-top: none;
+}
+
 #customize-theme-controls li#accordion-section-sm_font_palettes_section h3.accordion-section-title:before {
   position: relative;
   float: right;
@@ -3074,11 +3078,6 @@ input.c-color-palette__input[class] {
   margin-right: 28px;
   font-size: 17px;
   -webkit-font-smoothing: antialiased;
-}
-
-#customize-theme-controls li#accordion-section-sm_color_palettes_section h3.accordion-section-title,
-#customize-theme-controls li#accordion-section-sm_font_palettes_section h3.accordion-section-title {
-  border-top: none;
 }
 
 #customize-theme-controls li#accordion-section-sm_color_palettes_section h3.accordion-section-title:before,

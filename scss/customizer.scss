@@ -2671,6 +2671,9 @@ input.c-color-palette__input[class] {
 		// Style Manager → Colors / Fonts Panels
 		li#accordion-section-sm_color_palettes_section {
 			@include section_icon("\f100");
+			h3.accordion-section-title {
+				border-top: none;
+			}
 		}
 
 		li#accordion-section-sm_font_palettes_section {
@@ -2680,7 +2683,6 @@ input.c-color-palette__input[class] {
 		li#accordion-section-sm_color_palettes_section,
 		li#accordion-section-sm_font_palettes_section {
 			h3.accordion-section-title {
-				border-top: none;
 				
 				&:before {
 				    padding: 3px;
@@ -2703,7 +2705,7 @@ input.c-color-palette__input[class] {
 		  margin: 0 0 15px 0;
 		}
 	}
-	
+
 		// Theme Options Spacing between Sections
 		li[id$="[general]"], 
 		li[id$="[footer_section]"] {
