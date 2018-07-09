@@ -146,7 +146,7 @@ $background-hover 	: #f5fcff;
 		// Select the Second to Last Element
 		// https://css-tricks.com/useful-nth-child-recipies/
 		.control-section:nth-last-child(2) {
-			border-bottom: 1px solid $borders;
+			// border-bottom: 1px solid $borders;
 		}
 	}
 
@@ -2666,19 +2666,6 @@ input.c-color-palette__input[class] {
 		color: #f8bc30; // Yellow color
 		}
 	}
-
-	// Theme Options Section
-	li#accordion-panel-theme_options_panel {
-		@include section_icon("\f538");
-
-		h3.accordion-section-title {
-		  border-bottom: 1px solid #ddd;
-		  border-left: none;
-		  border-right: none;
-		  margin: 0 0 15px 0;
-		}
-	}
-
 		// Style Manager → Colors / Fonts Panels
 		li#accordion-section-sm_color_palettes_section {
 			@include section_icon("\f100");
@@ -2696,15 +2683,36 @@ input.c-color-palette__input[class] {
 				&:before {
 				    padding: 3px;
 				    margin-right: 5px;
+				    margin-top: -2px;
 				}
 			}
 		}
 
-	  // Theme Options Spacing between Sections
-	  li[id$="[general]"], li[id$="[footer_section]"] {
-	    border-bottom: 1px solid #ddd;
-	    border-left: none;
-	    border-right: none;
-	    margin: 0 0 15px 0;
-	  }
+
+
+	// Theme Options Section
+	li#accordion-panel-theme_options_panel {
+		@include section_icon("\f538");
+
+		h3.accordion-section-title {
+		  border-bottom: 1px solid #ddd;
+		  border-left: none;
+		  border-right: none;
+		  margin: 0 0 15px 0;
+		}
+	}
+		// Theme Options Spacing between Sections
+		li[id$="[general]"], 
+		li[id$="[footer_section]"] {
+			border-bottom: 1px solid #ddd;
+			border-left: none;
+			border-right: none;
+			margin: 0 0 15px 0;
+		}
+
+		li[id$="[general]"] {
+			h3.accordion-section-title {
+				border-top: none;
+			}
+		}
 }
