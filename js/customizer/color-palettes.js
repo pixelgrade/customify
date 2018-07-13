@@ -13,14 +13,14 @@ let ColorPalettes = ( function( $, exports, wp ) {
         "sm_light_tertiary"
     ];
 
-	const master_color_selector = '#_customize-input-sm_dark_color_master_slider_control';
-	const primary_color_selector = '#_customize-input-sm_dark_color_primary_slider_control';
-	const secondary_color_selector = '#_customize-input-sm_dark_color_secondary_slider_control';
-	const tertiary_color_selector = '#_customize-input-sm_dark_color_tertiary_slider_control';
-	const color_dispersion_selector = '#_customize-input-sm_colors_dispersion_control';
-	const color_focus_point_selector = '#_customize-input-sm_colors_focus_point_control';
-	const color_sliders_selector = primary_color_selector + ', ' + secondary_color_selector + ', ' + tertiary_color_selector;
-	const all_sliders_selector = color_sliders_selector + ', ' + color_dispersion_selector + ', ' + color_focus_point_selector;
+//	const master_color_selector = '#_customize-input-sm_dark_color_master_slider_control';
+//	const primary_color_selector = '#_customize-input-sm_dark_color_primary_slider_control';
+//	const secondary_color_selector = '#_customize-input-sm_dark_color_secondary_slider_control';
+//	const tertiary_color_selector = '#_customize-input-sm_dark_color_tertiary_slider_control';
+//	const color_dispersion_selector = '#_customize-input-sm_colors_dispersion_control';
+//	const color_focus_point_selector = '#_customize-input-sm_colors_focus_point_control';
+//	const color_sliders_selector = primary_color_selector + ', ' + secondary_color_selector + ', ' + tertiary_color_selector;
+//	const all_sliders_selector = color_sliders_selector + ', ' + color_dispersion_selector + ', ' + color_focus_point_selector;
 
 
     const initializePalettes = () => {
@@ -448,20 +448,20 @@ let ColorPalettes = ( function( $, exports, wp ) {
 
 	const reloadConnectedFields = () => {
 		const variation = getCurrentVariation();
-		const primaryRatio = $( primary_color_selector ).val() / 100;
-		const secondaryRatio = $( secondary_color_selector ).val() / 100;
-		const tertiaryRatio = $( tertiary_color_selector ).val() / 100;
-		const colorDispersion = $( color_dispersion_selector ).val() / 100;
-		const focusPoint = $( color_focus_point_selector ).val() / 100;
+//		const primaryRatio = $( primary_color_selector ).val() / 100;
+//		const secondaryRatio = $( secondary_color_selector ).val() / 100;
+//		const tertiaryRatio = $( tertiary_color_selector ).val() / 100;
+//		const colorDispersion = $( color_dispersion_selector ).val() / 100;
+//		const focusPoint = $( color_focus_point_selector ).val() / 100;
 
 		let tempSettings = JSON.parse(JSON.stringify(window.settingsClone));
 
 		unbindConnectedFields();
 
-		tempSettings = moveConnectedFields( tempSettings, 'sm_dark_primary', 'sm_color_primary', primaryRatio );
-		tempSettings = moveConnectedFields( tempSettings, 'sm_dark_secondary', 'sm_color_secondary', secondaryRatio );
-		tempSettings = moveConnectedFields( tempSettings, 'sm_dark_tertiary', 'sm_color_tertiary', tertiaryRatio );
-		tempSettings = disperseColorConnectedFields( tempSettings, colorDispersion, focusPoint );
+//		tempSettings = moveConnectedFields( tempSettings, 'sm_dark_primary', 'sm_color_primary', primaryRatio );
+//		tempSettings = moveConnectedFields( tempSettings, 'sm_dark_secondary', 'sm_color_secondary', secondaryRatio );
+//		tempSettings = moveConnectedFields( tempSettings, 'sm_dark_tertiary', 'sm_color_tertiary', tertiaryRatio );
+//		tempSettings = disperseColorConnectedFields( tempSettings, colorDispersion, focusPoint );
 
 		tempSettings = alterFields( tempSettings, colorPalettesVariations[variation] );
 
@@ -470,7 +470,7 @@ let ColorPalettes = ( function( $, exports, wp ) {
 		wp.customize.settings.settings = tempSettings;
 
 		bindConnectedFields();
-		buildColorMatrix();
+//		buildColorMatrix();
 		resetSettings( masterSettingIds );
 	};
 
