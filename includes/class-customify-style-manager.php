@@ -97,8 +97,8 @@ class Customify_Style_Manager {
 		/**
 		 * Initialize the Font Palettes logic.
 		 */
-		require_once 'class-customify-font-palettes.php';
-		$this->font_palettes = Customify_Font_Palettes::instance();
+//		require_once 'class-customify-font-palettes.php';
+//		$this->font_palettes = Customify_Font_Palettes::instance();
 
 		/**
 		 * Initialize the Cloud API logic.
