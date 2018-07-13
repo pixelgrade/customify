@@ -1,6 +1,7 @@
 # Color Palettes Integration Guide
 
 ## 1. Add color controls for all elements on the page
+ 
 ```php
 function make_this_function_name_unique( $config ) {
 
@@ -43,6 +44,79 @@ function make_this_function_name_unique( $config ) {
 }
 add_filter('customify_filter_fields', 'make_this_function_name_unique' );
 ```
+
+### 1.1. Limit yourself to using as few colors as possible
+Try to use as few colors as possible in your configuration. The current color palettes system supports at most 9 colors (3 accent colors, 3 dark shades and 3 light shades).
+To make things easier define some constants in your config file like so: 
+
+```php
+define( 'SM_COLOR_PRIMARY',     '#FF0000' );
+define( 'SM_COLOR_SECONDARY',   '#00FF00' );
+define( 'SM_COLOR_TERTIARY',    '#0000FF' );
+ 
+define( 'SM_DARK_PRIMARY',      '#111111' );
+define( 'SM_DARK_SECONDARY',    '#222222' ); 
+define( 'SM_DARK_TERTIARY',     '#333333' );
+ 
+define( 'SM_LIGHT_PRIMARY',     '#EEEEEE' );
+define( 'SM_LIGHT_SECONDARY',   '#DDDDDD' );
+define( 'SM_LIGHT_TERTIARY',    '#CCCCCC' );
+```
+
+You may want to keep all nine definitions even if you don't need them. If your not using one constant in the config you can either copy-paste the value of another one in the same group or event alter it's value a little.
+
+Having all these constants defined will come in handy when using palettes variations and also in defining the default palette for the theme.
+
+### 1.2. Keep it simple
+It happens a lot for developers to write unneeded code, or overly specific selectors. This is a good time to give your code a health check.
+Things that have a big chance of needed to be improved in your code.
+
+Use `opacity` instead of using a new color value when possible.
+```css
+.container {
+    color: #222;
+}
+
+.container-child {
+    /* color: #444 */
+    opacity: 0.9;
+}
+```
+
+Use the `currentColor` value for properties like `border`, `outline`, `box-shadow`, `placeholder` and other properties or pseudo-elements.
+```css
+.element {
+    color: #222;
+    /* box-shadow: #222 0 1em 1em; */
+    box-shadow: currentColor 0 1em 1em;
+}
+
+.element::after {
+    content: "";
+    /* border: 2px solid #222; */
+    border: 2px solid;
+}
+```
+Use `color: inherit` when possible
+```
+a {
+    color: #f00;
+}
+
+.container {
+    color: #222;
+}
+
+.container a {
+    /* color: #222; */
+    color: inherit;
+    text-decoration: underline;
+}
+
+```
+
+### 1.3. Make use of Customify's callback filters
+If your theme uses more than 3 dark or white shades, you can always make use of the callback filters feature that Customify uses.   
 
 ## 2. Add Style Manager section with master controls
 ### 2.1. Add Style Manager support to the theme
@@ -89,7 +163,7 @@ add_filter( 'customify_filter_fields', 'pixelgrade_add_customify_style_manager_s
 $options['sections']['style_manager_section'] = array_replace_recursive( $options['sections']['style_manager_section'], array(
     'options' => array(
         'sm_color_primary' => array(
-            'default' => '#FF0000',
+            'default' => SM_COLOR_PRIMARY,
             'connected_fields' => array(
                 'accent_color',
             ),
