@@ -4,7 +4,7 @@
  *
  * @see         https://pixelgrade.com
  * @author      Pixelgrade
- * @since       1.7.5
+ * @since       1.7.4
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -19,14 +19,14 @@ class Customify_Font_Palettes {
 	 * Holds the only instance of this class.
 	 * @var     null|Customify_Font_Palettes
 	 * @access  protected
-	 * @since   1.7.5
+	 * @since   1.7.4
 	 */
 	protected static $_instance = null;
 
 	/**
 	 * Constructor.
 	 *
-	 * @since 1.7.5
+	 * @since 1.7.4
 	 */
 	protected function __construct() {
 		$this->init();
@@ -35,7 +35,7 @@ class Customify_Font_Palettes {
 	/**
 	 * Initialize this module.
 	 *
-	 * @since 1.7.5
+	 * @since 1.7.4
 	 */
 	public function init() {
 		// Hook up.
@@ -45,7 +45,7 @@ class Customify_Font_Palettes {
 	/**
 	 * Initiate our hooks
 	 *
-	 * @since 1.7.5
+	 * @since 1.7.4
 	 */
 	public function add_hooks() {
 		/*
@@ -110,7 +110,7 @@ class Customify_Font_Palettes {
 	 * Things like transforming font_size_line_height_points to a polynomial function for easy use client side,
 	 * or processing the styles intervals and making sure that we get to a state where there are no overlaps and the order is right.
 	 *
-	 * @since 1.7.5
+	 * @since 1.7.4
 	 *
 	 * @param array $config
 	 *
@@ -131,7 +131,7 @@ class Customify_Font_Palettes {
 	/**
 	 * Preprocess a font palette config before using it.
 	 *
-	 * @since 1.7.5
+	 * @since 1.7.4
 	 *
 	 * @param array $palette_config
 	 *
@@ -154,7 +154,7 @@ class Customify_Font_Palettes {
 	/**
 	 * Before using a font logic config, preprocess it to allow for standardization, fill up of missing info, etc.
 	 *
-	 * @since 1.7.5
+	 * @since 1.7.4
 	 *
 	 * @param array $fonts_logic_config
 	 *
@@ -293,7 +293,7 @@ class Customify_Font_Palettes {
 	/**
 	 * Get the font palettes configuration.
 	 *
-	 * @since 1.7.5
+	 * @since 1.7.4
 	 *
 	 * @param bool $skip_cache Optional. Whether to use the cached config or fetch a new one.
 	 *
@@ -317,7 +317,7 @@ class Customify_Font_Palettes {
 	/**
 	 * Determine if Font Palettes are supported.
 	 *
-	 * @since 1.7.5
+	 * @since 1.7.4
 	 *
 	 * @return bool
 	 */
@@ -332,7 +332,7 @@ class Customify_Font_Palettes {
 	 * This handles the base configuration for the controls in the Style Manager section. We expect other parties (e.g. the theme),
 	 * to come and fill up the missing details (e.g. connected fields).
 	 *
-	 * @since 1.7.5
+	 * @since 1.7.4
 	 *
 	 * @param array $config This holds required keys for the plugin config like 'opt-name', 'panels', 'settings'.
 	 *
@@ -492,7 +492,7 @@ class Customify_Font_Palettes {
 	/**
 	 * Add the current font palette control to the Style Manager section.
 	 *
-	 * @since 1.7.5
+	 * @since 1.7.4
 	 *
 	 * @param array $config
 	 *
@@ -576,7 +576,7 @@ class Customify_Font_Palettes {
 	 *
 	 * Think things like filling up the default font_size if not present.
 	 *
-	 * @since 1.7.5
+	 * @since 1.7.4
 	 *
 	 * @param array $config
 	 *
@@ -731,7 +731,7 @@ class Customify_Font_Palettes {
 	 *
 	 * This is only a fallback config in case we can't communicate with the cloud, the first time.
 	 *
-	 * @since 1.7.5
+	 * @since 1.7.4
 	 *
 	 * @return array
 	 */
@@ -1311,7 +1311,7 @@ class Customify_Font_Palettes {
 	/**
 	 * Get the current font palette ID or false if none is selected.
 	 *
-	 * @since 1.7.5
+	 * @since 1.7.4
 	 *
 	 * @return string|false
 	 */
@@ -1322,7 +1322,7 @@ class Customify_Font_Palettes {
 	/**
 	 * Get the current font palette variation ID or false if none is selected.
 	 *
-	 * @since 1.7.5
+	 * @since 1.7.4
 	 *
 	 * @return string|false
 	 */
@@ -1333,7 +1333,7 @@ class Customify_Font_Palettes {
 	/**
 	 * Determine if the selected font palette has been customized and remember this in an option.
 	 *
-	 * @since 1.7.5
+	 * @since 1.7.4
 	 *
 	 * @return bool
 	 */
@@ -1374,7 +1374,7 @@ class Customify_Font_Palettes {
 	/**
 	 * Determine if a custom font palette is in use.
 	 *
-	 * @since 1.7.5
+	 * @since 1.7.4
 	 *
 	 * @return bool
 	 */
@@ -1385,7 +1385,7 @@ class Customify_Font_Palettes {
 	/**
 	 * Get all the defined Style Manager master font field ids.
 	 *
-	 * @since 1.7.5
+	 * @since 1.7.4
 	 *
 	 * @param array $options
 	 *
@@ -1410,7 +1410,7 @@ class Customify_Font_Palettes {
 	/**
 	 * Add font palettes usage data to the site data sent to the cloud.
 	 *
-	 * @since 1.7.5
+	 * @since 1.7.4
 	 *
 	 * @param array $site_data
 	 *
@@ -1436,7 +1436,7 @@ class Customify_Font_Palettes {
 	 *
 	 * Ensures only one instance of Customify_Font_Palettes is loaded or can be loaded.
 	 *
-	 * @since  1.7.5
+	 * @since  1.7.4
 	 * @static
 	 *
 	 * @return Customify_Font_Palettes Main Customify_Font_Palettes instance
@@ -1452,7 +1452,7 @@ class Customify_Font_Palettes {
 	/**
 	 * Cloning is forbidden.
 	 *
-	 * @since 1.7.5
+	 * @since 1.7.4
 	 */
 	public function __clone() {
 
@@ -1462,7 +1462,7 @@ class Customify_Font_Palettes {
 	/**
 	 * Unserializing instances of this class is forbidden.
 	 *
-	 * @since 1.7.5
+	 * @since 1.7.4
 	 */
 	public function __wakeup() {
 

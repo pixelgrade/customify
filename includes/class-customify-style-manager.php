@@ -35,7 +35,7 @@ class Customify_Style_Manager {
 	 * The external theme configs object.
 	 * @var     null|Customify_Theme_Configs
 	 * @access  public
-	 * @since   1.7.5
+	 * @since   1.7.4
 	 */
 	protected $theme_configs = null;
 
@@ -43,7 +43,7 @@ class Customify_Style_Manager {
 	 * The color palettes object.
 	 * @var     null|Customify_Color_Palettes
 	 * @access  public
-	 * @since   1.7.5
+	 * @since   1.7.4
 	 */
 	protected $color_palettes = null;
 
@@ -51,7 +51,7 @@ class Customify_Style_Manager {
 	 * The font palettes object.
 	 * @var     null|Customify_Font_Palettes
 	 * @access  public
-	 * @since   1.7.5
+	 * @since   1.7.4
 	 */
 	protected $font_palettes = null;
 
@@ -59,7 +59,7 @@ class Customify_Style_Manager {
 	 * The Cloud API object.
 	 * @var     null|Customify_Cloud_Api
 	 * @access  public
-	 * @since   1.7.5
+	 * @since   1.7.4
 	 */
 	protected $cloud_api = null;
 
@@ -79,7 +79,7 @@ class Customify_Style_Manager {
 	/**
 	 * Initialize this module.
 	 *
-	 * @since 1.7.5
+	 * @since 1.7.4
 	 */
 	public function init() {
 		/**
