@@ -4,7 +4,7 @@
  *
  * @see         https://pixelgrade.com
  * @author      Pixelgrade
- * @since       1.7.5
+ * @since       1.7.4
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -19,7 +19,7 @@ class Customify_Design_Assets {
 	 * Holds the only instance of this class.
 	 * @var null|Customify_Design_Assets
 	 * @access protected
-	 * @since 1.7.5
+	 * @since 1.7.4
 	 */
 	protected static $_instance = null;
 
@@ -27,7 +27,7 @@ class Customify_Design_Assets {
 	 * The current design assets config.
 	 * @var     array
 	 * @access  public
-	 * @since   1.7.5
+	 * @since   1.7.4
 	 */
 	protected $design_assets = null;
 
@@ -35,14 +35,14 @@ class Customify_Design_Assets {
 	 * The cloud API object used to communicate with the cloud.
 	 * @var     Customify_Cloud_Api
 	 * @access  public
-	 * @since   1.7.5
+	 * @since   1.7.4
 	 */
 	protected $cloud_api = null;
 
 	/**
 	 * Constructor.
 	 *
-	 * @since 1.7.5
+	 * @since 1.7.4
 	 */
 	private function __construct() {
 		$this->init();
@@ -51,7 +51,7 @@ class Customify_Design_Assets {
 	/**
 	 * Initialize this module.
 	 *
-	 * @since 1.7.5
+	 * @since 1.7.4
 	 */
 	public function init() {
 		/**
@@ -64,7 +64,7 @@ class Customify_Design_Assets {
 	/**
 	 * Get the design assets configuration.
 	 *
-	 * @since 1.7.5
+	 * @since 1.7.4
 	 *
 	 * @param bool $skip_cache Optional. Whether to use the cached config or fetch a new one.
 	 *
@@ -90,7 +90,7 @@ class Customify_Design_Assets {
 	 *
 	 * Caches the data for 12 hours. Use local defaults if not available.
 	 *
-	 * @since 1.7.5
+	 * @since 1.7.4
 	 *
 	 * @param bool $skip_cache Optional. Whether to use the cached data or fetch a new one.
 	 *
@@ -136,7 +136,7 @@ class Customify_Design_Assets {
 	/**
 	 * Get the design assets cache key.
 	 *
-	 * @since 1.7.5
+	 * @since 1.7.4
 	 *
 	 * @return string
 	 */
@@ -147,7 +147,7 @@ class Customify_Design_Assets {
 	/**
 	 * Include the customify "external" config file in the theme root and overwrite the existing theme configs.
 	 *
-	 * @since 1.7.5
+	 * @since 1.7.4
 	 *
 	 * @param array $design_assets
 	 *
@@ -202,7 +202,7 @@ class Customify_Design_Assets {
 	 *
 	 * Ensures only one instance of Customify_Design_Assets is loaded or can be loaded.
 	 *
-	 * @since  1.7.5
+	 * @since  1.7.4
 	 * @static
 	 *
 	 * @return Customify_Design_Assets Main Customify_Design_Assets instance
@@ -219,7 +219,7 @@ class Customify_Design_Assets {
 	/**
 	 * Cloning is forbidden.
 	 *
-	 * @since 1.7.5
+	 * @since 1.7.4
 	 */
 	public function __clone() {
 
@@ -229,7 +229,7 @@ class Customify_Design_Assets {
 	/**
 	 * Unserializing instances of this class is forbidden.
 	 *
-	 * @since 1.7.5
+	 * @since 1.7.4
 	 */
 	public function __wakeup() {
 

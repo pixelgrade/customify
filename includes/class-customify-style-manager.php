@@ -35,7 +35,7 @@ class Customify_Style_Manager {
 	 * The external theme configs object.
 	 * @var     null|Customify_Theme_Configs
 	 * @access  public
-	 * @since   1.7.5
+	 * @since   1.7.4
 	 */
 	protected $theme_configs = null;
 
@@ -43,7 +43,7 @@ class Customify_Style_Manager {
 	 * The color palettes object.
 	 * @var     null|Customify_Color_Palettes
 	 * @access  public
-	 * @since   1.7.5
+	 * @since   1.7.4
 	 */
 	protected $color_palettes = null;
 
@@ -51,7 +51,7 @@ class Customify_Style_Manager {
 	 * The font palettes object.
 	 * @var     null|Customify_Font_Palettes
 	 * @access  public
-	 * @since   1.7.5
+	 * @since   1.7.4
 	 */
 	protected $font_palettes = null;
 
@@ -59,7 +59,7 @@ class Customify_Style_Manager {
 	 * The Cloud API object.
 	 * @var     null|Customify_Cloud_Api
 	 * @access  public
-	 * @since   1.7.5
+	 * @since   1.7.4
 	 */
 	protected $cloud_api = null;
 
@@ -79,7 +79,7 @@ class Customify_Style_Manager {
 	/**
 	 * Initialize this module.
 	 *
-	 * @since 1.7.5
+	 * @since 1.7.4
 	 */
 	public function init() {
 		/**
@@ -229,80 +229,6 @@ class Customify_Style_Manager {
 		$other_theme_sections_config = $config['sections'];
 		unset( $config['sections'] );
 
-		// We need to split the fields in the Style Manager section into two: color palettes and fonts.
-		$color_palettes_fields = array(
-			'sm_current_color_palette',
-			'sm_color_matrix',
-			'sm_dark_color_master_slider',
-			'sm_dark_color_primary_slider',
-			'sm_dark_color_secondary_slider',
-			'sm_dark_color_tertiary_slider',
-			'sm_colors_dispersion',
-			'sm_colors_focus_point',
-			'sm_color_palette',
-			'sm_color_palette_variation',
-			'sm_color_primary',
-			'sm_color_secondary',
-			'sm_color_tertiary',
-			'sm_dark_primary',
-			'sm_dark_secondary',
-			'sm_dark_tertiary',
-			'sm_light_primary',
-			'sm_light_secondary',
-			'sm_light_tertiary',
-			'sm_swap_colors',
-			'sm_swap_dark_light',
-			'sm_swap_colors_dark',
-			'sm_swap_secondary_colors_dark',
-			'sm_advanced_toggle',
-		);
-
-		$color_palettes_section_config = array(
-			'title' => __( 'Colors', 'pixcustomify' ),
-			'section_id' => 'sm_color_palettes_section',
-			'priority' => 10,
-			'options' => array(),
-		);
-		foreach ( $color_palettes_fields as $field_id ) {
-			if ( ! isset( $style_manager_section_config['options'][ $field_id ] ) ) {
-				continue;
-			}
-
-			if ( empty( $color_palettes_section_config['options'] ) ) {
-				$color_palettes_section_config['options'] = array( $field_id => $style_manager_section_config['options'][ $field_id ] );
-			} else {
-				$color_palettes_section_config['options'] = array_merge( $color_palettes_section_config['options'], array( $field_id => $style_manager_section_config['options'][ $field_id ] ) );
-			}
-		}
-
-		$font_palettes_fields = array(
-			'sm_font_palette',
-			'sm_font_palette_variation',
-			'sm_font_primary',
-			'sm_font_secondary',
-			'sm_font_body',
-			'sm_swap_fonts',
-			'sm_swap_primary_secondary_fonts',
-		);
-
-		$font_palettes_section_config = array(
-			'title' => __( 'Fonts', 'pixcustomify' ),
-			'section_id' => 'sm_font_palettes_section',
-			'priority' => 20,
-			'options' => array(),
-		);
-		foreach ( $font_palettes_fields as $field_id ) {
-			if ( ! isset( $style_manager_section_config['options'][ $field_id ] ) ) {
-				continue;
-			}
-
-			if ( empty( $font_palettes_section_config['options'] ) ) {
-				$font_palettes_section_config['options'] = array( $field_id => $style_manager_section_config['options'][ $field_id ] );
-			} else {
-				$font_palettes_section_config['options'] = array_merge( $font_palettes_section_config['options'], array( $field_id => $style_manager_section_config['options'][ $field_id ] ) );
-			}
-		}
-
 		// Now group them in panels.
 		if ( ! isset( $config['panels'] ) ) {
 			$config['panels'] = array();
@@ -314,13 +240,96 @@ class Customify_Style_Manager {
 			'capability'  => 'edit_theme_options',
 			'panel_id'    => 'style_manager_panel',
 			'title'       => __( 'Style Manager', 'pixcustomify' ),
-			'description' => __( 'Style Manager is a system that helps you to change the look of your site and easily make an impression with it!', 'pixcustomify' ),
-			'sections' => array(
-				'sm_color_palettes_section' => $color_palettes_section_config,
-				'sm_font_palettes_section' => $font_palettes_section_config,
-			),
+			'description' => __( '<strong>Style Manager</strong> is an intuitive system to help you change the look of your website and make an excellent impression.', 'pixcustomify' ),
+			'sections' => array(),
 			'auto_expand_sole_section' => true, // If there is only one section in the panel, auto-expand it.
 		);
+
+		// Maybe handle the color palettes.
+		if ( class_exists( 'Customify_Color_Palettes' ) && Customify_Color_Palettes::instance()->is_supported() ) {
+
+			// We need to split the fields in the Style Manager section into two: color palettes and fonts.
+			$color_palettes_fields = array(
+				'sm_current_color_palette',
+				'sm_color_matrix',
+				'sm_dark_color_master_slider',
+				'sm_dark_color_primary_slider',
+				'sm_dark_color_secondary_slider',
+				'sm_dark_color_tertiary_slider',
+				'sm_colors_dispersion',
+				'sm_colors_focus_point',
+				'sm_color_palette',
+				'sm_color_palette_variation',
+				'sm_color_primary',
+				'sm_color_secondary',
+				'sm_color_tertiary',
+				'sm_dark_primary',
+				'sm_dark_secondary',
+				'sm_dark_tertiary',
+				'sm_light_primary',
+				'sm_light_secondary',
+				'sm_light_tertiary',
+				'sm_swap_colors',
+				'sm_swap_dark_light',
+				'sm_swap_colors_dark',
+				'sm_swap_secondary_colors_dark',
+				'sm_advanced_toggle',
+			);
+
+			$color_palettes_section_config = array(
+				'title'      => __( 'Colors', 'pixcustomify' ),
+				'section_id' => 'sm_color_palettes_section',
+				'priority'   => 10,
+				'options'    => array(),
+			);
+			foreach ( $color_palettes_fields as $field_id ) {
+				if ( ! isset( $style_manager_section_config['options'][ $field_id ] ) ) {
+					continue;
+				}
+
+				if ( empty( $color_palettes_section_config['options'] ) ) {
+					$color_palettes_section_config['options'] = array( $field_id => $style_manager_section_config['options'][ $field_id ] );
+				} else {
+					$color_palettes_section_config['options'] = array_merge( $color_palettes_section_config['options'], array( $field_id => $style_manager_section_config['options'][ $field_id ] ) );
+				}
+			}
+
+			$config['panels']['style_manager_panel']['sections']['sm_color_palettes_section'] = $color_palettes_section_config;
+		}
+
+		// Maybe handle the font palettes.
+		if ( class_exists( 'Customify_Font_Palettes' ) && Customify_Font_Palettes::instance()->is_supported() ) {
+
+			$font_palettes_fields = array(
+				'sm_font_palette',
+				'sm_font_palette_variation',
+				'sm_font_primary',
+				'sm_font_secondary',
+				'sm_font_body',
+				'sm_swap_fonts',
+				'sm_swap_primary_secondary_fonts',
+			);
+
+			$font_palettes_section_config = array(
+				'title'      => __( 'Fonts', 'pixcustomify' ),
+				'section_id' => 'sm_font_palettes_section',
+				'priority'   => 20,
+				'options'    => array(),
+			);
+			foreach ( $font_palettes_fields as $field_id ) {
+				if ( ! isset( $style_manager_section_config['options'][ $field_id ] ) ) {
+					continue;
+				}
+
+				if ( empty( $font_palettes_section_config['options'] ) ) {
+					$font_palettes_section_config['options'] = array( $field_id => $style_manager_section_config['options'][ $field_id ] );
+				} else {
+					$font_palettes_section_config['options'] = array_merge( $font_palettes_section_config['options'], array( $field_id => $style_manager_section_config['options'][ $field_id ] ) );
+				}
+			}
+
+			$config['panels']['style_manager_panel']['sections']['sm_font_palettes_section'] = $font_palettes_section_config;
+		}
 
 		// The Theme Options panel.
 		$config['panels']['theme_options_panel'] = array(
@@ -328,7 +337,7 @@ class Customify_Style_Manager {
 			'capability'  => 'edit_theme_options',
 			'panel_id'    => 'theme_options_panel',
 			'title'       => __( 'Theme Options', 'pixcustomify' ),
-			'description' => __( 'Advanced options to change your site appearance on a more granular level.', 'pixcustomify' ),
+			'description' => __( 'Advanced options to change your site look-and-feel on a detailed level.', 'pixcustomify' ),
 			'sections' => $other_theme_sections_config,
 		);
 

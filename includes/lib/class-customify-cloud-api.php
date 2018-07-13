@@ -4,7 +4,7 @@
  *
  * @see         https://pixelgrade.com
  * @author      Pixelgrade
- * @since       1.7.5
+ * @since       1.7.4
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -19,14 +19,14 @@ class Customify_Cloud_Api {
 	 * External REST API endpoints used for communicating with the Pixelgrade Cloud.
 	 * @var array
 	 * @access public
-	 * @since    1.7.5
+	 * @since    1.7.4
 	 */
 	public static $externalApiEndpoints;
 
 	/**
 	 * Constructor.
 	 *
-	 * @since 1.7.5
+	 * @since 1.7.4
 	 */
 	public function __construct() {
 
@@ -36,7 +36,7 @@ class Customify_Cloud_Api {
 	/**
 	 * Initialize this module.
 	 *
-	 * @since 1.7.5
+	 * @since 1.7.4
 	 */
 	public function init() {
 		// Make sure our constants are in place, if not already defined.
@@ -60,7 +60,7 @@ class Customify_Cloud_Api {
 	/**
 	 * Fetch the design assets data from the Pixelgrade Cloud.
 	 *
-	 * @since 1.7.5
+	 * @since 1.7.4
 	 *
 	 * @return array|false
 	 */
@@ -100,7 +100,7 @@ class Customify_Cloud_Api {
 	/**
 	 * Get the active theme data.
 	 *
-	 * @since 1.7.5
+	 * @since 1.7.4
 	 *
 	 * @return array
 	 */
@@ -132,7 +132,7 @@ class Customify_Cloud_Api {
 	/**
 	 * Get the site data.
 	 *
-	 * @since 1.7.5
+	 * @since 1.7.4
 	 *
 	 * @return array
 	 */
@@ -156,7 +156,7 @@ class Customify_Cloud_Api {
 	/**
 	 * Send stats to the Pixelgrade Cloud.
 	 *
-	 * @since 1.7.5
+	 * @since 1.7.4
 	 *
 	 * @param array $request_data The data to be sent.
 	 * @param bool $blocking Optional. Whether this should be a blocking request. Defaults to false.

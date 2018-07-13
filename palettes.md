@@ -1,6 +1,48 @@
 # Color Palettes Integration Guide
 
 ## 1. Add color controls for all elements on the page
+```php
+function make_this_function_name_unique( $config ) {
+
+	// usually the sections key will be here, but a check won't hurt
+	if ( ! isset($config['sections']) ) { 
+		$config['sections'] = array();
+	}
+	
+	// this means that we add a new entry named "theme_added_settings" in the sections area
+	$config['sections']['theme_added_settings'] = array(
+		'title' => 'Section added dynamically',
+		'settings' => array( 
+		
+			// this is the field id and it must be unique
+			'field_example' => array(
+				'type'  => 'color', // there is a list of types below
+				'label' => 'Body color', // the label is optional but is nice to have one
+				'css' => array(
+				
+					// the CSS key is the one which controls the output of this field
+					array(
+					 	// a CSS selector
+						'selector' => '#logo',
+						// the CSS property which should be affected by this field
+						'property' => 'background-color',
+					)
+					
+					// repeat this as long as you need
+					array(
+						'selector' => 'body',
+						'property' => 'color',
+					)
+				)
+			)
+		)
+	);
+	
+	// when working with filters always return filtered value
+	return $config;
+}
+add_filter('customify_filter_fields', 'make_this_function_name_unique' );
+```
 
 ## 2. Add Style Manager section with master controls
 ### 2.1. Add Style Manager support to the theme
@@ -59,6 +101,8 @@ $options['sections']['style_manager_section'] = array_replace_recursive( $option
 ```
 
 ### 2.4. Create a default Color Palette for the current Theme
+#### 2.4.1 Upload an image to Pixelgrade Cloud in order to use it as a mood background image for this Palette 
+#### 2.4.2 Write the proper configuration and use the `customify_get_color_palettes` hook to add it to the main list 
 Color values listed in the options attribute should match the ones that we've just set for the options in the Style Manager section (or rather the other way around)
 ```php
 function themename_add_default_color_palette( $color_palettes ) {
@@ -66,7 +110,9 @@ function themename_add_default_color_palette( $color_palettes ) {
     $color_palettes = array_merge(array(
         'default' => array(
             'label' => 'Default',
-            'background_image_url' => '',
+			'preview' => array(
+				'background_image_url' => '',
+			),
             'options' => array(
                 'sm_color_primary' => '#FF4D58',
                 'sm_color_secondary' => '#F53C48',
