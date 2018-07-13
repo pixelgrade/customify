@@ -71,7 +71,7 @@ class Customify_Cloud_Api {
 			'theme_data' => $this->get_active_theme_data(),
 			// We are only interested in data needed to identify the plugin version and eventually deliver design assets suitable for it.
 			'site_data' => $this->get_site_data(),
-		) );
+		), $this );
 
 		$request_args = array(
 			'method' => self::$externalApiEndpoints['cloud']['getDesignAssets']['method'],
@@ -175,7 +175,13 @@ class Customify_Cloud_Api {
 			);
 		}
 
-		$request_data = apply_filters( 'customify_pixelgrade_cloud_request_data', $request_data );
+		/**
+		 * Filters request data sent to the cloud.
+		 *
+		 * @param array $request_data
+		 * @param object $this @todo This argument is no longer needed and should be removed when Pixelgrade Care doesn't rely on it.
+		 */
+		$request_data = apply_filters( 'customify_pixelgrade_cloud_request_data', $request_data, $this );
 
 		$request_args = array(
 			'method' => self::$externalApiEndpoints['cloud']['stats']['method'],

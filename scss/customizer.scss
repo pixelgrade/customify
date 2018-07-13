@@ -2657,6 +2657,13 @@ input.c-color-palette__input[class] {
 
 #customize-theme-controls {
 
+    #sub-accordion-panel-style_manager_panel,
+    #sub-accordion-panel-theme_options_panel {
+      .customize-panel-description {
+        display: block;
+      }
+    }
+
 	// Style Manager Section
 	// ----------------------------------------	
 	li#accordion-panel-style_manager_panel {
@@ -2683,7 +2690,7 @@ input.c-color-palette__input[class] {
 		li#accordion-section-sm_color_palettes_section,
 		li#accordion-section-sm_font_palettes_section {
 			h3.accordion-section-title {
-				
+
 				&:before {
 				    padding: 3px;
 				    margin-right: 5px;
