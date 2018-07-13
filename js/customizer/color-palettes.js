@@ -267,7 +267,7 @@ let ColorPalettes = ( function( $, exports, wp ) {
 
         $( this ).trigger( 'customify:preset-change' );
         updateCurrentPalette( label );
-	    buildColorMatrix();
+//	    buildColorMatrix();
     };
 
     const buildColorMatrix = () => {
@@ -497,14 +497,12 @@ let ColorPalettes = ( function( $, exports, wp ) {
 	    //
 	    $( document ).on( 'click', '.customify_preset.color_palette input', onPaletteChange );
 
-	    //
-	    $( all_sliders_selector ).on( 'input', reloadConnectedFields );
+//	    $( all_sliders_selector ).on( 'input', reloadConnectedFields );
 
-	    //
-	    $( master_color_selector ).on( 'input', function() {
-		    const masterValue = $( master_color_selector ).val();
-		    $( color_sliders_selector ).val( masterValue ).trigger( 'input' );
-	    } );
+//	    $( master_color_selector ).on( 'input', function() {
+//		    const masterValue = $( master_color_selector ).val();
+//		    $( color_sliders_selector ).val( masterValue ).trigger( 'input' );
+//	    } );
     };
 
     wp.customize.bind( 'ready', function() {
@@ -512,7 +510,7 @@ let ColorPalettes = ( function( $, exports, wp ) {
 	    createCurrentPaletteControls();
 	    updateCurrentPalette();
 	    reloadConnectedFields();
-	    buildColorMatrix();
+//	    buildColorMatrix();
 	    bindEvents();
     } );
 
