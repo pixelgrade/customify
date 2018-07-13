@@ -1174,10 +1174,11 @@ class PixCustomifyPlugin {
 						}
 
 						$panel_args = array(
-							'priority'    => 10,
-							'capability'  => 'edit_theme_options',
-							'title'       => __( 'Panel title is required', 'pixcustomify' ),
-							'description' => __( 'Description of what this panel does.', 'pixcustomify' ),
+							'priority'                 => 10,
+							'capability'               => 'edit_theme_options',
+							'title'                    => __( 'Panel title is required', 'pixcustomify' ),
+							'description'              => __( 'Description of what this panel does.', 'pixcustomify' ),
+							'auto_expand_sole_section' => false,
 						);
 
 						if ( isset( $panel_config['priority'] ) && ! empty( $panel_config['priority'] ) ) {
@@ -1191,6 +1192,11 @@ class PixCustomifyPlugin {
 						if ( isset( $panel_config['description'] ) && ! empty( $panel_config['description'] ) ) {
 							$panel_args['description'] = $panel_config['description'];
 						}
+
+						if ( isset( $panel_config['auto_expand_sole_section'] ) ) {
+							$panel_args['auto_expand_sole_section'] = $panel_config['auto_expand_sole_section'];
+						}
+
 
 						$wp_customize->add_panel( $panel_id, $panel_args );
 
