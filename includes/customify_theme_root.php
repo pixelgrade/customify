@@ -13,6 +13,30 @@ $config = [
 	'sections' => [],
 ];
 
+// Recommended Fonts List - Headings
+$recommended_fonts = array(
+	'Oswald',
+	'Roboto',
+	'Playfair Display',
+	'Lato',
+	'Open Sans',
+	'Exo',
+	'PT Sans',
+	'Ubuntu',
+	'Vollkorn',
+	'Lora',
+	'Arvo',
+	'Josefin Slab',
+	'Crete Round',
+	'Kreon',
+	'Bubblegum Sans',
+	'The Girl Next Door',
+	'Pacifico',
+	'Handlee',
+	'Satify',
+	'Pompiere'
+);
+
 $config['sections'] = [
 
 	/**
@@ -724,6 +748,47 @@ $config['sections'] = [
 			],
 		],
 	],
+
+	/**
+	 * Fonts - This section will handle all elements fonts (eg. links, headings)
+	 */
+	'fonts_section' => [
+		'title'    => __( 'Fonts', 'customify' ),
+		'priority' => 3, // This will put this section right after Colors section that has a priority of 2.
+		'options'  => [
+			/**
+			 * Header Section
+			 */
+			'header_section'                               => [
+				'type' => 'html',
+				'html' => '<span id="section-title-blog-fonts" class="separator section label large">' . esc_html__( 'Header', 'customify' ) . '</span>',
+			],
+			'header_links_font' => [
+				'type'     			=> 'font',
+				'label'            => esc_html__( 'Navigation Text', 'customify' ),
+				'desc'             => esc_html__( '', 'customify' ),
+				'selector'         => '.nav--main a',
+
+				// Set the defaults
+				'default'  => [
+					'font-family'    => 'Oswald',
+					'font-weight'    => '300',
+					'letter-spacing' => 0.06,
+					'text-transform' => 'uppercase'
+				],
+
+				// List of recommended fonts defined by theme
+				'recommended' => $recommended_fonts,
+				// Sub Fields Configuration (optional)
+				'fields'   => [
+					'letter-spacing'  => [ -1, 2, 0.01, 'em' ],
+					'text-align'      => false,                           // Disable sub-field (False by default)
+					'text-transform'  => true,
+					'text-decoration' => false,
+				],
+			],
+		],
+	],
 ];
 
 /**
@@ -731,6 +796,7 @@ $config['sections'] = [
  */
 $config['sections']['style_manager_section'] = [
 	'options' => [
+		// Colors connected fields.
 		'sm_color_primary'   => [
 			'connected_fields' => [
 				'body_link_color',
@@ -783,6 +849,17 @@ $config['sections']['style_manager_section'] = [
 			],
 		],
 		'sm_light_tertiary'  => [
+			'connected_fields' => [],
+		],
+
+		// Fonts connected fields.
+		'sm_font_primary'  => [
+			'connected_fields' => [],
+		],
+		'sm_font_secondary'  => [
+			'connected_fields' => [],
+		],
+		'sm_font_body'  => [
 			'connected_fields' => [],
 		],
 	],
