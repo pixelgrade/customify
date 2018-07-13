@@ -2,12 +2,12 @@
 Contributors: pixelgrade, euthelup, babbardel, vlad.olaru, cristianfrumusanu, raduconstantin, razvanonofrei
 Tags: customizer, css, editor, live, preview, customizer
 Requires at least: 4.7.0
-Tested up to: 4.9.5
-Stable tag: 1.7.3
+Tested up to: 4.9.7
+Stable tag: 1.7.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Customify is a Theme Customizer Booster that you can easily use to add Fonts, Colors, Live CSS Editor and other options to your theme.
+Customify is a Theme Customizer Booster that you can easily use to customizer Fonts, Colors, Live CSS Editor and other options for your site.
 
 == Description ==
 
@@ -44,6 +44,10 @@ With [Customify](https://github.com/pixelgrade/customify), developers can easily
 * Default [image](https://unsplash.com/photos/OgM4RKdr2kY) for Style Manager Color Palette control - License: (Unsplash)[https://unsplash.com/license]
 
 == Changelog ==
+
+= 1.7.4 =
+* Reorganized Customizer custom sections and grouped them into Theme Options, thus making the Style Manager panel stand out.
+* Refactored parts for more performance and clarity.
 
 = 1.7.3 =
 * Added HEX field for colors in the current Color Palette
