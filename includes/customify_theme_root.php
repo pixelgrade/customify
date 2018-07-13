@@ -13,6 +13,12 @@ $config = [
 	'sections' => [],
 ];
 
+define( 'SM_HEADINGS_FONT', 'Source Sans Pro' );
+define( 'SM_SECONDARY_FONT', 'Source Sans Pro' );
+define( 'SM_ACCENT_FONT', 'Source Sans Pro' );
+define( 'SM_BODY_FONT', 'Source Sans Pro' );
+define( 'SM_LOGO_FONT', 'Source Sans Pro' );
+
 // Recommended Fonts List - Headings
 $recommended_fonts = array(
 	'Oswald',
@@ -37,14 +43,480 @@ $recommended_fonts = array(
 	'Pompiere'
 );
 
+// Body
+$recommended_body_fonts = apply_filters(
+	'customify_theme_recommended_body_fonts',
+	array(
+		'Roboto',
+		'Playfair Display',
+		'Oswald',
+		'Lato',
+		'Open Sans',
+		'Exo',
+		'PT Sans',
+		'Ubuntu',
+		'Vollkorn',
+		'Lora',
+		'Arvo',
+		'Josefin Slab',
+		'Crete Round',
+		'Kreon',
+		'Bubblegum Sans',
+		'The Girl Next Door',
+		'Pacifico',
+		'Handlee',
+		'Satify',
+		'Pompiere',
+	)
+);
+
 $config['sections'] = [
+
+	/**
+	 * Fonts - This section will handle all elements fonts (eg. links, headings)
+	 */
+	'fonts_section' => [
+		'title'    => __( 'Fonts', 'customify' ),
+		'priority' => 3, // This will put this section right after Colors section that has a priority of 2.
+		'options'  => [
+			/**
+			 * Header Section
+			 */
+			'header_section'                               => [
+				'type' => 'html',
+				'html' => '<span id="section-title-blog-fonts" class="separator section label large">' . esc_html__( 'Header', 'customify' ) . '</span>',
+			],
+			'header_site_title_font'         => array(
+				'type'        => 'font',
+				'label'       => esc_html__( 'Site Title Font', '__components_txtd' ),
+				'selector'    => '.page-template-template-homepage .entry-header h1',
+				'callback'    => 'typeline_font_cb',
+
+				'default' => array(
+					'font-family'    => SM_HEADINGS_FONT,
+					'font-weight'    => '700',
+					'font-size'      => 32,
+					'line-height'    => 1.214,
+					'letter-spacing' => -0.02,
+					'text-transform' => 'none',
+				),
+
+				// Sub Fields Configuration
+				'fields'      => array(
+					'font-size'       => array(
+						'min'  => 8,
+						'max'  => 90,
+						'step' => 1,
+						'unit' => 'px',
+					),
+					'line-height'     => array( 0, 2, 0.1, '' ),
+					'letter-spacing'  => array( - 1, 2, 0.01, 'em' ),
+					'text-align'      => false,
+					'text-transform'  => true,
+					'text-decoration' => false,
+				),
+			),
+			'header_navigation_font'         => array(
+				'type'        => 'font',
+				'label'       => esc_html__( 'Navigation Text', '__components_txtd' ),
+				'selector'    => '.storefront-primary-navigation',
+				'callback'    => 'typeline_font_cb',
+
+				'default' => array(
+					'font-family'    => SM_HEADINGS_FONT,
+					'font-weight'    => '400',
+					'font-size'      => 16,
+					'line-height'    => 1.618,
+					'letter-spacing' => 0,
+					'text-transform' => 'none',
+				),
+
+				// Sub Fields Configuration
+				'fields'      => array(
+					'font-size'       => array(
+						'min'  => 8,
+						'max'  => 90,
+						'step' => 1,
+						'unit' => 'px',
+					),
+					'line-height'     => array( 0, 2, 0.1, '' ),
+					'letter-spacing'  => array( - 1, 2, 0.01, 'em' ),
+					'text-align'      => false,
+					'text-transform'  => true,
+					'text-decoration' => false,
+				),
+			),
+
+			/**
+			 * Main Content Section
+			 */
+			'main_content'                               => [
+				'type' => 'html',
+				'html' => '<span id="section-title-blog-fonts" class="separator section label large">' . esc_html__( 'Main Content', 'customify' ) . '</span>',
+			],
+			'main_content_page_title_font'         => array(
+				'type'        => 'font',
+				'label'       => esc_html__( 'Page Title Font', '__components_txtd' ),
+				'selector'    => '.page-template-template-homepage .entry-header h1',
+				'callback'    => 'typeline_font_cb',
+
+				'default' => array(
+					'font-family'    => SM_HEADINGS_FONT,
+					'font-weight'    => '300',
+					'font-size'      => 59,
+					'line-height'    => 1.214,
+					'letter-spacing' => -0.02,
+					'text-transform' => 'none',
+				),
+
+				// Sub Fields Configuration
+				'fields'      => array(
+					'font-size'       => array(
+						'min'  => 8,
+						'max'  => 90,
+						'step' => 1,
+						'unit' => 'px',
+					),
+					'line-height'     => array( 0, 2, 0.1, '' ),
+					'letter-spacing'  => array( - 1, 2, 0.01, 'em' ),
+					'text-align'      => false,
+					'text-transform'  => true,
+					'text-decoration' => false,
+				),
+			),
+			'main_content_body_text_font'          => array(
+				'type'        => 'font',
+				'label'       => esc_html__( 'Body Text Font', '__components_txtd' ),
+				'selector'    => 'body',
+				'callback'    => 'typeline_body_font_cb',
+
+				'default' => array(
+					'font-family'    => SM_BODY_FONT,
+					'font-weight'    => '400',
+					'font-size'      => 16,
+					'line-height'    => 1.618,
+					'letter-spacing' => 0,
+					'text-transform' => 'none',
+				),
+
+				// Sub Fields Configuration
+				'fields'      => array(
+					'font-size'       => array(
+						'min'  => 8,
+						'max'  => 90,
+						'step' => 1,
+						'unit' => 'px',
+					),
+					'line-height'     => array( 0, 2, 0.1, '' ),
+					'letter-spacing'  => array( - 1, 2, 0.01, 'em' ),
+					'text-align'      => false,
+					'text-transform'  => true,
+					'text-decoration' => false,
+				),
+			),
+			'main_content_quote_block_font'         => array(
+				'type'        => 'font',
+				'label'       => esc_html__( 'Quote Block Font', '__components_txtd' ),
+				'selector'    => 'blockquote',
+				'callback'    => 'typeline_font_cb',
+				'default'  => array(
+					'font-family'    => SM_ACCENT_FONT,
+					'font-weight'    => 'italic',
+					'font-size'      => 18,
+					'line-height'    => 1.67,
+					'letter-spacing' => 0,
+					'text-transform' => 'none',
+				),
+
+				// Sub Fields Configuration
+				'fields'      => array(
+					'font-size'       => array(
+						'min'  => 8,
+						'max'  => 90,
+						'step' => 1,
+						'unit' => 'px',
+					),
+					'line-height'     => array( 0, 2, 0.1, '' ),
+					'letter-spacing'  => array( - 1, 2, 0.01, 'em' ),
+					'text-align'      => false,
+					'text-transform'  => true,
+					'text-decoration' => false,
+				),
+			),
+
+			'main_content_heading_1_font' => [
+				'type'     			=> 'font',
+				'label'            => esc_html__( 'Heading 1', 'customify' ),
+				'desc'             => esc_html__( '', 'customify' ),
+				'selector'         => '.alpha, h1',
+
+				'default' => array(
+					'font-family'    => SM_HEADINGS_FONT,
+					'font-weight'    => '300',
+					'font-size'      => 42,
+					'line-height'    => 1.214,
+					'letter-spacing' => -0.02,
+					'text-transform' => 'none',
+				),
+
+				// Sub Fields Configuration
+				'fields'      => array(
+					'font-size'       => array(
+						'min'  => 8,
+						'max'  => 90,
+						'step' => 1,
+						'unit' => 'px',
+					),
+					'line-height'     => array( 0, 2, 0.1, '' ),
+					'letter-spacing'  => array( - 1, 2, 0.01, 'em' ),
+					'text-align'      => false,
+					'text-transform'  => true,
+					'text-decoration' => false,
+				),
+			],
+
+			'main_content_heading_2_font' => [
+				'type'     			=> 'font',
+				'label'            => esc_html__( 'Heading 2', 'customify' ),
+				'desc'             => esc_html__( '', 'customify' ),
+				'selector'         => '.beta, h2',
+
+				'default' => array(
+					'font-family'    => SM_HEADINGS_FONT,
+					'font-weight'    => '300',
+					'font-size'      => 32,
+					'line-height'    => 1.214,
+					'letter-spacing' => 0,
+					'text-transform' => 'none',
+				),
+
+				// Sub Fields Configuration
+				'fields'      => array(
+					'font-size'       => array(
+						'min'  => 8,
+						'max'  => 90,
+						'step' => 1,
+						'unit' => 'px',
+					),
+					'line-height'     => array( 0, 2, 0.1, '' ),
+					'letter-spacing'  => array( - 1, 2, 0.01, 'em' ),
+					'text-align'      => false,
+					'text-transform'  => true,
+					'text-decoration' => false,
+				),
+			],
+
+			'main_content_heading_4_font' => [
+				'type'     			=> 'font',
+				'label'            => esc_html__( 'Heading 4', 'customify' ),
+				'desc'             => esc_html__( '', 'customify' ),
+				'selector'         => '.delta, h4',
+
+				'default' => array(
+					'font-family'    => SM_HEADINGS_FONT,
+					'font-weight'    => '300',
+					'font-size'      => 23,
+					'line-height'    => 1.6,
+					'letter-spacing' => 0,
+					'text-transform' => 'none',
+				),
+
+				// Sub Fields Configuration
+				'fields'      => array(
+					'font-size'       => array(
+						'min'  => 8,
+						'max'  => 90,
+						'step' => 1,
+						'unit' => 'px',
+					),
+					'line-height'     => array( 0, 2, 0.1, '' ),
+					'letter-spacing'  => array( - 1, 2, 0.01, 'em' ),
+					'text-align'      => false,
+					'text-transform'  => true,
+					'text-decoration' => false,
+				),
+			],
+
+			'main_content_heading_5_font' => [
+				'type'     			=> 'font',
+				'label'            => esc_html__( 'Heading 5', 'customify' ),
+				'desc'             => esc_html__( '', 'customify' ),
+				'selector'         => 'h5',
+
+				'default' => array(
+					'font-family'    => SM_HEADINGS_FONT,
+					'font-weight'    => '300',
+					'font-size'      => 14,
+					'line-height'    => 1.6,
+					'letter-spacing' => 0,
+					'text-transform' => 'none',
+				),
+
+				// Sub Fields Configuration
+				'fields'      => array(
+					'font-size'       => array(
+						'min'  => 8,
+						'max'  => 90,
+						'step' => 1,
+						'unit' => 'px',
+					),
+					'line-height'     => array( 0, 2, 0.1, '' ),
+					'letter-spacing'  => array( - 1, 2, 0.01, 'em' ),
+					'text-align'      => false,
+					'text-transform'  => true,
+					'text-decoration' => false,
+				),
+			],
+
+			'main_content_heading_6_font' => [
+				'type'     			=> 'font',
+				'label'            => esc_html__( 'Heading 6', 'customify' ),
+				'desc'             => esc_html__( '', 'customify' ),
+				'selector'         => 'h6',
+
+				'default' => array(
+					'font-family'    => SM_HEADINGS_FONT,
+					'font-weight'    => '300',
+					'font-size'      => 11,
+					'line-height'    => 1.6,
+					'letter-spacing' => 0,
+					'text-transform' => 'none',
+				),
+
+				// Sub Fields Configuration
+				'fields'      => array(
+					'font-size'       => array(
+						'min'  => 8,
+						'max'  => 90,
+						'step' => 1,
+						'unit' => 'px',
+					),
+					'line-height'     => array( 0, 2, 0.1, '' ),
+					'letter-spacing'  => array( - 1, 2, 0.01, 'em' ),
+					'text-align'      => false,
+					'text-transform'  => true,
+					'text-decoration' => false,
+				),
+			],
+
+			'main_content_heading_3_font' => [
+				'type'     			=> 'font',
+				'label'            => esc_html__( 'Heading 3', 'customify' ),
+				'desc'             => esc_html__( '', 'customify' ),
+				'selector'         => '.gamma, h3',
+
+				'default' => array(
+					'font-family'    => SM_HEADINGS_FONT,
+					'font-weight'    => '300',
+					'font-size'      => 26,
+					'line-height'    => 1.6,
+					'letter-spacing' => 0,
+					'text-transform' => 'none',
+				),
+
+				// Sub Fields Configuration
+				'fields'      => array(
+					'font-size'       => array(
+						'min'  => 8,
+						'max'  => 90,
+						'step' => 1,
+						'unit' => 'px',
+					),
+					'line-height'     => array( 0, 2, 0.1, '' ),
+					'letter-spacing'  => array( - 1, 2, 0.01, 'em' ),
+					'text-align'      => false,
+					'text-transform'  => true,
+					'text-decoration' => false,
+				),
+			],
+
+			/**
+			 * Buttons Section
+			 */
+			'buttons_content'                               => [
+				'type' => 'html',
+				'html' => '<span id="section-title-blog-fonts" class="separator section label large">' . esc_html__( 'Buttons', 'customify' ) . '</span>',
+			],
+			'buttons_font' => [
+				'type'     			=> 'font',
+				'label'            => esc_html__( 'Buttons', 'customify' ),
+				'desc'             => esc_html__( '', 'customify' ),
+				'selector'         => '.added_to_cart, .button, button, input[type=button], input[type=reset], input[type=submit]',
+
+				'default' => array(
+					'font-family'    => SM_SECONDARY_FONT,
+					'font-weight'    => '600',
+					'font-size'      => 14,
+					'line-height'    => 1.618,
+					'letter-spacing' => 0,
+					'text-transform' => 'none',
+				),
+
+				// Sub Fields Configuration
+				'fields'      => array(
+					'font-size'       => array(
+						'min'  => 8,
+						'max'  => 90,
+						'step' => 1,
+						'unit' => 'px',
+					),
+					'line-height'     => array( 0, 2, 0.1, '' ),
+					'letter-spacing'  => array( - 1, 2, 0.01, 'em' ),
+					'text-align'      => false,
+					'text-transform'  => true,
+					'text-decoration' => false,
+				),
+			],
+
+
+			/**
+			 * Cards Section
+			 */
+			'cards_content'                               => [
+				'type' => 'html',
+				'html' => '<span id="section-title-blog-fonts" class="separator section label large">' . esc_html__( 'Cards', 'customify' ) . '</span>',
+			],
+
+			'cards_price_font' => [
+				'type'     			=> 'font',
+				'label'            => esc_html__( 'Price', 'customify' ),
+				'desc'             => esc_html__( '', 'customify' ),
+				'selector'         => 'ul.products li.product .price',
+
+				'default' => array(
+					'font-family'    => SM_BODY_FONT,
+					'font-weight'    => '400',
+					'font-size'      => 14,
+					'line-height'    => 1.7,
+					'letter-spacing' => 0,
+					'text-transform' => 'none',
+				),
+
+				// Sub Fields Configuration
+				'fields'      => array(
+					'font-size'       => array(
+						'min'  => 8,
+						'max'  => 90,
+						'step' => 1,
+						'unit' => 'px',
+					),
+					'line-height'     => array( 0, 2, 0.1, '' ),
+					'letter-spacing'  => array( - 1, 2, 0.01, 'em' ),
+					'text-align'      => false,
+					'text-transform'  => true,
+					'text-decoration' => false,
+				),
+			],
+
+		],
+	],
 
 	/**
 	 * COLORS - This section will handle all elements colors (eg. links, headings)
 	 */
 	'colors_section' => [
 		'title'    => __( 'Colors', 'customify' ),
-		'priority' => 2, // This will put this section right after Style Manager that has a priority of 1.
+		'priority' => 3, // This will put this section right after Style Manager that has a priority of 1.
 		'options'  => [
 			/**
 			 * Header Section
@@ -748,47 +1220,6 @@ $config['sections'] = [
 			],
 		],
 	],
-
-	/**
-	 * Fonts - This section will handle all elements fonts (eg. links, headings)
-	 */
-	'fonts_section' => [
-		'title'    => __( 'Fonts', 'customify' ),
-		'priority' => 3, // This will put this section right after Colors section that has a priority of 2.
-		'options'  => [
-			/**
-			 * Header Section
-			 */
-			'header_section'                               => [
-				'type' => 'html',
-				'html' => '<span id="section-title-blog-fonts" class="separator section label large">' . esc_html__( 'Header', 'customify' ) . '</span>',
-			],
-			'header_links_font' => [
-				'type'     			=> 'font',
-				'label'            => esc_html__( 'Navigation Text', 'customify' ),
-				'desc'             => esc_html__( '', 'customify' ),
-				'selector'         => '.nav--main a',
-
-				// Set the defaults
-				'default'  => [
-					'font-family'    => 'Oswald',
-					'font-weight'    => '300',
-					'letter-spacing' => 0.06,
-					'text-transform' => 'uppercase'
-				],
-
-				// List of recommended fonts defined by theme
-				'recommended' => $recommended_fonts,
-				// Sub Fields Configuration (optional)
-				'fields'   => [
-					'letter-spacing'  => [ -1, 2, 0.01, 'em' ],
-					'text-align'      => false,                           // Disable sub-field (False by default)
-					'text-transform'  => true,
-					'text-decoration' => false,
-				],
-			],
-		],
-	],
 ];
 
 /**
@@ -854,13 +1285,28 @@ $config['sections']['style_manager_section'] = [
 
 		// Fonts connected fields.
 		'sm_font_primary'  => [
-			'connected_fields' => [],
+			'connected_fields' => [
+				'main_content_page_title_font',
+				'main_content_quote_block_font',
+				'main_content_heading_1_font',
+				'main_content_heading_2_font',
+				'main_content_heading_3_font',
+			],
 		],
 		'sm_font_secondary'  => [
-			'connected_fields' => [],
+			'connected_fields' => [
+				'main_content_heading_4_font',
+				'main_content_heading_5_font',
+				'main_content_heading_6_font',
+				'buttons_font',
+				'header_navigation_font'
+			],
 		],
 		'sm_font_body'  => [
-			'connected_fields' => [],
+			'connected_fields' => [
+				'main_content_body_text_font',
+				'cards_price_font'
+			],
 		],
 	],
 ];
