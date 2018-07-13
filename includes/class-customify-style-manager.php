@@ -240,7 +240,7 @@ class Customify_Style_Manager {
 			'capability'  => 'edit_theme_options',
 			'panel_id'    => 'style_manager_panel',
 			'title'       => __( 'Style Manager', 'pixcustomify' ),
-			'description' => __( 'Style Manager is a system that helps you to change the look of your site and easily make an impression with it!', 'pixcustomify' ),
+			'description' => __( '<strong>Style Manager</strong> is an intuitive system to help you change the look of your website and make an excellent impression.', 'pixcustomify' ),
 			'sections' => array(),
 			'auto_expand_sole_section' => true, // If there is only one section in the panel, auto-expand it.
 		);
@@ -337,7 +337,7 @@ class Customify_Style_Manager {
 			'capability'  => 'edit_theme_options',
 			'panel_id'    => 'theme_options_panel',
 			'title'       => __( 'Theme Options', 'pixcustomify' ),
-			'description' => __( 'Advanced options to change your site appearance on a more granular level.', 'pixcustomify' ),
+			'description' => __( 'Advanced options to change your site look-and-feel on a detailed level.', 'pixcustomify' ),
 			'sections' => $other_theme_sections_config,
 		);
 
