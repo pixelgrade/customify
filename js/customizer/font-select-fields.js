@@ -375,15 +375,38 @@ let CustomifyFontSelectFields = ( function( $, exports, wp ) {
                         unit = '';
                     // We will do this only for numerical fields.
                     if ( _.contains( ['letter_spacing','line_height', 'font_size'], field ) && isNaN( cleanValue ) ) {
-                        let matches = cleanValue.match(/^([\d.\-+]+)(.+)/i);
-                        if ( matches !== null && typeof matches[1] !== "undefined" ) {
-                            cleanValue = matches[1];
-                            unit = matches[2];
-                            if ( unit !== '' ) {
-                                $( el ).attr( 'unit', unit );
+                        // If we have a standardized value field (as array), use that.
+                        if ( typeof cleanValue.value !== "undefined" ) {
+                            if ( typeof cleanValue.unit !== "undefined" ) {
+                                unit = cleanValue.unit;
+                            }
+
+                            cleanValue = cleanValue.value;
+                        } else {
+                            // Treat the case when the value is a string.
+                            let matches = cleanValue.match(/^([\d.\-+]+)(.+)/i);
+                            if (matches !== null && typeof matches[1] !== "undefined") {
+                                cleanValue = matches[1];
+                                unit = matches[2];
                             }
                         }
                     }
+
+                    if ( unit !== '' ) {
+                        $( el ).attr( 'unit', unit );
+                    }
+
+                    // If this field has a min/max attribute we need to make sure that those attributes allow for the value we are trying to impose.
+                    // But only for numerical values.
+                    if ( ! isNaN( cleanValue ) ) {
+                        if ( $(el).attr('min') && $(el).attr('min') > cleanValue ) {
+                            $(el).attr('min', cleanValue );
+                        }
+                        if ( $(el).attr('max') && $(el).attr('max') < cleanValue ) {
+                            $(el).attr('max', cleanValue );
+                        }
+                    }
+
                     $( el ).val( cleanValue ).trigger( 'change' );
                 }
             } );

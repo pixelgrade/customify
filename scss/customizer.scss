@@ -146,7 +146,7 @@ $background-hover 	: #f5fcff;
 		// Select the Second to Last Element
 		// https://css-tricks.com/useful-nth-child-recipies/
 		.control-section:nth-last-child(2) {
-			border-bottom: 1px solid $borders;
+			// border-bottom: 1px solid $borders;
 		}
 	}
 
@@ -166,7 +166,7 @@ $background-hover 	: #f5fcff;
 }
 
 #customize-controls .description {
-    margin-bottom: 9px;
+    // margin-bottom: 9px;
 
 	font-size: 12px;
 	font-weight: 300;
@@ -1826,6 +1826,8 @@ ul.font-options__options-list {
 //    STYLE MANAGER
 //------------------------------------*/
 
+// COLOR PALETTES SECTION //
+
 $palette_box_shadow: inset 0 0 3px 0 rgba(0,0,0,0.15), inset 0 1px 3px 0 rgba(0,0,0,0.15);
 $palette_box_shadow_stronger: inset 0 2px 3px 0 rgba(0,0,0,0.15), inset 0 0 3px 0 rgba(0,0,0,0.15);
 
@@ -2401,7 +2403,7 @@ $animation-duration: 1s;
 	}
 }
 
-#sub-accordion-section-style_manager_section {
+#sub-accordion-section-sm_color_palettes_section {
 	display: flex !important;
 	flex-direction: column;
 	padding: 12px 0 0 !important;
@@ -2634,4 +2636,95 @@ input.c-color-palette__input[class] {
     opacity: 1;
     transform: scale3d(1, 1, 1);
   }
+}
+
+// SECTIONS AND PANELS WITH ICONS
+// ========================================
+
+@mixin section_icon($icon) {
+	h3.accordion-section-title:before {
+        position: relative;
+        float: right;
+        content: $icon;
+        color: #aed2e5;
+        font-family: dashicons;
+        padding: 1px;
+        margin-right: 28px;
+        font-size: 17px;
+        -webkit-font-smoothing: antialiased;
+	}
+}
+
+#customize-theme-controls {
+
+    #sub-accordion-panel-style_manager_panel,
+    #sub-accordion-panel-theme_options_panel {
+      .customize-panel-description {
+        display: block;
+      }
+    }
+
+	// Style Manager Section
+	// ----------------------------------------	
+	li#accordion-panel-style_manager_panel {
+		@include section_icon("\f155");
+
+		h3.accordion-section-title:before {
+		font-size: 18px;
+		color: #f8bc30; // Yellow color
+		}
+	}
+
+		// Style Manager → Colors / Fonts Panels
+		li#accordion-section-sm_color_palettes_section {
+			@include section_icon("\f100");
+			h3.accordion-section-title {
+				border-top: none;
+			}
+		}
+
+		li#accordion-section-sm_font_palettes_section {
+			@include section_icon("\f122");
+		}
+
+		li#accordion-section-sm_color_palettes_section,
+		li#accordion-section-sm_font_palettes_section {
+			h3.accordion-section-title {
+
+				&:before {
+				    padding: 3px;
+				    margin-right: 5px;
+				    margin-top: -2px;
+				}
+			}
+		}
+
+
+	// Theme Options Section
+	// ----------------------------------------
+	li#accordion-panel-theme_options_panel {
+		@include section_icon("\f538");
+
+		h3.accordion-section-title {
+		  border-bottom: 1px solid #ddd;
+		  border-left: none;
+		  border-right: none;
+		  margin: 0 0 15px 0;
+		}
+	}
+
+		// Theme Options Spacing between Sections
+		li[id$="[general]"], 
+		li[id$="[footer_section]"] {
+			border-bottom: 1px solid #ddd;
+			border-left: none;
+			border-right: none;
+			margin: 0 0 15px 0;
+		}
+
+		li[id$="[general]"] {
+			h3.accordion-section-title {
+				border-top: none;
+			}
+		}
 }

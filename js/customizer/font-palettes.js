@@ -6,6 +6,8 @@ let FontPalettes = ( function( $, exports, wp ) {
         'sm_font_body'
     ];
 
+    const defaultFontType = 'google';
+
     const initializePalettes = () => {
         // Cache initial settings configuration to be able to update connected fields on variation change.
         if ( typeof window.settingsClone === "undefined" ) {
@@ -149,6 +151,14 @@ let FontPalettes = ( function( $, exports, wp ) {
                  * We need to determine the 6 subfields values to be able to determine the value of the font field.
                  */
 
+                // The font type is straight forward as it comes directly from the parent field font logic configuration.
+                if (typeof fonts_logic.type !== "undefined") {
+                    newFontData['type'] = fonts_logic.type;
+                } else {
+                    // We use the default
+                    newFontData['type'] = defaultFontType;
+                }
+
                 // The font family is straight forward as it comes directly from the parent field font logic configuration.
                 if (typeof fonts_logic.font_family !== "undefined") {
                     newFontData['font_family'] = fonts_logic.font_family;
@@ -169,7 +179,7 @@ let FontPalettes = ( function( $, exports, wp ) {
                         let idx = 0;
                         while ( idx < fonts_logic.font_styles.length-1 &&
                                 typeof fonts_logic.font_styles[idx].end !== "undefined" &&
-                                fonts_logic.font_styles[idx].end <= connected_field_data.font_size ) {
+                                fonts_logic.font_styles[idx].end <= connected_field_data.font_size.value ) {
                             idx++;
                         }
 
@@ -188,7 +198,7 @@ let FontPalettes = ( function( $, exports, wp ) {
                     // The line height is determined by getting the value of the polynomial function determined by points.
                     if ( typeof fonts_logic.font_size_to_line_height_points !== "undefined" && _.isArray(fonts_logic.font_size_to_line_height_points)) {
                         let f = interpolatingPolynomial(fonts_logic.font_size_to_line_height_points);
-                        newFontData['line_height'] = Number(f(connected_field_data.font_size)).toPrecision(2);
+                        newFontData['line_height'] = { value: Number(f(connected_field_data.font_size.value)).toPrecision(2) };
                     }
                 }
 

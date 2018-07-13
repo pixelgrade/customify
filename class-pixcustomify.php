@@ -378,7 +378,7 @@ class PixCustomifyPlugin {
 		wp_enqueue_script( 'jquery-react' );
 		wp_enqueue_script( $this->plugin_slug . '-customizer-scripts' );
 
-		wp_localize_script( $this->plugin_slug . '-customizer-scripts', 'customify_settings', $this->localized );
+		wp_localize_script( $this->plugin_slug . '-customizer-scripts', 'customify_settings', apply_filters( 'customify_localized_js_settings', $this->localized ) );
 	}
 
 	/** Register Customizer scripts loaded only on previewer page */

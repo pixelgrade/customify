@@ -94,11 +94,11 @@ class Customify_Style_Manager {
 		require_once 'class-customify-color-palettes.php';
 		$this->color_palettes = Customify_Color_Palettes::instance();
 
-//		/**
-//		 * Initialize the Font Palettes logic.
-//		 */
-//		require_once 'class-customify-font-palettes.php';
-//		$this->font_palettes = Customify_Font_Palettes::instance();
+		/**
+		 * Initialize the Font Palettes logic.
+		 */
+		require_once 'class-customify-font-palettes.php';
+		$this->font_palettes = Customify_Font_Palettes::instance();
 
 		/**
 		 * Initialize the Cloud API logic.
@@ -120,6 +120,11 @@ class Customify_Style_Manager {
 		 * Handle the Customizer Style Manager base config.
 		 */
 		add_filter( 'customify_filter_fields', array( $this, 'style_manager_section_base_config' ), 12, 1 );
+
+		/*
+		 * Handle the grouping and reorganization of the Customizer theme sections when the Style Manager is active.
+		 */
+		add_filter( 'customify_final_config', array( $this, 'reorganize_sections' ), 10, 1 );
 
 		/*
 		 * Handle the logic for user feedback.
@@ -197,6 +202,151 @@ class Customify_Style_Manager {
 		) );
 
 		return $config;
+	}
+
+	/**
+	 * Reorganize the Customizer sections.
+	 *
+	 * @since 1.7.4
+	 *
+	 * @param array $config This holds required keys for the plugin config like 'opt-name', 'panels', 'settings'.
+	 * @return array
+	 */
+	public function reorganize_sections( $config ) {
+		// If there is no style manager support, bail early.
+		if ( ! $this->is_supported() ) {
+			return $config;
+		}
+
+		// If there is no Style Manager section, bail.
+		if ( ! isset( $config['sections']['style_manager_section'] ) ) {
+			return $config;
+		}
+
+		$style_manager_section_config = $config['sections']['style_manager_section'];
+		unset( $config['sections']['style_manager_section'] );
+		// All the other sections.
+		$other_theme_sections_config = $config['sections'];
+		unset( $config['sections'] );
+
+		// We need to split the fields in the Style Manager section into two: color palettes and fonts.
+		$color_palettes_fields = array(
+			'sm_current_color_palette',
+			'sm_color_matrix',
+			'sm_dark_color_master_slider',
+			'sm_dark_color_primary_slider',
+			'sm_dark_color_secondary_slider',
+			'sm_dark_color_tertiary_slider',
+			'sm_colors_dispersion',
+			'sm_colors_focus_point',
+			'sm_color_palette',
+			'sm_color_palette_variation',
+			'sm_color_primary',
+			'sm_color_secondary',
+			'sm_color_tertiary',
+			'sm_dark_primary',
+			'sm_dark_secondary',
+			'sm_dark_tertiary',
+			'sm_light_primary',
+			'sm_light_secondary',
+			'sm_light_tertiary',
+			'sm_swap_colors',
+			'sm_swap_dark_light',
+			'sm_swap_colors_dark',
+			'sm_swap_secondary_colors_dark',
+			'sm_advanced_toggle',
+		);
+
+		$color_palettes_section_config = array(
+			'title' => __( 'Colors', 'pixcustomify' ),
+			'section_id' => 'sm_color_palettes_section',
+			'priority' => 10,
+			'options' => array(),
+		);
+		foreach ( $color_palettes_fields as $field_id ) {
+			if ( ! isset( $style_manager_section_config['options'][ $field_id ] ) ) {
+				continue;
+			}
+
+			if ( empty( $color_palettes_section_config['options'] ) ) {
+				$color_palettes_section_config['options'] = array( $field_id => $style_manager_section_config['options'][ $field_id ] );
+			} else {
+				$color_palettes_section_config['options'] = array_merge( $color_palettes_section_config['options'], array( $field_id => $style_manager_section_config['options'][ $field_id ] ) );
+			}
+		}
+
+		$font_palettes_fields = array(
+			'sm_font_palette',
+			'sm_font_palette_variation',
+			'sm_font_primary',
+			'sm_font_secondary',
+			'sm_font_body',
+			'sm_swap_fonts',
+			'sm_swap_primary_secondary_fonts',
+		);
+
+		$font_palettes_section_config = array(
+			'title' => __( 'Fonts', 'pixcustomify' ),
+			'section_id' => 'sm_font_palettes_section',
+			'priority' => 20,
+			'options' => array(),
+		);
+		foreach ( $font_palettes_fields as $field_id ) {
+			if ( ! isset( $style_manager_section_config['options'][ $field_id ] ) ) {
+				continue;
+			}
+
+			if ( empty( $font_palettes_section_config['options'] ) ) {
+				$font_palettes_section_config['options'] = array( $field_id => $style_manager_section_config['options'][ $field_id ] );
+			} else {
+				$font_palettes_section_config['options'] = array_merge( $font_palettes_section_config['options'], array( $field_id => $style_manager_section_config['options'][ $field_id ] ) );
+			}
+		}
+
+		// Now group them in panels.
+		if ( ! isset( $config['panels'] ) ) {
+			$config['panels'] = array();
+		}
+
+		// The Style Manager panel.
+		$config['panels']['style_manager_panel'] = array(
+			'priority'    => 22,
+			'capability'  => 'edit_theme_options',
+			'panel_id'    => 'style_manager_panel',
+			'title'       => __( 'Style Manager', 'pixcustomify' ),
+			'description' => __( 'Style Manager is a system that helps you to change the look of your site and easily make an impression with it!', 'pixcustomify' ),
+			'sections' => array(
+				'sm_color_palettes_section' => $color_palettes_section_config,
+				'sm_font_palettes_section' => $font_palettes_section_config,
+			),
+			'auto_expand_sole_section' => true, // If there is only one section in the panel, auto-expand it.
+		);
+
+		// The Theme Options panel.
+		$config['panels']['theme_options_panel'] = array(
+			'priority'    => 23,
+			'capability'  => 'edit_theme_options',
+			'panel_id'    => 'theme_options_panel',
+			'title'       => __( 'Theme Options', 'pixcustomify' ),
+			'description' => __( 'Advanced options to change your site appearance on a more granular level.', 'pixcustomify' ),
+			'sections' => $other_theme_sections_config,
+		);
+
+		// Finally, remove the switch theme panel from the Customizer.
+		add_action( 'customize_register', array( $this, 'remove_switch_theme_panel' ), 10 );
+
+		return $config;
+	}
+
+	/**
+	 * Remove the switch/preview theme panel.
+	 *
+	 * @since 1.7.4
+	 *
+	 * @param WP_Customize_Manager $wp_customize
+	 */
+	public function remove_switch_theme_panel( $wp_customize ) {
+		$wp_customize->remove_panel( 'themes' );
 	}
 
 	/**
