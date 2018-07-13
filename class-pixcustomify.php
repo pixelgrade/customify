@@ -378,7 +378,7 @@ class PixCustomifyPlugin {
 		wp_enqueue_script( 'jquery-react' );
 		wp_enqueue_script( $this->plugin_slug . '-customizer-scripts' );
 
-		wp_localize_script( $this->plugin_slug . '-customizer-scripts', 'customify_settings', $this->localized );
+		wp_localize_script( $this->plugin_slug . '-customizer-scripts', 'customify_settings', apply_filters( 'customify_localized_js_settings', $this->localized ) );
 	}
 
 	/** Register Customizer scripts loaded only on previewer page */
@@ -1174,10 +1174,11 @@ class PixCustomifyPlugin {
 						}
 
 						$panel_args = array(
-							'priority'    => 10,
-							'capability'  => 'edit_theme_options',
-							'title'       => __( 'Panel title is required', 'pixcustomify' ),
-							'description' => __( 'Description of what this panel does.', 'pixcustomify' ),
+							'priority'                 => 10,
+							'capability'               => 'edit_theme_options',
+							'title'                    => __( 'Panel title is required', 'pixcustomify' ),
+							'description'              => __( 'Description of what this panel does.', 'pixcustomify' ),
+							'auto_expand_sole_section' => false,
 						);
 
 						if ( isset( $panel_config['priority'] ) && ! empty( $panel_config['priority'] ) ) {
@@ -1191,6 +1192,11 @@ class PixCustomifyPlugin {
 						if ( isset( $panel_config['description'] ) && ! empty( $panel_config['description'] ) ) {
 							$panel_args['description'] = $panel_config['description'];
 						}
+
+						if ( isset( $panel_config['auto_expand_sole_section'] ) ) {
+							$panel_args['auto_expand_sole_section'] = $panel_config['auto_expand_sole_section'];
+						}
+
 
 						$wp_customize->add_panel( $panel_id, $panel_args );
 

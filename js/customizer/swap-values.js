@@ -37,7 +37,7 @@
 
         $document.on( 'click', '[data-action="sm_toggle_advanced_settings"]', function( e ) {
             e.preventDefault();
-            $( '#sub-accordion-section-style_manager_section' ).toggleClass( 'advanced' );
+            $( '#sub-accordion-section-sm_color_palettes_section' ).toggleClass( 'advanced' );
         } );
 
     } );

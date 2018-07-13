@@ -203,9 +203,10 @@ class Pix_Customize_Preset_Control extends Pix_Customize_Control {
                                 </span>
                             </label>
                             <div class="palette">
-                                <?php foreach ( $choice_config['options'] as $color_name => $color_value ) {
-		                            if ( ! empty( $customizer_config['sections']['style_manager_section']['options'][$color_name]['connected_fields'] ) ) {
-			                            echo '<div class="palette__item ' . esc_attr( $color_name ) . '" style="background: ' . esc_attr( $color_value ) . '"></div>' . PHP_EOL;
+                                <?php foreach ( $choice_config['options'] as $color_setting_id => $color_value ) {
+                                	$field_config = PixCustomifyPlugin()->get_option_customizer_config( $color_setting_id );
+		                            if ( ! empty( $field_config['connected_fields'] ) ) {
+			                            echo '<div class="palette__item ' . esc_attr( $color_setting_id ) . '" style="background: ' . esc_attr( $color_value ) . '"></div>' . PHP_EOL;
 		                            }
                                 } ?>
                             </div>

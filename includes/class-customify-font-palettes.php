@@ -4,7 +4,7 @@
  *
  * @see         https://pixelgrade.com
  * @author      Pixelgrade
- * @since       1.7.5
+ * @since       1.7.4
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -19,14 +19,14 @@ class Customify_Font_Palettes {
 	 * Holds the only instance of this class.
 	 * @var     null|Customify_Font_Palettes
 	 * @access  protected
-	 * @since   1.7.5
+	 * @since   1.7.4
 	 */
 	protected static $_instance = null;
 
 	/**
 	 * Constructor.
 	 *
-	 * @since 1.7.5
+	 * @since 1.7.4
 	 */
 	protected function __construct() {
 		$this->init();
@@ -35,7 +35,7 @@ class Customify_Font_Palettes {
 	/**
 	 * Initialize this module.
 	 *
-	 * @since 1.7.5
+	 * @since 1.7.4
 	 */
 	public function init() {
 		// Hook up.
@@ -45,13 +45,14 @@ class Customify_Font_Palettes {
 	/**
 	 * Initiate our hooks
 	 *
-	 * @since 1.7.5
+	 * @since 1.7.4
 	 */
 	public function add_hooks() {
 		/*
 		 * Handle the font palettes preprocessing.
 		 */
-		add_filter( 'customify_get_font_palettes', array( $this, 'preprocess_config' ), 10, 1 );
+		add_filter( 'customify_get_font_palettes', array( $this, 'preprocess_config' ), 5, 1 );
+
 		/*
 		 * Handle the Customizer Style Manager section config.
 		 */
@@ -109,7 +110,7 @@ class Customify_Font_Palettes {
 	 * Things like transforming font_size_line_height_points to a polynomial function for easy use client side,
 	 * or processing the styles intervals and making sure that we get to a state where there are no overlaps and the order is right.
 	 *
-	 * @since 1.7.5
+	 * @since 1.7.4
 	 *
 	 * @param array $config
 	 *
@@ -130,7 +131,7 @@ class Customify_Font_Palettes {
 	/**
 	 * Preprocess a font palette config before using it.
 	 *
-	 * @since 1.7.5
+	 * @since 1.7.4
 	 *
 	 * @param array $palette_config
 	 *
@@ -153,7 +154,7 @@ class Customify_Font_Palettes {
 	/**
 	 * Before using a font logic config, preprocess it to allow for standardization, fill up of missing info, etc.
 	 *
-	 * @since 1.7.5
+	 * @since 1.7.4
 	 *
 	 * @param array $fonts_logic_config
 	 *
@@ -165,6 +166,17 @@ class Customify_Font_Palettes {
 		}
 
 		foreach ( $fonts_logic_config as $font_setting_id => $font_logic ) {
+			if ( empty( $font_logic['font_family'] ) ) {
+				// If we don't have a font family we can't do much with this config - remove it.
+				unset( $fonts_logic_config[ $font_setting_id ] );
+				continue;
+			}
+
+			if ( empty( $font_logic['type'] ) ) {
+				// Default to 'google'
+				$fonts_logic_config[ $font_setting_id ]['type'] = 'google';
+			}
+
 			// Process the font_styles_intervals and make sure that they are in the right order and not overlapping.
 			if ( ! empty( $font_logic['font_styles_intervals'] ) && is_array( $font_logic['font_styles_intervals'] ) ) {
 				$font_styles = array( array_shift( $font_logic['font_styles_intervals'] ) );
@@ -251,13 +263,23 @@ class Customify_Font_Palettes {
 				}
 
 				// We need to do a last pass and ensure no breaks in the intervals. We need them to be continuous.
-				// We will extend intervals to their next neighbour.
+				// We will extend intervals to their next (right-hand) neighbour to achieve continuity.
 				if ( count( $font_styles ) > 1 ) {
 					// The first interval should start at zero, just in case.
 					$font_styles[0]['start'] = 0;
 					for( $i = 1; $i < count( $font_styles ); $i++ ) {
 						// Extend the previous interval, just in case.
 						$font_styles[ $i-1 ]['end'] = $font_styles[ $i ]['start'];
+					}
+				}
+
+				// The last interval should not have an end.
+				unset( $font_styles[ count( $font_styles )-1 ]['end'] );
+
+				// Finally, go through each font style and standardize it.
+				foreach( $font_styles as $key => $value ) {
+					if ( isset( $value['letter_spacing'] ) ) {
+						$font_styles[ $key ]['letter_spacing'] = $this->maybe_standardize_value( $value['letter_spacing'] );
 					}
 				}
 
@@ -271,7 +293,7 @@ class Customify_Font_Palettes {
 	/**
 	 * Get the font palettes configuration.
 	 *
-	 * @since 1.7.5
+	 * @since 1.7.4
 	 *
 	 * @param bool $skip_cache Optional. Whether to use the cached config or fetch a new one.
 	 *
@@ -295,7 +317,7 @@ class Customify_Font_Palettes {
 	/**
 	 * Determine if Font Palettes are supported.
 	 *
-	 * @since 1.7.5
+	 * @since 1.7.4
 	 *
 	 * @return bool
 	 */
@@ -310,7 +332,7 @@ class Customify_Font_Palettes {
 	 * This handles the base configuration for the controls in the Style Manager section. We expect other parties (e.g. the theme),
 	 * to come and fill up the missing details (e.g. connected fields).
 	 *
-	 * @since 1.7.5
+	 * @since 1.7.4
 	 *
 	 * @param array $config This holds required keys for the plugin config like 'opt-name', 'panels', 'settings'.
 	 *
@@ -453,10 +475,10 @@ class Customify_Font_Palettes {
 					'label'        => esc_html__( 'Swap Fonts', 'customify' ),
 					'action'       => 'sm_swap_fonts',
 				),
-				'sm_swap_primary_secondary'            => array(
+				'sm_swap_primary_secondary_fonts'            => array(
 					'type'         => 'button',
 					'setting_type' => 'option',
-					'setting_id'   => 'sm_swap_primary_secondary',
+					'setting_id'   => 'sm_swap_primary_secondary_fonts',
 					'priority'     => 9.1,
 					'label'        => esc_html__( 'Swap Primary ⇆ Secondary', 'customify' ),
 					'action'       => 'sm_swap_dark_light',
@@ -470,7 +492,7 @@ class Customify_Font_Palettes {
 	/**
 	 * Add the current font palette control to the Style Manager section.
 	 *
-	 * @since 1.7.5
+	 * @since 1.7.4
 	 *
 	 * @param array $config
 	 *
@@ -554,7 +576,7 @@ class Customify_Font_Palettes {
 	 *
 	 * Think things like filling up the default font_size if not present.
 	 *
-	 * @since 1.7.5
+	 * @since 1.7.4
 	 *
 	 * @param array $config
 	 *
@@ -590,9 +612,22 @@ class Customify_Font_Palettes {
 					// If we didn't get a font_size we will try and grab the default value for the connected field.
 					if ( ! isset( $value['font_size'] ) ) {
 						if ( isset( $option_config['default']['font-size'] ) ) {
-							$value['font_size'] = $option_config['default']['font-size'];
+							$value['font_size'] = array( 'value' => $option_config['default']['font-size'] );
 						} else {
 							$value['font_size'] = false;
+						}
+					}
+
+					// Handle the case when the received font_size value is a number with a unit - split them.
+					$value['font_size'] = $this->maybe_standardize_value( $value['font_size'] );
+
+					// If we don't have an unit, maybe we can make an educated guess.
+					// If the value is bellow 9, then probably we are talking about ems, else pxs.
+					if ( ! empty( $value['font_size'] ) && ! empty( $value['font_size']['value'] ) && ! isset( $value['font_size']['unit'] ) ) {
+						if ( $value['font_size']['value'] < 9 ) {
+							$value['font_size']['unit'] = 'em';
+						} else {
+							$value['font_size']['unit'] = 'px';
 						}
 					}
 
@@ -604,6 +639,51 @@ class Customify_Font_Palettes {
 		}
 
 		return $config;
+	}
+
+	/**
+	 * Standardize a numerical value for a font CSS property.
+	 *
+	 * The standard format is an associative array with the following entries:
+	 *  - 'value': holds the actual numerical value (int or float)
+	 *  - 'unit : optional; it holds the unit that should be used for the value
+	 *
+	 * @param mixed $value
+	 *
+	 * @return array|bool
+	 */
+	private function maybe_standardize_value( $value ) {
+		$new_value = false;
+
+		if ( false === $value ) {
+			return $new_value;
+		}
+
+		if ( is_array( $value ) ) {
+			$new_value = $value;
+		}
+
+		if ( is_string( $value ) ) {
+			if ( is_numeric( $value ) ) {
+				$new_value = array( 'value' => (float) $value );
+			} else {
+				// We will get everything in front that is a valid part of a number (float including).
+				preg_match("/^([\d.\-+]+)/i", $value, $match);
+
+				if ( ! empty( $match ) && isset( $match[0] ) ) {
+					$new_value = array(
+						'value' => (float) $match[0],
+						'unit' => substr( $value, strlen( $match[0] ) ),
+					);
+				}
+			}
+		}
+
+		if ( is_numeric( $value ) ) {
+			$new_value = array( 'value' => $value );
+		}
+
+		return $new_value;
 	}
 
 	/**
@@ -651,7 +731,7 @@ class Customify_Font_Palettes {
 	 *
 	 * This is only a fallback config in case we can't communicate with the cloud, the first time.
 	 *
-	 * @since 1.7.5
+	 * @since 1.7.4
 	 *
 	 * @return array
 	 */
@@ -791,7 +871,7 @@ class Customify_Font_Palettes {
 						// Font loaded when a palette is selected
 						'font_family'      => 'Lora',
 						// Load all these fonts weights.
-						'font_weights'     => array( 'bold' ),
+						'font_weights'     => array( 700 ),
 						// "Generate" the graph to be used for font-size and line-height.
 						'font_size_to_line_height_points' => array(
 							array( 24, 1.25 ),
@@ -803,8 +883,7 @@ class Customify_Font_Palettes {
 						'font_styles_intervals'      => array(
 							array(
 								'start'          => 0,
-								'end'            => 30,
-								'font_weight'    => 'bold',
+								'font_weight'    => 700,
 								'letter_spacing' => '0em',
 								'text_transform' => 'none',
 							),
@@ -821,19 +900,31 @@ class Customify_Font_Palettes {
 						),
 						'font_styles_intervals'      => array(
 							array(
-								'start'            => 0,
+								'start'          => 0,
 								'font_weight'    => 600,
 								'letter_spacing' => '0.154em',
 								'text_transform' => 'uppercase',
 							),
 							array(
-								'start'            => 13,
+								'start'          => 13,
 								'font_weight'    => 'regular',
 								'letter_spacing' => '0em',
 								'text_transform' => 'uppercase',
 							),
 							array(
-								'start'            => 17, // (? Buttons vs Navigation at 16px)
+								'start'          => 14,
+								'font_weight'    => 'regular',
+								'letter_spacing' => '0.1em',
+								'text_transform' => 'uppercase',
+							),
+							array(
+								'start'          => 16,
+								'font_weight'    => 'regular',
+								'letter_spacing' => '0em',
+								'text_transform' => 'uppercase',
+							),
+							array(
+								'start'          => 17,
 								'font_weight'    => 'regular',
 								'letter_spacing' => '0em',
 								'text_transform' => 'none',
@@ -891,11 +982,12 @@ class Customify_Font_Palettes {
 						// Font loaded when a palette is selected
 						'font_family'      => 'Oswald',
 						// Load all these fonts weights.
-						'font_weights'     => array( 300, 400, 700),
+						'font_weights'     => array( 300, 400, 500 ),
 						// "Generate" the graph to be used for font-size and line-height.
 						'font_size_to_line_height_points' => array(
-							array( 20, 1.55 ),
+							array( 20, 1.15 ),
 							array( 26, 1.45 ),
+							array( 30, 1.25 ),
 							array( 56, 1.25 ),
 						),
 
@@ -903,7 +995,25 @@ class Customify_Font_Palettes {
 						'font_styles_intervals'      => array(
 							array(
 								'start'          => 0,
+								'font_weight'    => 500,
+								'letter_spacing' => '0.04em',
+								'text_transform' => 'uppercase',
+							),
+							array(
+								'start'          => 24,
+								'font_weight'    => 300,
+								'letter_spacing' => '0.06em',
+								'text_transform' => 'uppercase',
+							),
+							array(
+								'start'          => 25,
 								'font_weight'    => 400,
+								'letter_spacing' => '0.04em',
+								'text_transform' => 'uppercase',
+							),
+							array(
+								'start'          => 26,
+								'font_weight'    => 500,
 								'letter_spacing' => '0.04em',
 								'text_transform' => 'uppercase',
 							),
@@ -912,24 +1022,31 @@ class Customify_Font_Palettes {
 
 					// Secondary font is used for smaller headings [H4, H5, H6], including meta details
 					'sm_font_secondary' => array(
-						'font_family'      => 'Roboto',
-						'font_weights'     => array( 300, '300italic', 400, '400italic', 500, '500italic' ),
+						'font_family'      => 'Oswald',
+						'font_weights'     => array( 200, '200italic', 500, '500italic' ),
 						'font_size_to_line_height_points' => array(
-							array( 11, 1.625 ),
-							array( 18, 1.4 ),
+							array( 14, 1.625 ),
+							array( 22, 1.55 ),
+							array( 24, 1.625 ),
 						),
 						'font_styles_intervals'      => array(
 							array(
 								'start'          => 0,
-								'font_weight'    => 400,
-								'letter_spacing' => '0.04em',
+								'font_weight'    => 500,
+								'letter_spacing' => '0.01em',
 								'text_transform' => 'uppercase',
 							),
 							array(
-								'start'          => 12,
+								'start'          => 20,
 								'font_weight'    => 500,
 								'letter_spacing' => '0em',
 								'text_transform' => 'uppercase',
+							),
+							array(
+								'start'          => 24,
+								'font_weight'    => 200,
+								'letter_spacing' => '0em',
+								'text_transform' => 'none',
 							),
 						),
 					),
@@ -939,7 +1056,7 @@ class Customify_Font_Palettes {
 						'font_family'      => 'Roboto',
 						'font_weights'     => array( 300, '300italic', 400, '400italic', 500, '500italic' ),
 						'font_size_to_line_height_points' => array(
-							array( 14, 1.45 ),
+							array( 10, 1.6 ),
 							array( 16, 1.625 ),
 							array( 18, 1.75 ),
 						),
@@ -948,7 +1065,21 @@ class Customify_Font_Palettes {
 						'font_styles_intervals'      => array(
 							array(
 								'start'          => 0,
-								'font_weight'    => 400,
+								'end'            => 10.9,
+								'font_weight'    => 500,
+								'letter_spacing' => '0.03em',
+								'text_transform' => 'none',
+							),
+							array(
+								'start'          => 10.9,
+								'end'            => 12,
+								'font_weight'    => 500,
+								'letter_spacing' => '0.02em',
+								'text_transform' => 'uppercase',
+							),
+							array(
+								'start'          => 12,
+								'font_weight'    => 300,
 								'letter_spacing' => 0,
 								'text_transform' => 'none',
 							),
@@ -1180,7 +1311,7 @@ class Customify_Font_Palettes {
 	/**
 	 * Get the current font palette ID or false if none is selected.
 	 *
-	 * @since 1.7.5
+	 * @since 1.7.4
 	 *
 	 * @return string|false
 	 */
@@ -1191,7 +1322,7 @@ class Customify_Font_Palettes {
 	/**
 	 * Get the current font palette variation ID or false if none is selected.
 	 *
-	 * @since 1.7.5
+	 * @since 1.7.4
 	 *
 	 * @return string|false
 	 */
@@ -1202,7 +1333,7 @@ class Customify_Font_Palettes {
 	/**
 	 * Determine if the selected font palette has been customized and remember this in an option.
 	 *
-	 * @since 1.7.5
+	 * @since 1.7.4
 	 *
 	 * @return bool
 	 */
@@ -1243,7 +1374,7 @@ class Customify_Font_Palettes {
 	/**
 	 * Determine if a custom font palette is in use.
 	 *
-	 * @since 1.7.5
+	 * @since 1.7.4
 	 *
 	 * @return bool
 	 */
@@ -1254,7 +1385,7 @@ class Customify_Font_Palettes {
 	/**
 	 * Get all the defined Style Manager master font field ids.
 	 *
-	 * @since 1.7.5
+	 * @since 1.7.4
 	 *
 	 * @param array $options
 	 *
@@ -1279,7 +1410,7 @@ class Customify_Font_Palettes {
 	/**
 	 * Add font palettes usage data to the site data sent to the cloud.
 	 *
-	 * @since 1.7.5
+	 * @since 1.7.4
 	 *
 	 * @param array $site_data
 	 *
@@ -1305,7 +1436,7 @@ class Customify_Font_Palettes {
 	 *
 	 * Ensures only one instance of Customify_Font_Palettes is loaded or can be loaded.
 	 *
-	 * @since  1.7.5
+	 * @since  1.7.4
 	 * @static
 	 *
 	 * @return Customify_Font_Palettes Main Customify_Font_Palettes instance
@@ -1321,7 +1452,7 @@ class Customify_Font_Palettes {
 	/**
 	 * Cloning is forbidden.
 	 *
-	 * @since 1.7.5
+	 * @since 1.7.4
 	 */
 	public function __clone() {
 
@@ -1331,7 +1462,7 @@ class Customify_Font_Palettes {
 	/**
 	 * Unserializing instances of this class is forbidden.
 	 *
-	 * @since 1.7.5
+	 * @since 1.7.4
 	 */
 	public function __wakeup() {
 

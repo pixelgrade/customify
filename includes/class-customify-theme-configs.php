@@ -4,7 +4,7 @@
  *
  * @see         https://pixelgrade.com
  * @author      Pixelgrade
- * @since       1.7.5
+ * @since       1.7.4
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -19,7 +19,7 @@ class Customify_Theme_Configs {
 	 * Holds the only instance of this class.
 	 * @var     null|Customify_Theme_Configs
 	 * @access  protected
-	 * @since   1.7.5
+	 * @since   1.7.4
 	 */
 	protected static $_instance = null;
 
@@ -27,14 +27,14 @@ class Customify_Theme_Configs {
 	 * The external theme config for the current active theme.
 	 * @var     array
 	 * @access  public
-	 * @since   1.7.5
+	 * @since   1.7.4
 	 */
 	public $external_theme_config = null;
 
 	/**
 	 * Constructor.
 	 *
-	 * @since 1.7.5
+	 * @since 1.7.4
 	 */
 	protected function __construct() {
 		$this->init();
@@ -43,7 +43,7 @@ class Customify_Theme_Configs {
 	/**
 	 * Initialize this module.
 	 *
-	 * @since 1.7.5
+	 * @since 1.7.4
 	 */
 	public function init() {
 		// Hook up.
@@ -53,7 +53,7 @@ class Customify_Theme_Configs {
 	/**
 	 * Initiate our hooks
 	 *
-	 * @since 1.7.5
+	 * @since 1.7.4
 	 */
 	public function add_hooks() {
 		/*
@@ -100,7 +100,7 @@ class Customify_Theme_Configs {
 	/**
 	 * Determine if Style Manager is supported.
 	 *
-	 * @since 1.7.5
+	 * @since 1.7.4
 	 *
 	 * @return bool
 	 */
@@ -112,7 +112,7 @@ class Customify_Theme_Configs {
 	/**
 	 * Get the themes configuration.
 	 *
-	 * @since 1.7.5
+	 * @since 1.7.4
 	 *
 	 * @param bool $skip_cache Optional. Whether to use the cached config or fetch a new one.
 	 *
@@ -138,7 +138,7 @@ class Customify_Theme_Configs {
 	 *
 	 * If the conditions are met, activate an external theme config by declaring support for the style manager and saving the config.
 	 *
-	 * @since 1.7.5
+	 * @since 1.7.4
 	 *
 	 * @param array $config This holds required keys for the plugin config like 'opt-name', 'panels', 'settings'
 	 * @return array
@@ -214,7 +214,7 @@ class Customify_Theme_Configs {
 	 *
 	 * If the conditions are met, apply an external theme config. Right now we are only handling sections and their controls.
 	 *
-	 * @since 1.7.5
+	 * @since 1.7.4
 	 *
 	 * @param array $config This holds required keys for the plugin config like 'opt-name', 'panels', 'settings'
 	 * @return array
@@ -255,7 +255,7 @@ class Customify_Theme_Configs {
 	 *
 	 * Mainly things like removing sections, controls, etc.
 	 *
-	 * @since 1.7.5
+	 * @since 1.7.4
 	 *
 	 * @param WP_Customize_Manager $wp_customize
 	 */
@@ -340,7 +340,7 @@ class Customify_Theme_Configs {
 	 *
 	 * Ensures only one instance of Customify_Theme_Configs is loaded or can be loaded.
 	 *
-	 * @since  1.7.5
+	 * @since  1.7.4
 	 * @static
 	 *
 	 * @return Customify_Theme_Configs Main Customify_Theme_Configs instance
@@ -357,7 +357,7 @@ class Customify_Theme_Configs {
 	/**
 	 * Cloning is forbidden.
 	 *
-	 * @since 1.7.5
+	 * @since 1.7.4
 	 */
 	public function __clone() {
 
@@ -367,7 +367,7 @@ class Customify_Theme_Configs {
 	/**
 	 * Unserializing instances of this class is forbidden.
 	 *
-	 * @since 1.7.5
+	 * @since 1.7.4
 	 */
 	public function __wakeup() {
 

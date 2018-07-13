@@ -4,7 +4,7 @@
  *
  * @see         https://pixelgrade.com
  * @author      Pixelgrade
- * @since       1.7.5
+ * @since       1.7.4
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -19,14 +19,14 @@ class Customify_Cloud_Api {
 	 * External REST API endpoints used for communicating with the Pixelgrade Cloud.
 	 * @var array
 	 * @access public
-	 * @since    1.7.5
+	 * @since    1.7.4
 	 */
 	public static $externalApiEndpoints;
 
 	/**
 	 * Constructor.
 	 *
-	 * @since 1.7.5
+	 * @since 1.7.4
 	 */
 	public function __construct() {
 
@@ -36,7 +36,7 @@ class Customify_Cloud_Api {
 	/**
 	 * Initialize this module.
 	 *
-	 * @since 1.7.5
+	 * @since 1.7.4
 	 */
 	public function init() {
 		// Make sure our constants are in place, if not already defined.
@@ -60,7 +60,7 @@ class Customify_Cloud_Api {
 	/**
 	 * Fetch the design assets data from the Pixelgrade Cloud.
 	 *
-	 * @since 1.7.5
+	 * @since 1.7.4
 	 *
 	 * @return array|false
 	 */
@@ -71,7 +71,7 @@ class Customify_Cloud_Api {
 			'theme_data' => $this->get_active_theme_data(),
 			// We are only interested in data needed to identify the plugin version and eventually deliver design assets suitable for it.
 			'site_data' => $this->get_site_data(),
-		) );
+		), $this );
 
 		$request_args = array(
 			'method' => self::$externalApiEndpoints['cloud']['getDesignAssets']['method'],
@@ -100,7 +100,7 @@ class Customify_Cloud_Api {
 	/**
 	 * Get the active theme data.
 	 *
-	 * @since 1.7.5
+	 * @since 1.7.4
 	 *
 	 * @return array
 	 */
@@ -132,7 +132,7 @@ class Customify_Cloud_Api {
 	/**
 	 * Get the site data.
 	 *
-	 * @since 1.7.5
+	 * @since 1.7.4
 	 *
 	 * @return array
 	 */
@@ -156,7 +156,7 @@ class Customify_Cloud_Api {
 	/**
 	 * Send stats to the Pixelgrade Cloud.
 	 *
-	 * @since 1.7.5
+	 * @since 1.7.4
 	 *
 	 * @param array $request_data The data to be sent.
 	 * @param bool $blocking Optional. Whether this should be a blocking request. Defaults to false.
@@ -175,7 +175,13 @@ class Customify_Cloud_Api {
 			);
 		}
 
-		$request_data = apply_filters( 'customify_pixelgrade_cloud_request_data', $request_data );
+		/**
+		 * Filters request data sent to the cloud.
+		 *
+		 * @param array $request_data
+		 * @param object $this @todo This argument is no longer needed and should be removed when Pixelgrade Care doesn't rely on it.
+		 */
+		$request_data = apply_filters( 'customify_pixelgrade_cloud_request_data', $request_data, $this );
 
 		$request_args = array(
 			'method' => self::$externalApiEndpoints['cloud']['stats']['method'],
