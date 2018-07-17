@@ -2665,7 +2665,7 @@ input.c-color-palette__input[class] {
     }
 
 	// Style Manager Section
-	// ----------------------------------------	
+	// ----------------------------------------
 	li#accordion-panel-style_manager_panel {
 		@include section_icon("\f155");
 
@@ -2714,7 +2714,7 @@ input.c-color-palette__input[class] {
 	}
 
 		// Theme Options Spacing between Sections
-		li[id$="[general]"], 
+		li[id$="[general]"],
 		li[id$="[footer_section]"] {
 			border-bottom: 1px solid #ddd;
 			border-left: none;
@@ -2728,3 +2728,53 @@ input.c-color-palette__input[class] {
 			}
 		}
 }
+
+.color .disc {
+	display: block;
+	overflow: hidden;
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	z-index: 15;
+	border-radius: 50%;
+	pointer-events: none;
+	opacity: 0;
+	transition: opacity .3s .7s ease-in-out;
+
+	&:after {
+	    content: "";
+	    filter: blur(6px) saturate(.7) brightness(1.1);
+
+	    display: block;
+	    width: 200%;
+	    height: 200%;
+	    padding-top: 100%;
+
+	    position: absolute;
+	    top: -50%;
+	    left: -50%;
+	    transform: scale(1);
+	    background-image:
+	        linear-gradient(330deg, transparent 50%, #ff8100 0),
+	        linear-gradient(300deg, transparent 50%, #ff5800 0),
+	        linear-gradient(270deg, transparent 50%, #c92323 0),
+	        linear-gradient(240deg, transparent 50%, #cc42a2 0),
+	        linear-gradient(210deg, transparent 50%, #9f49ac 0),
+	        linear-gradient(180deg, transparent 50%, #306cd3 0),
+	        linear-gradient(150deg, transparent 50%, #179067 0),
+	        linear-gradient(120deg, transparent 50%, #0eb5d6 0),
+	        linear-gradient(90deg, transparent 50%, #50b517 0),
+	        linear-gradient(60deg, transparent 50%, #ede604 0),
+	        linear-gradient(30deg, transparent 50%, #fc0 0),
+	        linear-gradient(0deg, transparent 50%, #feac00 0);
+	    background-clip: content-box,content-box,content-box,content-box,content-box,content-box,padding-box,padding-box,padding-box,padding-box,padding-box,padding-box;
+	}
+}
+
+.color.altered .disc {
+	opacity: 1;
+	transition-delay: 0;
+}
+

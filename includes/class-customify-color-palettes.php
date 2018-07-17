@@ -358,6 +358,7 @@ class Customify_Color_Palettes {
 					'<div class="color ' . $setting_id . '" data-setting="' . $setting_id . '">' . PHP_EOL .
 					'<div class="fill"></div>' . PHP_EOL .
 					'<div class="picker">' .
+					'<div class="disc"></div>'.
 					'<i></i>'.
 					'</div>' . PHP_EOL .
 					'</div>' . PHP_EOL;
