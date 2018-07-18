@@ -124,33 +124,20 @@ let ColorPalettes = ( function( $, exports, wp ) {
         }
     };
 
-    const getSlaveFieldCallback = function( parent_setting_id, connected_setting_id ) {
-        return function( new_value, old_value ) {
-            let parentSetting = wp.customize( parent_setting_id );
-            if ( ! _.isUndefined( parentSetting ) ) {
-                let parentSettingValue = parentSetting();
-                if ( parentSettingValue !== new_value ) {
-                    let $target = $( '.c-color-palette .color' ).filter( '.' + parent_setting_id );
-                    $( '.c-color-palette .color' ).filter( '.' + parent_setting_id ).addClass( 'altered' );
-                }
-            }
-        }
-    };
-
     const bindConnectedFields = function() {
         _.each( masterSettingIds, function( parent_setting_id ) {
             if ( typeof wp.customize.settings.settings[parent_setting_id] !== "undefined" ) {
                 let parent_setting_data = wp.customize.settings.settings[parent_setting_id];
                 let parent_setting = wp.customize(parent_setting_id);
 
-                if (typeof parent_setting_data.connected_fields !== "undefined") {
+                if ( ! _.isUndefined( parent_setting_data.connected_fields ) ) {
                     window.connectedFieldsCallbacks[parent_setting_id] = getMasterFieldCallback(parent_setting_data, parent_setting_id);
                     parent_setting.bind(window.connectedFieldsCallbacks[parent_setting_id]);
 
                     _.each( parent_setting_data.connected_fields, function( connected_field_data ) {
                         let connected_setting_id = connected_field_data.setting_id;
                         let connected_setting = wp.customize(connected_setting_id);
-                        window.connectedFieldsCallbacks[connected_setting_id] = getSlaveFieldCallback(parent_setting_id, connected_setting_id);
+                        window.connectedFieldsCallbacks[connected_setting_id] = toggleAlteredClassOnMasterControls;
                         connected_setting.bind(window.connectedFieldsCallbacks[connected_setting_id]);
                     } );
                 }
@@ -182,6 +169,26 @@ let ColorPalettes = ( function( $, exports, wp ) {
 
 	    return variation;
     };
+
+    const getPaletteColors = () => {
+
+    }
+
+    const getCurrentPaletteColors = () => {
+        const $palette = $( '.c-color-palette' );
+        const $colors = $palette.find( '.colors.next .color' );
+        const colors = [];
+
+        $colors.each( ( i, obj ) => {
+            const $obj = $( obj );
+            const setting_id = $obj.data( 'setting' );
+            const setting = wp.customize( setting_id );
+            const color = setting();
+            colors.push( color );
+        } );
+
+        return colors;
+    }
 
     const createCurrentPaletteControls = () => {
         const $palette = $( '.c-color-palette' );
@@ -215,11 +222,11 @@ let ColorPalettes = ( function( $, exports, wp ) {
 	                    setting.set( currentColor );
                         $palette.find( '.c-color-palette__name' ).text( 'Custom Style' );
                     }
-                }
-            } );
 
-            $input.change( function() {
-                $obj.removeClass( 'altered' );
+                    if ( event.originalEvent.type !== 'external' ) {
+                        $palette.find( '.color.' + setting_id ).removeClass( 'altered' );
+                    }
+                },
             } );
 
 	        $obj.find( '.iris-picker' ).on( 'click', function( e ) {
@@ -296,8 +303,34 @@ let ColorPalettes = ( function( $, exports, wp ) {
 
         $( this ).trigger( 'customify:preset-change' );
         setCurrentPalette( label );
+
+        setPalettesOnConnectedFields();
+
 //	    buildColorMatrix();
     };
+
+    const setPalettesOnConnectedFields = () => {
+        let $targets = $();
+        _.each( masterSettingIds, function( parent_setting_id ) {
+            if ( typeof wp.customize.settings.settings[parent_setting_id] !== "undefined" ) {
+                let parent_setting_data = wp.customize.settings.settings[parent_setting_id];
+                if ( ! _.isUndefined( parent_setting_data.connected_fields ) )  {
+                    _.each( parent_setting_data.connected_fields, function( connected_field_data ) {
+                        let connected_setting_id = connected_field_data.setting_id;
+                        var matches = connected_setting_id.match(/\[(.*?)\]/);
+
+                        if ( matches ) {
+                            let target_id = matches[1];
+                            let $target = $( '.customize-control-color' ).filter( '[id*="' + target_id + '"]' ).find( '.wp-color-picker' );
+                            $targets = $targets.add( $target );
+                        }
+                    });
+                }
+            }
+        });
+
+        $targets.iris({ palettes: getCurrentPaletteColors() });
+    }
 
     const buildColorMatrix = () => {
         const $matrix = $( '.sm_color_matrix' );
@@ -335,12 +368,12 @@ let ColorPalettes = ( function( $, exports, wp ) {
 	    });
     };
 
-    const refreshCurrentPaletteControl = () => {
-        let optionsToShow = [];
+    const toggleAlteredClassOnMasterControls = _.debounce( () => {
         let alteredSettings = [];
+        let alteredSettingsSelector;
 
         _.each( masterSettingIds, function( masterSettingId ) {
-        	let connectedFields = wp.customize.settings.settings[masterSettingId]['connected_fields'];
+            let connectedFields = wp.customize.settings.settings[masterSettingId]['connected_fields'];
             let masterSettingValue = wp.customize( masterSettingId )();
             let connectedFieldsWereAltered = false;
 
@@ -350,33 +383,52 @@ let ColorPalettes = ( function( $, exports, wp ) {
                 });
             }
 
-        	if ( ! _.isUndefined( connectedFields ) && connectedFields.length ) {
+            if ( ! _.isUndefined( connectedFields ) && connectedFields.length ) {
                 _.each( connectedFields, function( connectedField ) {
                     let connectedSettingId = connectedField.setting_id;
                     let connectedFieldValue = wp.customize( connectedSettingId )();
-                    if ( connectedFieldValue !== masterSettingValue ) {
+                    if ( connectedFieldValue.toLowerCase() !== masterSettingValue.toLowerCase() ) {
                         connectedFieldsWereAltered = true;
                     }
                 } );
+
                 if ( connectedFieldsWereAltered ) {
                     alteredSettings.push( masterSettingId );
                 }
-        		optionsToShow.push( masterSettingId );
-	        }
+            }
         } );
 
-        let optionsSelector = '.' + optionsToShow.join(', .');
-        let alteredSettingsSelector = '.' + alteredSettings.join(', .');
+        alteredSettingsSelector = '.' + alteredSettings.join(', .');
 
-        $( '.c-color-palette .color' ).removeClass( 'altered' ).addClass( 'hidden' ).filter( optionsSelector ).removeClass( 'hidden' )
+        $( '.c-color-palette .color' ).removeClass( 'altered' );
 
         if ( alteredSettings.length ) {
             $( '.c-color-palette .color' ).filter( alteredSettingsSelector ).addClass( 'altered' );
         }
+    }, 100 );
 
-        $( '.customify_preset.color_palette .palette__item' ).addClass( 'hidden' )
-            .filter( optionsSelector ).removeClass( 'hidden' );
-    };
+    const toggleHiddenClassOnMasterControls = _.debounce( () => {
+        let optionsToShow = [];
+        let optionsSelector;
+
+        _.each( masterSettingIds, function( masterSettingId ) {
+            let connectedFields = wp.customize.settings.settings[masterSettingId]['connected_fields'];
+
+            if ( ! _.isUndefined( connectedFields ) && ! _.isEmpty( connectedFields ) ) {
+                optionsToShow.push( masterSettingId );
+            }
+        } );
+
+        optionsSelector = '.' + optionsToShow.join(', .');
+
+        $( '.c-color-palette .color' ).addClass( 'hidden' ).filter( optionsSelector ).removeClass( 'hidden' )
+        $( '.customify_preset.color_palette .palette__item' ).addClass( 'hidden' ).filter( optionsSelector ).removeClass( 'hidden' );
+    }, 100 );
+
+    const refreshCurrentPaletteControl = () => {
+        toggleAlteredClassOnMasterControls();
+        toggleHiddenClassOnMasterControls();
+    }
 
 	const swapConnectedFields = ( settings ) => {
         let variation = getCurrentVariation();
@@ -570,6 +622,7 @@ let ColorPalettes = ( function( $, exports, wp ) {
 	    reloadConnectedFields();
         bindConnectedFields();
         refreshCurrentPaletteControl();
+        setPalettesOnConnectedFields();
 	    bindEvents();
     } );
 

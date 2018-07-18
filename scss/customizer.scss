@@ -2741,7 +2741,7 @@ input.c-color-palette__input[class] {
 	border-radius: 50%;
 	pointer-events: none;
 	opacity: 0;
-	transition: opacity .3s .7s ease-in-out;
+	transition: opacity .3s ease-in-out;
 
 	&:after {
 	    content: "";
@@ -2775,6 +2775,26 @@ input.c-color-palette__input[class] {
 
 .color.altered .disc {
 	opacity: 1;
-	transition-delay: 0;
+}
+
+.customize-control-color .wp-picker-container .iris-picker {
+
+	.iris-palette-container {
+		display: flex;
+		width: 215px;
+	}
+
+	.iris-palette {
+		width: auto !important;
+		height: auto !important;
+		flex: 1 1 0;
+		float: none;
+
+		&:after {
+			content: "";
+			display: block;
+			padding-top: 100%;
+		}
+	}
 }
 
