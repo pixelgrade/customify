@@ -174,23 +174,19 @@ let ColorPalettes = ( function( $, exports, wp ) {
 	    return variation;
     };
 
-    const getPaletteColors = () => {
+    // return an array with the hex values of a certain color palette
+    const getPaletteColors = ( palette_id ) => {
 
     }
 
+    // return an array with the hex values of the current palette
     const getCurrentPaletteColors = () => {
-        const $palette = $( '.c-color-palette' );
-        const $colors = $palette.find( '.colors.next .color' );
         const colors = [];
-
-        $colors.each( ( i, obj ) => {
-            const $obj = $( obj );
-            const setting_id = $obj.data( 'setting' );
+        _.each( masterSettingIds, function( setting_id ) {
             const setting = wp.customize( setting_id );
             const color = setting();
             colors.push( color );
         } );
-
         return colors;
     }
 
@@ -236,6 +232,13 @@ let ColorPalettes = ( function( $, exports, wp ) {
 		        e.preventDefault();
             } );
 
+            const showColorPicker = () => {
+                $colors.not( $obj ).each( function( i, obj ) {
+                    $( obj ).data( 'target' ).not( $input ).hide();
+                } );
+                $input.show().focus();
+            }
+
 	        $obj.on( 'click', ( e ) => {
                 e.stopPropagation();
                 e.preventDefault();
@@ -243,13 +246,13 @@ let ColorPalettes = ( function( $, exports, wp ) {
                 if ( $input.is( ':visible' ) ) {
                     $input.iris( 'hide' );
                     $input.hide();
-                    $( '.js-altered-notification' ).addClass( 'hidden' )
                     $colors.removeClass( 'active inactive' );
                 } else {
-                    $colors.not( $obj ).each( function( i, obj ) {
-                        $( obj ).data( 'target' ).not( $input ).hide();
-                    } );
-                    $input.show().focus();
+                    if ( $obj.is( '.altered' ) ) {
+                        confirmChanges( showColorPicker );
+                    } else {
+                        showColorPicker();
+                    }
                 }
             } );
 
@@ -280,8 +283,6 @@ let ColorPalettes = ( function( $, exports, wp ) {
 
                 $input.iris( 'color', $obj.css( 'color' ) );
                 $input.iris( 'show' );
-
-                $( '.js-altered-notification' ).toggleClass( 'hidden', ! $obj.is( '.altered' ) );
             } );
         } );
 
@@ -292,7 +293,6 @@ let ColorPalettes = ( function( $, exports, wp ) {
 
 		        $input.iris( 'hide' );
 		        $input.hide();
-                $( '.js-altered-notification' ).addClass( 'hidden' );
 	        } );
         } );
 
@@ -315,15 +315,20 @@ let ColorPalettes = ( function( $, exports, wp ) {
 //	    buildColorMatrix();
     };
 
+    // this function goes through all the connected fields and adds swatches to the default color picker for all the colors in the current color palette
     const setPalettesOnConnectedFields = () => {
         let $targets = $();
+        // loop through the master settings
         _.each( masterSettingIds, function( parent_setting_id ) {
             if ( typeof wp.customize.settings.settings[parent_setting_id] !== "undefined" ) {
                 let parent_setting_data = wp.customize.settings.settings[parent_setting_id];
                 if ( ! _.isUndefined( parent_setting_data.connected_fields ) )  {
+                    // loop through all the connected fields and search the element on which the iris plugin has been initialized
                     _.each( parent_setting_data.connected_fields, function( connected_field_data ) {
+                        // the connected_setting_id is different than the actual id attribute of the element we're searching for
+                        // so we have to do some regular expressions
                         let connected_setting_id = connected_field_data.setting_id;
-                        var matches = connected_setting_id.match(/\[(.*?)\]/);
+                        let matches = connected_setting_id.match(/\[(.*?)\]/);
 
                         if ( matches ) {
                             let target_id = matches[1];
@@ -334,7 +339,7 @@ let ColorPalettes = ( function( $, exports, wp ) {
                 }
             }
         });
-
+        // apply the current color palettes to all the elements found
         $targets.iris({ palettes: getCurrentPaletteColors() });
     }
 
@@ -407,10 +412,12 @@ let ColorPalettes = ( function( $, exports, wp ) {
         alteredSettingsSelector = '.' + alteredSettings.join(', .');
 
         $( '.c-color-palette .color' ).removeClass( 'altered' );
+        $( '.js-altered-notification' ).toggleClass( 'hidden', ! alteredSettings.length );
 
         if ( alteredSettings.length ) {
             $( '.c-color-palette .color' ).filter( alteredSettingsSelector ).addClass( 'altered' );
         }
+
     }, 30 );
 
     const toggleHiddenClassOnMasterControls = _.debounce( () => {
@@ -588,6 +595,23 @@ let ColorPalettes = ( function( $, exports, wp ) {
         refreshCurrentPaletteControl();
     }
 
+    const confirmChanges = ( callback ) => {
+        if ( typeof callback !== 'function' ) {
+            return;
+        }
+
+        let altered = !! $( '.c-color-palette .color.altered' ).length;
+        let confirmed = true;
+
+        if ( altered ) {
+            confirmed = confirm( "One or more fields connected to the color palette have been modified. By changing the palette variation you will lose changes to any color made prior to this action." );
+        }
+
+        if ( ! altered || confirmed ) {
+            callback();
+        }
+    }
+
 
     const bindEvents = () => {
 	    const paletteControlSelector = '.c-color-palette__control';
@@ -598,19 +622,25 @@ let ColorPalettes = ( function( $, exports, wp ) {
 	    $paletteControl.filter( '.variation-' + variation ).addClass( 'active' );
 
 	    $( 'body' ).on( 'click', paletteControlSelector, function() {
-		    let $obj = $( this ),
-			    $target = $( $obj.data( 'target' ) );
+            confirmChanges( () => {
+                let $obj = $( this ),
+                    $target = $( $obj.data( 'target' ) );
 
-		    $obj.siblings( paletteControlSelector ).removeClass( 'active' );
-		    $obj.addClass( 'active' );
-		    $target.prop( 'checked', true ).trigger( 'change' );
+                $obj.siblings( paletteControlSelector ).removeClass( 'active' );
+                $obj.addClass( 'active' );
+                $target.prop( 'checked', true ).trigger( 'change' );
+            } );
 	    } );
 
 	    // when variation is changed reload connected fields from cached version of customizer settings config
-	    $( document ).on( 'change', '[name="_customize-radio-sm_color_palette_variation_control"]', reinitializeConnectedFields );
+	    $( document ).on( 'change', '[name="_customize-radio-sm_color_palette_variation_control"]', () => {
+            confirmChanges( reinitializeConnectedFields );
+        } );
 
 	    //
-	    $( document ).on( 'click', '.customify_preset.color_palette input', onPaletteChange );
+	    $( document ).on( 'click', '.customify_preset.color_palette input', function () {
+            confirmChanges( onPaletteChange.bind( this ) );
+        } );
 
 //	    $( all_sliders_selector ).on( 'input', reloadConnectedFields );
 
