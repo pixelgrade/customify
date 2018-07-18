@@ -241,6 +241,7 @@ let ColorPalettes = ( function( $, exports, wp ) {
                 if ( $input.is( ':visible' ) ) {
                     $input.iris( 'hide' );
                     $input.hide();
+                    $( '.js-altered-notification' ).addClass( 'hidden' )
                     $colors.removeClass( 'active inactive' );
                 } else {
                     $colors.not( $obj ).each( function( i, obj ) {
@@ -264,8 +265,8 @@ let ColorPalettes = ( function( $, exports, wp ) {
 		        $colors.not( $obj ).addClass( 'inactive' ).removeClass( 'active' );
 		        $obj.addClass( 'active' ).removeClass( 'inactive' );
 
-                $colors.not( $obj ).each( function( i, obj ) {
-                    $( obj ).data( 'target' ).iris( 'hide' );
+                $colors.not( $obj ).each( function( i, other ) {
+                    $( other ).data( 'target' ).iris( 'hide' );
                 } );
 
                 const $iris = $input.next( '.iris-picker' );
@@ -277,6 +278,8 @@ let ColorPalettes = ( function( $, exports, wp ) {
 
                 $input.iris( 'color', $obj.css( 'color' ) );
                 $input.iris( 'show' );
+
+                $( '.js-altered-notification' ).toggleClass( 'hidden', ! $obj.is( '.altered' ) );
             } );
         } );
 
@@ -287,6 +290,7 @@ let ColorPalettes = ( function( $, exports, wp ) {
 
 		        $input.iris( 'hide' );
 		        $input.hide();
+                $( '.js-altered-notification' ).addClass( 'hidden' );
 	        } );
         } );
 

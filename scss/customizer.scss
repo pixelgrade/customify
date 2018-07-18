@@ -2368,6 +2368,17 @@ $animation-duration: 1s;
 	.color-palette-container {
 		padding: 19px;
 		background: white;
+
+		.description {
+			margin-bottom: 15px;
+		}
+	}
+
+	.description.c-color-palette__notification {
+		padding-top: 19px;
+		margin-bottom: 0;
+		font-size: inherit;
+		font-weight: bold;
 	}
 }
 

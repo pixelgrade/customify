@@ -367,6 +367,9 @@ class Customify_Color_Palettes {
 		}
 
 		$current_palette .= '<div class="c-color-palette__fields">';
+		$current_palette .= '<div class="c-color-palette__notification  description  hidden  js-altered-notification">' . PHP_EOL .
+			__( 'One or more fields connected to this control have been modified. By altering its value you may lose changes made prior to this action.', '__theme_txtd' ) . PHP_EOL .
+		'</div>'  . PHP_EOL;
 		foreach ( $master_color_controls_ids as $setting_id ) {
 			$current_palette .= '<input id="current-palette-' . $setting_id . '" class="c-color-palette__input ' . $setting_id . '" type="text">';
 		}
