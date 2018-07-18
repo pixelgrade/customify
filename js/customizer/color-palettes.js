@@ -92,10 +92,14 @@ let ColorPalettes = ( function( $, exports, wp ) {
         // trigger transition to new color palette
         setTimeout(function() {
             $palette.addClass( 'animate' );
-            var color = $next.first( ':visible' ).css( 'color' );
-            $palette.find( '.c-color-palette__control' ).css( 'color', color );
+            updateActiveVariationControlColor();
         });
     };
+
+    const updateActiveVariationControlColor = _.debounce( () => {
+        var color = $( '.colors.next .color' ).first( ':visible' ).css( 'color' );
+        $( '.c-color-palette__control' ).css( 'color', color );
+    }, 30 );
 
     const resetSettings = () => {
         _.each( masterSettingIds, function( setting_id ) {
@@ -213,9 +217,7 @@ let ColorPalettes = ( function( $, exports, wp ) {
                     const lastColor = setting();
                     const currentColor = ui.color.toString();
 
-                    if ( 'sm_color_primary' === $obj.data( 'setting' ) ) {
-	                    $( '.c-color-palette__control' ).css( 'color', currentColor );
-                    }
+                    updateActiveVariationControlColor();
 
                     if ( lastColor !== currentColor ) {
                         $obj.css( 'color', currentColor );
@@ -409,7 +411,7 @@ let ColorPalettes = ( function( $, exports, wp ) {
         if ( alteredSettings.length ) {
             $( '.c-color-palette .color' ).filter( alteredSettingsSelector ).addClass( 'altered' );
         }
-    }, 100 );
+    }, 30 );
 
     const toggleHiddenClassOnMasterControls = _.debounce( () => {
         let optionsToShow = [];
@@ -427,11 +429,12 @@ let ColorPalettes = ( function( $, exports, wp ) {
 
         $( '.c-color-palette .color' ).addClass( 'hidden' ).filter( optionsSelector ).removeClass( 'hidden' )
         $( '.customify_preset.color_palette .palette__item' ).addClass( 'hidden' ).filter( optionsSelector ).removeClass( 'hidden' );
-    }, 100 );
+    }, 30 );
 
     const refreshCurrentPaletteControl = () => {
         toggleAlteredClassOnMasterControls();
         toggleHiddenClassOnMasterControls();
+        updateActiveVariationControlColor();
     }
 
 	const swapConnectedFields = ( settings ) => {
