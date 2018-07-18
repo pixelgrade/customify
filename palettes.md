@@ -19,13 +19,13 @@ Our current color palettes system supports at most 9 colors (3 accent colors, 3 
 
 ```php
 // Color
-define( 'SM_COLOR_PRIMARY',     '#FF0000' );
-define( 'SM_COLOR_SECONDARY',   '#00FF00' );
+define( 'SM_COLOR_PRIMARY',     '#FF0000' ); // Use it for Accent Elements
+define( 'SM_COLOR_SECONDARY',   '#00FF00' ); 
 define( 'SM_COLOR_TERTIARY',    '#0000FF' );
  
 // Dark
 define( 'SM_DARK_PRIMARY',      '#111111' );
-define( 'SM_DARK_SECONDARY',    '#222222' ); 
+define( 'SM_DARK_SECONDARY',    '#222222' ); // Use it for Body Text
 define( 'SM_DARK_TERTIARY',     '#333333' );
  
 // Light
