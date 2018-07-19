@@ -214,6 +214,7 @@ let ColorPalettes = ( function( $, exports, wp ) {
                     const currentColor = ui.color.toString();
 
                     updateActiveVariationControlColor();
+                    setPalettesOnConnectedFields();
 
                     if ( lastColor !== currentColor ) {
                         $obj.css( 'color', currentColor );
@@ -316,7 +317,7 @@ let ColorPalettes = ( function( $, exports, wp ) {
     };
 
     // this function goes through all the connected fields and adds swatches to the default color picker for all the colors in the current color palette
-    const setPalettesOnConnectedFields = () => {
+    const setPalettesOnConnectedFields = _.debounce( () => {
         let $targets = $();
         // loop through the master settings
         _.each( masterSettingIds, function( parent_setting_id ) {
@@ -341,7 +342,7 @@ let ColorPalettes = ( function( $, exports, wp ) {
         });
         // apply the current color palettes to all the elements found
         $targets.iris({ palettes: getCurrentPaletteColors() });
-    }
+    }, 30 );
 
     const buildColorMatrix = () => {
         const $matrix = $( '.sm_color_matrix' );
@@ -633,9 +634,7 @@ let ColorPalettes = ( function( $, exports, wp ) {
 	    } );
 
 	    // when variation is changed reload connected fields from cached version of customizer settings config
-	    $( document ).on( 'change', '[name="_customize-radio-sm_color_palette_variation_control"]', () => {
-            confirmChanges( reinitializeConnectedFields );
-        } );
+	    $( document ).on( 'change', '[name="_customize-radio-sm_color_palette_variation_control"]', reinitializeConnectedFields );
 
 	    //
 	    $( document ).on( 'click', '.customify_preset.color_palette input', function () {

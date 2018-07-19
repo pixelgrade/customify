@@ -3,7 +3,7 @@ Contributors: pixelgrade, euthelup, babbardel, vlad.olaru, cristianfrumusanu, ra
 Tags: customizer, css, editor, live, preview, customizer
 Requires at least: 4.7.0
 Tested up to: 4.9.7
-Stable tag: 1.7.4
+Stable tag: 1.8.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -44,6 +44,12 @@ With [Customify](https://github.com/pixelgrade/customify), developers can easily
 * Default [image](https://unsplash.com/photos/OgM4RKdr2kY) for Style Manager Color Palette control - License: (Unsplash)[https://unsplash.com/license]
 
 == Changelog ==
+
+= 1.8.0 =
+* Added altered state for colors in the current color palette when any of the controls connected to the color has been modified
+* Added the colors from the current palette to all the color pickers in the Theme Options section
+* Fixed bug where default values were being forced in Customizer Preview at first load
+* Fixed bug preventing CSS output for color controls in the Style Manager section of the Customizer
 
 = 1.7.4 =
 * Reorganized Customizer custom sections and grouped them into Theme Options, thus making the Style Manager panel stand out.
