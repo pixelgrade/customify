@@ -43,7 +43,7 @@ class Customify_Color_Palettes {
 	}
 
 	/**
-	 * Initiate our hooks
+	 * Initiate our hooks.
 	 *
 	 * @since 1.7.4
 	 */
@@ -732,7 +732,7 @@ class Customify_Color_Palettes {
 	 *
 	 * @return string|false
 	 */
-	protected function get_current_palette() {
+	public function get_current_palette() {
 		return get_option( 'sm_color_palette', false );
 	}
 
@@ -743,7 +743,7 @@ class Customify_Color_Palettes {
 	 *
 	 * @return string|false
 	 */
-	protected function get_current_palette_variation() {
+	public function get_current_palette_variation() {
 		return get_option( 'sm_color_palette_variation', false );
 	}
 
@@ -795,7 +795,7 @@ class Customify_Color_Palettes {
 	 *
 	 * @return bool
 	 */
-	protected function is_using_custom_palette(){
+	public function is_using_custom_palette(){
 		return (bool) get_option( 'sm_is_custom_color_palette', false );
 	}
 
@@ -856,7 +856,7 @@ class Customify_Color_Palettes {
 	 * @since  1.7.4
 	 * @static
 	 *
-	 * @return Customify_Font_Palettes Main Customify_Color_Palettes instance
+	 * @return Customify_Color_Palettes Main Customify_Color_Palettes instance
 	 */
 	public static function instance() {
 

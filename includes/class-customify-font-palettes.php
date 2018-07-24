@@ -1315,7 +1315,7 @@ class Customify_Font_Palettes {
 	 *
 	 * @return string|false
 	 */
-	protected function get_current_palette() {
+	public function get_current_palette() {
 		return get_option( 'sm_font_palette', false );
 	}
 
@@ -1326,7 +1326,7 @@ class Customify_Font_Palettes {
 	 *
 	 * @return string|false
 	 */
-	protected function get_current_palette_variation() {
+	public function get_current_palette_variation() {
 		return get_option( 'sm_font_palette_variation', false );
 	}
 
@@ -1378,7 +1378,7 @@ class Customify_Font_Palettes {
 	 *
 	 * @return bool
 	 */
-	protected function is_using_custom_palette(){
+	public function is_using_custom_palette(){
 		return (bool) get_option( 'sm_is_custom_font_palette', false );
 	}
 

@@ -1,0 +1,29 @@
+/* Styling for Pixcloud Admin Notice Manager */
+
+/* Style redirect button to look like link */
+.pixcloud_anm-link {
+	color: #0073aa;
+	padding: 0;
+	margin: 0;
+	border-style: none;
+	background: none;
+	outline: 0;
+	transition-property: border, background, color;
+	transition-duration: .05s;
+	transition-timing-function: ease-in-out;
+	text-decoration: underline;
+}
+
+.pixcloud_anm-link:active {
+    color: #00a0d2;
+}
+
+.pixcloud_anm-link:hover {
+	color: #00a0d2;
+	cursor: pointer;
+}
+
+.pixcloud_anm-link:focus {
+	color: #124964;
+	box-shadow: 0 0 0 1px #5b9dd9, 0 0 2px 1px rgba(30, 140, 190, .8);
+}
