@@ -292,7 +292,7 @@ class PixCustomifyPlugin {
 
 		$this->localized['ajax_url'] = admin_url( 'admin-ajax.php' );
 		$this->localized['style_manager_user_feedback_nonce'] = wp_create_nonce( 'customify_style_manager_user_feedback' );
-		$this->localized['style_manager_user_feedback_provided'] = $this->get_option( 'style_manager_user_feedback_provided', false );
+		$this->localized['style_manager_user_feedback_provided'] = get_option( 'style_manager_user_feedback_provided', false );
 	}
 
 	public function get_version() {
@@ -1960,38 +1960,48 @@ class PixCustomifyPlugin {
 		return $settings;
 	}
 
-	protected function get_value( $option, $alt_opt_name ) {
+	protected function get_value( $option_id, $alt_opt_name ) {
 		global $wp_customize;
 
-		$opt_name = $this->opt_name;
+		$options_name = $this->opt_name;
 		$values   = $this->current_values;
 
-		// In case someone asked for a DB value too early but it has given us the opt_name under which to search, let's do it
-		if ( empty( $opt_name ) && ! empty( $alt_opt_name ) ) {
-			$opt_name = $alt_opt_name;
-			$values   = $this->get_current_values( $opt_name );
+		// In case someone asked for a DB value too early but it has given us the options_name under which to search, let's do it
+		if ( empty( $options_name ) && ! empty( $alt_opt_name ) ) {
+			$options_name = $alt_opt_name;
+			$values   = $this->get_current_values( $options_name );
 		}
 
 		if ( ! empty( $wp_customize ) && method_exists( $wp_customize, 'get_setting' ) ) {
+			// Get the field config.
+			$option_config = $this->get_option_customizer_config( $option_id );
 
-			$option_key = $opt_name . '[' . $option . ']';
-			$setting    = $wp_customize->get_setting( $option_key );
+			if ( empty( $option_id ) || ! isset( $option_config['type'] ) ) {
+				return null;
+			}
+
+			// If we have been explicitly given a setting ID we will use that
+			if ( ! empty( $option_config['setting_id'] ) ) {
+				$setting_id = $option_config['setting_id'];
+			} else {
+				$setting_id = $options_name . '[' . $option_id . ']';
+			}
+
+			$setting    = $wp_customize->get_setting( $setting_id );
 			if ( ! empty( $setting ) ) {
-				$value = $setting->value();
-
-				return $value;
+				return $setting->value();
 			}
 		}
 
 		// shim
-		if ( strpos( $option, $opt_name . '[' ) !== false ) {
+		if ( strpos( $option_id, $options_name . '[' ) !== false ) {
 			// get only the setting id
-			$option = explode( '[', $option );
-			$option = rtrim( $option[1], ']' );
+			$option_id = explode( '[', $option_id );
+			$option_id = rtrim( $option_id[1], ']' );
 		}
 
-		if ( isset( $values[ $option ] ) ) {
-			return $values[ $option ];
+		if ( isset( $values[ $option_id ] ) ) {
+			return $values[ $option_id ];
 		}
 
 		return null;
@@ -2002,27 +2012,47 @@ class PixCustomifyPlugin {
 	 * If there is a value and return it.
 	 * Otherwise try to get the default parameter or the default from config.
 	 *
-	 * @param $option
+	 * @param $option_id
 	 * @param mixed $default Optional.
 	 * @param string $alt_opt_name Optional. We can use this to bypass the fact that the DB values are loaded on after_setup_theme, if we know what to look for.
 	 *
 	 * @return bool|null|string
 	 */
-	public function get_option( $option, $default = null, $alt_opt_name = null ) {
+	public function get_option( $option_id, $default = null, $alt_opt_name = null ) {
 		// If the development constant CUSTOMIFY_DEV_FORCE_DEFAULTS has been defined we will not retrieve anything from the database
 		// Always go with the default
-		if ( defined( 'CUSTOMIFY_DEV_FORCE_DEFAULTS' ) && true === CUSTOMIFY_DEV_FORCE_DEFAULTS && ! $this->skip_dev_mode_force_defaults( $option ) ) {
+		if ( defined( 'CUSTOMIFY_DEV_FORCE_DEFAULTS' ) && true === CUSTOMIFY_DEV_FORCE_DEFAULTS && ! $this->skip_dev_mode_force_defaults( $option_id ) ) {
 			$return = null;
 		} else {
-			$return = $this->get_value( $option, $alt_opt_name );
+			// Get the field config.
+			$option_config = $this->get_option_customizer_config( $option_id );
+
+			if ( empty( $option_id ) ) {
+				$return = null;
+			} elseif ( isset( $option_config['setting_type'] ) && $option_config['setting_type'] === 'option' ) {
+				// We have a setting that is saved in the wp_options table, not in theme_mods.
+				// We will fetch it directly.
+
+				// If we have been explicitly given a setting ID we will use that
+				if ( ! empty( $option_config['setting_id'] ) ) {
+					$setting_id = $option_config['setting_id'];
+				} else {
+					$setting_id = $this->opt_name . '[' . $option_id . ']';
+				}
+
+				$return = get_option( $setting_id );
+			} else {
+				// Get the value stores in theme_mods.
+				$return = $this->get_value( $option_id, $alt_opt_name );
+			}
 		}
 
 		if ( $return !== null ) {
 			return $return;
 		} elseif ( $default !== null ) {
 			return $default;
-		} elseif ( isset( $this->options_list[ $option ] ) && isset( $this->options_list[ $option ]['default'] ) ) {
-			return $this->options_list[ $option ]['default'];
+		} elseif ( isset( $this->options_list[ $option_id ] ) && isset( $this->options_list[ $option_id ]['default'] ) ) {
+			return $this->options_list[ $option_id ]['default'];
 		}
 
 		return null;

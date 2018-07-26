@@ -2127,17 +2127,10 @@ $palette_border-radius: 5px;
 	width: 100%;
 }
 
-.color {
-	display: flex;
-	flex-direction: column;
-
-	flex-grow: 1;
-	overflow: hidden;
-}
-
 .fill {
 	position: relative;
 	height: $palette_height;
+	margin-bottom: 1em;
 }
 
 .c-color-palette__overlay {
@@ -2171,10 +2164,11 @@ $palette_border-radius: 5px;
 
 	width: 80%;
 	max-width: 3em;
-	margin-top: 1em;
+	margin-top: auto;
+	margin-bottom: auto;
 
 	border-radius: 50%;
-	transform: translateX(-50%);
+	transform: translate3d(-50%,0,0);
 }
 
 .colors.next .picker > i {
@@ -2368,6 +2362,17 @@ $animation-duration: 1s;
 	.color-palette-container {
 		padding: 19px;
 		background: white;
+
+		.description {
+			margin-bottom: 15px;
+		}
+	}
+
+	.description.c-color-palette__notification {
+		padding-top: 19px;
+		margin-bottom: 0;
+		font-size: inherit;
+		font-weight: bold;
 	}
 }
 
@@ -2465,6 +2470,29 @@ $animation-duration: 1s;
 }
 
 .color {
+	display: flex;
+	flex-direction: column;
+
+	flex: 1 1 0;
+	overflow: hidden;
+
+	.c-color-palette.animate & {
+		transition: flex-grow .3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+
+		&.hidden {
+			transition: flex-grow .3s cubic-bezier(0.6, -1.00, 0.74, 0.05); // easeBackInMega
+		}
+	}
+
+	&.hidden {
+		display: flex;
+		flex-grow: 0;
+
+		.picker {
+			opacity: 0;
+			transition: opacity .2s ease-out;
+		}
+	}
 
 	.picker {
 		border: 2px solid transparent;
@@ -2665,7 +2693,7 @@ input.c-color-palette__input[class] {
     }
 
 	// Style Manager Section
-	// ----------------------------------------	
+	// ----------------------------------------
 	li#accordion-panel-style_manager_panel {
 		@include section_icon("\f155");
 
@@ -2714,7 +2742,7 @@ input.c-color-palette__input[class] {
 	}
 
 		// Theme Options Spacing between Sections
-		li[id$="[general]"], 
+		li[id$="[general]"],
 		li[id$="[footer_section]"] {
 			border-bottom: 1px solid #ddd;
 			border-left: none;
@@ -2728,3 +2756,73 @@ input.c-color-palette__input[class] {
 			}
 		}
 }
+
+.color .disc {
+	display: block;
+	overflow: hidden;
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	z-index: 15;
+	border-radius: 50%;
+	pointer-events: none;
+	opacity: 0;
+	transition: opacity .3s ease-in-out;
+
+	&:after {
+	    content: "";
+	    filter: blur(6px) saturate(.7) brightness(1.1);
+
+	    display: block;
+	    width: 200%;
+	    height: 200%;
+	    padding-top: 100%;
+
+	    position: absolute;
+	    top: -50%;
+	    left: -50%;
+	    transform: scale(1);
+	    background-image:
+	        linear-gradient(330deg, transparent 50%, #ff8100 0),
+	        linear-gradient(300deg, transparent 50%, #ff5800 0),
+	        linear-gradient(270deg, transparent 50%, #c92323 0),
+	        linear-gradient(240deg, transparent 50%, #cc42a2 0),
+	        linear-gradient(210deg, transparent 50%, #9f49ac 0),
+	        linear-gradient(180deg, transparent 50%, #306cd3 0),
+	        linear-gradient(150deg, transparent 50%, #179067 0),
+	        linear-gradient(120deg, transparent 50%, #0eb5d6 0),
+	        linear-gradient(90deg, transparent 50%, #50b517 0),
+	        linear-gradient(60deg, transparent 50%, #ede604 0),
+	        linear-gradient(30deg, transparent 50%, #fc0 0),
+	        linear-gradient(0deg, transparent 50%, #feac00 0);
+	    background-clip: content-box,content-box,content-box,content-box,content-box,content-box,padding-box,padding-box,padding-box,padding-box,padding-box,padding-box;
+	}
+}
+
+.color.altered .disc {
+	opacity: 1;
+}
+
+.customize-control-color .wp-picker-container .iris-picker {
+
+	.iris-palette-container {
+		display: flex;
+		width: 215px;
+	}
+
+	.iris-palette {
+		width: auto !important;
+		height: auto !important;
+		flex: 1 1 0;
+		float: none;
+
+		&:after {
+			content: "";
+			display: block;
+			padding-top: 100%;
+		}
+	}
+}
+

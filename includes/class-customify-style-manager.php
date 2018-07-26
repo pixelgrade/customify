@@ -98,11 +98,11 @@ class Customify_Style_Manager {
 		require_once 'class-customify-color-palettes.php';
 		$this->color_palettes = Customify_Color_Palettes::instance();
 
-		/**
-		 * Initialize the Font Palettes logic.
-		 */
-		require_once 'class-customify-font-palettes.php';
-		$this->font_palettes = Customify_Font_Palettes::instance();
+//		/**
+//		 * Initialize the Font Palettes logic.
+//		 */
+//		require_once 'class-customify-font-palettes.php';
+//		$this->font_palettes = Customify_Font_Palettes::instance();
 
 		/**
 		 * Initialize the Notifications logic.

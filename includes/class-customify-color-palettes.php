@@ -358,6 +358,7 @@ class Customify_Color_Palettes {
 					'<div class="color ' . $setting_id . '" data-setting="' . $setting_id . '">' . PHP_EOL .
 					'<div class="fill"></div>' . PHP_EOL .
 					'<div class="picker">' .
+					'<div class="disc"></div>'.
 					'<i></i>'.
 					'</div>' . PHP_EOL .
 					'</div>' . PHP_EOL;
@@ -366,6 +367,9 @@ class Customify_Color_Palettes {
 		}
 
 		$current_palette .= '<div class="c-color-palette__fields">';
+		$current_palette .= '<div class="c-color-palette__notification  description  hidden  js-altered-notification">' . PHP_EOL .
+			__( 'One or more colors connected to your color palette have been modified. By changing or altering the current palette you will lose changes made prior to this action.', '__theme_txtd' ) . PHP_EOL .
+		'</div>'  . PHP_EOL;
 		foreach ( $master_color_controls_ids as $setting_id ) {
 			$current_palette .= '<input id="current-palette-' . $setting_id . '" class="c-color-palette__input ' . $setting_id . '" type="text">';
 		}
