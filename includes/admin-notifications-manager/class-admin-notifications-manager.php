@@ -166,6 +166,9 @@ class Pixcloud_Admin_Notifications_Manager {
 		// Add JS and ajax processing to handle dismissal of persistent notices.
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 		add_action( 'wp_ajax_' . $this->manager_id . '_dismiss_admin_notice', array( $this, 'dismiss_notice' ) );
+
+		// Add notifications data to requests.
+		add_filter( 'customify_pixelgrade_cloud_request_data', array( $this, 'add_data_to_request' ), 10, 1 );
 	}
 
 	public function maybe_load_remote_notifications() {
@@ -254,14 +257,15 @@ class Pixcloud_Admin_Notifications_Manager {
 
 		// Set the notice arguments using defaults where necessary. (user_ids should always be set for an opt out notice.)
 		$defaults = array(
-			'message'           => '',
-			'wrap_tag'          => 'p',
-			'type'              => 'error',
-			'user_ids'          => array(),
-			'post_ids'          => array(),
-			'persistent'        => false,
-			'dismissable'       => true,
-			'no_js_dismissable' => false,
+			'message'               => '',
+			'wrap_tag'              => 'p',
+			'type'                  => 'error',
+			'user_ids'              => array(),
+			'screen_ids'            => array(),
+			'post_ids'              => array(),
+			'persistent'            => false,
+			'dismissable'           => true,
+			'no_js_dismissable'     => false,
 			'dismiss_for_all_users' => false,
 		);
 
@@ -497,9 +501,7 @@ class Pixcloud_Admin_Notifications_Manager {
 				if ( ! empty( $role_user_ids ) ) {
 					$user_ids = array_unique( array_merge( $user_ids, $role_user_ids ) );
 				}
-
 			}
-
 		}
 
 		return $user_ids;
@@ -685,7 +687,14 @@ class Pixcloud_Admin_Notifications_Manager {
 
 				// Display the notice with option to filter display.
 				if ( true === apply_filters( $this->manager_id . '_display_notice', $display, $notice ) ) {
-					$this->display_notice( $notice );
+					// Parse any content tags.
+					$notice['message'] = self::parse_content_tags( $notice['message'] );
+
+					if ( 'custom' !== $notice['type'] ) {
+						$this->display_standard_notice( $notice );
+					} else {
+						$this->display_custom_notice( $notice );
+					}
 
 					// Register the notice display
 					$this->register_user_notice_display( $notice['id'], $user_id );
@@ -695,22 +704,19 @@ class Pixcloud_Admin_Notifications_Manager {
 						$this->dismiss_notice_for_user( $notice['id'], $user_id );
 					}
 				}
-
 			}
-
 		}
-
 	}
 
 	/**
-	 * Display notice.
+	 * Display standard notice.
 	 *
 	 * @access protected
 	 * @since  1.9.0
 	 *
 	 * @param array $notice array of notice parameters.
 	 */
-	protected function display_notice( $notice ) {
+	protected function display_standard_notice( $notice ) {
 
 		// Add classes to the notice container as needed.
 		$container_classes = array(
@@ -724,13 +730,16 @@ class Pixcloud_Admin_Notifications_Manager {
 			$container_classes[] = 'notice-manager-ajax';
 		}
 
+		// Convert newlines to <br>s.
+		$notice['message'] = nl2br( $notice['message'] );
+
 		if ( ! empty( $notice['wrap_tag'] ) ) {
 			$notice['message'] = '<' . $notice['wrap_tag'] . '>' . $notice['message'] . '</' . $notice['wrap_tag'] . '>';
 		}
 
 		// Display the notice.
 		?>
-		<div class="<?php echo implode( ' ', $container_classes ); ?>">
+		<div id="<?php echo esc_attr( $this->manager_id . '-' . $notice['id'] ); ?>" class="<?php echo implode( ' ', $container_classes ); ?>">
 			<form class="pixcloud_anm-form"
 			      action="<?php echo admin_url( 'admin-ajax.php?action=' . $this->manager_id . '_dismiss_admin_notice' ); ?>"
 			      method="post">
@@ -749,14 +758,15 @@ class Pixcloud_Admin_Notifications_Manager {
 								<td style="width: 100%">
 					</noscript><?php
 				}
+
 				echo $notice['message'];
+
 				if ( $notice['no_js_dismissable'] ) {
 					?>
 					<noscript>
 						</td>
 						<td>
-							<button type="submit" class="notice-dismiss"><span
-										class="screen-reader-text"><?php _e( 'Dismiss this notice.' ); ?></span>
+							<button type="submit" class="notice-dismiss"><span class="screen-reader-text"><?php esc_html_e( 'Dismiss this notice.', 'customify' ); ?></span>
 							</button>
 						</td>
 						</tr></table>
@@ -765,6 +775,123 @@ class Pixcloud_Admin_Notifications_Manager {
 			</form>
 		</div>
 		<?php
+	}
+
+	/**
+	 * Display custom notice.
+	 *
+	 * @access protected
+	 * @since  1.9.0
+	 *
+	 * @param array $notice array of notice parameters.
+	 */
+	protected function display_custom_notice( $notice ) {
+
+		// Add classes to the notice container as needed.
+		$container_classes = array(
+			'notice', // this class is needed by WordPress to properly identify notices and move/enhance them with JS.
+			'notice-' . esc_attr( $notice['type'] ),
+		);
+		if ( $notice['dismissable'] ) {
+			$container_classes[] = 'is-dismissible';
+		}
+		if ( $notice['persistent'] && $notice['dismissable'] ) {
+			$container_classes[] = 'notice-manager-ajax';
+		}
+
+		// Display the notice.
+		?>
+		<div id="<?php echo esc_attr( $this->manager_id . '-' . $notice['id'] ); ?>" class="<?php echo implode( ' ', $container_classes ); ?>">
+			<form class="pixcloud_anm-form"
+			      action="<?php echo admin_url( 'admin-ajax.php?action=' . $this->manager_id . '_dismiss_admin_notice' ); ?>"
+			      method="post">
+				<?php if ( in_array( 'notice-manager-ajax', $container_classes ) ) { ?>
+					<input type="hidden" class="pixcloud_anm-id" value="<?php echo esc_attr( $this->manager_id ); ?>"/>
+					<input type="hidden" class="pixcloud_anm-notice-id" name="noticeID"
+					       value="<?php echo esc_attr( $this->manager_id . '-' . $notice['id'] ); ?>"/>
+					<noscript><input type="hidden" name="pixcloud_anm-no-js" value="1"/></noscript>
+					<?php wp_nonce_field( $this->manager_id . '_dismiss_admin_notice', 'nonce-pixcloud_anm-' . $this->manager_id . '-' . $notice['id'] );
+				}
+				if ( $notice['no_js_dismissable'] ) {
+					?>
+					<noscript>
+						<table>
+							<tr>
+								<td style="width: 100%">
+					</noscript><?php
+				}
+
+				echo $notice['message'];
+
+				if ( $notice['no_js_dismissable'] ) {
+					?>
+					<noscript>
+						</td>
+						<td>
+							<button type="submit" class="notice-dismiss"><span class="screen-reader-text"><?php esc_html_e( 'Dismiss this notice.', 'customify' ); ?></span></button>
+						</td>
+						</tr></table>
+					</noscript>
+				<?php } ?>
+			</form>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Replace any content tags present in the content.
+	 *
+	 * @param string $content
+	 *
+	 * @return string
+	 */
+	protected function parse_content_tags( $content ) {
+		$original_content = $content;
+
+		// Allow others to alter the content before we do our work
+		$content = apply_filters( 'pixcloud_notifications_before_parse_content_tags', $content );
+
+		// Now we will replace all the supported tags with their value
+		// %year%
+		$content = str_replace( '%year%', date( 'Y' ), $content );
+
+		// %site-title% or %site_title%
+		$content = str_replace( '%site-title%', get_bloginfo( 'name' ), $content );
+		$content = str_replace( '%site_title%', get_bloginfo( 'name' ), $content );
+
+		// Handle the current user tags.
+		if ( false !== strpos( $content, '%user_first_name%' ) ||
+		     false !== strpos( $content, '%user_last_name%' ) ||
+		     false !== strpos( $content, '%user_nickname%' ) ||
+		     false !== strpos( $content, '%user_display_name%' ) ) {
+			$user = wp_get_current_user();
+
+			if ( ! empty( $user ) && ! is_wp_error( $user ) ) {
+				// %first_name%
+				$content = str_replace( '%user_first_name%', $user->first_name, $content );
+				// %last_name%
+				$content = str_replace( '%user_last_name%', $user->last_name, $content );
+				// %display_name%
+				$content = str_replace( '%user_nickname%', $user->display_name, $content );
+				// %nickname%
+				$content = str_replace( '%user_display_name%', $user->nickname, $content );
+			}
+		}
+
+		// %active_theme%
+		$content = str_replace( '%active_theme%', Pixcloud_Notification_Conditions::get_active_theme_name(), $content );
+
+		// %customify_version%
+		$content = str_replace( '%customify_version%', Pixcloud_Notification_Conditions::get_customify_version(), $content );
+
+		// %style_manager_version%
+		$content = str_replace( '%style_manager_version%', Pixcloud_Notification_Conditions::get_style_manager_version(), $content );
+
+		// %current_color_palette%
+		$content = str_replace( '%current_color_palette%', Pixcloud_Notification_Conditions::get_current_color_palette_label(), $content );
+
+		// Allow others to alter the content after we did our work
+		return apply_filters( 'pixcloud_notifications_after_parse_content_tags', $content, $original_content );
 	}
 
 	/**
@@ -1014,6 +1141,49 @@ class Pixcloud_Admin_Notifications_Manager {
 	 */
 	public function remove_all_data() {
 		$this->remove_user_data();
+	}
+
+	public function add_data_to_request( $data ) {
+		// Do nothing if data is already there.
+		if ( isset( $data['notifications_data'] ) ) {
+			return $data;
+		}
+
+		$notifications_data = array();
+
+		$user_ids = $this->get_users_with_notifications_data();
+		if ( ! empty( $user_ids ) ) {
+			foreach ( $user_ids as $user_id ) {
+				$user_notifications_data = get_user_meta( $user_id, $this->manager_id . '_notifications', true );
+				if ( ! empty( $user_notifications_data ) ) {
+					foreach ( $user_notifications_data as $id => $user_notification_data ) {
+						// We will send data user agnostic.
+						// We will rely on the fact that displayed and dismissed is boolean (so they can be translated to 0 and 1),
+						// and simply do the sum of them.
+						if ( ! isset( $notifications_data[ $id ] ) ) {
+							$notifications_data[ $id ] = array(
+								'seen_by_users' => 0,
+								'dismissed_by_users' => 0,
+							);
+						}
+
+						if ( ! empty( $user_notification_data['displayed'] ) ) {
+							$notifications_data[ $id ]['seen_by_users'] ++;
+						}
+
+						if ( ! empty( $user_notification_data['dismissed'] ) ) {
+							$notifications_data[ $id ]['dismissed_by_users'] ++;
+						}
+					}
+				}
+			}
+		}
+
+		if ( ! empty( $notifications_data ) ) {
+			$data['notifications_data'] = $notifications_data;
+		}
+
+		return $data;
 	}
 
 	/**

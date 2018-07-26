@@ -8,59 +8,43 @@
  */
 class Pixcloud_Notification_Conditions {
 
-	protected static $all_operators = array(
-		'equal', 'not_equal', 'is_empty', 'is_not_empty',
-		'less', 'less_or_equal', 'greater', 'greater_or_equal',
-		'begins_with', 'not_begins_with', 'contains', 'not_contains', 'ends_with', 'not_ends_with',
-		'in', 'not_in', 'any', 'all',
-		'between', 'not_between',
-	);
-
-	protected static $unary_operators = array(
-		'is_empty', 'is_not_empty',
-	);
-
-	protected static $binary_operators = array(
-		'equal', 'not_equal',
-		'less', 'less_or_equal', 'greater', 'greater_or_equal',
-		'begins_with', 'not_begins_with', 'contains', 'not_contains', 'ends_with', 'not_ends_with',
-	);
-
-	protected static $ternary_operators = array(
-		'between', 'not_between',
-	);
-
-
-	protected static $list_operators = array(
-		'in', 'not_in', 'any', 'all',
+	protected static $group_relations = array(
+		'AND', 'OR',
 	);
 
 	protected static $active_theme_details = null;
 
 	/**
-	 * @param $conditions
+	 * Process a notification's conditions.
 	 *
-	 * @return bool|mixed|void
+	 * @param array $conditions
+	 *
+	 * @return bool|mixed
 	 */
 	public static function process( $conditions ) {
 		// First check if the conditions are valid.
 		// On invalid conditions we return true.
 		if ( empty( $conditions['valid'] ) ) {
-			return apply_filters( 'pixcloud_processed_conditions', true, $conditions );
+			return apply_filters( 'pixcloud_notification_conditions_result', true, $conditions );
 		}
 
-		return self::process_group( $conditions );
+		// Process the group. Any top level conditions are expected to be a group, not an individual rule.
+		$result = self::process_group( $conditions );
+
+		return apply_filters( 'pixcloud_notification_conditions_result', $result, $conditions );
 	}
 
 	/**
-	 * @param $group_conditions
+	 * Process and evaluate a notification condition group.
+	 *
+	 * @param array $group_conditions
 	 *
 	 * @return bool
 	 */
 	public static function process_group( $group_conditions ) {
 		// By default we will use the AND relation among group rules or subgroups.
 		$group_relation = 'AND';
-		if ( ! empty( $group_conditions['condition'] ) && in_array( $group_conditions['condition'], array( 'AND', 'OR', ) ) ) {
+		if ( ! empty( $group_conditions['condition'] ) && in_array( $group_conditions['condition'], self::$group_relations ) ) {
 			$group_relation = $group_conditions['condition'];
 		}
 
@@ -82,40 +66,48 @@ class Pixcloud_Notification_Conditions {
 				break;
 		}
 
+		$stop = false;
 		foreach ( $group_conditions['rules'] as $rule ) {
 			// Determine if it is a simple rule or a subgroup.
 			if ( ! empty( $rule['rules'] ) ) {
-				$rule_result = self::process_group( $rule );
+				$result = self::process_group( $rule );
 			} else {
-				$rule_result = self::process_rule( $rule );
+				$result = self::process_rule( $rule );
 			}
 
 			// Now evaluate the rule result according to the group relation.
 			switch ( $group_relation ) {
 				case 'AND':
-					if ( false === $rule_result ) {
+					if ( false === $result ) {
 						// Stop the evaluation.
-						return $rule_result;
+						$stop = true;
 					}
 					break;
 				case 'OR':
-					if ( true === $rule_result ) {
+					if ( true === $result ) {
 						// Stop the evaluation.
-						return $rule_result;
+						$stop = true;
 					}
 					break;
 				default:
 					// We should not reach here but just in case.
-					return $result;
+					$stop = true;
 					break;
+			}
+
+			// Stop the rules processing if this is the case.
+			if ( true === $stop ) {
+				break;
 			}
 		}
 
-		return $result;
+		return apply_filters( 'pixcloud_notification_conditions_group_result', $result, $group_conditions['rules'], $group_relation, $group_conditions );
 	}
 
 	/**
-	 * @param $rule
+	 * Process and evaluate a notification condition rule.
+	 *
+	 * @param array $rule
 	 *
 	 * @return bool
 	 */
@@ -126,22 +118,12 @@ class Pixcloud_Notification_Conditions {
 		if ( empty( $rule['id'] ) ) {
 			return $result;
 		}
-		if ( empty( $rule['operator'] ) || ! in_array( $rule['operator'], self::$all_operators ) ) {
+		if ( empty( $rule['operator'] ) ) {
 			return $result;
 		}
 
-		// Check the number of values a operator can handle.
-		if ( in_array( $rule['operator'], self::$unary_operators ) && is_array( $rule['value'] ) && count( $rule['value'] ) > 1 ) {
-			return $result;
-		}
-		if ( in_array( $rule['operator'], self::$binary_operators ) && is_array( $rule['value'] ) && count( $rule['value'] ) > 1 ) {
-			return $result;
-		}
-		if ( in_array( $rule['operator'], self::$ternary_operators ) && ( ! is_array( $rule['value'] ) || count( $rule['value'] ) != 2 ) ) {
-			return $result;
-		}
-		if ( in_array( $rule['operator'], self::$list_operators ) && ! is_array( $rule['value'] ) ) {
-			return $result;
+		if ( ! isset( $rule['value'] ) ) {
+			$rule['value'] = null;
 		}
 
 		// Now determine the field value (the dynamic part of the rule).
@@ -149,17 +131,54 @@ class Pixcloud_Notification_Conditions {
 			return $result;
 		}
 		$field_value = call_user_func( array( __CLASS__, 'get_' . $rule['id'] ), $rule );
-		// Make sure that we work with the provided field type.
-		$field_value = self::convert_field_value_to_type( $field_value, $rule );
+		// Make sure that we work with the provided field type, regardless if it is a single value or a list.
+		$field_value = self::convert_value_to_type( $field_value, $rule['type'] );
+		$rule['value'] = self::convert_value_to_type( $rule['value'], $rule['type'] );
 
-		return $result;
+		// Before we evaluate the expression, we need to account for the special expressions (e.g. function_exists, class_exists).
+		switch ( $rule['id'] ) {
+			case 'function_exists':
+				// We apply function_exists to each value.
+				if ( is_array( $rule['value'] ) ) {
+					$rule['value'] = array_map( 'function_exists', $rule['value'] );
+				} else {
+					$rule['value'] = function_exists( $rule['value'] );
+				}
+
+				// Make sure that the field value is true.
+				$field_value = true;
+				break;
+			case 'class_exists':
+				// We apply function_exists to each value.
+				if ( is_array( $rule['value'] ) ) {
+					$rule['value'] = array_map( 'class_exists', $rule['value'] );
+				} else {
+					$rule['value'] = class_exists( $rule['value'] );
+				}
+
+				// Make sure that the field value is true.
+				$field_value = true;
+				break;
+			default:
+				break;
+		}
+
+		// Now evaluate the expression.
+		require_once 'class-notification-logicalexpression.php';
+		$result = Pixcloud_Notification_LogicalExpression::evaluate( $field_value, $rule['operator'], $rule['value'] );
+
+		return apply_filters( 'pixcloud_notification_conditions_rule_result', $result, $field_value, $rule['operator'], $rule['value'], $rule );
 	}
 
-	/*
+	public static function evaluate_expression( $left, $operator, $right, $rule ) {
+
+	}
+
+	/* ========================
 	 * THE FIELD VALUES GETTERS
 	 */
 
-	public static function get_style_manager_is_supported( $rule ) {
+	public static function get_style_manager_is_supported( $rule = null ) {
 		if ( class_exists( 'Customify_Style_Manager' ) && Customify_Style_Manager::instance()->is_supported() ) {
 			return true;
 		}
@@ -167,7 +186,7 @@ class Pixcloud_Notification_Conditions {
 		return false;
 	}
 
-	public static function get_style_manager_user_provided_feedback( $rule ) {
+	public static function get_style_manager_user_provided_feedback( $rule = null ) {
 		if ( class_exists( 'Customify_Style_Manager' ) && Customify_Style_Manager::instance()->user_provided_feedback() ) {
 			return true;
 		}
@@ -175,7 +194,7 @@ class Pixcloud_Notification_Conditions {
 		return false;
 	}
 
-	public static function get_style_manager_user_provided_feedback_days_ago( $rule ) {
+	public static function get_style_manager_user_provided_feedback_days_ago( $rule = null ) {
 		$user_provided_feedback = get_option( 'style_manager_user_feedback_provided' );
 		if ( empty( $user_provided_feedback ) ) {
 			return false;
@@ -184,7 +203,7 @@ class Pixcloud_Notification_Conditions {
 		return round( ( time() - $user_provided_feedback ) / DAY_IN_SECONDS );
 	}
 
-	public static function get_current_color_palette_hashid( $rule ) {
+	public static function get_current_color_palette_hashid( $rule = null ) {
 		if ( class_exists('Customify_Color_Palettes') ) {
 			return Customify_Color_Palettes::instance()->get_current_palette();
 		}
@@ -192,7 +211,19 @@ class Pixcloud_Notification_Conditions {
 		return '';
 	}
 
-	public static function get_current_color_palette_is_custom( $rule ) {
+	public static function get_current_color_palette_label( $rule = null ) {
+		if ( class_exists('Customify_Color_Palettes') ) {
+			$color_palette_hashid = self::get_current_color_palette_hashid( $rule );
+			$color_palettes = Customify_Color_Palettes::instance()->get_palettes();
+			if ( ! empty( $color_palettes[ $color_palette_hashid ] ) ) {
+				return $color_palettes[ $color_palette_hashid ]['label'];
+			}
+		}
+
+		return '';
+	}
+
+	public static function get_current_color_palette_is_custom( $rule = null ) {
 		if ( class_exists('Customify_Color_Palettes') ) {
 			return Customify_Color_Palettes::instance()->is_using_custom_palette();
 		}
@@ -200,7 +231,7 @@ class Pixcloud_Notification_Conditions {
 		return false;
 	}
 
-	public static function get_current_color_palette_is_variation_in_use( $rule ) {
+	public static function get_current_color_palette_is_variation_in_use( $rule = null ) {
 		if ( class_exists('Customify_Color_Palettes') ) {
 			return Customify_Color_Palettes::instance()->get_current_palette_variation();
 		}
@@ -208,7 +239,7 @@ class Pixcloud_Notification_Conditions {
 		return false;
 	}
 
-	public static function get_active_theme_slug( $rule ) {
+	public static function get_active_theme_slug( $rule = null ) {
 		$theme_details = self::get_active_theme_details();
 
 		if ( ! empty( $theme_details['slug'] ) ) {
@@ -218,7 +249,7 @@ class Pixcloud_Notification_Conditions {
 		return '';
 	}
 
-	public static function get_active_theme_hashid( $rule ) {
+	public static function get_active_theme_hashid( $rule = null ) {
 		$theme_details = self::get_active_theme_details();
 
 		if ( ! empty( $theme_details['hashid'] ) ) {
@@ -228,7 +259,7 @@ class Pixcloud_Notification_Conditions {
 		return '';
 	}
 
-	public static function get_active_theme_name( $rule ) {
+	public static function get_active_theme_name( $rule = null ) {
 		$theme_details = self::get_active_theme_details();
 
 		if ( ! empty( $theme_details['name'] ) ) {
@@ -238,7 +269,7 @@ class Pixcloud_Notification_Conditions {
 		return '';
 	}
 
-	public static function get_active_theme_author( $rule ) {
+	public static function get_active_theme_author( $rule = null ) {
 		$theme_details = self::get_active_theme_details();
 
 		if ( ! empty( $theme_details['author'] ) ) {
@@ -248,7 +279,7 @@ class Pixcloud_Notification_Conditions {
 		return '';
 	}
 
-	public static function get_active_theme_has_wupdates_valid_code( $rule ) {
+	public static function get_active_theme_has_wupdates_valid_code( $rule = null ) {
 		$theme_details = self::get_active_theme_details();
 
 		if ( ! empty( $theme_details['wupdates_code_unchanged'] ) ) {
@@ -258,7 +289,7 @@ class Pixcloud_Notification_Conditions {
 		return false;
 	}
 
-	public static function get_active_theme_has_pixelgrade_license( $rule ) {
+	public static function get_active_theme_has_pixelgrade_license( $rule = null ) {
 		$theme_details = self::get_active_theme_details();
 
 		if ( ! empty( $theme_details['license_hash'] ) ) {
@@ -268,7 +299,7 @@ class Pixcloud_Notification_Conditions {
 		return false;
 	}
 
-	public static function get_active_theme_pixelgrade_license_status( $rule ) {
+	public static function get_active_theme_pixelgrade_license_status( $rule = null ) {
 		$theme_details = self::get_active_theme_details();
 
 		if ( ! empty( $theme_details['license_status'] ) ) {
@@ -278,7 +309,7 @@ class Pixcloud_Notification_Conditions {
 		return '';
 	}
 
-	public static function get_active_theme_version( $rule ) {
+	public static function get_active_theme_version( $rule = null ) {
 		$theme_details = self::get_active_theme_details();
 
 		if ( ! empty( $theme_details['version'] ) ) {
@@ -288,7 +319,7 @@ class Pixcloud_Notification_Conditions {
 		return '0.0.1';
 	}
 
-	public static function get_customify_version( $rule ) {
+	public static function get_customify_version( $rule = null ) {
 		if ( function_exists( 'PixCustomifyPlugin' ) ) {
 			return PixCustomifyPlugin()->get_version();
 		}
@@ -296,7 +327,7 @@ class Pixcloud_Notification_Conditions {
 		return false;
 	}
 
-	public static function get_style_manager_version( $rule ) {
+	public static function get_style_manager_version( $rule = null ) {
 		if ( function_exists( 'StyleManager_Plugin' ) ) {
 			return StyleManager_Plugin()->get_version();
 		}
@@ -304,11 +335,11 @@ class Pixcloud_Notification_Conditions {
 		return false;
 	}
 
-	public static function get_wp_version( $rule ) {
+	public static function get_wp_version( $rule = null ) {
 		return get_bloginfo( 'version' );
 	}
 
-	public static function get_php_version( $rule ) {
+	public static function get_php_version( $rule = null ) {
 		if ( function_exists( 'phpversion' ) ) {
 			return phpversion();
 		}
@@ -316,7 +347,7 @@ class Pixcloud_Notification_Conditions {
 		return false;
 	}
 
-	public static function get_current_user_role( $rule ) {
+	public static function get_current_user_role( $rule = null ) {
 		$current_user = wp_get_current_user();
 
 		if ( ! empty( $current_user ) && ! is_wp_error( $current_user ) ) {
@@ -326,7 +357,7 @@ class Pixcloud_Notification_Conditions {
 		return false;
 	}
 
-	public static function get_current_user_capabilities( $rule ) {
+	public static function get_current_user_capabilities( $rule = null ) {
 		$current_user = wp_get_current_user();
 
 		if ( ! empty( $current_user ) && ! is_wp_error( $current_user ) ) {
@@ -336,16 +367,18 @@ class Pixcloud_Notification_Conditions {
 		return false;
 	}
 
-	public static function get_site_is_public( $rule ) {
+	public static function get_site_is_public( $rule = null ) {
 		// Local/development url parts to match for
 		$devsite_needles = array(
 			'localhost',
 			':8888',
 			'.local',
-			'pixelgrade.dev',
 			'.dev',
 			':8082',
 			'staging.',
+			'.invalid',
+			'.test',
+			'.example',
 		);
 
 		if ( self::string_contains_any( get_bloginfo( 'url'), $devsite_needles ) ) {
@@ -355,67 +388,111 @@ class Pixcloud_Notification_Conditions {
 		return  true;
 	}
 
-	public static function get_site_url( $rule ) {
+	public static function get_site_url( $rule = null ) {
 		return get_bloginfo( 'url');
 	}
 
-	public static function get_site_is_multisite( $rule ) {
+	public static function get_site_is_multisite( $rule = null ) {
 		return is_multisite();
 	}
 
-	public static function get_site_number_of_posts( $rule ) {
-		return wp_count_posts( 'post' );
+	public static function get_site_number_of_posts( $rule = null ) {
+		// Make sure it is an array.
+		$post_count = json_decode( json_encode( wp_count_posts( 'post' ) ), true );
+		return ! empty( $post_count['publish'] ) ? $post_count['publish'] : 0;
 	}
 
-	public static function get_site_number_of_pages( $rule ) {
-		return wp_count_posts( 'page' );
+	public static function get_site_number_of_pages( $rule = null ) {
+		// Make sure it is an array.
+		$post_count = json_decode( json_encode( wp_count_posts( 'page' ) ), true );
+		return ! empty( $post_count['publish'] ) ? $post_count['publish'] : 0;
 	}
 
-	public static function get_current_date( $rule ) {
+	public static function get_current_date( $rule = null ) {
 		return date('Y/m/d');
 	}
-	// There are special.
-	public static function get_class_exists( $rule ) {
-		return null;
+	// These are special.
+	public static function get_class_exists( $rule = null ) {
+		return true;
 	}
 
-	public static function get_function_exists( $rule ) {
-		return null;
+	public static function get_function_exists( $rule = null ) {
+		return true;
 	}
 
-	/*
+	/* =======
 	 * HELPERS
 	 */
 
 	/**
 	 * @param $value
-	 * @param $rule
+	 * @param $type
 	 *
 	 * @return false|float|int|string
 	 */
-	public static function convert_field_value_to_type( $value, $rule ) {
-		if ( ! empty( $rule['type'] ) ) {
-			switch ( $rule['type'] ) {
+	public static function convert_value_to_type( $value, $type ) {
+		if ( null === $value ) {
+			return $value;
+		}
+
+		// Make sure we are not dealing with stdClass.
+		if ( $value instanceof stdClass ) {
+			$value = json_decode( json_encode( $value ), true );
+		}
+
+		if ( ! empty( $type ) ) {
+			switch ( $type ) {
 				case 'integer':
-					$value = (int) $value;
+					if ( is_array( $value ) ) {
+						$value = array_map( 'intval', $value );
+					} else {
+						$value = intval( $value );
+					}
 					break;
 				case 'string':
-					$value = (string) $value;
+					if ( is_array( $value ) ) {
+						$value = array_map( 'strval', $value );
+					} else {
+						$value = strval( $value );
+					}
 					break;
 				case 'double':
-					$value = (double) $value;
+					if ( is_array( $value ) ) {
+						$value = array_map( 'doubleval', $value );
+					} else {
+						$value = doubleval( $value );
+					}
 					break;
 				case 'date':
-					$value = date('Y/m/d', strtotime( $value ) );
+					if ( is_array( $value ) ) {
+						$value = array_map( 'strtotime', $value );
+						$value = array_map( array( __CLASS__, 'dateval' ), $value );
+					} else {
+						$value = self::dateval( strtotime( $value ) );
+					}
 					break;
 				case 'time':
-					$value = date('H:i:s', strtotime( $value ) );
+					if ( is_array( $value ) ) {
+						$value = array_map( 'strtotime', $value );
+						$value = array_map( array( __CLASS__, 'timeval' ), $value );
+					} else {
+						$value = self::timeval( strtotime( $value ) );
+					}
 					break;
 				case 'datetime':
-					$value = date('Y/m/d H:i:s', strtotime( $value ) );
+					if ( is_array( $value ) ) {
+						$value = array_map( 'strtotime', $value );
+						$value = array_map( array( __CLASS__, 'datetimeval' ), $value );
+					} else {
+						$value = self::datetimeval( strtotime( $value ) );
+					}
 					break;
 				case 'boolean':
-					$value = (bool) $value;
+					if ( is_array( $value ) ) {
+						$value = array_map( 'boolval', $value );
+					} else {
+						$value = boolval( $value );
+					}
 					break;
 				default:
 					break;
@@ -423,6 +500,18 @@ class Pixcloud_Notification_Conditions {
 		}
 
 		return $value;
+	}
+
+	protected static function dateval( $timestamp ) {
+		return date('Y/m/d', $timestamp );
+	}
+
+	protected static function timeval( $timestamp ) {
+		return date('H:i:s', $timestamp );
+	}
+
+	protected static function datetimeval( $timestamp ) {
+		return date('Y/m/d H:i:s', $timestamp );
 	}
 
 	/**
@@ -602,7 +691,7 @@ class Pixcloud_Notification_Conditions {
 			return false;
 		}
 
-		return sanitize_title( $wupdates_ids[ $slug ]['id'] );
+		return $wupdates_ids[ $slug ]['id'];
 	}
 
 	/**
