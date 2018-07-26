@@ -411,13 +411,31 @@ class Pixcloud_Notification_Conditions {
 	public static function get_current_date( $rule = null ) {
 		return date('Y/m/d');
 	}
-	// These are special.
+
+	// This is special.
 	public static function get_class_exists( $rule = null ) {
 		return true;
 	}
 
+	// This is special.
 	public static function get_function_exists( $rule = null ) {
 		return true;
+	}
+
+	public static function get_wp_debug_active( $rule = null ) {
+		return defined( 'WP_DEBUG') && true === WP_DEBUG;
+	}
+
+	public static function get_pixelgrade_dev_mode_active( $rule = null ) {
+		return defined( 'PIXELGRADE_CARE__DEV_MODE') && true === PIXELGRADE_CARE__DEV_MODE;
+	}
+
+	public static function get_customify_dev_force_defaults_active( $rule = null ) {
+		return defined( 'CUSTOMIFY_DEV_FORCE_DEFAULTS') && true === CUSTOMIFY_DEV_FORCE_DEFAULTS;
+	}
+
+	public static function get_sm_dev_customizer_force_defaults_active( $rule = null ) {
+		return defined( 'SM_DEV_CUSTOMIZER_FORCE_DEFAULTS') && true === SM_DEV_CUSTOMIZER_FORCE_DEFAULTS;
 	}
 
 	/* =======
