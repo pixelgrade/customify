@@ -23,10 +23,10 @@ Our current color palettes system supports at most 9 colors (3 accent colors, 3 
 |   | Secondary | An alternative color for Primary |
 |   | Tertiary | An alternative color for Secondary |
 | **Dark** | Primary | Headings Color – usually the darkest shade. |
-| Dark shades | Secondary | Body text color |
+| | Secondary | Body text color |
 |   | Tertiary | The lightest shade of dark. |
 | **Light** | Primary | Main site background color |
-|  Light shades | Secondary | A complementary color for site background |
+|   | Secondary | A complementary color for site background |
 |   | Tertiary | A *highlighter* background color for various elements (e.g. post-it notes, brush strokes). Should have a greater intensity than the others two light colors. |
 
 
