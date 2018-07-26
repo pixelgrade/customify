@@ -15,7 +15,22 @@ Next you need to organize and reduce the number of all those colors to three gro
 From over 7-years experience of building sites, we find out that those three categories could fill up most of the decisions that a designer take in setting up their site’s elements.
 
 ### 1.2 Define the Master Colors
-Our current color palettes system supports at most 9 colors (3 accent colors, 3 dark shades and 3 light shades). To make things easier define those colors as constants in your `functions.php` file like so: 
+Our current color palettes system supports at most 9 colors (3 accent colors, 3 dark shades and 3 light shades). Below are some guidelines and suggestions about the purpose of each color: 
+
+| Section | Type | Description |
+|:--|:--|:--|
+| **Color** | Primary | The main Accent color use it to draw the highest attention.|
+|   | Secondary | An alternative color for Primary |
+|   | Tertiary | An alternative color for Secondary |
+| **Dark** | Primary | Headings Color – usually the darkest shade. |
+| Dark shades | Secondary | Body text color |
+|   | Tertiary | The lightest shade of dark. |
+| **Light** | Primary | Main site background color |
+|  Light shades | Secondary | A complementary color for site background |
+|   | Tertiary | A *highlighter* background color for various elements (e.g. post-it notes, brush strokes). Should have a greater intensity than the others two light colors. |
+
+
+To make things easier define those colors as constants in your `functions.php` file like so: 
 
 ```php
 // Color
