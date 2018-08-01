@@ -1177,7 +1177,7 @@ class PixCustomifyPlugin {
 					continue;
 				}
 
-				$panel = $wp_customize->get_control( $panel_id );
+				$panel = $wp_customize->get_panel( $panel_id );
 				if ( empty( $panel ) || ! $panel instanceof WP_Customize_Panel ) {
 					continue;
 				}
@@ -1223,7 +1223,7 @@ class PixCustomifyPlugin {
 					continue;
 				}
 
-				$section = $wp_customize->get_control( $section_id );
+				$section = $wp_customize->get_section( $section_id );
 				if ( empty( $section ) || ! $section instanceof WP_Customize_Section ) {
 					continue;
 				}
@@ -1259,7 +1259,7 @@ class PixCustomifyPlugin {
 					continue;
 				}
 
-				$setting = $wp_customize->get_control( $setting_id );
+				$setting = $wp_customize->get_setting( $setting_id );
 				if ( empty( $setting ) || ! $setting instanceof WP_Customize_Setting ) {
 					continue;
 				}
