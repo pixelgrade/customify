@@ -255,7 +255,7 @@ class Customify_Style_Manager {
 			'priority'    => 22,
 			'capability'  => 'edit_theme_options',
 			'panel_id'    => 'style_manager_panel',
-			'title'       => __( 'Style Manager', 'pixcustomify' ),
+			'title'       => esc_html__( 'Style Manager', 'pixcustomify' ),
 			'description' => __( '<strong>Style Manager</strong> is an intuitive system to help you change the look of your website and make an excellent impression.', 'pixcustomify' ),
 			'sections' => array(),
 			'auto_expand_sole_section' => true, // If there is only one section in the panel, auto-expand it.
@@ -293,7 +293,7 @@ class Customify_Style_Manager {
 			);
 
 			$color_palettes_section_config = array(
-				'title'      => __( 'Colors', 'pixcustomify' ),
+				'title'      => esc_html__( 'Colors', 'pixcustomify' ),
 				'section_id' => 'sm_color_palettes_section',
 				'priority'   => 10,
 				'options'    => array(),
@@ -327,7 +327,7 @@ class Customify_Style_Manager {
 			);
 
 			$font_palettes_section_config = array(
-				'title'      => __( 'Fonts', 'pixcustomify' ),
+				'title'      => esc_html__( 'Fonts', 'pixcustomify' ),
 				'section_id' => 'sm_font_palettes_section',
 				'priority'   => 20,
 				'options'    => array(),
@@ -352,15 +352,68 @@ class Customify_Style_Manager {
 			'priority'    => 23,
 			'capability'  => 'edit_theme_options',
 			'panel_id'    => 'theme_options_panel',
-			'title'       => __( 'Theme Options', 'pixcustomify' ),
-			'description' => __( 'Advanced options to change your site look-and-feel on a detailed level.', 'pixcustomify' ),
+			'title'       => esc_html__( 'Theme Options', 'pixcustomify' ),
+			'description' => esc_html__( 'Advanced options to change your site look-and-feel on a detailed level.', 'pixcustomify' ),
 			'sections' => $other_theme_sections_config,
 		);
 
-		// Finally, remove the switch theme panel from the Customizer.
-		add_action( 'customize_register', array( $this, 'remove_switch_theme_panel' ), 10 );
+		// Add the logic that handles sections and controls added directly to WP_Customizer, not through the config.
+		add_action( 'customize_register', array( $this, 'reorganize_direct_sections_and_controls' ), 100 );
+
+		// Remove the switch theme panel from the Customizer.
+		add_action( 'customize_register', array( $this, 'remove_switch_theme_panel' ), 12 );
 
 		return $config;
+	}
+
+	/**
+	 * Reorganizes sections and controls added directly to WP_Customizer, not through the config.
+	 *
+	 * @todo Please note that this is house cleaning and it is only necessary due to the lack of complete standardization on the theme side. We should not need this forever!
+	 *
+	 * @since 1.9.0
+	 *
+	 * @param WP_Customize_Manager $wp_customize
+	 */
+	public function reorganize_direct_sections_and_controls( $wp_customize ) {
+		// We will do out best to identify direct sections and move their controls to the appropriate place.
+		/** @var WP_Customize_Section $section */
+		foreach ( $wp_customize->sections() as $section ) {
+			// These are general theme options sections that need to have their controls moved to the Theme Options > General section.
+			if ( false !== strpos( $section->id, 'theme_options') ) {
+				$theme_options_panel = $wp_customize->get_panel( 'theme_options_panel' );
+				$general_section = false;
+				foreach ( $theme_options_panel->sections as $theme_options_section ) {
+					if ( false !== strpos( $theme_options_section->id, 'general' ) ) {
+						$general_section = $section;
+					}
+				}
+
+				if ( false === $general_section ) {
+					// We need to add a general section in the Theme Options panel.
+					$general_section = $wp_customize->add_section( 'theme_options[general]', array(
+						'title'             => esc_html__( 'General', 'pixcustomify' ),
+						'panel'             => $theme_options_panel->id,
+						'priority'          => 2,
+					) );
+				}
+
+				// Move all the controls in the identified theme options section to the general one.
+				/** @var WP_Customize_Control $control */
+				foreach ( $wp_customize->controls() as $control ) {
+					if ( $control->section !== $section->id ) {
+						continue;
+					}
+
+					$control->section = $general_section->id;
+				}
+
+				// Finally remove the now empty section.
+				$wp_customize->remove_section( $section->id );
+
+				break;
+			}
+		}
 	}
 
 	/**
