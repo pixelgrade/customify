@@ -257,9 +257,10 @@ class Pixcloud_Admin_Notifications_Manager {
 
 		// Set the notice arguments using defaults where necessary. (user_ids should always be set for an opt out notice.)
 		$defaults = array(
-			'message'               => '',
-			'wrap_tag'              => 'p',
 			'type'                  => 'error',
+			'message'               => '',
+			'container_classes'     => array(),
+			'wrap_tag'              => 'p',
 			'user_ids'              => array(),
 			'screen_ids'            => array(),
 			'post_ids'              => array(),
@@ -303,7 +304,7 @@ class Pixcloud_Admin_Notifications_Manager {
 					}
 					break;
 				case 'message' :
-					if ( ! is_string( $value ) && ! is_int( $value ) && ! is_float( $value ) ) {
+					if ( ! is_string( $value ) && ! is_array( $value ) ) {
 						return false;
 					}
 					if ( empty( $value ) ) {
@@ -687,8 +688,6 @@ class Pixcloud_Admin_Notifications_Manager {
 
 				// Display the notice with option to filter display.
 				if ( true === apply_filters( $this->manager_id . '_display_notice', $display, $notice ) ) {
-					// Parse any content tags.
-					$notice['message'] = self::parse_content_tags( $notice['message'] );
 
 					if ( 'custom' !== $notice['type'] ) {
 						$this->display_standard_notice( $notice );
@@ -730,6 +729,9 @@ class Pixcloud_Admin_Notifications_Manager {
 			$container_classes[] = 'notice-manager-ajax';
 		}
 
+		// Parse any content tags.
+		$notice['message'] = self::parse_content_tags( $notice['message'] );
+
 		// Convert newlines to <br>s.
 		$notice['message'] = nl2br( $notice['message'] );
 
@@ -737,7 +739,7 @@ class Pixcloud_Admin_Notifications_Manager {
 			$notice['message'] = '<' . $notice['wrap_tag'] . '>' . $notice['message'] . '</' . $notice['wrap_tag'] . '>';
 		}
 
-		// Display the notice.
+		// Display the notice markup.
 		?>
 		<div id="<?php echo esc_attr( $this->manager_id . '-' . $notice['id'] ); ?>" class="<?php echo implode( ' ', $container_classes ); ?>">
 			<form class="pixcloud_anm-form"
@@ -790,8 +792,13 @@ class Pixcloud_Admin_Notifications_Manager {
 		// Add classes to the notice container as needed.
 		$container_classes = array(
 			'notice', // this class is needed by WordPress to properly identify notices and move/enhance them with JS.
-			'notice-' . esc_attr( $notice['type'] ),
 		);
+
+		// Merge with the custom classes received.
+		if (  ! empty( $notice['container_classes' ] ) || is_array( $notice['container_classes'] ) ) {
+			$container_classes = array_merge( $container_classes, $notice['container_classes'] );
+		}
+
 		if ( $notice['dismissable'] ) {
 			$container_classes[] = 'is-dismissible';
 		}
@@ -799,7 +806,29 @@ class Pixcloud_Admin_Notifications_Manager {
 			$container_classes[] = 'notice-manager-ajax';
 		}
 
-		// Display the notice.
+		// Standardize the message since we can receive the markup directly or a complex data structure with markup, CSS, and so on.
+		if ( is_string( $notice['message'] ) ) {
+			$notice['message'] = array(
+					'markup' => $notice['message'],
+			);
+		}
+
+		// Bail if we don't have any markup.
+		if ( empty( $notice['message']['markup'] ) ) {
+			return;
+		}
+
+		// Parse any content tags.
+		$notice['message']['markup'] = self::parse_content_tags( $notice['message']['markup'] );
+
+		// Output the custom CSS.
+		if ( ! empty( $notice['message']['css'] ) ) { ?>
+			<style type="text/css">
+				<?php echo $notice['message']['css']; ?>
+			</style>
+		<?php }
+
+		// Display the notice markup.
 		?>
 		<div id="<?php echo esc_attr( $this->manager_id . '-' . $notice['id'] ); ?>" class="<?php echo implode( ' ', $container_classes ); ?>">
 			<form class="pixcloud_anm-form"
@@ -821,7 +850,7 @@ class Pixcloud_Admin_Notifications_Manager {
 					</noscript><?php
 				}
 
-				echo $notice['message'];
+				echo $notice['message']['markup'];
 
 				if ( $notice['no_js_dismissable'] ) {
 					?>
@@ -889,6 +918,44 @@ class Pixcloud_Admin_Notifications_Manager {
 
 		// %current_color_palette%
 		$content = str_replace( '%current_color_palette%', Pixcloud_Notification_Conditions::get_current_color_palette_label(), $content );
+
+		/*
+		 * URLs.
+		 */
+		// %home_url%
+		$content = str_replace( '%home_url%', home_url(), $content );
+
+		// %customizer_url%
+		$content = str_replace( '%customizer_url%', wp_customize_url(), $content );
+		// %customizer_style_manager_url%
+		$section_link = add_query_arg( array( 'autofocus[panel]' => 'style_manager_panel' ), admin_url( 'customize.php' ) );
+		$content = str_replace( '%customizer_style_manager_url%', $section_link, $content );
+		// %customizer_style_manager_colors_url%
+		$section_link = add_query_arg( array( 'autofocus[section]' => 'sm_color_palettes_section' ), admin_url( 'customize.php' ) );
+		$content = str_replace( '%customizer_style_manager_colors_url%', $section_link, $content );
+		// %customizer_style_manager_fonts_url%
+		$section_link = add_query_arg( array( 'autofocus[section]' => 'sm_font_palettes_section' ), admin_url( 'customize.php' ) );
+		$content = str_replace( '%customizer_style_manager_fonts_url%', $section_link, $content );
+		// %customizer_theme_options_url%
+		$section_link = add_query_arg( array( 'autofocus[panel]' => 'theme_options_panel' ), admin_url( 'customize.php' ) );
+		$content = str_replace( '%customizer_theme_options_url%', $section_link, $content );
+		// %customizer_menus_url%
+		$section_link = add_query_arg( array( 'autofocus[panel]' => 'nav_menus' ), admin_url( 'customize.php' ) );
+		$content = str_replace( '%customizer_menus_url%', $section_link, $content );
+		// %customizer_widgets_url%
+		$section_link = add_query_arg( array( 'autofocus[panel]' => 'widgets' ), admin_url( 'customize.php' ) );
+		$content = str_replace( '%customizer_widgets_url%', $section_link, $content );
+		// %customizer_homepage_settings_url%
+		$section_link = add_query_arg( array( 'autofocus[section]' => 'static_front_page' ), admin_url( 'customize.php' ) );
+		$content = str_replace( '%customizer_homepage_settings_url%', $section_link, $content );
+		// %customizer_site_identity_url%
+		$section_link = add_query_arg( array( 'autofocus[section]' => 'publish_settings' ), admin_url( 'customize.php' ) );
+		$content = str_replace( '%customizer_site_identity_url%', $section_link, $content );
+
+		// %pixelgrade_care_dashboard_url%
+		$content = str_replace( '%pixelgrade_care_dashboard_url%', admin_url( 'admin.php?page=pixelgrade_care' ), $content );
+		// %pixelgrade_care_themes_url%
+		$content = str_replace( '%pixelgrade_care_themes_url%', admin_url( 'admin.php?page=pixelgrade_themes' ), $content );
 
 		// Allow others to alter the content after we did our work
 		return apply_filters( 'pixcloud_notifications_after_parse_content_tags', $content, $original_content );
