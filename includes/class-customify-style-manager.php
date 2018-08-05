@@ -549,7 +549,7 @@ class Customify_Style_Manager {
 			return true;
 		}
 
-		if ( ! empty( $timestamp ) && intval( $timestamp_limit ) > intval( $feedback_timestamp ) ) {
+		if ( ! empty( $timestamp_limit ) && intval( $timestamp_limit ) > intval( $feedback_timestamp ) ) {
 			return  true;
 		}
 
