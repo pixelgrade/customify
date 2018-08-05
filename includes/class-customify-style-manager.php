@@ -438,8 +438,11 @@ class Customify_Style_Manager {
 			return;
 		}
 
-		// Only output if the user didn't provide feedback.
-		if ( ! $this->user_provided_feedback() ) { ?>
+		// We want to ask for feedback once a month.
+		$a_month_back = time() - MONTH_IN_SECONDS;
+
+		// Only output if we should ask for feedback.
+		if ( $this->should_ask_for_feedback( $a_month_back ) ) { ?>
 			<div id="style-manager-user-feedback-modal">
 				<div class="modal">
 					<div class="modal-dialog" role="document">
@@ -515,26 +518,42 @@ class Customify_Style_Manager {
 	}
 
 	/**
-	 * @param bool|int $timestamp_limit Optional. Timestamp to compare the time the user provided feedback.
-	 *                              If the provided timestamp is earlier than the time the user provided feedback, returns false.
+	 * Return whether user provided feedback, and if so, return the timestamp.
 	 *
-	 * @return bool
+	 * @return bool|int
 	 */
-	public function user_provided_feedback( $timestamp_limit = false ) {
-		if ( defined( 'CUSTOMIFY_SM_ALWAYS_ASK_FOR_FEEDBACK' ) && true === CUSTOMIFY_SM_ALWAYS_ASK_FOR_FEEDBACK ) {
-			return false;
-		}
-
+	public function user_provided_feedback() {
 		$user_provided_feedback = get_option( 'style_manager_user_feedback_provided' );
 		if ( empty( $user_provided_feedback ) ) {
 			return false;
 		}
 
-		if ( ! empty( $timestamp ) && is_int( $timestamp ) && $timestamp_limit > $user_provided_feedback ) {
-			return  false;
+		return $user_provided_feedback;
+	}
+
+	/**
+	 * Determine if we should ask for user feedback.
+	 *
+	 * @param bool|int $timestamp_limit Optional. Timestamp to compare the time the user provided feedback.
+	 *                              If the provided timestamp is earlier than the time the user provided feedback, should ask again.
+	 *
+	 * @return bool
+	 */
+	public function should_ask_for_feedback( $timestamp_limit = false ) {
+		if ( defined( 'CUSTOMIFY_SM_ALWAYS_ASK_FOR_FEEDBACK' ) && true === CUSTOMIFY_SM_ALWAYS_ASK_FOR_FEEDBACK ) {
+			return true;
 		}
 
-		return true;
+		$feedback_timestamp = $this->user_provided_feedback();
+		if ( empty( $feedback_timestamp ) ) {
+			return true;
+		}
+
+		if ( ! empty( $timestamp ) && intval( $timestamp_limit ) > intval( $feedback_timestamp ) ) {
+			return  true;
+		}
+
+		return false;
 	}
 
 	/**
