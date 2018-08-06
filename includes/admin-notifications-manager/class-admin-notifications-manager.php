@@ -897,7 +897,12 @@ class Pixcloud_Admin_Notifications_Manager {
 
 			if ( ! empty( $user ) && ! is_wp_error( $user ) ) {
 				// %first_name%
-				$content = str_replace( '%user_first_name%', $user->first_name, $content );
+				if ( ! empty( $user->first_name ) ) {
+					$content = str_replace( '%user_first_name%', $user->first_name, $content );
+				} else {
+					// Fallback to display_name.
+					$content = str_replace( '%user_first_name%', $user->display_name, $content );
+				}
 				// %last_name%
 				$content = str_replace( '%user_last_name%', $user->last_name, $content );
 				// %display_name%
