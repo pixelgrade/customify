@@ -255,8 +255,8 @@ class Customify_Style_Manager {
 			'priority'    => 22,
 			'capability'  => 'edit_theme_options',
 			'panel_id'    => 'style_manager_panel',
-			'title'       => esc_html__( 'Style Manager', 'pixcustomify' ),
-			'description' => __( '<strong>Style Manager</strong> is an intuitive system to help you change the look of your website and make an excellent impression.', 'pixcustomify' ),
+			'title'       => esc_html__( 'Style Manager', 'customify' ),
+			'description' => __( '<strong>Style Manager</strong> is an intuitive system to help you change the look of your website and make an excellent impression.', 'customify' ),
 			'sections' => array(),
 			'auto_expand_sole_section' => true, // If there is only one section in the panel, auto-expand it.
 		);
@@ -293,7 +293,7 @@ class Customify_Style_Manager {
 			);
 
 			$color_palettes_section_config = array(
-				'title'      => esc_html__( 'Colors', 'pixcustomify' ),
+				'title'      => esc_html__( 'Colors', 'customify' ),
 				'section_id' => 'sm_color_palettes_section',
 				'priority'   => 10,
 				'options'    => array(),
@@ -327,7 +327,7 @@ class Customify_Style_Manager {
 			);
 
 			$font_palettes_section_config = array(
-				'title'      => esc_html__( 'Fonts', 'pixcustomify' ),
+				'title'      => esc_html__( 'Fonts', 'customify' ),
 				'section_id' => 'sm_font_palettes_section',
 				'priority'   => 20,
 				'options'    => array(),
@@ -352,8 +352,8 @@ class Customify_Style_Manager {
 			'priority'    => 23,
 			'capability'  => 'edit_theme_options',
 			'panel_id'    => 'theme_options_panel',
-			'title'       => esc_html__( 'Theme Options', 'pixcustomify' ),
-			'description' => esc_html__( 'Advanced options to change your site look-and-feel on a detailed level.', 'pixcustomify' ),
+			'title'       => esc_html__( 'Theme Options', 'customify' ),
+			'description' => esc_html__( 'Advanced options to change your site look-and-feel on a detailed level.', 'customify' ),
 			'sections' => $other_theme_sections_config,
 		);
 
@@ -392,7 +392,7 @@ class Customify_Style_Manager {
 				if ( false === $general_section ) {
 					// We need to add a general section in the Theme Options panel.
 					$general_section = $wp_customize->add_section( 'theme_options[general]', array(
-						'title'             => esc_html__( 'General', 'pixcustomify' ),
+						'title'             => esc_html__( 'General', 'customify' ),
 						'panel'             => $theme_options_panel->id,
 						'priority'          => 2,
 					) );

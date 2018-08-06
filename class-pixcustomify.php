@@ -1348,8 +1348,8 @@ class PixCustomifyPlugin {
 						$panel_args = array(
 							'priority'                 => 10,
 							'capability'               => 'edit_theme_options',
-							'title'                    => __( 'Panel title is required', 'pixcustomify' ),
-							'description'              => __( 'Description of what this panel does.', 'pixcustomify' ),
+							'title'                    => __( 'Panel title is required', 'customify' ),
+							'description'              => __( 'Description of what this panel does.', 'customify' ),
 							'auto_expand_sole_section' => false,
 						);
 
