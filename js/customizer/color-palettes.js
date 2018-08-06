@@ -13,14 +13,14 @@ let ColorPalettes = ( function( $, exports, wp ) {
         "sm_light_tertiary"
     ];
 
-	const master_color_selector = '#_customize-input-sm_dark_color_master_slider_control';
-	const primary_color_selector = '#_customize-input-sm_dark_color_primary_slider_control';
-	const secondary_color_selector = '#_customize-input-sm_dark_color_secondary_slider_control';
-	const tertiary_color_selector = '#_customize-input-sm_dark_color_tertiary_slider_control';
-	const color_dispersion_selector = '#_customize-input-sm_colors_dispersion_control';
-	const color_focus_point_selector = '#_customize-input-sm_colors_focus_point_control';
-	const color_sliders_selector = primary_color_selector + ', ' + secondary_color_selector + ', ' + tertiary_color_selector;
-	const all_sliders_selector = color_sliders_selector + ', ' + color_dispersion_selector + ', ' + color_focus_point_selector;
+	// const master_color_selector = '#_customize-input-sm_dark_color_master_slider_control';
+	// const primary_color_selector = '#_customize-input-sm_dark_color_primary_slider_control';
+	// const secondary_color_selector = '#_customize-input-sm_dark_color_secondary_slider_control';
+	// const tertiary_color_selector = '#_customize-input-sm_dark_color_tertiary_slider_control';
+	// const color_dispersion_selector = '#_customize-input-sm_colors_dispersion_control';
+	// const color_focus_point_selector = '#_customize-input-sm_colors_focus_point_control';
+	// const color_sliders_selector = primary_color_selector + ', ' + secondary_color_selector + ', ' + tertiary_color_selector;
+	// const all_sliders_selector = color_sliders_selector + ', ' + color_dispersion_selector + ', ' + color_focus_point_selector;
 
     let setupGlobalsDone = false;
 
@@ -177,7 +177,7 @@ let ColorPalettes = ( function( $, exports, wp ) {
     // return an array with the hex values of a certain color palette
     const getPaletteColors = ( palette_id ) => {
 
-    }
+    };
 
     // return an array with the hex values of the current palette
     const getCurrentPaletteColors = () => {
@@ -188,7 +188,7 @@ let ColorPalettes = ( function( $, exports, wp ) {
             colors.push( color );
         } );
         return colors;
-    }
+    };
 
     const createCurrentPaletteControls = () => {
         const $palette = $( '.c-color-palette' );
@@ -238,7 +238,7 @@ let ColorPalettes = ( function( $, exports, wp ) {
                     $( obj ).data( 'target' ).not( $input ).hide();
                 } );
                 $input.show().focus();
-            }
+            };
 
 	        $obj.on( 'click', ( e ) => {
                 e.stopPropagation();
@@ -444,7 +444,7 @@ let ColorPalettes = ( function( $, exports, wp ) {
         toggleAlteredClassOnMasterControls();
         toggleHiddenClassOnMasterControls();
         updateActiveVariationControlColor();
-    }
+    };
 
 	const swapConnectedFields = ( settings ) => {
         let variation = getCurrentVariation();
@@ -595,7 +595,7 @@ let ColorPalettes = ( function( $, exports, wp ) {
         bindConnectedFields();
         resetSettings();
         refreshCurrentPaletteControl();
-    }
+    };
 
     const confirmChanges = ( callback ) => {
         if ( typeof callback !== 'function' ) {
@@ -612,7 +612,7 @@ let ColorPalettes = ( function( $, exports, wp ) {
         if ( ! altered || confirmed ) {
             callback();
         }
-    }
+    };
 
     const bindEvents = () => {
 	    const paletteControlSelector = '.c-color-palette__control';
@@ -636,19 +636,16 @@ let ColorPalettes = ( function( $, exports, wp ) {
 	    // when variation is changed reload connected fields from cached version of customizer settings config
 	    $( document ).on( 'change', '[name="_customize-radio-sm_color_palette_variation_control"]', reinitializeConnectedFields );
 
-	    //
 	    $( document ).on( 'click', '.customify_preset.color_palette input', function () {
             confirmChanges( onPaletteChange.bind( this ) );
         } );
 
+	    // $( all_sliders_selector ).on( 'input', reloadConnectedFields );
 	    //
-	    $( all_sliders_selector ).on( 'input', reloadConnectedFields );
-
-	    //
-	    $( master_color_selector ).on( 'input', function() {
-		    const masterValue = $( master_color_selector ).val();
-		    $( color_sliders_selector ).val( masterValue ).trigger( 'input' );
-	    } );
+	    // $( master_color_selector ).on( 'input', function() {
+		//     const masterValue = $( master_color_selector ).val();
+		//     $( color_sliders_selector ).val( masterValue ).trigger( 'input' );
+	    // } );
     };
 
     wp.customize.bind( 'ready', function() {
