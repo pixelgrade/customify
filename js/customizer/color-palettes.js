@@ -61,44 +61,19 @@ let ColorPalettes = ( function( $, exports, wp ) {
             return;
         }
 
-        const $current = $palette.find( '.colors.current' );
-        const $next = $palette.find( '.colors.next' );
-
-        label = label || 'Custom Style';
-        $palette.find( '.c-color-palette__name' ).text( label );
-
-        // apply the last animate set of colors to the "current" color palette
-        _.each( masterSettingIds, function( setting_id ) {
-            const color = $next.find( '.' + setting_id ).css( 'color' );
-            $current.find( '.color.' + setting_id ).css( 'color', color );
-            $palette.find( 'input.' + setting_id ).val( rgb2hex( color ) );
-        });
-
-        // removing the "animate" class will put the "next" color palette out view
-        // so we can update the colors in it
-        $palette.removeClass( 'animate' );
+        const $colors = $palette.find( '.colors' );
 
         // update the colors in the "next" palette with the new values
         _.each( masterSettingIds, function( setting_id ) {
             const setting = wp.customize( setting_id );
 
             if ( typeof setting !== "undefined" ) {
-                $next.find( '.' + setting_id ).css( 'color', setting() );
+                $colors.find( '.' + setting_id ).css( 'color', setting() );
             }
         });
 
         $palette.find( '.altered' ).removeClass( 'altered' );
-        // trigger transition to new color palette
-        setTimeout(function() {
-            $palette.addClass( 'animate' );
-            updateActiveVariationControlColor();
-        });
     };
-
-    const updateActiveVariationControlColor = _.debounce( () => {
-        var color = $( '.colors.next .color' ).first( ':visible' ).css( 'color' );
-        $( '.c-color-palette__control' ).css( 'color', color );
-    }, 30 );
 
     const resetSettings = () => {
         _.each( masterSettingIds, function( setting_id ) {
@@ -199,7 +174,7 @@ let ColorPalettes = ( function( $, exports, wp ) {
             return;
         }
 
-        const $colors = $palette.find( '.colors.next .color' );
+        const $colors = $palette.find( '.colors .color' );
 
         $colors.each( ( i, obj ) => {
             const $obj = $( obj );
@@ -214,7 +189,6 @@ let ColorPalettes = ( function( $, exports, wp ) {
                     const lastColor = setting();
                     const currentColor = ui.color.toString();
 
-                    updateActiveVariationControlColor();
                     setPalettesOnConnectedFields();
 
                     if ( lastColor !== currentColor ) {
@@ -315,7 +289,7 @@ let ColorPalettes = ( function( $, exports, wp ) {
 
         setPalettesOnConnectedFields();
 
-//	    buildColorMatrix();
+	    buildColorMatrix();
     };
 
     // this function goes through all the connected fields and adds swatches to the default color picker for all the colors in the current color palette
@@ -368,7 +342,7 @@ let ColorPalettes = ( function( $, exports, wp ) {
                 classes.push( fieldClassName );
 
                 if ( ! $bucket.children( '.' + fieldClassName ).length ) {
-                    const $color = $( '<div title="' + field_id + '" class="' + fieldClassName + '">' ).appendTo( $bucket );
+                    $( '<div title="' + field_id + '" class="' + fieldClassName + '">' ).appendTo( $bucket );
                 }
             } );
 
@@ -444,7 +418,6 @@ let ColorPalettes = ( function( $, exports, wp ) {
     const refreshCurrentPaletteControl = () => {
         toggleAlteredClassOnMasterControls();
         toggleHiddenClassOnMasterControls();
-        updateActiveVariationControlColor();
     };
 
 	const swapConnectedFields = ( settings, swapMap ) => {
@@ -678,6 +651,21 @@ let ColorPalettes = ( function( $, exports, wp ) {
         $( '[name="_customize-radio-sm_color_diversity_control"]' ).on( 'change', reinitializeConnectedFields );
         $( '[name="_customize-radio-sm_shuffle_colors_control"]' ).on( 'change', reinitializeConnectedFields );
 	    $( '[name="_customize-radio-sm_dark_mode_control"]' ).on( 'change', reinitializeConnectedFields );
+
+	    $( document ).on( 'click', '.sm-tabs__item', function( e ) {
+		    e.preventDefault();
+
+		    var $section = $( '#sub-accordion-section-sm_color_palettes_section' );
+		    var $tabs = $( '.sm-tabs__item' );
+		    var $active = $(this);
+		    var target = $active.data('target');
+
+		    $tabs.removeClass( 'sm-tabs__item--active' );
+		    $active.addClass( 'sm-tabs__item--active' );
+		    $section.removeClass( 'sm-view-palettes sm-view-customize sm-view-options').addClass( 'sm-view-' + target );
+	    } );
+
+	    $( '.sm-tabs__item' ).first().trigger( 'click' );
     };
 
     wp.customize.bind( 'ready', function() {

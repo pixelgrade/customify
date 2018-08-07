@@ -492,13 +492,11 @@ class Customify_Color_Palettes {
 					'label'        => esc_html__( 'Swap Secondary Color ⇆ Secondary Dark', 'customify' ),
 					'action'       => 'sm_swap_secondary_colors_dark',
 				),
-				'sm_advanced_toggle' => array(
-					'type'         => 'button',
-					'setting_type' => 'option',
-					'setting_id'   => 'sm_toggle_advanced_settings',
-					'priority'     => 30.4,
-					'label'        => esc_html__( 'Toggle Advanced Settings', 'customify' ),
-					'action'       => 'sm_toggle_advanced_settings',
+				'sm_spacing_bottom' => array(
+					'type'       => 'html',
+					'html'       => '',
+					'setting_id' => 'sm_spacing_bottom',
+					'priority'   => 31,
 				),
 			),
 		) );
@@ -526,24 +524,20 @@ class Customify_Color_Palettes {
 		}
 
 		$current_palette = '';
-		$current_palette_sets = array( 'current', 'next' );
 
 		$master_color_controls_ids = $this->get_all_master_color_controls_ids( $config['sections']['style_manager_section']['options'] );
 
-		foreach ( $current_palette_sets as $set ) {
-			$current_palette .= '<div class="colors ' . $set . '">';
-			foreach ( $master_color_controls_ids as $setting_id ) {
-				$current_palette .=
-					'<div class="color ' . $setting_id . '" data-setting="' . $setting_id . '">' . PHP_EOL .
-					'<div class="fill"></div>' . PHP_EOL .
-					'<div class="picker">' .
-					'<div class="disc"></div>'.
-					'<i></i>'.
-					'</div>' . PHP_EOL .
-					'</div>' . PHP_EOL;
-			}
-			$current_palette .= '</div>';
+		$current_palette .= '<div class="colors">';
+		foreach ( $master_color_controls_ids as $setting_id ) {
+			$current_palette .=
+				'<div class="color ' . $setting_id . '" data-setting="' . $setting_id . '">' . PHP_EOL .
+				'<div class="picker">' .
+				'<div class="disc"></div>'.
+				'<i></i>'.
+				'</div>' . PHP_EOL .
+				'</div>' . PHP_EOL;
 		}
+		$current_palette .= '</div>';
 
 		$current_palette .= '<div class="c-color-palette__fields">';
 		$current_palette .= '<div class="c-color-palette__notification  description  hidden  js-altered-notification">' . PHP_EOL .
@@ -557,47 +551,18 @@ class Customify_Color_Palettes {
 		// The section might be already defined, thus we merge, not replace the entire section config.
 		$config['sections']['style_manager_section']['options'] = array(
               'sm_current_color_palette' => array(
-                  'type' => 'html',
+                  'type'       => 'html',
                   'setting_id' => 'sm_current_color_palette',
-                  'html' =>
-                      '<div class="color-palette-container">' . PHP_EOL .
-                      '<span class="customize-control-title">Current Color Palette:</span>' . PHP_EOL .
-                      '<span class="description customize-control-description">Choose a color palette to start with. Adjust its style using the variation buttons below.</span>' . PHP_EOL .
+                  'html'       =>
                       '<div class="c-color-palette">' . PHP_EOL .
-                      $current_palette .
-                      '<div class="c-color-palette__overlay">' . PHP_EOL .
-                      '<div class="c-color-palette__label">' .
-                      '<div class="c-color-palette__name">' . 'Original Style' . '</div>' .
-                      '<div class="c-color-palette__control variation-light active" data-target="#_customize-input-sm_color_palette_variation_control-radio-light">' .
-                      '<span class="dashicons dashicons-image-rotate"></span>' .
-                      '<div class="c-color-palette__tooltip">Light</div>' .
-                      '</div>' .
-                      '<div class="c-color-palette__control variation-dark" data-target="#_customize-input-sm_color_palette_variation_control-radio-dark">' .
-                      '<span class="dashicons dashicons-image-filter"></span>'.
-                      '<div class="c-color-palette__tooltip">Dark</div>' .
-                      '</div>' .
-                      '<div class="c-color-palette__control variation-colorful" data-target="#_customize-input-sm_color_palette_variation_control-radio-colorful">' .
-                      '<span class="dashicons dashicons-admin-appearance"></span>' .
-                      '<div class="c-color-palette__tooltip">Colorful</div>' .
-                      '</div>' .
+                      $current_palette . PHP_EOL .
+                      '<div class="sm_color_matrix"></div>' . PHP_EOL .
                       '</div>' . PHP_EOL .
-                      '</div>' . PHP_EOL .
-                      '</div>' . PHP_EOL .
-                      '</div>' . PHP_EOL .
-                      '<svg class="c-color-palette__blur" width="15em" height="15em" viewBox="0 0 15 15" xmlns="http://www.w3.org/2000/svg" version="1.1">' . PHP_EOL .
-                      '<defs>' . PHP_EOL .
-                      '<filter id="goo">' . PHP_EOL .
-                      '<feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />' . PHP_EOL .
-                      '<feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 50 -20" result="goo" />' . PHP_EOL .
-                      '<feBlend in="SourceGraphic" in2="goo" />' . PHP_EOL .
-                      '</filter>' . PHP_EOL .
-                      '</defs>' . PHP_EOL .
-                      '</svg>',
-              ),
-              'sm_color_matrix' => array(
-                  'type' => 'html',
-                  'setting_id' => 'sm_color_matrix',
-                  'html' => '<div class="sm_color_matrix"></div>'
+                      '<div class="sm-tabs">' . PHP_EOL .
+	                      '<div class="sm-tabs__item" data-target="palettes">Palettes</div>' . PHP_EOL .
+	                      '<div class="sm-tabs__item" data-target="customize">Customize</div>' . PHP_EOL .
+	                      '<div class="sm-tabs__item" data-target="options">Options</div>' . PHP_EOL .
+                      '</div>',
               ),
               'sm_coloration_level' => array(
 	              'type'         => 'radio',
@@ -688,36 +653,6 @@ class Customify_Color_Palettes {
                   'desc'        => '',
                   'live'        => true,
 	              'default'     => $this->get_dark_to_color_slider_default_value( $config['sections']['style_manager_section']['options'], 'sm_dark_tertiary', 'sm_color_tertiary' ), // this should be set by the theme (previously 1300)
-                  'input_attrs' => array(
-                      'min'          => 0,
-                      'max'          => 100,
-                      'step'         => 1,
-                      'data-preview' => true,
-                  ),
-                  'css'         => array(),
-              ),
-              'sm_colors_dispersion' => array(
-	              'setting_id'  => 'sm_colors_dispersion',
-                  'type'        => 'range',
-                  'label'       => esc_html__( 'Colors dispersion range', 'customify' ),
-                  'desc'        => '',
-                  'live'        => true,
-                  'default'     => $this->get_color_dispersion_slider_default_value( $config['sections']['style_manager_section']['options'] ),
-                  'input_attrs' => array(
-                      'min'          => 1,
-                      'max'          => 100,
-                      'step'         => 1,
-                      'data-preview' => true,
-                  ),
-                  'css'         => array(),
-              ),
-              'sm_colors_focus_point' => array(
-	              'setting_id'  => 'sm_colors_focus_point',
-                  'type'        => 'range',
-                  'label'       => esc_html__( 'Colors focus point', 'customify' ),
-                  'desc'        => '',
-                  'live'        => true,
-                  'default'     => $this->get_color_focus_slider_default_value( $config['sections']['style_manager_section']['options'] ),
                   'input_attrs' => array(
                       'min'          => 0,
                       'max'          => 100,
@@ -852,54 +787,6 @@ class Customify_Color_Palettes {
 		}
 
 		return 100 * $color_count / $total_count;
-	}
-
-
-	private function get_color_dispersion_slider_default_value( $options ) {
-		$primary_count = count($options['sm_color_primary']['connected_fields']);
-		$secondary_count = count($options['sm_color_secondary']['connected_fields']);
-		$tertiary_count = count($options['sm_color_tertiary']['connected_fields']);
-		$total_count = $primary_count + $secondary_count + $tertiary_count;
-		$n = 3;
-
-		$average = ( $primary_count + $secondary_count + $tertiary_count ) / $n;
-
-		$diff_primary = pow( $primary_count - $average, 2 );
-		$diff_secondary = pow( $secondary_count - $average, 2 );
-		$diff_tertiary = pow( $tertiary_count - $average, 2 );
-
-		$diff_average = ( $diff_primary + $diff_secondary + $diff_tertiary ) / $n; // presupun ca e intre 0 si total * 2 / 3
-
-		$diff1 = pow( $total_count - $average, 2);
-		$diff2 = pow( $average, 2);
-		$diff3 = $diff2;
-
-		$min = 0; // dispersion = 1
-		$max = ($diff1 + $diff2 + $diff3) / 3;
-		// $max = 2 * ($n - 1) * $average / $n; // dispersion = 0;
-
-		// avoid division by zero
-		if ( $max === 0 ) {
-			return 100;
-		}
-
-		return 100 * ($diff_average / max($primary_count, $secondary_count, $tertiary_count));
-	}
-
-	private function get_color_focus_slider_default_value( $options ) {
-		$primary_count = count($options['sm_color_primary']['connected_fields']);
-		$secondary_count = count($options['sm_color_secondary']['connected_fields']);
-		$tertiary_count = count($options['sm_color_tertiary']['connected_fields']);
-		$total_count = $primary_count + $secondary_count + $tertiary_count;
-
-		// avoid division by zero
-		if ( $total_count === 0 ) {
-			return 50;
-		}
-
-		$focus_point = (0 * $primary_count + 0.5 * $secondary_count + 1 * $tertiary_count ) / $total_count;
-
-		return $focus_point * 100;
 	}
 
 	/**

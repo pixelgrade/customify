@@ -303,6 +303,7 @@ class Customify_Style_Manager {
 				'sm_swap_colors_dark',
 				'sm_swap_secondary_colors_dark',
 				'sm_advanced_toggle',
+				'sm_spacing_bottom',
 			);
 
 			$color_palettes_section_config = array(
