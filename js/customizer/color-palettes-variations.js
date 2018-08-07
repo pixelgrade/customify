@@ -1,4 +1,29 @@
 window.colorPalettesVariations = {
+    'color_diversity_low': {
+        'sm_color_primary': ['sm_color_primary','sm_color_secondary','sm_color_tertiary'],
+        'sm_color_secondary': [],
+        'sm_color_tertiary': [],
+    },
+    'color_diversity_medium': {
+        'sm_color_primary': ['sm_color_primary','sm_color_secondary'],
+        'sm_color_secondary': ['sm_color_tertiary'],
+        'sm_color_tertiary': [],
+    },
+    'color_diversity_high': {
+        'sm_color_primary': ['sm_color_primary'],
+        'sm_color_secondary': ['sm_color_secondary'],
+        'sm_color_tertiary': ['sm_color_tertiary'],
+    },
+	'shuffle_remix': {
+		'sm_color_primary': ['sm_color_secondary'],
+		'sm_color_secondary': ['sm_color_tertiary'],
+		'sm_color_tertiary': ['sm_color_primary'],
+	},
+	'shuffle_mixed': {
+		'sm_color_primary': ['sm_color_tertiary'],
+		'sm_color_secondary': ['sm_color_primary'],
+		'sm_color_tertiary': ['sm_color_secondary'],
+	},
     'light': {
         'sm_color_primary': ['sm_color_primary'],
         'sm_color_secondary': ['sm_color_secondary'],
@@ -11,9 +36,6 @@ window.colorPalettesVariations = {
         'sm_light_tertiary': ['sm_light_tertiary'],
     },
     'dark': {
-        'sm_color_primary': ['sm_color_primary'],
-        'sm_color_secondary': ['sm_color_secondary'],
-        'sm_color_tertiary': ['sm_color_tertiary'],
         'sm_dark_primary': ['sm_light_primary'],
         'sm_dark_secondary': ['sm_light_secondary'],
         'sm_dark_tertiary': ['sm_light_tertiary'],
@@ -21,7 +43,7 @@ window.colorPalettesVariations = {
         'sm_light_secondary': ['sm_dark_secondary'],
         'sm_light_tertiary': ['sm_dark_tertiary'],
     },
-    'colorful': {
+    'colorful2': {
         'sm_color_primary': ['sm_light_primary'],
         'sm_color_secondary': ['sm_light_secondary'],
         'sm_color_tertiary': ['sm_light_tertiary'],
@@ -32,6 +54,28 @@ window.colorPalettesVariations = {
         'sm_light_secondary': ['sm_color_secondary', 'sm_dark_secondary'],
         'sm_light_tertiary': ['sm_color_tertiary', 'sm_dark_tertiary'],
     },
+	'colorful3': {
+		'sm_color_primary': ['sm_light_primary'],
+		'sm_color_secondary': ['sm_light_secondary'],
+		'sm_color_tertiary': ['sm_light_tertiary'],
+		'sm_dark_primary': ['sm_color_primary', 'sm_color_secondary', 'sm_color_tertiary'],
+		'sm_dark_secondary': [],
+		'sm_dark_tertiary': [],
+		'sm_light_primary': ['sm_dark_primary', 'sm_dark_secondary', 'sm_dark_tertiary'],
+		'sm_light_secondary': [],
+		'sm_light_tertiary': [],
+	},
+	'colorful': {
+		'sm_color_primary': ['sm_color_secondary'],
+		'sm_color_secondary': ['sm_color_tertiary'],
+		'sm_color_tertiary': ['sm_color_primary'],
+		'sm_dark_primary': ['sm_dark_primary'],
+		'sm_dark_secondary': ['sm_dark_secondary'],
+		'sm_dark_tertiary': ['sm_dark_tertiary'],
+		'sm_light_primary': ['sm_light_primary'],
+		'sm_light_secondary': ['sm_light_secondary'],
+		'sm_light_tertiary': ['sm_light_tertiary'],
+	},
     'dark_alt': {
         'sm_color_primary': ['sm_light_primary'],
         'sm_color_secondary': ['sm_light_secondary'],

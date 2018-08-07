@@ -13,14 +13,13 @@ let ColorPalettes = ( function( $, exports, wp ) {
         "sm_light_tertiary"
     ];
 
-	// const master_color_selector = '#_customize-input-sm_dark_color_master_slider_control';
-	// const primary_color_selector = '#_customize-input-sm_dark_color_primary_slider_control';
-	// const secondary_color_selector = '#_customize-input-sm_dark_color_secondary_slider_control';
-	// const tertiary_color_selector = '#_customize-input-sm_dark_color_tertiary_slider_control';
-	// const color_dispersion_selector = '#_customize-input-sm_colors_dispersion_control';
-	// const color_focus_point_selector = '#_customize-input-sm_colors_focus_point_control';
-	// const color_sliders_selector = primary_color_selector + ', ' + secondary_color_selector + ', ' + tertiary_color_selector;
-	// const all_sliders_selector = color_sliders_selector + ', ' + color_dispersion_selector + ', ' + color_focus_point_selector;
+	const primary_color_selector = '#_customize-input-sm_dark_color_primary_slider_control';
+	const secondary_color_selector = '#_customize-input-sm_dark_color_secondary_slider_control';
+	const tertiary_color_selector = '#_customize-input-sm_dark_color_tertiary_slider_control';
+	const color_dispersion_selector = '#_customize-input-sm_colors_dispersion_control';
+	const color_focus_point_selector = '#_customize-input-sm_colors_focus_point_control';
+	const color_sliders_selector = primary_color_selector + ', ' + secondary_color_selector + ', ' + tertiary_color_selector;
+	const all_sliders_selector = color_sliders_selector + ', ' + color_dispersion_selector + ', ' + color_focus_point_selector;
 
     let setupGlobalsDone = false;
 
@@ -174,9 +173,11 @@ let ColorPalettes = ( function( $, exports, wp ) {
 	    return variation;
     };
 
-    // return an array with the hex values of a certain color palette
-    const getPaletteColors = ( palette_id ) => {
-
+    const getSwapMap = ( variation ) => {
+        if ( ! window.colorPalettesVariations.hasOwnProperty( variation ) ) {
+            return defaultVariation;
+        }
+        return window.colorPalettesVariations[variation];
     };
 
     // return an array with the hex values of the current palette
@@ -446,9 +447,7 @@ let ColorPalettes = ( function( $, exports, wp ) {
         updateActiveVariationControlColor();
     };
 
-	const swapConnectedFields = ( settings ) => {
-        let variation = getCurrentVariation();
-        let swapMap = window.colorPalettesVariations[variation];
+	const swapConnectedFields = ( settings, swapMap ) => {
         let newSettings = JSON.parse(JSON.stringify(settings));
         let oldSettings = JSON.parse(JSON.stringify(settings));
 
@@ -572,22 +571,54 @@ let ColorPalettes = ( function( $, exports, wp ) {
     };
 
 	const reloadConnectedFields = () => {
-//		const primaryRatio = $( primary_color_selector ).val() / 100;
-//		const secondaryRatio = $( secondary_color_selector ).val() / 100;
-//		const tertiaryRatio = $( tertiary_color_selector ).val() / 100;
+		const primaryRatio = $( primary_color_selector ).val() / 100;
+		const secondaryRatio = $( secondary_color_selector ).val() / 100;
+		const tertiaryRatio = $( tertiary_color_selector ).val() / 100;
 //		const colorDispersion = $( color_dispersion_selector ).val() / 100;
 //		const focusPoint = $( color_focus_point_selector ).val() / 100;
 
 		let tempSettings = JSON.parse(JSON.stringify(window.settingsClone));
 
-//		tempSettings = moveConnectedFields( tempSettings, 'sm_dark_primary', 'sm_color_primary', primaryRatio );
-//		tempSettings = moveConnectedFields( tempSettings, 'sm_dark_secondary', 'sm_color_secondary', secondaryRatio );
-//		tempSettings = moveConnectedFields( tempSettings, 'sm_dark_tertiary', 'sm_color_tertiary', tertiaryRatio );
+		tempSettings = moveConnectedFields( tempSettings, 'sm_dark_primary', 'sm_color_primary', primaryRatio );
+		tempSettings = moveConnectedFields( tempSettings, 'sm_dark_secondary', 'sm_color_secondary', secondaryRatio );
+		tempSettings = moveConnectedFields( tempSettings, 'sm_dark_tertiary', 'sm_color_tertiary', tertiaryRatio );
 //		tempSettings = disperseColorConnectedFields( tempSettings, colorDispersion, focusPoint );
 
-		tempSettings = swapConnectedFields( tempSettings );
+        var diversity = $( '[name="_customize-radio-sm_color_diversity_control"]:checked' ).val();
+        var diversity_variation = getSwapMap( 'color_diversity_low' );
+        tempSettings = swapConnectedFields( tempSettings, diversity_variation );
+
+        if ( diversity === 'medium' ) {
+	        tempSettings = moveConnectedFields( tempSettings, 'sm_color_primary', 'sm_color_secondary', 0.5 );
+        }
+
+		if ( diversity === 'high' ) {
+			tempSettings = moveConnectedFields( tempSettings, 'sm_color_primary', 'sm_color_secondary', 0.67 );
+			tempSettings = moveConnectedFields( tempSettings, 'sm_color_secondary', 'sm_color_tertiary', 0.50 );
+		}
+
+        var shuffle = $( '[name="_customize-radio-sm_shuffle_colors_control"]:checked' ).val();
+        if ( shuffle !== 'default' ) {
+            var shuffle_variation = getSwapMap( 'shuffle_' + shuffle );
+            tempSettings = swapConnectedFields( tempSettings, shuffle_variation );
+        }
+
+        var dark_mode = $( '[name="_customize-radio-sm_dark_mode_control"]:checked' ).val();
+        if ( dark_mode === 'on' ) {
+            var dark_mmode_variation = getSwapMap( 'dark' );
+            tempSettings = swapConnectedFields( tempSettings, dark_mmode_variation );
+        }
+
 		wp.customize.settings.settings = tempSettings;
+
+        buildColorMatrix();
 	};
+
+    const applyColorationValueToFields = () => {
+        var coloration = $( '[name="_customize-radio-sm_coloration_level_control"]:checked' ).val();
+        var ratio = parseFloat( coloration );
+        $( color_sliders_selector ).val( ratio ).trigger( 'input' );
+    }
 
     const reinitializeConnectedFields = () => {
         reloadConnectedFields();
@@ -642,10 +673,11 @@ let ColorPalettes = ( function( $, exports, wp ) {
 
 	    // $( all_sliders_selector ).on( 'input', reloadConnectedFields );
 	    //
-	    // $( master_color_selector ).on( 'input', function() {
-		//     const masterValue = $( master_color_selector ).val();
-		//     $( color_sliders_selector ).val( masterValue ).trigger( 'input' );
-	    // } );
+        $( color_sliders_selector ).on( 'input', reinitializeConnectedFields );
+        $( '[name="_customize-radio-sm_coloration_level_control"]' ).on( 'change', applyColorationValueToFields );
+        $( '[name="_customize-radio-sm_color_diversity_control"]' ).on( 'change', reinitializeConnectedFields );
+        $( '[name="_customize-radio-sm_shuffle_colors_control"]' ).on( 'change', reinitializeConnectedFields );
+	    $( '[name="_customize-radio-sm_dark_mode_control"]' ).on( 'change', reinitializeConnectedFields );
     };
 
     wp.customize.bind( 'ready', function() {
@@ -653,7 +685,7 @@ let ColorPalettes = ( function( $, exports, wp ) {
 
         createCurrentPaletteControls();
 
-//	    buildColorMatrix();
+	    buildColorMatrix();
 	    reloadConnectedFields();
         bindConnectedFields();
         refreshCurrentPaletteControl();
