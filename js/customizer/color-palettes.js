@@ -261,10 +261,10 @@ let ColorPalettes = ( function( $, exports, wp ) {
         var averageDark = getAveragePixel( getPixelsFromColors( paletteDark ) );
 
         if ( filter === 'gingham' ) {
-            if ( paletteDark.indexOf( color ) === -1 ) {
+            // if ( paletteDark.indexOf( color ) === -1 ) {
                 newColor = hsl2Rgb( newColor.hue, mixValues( newColor.saturation, 1, 0.5 ), newColor.lightness );
                 return rgb2hex( newColor );
-            }
+            // }
         }
 
         if ( filter === 'clarendon' ) {
@@ -272,7 +272,7 @@ let ColorPalettes = ( function( $, exports, wp ) {
             return hsl2hex( newColor );
         }
 
-        if ( filter === 'lark' ) {
+        if ( filter === 'warm' && color !== palette[0] ) {
             var sepia = hex2rgba( '#704214' );
             sepia.saturation = mix( 'saturation', sepia, newColor, 1 );
             sepia.lightness = mix( 'lightness', sepia, newColor, 1 );
@@ -300,7 +300,7 @@ let ColorPalettes = ( function( $, exports, wp ) {
             return hsl2hex( newColor );
         }
 
-        if ( filter === 'cold' ) {
+        if ( filter === 'cold' && color !== palette[0] ) {
             var targetHue = 0.55;
 
             newColor.saturation = mix( 'saturation', newColor, hex2rgba( '#FFF' ), 0.4 );
@@ -311,25 +311,6 @@ let ColorPalettes = ( function( $, exports, wp ) {
             var newColorHSL = rgbToHsl( newColor.red, newColor.green, newColor.blue );
             newColor.hue = newColorHSL[0];
             newColor.saturation = mixValues( newColorHSL[1], 1, 0.1 );
-            newColor.lightness = mix( 'lightness', newColor, hex2rgba( newColor.lightness > 0.5 ? '#FFF' : '#000' ), 0.2 );
-            return hsl2hex( newColor );
-        }
-
-        if ( filter === 'warm' ) {
-            var targetHue = 0.1;
-
-            if ( paletteColors.indexOf( color ) !== -1 ) {
-                newColor = mixRGB( newColor, averageColor, 0.5 );
-                newColor = hex2rgba( hsl2hex( newColor ) );
-            }
-
-            newColor.hue = ( newColor.hue - targetHue ) / 18 + targetHue;
-            newColor = hex2rgba( hsl2hex( newColor ) );
-
-            // increase contrast ( saturation +10%, lightness +/- 20% );
-            var newColorHSL = rgbToHsl( newColor.red, newColor.green, newColor.blue );
-            newColor.hue = newColorHSL[0];
-            newColor.saturation = mixValues( newColorHSL[1], 1, 0.05 );
             newColor.lightness = mix( 'lightness', newColor, hex2rgba( newColor.lightness > 0.5 ? '#FFF' : '#000' ), 0.2 );
             return hsl2hex( newColor );
         }
