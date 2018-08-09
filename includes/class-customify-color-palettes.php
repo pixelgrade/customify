@@ -636,7 +636,7 @@ class Customify_Color_Palettes {
 	              ),
               ),
               'sm_dark_mode'   => array(
-	              'type'         => 'sm_radio',
+	              'type'         => 'sm_switch',
 	              'setting_type' => 'option',
 	              'setting_id'   => 'sm_dark_mode',
 	              'label'        => esc_html__( 'Dark Mode', 'customify' ),
