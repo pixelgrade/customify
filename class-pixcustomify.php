@@ -1825,7 +1825,7 @@ class PixCustomifyPlugin {
 
 				$control_args['choices'] = $field_config['choices'];
 
-				$control_class_name = 'Pix_Customize_SM_swtich_Control';
+				$control_class_name = 'Pix_Customize_SM_switch_Control';
 				break;
 
 			case 'preset' :
