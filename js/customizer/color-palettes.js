@@ -55,14 +55,18 @@ let ColorPalettes = ( function( $, exports, wp ) {
 
 	const hexDigits = ["0","1","2","3","4","5","6","7","8","9","a","b","c","d","e","f"];
 
-	function rgb2hex( rgb ) {
-		rgb = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
-		return "#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]);
-	}
-
 	function hex( x ) {
 		return isNaN(x) ? "00" : hexDigits[(x - x % 16) / 16] + hexDigits[x % 16];
 	}
+
+    function rgb2hex( color ) {
+        return '#' + hex( color[0] ) + hex( color[1] ) + hex( color[2] );
+    }
+
+    function hsl2hex( color ) {
+        var rgb = hsl2Rgb( color.hue, color.saturation, color.lightness );
+        return rgb2hex( rgb );
+    }
 
 	function hex2rgba( hex ) {
 		var matches = /^#([A-Fa-f0-9]{3,4}){1,2}$/.test( hex );
@@ -230,52 +234,166 @@ let ColorPalettes = ( function( $, exports, wp ) {
 		return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
 	}
 
+    function mixRGB(color1, color2, ratio) {
+        ratio = ratio || 0.5;
+        color1.red = parseInt( color2.red * ratio + color1.red * ( 1 - ratio ), 10);
+        color1.green = parseInt( color2.green * ratio + color1.green * ( 1 - ratio ), 10);
+        color1.blue = parseInt( color2.blue * ratio + color1.blue * ( 1 - ratio ), 10);
+        return hex2rgba( rgb2hex( [color1.red, color1.green, color1.blue] ) );
+    }
+
+    function mix(property, color1, color2, ratio) {
+        return color1[property] * ( 1 - ratio ) + color2[property] * ratio;
+    }
+
+    function mixValues( value1, value2, ratio ) {
+        return value1 * ( 1 - ratio ) + value2 * ratio;
+    }
+
     const filterColor = ( color ) => {
         let filter = $( '[name="_customize-radio-sm_palette_filter_control"]:checked' ).val();
         let newColor = hex2rgba( color );
+        var palette = getCurrentPaletteColors();
+        var paletteColors = palette.slice(0,3);
+        var paletteDark = palette.slice(3,6);
+        var average = getAveragePixel( getPixelsFromColors( palette ) );
+        var averageColor = getAveragePixel( getPixelsFromColors( paletteColors ) );
+        var averageDark = getAveragePixel( getPixelsFromColors( paletteDark ) );
 
         if ( filter === 'gingham' ) {
-            newColor = hsl2Rgb( newColor.hue, 1 - ( 1 - newColor.saturation ) * 0.5, newColor.lightness );
-            newColor = '#' + hex( newColor[0] ) + hex( newColor[1] ) + hex( newColor[2] );
-            return newColor;
+            if ( paletteDark.indexOf( color ) === -1 ) {
+                newColor = hsl2Rgb( newColor.hue, mixValues( newColor.saturation, 1, 0.5 ), newColor.lightness );
+                return rgb2hex( newColor );
+            }
         }
 
         if ( filter === 'clarendon' ) {
-            var averageColor = getAveragePixel( getPixelsFromColors( getCurrentPaletteColors().slice(0,3) ) );
-            newColor = hsl2Rgb( newColor.hue * 0.75 + averageColor.hue * 0.25, newColor.saturation, newColor.lightness );
-            newColor = '#' + hex( newColor[0] ) + hex( newColor[1] ) + hex( newColor[2] );
-            return newColor;
+            newColor.hue = mix( 'hue', newColor, averageColor, 0.25 );
+            return hsl2hex( newColor );
         }
 
         if ( filter === 'lark' ) {
-            // increase saturation 1.1
-            newColor.saturation = 1 - ( 1 - newColor.saturation ) * (2 - 1.1);
+            var sepia = hex2rgba( '#704214' );
+            sepia.saturation = mix( 'saturation', sepia, newColor, 1 );
+            sepia.lightness = mix( 'lightness', sepia, newColor, 1 );
+            sepia = hex2rgba( hsl2hex( sepia ) );
+            newColor.saturation = newColor.saturation * 0.75;
+            newColor = hex2rgba( hsl2hex( newColor ) );
+            newColor = mixRGB( newColor, sepia, 0.75 );
 
-            // apply 0.25 sepia
-            var sepiaHSL = [30, 0.7, 0.26];
-            var sepiaRGB = [112, 66, 20];
-            newColor.red = newColor.red * 0.75 + sepiaRGB[0] * 0.25;
-            newColor.green = newColor.green * 0.75 + sepiaRGB[1] * 0.25;
-            newColor.blue = newColor.blue * 0.75 + sepiaRGB[2] * 0.25;
+            newColor.lightness = mix( 'lightness', newColor, hex2rgba( newColor.lightness > 0.5 ? '#FFF' : '#000' ), 0.2 );
+	        return hsl2hex( newColor );
+        }
 
+        if ( filter === 'washout' ) {
+            newColor.saturation = mix( 'saturation', newColor, hex2rgba( '#FFF' ), 0.6 );
+            newColor.lightness = mix( 'lightness', newColor, hex2rgba( '#FFF' ), 0.2 );
+            return hsl2hex( newColor );
+        }
+
+        if ( filter === 'muted' ) {
+            if ( paletteColors.indexOf( color ) !== -1 ) {
+                newColor = mixRGB( newColor, averageColor, 0.5 );
+                return rgb2hex( [ newColor.red, newColor.green, newColor.blue ] );
+            }
+            newColor.hue = mix( 'hue', newColor, averageColor, 1 );
+            return hsl2hex( newColor );
+        }
+
+        if ( filter === 'cold' ) {
+            var targetHue = 0.55;
+
+            newColor.saturation = mix( 'saturation', newColor, hex2rgba( '#FFF' ), 0.4 );
+            newColor.hue = ( newColor.hue - targetHue ) / 18 + targetHue;
+            newColor = hex2rgba( hsl2hex( newColor ) );
+
+            // increase contrast ( saturation +10%, lightness +/- 20% );
             var newColorHSL = rgbToHsl( newColor.red, newColor.green, newColor.blue );
-
             newColor.hue = newColorHSL[0];
-            newColor.saturation = newColorHSL[1];
+            newColor.saturation = mixValues( newColorHSL[1], 1, 0.1 );
+            newColor.lightness = mix( 'lightness', newColor, hex2rgba( newColor.lightness > 0.5 ? '#FFF' : '#000' ), 0.2 );
+            return hsl2hex( newColor );
+        }
 
-            // increase contrast by 1.2
-            newColor.lightness = Math.min(1, Math.max(0, (newColor.lightness - 0.5) * 1.2 + 0.5));
+        if ( filter === 'warm' ) {
+            var targetHue = 0.1;
 
-            newColor = hsl2Rgb(newColor.hue, newColor.saturation, newColor.lightness);
+            if ( paletteColors.indexOf( color ) !== -1 ) {
+                newColor = mixRGB( newColor, averageColor, 0.5 );
+                newColor = hex2rgba( hsl2hex( newColor ) );
+            }
 
-            newColor = '#' + hex( newColor[0] ) + hex( newColor[1] ) + hex( newColor[2] );
-            return newColor;
+            newColor.hue = ( newColor.hue - targetHue ) / 18 + targetHue;
+            newColor = hex2rgba( hsl2hex( newColor ) );
+
+            // increase contrast ( saturation +10%, lightness +/- 20% );
+            var newColorHSL = rgbToHsl( newColor.red, newColor.green, newColor.blue );
+            newColor.hue = newColorHSL[0];
+            newColor.saturation = mixValues( newColorHSL[1], 1, 0.05 );
+            newColor.lightness = mix( 'lightness', newColor, hex2rgba( newColor.lightness > 0.5 ? '#FFF' : '#000' ), 0.2 );
+            return hsl2hex( newColor );
+        }
+
+        if ( filter === 'dumb' ) {
+
+            if ( color === palette[1] || color === palette[2] ) {
+                newColor = hex2rgba(palette[0]);
+                newColor.lightness = mix( 'lightness', newColor, hex2rgba( '#000' ), 0.2 );
+                newColor.saturation = mix( 'saturation', newColor, hex2rgba( '#000' ), 0.2 );
+
+                if ( color === palette[2] ) {
+                    newColor.lightness = mix( 'lightness', newColor, hex2rgba( '#000' ), 0.2 );
+                    newColor.saturation = mix( 'saturation', newColor, hex2rgba( '#000' ), 0.2 );
+                }
+                return hsl2hex( newColor );
+            } else {
+                newColor.hue = hex2rgba(palette[0]).hue;
+                return hsl2hex( newColor );
+            }
+        }
+
+        if ( filter === 'mayfair' ) {
+            if ( color === palette[1] || color === palette[2] ) {
+                newColor = hex2rgba(palette[0]);
+                // newColor.lightness = mix( 'lightness', newColor, hex2rgba( '#000' ), 0.2 );
+                // newColor.saturation = mix( 'saturation', newColor, hex2rgba( '#000' ), 0.2 );
+                newColor.hue = ( newColor.hue + 0.05 ) % 1;
+
+                if ( color === palette[2] ) {
+                    // newColor.lightness = mix( 'lightness', newColor, hex2rgba( '#000' ), 0.2 );
+                    // newColor.saturation = mix( 'saturation', newColor, hex2rgba( '#000' ), 0.2 );
+                    newColor.hue = ( newColor.hue + 0.05 ) % 1;
+                }
+                return hsl2hex( newColor );
+            } else {
+                newColor.hue = hex2rgba(palette[0]).hue;
+                return hsl2hex( newColor );
+            }
+        }
+
+
+        if ( filter === 'sierra' ) {
+            if ( color === palette[1] || color === palette[2] ) {
+                newColor = hex2rgba(palette[0]);
+                // newColor.lightness = mix( 'lightness', newColor, hex2rgba( '#000' ), 0.2 );
+                // newColor.saturation = mix( 'saturation', newColor, hex2rgba( '#000' ), 0.2 );
+                newColor.hue = ( newColor.hue + 0.95 ) % 1;
+
+                if ( color === palette[2] ) {
+                    // newColor.lightness = mix( 'lightness', newColor, hex2rgba( '#000' ), 0.2 );
+                    // newColor.saturation = mix( 'saturation', newColor, hex2rgba( '#000' ), 0.2 );
+                    newColor.hue = ( newColor.hue + 0.95 ) % 1;
+                }
+                return hsl2hex( newColor );
+            } else {
+                newColor.hue = hex2rgba(palette[0]).hue;
+                return hsl2hex( newColor );
+            }
         }
 
         if ( filter === 'walden' ) {
-            newColor = hsl2Rgb( newColor.hue, 0, newColor.lightness );
-            newColor = '#' + hex( newColor[0] ) + hex( newColor[1] ) + hex( newColor[2] );
-            return newColor;
+            newColor = hsl2Rgb( newColor.hue, mixValues( newColor.saturation, 0, 0.8 ), newColor.lightness );
+            return rgb2hex(newColor);
         }
 
         return color;

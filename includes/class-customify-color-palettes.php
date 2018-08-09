@@ -182,9 +182,15 @@ class Customify_Color_Palettes {
 						'gingham'   => esc_html__( 'Gingham', 'customify' ),
 						'clarendon' => esc_html__( 'Clarendon', 'customify' ),
 						'lark'      => esc_html__( 'Lark', 'customify' ),
+
+						'washout'   => esc_html__( 'Washout', 'customify' ),
+						'muted'     => esc_html__( 'Muted', 'customify' ),
+						'cold'      => esc_html__( 'Cold', 'customify' ),
+						'warm'      => esc_html__( 'Warm', 'customify' ),
+						'dumb'      => esc_html__( 'Dumb', 'customify' ),
+
 						'mayfair'   => esc_html__( 'Mayfair', 'customify' ),
 						'sierra'    => esc_html__( 'Sierra', 'customify' ),
-						'valencia'  => esc_html__( 'Valencia', 'customify' ),
 						'walden'    => esc_html__( 'Walden', 'customify' ),
 					),
 				),
