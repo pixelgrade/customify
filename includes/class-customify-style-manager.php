@@ -268,10 +268,11 @@ class Customify_Style_Manager {
 			$color_palettes_fields = array(
 				'sm_current_color_palette',
 				'sm_color_matrix',
+				'sm_palette_filter',
 				'sm_coloration_level',
 				'sm_color_diversity',
 				'sm_shuffle_colors',
-				'sm_dark_mode',
+                'sm_dark_mode',
 				'sm_dark_color_master_slider',
 				'sm_dark_color_primary_slider',
 				'sm_dark_color_secondary_slider',

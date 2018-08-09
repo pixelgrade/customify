@@ -1,7 +1,7 @@
 let ColorPalettes = ( function( $, exports, wp ) {
 
 	const defaultVariation = 'light';
-	const masterSettingIds = [
+    const masterSettingIds = [
         "sm_color_primary",
         "sm_color_secondary",
         "sm_color_tertiary",
@@ -13,13 +13,23 @@ let ColorPalettes = ( function( $, exports, wp ) {
         "sm_light_tertiary"
     ];
 
+	window.tempColors = {
+        sm_color_primary: '',
+        sm_color_secondary: '',
+        sm_color_tertiary: '',
+        sm_dark_primary: '',
+        sm_dark_secondary: '',
+        sm_dark_tertiary: '',
+        sm_light_primary: '',
+        sm_light_secondary: '',
+        sm_light_tertiary: '',
+    };
+
 	const primary_color_selector = '#_customize-input-sm_dark_color_primary_slider_control';
 	const secondary_color_selector = '#_customize-input-sm_dark_color_secondary_slider_control';
 	const tertiary_color_selector = '#_customize-input-sm_dark_color_tertiary_slider_control';
-	const color_dispersion_selector = '#_customize-input-sm_colors_dispersion_control';
-	const color_focus_point_selector = '#_customize-input-sm_colors_focus_point_control';
+	const mute_palette_slider_selector = '#_customize-input-sm_mute_palette_slider_control';
 	const color_sliders_selector = primary_color_selector + ', ' + secondary_color_selector + ', ' + tertiary_color_selector;
-	const all_sliders_selector = color_sliders_selector + ', ' + color_dispersion_selector + ', ' + color_focus_point_selector;
 
     let setupGlobalsDone = false;
 
@@ -45,35 +55,64 @@ let ColorPalettes = ( function( $, exports, wp ) {
 
 	const hexDigits = ["0","1","2","3","4","5","6","7","8","9","a","b","c","d","e","f"];
 
-	function rgb2hex(rgb) {
+	function rgb2hex( rgb ) {
 		rgb = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
 		return "#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]);
 	}
 
-	function hex(x) {
+	function hex( x ) {
 		return isNaN(x) ? "00" : hexDigits[(x - x % 16) / 16] + hexDigits[x % 16];
 	}
 
-    const setCurrentPalette = ( label ) => {
-        const $palette = $( '.c-color-palette' );
-
-        if ( ! $palette.length ) {
-            return;
-        }
-
-        const $colors = $palette.find( '.colors' );
-
-        // update the colors in the "next" palette with the new values
-        _.each( masterSettingIds, function( setting_id ) {
-            const setting = wp.customize( setting_id );
-
-            if ( typeof setting !== "undefined" ) {
-                $colors.find( '.' + setting_id ).css( 'color', setting() );
+	function hex2rgba( hex ) {
+		var matches = /^#([A-Fa-f0-9]{3,4}){1,2}$/.test( hex );
+        var r = 0, g = 0, b = 0, a = 0;
+		if ( matches ) {
+			hex = hex.substring(1).split('');
+			if ( hex.length === 3 ) {
+				hex = [hex[0], hex[0], hex[1], hex[1], hex[2], hex[2], 'F', 'F'];
+			}
+            if ( hex.length === 4 ) {
+                hex = [hex[0], hex[0], hex[1], hex[1], hex[2], hex[2], hex[3], hex[3]];
             }
-        });
+            r = parseInt( [ hex[0], hex[1] ].join(''), 16 );
+            g = parseInt( [ hex[2], hex[3] ].join(''), 16 );
+            b = parseInt( [ hex[4], hex[5] ].join(''), 16 );
+            a = parseInt( [ hex[6], hex[7] ].join(''), 16 );
+		}
+        var hsl = rgbToHsl(r, g, b);
+        var rgba = {
+            red: r,
+            green: g,
+            blue: b,
+            alpha: a,
+            hue: hsl[0],
+            saturation: hsl[1],
+            lightness: hsl[2],
+            luma: 0.2126 * r + 0.7152 * g + 0.0722 * b
+        };
+        return rgba;
+	}
 
-        $palette.find( '.altered' ).removeClass( 'altered' );
-    };
+    function rgbToHsl(r, g, b){
+        r /= 255, g /= 255, b /= 255;
+        var max = Math.max(r, g, b), min = Math.min(r, g, b);
+        var h, s, l = (max + min) / 2;
+
+        if(max == min){
+            h = s = 0; // achromatic
+        }else{
+            var d = max - min;
+            s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+            switch(max){
+                case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+                case g: h = (b - r) / d + 2; break;
+                case b: h = (r - g) / d + 4; break;
+            }
+            h /= 6;
+        }
+        return [h, s, l];
+    }
 
     const resetSettings = () => {
         _.each( masterSettingIds, function( setting_id ) {
@@ -97,7 +136,7 @@ let ColorPalettes = ( function( $, exports, wp ) {
                 if ( _.isUndefined( setting ) ) {
                     return;
                 }
-                setting.set( new_value );
+                setting.set( filterColor( new_value ) );
             } );
         }
     };
@@ -166,6 +205,82 @@ let ColorPalettes = ( function( $, exports, wp ) {
         return colors;
     };
 
+	function hsl2Rgb(h, s, l){
+		var r, g, b;
+
+		if(s == 0){
+			r = g = b = l; // achromatic
+		}else{
+			var hue2rgb = function hue2rgb(p, q, t){
+				if(t < 0) t += 1;
+				if(t > 1) t -= 1;
+				if(t < 1/6) return p + (q - p) * 6 * t;
+				if(t < 1/2) return q;
+				if(t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+				return p;
+			}
+
+			var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+			var p = 2 * l - q;
+			r = hue2rgb(p, q, h + 1/3);
+			g = hue2rgb(p, q, h);
+			b = hue2rgb(p, q, h - 1/3);
+		}
+
+		return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
+	}
+
+    const filterColor = ( color ) => {
+        let filter = $( '[name="_customize-radio-sm_palette_filter_control"]:checked' ).val();
+        let newColor = hex2rgba( color );
+
+        if ( filter === 'gingham' ) {
+            newColor = hsl2Rgb( newColor.hue, 1 - ( 1 - newColor.saturation ) * 0.5, newColor.lightness );
+            newColor = '#' + hex( newColor[0] ) + hex( newColor[1] ) + hex( newColor[2] );
+            return newColor;
+        }
+
+        if ( filter === 'clarendon' ) {
+            var averageColor = getAveragePixel( getPixelsFromColors( getCurrentPaletteColors().slice(0,3) ) );
+            newColor = hsl2Rgb( newColor.hue * 0.75 + averageColor.hue * 0.25, newColor.saturation, newColor.lightness );
+            newColor = '#' + hex( newColor[0] ) + hex( newColor[1] ) + hex( newColor[2] );
+            return newColor;
+        }
+
+        if ( filter === 'lark' ) {
+            // increase saturation 1.1
+            newColor.saturation = 1 - ( 1 - newColor.saturation ) * (2 - 1.1);
+
+            // apply 0.25 sepia
+            var sepiaHSL = [30, 0.7, 0.26];
+            var sepiaRGB = [112, 66, 20];
+            newColor.red = newColor.red * 0.75 + sepiaRGB[0] * 0.25;
+            newColor.green = newColor.green * 0.75 + sepiaRGB[1] * 0.25;
+            newColor.blue = newColor.blue * 0.75 + sepiaRGB[2] * 0.25;
+
+            var newColorHSL = rgbToHsl( newColor.red, newColor.green, newColor.blue );
+
+            newColor.hue = newColorHSL[0];
+            newColor.saturation = newColorHSL[1];
+
+            // increase contrast by 1.2
+            newColor.lightness = Math.min(1, Math.max(0, (newColor.lightness - 0.5) * 1.2 + 0.5));
+
+            newColor = hsl2Rgb(newColor.hue, newColor.saturation, newColor.lightness);
+
+            newColor = '#' + hex( newColor[0] ) + hex( newColor[1] ) + hex( newColor[2] );
+            return newColor;
+        }
+
+        if ( filter === 'walden' ) {
+            newColor = hsl2Rgb( newColor.hue, 0, newColor.lightness );
+            newColor = '#' + hex( newColor[0] ) + hex( newColor[1] ) + hex( newColor[2] );
+            return newColor;
+        }
+
+        return color;
+    }
+
     const createCurrentPaletteControls = () => {
         const $palette = $( '.c-color-palette' );
         const $fields = $palette.find( '.c-color-palette__fields' ).find( 'input' );
@@ -189,13 +304,12 @@ let ColorPalettes = ( function( $, exports, wp ) {
                     const lastColor = setting();
                     const currentColor = ui.color.toString();
 
-                    setPalettesOnConnectedFields();
+                    // setPalettesOnConnectedFields();
 
-                    if ( lastColor !== currentColor ) {
-                        $obj.css( 'color', currentColor );
-	                    setting.set( currentColor );
-                        $palette.find( '.c-color-palette__name' ).text( 'Custom Style' );
-                    }
+                    // if ( lastColor !== currentColor ) {
+                    $obj.css( 'color', filterColor( currentColor ) );
+                    setting.set( currentColor );
+                    // }
 
                     if ( event.originalEvent.type !== 'external' ) {
                         $palette.find( '.color.' + setting_id ).removeClass( 'altered' );
@@ -257,9 +371,14 @@ let ColorPalettes = ( function( $, exports, wp ) {
 
                 $iris.css( 'left', ( paletteWidth - 200 ) * index / ( $visibleColors.length - 1 ) );
 
-                $input.iris( 'color', $obj.css( 'color' ) );
+                showOldColors();
+
                 $input.iris( 'show' );
             } );
+
+            $input.on( 'focusout', ( e ) => {
+                showNewColors();
+            });
         } );
 
         $( 'body' ).on( 'click', function() {
@@ -271,24 +390,28 @@ let ColorPalettes = ( function( $, exports, wp ) {
 		        $input.hide();
 	        } );
         } );
+    };
 
-        setCurrentPalette();
+    const showNewColors = function() {
+        _.each(masterSettingIds, function( id ) {
+            const setting = wp.customize( id );
+            const initialColor = setting();
+            $( '.c-color-palette' ).find( '.color.' + id ).css( 'color', filterColor( initialColor ) );
+        });
+    };
+
+    const showOldColors = function() {
+        _.each(masterSettingIds, function( id ) {
+            const setting = wp.customize( id );
+            const initialColor = setting();
+            $( '.c-color-palette' ).find( '.c-color-palette__fields' ).find( 'input.' + id ).iris( 'color', initialColor );
+            $( '.c-color-palette' ).find( '.color.' + id ).css( 'color', initialColor );
+        });
     };
 
     const onPaletteChange = function() {
-        const $label = $( this ).next( 'label' ).clone();
-        let label;
-
-        $label.find( '.preview__letter' ).remove();
-        label = $label.text();
-        $label.remove();
-
         $( this ).trigger( 'customify:preset-change' );
-
-        setCurrentPalette( label );
-
-        setPalettesOnConnectedFields();
-
+        showNewColors();
 	    buildColorMatrix();
     };
 
@@ -334,7 +457,7 @@ let ColorPalettes = ( function( $, exports, wp ) {
             const color = wp.customize( setting_id )();
             let classes = [];
 
-            $bucket.css( 'color', color );
+            $bucket.css( 'color', filterColor( color ) );
 
 		    _.each( wp.customize.settings.settings[setting_id]['connected_fields'], function( connected_field ) {
                 const field_id = connected_field.setting_id;
@@ -389,10 +512,10 @@ let ColorPalettes = ( function( $, exports, wp ) {
         alteredSettingsSelector = '.' + alteredSettings.join(', .');
 
         $( '.c-color-palette .color' ).removeClass( 'altered' );
-        $( '.js-altered-notification' ).toggleClass( 'hidden', ! alteredSettings.length );
+        // $( '.js-altered-notification' ).toggleClass( 'hidden', ! alteredSettings.length );
 
         if ( alteredSettings.length ) {
-            $( '.c-color-palette .color' ).filter( alteredSettingsSelector ).addClass( 'altered' );
+            // $( '.c-color-palette .color' ).filter( alteredSettingsSelector ).addClass( 'altered' );
         }
 
     }, 30 );
@@ -418,6 +541,8 @@ let ColorPalettes = ( function( $, exports, wp ) {
     const refreshCurrentPaletteControl = () => {
         toggleAlteredClassOnMasterControls();
         toggleHiddenClassOnMasterControls();
+	    // setPalettesOnConnectedFields();
+        showNewColors();
     };
 
 	const swapConnectedFields = ( settings, swapMap ) => {
@@ -547,15 +672,12 @@ let ColorPalettes = ( function( $, exports, wp ) {
 		const primaryRatio = $( primary_color_selector ).val() / 100;
 		const secondaryRatio = $( secondary_color_selector ).val() / 100;
 		const tertiaryRatio = $( tertiary_color_selector ).val() / 100;
-//		const colorDispersion = $( color_dispersion_selector ).val() / 100;
-//		const focusPoint = $( color_focus_point_selector ).val() / 100;
 
 		let tempSettings = JSON.parse(JSON.stringify(window.settingsClone));
 
 		tempSettings = moveConnectedFields( tempSettings, 'sm_dark_primary', 'sm_color_primary', primaryRatio );
 		tempSettings = moveConnectedFields( tempSettings, 'sm_dark_secondary', 'sm_color_secondary', secondaryRatio );
 		tempSettings = moveConnectedFields( tempSettings, 'sm_dark_tertiary', 'sm_color_tertiary', tertiaryRatio );
-//		tempSettings = disperseColorConnectedFields( tempSettings, colorDispersion, focusPoint );
 
         var diversity = $( '[name="_customize-radio-sm_color_diversity_control"]:checked' ).val();
         var diversity_variation = getSwapMap( 'color_diversity_low' );
@@ -586,6 +708,61 @@ let ColorPalettes = ( function( $, exports, wp ) {
 
         buildColorMatrix();
 	};
+
+    const mutePalette = function() {
+        var mute_palette = $( mute_palette_slider_selector ).val() / 100;
+        var average = getAveragePixel( getPixelsFromColors( getCurrentPaletteColors() ) );
+        _.each( masterSettingIds, function( setting_id ) {
+            const setting = wp.customize( setting_id );
+            if ( typeof setting !== "undefined" ) {
+                let value = setting();
+                let rgba = hex2rgba(value);
+                let r = parseInt( rgba.red + (average.red - rgba.red) * mute_palette, 10);
+                let g = parseInt( rgba.green + (average.green - rgba.green) * mute_palette, 10);
+                let b = parseInt( rgba.blue + (average.blue - rgba.blue) * mute_palette, 10);
+                r = Math.max( Math.min( r, 255 ), 0 );
+                g = Math.max( Math.min( g, 255 ), 0 );
+                b = Math.max( Math.min( b, 255 ), 0 );
+                let newValue = '#' + hex( r ) + hex( g ) + hex( b );
+                setting.set( newValue );
+            }
+        });
+    }
+
+    const getPixelsFromColors = function( colors ) {
+        var pixels = [];
+        _.each( colors, function( color ) {
+            pixels.push( hex2rgba( color ) );
+        });
+        return pixels;
+    }
+
+    const getAveragePixel = function( pixels ) {
+        var averagePixel = {
+            red: 0,
+            green: 0,
+            blue: 0,
+            alpha: 0,
+            hue: 0,
+            saturation: 0,
+            lightness: 0,
+            luma: 0
+        };
+
+        for ( var i = 0; i < pixels.length; i++ ) {
+            var pixel = pixels[i];
+
+            for ( var k in averagePixel ) {
+                averagePixel[k] += pixel[k];
+            }
+        }
+
+        for ( var k in averagePixel ) {
+            averagePixel[k] /= pixels.length;
+        }
+
+        return averagePixel;
+    }
 
     const applyColorationValueToFields = () => {
         var coloration = $( '[name="_customize-radio-sm_coloration_level_control"]:checked' ).val();
@@ -650,7 +827,12 @@ let ColorPalettes = ( function( $, exports, wp ) {
         $( '[name="_customize-radio-sm_coloration_level_control"]' ).on( 'change', applyColorationValueToFields );
         $( '[name="_customize-radio-sm_color_diversity_control"]' ).on( 'change', reinitializeConnectedFields );
         $( '[name="_customize-radio-sm_shuffle_colors_control"]' ).on( 'change', reinitializeConnectedFields );
-	    $( '[name="_customize-radio-sm_dark_mode_control"]' ).on( 'change', reinitializeConnectedFields );
+        $( '[name="_customize-radio-sm_dark_mode_control"]' ).on( 'change', reinitializeConnectedFields );
+        $( '[name="_customize-radio-sm_palette_filter_control"]' ).on( 'change', reinitializeConnectedFields );
+
+        $( mute_palette_slider_selector ).on( 'change', _.debounce(function() {
+            reinitializeConnectedFields();
+        }, 10) );
 
 	    $( document ).on( 'click', '.sm-tabs__item', function( e ) {
 		    e.preventDefault();

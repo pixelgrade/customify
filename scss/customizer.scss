@@ -1992,13 +1992,6 @@ $palette_border-radius: 5px;
 	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
 }
 
-.colors {
-	position: relative;
-	display: flex;
-	align-items: stretch;
-	width: 100%;
-}
-
 .picker {
 	position: relative;
 	top: 0;
@@ -2116,6 +2109,14 @@ $palette_border-radius: 5px;
 	}
 }
 
+.colors {
+	position: relative;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: stretch;
+	width: 100%;
+}
+
 .color {
 	display: flex;
 	flex-direction: column;
@@ -2134,6 +2135,7 @@ $palette_border-radius: 5px;
 	&.hidden {
 		display: flex;
 		flex-grow: 0;
+		display: none;
 
 		.picker {
 			opacity: 0;
@@ -2480,7 +2482,7 @@ input.c-color-palette__input[class] {
 	}
 
 	&.sm-view-customize {
-		[id="customize-control-sm_color_palette_control"] ~ * {
+		[id="customize-control-sm_palette_filter_control"] {
 			display: block !important;
 		}
 	}

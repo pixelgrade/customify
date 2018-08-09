@@ -2095,15 +2095,6 @@ ul.font-options__options-list .select2-container--default .select2-selection--si
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
 }
 
-.colors {
-  position: relative;
-  display: -ms-flexbox;
-  display: flex;
-  -ms-flex-align: stretch;
-      align-items: stretch;
-  width: 100%;
-}
-
 .picker {
   position: relative;
   top: 0;
@@ -2218,6 +2209,17 @@ ul.font-options__options-list .select2-container--default .select2-selection--si
   box-shadow: none !important;
 }
 
+.colors {
+  position: relative;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  -ms-flex-align: stretch;
+      align-items: stretch;
+  width: 100%;
+}
+
 .color {
   display: -ms-flexbox;
   display: flex;
@@ -2243,6 +2245,7 @@ ul.font-options__options-list .select2-container--default .select2-selection--si
   display: flex;
   -ms-flex-positive: 0;
       flex-grow: 0;
+  display: none;
 }
 
 .color.hidden .picker {
@@ -2653,7 +2656,7 @@ input.c-color-palette__input[class] {
   display: block !important;
 }
 
-[id="sub-accordion-section-sm_color_palettes_section"].sm-view-customize [id="customize-control-sm_color_palette_control"] ~ * {
+[id="sub-accordion-section-sm_color_palettes_section"].sm-view-customize [id="customize-control-sm_palette_filter_control"] {
   display: block !important;
 }
 
