@@ -513,6 +513,8 @@
 						break;
 
 					case 'radio':
+					case 'sm_radio':
+					case 'sm_switch':
 					case 'radio_image':
 
 						// in case of an array of values we use the ( val in array) condition

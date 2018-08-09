@@ -170,7 +170,7 @@ class Customify_Color_Palettes {
 					'choices'      => $this->get_palettes(),
 				),
 				'sm_palette_filter'  => array(
-					'type'         => 'radio',
+					'type'         => 'sm_radio',
 					'setting_type' => 'option',
 					'setting_id'   => 'sm_palette_filter',
 					'label'        => esc_html__( 'Palette Filter', 'customify' ),
@@ -596,7 +596,7 @@ class Customify_Color_Palettes {
                       '</div>',
               ),
               'sm_coloration_level' => array(
-	              'type'         => 'radio',
+	              'type'         => 'sm_radio',
 	              'setting_type' => 'option',
 	              'setting_id'   => 'sm_coloration_level',
 	              'label'        => esc_html__( 'Coloration Level', 'customify' ),
@@ -610,7 +610,7 @@ class Customify_Color_Palettes {
 	              ),
               ),
               'sm_color_diversity'  => array(
-	              'type'         => 'radio',
+	              'type'         => 'sm_radio',
 	              'setting_type' => 'option',
 	              'setting_id'   => 'sm_color_diversity',
 	              'label'        => esc_html__( 'Color Diversity', 'customify' ),
@@ -623,7 +623,7 @@ class Customify_Color_Palettes {
 	              ),
               ),
               'sm_shuffle_colors'   => array(
-	              'type'         => 'radio',
+	              'type'         => 'sm_radio',
 	              'setting_type' => 'option',
 	              'setting_id'   => 'sm_shuffle_colors',
 	              'label'        => esc_html__( 'Shuffle Colors', 'customify' ),
@@ -636,7 +636,7 @@ class Customify_Color_Palettes {
 	              ),
               ),
               'sm_dark_mode'   => array(
-	              'type'         => 'radio',
+	              'type'         => 'sm_radio',
 	              'setting_type' => 'option',
 	              'setting_id'   => 'sm_dark_mode',
 	              'label'        => esc_html__( 'Dark Mode', 'customify' ),
