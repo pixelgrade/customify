@@ -10,6 +10,7 @@ $text-color-light: rgba(65, 107, 126, 0.7);
   border-radius: 999em;
   overflow: hidden;
 
+  //max-width: 20.285em;
   height: 2.428em;
 
   display: flex;
@@ -19,7 +20,8 @@ $text-color-light: rgba(65, 107, 126, 0.7);
   color: $text-color-light;
 
   font-size: 14px;
-  font-weight: 500;
+  -webkit-font-smoothing: antialiased;
+  font-weight: 600;
   line-height: 1.142em;
 
   > * {
@@ -35,7 +37,7 @@ $text-color-light: rgba(65, 107, 126, 0.7);
     bottom: 0;
     left: 0;
 
-    border: 0.125em solid $accent-color;
+    border: .142em solid $accent-color;
     border-radius: 999em;
     pointer-events: none;
   }
@@ -55,10 +57,10 @@ $text-color-light: rgba(65, 107, 126, 0.7);
 
         position: relative;
         top: .285em;
-        margin-right: .357em;
+        margin-right: .45em;
 
-        width: .357em;
-        height: .571em;
+        height: .8em;
+        width: .55em;
 
         border-right: 2px solid;
         border-bottom: 2px solid;
@@ -76,6 +78,8 @@ $text-color-light: rgba(65, 107, 126, 0.7);
     position: relative;
     cursor: pointer;
     transition: all .2s ease-out;
+
+    color: inherit;
 
     &:hover {
       color: $text-color-dark;
@@ -135,10 +139,18 @@ $text-color-light: rgba(65, 107, 126, 0.7);
   }
 }
 
+[id="sub-accordion-section-sm_color_palettes_section"].sm-view-options li.customize-control-sm_switch {
+  display: flex !important;
+  align-items: center;
+  justify-content: space-between;
+
+  .customize-control-title {
+    display: inline-block;
+  }
+}
+
 //---- TOGGLE BUTTON ----
 .sm-switch {
-  border-radius: 999em;
-
   display: flex;
   flex-wrap: nowrap;
   align-items: stretch;
@@ -147,10 +159,12 @@ $text-color-light: rgba(65, 107, 126, 0.7);
 
   position: relative;
   height: 2.428em;
-  width: 5.534em;
+  max-width: 5.5em;
 
+  border-radius: 999em;
   color: $light-color;
   font-size: 14px;
+  -webkit-font-smoothing: antialiased;
   font-weight: 600;
   line-height: 1.142em;
 
@@ -176,7 +190,7 @@ $text-color-light: rgba(65, 107, 126, 0.7);
 
     &:nth-of-type(1) {
       + label {
-        padding-left: 1em;
+        padding-left: 1.214em;
 
         &:after {
           content: "";
@@ -198,7 +212,7 @@ $text-color-light: rgba(65, 107, 126, 0.7);
         }
 
         + label:after {
-          background: #ccc;
+          background: $color-grey;
           transform: translateX(100%) translateX(-2.125em);
         }
 
@@ -237,8 +251,8 @@ $text-color-light: rgba(65, 107, 126, 0.7);
           content: "";
           display: block;
 
-          height: 30px;
-          width: 30px;
+          height: 2.142em;
+          width: 2.142em;
           margin-right: auto;
           margin-left: 0.125em;
 

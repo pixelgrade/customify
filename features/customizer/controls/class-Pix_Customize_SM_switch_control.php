@@ -15,7 +15,7 @@ class Pix_Customize_SM_switch_Control extends Pix_Customize_Control {
             <span class="customize-control-title"><?php echo esc_html( $this->label ); ?></span>
 		<?php endif; ?>
         <div class="sm-switch">
-		    <?php foreach ( $this->choices as $value => $label ) { ?>
+		    <?php foreach ( array_reverse( $this->choices ) as $value => $label ) { ?>
                 <input
                     type="radio"
                     value="<?php echo $value ?>"

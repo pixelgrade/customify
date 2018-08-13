@@ -12,7 +12,8 @@
       align-items: stretch;
   color: rgba(65, 107, 126, 0.7);
   font-size: 14px;
-  font-weight: 500;
+  -webkit-font-smoothing: antialiased;
+  font-weight: 600;
   line-height: 1.142em;
 }
 
@@ -28,7 +29,7 @@
   right: 0;
   bottom: 0;
   left: 0;
-  border: 0.125em solid #57abd5;
+  border: 0.142em solid #57abd5;
   border-radius: 999em;
   pointer-events: none;
 }
@@ -48,9 +49,9 @@
   color: inherit;
   position: relative;
   top: .285em;
-  margin-right: .357em;
-  width: .357em;
-  height: .571em;
+  margin-right: .45em;
+  height: .8em;
+  width: .55em;
   border-right: 2px solid;
   border-bottom: 2px solid;
   -webkit-transform: translateY(-50%) rotate(45deg);
@@ -67,6 +68,7 @@
   position: relative;
   cursor: pointer;
   transition: all .2s ease-out;
+  color: inherit;
 }
 
 .sm-radio-group label:hover {
@@ -127,8 +129,20 @@
   border-left: 2px solid #57abd5;
 }
 
+[id="sub-accordion-section-sm_color_palettes_section"].sm-view-options li.customize-control-sm_switch {
+  display: -ms-flexbox !important;
+  display: flex !important;
+  -ms-flex-align: center;
+      align-items: center;
+  -ms-flex-pack: justify;
+      justify-content: space-between;
+}
+
+[id="sub-accordion-section-sm_color_palettes_section"].sm-view-options li.customize-control-sm_switch .customize-control-title, [id="sub-accordion-section-sm_color_palettes_section"].sm-view-options li.customize-control-sm_switch .separator.label {
+  display: inline-block;
+}
+
 .sm-switch {
-  border-radius: 999em;
   display: -ms-flexbox;
   display: flex;
   -ms-flex-wrap: nowrap;
@@ -140,9 +154,11 @@
   overflow: hidden;
   position: relative;
   height: 2.428em;
-  width: 5.534em;
+  max-width: 5.5em;
+  border-radius: 999em;
   color: #ffffff;
   font-size: 14px;
+  -webkit-font-smoothing: antialiased;
   font-weight: 600;
   line-height: 1.142em;
   z-index: 10;
@@ -170,7 +186,7 @@
 }
 
 .sm-switch input[type="radio"]:nth-of-type(1) + label {
-  padding-left: 1em;
+  padding-left: 1.214em;
 }
 
 .sm-switch input[type="radio"]:nth-of-type(1) + label:after {
@@ -190,7 +206,7 @@
 }
 
 .sm-switch input[type="radio"]:nth-of-type(1):not(:checked) + label:after {
-  background: #ccc;
+  background: #cccccc;
   -webkit-transform: translateX(100%) translateX(-2.125em);
           transform: translateX(100%) translateX(-2.125em);
 }
@@ -228,8 +244,8 @@
 .sm-switch input[type="radio"]:nth-of-type(2) + label:after {
   content: "";
   display: block;
-  height: 30px;
-  width: 30px;
+  height: 2.142em;
+  width: 2.142em;
   margin-right: auto;
   margin-left: 0.125em;
   border-radius: 50%;
