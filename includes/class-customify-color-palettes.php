@@ -170,7 +170,7 @@ class Customify_Color_Palettes {
 					'choices'      => $this->get_palettes(),
 				),
 				'sm_palette_filter'  => array(
-					'type'         => 'sm_radio',
+					'type'         => 'radio',
 					'setting_type' => 'option',
 					'setting_id'   => 'sm_palette_filter',
 					'label'        => esc_html__( 'Palette Filter', 'customify' ),

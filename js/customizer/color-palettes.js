@@ -251,7 +251,7 @@ let ColorPalettes = ( function( $, exports, wp ) {
     }
 
     const filterColor = ( color ) => {
-        let filter = $( '[name="_customize-radio-sm_palette_filter_control"]:checked' ).val();
+        let filter = $( '[name*="sm_palette_filter"]:checked' ).val();
         let newColor = hex2rgba( color );
         var palette = getCurrentPaletteColors();
         var paletteColors = palette.slice(0,3);
@@ -778,7 +778,7 @@ let ColorPalettes = ( function( $, exports, wp ) {
 		tempSettings = moveConnectedFields( tempSettings, 'sm_dark_secondary', 'sm_color_secondary', secondaryRatio );
 		tempSettings = moveConnectedFields( tempSettings, 'sm_dark_tertiary', 'sm_color_tertiary', tertiaryRatio );
 
-        var diversity = $( '[name="_customize-radio-sm_color_diversity_control"]:checked' ).val();
+        var diversity = $( '[name*="sm_color_diversity"]:checked' ).val();
         var diversity_variation = getSwapMap( 'color_diversity_low' );
         tempSettings = swapConnectedFields( tempSettings, diversity_variation );
 
@@ -791,13 +791,13 @@ let ColorPalettes = ( function( $, exports, wp ) {
 			tempSettings = moveConnectedFields( tempSettings, 'sm_color_secondary', 'sm_color_tertiary', 0.50 );
 		}
 
-        var shuffle = $( '[name="_customize-radio-sm_shuffle_colors_control"]:checked' ).val();
+        var shuffle = $( '[name*="sm_shuffle_colors"]:checked' ).val();
         if ( shuffle !== 'default' ) {
             var shuffle_variation = getSwapMap( 'shuffle_' + shuffle );
             tempSettings = swapConnectedFields( tempSettings, shuffle_variation );
         }
 
-        var dark_mode = $( '[name="_customize-radio-sm_dark_mode_control"]:checked' ).val();
+        var dark_mode = $( '[name*="sm_dark_mode"]:checked' ).val();
         if ( dark_mode === 'on' ) {
             var dark_mmode_variation = getSwapMap( 'dark' );
             tempSettings = swapConnectedFields( tempSettings, dark_mmode_variation );
@@ -807,26 +807,6 @@ let ColorPalettes = ( function( $, exports, wp ) {
 
         buildColorMatrix();
 	};
-
-    const mutePalette = function() {
-        var mute_palette = $( mute_palette_slider_selector ).val() / 100;
-        var average = getAveragePixel( getPixelsFromColors( getCurrentPaletteColors() ) );
-        _.each( masterSettingIds, function( setting_id ) {
-            const setting = wp.customize( setting_id );
-            if ( typeof setting !== "undefined" ) {
-                let value = setting();
-                let rgba = hex2rgba(value);
-                let r = parseInt( rgba.red + (average.red - rgba.red) * mute_palette, 10);
-                let g = parseInt( rgba.green + (average.green - rgba.green) * mute_palette, 10);
-                let b = parseInt( rgba.blue + (average.blue - rgba.blue) * mute_palette, 10);
-                r = Math.max( Math.min( r, 255 ), 0 );
-                g = Math.max( Math.min( g, 255 ), 0 );
-                b = Math.max( Math.min( b, 255 ), 0 );
-                let newValue = '#' + hex( r ) + hex( g ) + hex( b );
-                setting.set( newValue );
-            }
-        });
-    }
 
     const getPixelsFromColors = function( colors ) {
         var pixels = [];
@@ -864,7 +844,7 @@ let ColorPalettes = ( function( $, exports, wp ) {
     }
 
     const applyColorationValueToFields = () => {
-        var coloration = $( '[name="_customize-radio-sm_coloration_level_control"]:checked' ).val();
+        var coloration = $( '[name*="sm_coloration_level"]:checked' ).val();
         var ratio = parseFloat( coloration );
         $( color_sliders_selector ).val( ratio ).trigger( 'input' );
     }
@@ -913,21 +893,16 @@ let ColorPalettes = ( function( $, exports, wp ) {
             } );
 	    } );
 
-	    // when variation is changed reload connected fields from cached version of customizer settings config
-	    $( document ).on( 'change', '[name="_customize-radio-sm_color_palette_variation_control"]', reinitializeConnectedFields );
-
 	    $( document ).on( 'click', '.customify_preset.color_palette input', function () {
             confirmChanges( onPaletteChange.bind( this ) );
         } );
 
-	    // $( all_sliders_selector ).on( 'input', reloadConnectedFields );
-	    //
         $( color_sliders_selector ).on( 'input', reinitializeConnectedFields );
-        $( '[name="_customize-radio-sm_coloration_level_control"]' ).on( 'change', applyColorationValueToFields );
-        $( '[name="_customize-radio-sm_color_diversity_control"]' ).on( 'change', reinitializeConnectedFields );
-        $( '[name="_customize-radio-sm_shuffle_colors_control"]' ).on( 'change', reinitializeConnectedFields );
-        $( '[name="_customize-radio-sm_dark_mode_control"]' ).on( 'change', reinitializeConnectedFields );
-        $( '[name="_customize-radio-sm_palette_filter_control"]' ).on( 'change', reinitializeConnectedFields );
+        $( '[name*="sm_coloration_level"]' ).on( 'change', applyColorationValueToFields );
+        $( '[name*="sm_color_diversity"]' ).on( 'change', reinitializeConnectedFields );
+        $( '[name*="sm_shuffle_colors"]' ).on( 'change', reinitializeConnectedFields );
+        $( '[name*="sm_dark_mode"]' ).on( 'change', reinitializeConnectedFields );
+        $( '[name*="sm_palette_filter"]' ).on( 'change', reinitializeConnectedFields );
 
         $( mute_palette_slider_selector ).on( 'change', _.debounce(function() {
             reinitializeConnectedFields();

@@ -2502,3 +2502,9 @@ input.c-color-palette__input[class] {
 		flex-grow: 1;
 	}
 }
+
+// display each palette filter on its own row
+.customize-control-radio[class][id="customize-control-sm_palette_filter_control"] > .customize-inside-control-row:not(:only-of-type) {
+	display: block;
+	width: auto;
+}

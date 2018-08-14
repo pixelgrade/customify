@@ -19,12 +19,12 @@ class Pix_Customize_SM_radio_Control extends Pix_Customize_Control {
 				<input
                     type="radio"
                     value="<?php echo $value ?>"
-                    id="_customize-input-<?php echo $this->id ?>_control-radio-<?php echo $value ?>"
-                    name="_customize-radio-<?php echo $this->id ?>_control"
+                    id="_customize-sm-radio-<?php echo $this->id ?>_control-radio-<?php echo $value ?>"
+                    name="_customize-sm-radio-<?php echo $this->id ?>_control"
                     data-customize-setting-link="<?php echo $this->id ?>"
                     <?php checked( $this->value(), $value, true ); ?>
                 >
-				<label for="_customize-input-<?php echo $this->id ?>_control-radio-<?php echo $value ?>"><?php echo $label ?></label>
+				<label for="_customize-sm-radio-<?php echo $this->id ?>_control-radio-<?php echo $value ?>"><?php echo $label ?></label>
 		    <?php } ?>
         </div>
 
