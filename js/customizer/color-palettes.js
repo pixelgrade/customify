@@ -308,20 +308,20 @@ let ColorPalettes = ( function( $, exports, wp ) {
             // Color Group
             // Slightly increase saturation
             if ( color === palette[0] || color === palette[1] || color === palette[2] ) {
-                newColor = hsl2Rgb( newColor.hue, mixValues( newColor.saturation, 1, 0.2 ), newColor.lightness );
+                newColor = hsl2Rgb( newColor.hue, mixValues( newColor.saturation, 1, 0.3 ), newColor.lightness );
                 return rgb2hex( newColor );
             }
 
             // Dark Group
             // Add dark to darker colors
             if ( color === palette[3] || color === palette[4] || color === palette[5] ) {
-                newColor.lightness = mix( 'lightness', newColor, hex2rgba( '#000' ), 0.3 );
+                newColor.lightness = mix( 'lightness', newColor, hex2rgba( '#000' ), 0.4 );
             }
 
             // Light Group
             // Add light to lighter colors
             if ( color === palette[6] || color === palette[7] || color === palette[8] ) {
-                newColor.lightness = mix( 'lightness', newColor, hex2rgba( '#FFF' ), 0.3 );
+                newColor.lightness = mix( 'lightness', newColor, hex2rgba( '#FFF' ), 0.4 );
             }
 
             return hsl2hex( newColor );
