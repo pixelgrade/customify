@@ -759,6 +759,10 @@ class Customify_Color_Palettes {
 			$count += 1;
 		}
 
+		if ( $count === 0 ) {
+			return 0;
+		}
+
 		$average = $total / $count;
 
 		return $average;

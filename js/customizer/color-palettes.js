@@ -734,20 +734,19 @@ let ColorPalettes = ( function( $, exports, wp ) {
 	};
 
 	const reloadConnectedFields = () => {
-		const primaryRatio = $( primary_color_selector ).val() / 100;
-		const secondaryRatio = $( secondary_color_selector ).val() / 100;
-		const tertiaryRatio = $( tertiary_color_selector ).val() / 100;
-
 		let tempSettings = JSON.parse(JSON.stringify(window.settingsClone));
-
-		tempSettings = moveConnectedFields( tempSettings, 'sm_dark_primary', 'sm_color_primary', primaryRatio );
-		tempSettings = moveConnectedFields( tempSettings, 'sm_dark_secondary', 'sm_color_secondary', secondaryRatio );
-		tempSettings = moveConnectedFields( tempSettings, 'sm_dark_tertiary', 'sm_color_tertiary', tertiaryRatio );
-
-        var diversity = $( '[name*="sm_color_diversity"]:checked' ).val();
 
         if ( typeof $( '[name*="sm_color_diversity"]:checked' ).data( 'default' ) === 'undefined'
             || typeof $( '[name*="sm_coloration_level"]:checked' ).data( 'default' ) === 'undefined' ) {
+	        const primaryRatio = $( primary_color_selector ).val() / 100;
+	        const secondaryRatio = $( secondary_color_selector ).val() / 100;
+	        const tertiaryRatio = $( tertiary_color_selector ).val() / 100;
+
+	        tempSettings = moveConnectedFields( tempSettings, 'sm_dark_primary', 'sm_color_primary', primaryRatio );
+	        tempSettings = moveConnectedFields( tempSettings, 'sm_dark_secondary', 'sm_color_secondary', secondaryRatio );
+	        tempSettings = moveConnectedFields( tempSettings, 'sm_dark_tertiary', 'sm_color_tertiary', tertiaryRatio );
+
+	        var diversity = $( '[name*="sm_color_diversity"]:checked' ).val();
             var diversity_variation = getSwapMap( 'color_diversity_low' );
             tempSettings = swapConnectedFields( tempSettings, diversity_variation );
 
