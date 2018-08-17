@@ -203,7 +203,7 @@ class Customify_Color_Palettes {
 					'label'            => esc_html__( 'Color Primary', 'customify' ),
 					'default'          => '#ffeb00',
 					'connected_fields' => array(
-						'sm_color_primary_connected'
+//						'sm_color_primary_connected'
 					),
 					'css'              => array(
 						array(
@@ -236,7 +236,7 @@ class Customify_Color_Palettes {
 					'label'            => esc_html__( 'Color Secondary', 'customify' ),
 					'default'          => '#00ecff',
 					'connected_fields' => array(
-						'sm_color_secondary_connected'
+//						'sm_color_secondary_connected'
 					),
 					'css'              => array(
 						array(
@@ -269,7 +269,7 @@ class Customify_Color_Palettes {
 					'label'            => esc_html__( 'Color Tertiary', 'customify' ),
 					'default'          => '#00ecff',
 					'connected_fields' => array(
-						'sm_color_tertiary_connected'
+//						'sm_color_tertiary_connected'
 					),
 					'css'              => array(
 						array(
@@ -302,7 +302,7 @@ class Customify_Color_Palettes {
 					'label'            => esc_html__( 'Dark Primary', 'customify' ),
 					'default'          => '#171617',
 					'connected_fields' => array(
-						'sm_dark_primary_connected'
+//						'sm_dark_primary_connected'
 					),
 					'css'              => array(
 						array(
@@ -335,7 +335,7 @@ class Customify_Color_Palettes {
 					'label'            => esc_html__( 'Dark Secondary', 'customify' ),
 					'default'          => '#383c50',
 					'connected_fields' => array(
-						'sm_dark_secondary_connected'
+//						'sm_dark_secondary_connected'
 					),
 					'css'              => array(
 						array(
@@ -368,7 +368,7 @@ class Customify_Color_Palettes {
 					'label'            => esc_html__( 'Dark Tertiary', 'customify' ),
 					'default'          => '#65726F',
 					'connected_fields' => array(
-						'sm_dark_tertiary_connected'
+//						'sm_dark_tertiary_connected'
 					),
 					'css'              => array(
 						array(
@@ -401,7 +401,7 @@ class Customify_Color_Palettes {
 					'label'            => esc_html__( 'Light Primary', 'customify' ),
 					'default'          => '#ffffff',
 					'connected_fields' => array(
-						'sm_light_primary_connected'
+//						'sm_light_primary_connected'
 					),
 					'css'              => array(
 						array(
@@ -434,7 +434,7 @@ class Customify_Color_Palettes {
 					'label'            => esc_html__( 'Light Secondary', 'customify' ),
 					'default'          => '#ffffff',
 					'connected_fields' => array(
-						'sm_light_secondary_connected'
+//						'sm_light_secondary_connected'
 					),
 					'css'              => array(
 						array(
@@ -467,7 +467,7 @@ class Customify_Color_Palettes {
 					'label'            => esc_html__( 'Light Tertiary', 'customify' ),
 					'default'          => '#ffffff',
 					'connected_fields' => array(
-						'sm_light_tertiary_connected'
+//						'sm_light_tertiary_connected'
 					),
 					'css'              => array(
 						array(

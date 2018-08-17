@@ -746,7 +746,8 @@ let ColorPalettes = ( function( $, exports, wp ) {
 
         var diversity = $( '[name*="sm_color_diversity"]:checked' ).val();
 
-        if ( typeof $( '[name*="sm_color_diversity"]:checked' ).data( 'default' ) === 'undefined' ) {
+        if ( typeof $( '[name*="sm_color_diversity"]:checked' ).data( 'default' ) === 'undefined'
+            || typeof $( '[name*="sm_coloration_level"]:checked' ).data( 'default' ) === 'undefined' ) {
             var diversity_variation = getSwapMap( 'color_diversity_low' );
             tempSettings = swapConnectedFields( tempSettings, diversity_variation );
 
@@ -758,8 +759,6 @@ let ColorPalettes = ( function( $, exports, wp ) {
                 tempSettings = moveConnectedFields( tempSettings, 'sm_color_primary', 'sm_color_secondary', 0.67 );
                 tempSettings = moveConnectedFields( tempSettings, 'sm_color_secondary', 'sm_color_tertiary', 0.50 );
             }
-        } else {
-            console.log( 'diversity default' );
         }
 
         var shuffle = $( '[name*="sm_shuffle_colors"]:checked' ).val();
@@ -835,6 +834,7 @@ let ColorPalettes = ( function( $, exports, wp ) {
 
     const reinitializeConnectedFields = () => {
         reloadConnectedFields();
+        buildColorMatrix();
         unbindConnectedFields();
         bindConnectedFields();
 	    refreshCurrentPaletteControl();
@@ -917,6 +917,7 @@ let ColorPalettes = ( function( $, exports, wp ) {
 	    unbindConnectedFields();
 	    bindConnectedFields();
 	    refreshCurrentPaletteControl();
+	    buildColorMatrix();
 
 	    bindEvents();
     } );
