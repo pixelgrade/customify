@@ -1927,13 +1927,6 @@ $palette_box_shadow_stronger: inset 0 0 3px 0 rgba(0,0,0,0.4);
 			@for $i from 1 through 10 {
 			  &:nth-child(#{$i}) {
 				transition-delay: 0s + $i/20 - 1/20;
-
-				// PLAYGROUND:
-				// Size items based on color accent
-				// Higher size for accent colors
-				// Lower sizes for light colors
-
-				// flex-grow: 1/$i * 10 + $i/10;
 			  }
 			}
 		}
@@ -2078,6 +2071,10 @@ $palette_border-radius: 5px;
 	}
 }
 
+.c-color-palette__fields {
+	position: relative;
+}
+
 .c-color-palette .iris-picker {
 	position: absolute;
 	top: 100%;
@@ -2113,8 +2110,9 @@ $palette_border-radius: 5px;
 	position: relative;
 	display: flex;
 	flex-wrap: wrap;
-	align-items: stretch;
+	align-items: center;
 	width: 100%;
+	height: 3em;
 }
 
 .color {
@@ -2123,19 +2121,12 @@ $palette_border-radius: 5px;
 
 	flex: 1 1 0;
 	overflow: hidden;
-
-	.c-color-palette.animate & {
-		transition: flex-grow .3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
-
-		&.hidden {
-			transition: flex-grow .3s cubic-bezier(0.6, -1.00, 0.74, 0.05); // easeBackInMega
-		}
-	}
+	transition: flex-grow .3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
 
 	&.hidden {
 		display: flex;
 		flex-grow: 0;
-		display: none;
+		transition: flex-grow .3s cubic-bezier(0.6, -1.00, 0.74, 0.05); // easeBackInMega
 
 		.picker {
 			opacity: 0;
@@ -2144,7 +2135,6 @@ $palette_border-radius: 5px;
 	}
 
 	.picker {
-		//border: 2px solid transparent;
 		transition: opacity .3s ease-in-out, border-color .3s ease-in-out;
 		cursor: pointer;
 	}
@@ -2152,10 +2142,6 @@ $palette_border-radius: 5px;
 	&.inactive .picker {
 		opacity: 0.2;
 	}
-
-	//&.active .picker {
-	//	border-color: #73C5EE;
-	//}
 
 	&.inactive .picker:hover {
 		opacity: 1;
@@ -2425,6 +2411,7 @@ input.c-color-palette__input[class] {
 		> :nth-child(12) { grid-area: 17 / 7 / span 4 / span 4; }
 		> :nth-child(13) { grid-area: 19 / 36 / span 6 / span 6; }
 		> :nth-child(14) { grid-area: 12 / 18 / span 2 / span 2; }
+		> :nth-child(n+15) { display: none; }
 	}
 }
 
@@ -2507,4 +2494,31 @@ input.c-color-palette__input[class] {
 .customize-control-radio[class][id="customize-control-sm_palette_filter_control"] > .customize-inside-control-row:not(:only-of-type) {
 	display: block;
 	width: auto;
+}
+
+.color {
+	&[class*="sm_color"][class*="_connected"],
+	&[class*="sm_dark"][class*="_connected"],
+	&[class*="sm_light"][class*="_connected"] {
+		display: none;
+	}
+}
+
+.c-color-palette__colors {
+	position: relative;
+}
+
+.c-color-palette {
+	canvas, svg {
+		max-width: 100%;
+		height: auto;
+	}
+}
+
+
+.c-color-palette__fields {
+	position: absolute;
+	top: 100%;
+	left: 0;
+	right: 0;
 }

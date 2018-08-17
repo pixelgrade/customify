@@ -79,6 +79,9 @@ class Customify_Color_Palettes {
 		wp_register_script( PixCustomifyPlugin()->get_slug() . '-swap-values', plugins_url( 'js/customizer/swap-values.js', PixCustomifyPlugin()->get_file() ), array( 'jquery' ), PixCustomifyPlugin()->get_version() );
 		wp_register_script( PixCustomifyPlugin()->get_slug() . '-color-palettes-variations', plugins_url( 'js/customizer/color-palettes-variations.js', PixCustomifyPlugin()->get_file() ), array( 'jquery' ), PixCustomifyPlugin()->get_version() );
 		wp_register_script( PixCustomifyPlugin()->get_slug() . '-color-palettes', plugins_url( 'js/customizer/color-palettes.js', PixCustomifyPlugin()->get_file() ), array( 'jquery', PixCustomifyPlugin()->get_slug() . '-color-palettes-variations', PixCustomifyPlugin()->get_slug() . '-swap-values' ), PixCustomifyPlugin()->get_version() );
+
+		wp_register_script( PixCustomifyPlugin()->get_slug() . '-d3', '//d3js.org/d3.v3.min.js', array(), PixCustomifyPlugin()->get_version() );
+		wp_register_script( PixCustomifyPlugin()->get_slug() . '-color-palettes-preview', plugins_url( 'js/customizer/color-palettes-preview.js', PixCustomifyPlugin()->get_file() ), array( PixCustomifyPlugin()->get_slug() . '-d3' ), PixCustomifyPlugin()->get_version() );
 	}
 
 	/**
@@ -91,6 +94,7 @@ class Customify_Color_Palettes {
 		}
 
 		wp_enqueue_script( PixCustomifyPlugin()->get_slug() . '-color-palettes' );
+		wp_enqueue_script( PixCustomifyPlugin()->get_slug() . '-color-palettes-preview' );
 	}
 
 	/**
@@ -586,7 +590,7 @@ class Customify_Color_Palettes {
                   'setting_id' => 'sm_current_color_palette',
                   'html'       =>
                       '<div class="c-color-palette">' . PHP_EOL .
-                      $current_palette . PHP_EOL .
+                      '<div class="c-color-palette__colors">' . $current_palette . '</div>' . PHP_EOL .
                       '<div class="sm_color_matrix"></div>' . PHP_EOL .
                       '</div>' . PHP_EOL .
                       '<div class="sm-tabs">' . PHP_EOL .

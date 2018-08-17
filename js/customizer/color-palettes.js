@@ -13,7 +13,7 @@ let ColorPalettes = ( function( $, exports, wp ) {
         "sm_light_tertiary"
     ];
 
-	window.tempColors = {
+	const filteredColors = {
         sm_color_primary: '',
         sm_color_secondary: '',
         sm_color_tertiary: '',
@@ -28,7 +28,6 @@ let ColorPalettes = ( function( $, exports, wp ) {
 	const primary_color_selector = '#_customize-input-sm_dark_color_primary_slider_control';
 	const secondary_color_selector = '#_customize-input-sm_dark_color_secondary_slider_control';
 	const tertiary_color_selector = '#_customize-input-sm_dark_color_tertiary_slider_control';
-	const mute_palette_slider_selector = '#_customize-input-sm_mute_palette_slider_control';
 	const color_sliders_selector = primary_color_selector + ', ' + secondary_color_selector + ', ' + tertiary_color_selector;
 
     let setupGlobalsDone = false;
@@ -124,10 +123,35 @@ let ColorPalettes = ( function( $, exports, wp ) {
 
             if ( typeof setting !== "undefined" ) {
                 let value = setting();
-                setting.set( value + "ff" );
-                setting.set( value );
+	            let parent_setting_data = wp.customize.settings.settings[setting_id];
+
+	            _.each( parent_setting_data.connected_fields, function( connected_field_data ) {
+		            if ( _.isUndefined( connected_field_data ) || _.isUndefined( connected_field_data.setting_id ) || ! _.isString( connected_field_data.setting_id ) ) {
+			            return;
+		            }
+		            const connected_setting = wp.customize( connected_field_data.setting_id );
+		            if ( _.isUndefined( connected_setting ) ) {
+			            return;
+		            }
+		            connected_setting.set( getFilteredColor( setting_id ) );
+	            } );
             }
         });
+    };
+
+    const updateFilteredColors = () => {
+	    _.each( masterSettingIds, function( setting_id ) {
+		    const setting = wp.customize( setting_id );
+
+		    if ( typeof setting !== "undefined" ) {
+			    let value = setting();
+			    filteredColors[setting_id] = filterColor( value );
+		    }
+	    });
+    };
+
+    const getFilteredColor = ( setting_id ) => {
+        return filteredColors[setting_id];
     };
 
     const getMasterFieldCallback = function( parent_setting_data, parent_setting_id ) {
@@ -140,7 +164,7 @@ let ColorPalettes = ( function( $, exports, wp ) {
                 if ( _.isUndefined( setting ) ) {
                     return;
                 }
-                setting.set( filterColor( new_value ) );
+                setting.set( getFilteredColor( parent_setting_id ) );
             } );
         }
     };
@@ -261,10 +285,8 @@ let ColorPalettes = ( function( $, exports, wp ) {
         var averageDark = getAveragePixel( getPixelsFromColors( paletteDark ) );
 
         if ( filter === 'gingham' ) {
-            // if ( paletteDark.indexOf( color ) === -1 ) {
-                newColor = hsl2Rgb( newColor.hue, mixValues( newColor.saturation, 1, 0.5 ), newColor.lightness );
-                return rgb2hex( newColor );
-            // }
+            newColor = hsl2Rgb( newColor.hue, mixValues( newColor.saturation, 1, 0.5 ), newColor.lightness );
+            return rgb2hex( newColor );
         }
 
         if ( filter === 'clarendon' ) {
@@ -336,13 +358,8 @@ let ColorPalettes = ( function( $, exports, wp ) {
         if ( filter === 'mayfair' ) {
             if ( color === palette[1] || color === palette[2] ) {
                 newColor = hex2rgba(palette[0]);
-                // newColor.lightness = mix( 'lightness', newColor, hex2rgba( '#000' ), 0.2 );
-                // newColor.saturation = mix( 'saturation', newColor, hex2rgba( '#000' ), 0.2 );
                 newColor.hue = ( newColor.hue + 0.05 ) % 1;
-
                 if ( color === palette[2] ) {
-                    // newColor.lightness = mix( 'lightness', newColor, hex2rgba( '#000' ), 0.2 );
-                    // newColor.saturation = mix( 'saturation', newColor, hex2rgba( '#000' ), 0.2 );
                     newColor.hue = ( newColor.hue + 0.05 ) % 1;
                 }
                 return hsl2hex( newColor );
@@ -356,13 +373,8 @@ let ColorPalettes = ( function( $, exports, wp ) {
         if ( filter === 'sierra' ) {
             if ( color === palette[1] || color === palette[2] ) {
                 newColor = hex2rgba(palette[0]);
-                // newColor.lightness = mix( 'lightness', newColor, hex2rgba( '#000' ), 0.2 );
-                // newColor.saturation = mix( 'saturation', newColor, hex2rgba( '#000' ), 0.2 );
                 newColor.hue = ( newColor.hue + 0.95 ) % 1;
-
                 if ( color === palette[2] ) {
-                    // newColor.lightness = mix( 'lightness', newColor, hex2rgba( '#000' ), 0.2 );
-                    // newColor.saturation = mix( 'saturation', newColor, hex2rgba( '#000' ), 0.2 );
                     newColor.hue = ( newColor.hue + 0.95 ) % 1;
                 }
                 return hsl2hex( newColor );
@@ -378,7 +390,7 @@ let ColorPalettes = ( function( $, exports, wp ) {
         }
 
         return color;
-    }
+    };
 
     const createCurrentPaletteControls = () => {
         const $palette = $( '.c-color-palette' );
@@ -400,15 +412,11 @@ let ColorPalettes = ( function( $, exports, wp ) {
 
             $input.iris( {
                 change: ( event, ui ) => {
-                    const lastColor = setting();
                     const currentColor = ui.color.toString();
 
-                    // setPalettesOnConnectedFields();
-
-                    // if ( lastColor !== currentColor ) {
                     $obj.css( 'color', filterColor( currentColor ) );
                     setting.set( currentColor );
-                    // }
+                    setPalettesOnConnectedFields();
 
                     if ( event.originalEvent.type !== 'external' ) {
                         $palette.find( '.color.' + setting_id ).removeClass( 'altered' );
@@ -464,7 +472,7 @@ let ColorPalettes = ( function( $, exports, wp ) {
                 } );
 
                 const $iris = $input.next( '.iris-picker' );
-                const paletteWidth = $palette.outerWidth();
+                const paletteWidth = $palette.find( '.c-color-palette__colors' ).outerWidth();
                 const $visibleColors = $colors.filter( ':visible' );
                 const index = $visibleColors.index( $obj );
 
@@ -493,9 +501,7 @@ let ColorPalettes = ( function( $, exports, wp ) {
 
     const showNewColors = function() {
         _.each(masterSettingIds, function( id ) {
-            const setting = wp.customize( id );
-            const initialColor = setting();
-            $( '.c-color-palette' ).find( '.color.' + id ).css( 'color', filterColor( initialColor ) );
+            $( '.c-color-palette' ).find( '.color.' + id ).css( 'color', getFilteredColor( id ) );
         });
     };
 
@@ -510,8 +516,8 @@ let ColorPalettes = ( function( $, exports, wp ) {
 
     const onPaletteChange = function() {
         $( this ).trigger( 'customify:preset-change' );
-        showNewColors();
-	    buildColorMatrix();
+	    updateFilteredColors();
+	    reinitializeConnectedFields();
     };
 
     // this function goes through all the connected fields and adds swatches to the default color picker for all the colors in the current color palette
@@ -547,16 +553,15 @@ let ColorPalettes = ( function( $, exports, wp ) {
 
         if ( ! $matrix.children().length ) {
             _.each( masterSettingIds, function( setting_id ) {
-                const $bucket = $( '<div class="' + setting_id + '">' ).appendTo( $matrix );
+                $( '<div class="' + setting_id + '">' ).appendTo( $matrix );
             } );
         }
 
 	    _.each( masterSettingIds, function( setting_id ) {
             const $bucket = $matrix.children( '.' + setting_id );
-            const color = wp.customize( setting_id )();
             let classes = [];
 
-            $bucket.css( 'color', filterColor( color ) );
+            $bucket.css( 'color', getFilteredColor( setting_id ) );
 
 		    _.each( wp.customize.settings.settings[setting_id]['connected_fields'], function( connected_field ) {
                 const field_id = connected_field.setting_id;
@@ -642,6 +647,7 @@ let ColorPalettes = ( function( $, exports, wp ) {
         toggleHiddenClassOnMasterControls();
 	    // setPalettesOnConnectedFields();
         showNewColors();
+	    buildPreview();
     };
 
 	const swapConnectedFields = ( settings, swapMap ) => {
@@ -804,9 +810,7 @@ let ColorPalettes = ( function( $, exports, wp ) {
         }
 
 		wp.customize.settings.settings = tempSettings;
-
-        buildColorMatrix();
-	};
+    };
 
     const getPixelsFromColors = function( colors ) {
         var pixels = [];
@@ -846,18 +850,183 @@ let ColorPalettes = ( function( $, exports, wp ) {
     const applyColorationValueToFields = () => {
         var coloration = $( '[name*="sm_coloration_level"]:checked' ).val();
         var ratio = parseFloat( coloration );
-        $( color_sliders_selector ).val( ratio ).trigger( 'input' );
-    }
+        $( color_sliders_selector ).val( ratio );
+        reinitializeConnectedFields();
+    };
 
     const reinitializeConnectedFields = () => {
         reloadConnectedFields();
         unbindConnectedFields();
         bindConnectedFields();
-        resetSettings();
-        refreshCurrentPaletteControl();
+	    refreshCurrentPaletteControl();
+	    resetSettings();
     };
 
-    const confirmChanges = ( callback ) => {
+
+//  .attr('fill', function(d, i) {
+//		var colorsCount = Object.keys( filteredColors ).length;
+//		var color = filteredColors[masterSettingIds[Math.floor( i * colorsCount / numNodes )]];
+//		return color;
+//	});
+
+	const buildPreview = () => {
+		var margin = {top: 0, right: 0, bottom: 0, left: 0},
+			width = 960 - margin.left - margin.right,
+			height = 500 - margin.top - margin.bottom,
+			// padding between nodes
+			padding = 2,
+			maxRadius = 1000,
+			numberOfNodes = 36;
+
+        // Create random node data.
+		var data = d3.range( numberOfNodes ).map( function( x ) {
+			var value = Math.floor( Math.random() * 10 ) / 10,
+				size = Math.floor( Math.sqrt( ( value + 1 ) / numberOfNodes * - Math.log( Math.random() ) ) * maxRadius * 10 );
+			return {value: value, size: size};
+		} );
+
+		var x = d3.scale.linear()
+		          .domain( [0, 5] )
+		          .range( [margin.left, width + margin.right] );
+
+        // Map the basic node data to d3-friendly format.
+		var nodes = data.map( function( node, index ) {
+			return {
+				idealradius: node.size / 100,
+				radius: 0,
+				// Give each node a random color.
+				color: '#ff7f0e',
+				// Set the node's gravitational centerpoint.
+				idealcx: 10 * index,
+				idealcy: height / 2,
+				x: 10 * index,
+				// Add some randomization to the placement;
+				// nodes stacked on the same point can produce NaN errors.
+				y: height / 2 + Math.random()
+			};
+		} );
+
+		var force = d3.layout.force()
+		              .nodes( nodes )
+		              .size( [width, height] )
+		              .gravity( 0 )
+		              .charge( 0 )
+		              .on( "tick", tick )
+		              .start();
+
+		var svg = d3.select( ".c-color-palette" ).append( "svg" )
+		            .attr( "width", width + margin.left + margin.right )
+		            .attr( "height", height + margin.top + margin.bottom )
+                    .attr( "viewBox", "0 0 " + (width + margin.left + margin.right) + " " + (height + margin.top + margin.bottom) );
+
+		var loading = svg.append( "text" )
+		                 .attr( "x", ( width + margin.left + margin.right ) / 2 )
+		                 .attr( "y", ( height + margin.top + margin.bottom ) / 2 )
+		                 .attr( "dy", ".35em" )
+		                 .style( "text-anchor", "middle" )
+		                 .text( "Simulating. One moment please…" );
+
+		/**
+		 * On a tick, apply custom gravity, collision detection, and node placement.
+		 */
+		function tick( e ) {
+			for ( i = 0; i < nodes.length; i ++ ) {
+				var node = nodes[i];
+				/*
+				 * Animate the radius via the tick.
+				 *
+				 * Typically this would be performed as a transition on the SVG element itself,
+				 * but since this is a static force layout, we must perform it on the node.
+				 */
+				node.radius = node.idealradius - node.idealradius * e.alpha * 10;
+				node = gravity( .2 * e.alpha )( node );
+				node = collide( .5 )( node );
+				node.cx = node.x;
+				node.cy = node.y;
+			}
+		}
+
+		/**
+		 * On a tick, move the node towards its desired position,
+		 * with a preference for accuracy of the node's x-axis placement
+		 * over smoothness of the clustering, which would produce inaccurate data presentation.
+		 */
+		function gravity( alpha ) {
+			return function( d ) {
+				d.y += ( d.idealcy - d.y ) * alpha;
+				d.x += ( d.idealcx - d.x ) * alpha * 3;
+				return d;
+			};
+		}
+
+		/**
+		 * On a tick, resolve collisions between nodes.
+		 */
+		function collide( alpha ) {
+			var quadtree = d3.geom.quadtree( nodes );
+			return function( d ) {
+				var r = d.radius + maxRadius + padding,
+					nx1 = d.x - r,
+					nx2 = d.x + r,
+					ny1 = d.y - r,
+					ny2 = d.y + r;
+				quadtree.visit( function( quad, x1, y1, x2, y2 ) {
+					if ( quad.point && (
+							quad.point !== d
+						) ) {
+						var x = d.x - quad.point.x,
+							y = d.y - quad.point.y,
+							l = Math.sqrt( x * x + y * y ),
+							r = d.radius + quad.point.radius + padding;
+						if ( l < r ) {
+							l = ( l - r ) / l * alpha;
+							d.x -= x *= l;
+							d.y -= y *= l;
+							quad.point.x += x;
+							quad.point.y += y;
+						}
+					}
+					return x1 > nx2 || x2 < nx1 || y1 > ny2 || y2 < ny1;
+				} );
+				return d;
+			};
+		}
+
+		/**
+		 * Run the force layout to compute where each node should be placed,
+		 * then replace the loading text with the graph.
+		 */
+		function renderGraph() {
+			// Run the layout a fixed number of times.
+			// The ideal number of times scales with graph complexity.
+			// Of course, don't run too long—you'll hang the page!
+			force.start();
+			for ( var i = 100; i > 0; -- i ) {
+				force.tick();
+			}
+			force.stop();
+
+			var circle = svg.selectAll( "circle" )
+			                .data( nodes )
+			                .enter().append( "circle" )
+			                .style( "fill", function( d, i ) {
+                                var colorsCount = Object.keys( filteredColors ).length;
+                                var color = filteredColors[masterSettingIds[Math.floor( i * colorsCount / numberOfNodes )]];
+                                return color;
+			                } )
+                            .style( "stroke", "#ddd" )
+			                .attr( "cx", function( d ) { return d.x } )
+			                .attr( "cy", function( d ) { return d.y } )
+			                .attr( "r", function( d ) { return d.radius } );
+
+			loading.remove();
+		}
+
+// Use a timeout to allow the rest of the page to load first.
+		setTimeout( renderGraph, 10 );
+	};
+
+	const confirmChanges = ( callback ) => {
         if ( typeof callback !== 'function' ) {
             return;
         }
@@ -897,16 +1066,15 @@ let ColorPalettes = ( function( $, exports, wp ) {
             confirmChanges( onPaletteChange.bind( this ) );
         } );
 
-        $( color_sliders_selector ).on( 'input', reinitializeConnectedFields );
         $( '[name*="sm_coloration_level"]' ).on( 'change', applyColorationValueToFields );
         $( '[name*="sm_color_diversity"]' ).on( 'change', reinitializeConnectedFields );
         $( '[name*="sm_shuffle_colors"]' ).on( 'change', reinitializeConnectedFields );
         $( '[name*="sm_dark_mode"]' ).on( 'change', reinitializeConnectedFields );
-        $( '[name*="sm_palette_filter"]' ).on( 'change', reinitializeConnectedFields );
 
-        $( mute_palette_slider_selector ).on( 'change', _.debounce(function() {
+        $( '[name*="sm_palette_filter"]' ).on( 'change', () => {
+	        updateFilteredColors();
             reinitializeConnectedFields();
-        }, 10) );
+        } );
 
 	    $( document ).on( 'click', '.sm-tabs__item', function( e ) {
 		    e.preventDefault();
@@ -929,11 +1097,11 @@ let ColorPalettes = ( function( $, exports, wp ) {
 
         createCurrentPaletteControls();
 
-	    buildColorMatrix();
 	    reloadConnectedFields();
-        bindConnectedFields();
-        refreshCurrentPaletteControl();
-        setPalettesOnConnectedFields();
+	    updateFilteredColors();
+	    unbindConnectedFields();
+	    bindConnectedFields();
+	    refreshCurrentPaletteControl();
 
 	    bindEvents();
     } );

@@ -2435,6 +2435,10 @@ ul.font-options__options-list .select2-container--default .select2-selection--si
   font-weight: bold;
 }
 
+.c-color-palette__fields {
+  position: relative;
+}
+
 .c-color-palette .iris-picker {
   position: absolute;
   top: 100%;
@@ -2470,9 +2474,10 @@ ul.font-options__options-list .select2-container--default .select2-selection--si
   display: flex;
   -ms-flex-wrap: wrap;
       flex-wrap: wrap;
-  -ms-flex-align: stretch;
-      align-items: stretch;
+  -ms-flex-align: center;
+      align-items: center;
   width: 100%;
+  height: 3em;
 }
 
 .color {
@@ -2483,16 +2488,8 @@ ul.font-options__options-list .select2-container--default .select2-selection--si
   -ms-flex: 1 1 0;
       flex: 1 1 0;
   overflow: hidden;
-}
-
-.c-color-palette.animate .color {
   transition: -ms-flex-positive 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
   transition: flex-grow 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
-}
-
-.c-color-palette.animate .color.hidden {
-  transition: -ms-flex-positive 0.3s cubic-bezier(0.6, -1, 0.74, 0.05);
-  transition: flex-grow 0.3s cubic-bezier(0.6, -1, 0.74, 0.05);
 }
 
 .color.hidden {
@@ -2500,7 +2497,8 @@ ul.font-options__options-list .select2-container--default .select2-selection--si
   display: flex;
   -ms-flex-positive: 0;
       flex-grow: 0;
-  display: none;
+  transition: -ms-flex-positive 0.3s cubic-bezier(0.6, -1, 0.74, 0.05);
+  transition: flex-grow 0.3s cubic-bezier(0.6, -1, 0.74, 0.05);
 }
 
 .color.hidden .picker {
@@ -2853,6 +2851,10 @@ input.c-color-palette__input[class] {
   grid-area: 12 / 18 / span 2 / span 2;
 }
 
+.sm_color_matrix > * > :nth-child(n+15) {
+  display: none;
+}
+
 .sm-tabs {
   display: -ms-flexbox;
   display: flex;
@@ -2932,4 +2934,24 @@ input.c-color-palette__input[class] {
 .customize-control-radio[class][id="customize-control-sm_palette_filter_control"] > .customize-inside-control-row:not(:only-of-type) {
   display: block;
   width: auto;
+}
+
+.color[class*="sm_color"][class*="_connected"], .color[class*="sm_dark"][class*="_connected"], .color[class*="sm_light"][class*="_connected"] {
+  display: none;
+}
+
+.c-color-palette__colors {
+  position: relative;
+}
+
+.c-color-palette canvas, .c-color-palette svg {
+  max-width: 100%;
+  height: auto;
+}
+
+.c-color-palette__fields {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
 }
