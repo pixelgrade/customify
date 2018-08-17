@@ -821,7 +821,6 @@ let ColorPalettes = ( function( $, exports, wp ) {
             _.each(sliders, function( slider_id ) {
                 var slider_setting = customify_settings.settings[ slider_id ];
                 wp.customize( slider_id ).set( slider_setting.default );
-                console.log( '#_customize-input-' + slider_id + '_control ', slider_setting.default );
                 $( '#_customize-input-' + slider_id + '_control ').val( slider_setting.default );
             });
         } else {
