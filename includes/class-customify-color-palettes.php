@@ -586,7 +586,7 @@ class Customify_Color_Palettes {
                   'setting_id' => 'sm_current_color_palette',
                   'html'       =>
                       '<div class="c-color-palette">' . PHP_EOL .
-                      $current_palette . PHP_EOL .
+                      '<div class="c-color-palette__colors">' . $current_palette . '</div>' . PHP_EOL .
                       '<div class="sm_color_matrix"></div>' . PHP_EOL .
                       '</div>' . PHP_EOL .
                       '<div class="sm-tabs">' . PHP_EOL .
@@ -698,10 +698,27 @@ class Customify_Color_Palettes {
 	}
 
 	private function get_color_diversity_default_value( $config ) {
-		$options = $config['sections']['style_manager_section']['options'];
-		$colors1 = empty( $options['sm_color_primary']['connected_fields'] ) ? 0 : 1;
-		$colors2 = empty( $options['sm_color_secondary']['connected_fields'] ) ? 0 : 1;
-		$colors3 = empty( $options['sm_color_tertiary']['connected_fields'] ) ? 0 : 1;
+		$optionsArrayObject = new ArrayObject( $config['sections']['style_manager_section']['options'] );
+		$optionsCopy = $optionsArrayObject->getArrayCopy();
+
+		$pos1 = array_search('sm_color_primary_connected', $optionsCopy['sm_color_primary']['connected_fields'] );
+		if ( false !== $pos1 ) {
+			unset( $optionsCopy['sm_color_primary']['connected_fields'][$pos1] );
+		}
+
+		$pos2 = array_search('sm_color_secondary_connected', $optionsCopy['sm_color_secondary']['connected_fields'] );
+		if ( false !== $pos2 ) {
+			unset( $optionsCopy['sm_color_secondary']['connected_fields'][$pos2] );
+		}
+
+		$pos3 = array_search('sm_color_tertiary_connected', $optionsCopy['sm_color_tertiary']['connected_fields'] );
+		if ( false !== $pos3 ) {
+			unset( $optionsCopy['sm_color_tertiary']['connected_fields'][$pos3] );
+		}
+
+		$colors1 = empty( $optionsCopy['sm_color_primary']['connected_fields'] ) ? 0 : 1;
+		$colors2 = empty( $optionsCopy['sm_color_secondary']['connected_fields'] ) ? 0 : 1;
+		$colors3 = empty( $optionsCopy['sm_color_tertiary']['connected_fields'] ) ? 0 : 1;
 		$colors = $colors1 + $colors2 + $colors3;
 
 		if ( $colors > 2 ) {
@@ -809,8 +826,21 @@ class Customify_Color_Palettes {
 	}
 
 	private function get_dark_to_color_slider_default_value( $options, $dark_id, $color_id ) {
-		$dark_count = count($options[$dark_id]['connected_fields']);
-		$color_count = count($options[$color_id]['connected_fields']);
+		$optionsArrayObject = new ArrayObject( $options );
+		$optionsCopy = $optionsArrayObject->getArrayCopy();
+
+		$pos1 = array_search($color_id . '_connected', $optionsCopy[$color_id]['connected_fields'] );
+		if ( false !== $pos1 ) {
+			unset( $optionsCopy[$color_id]['connected_fields'][$pos1] );
+		}
+
+		$pos2 = array_search($dark_id . '_connected', $optionsCopy[$dark_id]['connected_fields'] );
+		if ( false !== $pos2 ) {
+			unset( $optionsCopy[$dark_id]['connected_fields'][$pos2] );
+		}
+
+		$dark_count = count($optionsCopy[$dark_id]['connected_fields']);
+		$color_count = count($optionsCopy[$color_id]['connected_fields']);
 		$total_count = $dark_count + $color_count;
 
 		if ( $total_count === 0 ) {

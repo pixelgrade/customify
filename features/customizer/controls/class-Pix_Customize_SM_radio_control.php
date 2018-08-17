@@ -22,6 +22,7 @@ class Pix_Customize_SM_radio_Control extends Pix_Customize_Control {
                     id="_customize-sm-radio-<?php echo $this->id ?>_control-radio-<?php echo $value ?>"
                     name="_customize-sm-radio-<?php echo $this->id ?>_control"
                     data-customize-setting-link="<?php echo $this->id ?>"
+                    <?php if ( $value === $this->settings['default']->default ) { echo 'data-default="true"'; }; ?>
                     <?php checked( $this->value(), $value, true ); ?>
                 >
 				<label for="_customize-sm-radio-<?php echo $this->id ?>_control-radio-<?php echo $value ?>"><?php echo $label ?></label>
