@@ -173,7 +173,7 @@ class Customify_Color_Palettes {
 					'type'         => 'radio',
 					'setting_type' => 'option',
 					'setting_id'   => 'sm_palette_filter',
-					'label'        => esc_html__( 'Palette Filter', 'customify' ),
+					'label'        => esc_html__( 'Filters:', 'customify' ),
 					'default'      => 'original',
 					'priority'     => 10.1,
 					'live'         => true,
@@ -594,6 +594,21 @@ class Customify_Color_Palettes {
 	                      '<div class="sm-tabs__item" data-target="filters">Filters</div>' . PHP_EOL .
 	                      '<div class="sm-tabs__item" data-target="customize">Customize</div>' . PHP_EOL .
                       '</div>',
+              ),
+              'sm_palettes_description' => array(
+                  'type'       => 'html',
+                  'setting_id' => 'sm_palettes_description',
+                  'html'       => '<span class="description customize-control-description">Choose your <i>base color palette</i> and go deeper with the Filters and Customize tabs. Make it shine, mate!</span>' . PHP_EOL,
+              ),
+              'sm_filters_description' => array(
+                  'type'       => 'html',
+                  'setting_id' => 'sm_filters_description',
+                  'html'       => '<span class="description customize-control-description">Adjust the <i>colors properties</i> by using the filters in style. Keep the look fresh and engaging!</span>' . PHP_EOL,
+              ),
+              'sm_customize_description' => array(
+                  'type'       => 'html',
+                  'setting_id' => 'sm_customize_description',
+                  'html'       => '<span class="description customize-control-description">Adjust how the colors are used on your site with ease. Modify their usage level to craft a playful design!</span>' . PHP_EOL,
               ),
               'sm_coloration_level' => array(
 	              'type'         => 'sm_radio',

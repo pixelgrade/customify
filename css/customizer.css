@@ -2918,14 +2918,17 @@ input.c-color-palette__input[class] {
   display: none !important;
 }
 
+[id="sub-accordion-section-sm_color_palettes_section"].sm-view-palettes [id="customize-control-sm_palettes_description_control"],
 [id="sub-accordion-section-sm_color_palettes_section"].sm-view-palettes [id="customize-control-sm_color_palette_control"] {
   display: block !important;
 }
 
+[id="sub-accordion-section-sm_color_palettes_section"].sm-view-filters [id="customize-control-sm_filters_description_control"],
 [id="sub-accordion-section-sm_color_palettes_section"].sm-view-filters [id="customize-control-sm_palette_filter_control"] {
   display: block !important;
 }
 
+[id="sub-accordion-section-sm_color_palettes_section"].sm-view-customize [id="customize-control-sm_customize_description_control"],
 [id="sub-accordion-section-sm_color_palettes_section"].sm-view-customize [id="customize-control-sm_coloration_level_control"],
 [id="sub-accordion-section-sm_color_palettes_section"].sm-view-customize [id="customize-control-sm_color_diversity_control"],
 [id="sub-accordion-section-sm_color_palettes_section"].sm-view-customize [id="customize-control-sm_shuffle_colors_control"],
@@ -2938,6 +2941,11 @@ input.c-color-palette__input[class] {
   min-height: 24px;
   -ms-flex-positive: 1;
       flex-grow: 1;
+}
+
+[id="customize-control-sm_color_palette_control"] .customize-control-title, [id="customize-control-sm_color_palette_control"] .separator.label,
+[id="customize-control-sm_color_palette_control"] .customize-control-description {
+  display: none;
 }
 
 .customize-control-radio[class][id="customize-control-sm_palette_filter_control"] > .customize-inside-control-row:not(:only-of-type) {

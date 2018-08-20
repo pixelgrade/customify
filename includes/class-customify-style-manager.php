@@ -267,6 +267,9 @@ class Customify_Style_Manager {
 			// We need to split the fields in the Style Manager section into two: color palettes and fonts.
 			$color_palettes_fields = array(
 				'sm_current_color_palette',
+				'sm_palettes_description',
+				'sm_filters_description',
+				'sm_customize_description',
 				'sm_color_matrix',
 				'sm_palette_filter',
 				'sm_coloration_level',

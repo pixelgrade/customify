@@ -864,17 +864,6 @@ let ColorPalettes = ( function( $, exports, wp ) {
 	    $paletteControl.removeClass( 'active' );
 	    $paletteControl.filter( '.variation-' + variation ).addClass( 'active' );
 
-	    $( 'body' ).on( 'click', paletteControlSelector, function() {
-            confirmChanges( () => {
-                let $obj = $( this ),
-                    $target = $( $obj.data( 'target' ) );
-
-                $obj.siblings( paletteControlSelector ).removeClass( 'active' );
-                $obj.addClass( 'active' );
-                $target.prop( 'checked', true ).trigger( 'change' );
-            } );
-	    } );
-
 	    $( document ).on( 'click', '.customify_preset.color_palette input', function (e) {
 	        if ( ! confirmChanges( onPaletteChange.bind( this ) ) ) {
 	            e.preventDefault();

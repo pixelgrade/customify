@@ -2476,18 +2476,21 @@ input.c-color-palette__input[class] {
 	}
 
 	&.sm-view-palettes {
+		[id="customize-control-sm_palettes_description_control"],
 		[id="customize-control-sm_color_palette_control"] {
 			display: block !important;
 		}
 	}
 
 	&.sm-view-filters {
+		[id="customize-control-sm_filters_description_control"],
 		[id="customize-control-sm_palette_filter_control"] {
 			display: block !important;
 		}
 	}
 
 	&.sm-view-customize {
+		[id="customize-control-sm_customize_description_control"],
 		[id="customize-control-sm_coloration_level_control"],
 		[id="customize-control-sm_color_diversity_control"],
 		[id="customize-control-sm_shuffle_colors_control"],
@@ -2500,6 +2503,13 @@ input.c-color-palette__input[class] {
 		display: block !important;
 		min-height: 24px;
 		flex-grow: 1;
+	}
+}
+
+[id="customize-control-sm_color_palette_control"] {
+	.customize-control-title,
+	.customize-control-description {
+		display: none;
 	}
 }
 
