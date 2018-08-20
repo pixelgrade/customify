@@ -2355,7 +2355,7 @@ input.c-color-palette__input[class] {
 }
 
 .c-color-palette {
-	padding: 30px 35px;
+	padding: 30px 20px 18px;
 }
 
 [id="customize-control-sm_current_color_palette_control"][id] {
@@ -2420,15 +2420,17 @@ input.c-color-palette__input[class] {
 
 .sm-tabs {
 	display: flex;
+	justify-content: space-between;
 	padding: 0 16px;
 	text-align: center;
 	
 	border-bottom: 1px solid #DFE8EF;
 
 	&__item {
-		padding: 12px 18px;
+		padding: 12px 0;
 		margin-bottom: -1px;
-		flex-grow: 1;
+		// flex-grow: 1;
+		flex-basis: 31%;
 		
 		font-size: 14px;
 		// font-weight: 500;
@@ -2465,6 +2467,7 @@ input.c-color-palette__input[class] {
 		flex-grow: 1;
 		overflow-y: scroll;
 		margin-bottom: 0;
+		padding-top: 12px;
 	}
 
 	> * {
@@ -2473,7 +2476,17 @@ input.c-color-palette__input[class] {
 	}
 
 	[id="customize-control-sm_current_color_palette_control"] ~ * {
+		
+
 		display: none !important;
+	}
+
+	[id="customize-control-sm_palettes_description_control"],
+	[id="customize-control-sm_filters_description_control"],
+	[id="customize-control-sm_customize_description_control"] {
+		span {
+			margin: 0;
+		}
 	}
 
 	&.sm-view-palettes {
