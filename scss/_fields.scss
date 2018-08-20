@@ -139,10 +139,13 @@ $text-color-light: rgba(65, 107, 126, 0.7);
   }
 }
 
-[id="sub-accordion-section-sm_color_palettes_section"].sm-view-options li.customize-control-sm_switch {
+[id="sub-accordion-section-sm_color_palettes_section"].sm-view-customize li.customize-control-sm_switch {
   display: flex !important;
   align-items: center;
   justify-content: space-between;
+
+  padding-top: 42px;
+  padding-bottom: 42px;
 
   .customize-control-title {
     display: inline-block;
