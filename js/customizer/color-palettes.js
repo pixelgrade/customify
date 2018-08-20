@@ -899,7 +899,7 @@ let ColorPalettes = ( function( $, exports, wp ) {
 
 		    $tabs.removeClass( 'sm-tabs__item--active' );
 		    $active.addClass( 'sm-tabs__item--active' );
-		    $section.removeClass( 'sm-view-palettes sm-view-customize sm-view-options').addClass( 'sm-view-' + target );
+		    $section.removeClass( 'sm-view-palettes sm-view-filters sm-view-customize').addClass( 'sm-view-' + target );
 	    } );
 
 	    $( '.sm-tabs__item' ).first().trigger( 'click' );
