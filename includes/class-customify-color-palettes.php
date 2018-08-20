@@ -178,12 +178,12 @@ class Customify_Color_Palettes {
 					'priority'     => 10.1,
 					'live'         => true,
 					'choices'      => array(
-						'vivid'   	=> esc_html__( 'Vivid', 'customify' ),
 						'original'  => esc_html__( 'Original', 'customify' ),
+						'clarendon' => esc_html__( 'Clarendon', 'customify' ),
+						'vivid'   	=> esc_html__( 'Vivid', 'customify' ),
 						'softer'    => esc_html__( 'Softer', 'customify' ),
 						'pastel'    => esc_html__( 'Pastel', 'customify' ),
 						'greyish'   => esc_html__( 'Greyish', 'customify' ),
-						'clarendon' => esc_html__( 'Clarendon', 'customify' ),
 						// 'warm'      => esc_html__( 'Warming', 'customify' ),
 						// 'cold'      => esc_html__( 'Cooling', 'customify' ),
 						// 'sierra'    => esc_html__( 'Sierra', 'customify' ),
@@ -591,8 +591,8 @@ class Customify_Color_Palettes {
                       '</div>' . PHP_EOL .
                       '<div class="sm-tabs">' . PHP_EOL .
 	                      '<div class="sm-tabs__item" data-target="palettes">Palettes</div>' . PHP_EOL .
+	                      '<div class="sm-tabs__item" data-target="filters">Filters</div>' . PHP_EOL .
 	                      '<div class="sm-tabs__item" data-target="customize">Customize</div>' . PHP_EOL .
-	                      '<div class="sm-tabs__item" data-target="options">Options</div>' . PHP_EOL .
                       '</div>',
               ),
               'sm_coloration_level' => array(
