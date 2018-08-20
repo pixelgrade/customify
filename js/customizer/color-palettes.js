@@ -625,7 +625,7 @@ let ColorPalettes = ( function( $, exports, wp ) {
                 _.each( connectedFields, function( connectedField ) {
                     let connectedSettingId = connectedField.setting_id;
                     let connectedFieldValue = wp.customize( connectedSettingId )();
-                    if ( connectedFieldValue.toLowerCase() !== masterSettingValue.toLowerCase() ) {
+                    if ( connectedFieldValue.toLowerCase() !== filterColor( masterSettingValue ).toLowerCase() ) {
                         connectedFieldsWereAltered = true;
                     }
                 } );
@@ -639,10 +639,9 @@ let ColorPalettes = ( function( $, exports, wp ) {
         alteredSettingsSelector = '.' + alteredSettings.join(', .');
 
         $( '.c-color-palette .color' ).removeClass( 'altered' );
-        // $( '.js-altered-notification' ).toggleClass( 'hidden', ! alteredSettings.length );
 
         if ( alteredSettings.length ) {
-            // $( '.c-color-palette .color' ).filter( alteredSettingsSelector ).addClass( 'altered' );
+             $( '.c-color-palette .color' ).filter( alteredSettingsSelector ).addClass( 'altered' );
         }
 
     }, 30 );
@@ -840,10 +839,6 @@ let ColorPalettes = ( function( $, exports, wp ) {
     };
 
 	const confirmChanges = ( callback ) => {
-        if ( typeof callback !== 'function' ) {
-            return;
-        }
-
         let altered = !! $( '.c-color-palette .color.altered' ).length;
         let confirmed = true;
 
@@ -852,8 +847,13 @@ let ColorPalettes = ( function( $, exports, wp ) {
         }
 
         if ( ! altered || confirmed ) {
-            callback();
+	        if ( typeof callback === 'function' ) {
+                callback();
+	        }
+            return true;
         }
+
+        return false;
     };
 
     const bindEvents = () => {
@@ -875,15 +875,23 @@ let ColorPalettes = ( function( $, exports, wp ) {
             } );
 	    } );
 
-	    $( document ).on( 'click', '.customify_preset.color_palette input', function () {
-            confirmChanges( onPaletteChange.bind( this ) );
+	    $( document ).on( 'click', '.customify_preset.color_palette input', function (e) {
+	        if ( ! confirmChanges( onPaletteChange.bind( this ) ) ) {
+	            e.preventDefault();
+            }
         } );
+
+
+        $( '[for*="sm_palette_filter"], [for*="sm_coloration_level"], [for*="sm_color_diversity"], [for*="sm_shuffle_colors"], [for*="sm_dark_mode"]' ).on( 'click', function(e) {
+	        if ( ! confirmChanges() ) {
+	            e.preventDefault();
+	        }
+        });
 
         $( '[name*="sm_coloration_level"]' ).on( 'change', applyColorationValueToFields );
         $( '[name*="sm_color_diversity"]' ).on( 'change', reinitializeConnectedFields );
         $( '[name*="sm_shuffle_colors"]' ).on( 'change', reinitializeConnectedFields );
         $( '[name*="sm_dark_mode"]' ).on( 'change', reinitializeConnectedFields );
-
         $( '[name*="sm_palette_filter"]' ).on( 'change', () => {
 	        updateFilteredColors();
             reinitializeConnectedFields();
