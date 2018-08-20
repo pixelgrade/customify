@@ -2377,6 +2377,7 @@ input.c-color-palette__input[class] {
 
 .sm_color_matrix {
 	display: flex;
+	display: none;
 	flex-wrap: wrap;
 	margin-left: -15px;
 
@@ -2538,10 +2539,15 @@ input.c-color-palette__input[class] {
 	}
 }
 
-
 .c-color-palette__fields {
 	position: absolute;
 	top: 100%;
 	left: 0;
 	right: 0;
+	z-index: 100;
+}
+
+[id="sub-accordion-section-sm_color_palettes_section"] > .customize-section-description-container {
+	margin-bottom: 0;
+	border-bottom: 1px solid #DFE8EF;
 }

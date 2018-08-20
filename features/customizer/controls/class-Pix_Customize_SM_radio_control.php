@@ -10,7 +10,10 @@ class Pix_Customize_SM_radio_Control extends Pix_Customize_Control {
 	 *
 	 * @since 3.4.0
 	 */
-	public function render_content() { ?>
+	public function render_content() {
+		$input_id = '_customize-input-' . $this->id;
+		$name = '_customize-radio-' . $this->id;
+	    ?>
 		<?php if ( ! empty( $this->label ) ) : ?>
             <span class="customize-control-title"><?php echo esc_html( $this->label ); ?></span>
 		<?php endif; ?>
@@ -18,14 +21,14 @@ class Pix_Customize_SM_radio_Control extends Pix_Customize_Control {
 		    <?php foreach ( $this->choices as $value => $label ) { ?>
 				<input
                     type="radio"
-                    value="<?php echo $value ?>"
-                    id="_customize-sm-radio-<?php echo $this->id ?>_control-radio-<?php echo $value ?>"
-                    name="_customize-sm-radio-<?php echo $this->id ?>_control"
-                    data-customize-setting-link="<?php echo $this->id ?>"
+                    value="<?php echo esc_attr( $value ) ?>"
+                    id="<?php echo esc_attr( $input_id . '-radio-' . $value ); ?>"
+                    name="<?php echo esc_attr( $name ) ?>"
+					<?php $this->link(); ?>
                     <?php if ( $value === $this->settings['default']->default ) { echo 'data-default="true"'; }; ?>
                     <?php checked( $this->value(), $value, true ); ?>
                 >
-				<label for="_customize-sm-radio-<?php echo $this->id ?>_control-radio-<?php echo $value ?>"><?php echo $label ?></label>
+				<label for="<?php echo esc_attr( $input_id . '-radio-' . $value ); ?>"><?php echo esc_html( $label ) ?></label>
 		    <?php } ?>
         </div>
 
