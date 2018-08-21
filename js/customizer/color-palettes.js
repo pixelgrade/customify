@@ -182,8 +182,11 @@ let ColorPalettes = ( function( $, exports, wp ) {
                     _.each( parent_setting_data.connected_fields, function( connected_field_data ) {
                         let connected_setting_id = connected_field_data.setting_id;
                         let connected_setting = wp.customize(connected_setting_id);
-                        window.connectedFieldsCallbacks[connected_setting_id] = toggleAlteredClassOnMasterControls;
-                        connected_setting.bind(window.connectedFieldsCallbacks[connected_setting_id]);
+
+                        if ( typeof connected_setting !== "undefined" ) {
+                            window.connectedFieldsCallbacks[connected_setting_id] = toggleAlteredClassOnMasterControls;
+                            connected_setting.bind(window.connectedFieldsCallbacks[connected_setting_id]);
+                        }
                     } );
                 }
             }
@@ -624,9 +627,14 @@ let ColorPalettes = ( function( $, exports, wp ) {
             if ( ! _.isUndefined( connectedFields ) && connectedFields.length ) {
                 _.each( connectedFields, function( connectedField ) {
                     let connectedSettingId = connectedField.setting_id;
-                    let connectedFieldValue = wp.customize( connectedSettingId )();
-                    if ( connectedFieldValue.toLowerCase() !== filterColor( masterSettingValue ).toLowerCase() ) {
-                        connectedFieldsWereAltered = true;
+                    let connectedSetting = wp.customize( connectedSettingId );
+
+                    if ( typeof connectedSetting !== "undefined" ) {
+                        let connectedFieldValue = connectedSetting();
+
+                        if ( connectedFieldValue.toLowerCase() !== filterColor( masterSettingValue ).toLowerCase() ) {
+                            connectedFieldsWereAltered = true;
+                        }
                     }
                 } );
 
