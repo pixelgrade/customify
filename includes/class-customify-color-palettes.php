@@ -598,7 +598,7 @@ class Customify_Color_Palettes {
               'sm_palettes_description' => array(
                   'type'       => 'html',
                   'setting_id' => 'sm_palettes_description',
-                  'html'       => '<span class="description customize-control-description">Choose your <i>base color palette</i> and go deeper with the Filters and Customize tabs. Make it shine, mate!</span>' . PHP_EOL,
+                  'html'       => '<span class="description customize-control-description">Choose your <em>base color palette</em> and go deeper with the <em>Filters</em> and <em>Customize</em> tabs. Make it shine, mate!</span>' . PHP_EOL,
               ),
               'sm_filters_description' => array(
                   'type'       => 'html',

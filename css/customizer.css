@@ -2746,7 +2746,7 @@ input.c-color-palette__input[class] {
 }
 
 .c-color-palette {
-  padding: 30px 35px;
+  padding: 30px 20px 18px;
 }
 
 [id="customize-control-sm_current_color_palette_control"][id] {
@@ -2860,16 +2860,18 @@ input.c-color-palette__input[class] {
 .sm-tabs {
   display: -ms-flexbox;
   display: flex;
+  -ms-flex-pack: justify;
+      justify-content: space-between;
   padding: 0 16px;
   text-align: center;
   border-bottom: 1px solid #DFE8EF;
 }
 
 .sm-tabs__item {
-  padding: 12px 18px;
+  padding: 12px 0;
   margin-bottom: -1px;
-  -ms-flex-positive: 1;
-      flex-grow: 1;
+  -ms-flex-preferred-size: 31%;
+      flex-basis: 31%;
   font-size: 14px;
   color: #416B7E;
   opacity: 0.7;
@@ -2906,6 +2908,7 @@ input.c-color-palette__input[class] {
       flex-grow: 1;
   overflow-y: scroll;
   margin-bottom: 0;
+  padding-top: 12px;
 }
 
 [id="sub-accordion-section-sm_color_palettes_section"] > * {
@@ -2916,6 +2919,12 @@ input.c-color-palette__input[class] {
 
 [id="sub-accordion-section-sm_color_palettes_section"] [id="customize-control-sm_current_color_palette_control"] ~ * {
   display: none !important;
+}
+
+[id="sub-accordion-section-sm_color_palettes_section"] [id="customize-control-sm_palettes_description_control"] span,
+[id="sub-accordion-section-sm_color_palettes_section"] [id="customize-control-sm_filters_description_control"] span,
+[id="sub-accordion-section-sm_color_palettes_section"] [id="customize-control-sm_customize_description_control"] span {
+  margin: 0;
 }
 
 [id="sub-accordion-section-sm_color_palettes_section"].sm-view-palettes [id="customize-control-sm_palettes_description_control"],
