@@ -1514,7 +1514,7 @@ li#customize-control-site_logo .actions
     display: none !important;
 }.sm_color_matrix
 {
-    display: -ms-flexbox                                ;display: flex;margin-left: -15px;-ms-flex-wrap: wrap;flex-wrap: wrap;
+    display: -ms-flexbox                                        ;display: flex;display: none;margin-left: -15px;-ms-flex-wrap: wrap;flex-wrap: wrap;
 }.sm_color_matrix > *
 {
     display: grid;padding-top: 15px;padding-left: 15px;grid-auto-rows: 2px;grid-auto-columns: 2px;-ms-flex: 0 0 33.33333%;flex: 0 0 33.33333%;
