@@ -1073,6 +1073,9 @@ class PixCustomifyPlugin {
 
 					var append_style_to_iframe = function (ifrm_id, styleElment) {
 						var ifrm = window.frames[ifrm_id];
+                        if ( typeof ifrm === "undefined" ) {
+                            return;
+                        }
 						ifrm = ( ifrm.contentDocument || ifrm.contentDocument || ifrm.document );
 						var head = ifrm.getElementsByTagName('head')[0];
 
