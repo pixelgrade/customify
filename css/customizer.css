@@ -2768,7 +2768,6 @@ input.c-color-palette__input[class] {
 .sm_color_matrix {
   display: -ms-flexbox;
   display: flex;
-  display: none;
   -ms-flex-wrap: wrap;
       flex-wrap: wrap;
   margin-left: -15px;

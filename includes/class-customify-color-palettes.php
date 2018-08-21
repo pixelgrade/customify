@@ -749,38 +749,20 @@ class Customify_Color_Palettes {
 
 	private function get_coloration_level_average( $config ) {
 		$options = $config['sections']['style_manager_section']['options'];
-		$count = 0;
-		$total = 0;
 
-		$colors1 = empty( $options['sm_color_primary']['connected_fields'] ) ? 0 : 1;
-		$colors2 = empty( $options['sm_color_secondary']['connected_fields'] ) ? 0 : 1;
-		$colors3 = empty( $options['sm_color_tertiary']['connected_fields'] ) ? 0 : 1;
+		$colors1 = count( $options['sm_color_primary']['connected_fields'] );
+		$colors2 = count( $options['sm_color_secondary']['connected_fields'] );
+		$colors3 = count( $options['sm_color_tertiary']['connected_fields'] );
+		$colors = $colors1 + $colors2 + $colors3;
 
-		if ( $colors1 ) {
-			$ratio1 = $this->get_dark_to_color_slider_default_value( $options, 'sm_dark_primary', 'sm_color_primary' );
-			$total += $ratio1;
-			$count += 1;
-		}
+		$dark1 = count( $options['sm_dark_primary']['connected_fields'] );
+		$dark2 = count( $options['sm_dark_secondary']['connected_fields'] );
+		$dark3 = count( $options['sm_dark_tertiary']['connected_fields'] );
+		$dark = $dark1 + $dark2 + $dark3;
 
-		if ( $colors2 ) {
-			$ratio2 = $this->get_dark_to_color_slider_default_value( $options, 'sm_dark_secondary', 'sm_color_secondary' );
-			$total += $ratio2;
-			$count += 1;
-		}
+		$total = $colors + $dark;
 
-		if ( $colors3 ) {
-			$ratio3 = $this->get_dark_to_color_slider_default_value( $options, 'sm_dark_tertiary', 'sm_color_tertiary' );
-			$total += $ratio3;
-			$count += 1;
-		}
-
-		if ( $count === 0 ) {
-			return 0;
-		}
-
-		$average = $total / $count;
-
-		return $average;
+		return $colors * 100 / $total;
 	}
 
 	private function get_coloration_level_default_value( $config ) {
