@@ -181,6 +181,11 @@ class PixCustomifyPlugin {
 		add_action( 'init', array( $this, 'load_plugin_textdomain' ) );
 
 		/*
+		 * Load the upgrade logic.
+		 */
+		add_action( 'admin_init', array( $this, 'upgrade' ) );
+
+		/*
 		 * Prepare and load the configuration
 		 */
 		$this->init_plugin_configs();
@@ -249,6 +254,25 @@ class PixCustomifyPlugin {
 			// Add a JS to display a notification
 			add_action( 'customize_controls_print_footer_scripts', array( $this, 'prevent_changeset_save_in_devmode_notification' ), 100 );
 		}
+	}
+
+	/**
+	 * Handle the logic to upgrade between versions. It will run only one per version change.
+	 */
+	public function upgrade() {
+		$customify_dbversion = get_option( 'customify_dbversion', '0.0.1' );
+		if ( $this->get_version() === $customify_dbversion ) {
+			return;
+		}
+
+		// For versions, previous of version 2.0.0 (the Color Palettes v2.0 release).
+		if ( version_compare( $customify_dbversion, '2.0.0', '<' ) ) {
+			// Delete the option holding the fact that the user offered feedback.
+			delete_option( 'style_manager_user_feedback_provided' );
+		}
+
+		// Put the current version in the database.
+		update_option( 'customify_dbversion', $this->get_version(), true );
 	}
 
 	/**

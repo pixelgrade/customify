@@ -474,9 +474,9 @@ class Customify_Style_Manager {
 								<div class="modal-body full">
 									<div class="box box--large">
 										<div class="first-step">
-											<h2 class="modal-title">How would you rate your experience with using Color Palettes?</h2>
+											<h2 class="modal-title">How would you rate your experience in finding the right colors for your site?</h2>
 											<div class="scorecard">
-												<span>Worst</span>
+												<span>Poor</span>
 												<label>
 													<input type="radio" name="rating" value="1" required />
 													<span>1</span>
@@ -497,22 +497,23 @@ class Customify_Style_Manager {
 													<input type="radio" name="rating" value="5" required />
 													<span>5</span>
 												</label>
-												<span>Best</span>
+												<span>Great</span>
 											</div>
 										</div>
 										<div class="second-step hidden">
-											<p><strong>What makes you give <span class="rating-placeholder">5</span>*?</strong> I hope you’ll answer and help us do better:</p>
+											<p><strong>What points along the way made this a <span class="rating-placeholder">5</span>* experience for you?</strong><br>We are counting on your insights to guide us in doing better 🙏</p>
 											<div class="not-floating-labels">
 												<div class="form-row field">
-												<textarea name="message" placeholder="Your message.."
-												          id="style-manager-user-feedback-message" rows="4" oninvalid="this.setCustomValidity('May we have a little more info about your experience?')" oninput="setCustomValidity('')" required></textarea>
+												<textarea name="message" placeholder="Describe your experience in customizing your site colors.."
+												          id="style-manager-user-feedback-message" rows="6" oninvalid="this.setCustomValidity('May we have a little more info about your experience?')" oninput="setCustomValidity('')" required></textarea>
 												</div>
 											</div>
-											<button id="style-manager-user-feedback_btn" class="button" type="submit"><?php _e( 'Submit my feedback', 'customify' ); ?></button>
+											<button id="style-manager-user-feedback_btn" class="button" type="submit"><?php _e( 'Send us your insights', 'customify' ); ?></button>
 										</div>
 										<div class="thanks-step hidden">
-											<h3 class="modal-title">Thanks for your feedback!</h3>
-											<p>This will help us improve the product. Stay awesome! 🤗</p>
+											<h3 class="modal-title">Thank you so much for your feedback!</h3>
+											<p>It means the world to us as we strive to constantly push the limits and aim higher. Stay awesome! 🤗</p>
+											<p><em>The Pixelgrade Team</em></p>
 										</div>
 										<div class="error-step hidden">
 											<h3 class="modal-title">We've hit a snag!</h3>

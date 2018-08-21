@@ -22,7 +22,7 @@ let ColorPalettes = ( function( $, exports, wp ) {
         sm_dark_tertiary: '',
         sm_light_primary: '',
         sm_light_secondary: '',
-        sm_light_tertiary: '',
+        sm_light_tertiary: ''
     };
 
 	const primary_color_selector = '#_customize-input-sm_dark_color_primary_slider_control';
@@ -249,7 +249,7 @@ let ColorPalettes = ( function( $, exports, wp ) {
 				if(t < 1/2) return q;
 				if(t < 2/3) return p + (q - p) * (2/3 - t) * 6;
 				return p;
-			}
+			};
 
 			var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
 			var p = 2 * l - q;

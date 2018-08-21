@@ -88,7 +88,7 @@ $config['sections'] = [
 			],
 			'header_site_title_font'         => array(
 				'type'        => 'font',
-				'label'       => esc_html__( 'Site Title Font', '__components_txtd' ),
+				'label'       => esc_html__( 'Site Title Font', 'customify' ),
 				'selector'    => '.page-template-template-homepage .entry-header h1',
 				'callback'    => 'typeline_font_cb',
 
@@ -118,7 +118,7 @@ $config['sections'] = [
 			),
 			'header_navigation_font'         => array(
 				'type'        => 'font',
-				'label'       => esc_html__( 'Navigation Text', '__components_txtd' ),
+				'label'       => esc_html__( 'Navigation Text', 'customify' ),
 				'selector'    => '.storefront-primary-navigation',
 				'callback'    => 'typeline_font_cb',
 
@@ -156,7 +156,7 @@ $config['sections'] = [
 			],
 			'main_content_page_title_font'         => array(
 				'type'        => 'font',
-				'label'       => esc_html__( 'Page Title Font', '__components_txtd' ),
+				'label'       => esc_html__( 'Page Title Font', 'customify' ),
 				'selector'    => '.page-template-template-homepage .entry-header h1',
 				'callback'    => 'typeline_font_cb',
 
@@ -186,7 +186,7 @@ $config['sections'] = [
 			),
 			'main_content_body_text_font'          => array(
 				'type'        => 'font',
-				'label'       => esc_html__( 'Body Text Font', '__components_txtd' ),
+				'label'       => esc_html__( 'Body Text Font', 'customify' ),
 				'selector'    => 'body',
 				'callback'    => 'typeline_body_font_cb',
 
@@ -216,7 +216,7 @@ $config['sections'] = [
 			),
 			'main_content_quote_block_font'         => array(
 				'type'        => 'font',
-				'label'       => esc_html__( 'Quote Block Font', '__components_txtd' ),
+				'label'       => esc_html__( 'Quote Block Font', 'customify' ),
 				'selector'    => 'blockquote',
 				'callback'    => 'typeline_font_cb',
 				'default'  => array(

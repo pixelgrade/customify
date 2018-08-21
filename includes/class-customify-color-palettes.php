@@ -177,10 +177,10 @@ class Customify_Color_Palettes {
 					'default'      => 'original',
 					'priority'     => 10.1,
 					'live'         => true,
-					'choices'      => array(
+					'choices' => array(
 						'original'  => esc_html__( 'Original', 'customify' ),
 						'clarendon' => esc_html__( 'Clarendon', 'customify' ),
-						'vivid'   	=> esc_html__( 'Vivid', 'customify' ),
+						'vivid'     => esc_html__( 'Vivid', 'customify' ),
 						'softer'    => esc_html__( 'Softer', 'customify' ),
 						'pastel'    => esc_html__( 'Pastel', 'customify' ),
 						'greyish'   => esc_html__( 'Greyish', 'customify' ),
@@ -572,7 +572,7 @@ class Customify_Color_Palettes {
 
 		$current_palette .= '<div class="c-color-palette__fields">';
 		$current_palette .= '<div class="c-color-palette__notification  description  hidden  js-altered-notification">' . PHP_EOL .
-			__( 'One or more colors connected to your color palette have been modified. By changing or altering the current palette you will lose changes made prior to this action.', '__theme_txtd' ) . PHP_EOL .
+		                    wp_kses( __( 'One or more colors connected to your color palette have been modified. By changing or altering the current palette you will lose changes made prior to this action.', 'customify' ), array( 'em' => array(), 'b' => array(), 'strong' => array(), 'i' => array() ) ) . PHP_EOL .
 		'</div>'  . PHP_EOL;
 		foreach ( $master_color_controls_ids as $setting_id ) {
 			$current_palette .= '<input id="current-palette-' . $setting_id . '" class="c-color-palette__input ' . $setting_id . '" type="text">';
@@ -590,25 +590,39 @@ class Customify_Color_Palettes {
                       '<div class="sm_color_matrix"></div>' . PHP_EOL .
                       '</div>' . PHP_EOL .
                       '<div class="sm-tabs">' . PHP_EOL .
-	                      '<div class="sm-tabs__item" data-target="palettes">Palettes</div>' . PHP_EOL .
-	                      '<div class="sm-tabs__item" data-target="filters">Filters</div>' . PHP_EOL .
-	                      '<div class="sm-tabs__item" data-target="customize">Customize</div>' . PHP_EOL .
+	                      '<div class="sm-tabs__item" data-target="palettes">' . esc_html__( 'Palettes', 'customify' ) . '</div>' . PHP_EOL .
+	                      '<div class="sm-tabs__item" data-target="filters">' . esc_html__( 'Filters', 'customify' ) . '</div>' . PHP_EOL .
+	                      '<div class="sm-tabs__item" data-target="customize">' . esc_html__( 'Customize', 'customify' ) . '</div>' . PHP_EOL .
                       '</div>',
               ),
-              'sm_palettes_description' => array(
-                  'type'       => 'html',
-                  'setting_id' => 'sm_palettes_description',
-                  'html'       => '<span class="description customize-control-description">Choose your <em>base color palette</em> and go deeper with the <em>Filters</em> and <em>Customize</em> tabs. Make it shine, mate!</span>' . PHP_EOL,
+              'sm_palettes_description'  => array(
+	              'type'       => 'html',
+	              'setting_id' => 'sm_palettes_description',
+	              'html'       => '<span class="description customize-control-description">' . wp_kses( __( 'Choose your <em>base color palette</em> and go deeper with the <em>Filters</em> and <em>Customize</em> tabs. Make it shine, mate!', 'customify' ), array(
+			              'em'     => array(),
+			              'b'      => array(),
+			              'strong' => array(),
+			              'i'      => array(),
+		              ) ) . '</span>' . PHP_EOL,
               ),
-              'sm_filters_description' => array(
-                  'type'       => 'html',
-                  'setting_id' => 'sm_filters_description',
-                  'html'       => '<span class="description customize-control-description">Adjust the <i>colors properties</i> by using the filters in style. Keep the look fresh and engaging!</span>' . PHP_EOL,
+              'sm_filters_description'   => array(
+	              'type'       => 'html',
+	              'setting_id' => 'sm_filters_description',
+	              'html'       => '<span class="description customize-control-description">' . wp_kses( __( 'Adjust the <i>colors properties</i> by using the filters. Keep the look fresh and engaging!', 'customify' ), array(
+			              'em'     => array(),
+			              'b'      => array(),
+			              'strong' => array(),
+			              'i'      => array(),
+		              ) ) . '</span>' . PHP_EOL,
               ),
               'sm_customize_description' => array(
-                  'type'       => 'html',
-                  'setting_id' => 'sm_customize_description',
-                  'html'       => '<span class="description customize-control-description">Adjust how the colors are used on your site with ease. Modify their usage level to craft a playful design!</span>' . PHP_EOL,
+	              'type'       => 'html',
+	              'setting_id' => 'sm_customize_description',
+	              'html'       => '<span class="description customize-control-description">' . wp_kses( __( 'Adjust how the colors are used on your site with ease. Modify their usage level to craft a playful design!', 'customify' ), array( 'em'     => array(),
+	                                                                                                                                                                                                                                            'b'      => array(),
+	                                                                                                                                                                                                                                            'strong' => array(),
+	                                                                                                                                                                                                                                            'i'      => array(),
+		              ) ) . '</span>' . PHP_EOL,
               ),
               'sm_coloration_level' => array(
 	              'type'         => 'sm_radio',
@@ -618,13 +632,13 @@ class Customify_Color_Palettes {
 	              'default'      => $this->get_coloration_level_default_value( $config ),
 	              'live'         => true,
 	              'choices'      => array(
-		              $this->get_coloration_level_point_value( $config, 'low' ) => esc_html__( 'Low', 'customify' ),
-		              $this->get_coloration_level_point_value( $config, 'medium' )  => esc_html__( 'Medium', 'customify' ),
-		              $this->get_coloration_level_point_value( $config, 'high' )  => esc_html__( 'High', 'customify' ),
+		              $this->get_coloration_level_point_value( $config, 'low' )      => esc_html__( 'Low', 'customify' ),
+		              $this->get_coloration_level_point_value( $config, 'medium' )   => esc_html__( 'Medium', 'customify' ),
+		              $this->get_coloration_level_point_value( $config, 'high' )     => esc_html__( 'High', 'customify' ),
 		              $this->get_coloration_level_point_value( $config, 'striking' ) => esc_html__( 'Striking', 'customify' ),
 	              ),
               ),
-              'sm_color_diversity'  => array(
+              'sm_color_diversity' => array(
 	              'type'         => 'sm_radio',
 	              'setting_type' => 'option',
 	              'setting_id'   => 'sm_color_diversity',
@@ -637,7 +651,7 @@ class Customify_Color_Palettes {
 		              'high'   => esc_html__( 'High', 'customify' ),
 	              ),
               ),
-              'sm_shuffle_colors'   => array(
+              'sm_shuffle_colors'  => array(
 	              'type'         => 'sm_radio',
 	              'setting_type' => 'option',
 	              'setting_id'   => 'sm_shuffle_colors',
@@ -650,7 +664,7 @@ class Customify_Color_Palettes {
 		              'remix'   => esc_html__( 'Remix', 'customify' ),
 	              ),
               ),
-              'sm_dark_mode'   => array(
+              'sm_dark_mode'       => array(
 	              'type'         => 'sm_switch',
 	              'setting_type' => 'option',
 	              'setting_id'   => 'sm_dark_mode',
@@ -659,53 +673,55 @@ class Customify_Color_Palettes {
 	              'live'         => true,
 	              'choices'      => array(
 		              'off' => esc_html__( 'Off', 'customify' ),
-		              'on'   => esc_html__( 'On', 'customify' ),
+		              'on'  => esc_html__( 'On', 'customify' ),
 	              ),
               ),
-              'sm_dark_color_primary_slider' => array(
+              'sm_dark_color_primary_slider'   => array(
 	              'setting_id'  => 'sm_dark_color_primary_slider',
-                  'type'        => 'range',
-                  'label'       => esc_html__( 'Dark to Color (primary)', 'customify' ),
-                  'desc'        => '',
-                  'live'        => true,
-                  'default'     => $this->get_dark_to_color_slider_default_value( $config['sections']['style_manager_section']['options'], 'sm_dark_primary', 'sm_color_primary' ),
-                  'input_attrs' => array(
-                      'min'          => 0,
-                      'max'          => 100,
-                      'step'         => 1,
-                      'data-preview' => true,
-                  ),
-                  'css'         => array(),
+	              'type'        => 'range',
+	              'label'       => esc_html__( 'Dark to Color (primary)', 'customify' ),
+	              'desc'        => '',
+	              'live'        => true,
+	              'default'     => $this->get_dark_to_color_slider_default_value( $config['sections']['style_manager_section']['options'], 'sm_dark_primary', 'sm_color_primary' ),
+	              'input_attrs' => array(
+		              'min'          => 0,
+		              'max'          => 100,
+		              'step'         => 1,
+		              'data-preview' => true,
+	              ),
+	              'css'         => array(),
               ),
               'sm_dark_color_secondary_slider' => array(
 	              'setting_id'  => 'sm_dark_color_secondary_slider',
-                  'type'        => 'range',
-                  'label'       => esc_html__( 'Dark to Color (secondary)', 'customify' ),
-                  'desc'        => '',
-                  'live'        => true,
-	              'default'     => $this->get_dark_to_color_slider_default_value( $config['sections']['style_manager_section']['options'], 'sm_dark_secondary', 'sm_color_secondary' ), // this should be set by the theme (previously 1300)
-                  'input_attrs' => array(
-                      'min'          => 0,
-                      'max'          => 100,
-                      'step'         => 1,
-                      'data-preview' => true,
-                  ),
-                  'css'         => array(),
+	              'type'        => 'range',
+	              'label'       => esc_html__( 'Dark to Color (secondary)', 'customify' ),
+	              'desc'        => '',
+	              'live'        => true,
+	              'default'     => $this->get_dark_to_color_slider_default_value( $config['sections']['style_manager_section']['options'], 'sm_dark_secondary', 'sm_color_secondary' ),
+	              // this should be set by the theme (previously 1300)
+	              'input_attrs' => array(
+		              'min'          => 0,
+		              'max'          => 100,
+		              'step'         => 1,
+		              'data-preview' => true,
+	              ),
+	              'css'         => array(),
               ),
-              'sm_dark_color_tertiary_slider' => array(
+              'sm_dark_color_tertiary_slider'  => array(
 	              'setting_id'  => 'sm_dark_color_tertiary_slider',
-                  'type'        => 'range',
-                  'label'       => esc_html__( 'Dark to Color (tertiary)', 'customify' ),
-                  'desc'        => '',
-                  'live'        => true,
-	              'default'     => $this->get_dark_to_color_slider_default_value( $config['sections']['style_manager_section']['options'], 'sm_dark_tertiary', 'sm_color_tertiary' ), // this should be set by the theme (previously 1300)
-                  'input_attrs' => array(
-                      'min'          => 0,
-                      'max'          => 100,
-                      'step'         => 1,
-                      'data-preview' => true,
-                  ),
-                  'css'         => array(),
+	              'type'        => 'range',
+	              'label'       => esc_html__( 'Dark to Color (tertiary)', 'customify' ),
+	              'desc'        => '',
+	              'live'        => true,
+	              'default'     => $this->get_dark_to_color_slider_default_value( $config['sections']['style_manager_section']['options'], 'sm_dark_tertiary', 'sm_color_tertiary' ),
+	              // this should be set by the theme (previously 1300)
+	              'input_attrs' => array(
+		              'min'          => 0,
+		              'max'          => 100,
+		              'step'         => 1,
+		              'data-preview' => true,
+	              ),
+	              'css'         => array(),
               ),
           ) + $config['sections']['style_manager_section']['options'];
 
