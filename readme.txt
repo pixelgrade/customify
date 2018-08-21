@@ -45,6 +45,10 @@ With [Customify](https://github.com/pixelgrade/customify), developers can easily
 
 == Changelog ==
 
+= 2.0.0 =
+* Added the much improved and overall awesome **Color Palettes v2.0 styling system** (all modesty aside).
+* Minor improvements that are secondary to the one above. Enjoy.
+
 = 1.9.1 =
 * Fixed the Customizer JS crash due to wrong merge.
 
