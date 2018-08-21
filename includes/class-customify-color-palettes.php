@@ -773,15 +773,15 @@ class Customify_Color_Palettes {
 	private function get_coloration_level_default_label( $config ) {
 		$average = $this->get_coloration_level_average( $config );
 
-		if ( $average < 38 ) {
+		if ( $average < 25 ) {
 			return 'low';
 		}
 
-		if ( $average < 63 ) {
+		if ( $average < 50 ) {
 			return 'medium';
 		}
 
-		if ( $average < 88 ) {
+		if ( $average < 75 ) {
 			return 'high';
 		}
 
@@ -791,24 +791,26 @@ class Customify_Color_Palettes {
 	private function get_coloration_levels( $config ) {
 		$average = $this->get_coloration_level_average( $config );
 		$default = $this->get_coloration_level_default_label( $config );
-		$values = array( 'striking' => 100 );
 
 		if ( 'low' === $default ) {
 			$values['low'] = intval( $average );
-			$values['medium'] = intval( $average + (100 - $average) / 3 );
-			$values['high'] = intval( $average + (100 - $average) * 2 / 3 );
+			$values['medium'] = intval( $average + (100 - $average) / 4 );
+			$values['high'] = intval( $average + (100 - $average) * 2 / 4 );
+			$values['striking'] = intval( $average + (100 - $average) * 3 / 4 );
 		}
 
 		if ( 'medium' === $default ) {
 			$values['low'] = intval( $average / 2 );
 			$values['medium'] = intval( $average );
-			$values['high'] = intval( $average + (100 - $average) / 2 );
+			$values['high'] = intval( $average + (100 - $average) / 3 );
+			$values['striking'] = intval( $average + (100 - $average) * 2 / 3 );
 		}
 
 		if ( 'high' === $default ) {
 			$values['low'] = intval( $average / 3 );
 			$values['medium'] = intval( $average * 2 / 3 );
 			$values['high'] = intval( $average );
+			$values['striking'] = intval( $average + (100 - $average) / 2 );
 		}
 
 		if ( 'striking' === $default ) {
