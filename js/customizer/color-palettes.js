@@ -441,12 +441,16 @@ let ColorPalettes = ( function( $, exports, wp ) {
                     const currentColor = ui.color.toString();
 
                     $obj.css( 'color', filterColor( currentColor ) );
+
+	                filteredColors[setting_id] = filterColor( currentColor );
                     setting.set( currentColor );
-                    setPalettesOnConnectedFields();
 
                     if ( event.originalEvent.type !== 'external' ) {
                         $palette.find( '.color.' + setting_id ).removeClass( 'altered' );
                     }
+
+	                setPalettesOnConnectedFields();
+                    // buildColorMatrix();
                 },
             } );
 
@@ -485,11 +489,6 @@ let ColorPalettes = ( function( $, exports, wp ) {
 	        } );
 
 	        $input.on( 'focus', ( e ) => {
-
-		        $colors.each( ( i, obj ) => {
-		            $( obj ).data( 'target' ).not( $input ).iris( 'hide' );
-		        } );
-
 		        $colors.not( $obj ).addClass( 'inactive' ).removeClass( 'active' );
 		        $obj.addClass( 'active' ).removeClass( 'inactive' );
 
@@ -535,7 +534,6 @@ let ColorPalettes = ( function( $, exports, wp ) {
         _.each(masterSettingIds, function( id ) {
             const setting = wp.customize( id );
             const initialColor = setting();
-            $( '.c-color-palette' ).find( '.c-color-palette__fields' ).find( 'input.' + id ).iris( 'color', initialColor );
             $( '.c-color-palette' ).find( '.color.' + id ).css( 'color', initialColor );
         });
     };
@@ -595,7 +593,7 @@ let ColorPalettes = ( function( $, exports, wp ) {
                 classes.push( fieldClassName );
 
                 if ( ! $bucket.children( '.' + fieldClassName ).length ) {
-                    $( '<div title="' + field_id + '" class="' + fieldClassName + '">' ).appendTo( $bucket );
+	                $( '<div title="' + field_id + '" class="' + fieldClassName + '">' ).appendTo( $bucket );
                 }
             } );
 
@@ -632,7 +630,7 @@ let ColorPalettes = ( function( $, exports, wp ) {
                     if ( typeof connectedSetting !== "undefined" ) {
                         let connectedFieldValue = connectedSetting();
 
-                        if ( connectedFieldValue.toLowerCase() !== filterColor( masterSettingValue ).toLowerCase() ) {
+                        if ( typeof connectedFieldValue === "string" && connectedFieldValue.toLowerCase() !== filterColor( masterSettingValue ).toLowerCase() ) {
                             connectedFieldsWereAltered = true;
                         }
                     }
@@ -675,7 +673,7 @@ let ColorPalettes = ( function( $, exports, wp ) {
     const refreshCurrentPaletteControl = () => {
         toggleAlteredClassOnMasterControls();
         toggleHiddenClassOnMasterControls();
-	    // setPalettesOnConnectedFields();
+        setPalettesOnConnectedFields();
         showNewColors();
     };
 
@@ -839,7 +837,7 @@ let ColorPalettes = ( function( $, exports, wp ) {
 
     const reinitializeConnectedFields = () => {
         reloadConnectedFields();
-        buildColorMatrix();
+//        buildColorMatrix();
         unbindConnectedFields();
         bindConnectedFields();
 	    refreshCurrentPaletteControl();
@@ -920,7 +918,7 @@ let ColorPalettes = ( function( $, exports, wp ) {
 	    unbindConnectedFields();
 	    bindConnectedFields();
 	    refreshCurrentPaletteControl();
-	    buildColorMatrix();
+//	    buildColorMatrix();
 
 	    bindEvents();
     } );

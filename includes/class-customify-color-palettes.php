@@ -575,7 +575,7 @@ class Customify_Color_Palettes {
 		                    wp_kses( __( 'One or more colors connected to your color palette have been modified. By changing or altering the current palette you will lose changes made prior to this action.', 'customify' ), array( 'em' => array(), 'b' => array(), 'strong' => array(), 'i' => array() ) ) . PHP_EOL .
 		'</div>'  . PHP_EOL;
 		foreach ( $master_color_controls_ids as $setting_id ) {
-			$current_palette .= '<input id="current-palette-' . $setting_id . '" class="c-color-palette__input ' . $setting_id . '" type="text">';
+			$current_palette .= '<input id="current-palette-' . $setting_id . '" class="c-color-palette__input ' . $setting_id . '" type="text" value="' . get_option( $setting_id ) . '">';
 		}
 		$current_palette .= '</div>';
 
