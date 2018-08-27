@@ -2259,7 +2259,7 @@ class PixCustomifyPlugin {
 					$setting_id = $this->opt_name . '[' . $option_id . ']';
 				}
 
-				$return = get_option( $setting_id );
+				$return = get_option( $setting_id, null );
 			} else {
 				// Get the value stores in theme_mods.
 				$return = $this->get_value( $option_id, $alt_opt_name );
