@@ -631,12 +631,7 @@ class Customify_Color_Palettes {
 	              'label'        => esc_html__( 'Coloration Level', 'customify' ),
 	              'default'      => $this->get_coloration_level_default_value( $config ),
 	              'live'         => true,
-	              'choices'      => array(
-		              $this->get_coloration_level_point_value( $config, 'low' )      => esc_html__( 'Low', 'customify' ),
-		              $this->get_coloration_level_point_value( $config, 'medium' )   => esc_html__( 'Medium', 'customify' ),
-		              $this->get_coloration_level_point_value( $config, 'high' )     => esc_html__( 'High', 'customify' ),
-		              $this->get_coloration_level_point_value( $config, 'striking' ) => esc_html__( 'Striking', 'customify' ),
-	              ),
+	              'choices'      => $this->get_coloration_level_choices( $config ),
               ),
               'sm_color_diversity' => array(
 	              'type'         => 'sm_radio',
@@ -778,12 +773,21 @@ class Customify_Color_Palettes {
 
 		$total = $colors + $dark;
 
-		return $colors * 100 / $total;
+		return round( $colors * 100 / $total, 2 );
 	}
 
 	private function get_coloration_level_default_value( $config ) {
 		$label = $this->get_coloration_level_default_label( $config );
 		return $this->get_coloration_level_point_value( $config, $label );
+	}
+
+	private function get_coloration_level_choices( $config ) {
+		return array(
+			$this->get_coloration_level_point_value( $config, 'low' )      => esc_html__( 'Low', 'customify' ),
+			$this->get_coloration_level_point_value( $config, 'medium' )   => esc_html__( 'Medium', 'customify' ),
+			$this->get_coloration_level_point_value( $config, 'high' )     => esc_html__( 'High', 'customify' ),
+			$this->get_coloration_level_point_value( $config, 'striking' ) => esc_html__( 'Striking', 'customify' ),
+		);
 	}
 
 	private function get_coloration_level_default_label( $config ) {
@@ -808,32 +812,35 @@ class Customify_Color_Palettes {
 		$average = $this->get_coloration_level_average( $config );
 		$default = $this->get_coloration_level_default_label( $config );
 
+		$values = array(
+			'low' => $average,
+			'medium' => $average,
+			'high' => $average,
+			'striking' => $average
+		);
+
 		if ( 'low' === $default ) {
-			$values['low'] = intval( $average );
-			$values['medium'] = intval( $average + (100 - $average) / 4 );
-			$values['high'] = intval( $average + (100 - $average) * 2 / 4 );
-			$values['striking'] = intval( $average + (100 - $average) * 3 / 4 );
+			$values['medium'] = round( $average + (100 - $average) / 4, 2 );
+			$values['high'] = round( $average + (100 - $average) * 2 / 4, 2 );
+			$values['striking'] = round( $average + (100 - $average) * 3 / 4, 2 );
 		}
 
 		if ( 'medium' === $default ) {
-			$values['low'] = intval( $average / 2 );
-			$values['medium'] = intval( $average );
-			$values['high'] = intval( $average + (100 - $average) / 3 );
-			$values['striking'] = intval( $average + (100 - $average) * 2 / 3 );
+			$values['low'] = round( $average / 2, 2 );
+			$values['high'] = round( $average + (100 - $average) / 3, 2 );
+			$values['striking'] = round( $average + (100 - $average) * 2 / 3, 2 );
 		}
 
 		if ( 'high' === $default ) {
-			$values['low'] = intval( $average / 3 );
-			$values['medium'] = intval( $average * 2 / 3 );
-			$values['high'] = intval( $average );
-			$values['striking'] = intval( $average + (100 - $average) / 2 );
+			$values['low'] = round( $average / 3, 2 );
+			$values['medium'] = round( $average * 2 / 3, 2 );
+			$values['striking'] = round( $average + (100 - $average) / 2, 2 );
 		}
 
 		if ( 'striking' === $default ) {
-			$values['low'] = intval( $average / 4 );
-			$values['medium'] = intval( $average * 2 / 4 );
-			$values['high'] = intval( $average * 3 / 4 );
-			$values['striking'] = intval( $average );
+			$values['low'] = round( $average / 4, 2 );
+			$values['medium'] = round( $average * 2 / 4, 2 );
+			$values['high'] = round( $average * 3 / 4, 2 );
 		}
 
 		return $values;
@@ -841,7 +848,7 @@ class Customify_Color_Palettes {
 
 	private function get_coloration_level_point_value( $config, $point ) {
 		$values = $this->get_coloration_levels( $config );
-		return $values[$point];
+		return $values[$point] . '';
 	}
 
 	private function get_dark_to_color_slider_default_value( $options, $dark_id, $color_id ) {

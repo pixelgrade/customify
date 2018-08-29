@@ -450,7 +450,7 @@ let ColorPalettes = ( function( $, exports, wp ) {
                     }
 
 	                setPalettesOnConnectedFields();
-                    // buildColorMatrix();
+                    buildColorMatrix();
                 },
             } );
 
@@ -719,7 +719,7 @@ let ColorPalettes = ( function( $, exports, wp ) {
 		    const oldFromConnectedFields = Object.values( settings[from]['connected_fields'] );
 		    const oldToConnectedFields = Object.values( settings[to]['connected_fields'] );
 		    const oldConnectedFields = oldToConnectedFields.concat( oldFromConnectedFields );
-		    const count = ratio * oldConnectedFields.length;
+		    const count = Math.round( ratio * oldConnectedFields.length );
 
 		    let newToConnectedFields = oldConnectedFields.slice( 0, count );
 		    let newFromConnectedFields = oldConnectedFields.slice( count );
@@ -837,7 +837,7 @@ let ColorPalettes = ( function( $, exports, wp ) {
 
     const reinitializeConnectedFields = () => {
         reloadConnectedFields();
-//        buildColorMatrix();
+        buildColorMatrix();
         unbindConnectedFields();
         bindConnectedFields();
 	    refreshCurrentPaletteControl();
@@ -918,7 +918,7 @@ let ColorPalettes = ( function( $, exports, wp ) {
 	    unbindConnectedFields();
 	    bindConnectedFields();
 	    refreshCurrentPaletteControl();
-//	    buildColorMatrix();
+	    buildColorMatrix();
 
 	    bindEvents();
     } );
