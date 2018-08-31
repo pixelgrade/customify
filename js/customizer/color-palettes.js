@@ -166,6 +166,7 @@ let ColorPalettes = ( function( $, exports, wp ) {
                 }
                 setting.set( getFilteredColor( parent_setting_id ) );
             } );
+	        updateFilterPreviews();
         }
     };
 
@@ -277,8 +278,9 @@ let ColorPalettes = ( function( $, exports, wp ) {
         return value1 * ( 1 - ratio ) + value2 * ratio;
     }
 
-    const filterColor = ( color ) => {
-        let filter = $( '[name*="sm_palette_filter"]:checked' ).val();
+    const filterColor = ( color, filter ) => {
+        filter = typeof filter === "undefined" ? $( '[name*="sm_palette_filter"]:checked' ).val() : filter;
+
         let newColor = hex2rgba( color );
         var palette = getCurrentPaletteColors();
         var paletteColors = palette.slice(0,3);
@@ -908,6 +910,28 @@ let ColorPalettes = ( function( $, exports, wp ) {
 	    $( '.sm-tabs__item' ).first().trigger( 'click' );
     };
 
+    const updateFilterPreviews = _.debounce(() => {
+        $( '.sm-palette-filter' ).each(function() {
+           let $filters = $( this ).find( 'input' );
+
+           $filters.each(function(i, obj) {
+              let $input = $(obj);
+              let $label = $input.next( 'label' );
+              let label = $input.val();
+              let $colors = $label.find('.color');
+
+              $colors.each( function( j, color ) {
+                  let $color = $( color );
+                  let setting_id = $color.data( 'setting' );
+                  let setting = wp.customize( setting_id );
+                  let originalColor = setting();
+
+                  $color.css( 'color', filterColor( originalColor, label ) );
+              });
+           });
+        });
+    }, 30);
+
     wp.customize.bind( 'ready', function() {
 	    setupGlobals();
 
@@ -919,6 +943,8 @@ let ColorPalettes = ( function( $, exports, wp ) {
 	    bindConnectedFields();
 	    refreshCurrentPaletteControl();
 //	    buildColorMatrix();
+
+	    updateFilterPreviews();
 
 	    bindEvents();
     } );

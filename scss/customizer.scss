@@ -2565,6 +2565,34 @@ input.c-color-palette__input[class] {
 	border-bottom: 1px solid #DFE8EF;
 }
 
+.sm-palette-filter {
+
+	.colors {
+		border-radius: 6px;
+		padding: 10px 10px;
+		margin-bottom: 10px;
+		border: 1px solid transparent;
+
+		&:hover {
+			border-color: #DDD;
+			background-color: #EEE;
+		}
+	}
+
+	> input {
+		display: none;
+	}
+
+	.filter-label {
+		display: none;
+	}
+
+	> input:checked + label .colors {
+		border-color: #DDD;
+		background-color: #FAFAFA;
+	}
+}
+
 // FONT PALETTES OVERWRITES
 #customize-control-sm_font_palette_control ~ .customize-control {
 	display: none !important;

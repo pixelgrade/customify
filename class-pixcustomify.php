@@ -1844,6 +1844,16 @@ class PixCustomifyPlugin {
 
 				$control_class_name = 'Pix_Customize_SM_radio_Control';
 				break;
+
+			case 'sm_palette_filter' :
+				if ( ! isset( $field_config['choices'] ) || empty( $field_config['choices'] ) ) {
+					return;
+				}
+
+				$control_args['choices'] = $field_config['choices'];
+
+				$control_class_name = 'Pix_Customize_SM_palette_filter_Control';
+				break;
 				
 			case 'sm_switch' :
 				if ( ! isset( $field_config['choices'] ) || empty( $field_config['choices'] ) ) {
