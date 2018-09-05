@@ -176,7 +176,7 @@ let FontPalettes = ( function( $, exports, wp ) {
 
                     // The line height is determined by getting the value of the polynomial function determined by points.
                     if ( typeof fonts_logic.font_size_to_line_height_points !== "undefined" && _.isArray(fonts_logic.font_size_to_line_height_points)) {
-                        let f = interpolatingPolynomial(fonts_logic.font_size_to_line_height_points);
+                        let f = linear(fonts_logic.font_size_to_line_height_points);
                         newFontData['line_height'] = { value: Number(f(connected_field_data.font_size.value)).toPrecision(2) };
                     }
                 }
@@ -184,6 +184,101 @@ let FontPalettes = ( function( $, exports, wp ) {
                 let serializedNewFontData = CustomifyFontSelectFields.encodeValues(newFontData);
                 setting.set(serializedNewFontData);
             });
+        }
+    };
+
+    const help = {};
+
+	/**
+	 * Makes argument to be an array if it's not
+	 *
+	 * @param input
+	 * @returns {Array}
+	 */
+
+	help.makeItArrayIfItsNot = function (input) {
+		return Object.prototype.toString.call( input ) !== '[object Array]'
+			? [input]
+			: input
+	};
+
+	/**
+	 *
+	 * Utilizes bisection method to search an interval to which
+	 * point belongs to, then returns an index of left border
+	 * of the interval
+	 *
+	 * @param {Number} point
+	 * @param {Array} intervals
+	 * @returns {Number}
+	 */
+
+	help.findIntervalLeftBorderIndex = function (point, intervals) {
+		//If point is beyond given intervals
+		if (point < intervals[0])
+			return 0
+		if (point > intervals[intervals.length - 1])
+			return intervals.length - 1
+		//If point is inside interval
+		//Start searching on a full range of intervals
+		var indexOfNumberToCompare
+			, leftBorderIndex = 0
+			, rightBorderIndex = intervals.length - 1
+		//Reduce searching range till it find an interval point belongs to using binary search
+		while (rightBorderIndex - leftBorderIndex !== 1) {
+			indexOfNumberToCompare = leftBorderIndex + Math.floor((rightBorderIndex - leftBorderIndex)/2)
+			point >= intervals[indexOfNumberToCompare]
+				? leftBorderIndex = indexOfNumberToCompare
+				: rightBorderIndex = indexOfNumberToCompare
+		}
+		return leftBorderIndex
+	};
+
+	function evaluateLinear(pointsToEvaluate, functionValuesX, functionValuesY) {
+		var results = [];
+		pointsToEvaluate = help.makeItArrayIfItsNot(pointsToEvaluate);
+		pointsToEvaluate.forEach(function (point) {
+			var index = help.findIntervalLeftBorderIndex(point, functionValuesX);
+			if ( index === functionValuesX.length - 1) {
+				index--;
+            }
+			results.push(linearInterpolation(point, functionValuesX[index], functionValuesY[index], functionValuesX[index + 1], functionValuesY[index + 1]));
+		});
+		return results
+	}
+
+	/**
+	 *
+	 * Evaluates y-value at given x point for line that passes
+	 * through the points (x0,y0) and (y1,y1)
+	 *
+	 * @param x
+	 * @param x0
+	 * @param y0
+	 * @param x1
+	 * @param y1
+	 * @returns {Number}
+	 */
+	function linearInterpolation(x, x0, y0, x1, y1) {
+		var a = (y1 - y0) / (x1 - x0);
+		var b = -a * x0 + y0;
+		return a * x + b
+	}
+
+	const linear = function(points) {
+	    let xvalues = [];
+	    let yvalues = [];
+
+	    for (let i = 0; i < points.length; i++) {
+	        xvalues.push(i[0]);
+	        yvalues.push(i[1]);
+        }
+
+	    return function( x ) {
+		    if ( points.length === 0 ) {
+			    return 0;
+		    }
+		    return evaluateLinear([x], xvalues, yvalues)[0];
         }
     };
 
