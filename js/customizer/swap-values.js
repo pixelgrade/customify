@@ -35,11 +35,6 @@
             swap_values( 'sm_color_secondary', 'sm_dark_secondary' );
         } );
 
-        $document.on( 'click', '[data-action="sm_toggle_advanced_settings"]', function( e ) {
-            e.preventDefault();
-            $( '#sub-accordion-section-sm_color_palettes_section' ).toggleClass( 'advanced' );
-        } );
-
     } );
 
 } )( jQuery, window, wp );

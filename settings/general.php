@@ -7,6 +7,9 @@ $customify_sections = array();
 if ( isset( $config['sections'] ) && ! empty( $config['sections'] ) ) {
 
 	foreach ( $config['sections'] as $id => $section ) {
+		if ( empty( $section['title'] ) ) {
+			$section['title'] = 'No Title';
+		}
 		$customify_sections[$id] = $section['title'];
 	}
 
@@ -18,6 +21,9 @@ if ( isset( $config['panels'] ) && ! empty( $config['panels'] ) ) {
 
 		if ( isset( $panel['sections'] ) && ! empty( $panel['sections'] ) ) {
 			foreach ( $panel['sections'] as $id => $section ) {
+				if ( empty( $section['title'] ) ) {
+					$section['title'] = 'No Title';
+				}
 				$customify_sections[$id] = $section['title'];
 			}
 		}

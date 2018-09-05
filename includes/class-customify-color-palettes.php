@@ -43,7 +43,7 @@ class Customify_Color_Palettes {
 	}
 
 	/**
-	 * Initiate our hooks
+	 * Initiate our hooks.
 	 *
 	 * @since 1.7.4
 	 */
@@ -169,26 +169,29 @@ class Customify_Color_Palettes {
 					'choices_type' => 'color_palette',
 					'choices'      => $this->get_palettes(),
 				),
-				'sm_color_palette_variation' => array(
+				'sm_palette_filter'  => array(
 					'type'         => 'radio',
 					'setting_type' => 'option',
-					'setting_id'   => 'sm_color_palette_variation',
-					'label'        => esc_html__( 'Palette Variation', 'customify' ),
-					'default'      => 'light',
+					'setting_id'   => 'sm_palette_filter',
+					'label'        => esc_html__( 'Filters:', 'customify' ),
+					'default'      => 'original',
+					'priority'     => 10.1,
 					'live'         => true,
-					'priority'     => 10.5,
-					'choices'      => array(
-						'light'     => esc_html__( 'light', 'customify' ),
-						'light_alt' => esc_html__( 'light_alt', 'customify' ),
-
-						'dark'     => esc_html__( 'dark', 'customify' ),
-						'dark_alt' => esc_html__( 'dark_alt', 'customify' ),
-
-						'colorful'     => esc_html__( 'colorful', 'customify' ),
-						'colorful_alt' => esc_html__( 'colorful_alt', 'customify' ),
+					'choices' => array(
+						'original'  => esc_html__( 'Original', 'customify' ),
+						'clarendon' => esc_html__( 'Clarendon', 'customify' ),
+						'vivid'     => esc_html__( 'Vivid', 'customify' ),
+						'softer'    => esc_html__( 'Softer', 'customify' ),
+						'pastel'    => esc_html__( 'Pastel', 'customify' ),
+						'greyish'   => esc_html__( 'Greyish', 'customify' ),
+						// 'warm'      => esc_html__( 'Warming', 'customify' ),
+						// 'cold'      => esc_html__( 'Cooling', 'customify' ),
+						// 'sierra'    => esc_html__( 'Sierra', 'customify' ),
+						// 'mayfair'   => esc_html__( 'Mayfair', 'customify' ),
+						// 'dumb'      => esc_html__( 'Dumb', 'customify' ),
 					),
 				),
-				'sm_color_primary'              => array(
+				'sm_color_primary'           => array(
 					'type'             => 'color',
 					// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
 					'setting_type'     => 'option',
@@ -196,90 +199,297 @@ class Customify_Color_Palettes {
 					'setting_id'       => 'sm_color_primary',
 					// We don't want to refresh the preview window, even though we have no direct effect on it through this field.
 					'live'             => true,
-					'priority'     => 20,
+					'priority'         => 20,
 					'label'            => esc_html__( 'Color Primary', 'customify' ),
 					'default'          => '#ffeb00',
-					'connected_fields' => array(),
+					'connected_fields' => array(
+//						'sm_color_primary_connected'
+					),
+					'css'              => array(
+						array(
+							'selector' => ':root',
+							'property' => '--sm-color-primary',
+						),
+					),
+				),
+				'sm_color_primary_connected' => array(
+					'type'             => 'color',
+					'setting_type'     => 'option',
+					'setting_id'       => 'sm_color_primary_connected',
+					'priority'         => 21,
+					'label'            => esc_html__( 'Color Primary Connected', 'customify' ),
+					'live'             => true,
+					'default'          => '#ffeb00',
+					'css' => array(
+						array(
+							'selector' => ':root',
+							'property' => '--sm-color-primary-connected',
+						),
+					),
 				),
 				'sm_color_secondary'              => array(
 					'type'             => 'color',
 					'setting_type'     => 'option',
 					'setting_id'       => 'sm_color_secondary',
 					'live'             => true,
-					'priority'     => 20.1,
+					'priority'         => 20.1,
 					'label'            => esc_html__( 'Color Secondary', 'customify' ),
 					'default'          => '#00ecff',
-					'connected_fields' => array(),
+					'connected_fields' => array(
+//						'sm_color_secondary_connected'
+					),
+					'css'              => array(
+						array(
+							'selector' => ':root',
+							'property' => '--sm-color-secondary',
+						),
+					),
+				),
+				'sm_color_secondary_connected' => array(
+					'type'             => 'color',
+					'setting_type'     => 'option',
+					'setting_id'       => 'sm_color_secondary_connected',
+					'priority'         => 21,
+					'label'            => esc_html__( 'Color Secondary Connected', 'customify' ),
+					'live'             => true,
+					'default'          => '#00ecff',
+					'css' => array(
+						array(
+							'selector' => ':root',
+							'property' => '--sm-color-secondary-connected',
+						),
+					),
 				),
 				'sm_color_tertiary'              => array(
 					'type'             => 'color',
 					'setting_type'     => 'option',
 					'setting_id'       => 'sm_color_tertiary',
 					'live'             => true,
-					'priority'     => 20.2,
+					'priority'         => 20.2,
 					'label'            => esc_html__( 'Color Tertiary', 'customify' ),
 					'default'          => '#00ecff',
-					'connected_fields' => array(),
+					'connected_fields' => array(
+//						'sm_color_tertiary_connected'
+					),
+					'css'              => array(
+						array(
+							'selector' => ':root',
+							'property' => '--sm-color-tertiary',
+						),
+					),
+				),
+				'sm_color_tertiary_connected' => array(
+					'type'             => 'color',
+					'setting_type'     => 'option',
+					'setting_id'       => 'sm_color_tertiary_connected',
+					'priority'         => 21,
+					'label'            => esc_html__( 'Color Tertiary Connected', 'customify' ),
+					'live'             => true,
+					'default'          => '#00ecff',
+					'css' => array(
+						array(
+							'selector' => ':root',
+							'property' => '--sm-color-tertiary-connected',
+						),
+					),
 				),
 				'sm_dark_primary'              => array(
 					'type'             => 'color',
 					'setting_type'     => 'option',
 					'setting_id'       => 'sm_dark_primary',
 					'live'             => true,
-					'priority'     => 20.3,
+					'priority'         => 20.3,
 					'label'            => esc_html__( 'Dark Primary', 'customify' ),
 					'default'          => '#171617',
-					'connected_fields' => array(),
+					'connected_fields' => array(
+//						'sm_dark_primary_connected'
+					),
+					'css'              => array(
+						array(
+							'selector' => ':root',
+							'property' => '--sm-dark-primary',
+						),
+					),
+				),
+				'sm_dark_primary_connected' => array(
+					'type'             => 'color',
+					'setting_type'     => 'option',
+					'setting_id'       => 'sm_dark_primary_connected',
+					'priority'         => 21,
+					'label'            => esc_html__( 'Dark Primary Connected', 'customify' ),
+					'live'             => true,
+					'default'          => '#171617',
+					'css' => array(
+						array(
+							'selector' => ':root',
+							'property' => '--sm-dark-primary-connected',
+						),
+					),
 				),
 				'sm_dark_secondary'              => array(
 					'type'             => 'color',
 					'setting_type'     => 'option',
 					'setting_id'       => 'sm_dark_secondary',
 					'live'             => true,
-					'priority'     => 20.4,
+					'priority'         => 20.4,
 					'label'            => esc_html__( 'Dark Secondary', 'customify' ),
 					'default'          => '#383c50',
-					'connected_fields' => array(),
+					'connected_fields' => array(
+//						'sm_dark_secondary_connected'
+					),
+					'css'              => array(
+						array(
+							'selector' => ':root',
+							'property' => '--sm-dark-secondary',
+						),
+					),
+				),
+				'sm_dark_secondary_connected' => array(
+					'type'             => 'color',
+					'setting_type'     => 'option',
+					'setting_id'       => 'sm_dark_secondary_connected',
+					'priority'         => 21,
+					'label'            => esc_html__( 'Color Primary Connected', 'customify' ),
+					'live'             => true,
+					'default'          => '#ffeb00',
+					'css' => array(
+						array(
+							'selector' => ':root',
+							'property' => '--sm-dark-secondary-connected',
+						),
+					),
 				),
 				'sm_dark_tertiary'              => array(
 					'type'             => 'color',
 					'setting_type'     => 'option',
 					'setting_id'       => 'sm_dark_tertiary',
 					'live'             => true,
-					'priority'     => 20.5,
+					'priority'         => 20.5,
 					'label'            => esc_html__( 'Dark Tertiary', 'customify' ),
 					'default'          => '#65726F',
-					'connected_fields' => array(),
+					'connected_fields' => array(
+//						'sm_dark_tertiary_connected'
+					),
+					'css'              => array(
+						array(
+							'selector' => ':root',
+							'property' => '--sm-dark-tertiary',
+						),
+					),
+				),
+				'sm_dark_tertiary_connected' => array(
+					'type'             => 'color',
+					'setting_type'     => 'option',
+					'setting_id'       => 'sm_dark_tertiary_connected',
+					'priority'         => 21,
+					'label'            => esc_html__( 'Dark Tertiary Connected', 'customify' ),
+					'live'             => true,
+					'default'          => '#ffeb00',
+					'css' => array(
+						array(
+							'selector' => ':root',
+							'property' => '--sm-dark-tertiary-connected',
+						),
+					),
 				),
 				'sm_light_primary'              => array(
 					'type'             => 'color',
 					'setting_type'     => 'option',
 					'setting_id'       => 'sm_light_primary',
 					'live'             => true,
-					'priority'     => 20.6,
+					'priority'         => 20.6,
 					'label'            => esc_html__( 'Light Primary', 'customify' ),
 					'default'          => '#ffffff',
-					'connected_fields' => array(),
+					'connected_fields' => array(
+//						'sm_light_primary_connected'
+					),
+					'css'              => array(
+						array(
+							'selector' => ':root',
+							'property' => '--sm-light-primary',
+						),
+					),
+				),
+				'sm_light_primary_connected' => array(
+					'type'             => 'color',
+					'setting_type'     => 'option',
+					'setting_id'       => 'sm_light_primary_connected',
+					'priority'         => 21,
+					'label'            => esc_html__( 'Light Primary Connected', 'customify' ),
+					'live'             => true,
+					'default'          => '#ffffff',
+					'css' => array(
+						array(
+							'selector' => ':root',
+							'property' => '--sm-light-primary-connected',
+						),
+					),
 				),
 				'sm_light_secondary'              => array(
 					'type'             => 'color',
 					'setting_type'     => 'option',
 					'setting_id'       => 'sm_light_secondary',
 					'live'             => true,
-					'priority'     => 20.7,
+					'priority'         => 20.7,
 					'label'            => esc_html__( 'Light Secondary', 'customify' ),
 					'default'          => '#ffffff',
-					'connected_fields' => array(),
+					'connected_fields' => array(
+//						'sm_light_secondary_connected'
+					),
+					'css'              => array(
+						array(
+							'selector' => ':root',
+							'property' => '--sm-light-secondary',
+						),
+					),
+				),
+				'sm_light_secondary_connected' => array(
+					'type'             => 'color',
+					'setting_type'     => 'option',
+					'setting_id'       => 'sm_light_secondary_connected',
+					'priority'         => 21,
+					'label'            => esc_html__( 'Light Secondary Connected', 'customify' ),
+					'live'             => true,
+					'default'          => '#ffffff',
+					'css' => array(
+						array(
+							'selector' => ':root',
+							'property' => '--sm-light-secondary-connected',
+						),
+					),
 				),
 				'sm_light_tertiary'              => array(
 					'type'             => 'color',
 					'setting_type'     => 'option',
 					'setting_id'       => 'sm_light_tertiary',
 					'live'             => true,
-					'priority'     => 20.8,
+					'priority'         => 20.8,
 					'label'            => esc_html__( 'Light Tertiary', 'customify' ),
 					'default'          => '#ffffff',
-					'connected_fields' => array(),
+					'connected_fields' => array(
+//						'sm_light_tertiary_connected'
+					),
+					'css'              => array(
+						array(
+							'selector' => ':root',
+							'property' => '--sm-light-tertiary',
+						),
+					),
+				),
+				'sm_light_tertiary_connected' => array(
+					'type'             => 'color',
+					'setting_type'     => 'option',
+					'setting_id'       => 'sm_light_tertiary_connected',
+					'priority'         => 21,
+					'label'            => esc_html__( 'Light Tertiary Connected', 'customify' ),
+					'live'             => true,
+					'default'          => '#ffffff',
+					'css' => array(
+						array(
+							'selector' => ':root',
+							'property' => '--sm-light-tertiary-connected',
+						),
+					),
 				),
 				'sm_swap_colors'                => array(
 					'type'         => 'button',
@@ -313,13 +523,11 @@ class Customify_Color_Palettes {
 					'label'        => esc_html__( 'Swap Secondary Color ⇆ Secondary Dark', 'customify' ),
 					'action'       => 'sm_swap_secondary_colors_dark',
 				),
-				'sm_advanced_toggle' => array(
-					'type'         => 'button',
-					'setting_type' => 'option',
-					'setting_id'   => 'sm_toggle_advanced_settings',
-					'priority'     => 30.4,
-					'label'        => esc_html__( 'Toggle Advanced Settings', 'customify' ),
-					'action'       => 'sm_toggle_advanced_settings',
+				'sm_spacing_bottom' => array(
+					'type'       => 'html',
+					'html'       => '',
+					'setting_id' => 'sm_spacing_bottom',
+					'priority'   => 31,
 				),
 			),
 		) );
@@ -347,82 +555,134 @@ class Customify_Color_Palettes {
 		}
 
 		$current_palette = '';
-		$current_palette_sets = array( 'current', 'next' );
 
 		$master_color_controls_ids = $this->get_all_master_color_controls_ids( $config['sections']['style_manager_section']['options'] );
 
-		foreach ( $current_palette_sets as $set ) {
-			$current_palette .= '<div class="colors ' . $set . '">';
-			foreach ( $master_color_controls_ids as $setting_id ) {
-				$current_palette .=
-					'<div class="color ' . $setting_id . '" data-setting="' . $setting_id . '">' . PHP_EOL .
-					'<div class="fill"></div>' . PHP_EOL .
-					'<div class="picker">' .
-					'<i></i>'.
-					'</div>' . PHP_EOL .
-					'</div>' . PHP_EOL;
-			}
-			$current_palette .= '</div>';
+		$current_palette .= '<div class="colors">';
+		foreach ( $master_color_controls_ids as $setting_id ) {
+			$current_palette .=
+				'<div class="color ' . $setting_id . '" data-setting="' . $setting_id . '">' . PHP_EOL .
+				'<div class="picker">' .
+				'<div class="disc"></div>'.
+				'<i></i>'.
+				'</div>' . PHP_EOL .
+				'</div>' . PHP_EOL;
 		}
+		$current_palette .= '</div>';
 
 		$current_palette .= '<div class="c-color-palette__fields">';
+		$current_palette .= '<div class="c-color-palette__notification  description  hidden  js-altered-notification">' . PHP_EOL .
+		                    wp_kses( __( 'One or more colors connected to your color palette have been modified. By changing or altering the current palette you will lose changes made prior to this action.', 'customify' ), array( 'em' => array(), 'b' => array(), 'strong' => array(), 'i' => array() ) ) . PHP_EOL .
+		'</div>'  . PHP_EOL;
 		foreach ( $master_color_controls_ids as $setting_id ) {
-			$current_palette .= '<input id="current-palette-' . $setting_id . '" class="c-color-palette__input ' . $setting_id . '" type="text">';
+			$current_palette .= '<input id="current-palette-' . $setting_id . '" class="c-color-palette__input ' . $setting_id . '" type="text" value="' . get_option( $setting_id ) . '">';
 		}
 		$current_palette .= '</div>';
 
 		// The section might be already defined, thus we merge, not replace the entire section config.
 		$config['sections']['style_manager_section']['options'] = array(
               'sm_current_color_palette' => array(
-                  'type' => 'html',
+                  'type'       => 'html',
                   'setting_id' => 'sm_current_color_palette',
-                  'html' =>
-                      '<div class="color-palette-container">' . PHP_EOL .
-                      '<span class="customize-control-title">Current Color Palette:</span>' . PHP_EOL .
-                      '<span class="description customize-control-description">Choose a color palette to start with. Adjust its style using the variation buttons below.</span>' . PHP_EOL .
+                  'html'       =>
                       '<div class="c-color-palette">' . PHP_EOL .
-                      $current_palette .
-                      '<div class="c-color-palette__overlay">' . PHP_EOL .
-                      '<div class="c-color-palette__label">' .
-                      '<div class="c-color-palette__name">' . 'Original Style' . '</div>' .
-                      '<div class="c-color-palette__control variation-light active" data-target="#_customize-input-sm_color_palette_variation_control-radio-light">' .
-                      '<span class="dashicons dashicons-image-rotate"></span>' .
-                      '<div class="c-color-palette__tooltip">Light</div>' .
-                      '</div>' .
-                      '<div class="c-color-palette__control variation-dark" data-target="#_customize-input-sm_color_palette_variation_control-radio-dark">' .
-                      '<span class="dashicons dashicons-image-filter"></span>'.
-                      '<div class="c-color-palette__tooltip">Dark</div>' .
-                      '</div>' .
-                      '<div class="c-color-palette__control variation-colorful" data-target="#_customize-input-sm_color_palette_variation_control-radio-colorful">' .
-                      '<span class="dashicons dashicons-admin-appearance"></span>' .
-                      '<div class="c-color-palette__tooltip">Colorful</div>' .
-                      '</div>' .
+                      '<div class="c-color-palette__colors">' . $current_palette . '</div>' . PHP_EOL .
+                      '<div class="sm_color_matrix"></div>' . PHP_EOL .
                       '</div>' . PHP_EOL .
-                      '</div>' . PHP_EOL .
-                      '</div>' . PHP_EOL .
-                      '</div>' . PHP_EOL .
-                      '<svg class="c-color-palette__blur" width="15em" height="15em" viewBox="0 0 15 15" xmlns="http://www.w3.org/2000/svg" version="1.1">' . PHP_EOL .
-                      '<defs>' . PHP_EOL .
-                      '<filter id="goo">' . PHP_EOL .
-                      '<feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />' . PHP_EOL .
-                      '<feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 50 -20" result="goo" />' . PHP_EOL .
-                      '<feBlend in="SourceGraphic" in2="goo" />' . PHP_EOL .
-                      '</filter>' . PHP_EOL .
-                      '</defs>' . PHP_EOL .
-                      '</svg>',
+                      '<div class="sm-tabs">' . PHP_EOL .
+	                      '<div class="sm-tabs__item" data-target="palettes">' . esc_html__( 'Palettes', 'customify' ) . '</div>' . PHP_EOL .
+	                      '<div class="sm-tabs__item" data-target="filters">' . esc_html__( 'Filters', 'customify' ) . '</div>' . PHP_EOL .
+	                      '<div class="sm-tabs__item" data-target="customize">' . esc_html__( 'Customize', 'customify' ) . '</div>' . PHP_EOL .
+                      '</div>',
               ),
-              'sm_color_matrix' => array(
-                  'type' => 'html',
-                  'setting_id' => 'sm_color_matrix',
-                  'html' => '<div class="sm_color_matrix"></div>'
+              'sm_palettes_description'  => array(
+	              'type'       => 'html',
+	              'setting_id' => 'sm_palettes_description',
+	              'html'       => '<span class="description customize-control-description">' . wp_kses( __( 'Choose your <em>base color palette</em> and go deeper with the <em>Filters</em> and <em>Customize</em> tabs. Make it shine, mate!', 'customify' ), array(
+			              'em'     => array(),
+			              'b'      => array(),
+			              'strong' => array(),
+			              'i'      => array(),
+		              ) ) . '</span>' . PHP_EOL,
               ),
-              'sm_dark_color_master_slider' => array(
-	              'setting_id'  => 'sm_dark_color_master_slider',
+              'sm_filters_description'   => array(
+	              'type'       => 'html',
+	              'setting_id' => 'sm_filters_description',
+	              'html'       => '<span class="description customize-control-description">' . wp_kses( __( 'Adjust the <i>colors properties</i> by using the filters. Keep the look fresh and engaging!', 'customify' ), array(
+			              'em'     => array(),
+			              'b'      => array(),
+			              'strong' => array(),
+			              'i'      => array(),
+		              ) ) . '</span>' . PHP_EOL,
+              ),
+              'sm_customize_description' => array(
+	              'type'       => 'html',
+	              'setting_id' => 'sm_customize_description',
+	              'html'       => '<span class="description customize-control-description">' . wp_kses( __( 'Adjust how the colors are used on your site with ease. Modify their usage level to craft a playful design!', 'customify' ), array( 'em'     => array(),
+	                                                                                                                                                                                                                                            'b'      => array(),
+	                                                                                                                                                                                                                                            'strong' => array(),
+	                                                                                                                                                                                                                                            'i'      => array(),
+		              ) ) . '</span>' . PHP_EOL,
+              ),
+              'sm_coloration_level' => array(
+	              'type'         => 'sm_radio',
+	              'setting_type' => 'option',
+	              'setting_id'   => 'sm_coloration_level',
+	              'label'        => esc_html__( 'Coloration Level', 'customify' ),
+	              'default'      => $this->get_coloration_level_default_value( $config ),
+	              'live'         => true,
+	              'choices'      => array(
+		              $this->get_coloration_level_point_value( $config, 'low' )      => esc_html__( 'Low', 'customify' ),
+		              $this->get_coloration_level_point_value( $config, 'medium' )   => esc_html__( 'Medium', 'customify' ),
+		              $this->get_coloration_level_point_value( $config, 'high' )     => esc_html__( 'High', 'customify' ),
+		              $this->get_coloration_level_point_value( $config, 'striking' ) => esc_html__( 'Striking', 'customify' ),
+	              ),
+              ),
+              'sm_color_diversity' => array(
+	              'type'         => 'sm_radio',
+	              'setting_type' => 'option',
+	              'setting_id'   => 'sm_color_diversity',
+	              'label'        => esc_html__( 'Color Diversity', 'customify' ),
+	              'default'      => $this->get_color_diversity_default_value( $config ),
+	              'live'         => true,
+	              'choices'      => array(
+		              'low'    => esc_html__( 'Low', 'customify' ),
+		              'medium' => esc_html__( 'Medium', 'customify' ),
+		              'high'   => esc_html__( 'High', 'customify' ),
+	              ),
+              ),
+              'sm_shuffle_colors'  => array(
+	              'type'         => 'sm_radio',
+	              'setting_type' => 'option',
+	              'setting_id'   => 'sm_shuffle_colors',
+	              'label'        => esc_html__( 'Shuffle Colors', 'customify' ),
+	              'default'      => 'default',
+	              'live'         => true,
+	              'choices'      => array(
+		              'default' => esc_html__( 'Default', 'customify' ),
+		              'mixed'   => esc_html__( 'Mixed', 'customify' ),
+		              'remix'   => esc_html__( 'Remix', 'customify' ),
+	              ),
+              ),
+              'sm_dark_mode'       => array(
+	              'type'         => 'sm_switch',
+	              'setting_type' => 'option',
+	              'setting_id'   => 'sm_dark_mode',
+	              'label'        => esc_html__( 'Dark Mode', 'customify' ),
+	              'default'      => 'off',
+	              'live'         => true,
+	              'choices'      => array(
+		              'off' => esc_html__( 'Off', 'customify' ),
+		              'on'  => esc_html__( 'On', 'customify' ),
+	              ),
+              ),
+              'sm_dark_color_primary_slider'   => array(
+	              'setting_id'  => 'sm_dark_color_primary_slider',
 	              'type'        => 'range',
-	              'label'       => esc_html__( 'Dark to Color (master)', 'customify' ),
+	              'label'       => esc_html__( 'Dark to Color (primary)', 'customify' ),
 	              'desc'        => '',
 	              'live'        => true,
-	              'default'     => 50, // this should be set by the theme (previously 1300)
+	              'default'     => $this->get_dark_to_color_slider_default_value( $config['sections']['style_manager_section']['options'], 'sm_dark_primary', 'sm_color_primary' ),
 	              'input_attrs' => array(
 		              'min'          => 0,
 		              'max'          => 100,
@@ -431,89 +691,175 @@ class Customify_Color_Palettes {
 	              ),
 	              'css'         => array(),
               ),
-              'sm_dark_color_primary_slider' => array(
-	              'setting_id'  => 'sm_dark_color_primary_slider',
-                  'type'        => 'range',
-                  'label'       => esc_html__( 'Dark to Color (primary)', 'customify' ),
-                  'desc'        => '',
-                  'live'        => true,
-                  'default'     => $this->get_dark_to_color_slider_default_value( $config['sections']['style_manager_section']['options'], 'sm_dark_primary', 'sm_color_primary' ),
-                  'input_attrs' => array(
-                      'min'          => 0,
-                      'max'          => 100,
-                      'step'         => 1,
-                      'data-preview' => true,
-                  ),
-                  'css'         => array(),
-              ),
               'sm_dark_color_secondary_slider' => array(
 	              'setting_id'  => 'sm_dark_color_secondary_slider',
-                  'type'        => 'range',
-                  'label'       => esc_html__( 'Dark to Color (secondary)', 'customify' ),
-                  'desc'        => '',
-                  'live'        => true,
-	              'default'     => $this->get_dark_to_color_slider_default_value( $config['sections']['style_manager_section']['options'], 'sm_dark_secondary', 'sm_color_secondary' ), // this should be set by the theme (previously 1300)
-                  'input_attrs' => array(
-                      'min'          => 0,
-                      'max'          => 100,
-                      'step'         => 1,
-                      'data-preview' => true,
-                  ),
-                  'css'         => array(),
+	              'type'        => 'range',
+	              'label'       => esc_html__( 'Dark to Color (secondary)', 'customify' ),
+	              'desc'        => '',
+	              'live'        => true,
+	              'default'     => $this->get_dark_to_color_slider_default_value( $config['sections']['style_manager_section']['options'], 'sm_dark_secondary', 'sm_color_secondary' ),
+	              // this should be set by the theme (previously 1300)
+	              'input_attrs' => array(
+		              'min'          => 0,
+		              'max'          => 100,
+		              'step'         => 1,
+		              'data-preview' => true,
+	              ),
+	              'css'         => array(),
               ),
-              'sm_dark_color_tertiary_slider' => array(
+              'sm_dark_color_tertiary_slider'  => array(
 	              'setting_id'  => 'sm_dark_color_tertiary_slider',
-                  'type'        => 'range',
-                  'label'       => esc_html__( 'Dark to Color (tertiary)', 'customify' ),
-                  'desc'        => '',
-                  'live'        => true,
-	              'default'     => $this->get_dark_to_color_slider_default_value( $config['sections']['style_manager_section']['options'], 'sm_dark_tertiary', 'sm_color_tertiary' ), // this should be set by the theme (previously 1300)
-                  'input_attrs' => array(
-                      'min'          => 0,
-                      'max'          => 100,
-                      'step'         => 1,
-                      'data-preview' => true,
-                  ),
-                  'css'         => array(),
-              ),
-              'sm_colors_dispersion' => array(
-	              'setting_id'  => 'sm_colors_dispersion',
-                  'type'        => 'range',
-                  'label'       => esc_html__( 'Colors dispersion range', 'customify' ),
-                  'desc'        => '',
-                  'live'        => true,
-                  'default'     => $this->get_color_dispersion_slider_default_value( $config['sections']['style_manager_section']['options'] ),
-                  'input_attrs' => array(
-                      'min'          => 1,
-                      'max'          => 100,
-                      'step'         => 1,
-                      'data-preview' => true,
-                  ),
-                  'css'         => array(),
-              ),
-              'sm_colors_focus_point' => array(
-	              'setting_id'  => 'sm_colors_focus_point',
-                  'type'        => 'range',
-                  'label'       => esc_html__( 'Colors focus point', 'customify' ),
-                  'desc'        => '',
-                  'live'        => true,
-                  'default'     => $this->get_color_focus_slider_default_value( $config['sections']['style_manager_section']['options'] ),
-                  'input_attrs' => array(
-                      'min'          => 0,
-                      'max'          => 100,
-                      'step'         => 1,
-                      'data-preview' => true,
-                  ),
-                  'css'         => array(),
+	              'type'        => 'range',
+	              'label'       => esc_html__( 'Dark to Color (tertiary)', 'customify' ),
+	              'desc'        => '',
+	              'live'        => true,
+	              'default'     => $this->get_dark_to_color_slider_default_value( $config['sections']['style_manager_section']['options'], 'sm_dark_tertiary', 'sm_color_tertiary' ),
+	              // this should be set by the theme (previously 1300)
+	              'input_attrs' => array(
+		              'min'          => 0,
+		              'max'          => 100,
+		              'step'         => 1,
+		              'data-preview' => true,
+	              ),
+	              'css'         => array(),
               ),
           ) + $config['sections']['style_manager_section']['options'];
 
 		return $config;
 	}
 
+	private function get_color_diversity_default_value( $config ) {
+		$optionsArrayObject = new ArrayObject( $config['sections']['style_manager_section']['options'] );
+		$optionsCopy = $optionsArrayObject->getArrayCopy();
+
+		$pos1 = array_search('sm_color_primary_connected', $optionsCopy['sm_color_primary']['connected_fields'] );
+		if ( false !== $pos1 ) {
+			unset( $optionsCopy['sm_color_primary']['connected_fields'][$pos1] );
+		}
+
+		$pos2 = array_search('sm_color_secondary_connected', $optionsCopy['sm_color_secondary']['connected_fields'] );
+		if ( false !== $pos2 ) {
+			unset( $optionsCopy['sm_color_secondary']['connected_fields'][$pos2] );
+		}
+
+		$pos3 = array_search('sm_color_tertiary_connected', $optionsCopy['sm_color_tertiary']['connected_fields'] );
+		if ( false !== $pos3 ) {
+			unset( $optionsCopy['sm_color_tertiary']['connected_fields'][$pos3] );
+		}
+
+		$colors1 = empty( $optionsCopy['sm_color_primary']['connected_fields'] ) ? 0 : 1;
+		$colors2 = empty( $optionsCopy['sm_color_secondary']['connected_fields'] ) ? 0 : 1;
+		$colors3 = empty( $optionsCopy['sm_color_tertiary']['connected_fields'] ) ? 0 : 1;
+		$colors = $colors1 + $colors2 + $colors3;
+
+		if ( $colors > 2 ) {
+			return 'high';
+		}
+
+		if ( $colors > 1 ) {
+			return 'medium';
+		}
+
+		return 'low';
+	}
+
+	private function get_coloration_level_average( $config ) {
+		$options = $config['sections']['style_manager_section']['options'];
+
+		$colors1 = count( $options['sm_color_primary']['connected_fields'] );
+		$colors2 = count( $options['sm_color_secondary']['connected_fields'] );
+		$colors3 = count( $options['sm_color_tertiary']['connected_fields'] );
+		$colors = $colors1 + $colors2 + $colors3;
+
+		$dark1 = count( $options['sm_dark_primary']['connected_fields'] );
+		$dark2 = count( $options['sm_dark_secondary']['connected_fields'] );
+		$dark3 = count( $options['sm_dark_tertiary']['connected_fields'] );
+		$dark = $dark1 + $dark2 + $dark3;
+
+		$total = $colors + $dark;
+
+		return $colors * 100 / $total;
+	}
+
+	private function get_coloration_level_default_value( $config ) {
+		$label = $this->get_coloration_level_default_label( $config );
+		return $this->get_coloration_level_point_value( $config, $label );
+	}
+
+	private function get_coloration_level_default_label( $config ) {
+		$average = $this->get_coloration_level_average( $config );
+
+		if ( $average < 25 ) {
+			return 'low';
+		}
+
+		if ( $average < 50 ) {
+			return 'medium';
+		}
+
+		if ( $average < 75 ) {
+			return 'high';
+		}
+
+		return 'striking';
+	}
+
+	private function get_coloration_levels( $config ) {
+		$average = $this->get_coloration_level_average( $config );
+		$default = $this->get_coloration_level_default_label( $config );
+
+		if ( 'low' === $default ) {
+			$values['low'] = intval( $average );
+			$values['medium'] = intval( $average + (100 - $average) / 4 );
+			$values['high'] = intval( $average + (100 - $average) * 2 / 4 );
+			$values['striking'] = intval( $average + (100 - $average) * 3 / 4 );
+		}
+
+		if ( 'medium' === $default ) {
+			$values['low'] = intval( $average / 2 );
+			$values['medium'] = intval( $average );
+			$values['high'] = intval( $average + (100 - $average) / 3 );
+			$values['striking'] = intval( $average + (100 - $average) * 2 / 3 );
+		}
+
+		if ( 'high' === $default ) {
+			$values['low'] = intval( $average / 3 );
+			$values['medium'] = intval( $average * 2 / 3 );
+			$values['high'] = intval( $average );
+			$values['striking'] = intval( $average + (100 - $average) / 2 );
+		}
+
+		if ( 'striking' === $default ) {
+			$values['low'] = intval( $average / 4 );
+			$values['medium'] = intval( $average * 2 / 4 );
+			$values['high'] = intval( $average * 3 / 4 );
+			$values['striking'] = intval( $average );
+		}
+
+		return $values;
+	}
+
+	private function get_coloration_level_point_value( $config, $point ) {
+		$values = $this->get_coloration_levels( $config );
+		return $values[$point];
+	}
+
 	private function get_dark_to_color_slider_default_value( $options, $dark_id, $color_id ) {
-		$dark_count = count($options[$dark_id]['connected_fields']);
-		$color_count = count($options[$color_id]['connected_fields']);
+		$optionsArrayObject = new ArrayObject( $options );
+		$optionsCopy = $optionsArrayObject->getArrayCopy();
+
+		$pos1 = array_search($color_id . '_connected', $optionsCopy[$color_id]['connected_fields'] );
+		if ( false !== $pos1 ) {
+			unset( $optionsCopy[$color_id]['connected_fields'][$pos1] );
+		}
+
+		$pos2 = array_search($dark_id . '_connected', $optionsCopy[$dark_id]['connected_fields'] );
+		if ( false !== $pos2 ) {
+			unset( $optionsCopy[$dark_id]['connected_fields'][$pos2] );
+		}
+
+		$dark_count = count($optionsCopy[$dark_id]['connected_fields']);
+		$color_count = count($optionsCopy[$color_id]['connected_fields']);
 		$total_count = $dark_count + $color_count;
 
 		if ( $total_count === 0 ) {
@@ -521,54 +867,6 @@ class Customify_Color_Palettes {
 		}
 
 		return 100 * $color_count / $total_count;
-	}
-
-
-	private function get_color_dispersion_slider_default_value( $options ) {
-		$primary_count = count($options['sm_color_primary']['connected_fields']);
-		$secondary_count = count($options['sm_color_secondary']['connected_fields']);
-		$tertiary_count = count($options['sm_color_tertiary']['connected_fields']);
-		$total_count = $primary_count + $secondary_count + $tertiary_count;
-		$n = 3;
-
-		$average = ( $primary_count + $secondary_count + $tertiary_count ) / $n;
-
-		$diff_primary = pow( $primary_count - $average, 2 );
-		$diff_secondary = pow( $secondary_count - $average, 2 );
-		$diff_tertiary = pow( $tertiary_count - $average, 2 );
-
-		$diff_average = ( $diff_primary + $diff_secondary + $diff_tertiary ) / $n; // presupun ca e intre 0 si total * 2 / 3
-
-		$diff1 = pow( $total_count - $average, 2);
-		$diff2 = pow( $average, 2);
-		$diff3 = $diff2;
-
-		$min = 0; // dispersion = 1
-		$max = ($diff1 + $diff2 + $diff3) / 3;
-		// $max = 2 * ($n - 1) * $average / $n; // dispersion = 0;
-
-		// avoid division by zero
-		if ( $max === 0 ) {
-			return 100;
-		}
-
-		return 100 * ($diff_average / max($primary_count, $secondary_count, $tertiary_count));
-	}
-
-	private function get_color_focus_slider_default_value( $options ) {
-		$primary_count = count($options['sm_color_primary']['connected_fields']);
-		$secondary_count = count($options['sm_color_secondary']['connected_fields']);
-		$tertiary_count = count($options['sm_color_tertiary']['connected_fields']);
-		$total_count = $primary_count + $secondary_count + $tertiary_count;
-
-		// avoid division by zero
-		if ( $total_count === 0 ) {
-			return 50;
-		}
-
-		$focus_point = (0 * $primary_count + 0.5 * $secondary_count + 1 * $tertiary_count ) / $total_count;
-
-		return $focus_point * 100;
 	}
 
 	/**
@@ -732,7 +1030,7 @@ class Customify_Color_Palettes {
 	 *
 	 * @return string|false
 	 */
-	protected function get_current_palette() {
+	public function get_current_palette() {
 		return get_option( 'sm_color_palette', false );
 	}
 
@@ -743,7 +1041,7 @@ class Customify_Color_Palettes {
 	 *
 	 * @return string|false
 	 */
-	protected function get_current_palette_variation() {
+	public function get_current_palette_variation() {
 		return get_option( 'sm_color_palette_variation', false );
 	}
 
@@ -795,7 +1093,7 @@ class Customify_Color_Palettes {
 	 *
 	 * @return bool
 	 */
-	protected function is_using_custom_palette(){
+	public function is_using_custom_palette(){
 		return (bool) get_option( 'sm_is_custom_color_palette', false );
 	}
 
@@ -856,7 +1154,7 @@ class Customify_Color_Palettes {
 	 * @since  1.7.4
 	 * @static
 	 *
-	 * @return Customify_Font_Palettes Main Customify_Color_Palettes instance
+	 * @return Customify_Color_Palettes Main Customify_Color_Palettes instance
 	 */
 	public static function instance() {
 

@@ -7,6 +7,12 @@
 		wp.customize.bind( 'ready', function() {
 			var timeout = null;
 
+            // Create a stack of callbacks bound to parent settings to be able to unbind them
+            // when altering the connected_fields attribute.
+            if ( typeof window.connectedFieldsCallbacks === "undefined" ) {
+                window.connectedFieldsCallbacks = {};
+            }
+
 			// add ace editors
 			$( '.customify_ace_editor' ).each( function( key, el ) {
 				var id = $( this ).attr( 'id' ),
@@ -507,6 +513,8 @@
 						break;
 
 					case 'radio':
+					case 'sm_radio':
+					case 'sm_switch':
 					case 'radio_image':
 
 						// in case of an array of values we use the ( val in array) condition

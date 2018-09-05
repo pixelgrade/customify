@@ -951,9 +951,8 @@ class Customify_Font_Palettes {
 						'font_weights'     => array( 300, 400, 500 ),
 						// "Generate" the graph to be used for font-size and line-height.
 						'font_size_to_line_height_points' => array(
-							array( 20, 1.15 ),
+							array( 20, 1.55 ),
 							array( 26, 1.45 ),
-							array( 30, 1.25 ),
 							array( 56, 1.25 ),
 						),
 
@@ -993,7 +992,7 @@ class Customify_Font_Palettes {
 						'font_size_to_line_height_points' => array(
 							array( 14, 1.625 ),
 							array( 22, 1.55 ),
-							array( 24, 1.625 ),
+							array( 24, 1.5 ),
 						),
 						'font_styles_intervals'      => array(
 							array(
@@ -1154,7 +1153,7 @@ class Customify_Font_Palettes {
 	 *
 	 * @return string|false
 	 */
-	protected function get_current_palette() {
+	public function get_current_palette() {
 		return get_option( 'sm_font_palette', false );
 	}
 
@@ -1165,7 +1164,7 @@ class Customify_Font_Palettes {
 	 *
 	 * @return string|false
 	 */
-	protected function get_current_palette_variation() {
+	public function get_current_palette_variation() {
 		return get_option( 'sm_font_palette_variation', false );
 	}
 
@@ -1217,7 +1216,7 @@ class Customify_Font_Palettes {
 	 *
 	 * @return bool
 	 */
-	protected function is_using_custom_palette(){
+	public function is_using_custom_palette(){
 		return (bool) get_option( 'sm_is_custom_font_palette', false );
 	}
 

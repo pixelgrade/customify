@@ -181,6 +181,11 @@ class PixCustomifyPlugin {
 		add_action( 'init', array( $this, 'load_plugin_textdomain' ) );
 
 		/*
+		 * Load the upgrade logic.
+		 */
+		add_action( 'admin_init', array( $this, 'upgrade' ) );
+
+		/*
 		 * Prepare and load the configuration
 		 */
 		$this->init_plugin_configs();
@@ -230,6 +235,8 @@ class PixCustomifyPlugin {
 
 		add_action( 'customize_register', array( $this, 'remove_default_sections' ), 11 );
 		add_action( 'customize_register', array( $this, 'register_customizer' ), 12 );
+		// Maybe the theme has instructed us to do things like removing sections or controls.
+		add_action( 'customize_register', array( $this, 'maybe_process_config_extras' ), 13 );
 
 		if ( $this->get_plugin_setting( 'enable_editor_style', true ) ) {
 			add_action( 'admin_head', array( $this, 'add_customizer_settings_into_wp_editor' ) );
@@ -247,6 +254,25 @@ class PixCustomifyPlugin {
 			// Add a JS to display a notification
 			add_action( 'customize_controls_print_footer_scripts', array( $this, 'prevent_changeset_save_in_devmode_notification' ), 100 );
 		}
+	}
+
+	/**
+	 * Handle the logic to upgrade between versions. It will run only one per version change.
+	 */
+	public function upgrade() {
+		$customify_dbversion = get_option( 'customify_dbversion', '0.0.1' );
+		if ( $this->get_version() === $customify_dbversion ) {
+			return;
+		}
+
+		// For versions, previous of version 2.0.0 (the Color Palettes v2.0 release).
+		if ( version_compare( $customify_dbversion, '2.0.0', '<' ) ) {
+			// Delete the option holding the fact that the user offered feedback.
+			delete_option( 'style_manager_user_feedback_provided' );
+		}
+
+		// Put the current version in the database.
+		update_option( 'customify_dbversion', $this->get_version(), true );
 	}
 
 	/**
@@ -292,7 +318,7 @@ class PixCustomifyPlugin {
 
 		$this->localized['ajax_url'] = admin_url( 'admin-ajax.php' );
 		$this->localized['style_manager_user_feedback_nonce'] = wp_create_nonce( 'customify_style_manager_user_feedback' );
-		$this->localized['style_manager_user_feedback_provided'] = $this->get_option( 'style_manager_user_feedback_provided', false );
+		$this->localized['style_manager_user_feedback_provided'] = get_option( 'style_manager_user_feedback_provided', false );
 	}
 
 	public function get_version() {
@@ -1071,6 +1097,9 @@ class PixCustomifyPlugin {
 
 					var append_style_to_iframe = function (ifrm_id, styleElment) {
 						var ifrm = window.frames[ifrm_id];
+                        if ( typeof ifrm === "undefined" ) {
+                            return;
+                        }
 						ifrm = ( ifrm.contentDocument || ifrm.contentDocument || ifrm.document );
 						var head = ifrm.getElementsByTagName('head')[0];
 
@@ -1142,6 +1171,176 @@ class PixCustomifyPlugin {
 	}
 
 	/**
+	 * Maybe process certain "commands" from the config.
+	 *
+	 * Mainly things like removing sections, controls, etc.
+	 *
+	 * @since 1.9.0
+	 *
+	 * @param WP_Customize_Manager $wp_customize
+	 */
+	public function maybe_process_config_extras( $wp_customize ) {
+		// Bail if we have no external theme config data.
+		if ( empty( $this->customizer_config ) || ! is_array( $this->customizer_config ) ) {
+			return;
+		}
+
+		// Maybe remove panels
+		if ( ! empty( $this->customizer_config['remove_panels'] ) ) {
+			// Standardize it.
+			if ( is_string( $this->customizer_config['remove_panels'] ) ) {
+				$this->customizer_config['remove_panels'] = array( $this->customizer_config['remove_panels'] );
+			}
+
+			foreach ( $this->customizer_config['remove_panels'] as $panel_id ) {
+				$wp_customize->remove_panel( $panel_id );
+			}
+		}
+
+		// Maybe change panel props.
+		if ( ! empty( $this->customizer_config['change_panel_props'] ) ) {
+			foreach ( $this->customizer_config['change_panel_props'] as $panel_id => $panel_props ) {
+				if ( ! is_array( $panel_props ) ) {
+					continue;
+				}
+
+				$panel = $wp_customize->get_panel( $panel_id );
+				if ( empty( $panel ) || ! $panel instanceof WP_Customize_Panel ) {
+					continue;
+				}
+
+				$public_props = get_class_vars( get_class( $panel ) );
+				foreach ( $panel_props as $prop_name => $prop_value ) {
+
+					if ( ! in_array( $prop_name, array_keys( $public_props ) ) ) {
+						continue;
+					}
+
+					$panel->$prop_name = $prop_value;
+				}
+			}
+		}
+
+		// Maybe remove sections
+		if ( ! empty( $this->customizer_config['remove_sections'] ) ) {
+			// Standardize it.
+			if ( is_string( $this->customizer_config['remove_sections'] ) ) {
+				$this->customizer_config['remove_sections'] = array( $this->customizer_config['remove_sections'] );
+			}
+
+			foreach ( $this->customizer_config['remove_sections'] as $section_id ) {
+
+				if ( 'widgets' === $section_id ) {
+					global $wp_registered_sidebars;
+
+					foreach ( $wp_registered_sidebars as $widget => $settings ) {
+						$wp_customize->remove_section( 'sidebar-widgets-' . $widget );
+					}
+					continue;
+				}
+
+				$wp_customize->remove_section( $section_id );
+			}
+		}
+
+		// Maybe change section props.
+		if ( ! empty( $this->customizer_config['change_section_props'] ) ) {
+			foreach ( $this->customizer_config['change_section_props'] as $section_id => $section_props ) {
+				if ( ! is_array( $section_props ) ) {
+					continue;
+				}
+
+				$section = $wp_customize->get_section( $section_id );
+				if ( empty( $section ) || ! $section instanceof WP_Customize_Section ) {
+					continue;
+				}
+
+				$public_props = get_class_vars( get_class( $section ) );
+				foreach ( $section_props as $prop_name => $prop_value ) {
+
+					if ( ! in_array( $prop_name, array_keys( $public_props ) ) ) {
+						continue;
+					}
+
+					$section->$prop_name = $prop_value;
+				}
+			}
+		}
+
+		// Maybe remove settings
+		if ( ! empty( $this->customizer_config['remove_settings'] ) ) {
+			// Standardize it.
+			if ( is_string( $this->customizer_config['remove_settings'] ) ) {
+				$this->customizer_config['remove_settings'] = array( $this->customizer_config['remove_settings'] );
+			}
+
+			foreach ( $this->customizer_config['remove_settings'] as $setting_id ) {
+				$wp_customize->remove_setting( $setting_id );
+			}
+		}
+
+		// Maybe change setting props.
+		if ( ! empty( $this->customizer_config['change_setting_props'] ) ) {
+			foreach ( $this->customizer_config['change_setting_props'] as $setting_id => $setting_props ) {
+				if ( ! is_array( $setting_props ) ) {
+					continue;
+				}
+
+				$setting = $wp_customize->get_setting( $setting_id );
+				if ( empty( $setting ) || ! $setting instanceof WP_Customize_Setting ) {
+					continue;
+				}
+
+				$public_props = get_class_vars( get_class( $setting ) );
+				foreach ( $setting_props as $prop_name => $prop_value ) {
+
+					if ( ! in_array( $prop_name, array_keys( $public_props ) ) ) {
+						continue;
+					}
+
+					$setting->$prop_name = $prop_value;
+				}
+			}
+		}
+
+		// Maybe remove controls
+		if ( ! empty( $this->customizer_config['remove_controls'] ) ) {
+			// Standardize it.
+			if ( is_string( $this->customizer_config['remove_controls'] ) ) {
+				$this->customizer_config['remove_controls'] = array( $this->customizer_config['remove_controls'] );
+			}
+
+			foreach ( $this->customizer_config['remove_controls'] as $control_id ) {
+				$wp_customize->remove_control( $control_id );
+			}
+		}
+
+		// Maybe change control props.
+		if ( ! empty( $this->customizer_config['change_control_props'] ) ) {
+			foreach ( $this->customizer_config['change_control_props'] as $control_id => $control_props ) {
+				if ( ! is_array( $control_props ) ) {
+					continue;
+				}
+
+				$control = $wp_customize->get_control( $control_id );
+				if ( empty( $control ) || ! $control instanceof WP_Customize_Control ) {
+					continue;
+				}
+
+				$public_props = get_class_vars( get_class( $control ) );
+				foreach ( $control_props as $prop_name => $prop_value ) {
+
+					if ( ! in_array( $prop_name, array_keys( $public_props ) ) ) {
+						continue;
+					}
+
+					$control->$prop_name = $prop_value;
+				}
+			}
+		}
+	}
+
+	/**
 	 * @param WP_Customize_Manager $wp_customize
 	 */
 	function register_customizer( $wp_customize ) {
@@ -1176,8 +1375,8 @@ class PixCustomifyPlugin {
 						$panel_args = array(
 							'priority'                 => 10,
 							'capability'               => 'edit_theme_options',
-							'title'                    => __( 'Panel title is required', 'pixcustomify' ),
-							'description'              => __( 'Description of what this panel does.', 'pixcustomify' ),
+							'title'                    => __( 'Panel title is required', 'customify' ),
+							'description'              => __( 'Description of what this panel does.', 'customify' ),
 							'auto_expand_sole_section' => false,
 						);
 
@@ -1635,6 +1834,26 @@ class PixCustomifyPlugin {
 
 				$control_class_name = 'Pix_Customize_Select2_Control';
 				break;
+				
+			case 'sm_radio' :
+				if ( ! isset( $field_config['choices'] ) || empty( $field_config['choices'] ) ) {
+					return;
+				}
+
+				$control_args['choices'] = $field_config['choices'];
+
+				$control_class_name = 'Pix_Customize_SM_radio_Control';
+				break;
+				
+			case 'sm_switch' :
+				if ( ! isset( $field_config['choices'] ) || empty( $field_config['choices'] ) ) {
+					return;
+				}
+
+				$control_args['choices'] = $field_config['choices'];
+
+				$control_class_name = 'Pix_Customize_SM_switch_Control';
+				break;
 
 			case 'preset' :
 				if ( ! isset( $field_config['choices'] ) || empty( $field_config['choices'] ) ) {
@@ -1960,38 +2179,48 @@ class PixCustomifyPlugin {
 		return $settings;
 	}
 
-	protected function get_value( $option, $alt_opt_name ) {
+	protected function get_value( $option_id, $alt_opt_name ) {
 		global $wp_customize;
 
-		$opt_name = $this->opt_name;
+		$options_name = $this->opt_name;
 		$values   = $this->current_values;
 
-		// In case someone asked for a DB value too early but it has given us the opt_name under which to search, let's do it
-		if ( empty( $opt_name ) && ! empty( $alt_opt_name ) ) {
-			$opt_name = $alt_opt_name;
-			$values   = $this->get_current_values( $opt_name );
+		// In case someone asked for a DB value too early but it has given us the options_name under which to search, let's do it
+		if ( empty( $options_name ) && ! empty( $alt_opt_name ) ) {
+			$options_name = $alt_opt_name;
+			$values   = $this->get_current_values( $options_name );
 		}
 
 		if ( ! empty( $wp_customize ) && method_exists( $wp_customize, 'get_setting' ) ) {
+			// Get the field config.
+			$option_config = $this->get_option_customizer_config( $option_id );
 
-			$option_key = $opt_name . '[' . $option . ']';
-			$setting    = $wp_customize->get_setting( $option_key );
+			if ( empty( $option_id ) || ! isset( $option_config['type'] ) ) {
+				return null;
+			}
+
+			// If we have been explicitly given a setting ID we will use that
+			if ( ! empty( $option_config['setting_id'] ) ) {
+				$setting_id = $option_config['setting_id'];
+			} else {
+				$setting_id = $options_name . '[' . $option_id . ']';
+			}
+
+			$setting    = $wp_customize->get_setting( $setting_id );
 			if ( ! empty( $setting ) ) {
-				$value = $setting->value();
-
-				return $value;
+				return $setting->value();
 			}
 		}
 
 		// shim
-		if ( strpos( $option, $opt_name . '[' ) !== false ) {
+		if ( strpos( $option_id, $options_name . '[' ) !== false ) {
 			// get only the setting id
-			$option = explode( '[', $option );
-			$option = rtrim( $option[1], ']' );
+			$option_id = explode( '[', $option_id );
+			$option_id = rtrim( $option_id[1], ']' );
 		}
 
-		if ( isset( $values[ $option ] ) ) {
-			return $values[ $option ];
+		if ( isset( $values[ $option_id ] ) ) {
+			return $values[ $option_id ];
 		}
 
 		return null;
@@ -2002,27 +2231,47 @@ class PixCustomifyPlugin {
 	 * If there is a value and return it.
 	 * Otherwise try to get the default parameter or the default from config.
 	 *
-	 * @param $option
+	 * @param $option_id
 	 * @param mixed $default Optional.
 	 * @param string $alt_opt_name Optional. We can use this to bypass the fact that the DB values are loaded on after_setup_theme, if we know what to look for.
 	 *
 	 * @return bool|null|string
 	 */
-	public function get_option( $option, $default = null, $alt_opt_name = null ) {
+	public function get_option( $option_id, $default = null, $alt_opt_name = null ) {
 		// If the development constant CUSTOMIFY_DEV_FORCE_DEFAULTS has been defined we will not retrieve anything from the database
 		// Always go with the default
-		if ( defined( 'CUSTOMIFY_DEV_FORCE_DEFAULTS' ) && true === CUSTOMIFY_DEV_FORCE_DEFAULTS && ! $this->skip_dev_mode_force_defaults( $option ) ) {
+		if ( defined( 'CUSTOMIFY_DEV_FORCE_DEFAULTS' ) && true === CUSTOMIFY_DEV_FORCE_DEFAULTS && ! $this->skip_dev_mode_force_defaults( $option_id ) ) {
 			$return = null;
 		} else {
-			$return = $this->get_value( $option, $alt_opt_name );
+			// Get the field config.
+			$option_config = $this->get_option_customizer_config( $option_id );
+
+			if ( empty( $option_id ) ) {
+				$return = null;
+			} elseif ( isset( $option_config['setting_type'] ) && $option_config['setting_type'] === 'option' ) {
+				// We have a setting that is saved in the wp_options table, not in theme_mods.
+				// We will fetch it directly.
+
+				// If we have been explicitly given a setting ID we will use that
+				if ( ! empty( $option_config['setting_id'] ) ) {
+					$setting_id = $option_config['setting_id'];
+				} else {
+					$setting_id = $this->opt_name . '[' . $option_id . ']';
+				}
+
+				$return = get_option( $setting_id, null );
+			} else {
+				// Get the value stores in theme_mods.
+				$return = $this->get_value( $option_id, $alt_opt_name );
+			}
 		}
 
 		if ( $return !== null ) {
 			return $return;
 		} elseif ( $default !== null ) {
 			return $default;
-		} elseif ( isset( $this->options_list[ $option ] ) && isset( $this->options_list[ $option ]['default'] ) ) {
-			return $this->options_list[ $option ]['default'];
+		} elseif ( isset( $this->options_list[ $option_id ] ) && isset( $this->options_list[ $option_id ]['default'] ) ) {
+			return $this->options_list[ $option_id ]['default'];
 		}
 
 		return null;

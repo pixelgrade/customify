@@ -3,7 +3,7 @@
 Plugin Name: Customify
 Plugin URI:  https://wordpress.org/plugins/customify/
 Description: A Theme Customizer Booster
-Version: 1.7.4
+Version: 2.0.2
 Author: Pixelgrade
 Author URI: https://pixelgrade.com
 Author Email: contact@pixelgrade.com
@@ -23,12 +23,12 @@ if ( ! defined('EXT')) {
 	define('EXT', '.php');
 }
 
-require 'core/bootstrap' . EXT;
+require 'core/bootstrap.php';
 
 // Include our helper array class.
-require 'includes/lib/class-customify-array' . EXT;
+require 'includes/lib/class-customify-array.php';
 
-$config = include 'plugin-config' . EXT;
+$config = include 'plugin-config.php';
 
 // set textdomain
 pixcustomify::settextdomain( 'customify' );
@@ -36,7 +36,7 @@ pixcustomify::settextdomain( 'customify' );
 // Ensure Test Data
 // ----------------
 
-$defaults = include 'plugin-defaults'.EXT;
+$defaults = include 'plugin-defaults.php';
 
 $current_data = get_option( $config['settings-key'] );
 
@@ -61,7 +61,7 @@ function PixCustomifyPlugin() {
 	 */
 	require_once plugin_dir_path( __FILE__ ) . 'class-pixcustomify.php';
 
-	$instance = PixCustomifyPlugin::instance( __FILE__, '1.7.4' );
+	$instance = PixCustomifyPlugin::instance( __FILE__, '2.0.2' );
 
 	return $instance;
 }

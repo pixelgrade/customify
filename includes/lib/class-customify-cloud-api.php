@@ -65,17 +65,33 @@ class Customify_Cloud_Api {
 	 * @return array|false
 	 */
 	public function fetch_design_assets() {
-		$request_data = apply_filters( 'customify_pixelgrade_cloud_request_data', array(
+		$request_data = array(
 			'site_url' => home_url('/'),
 			// We are only interested in data needed to identify the theme and eventually deliver only design assets suitable for it.
 			'theme_data' => $this->get_active_theme_data(),
 			// We are only interested in data needed to identify the plugin version and eventually deliver design assets suitable for it.
 			'site_data' => $this->get_site_data(),
-		), $this );
+			// Extra post statuses besides `publish`.
+			'post_status' => array(),
+		);
+
+		// Handle development and testing constants.
+		if ( defined('SM_FETCH_DRAFT_ASSETS') && true === SM_FETCH_DRAFT_ASSETS ) {
+			$request_data['post_status'][] = 'draft';
+		}
+		if ( defined('SM_FETCH_PRIVATE_ASSETS') && true === SM_FETCH_PRIVATE_ASSETS ) {
+			$request_data['post_status'][] = 'private';
+		}
+		if ( defined('SM_FETCH_FUTURE_ASSETS') && true === SM_FETCH_FUTURE_ASSETS ) {
+			$request_data['post_status'][] = 'future';
+		}
+
+		// Allow others to filter the data we send.
+		$request_data = apply_filters( 'customify_pixelgrade_cloud_request_data', $request_data, $this );
 
 		$request_args = array(
 			'method' => self::$externalApiEndpoints['cloud']['getDesignAssets']['method'],
-			'timeout'   => 4,
+			'timeout'   => 5,
 			'blocking'  => true,
 			'body'      => $request_data,
 			'sslverify' => false,
