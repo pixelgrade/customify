@@ -60,27 +60,6 @@ let FontPalettes = ( function( $, exports, wp ) {
         });
     };
 
-    const bindVariationChange = () => {
-        const paletteControlSelector = '.c-font-palette__control';
-        const $paletteControl = $( paletteControlSelector );
-        const variation = wp.customize( 'sm_font_palette_variation' )();
-
-        if ( _.isUndefined( variation ) || ! $paletteControl.length ) {
-            return;
-        }
-
-        $paletteControl.removeClass( 'active' );
-        $paletteControl.filter( '.variation-' + variation ).addClass( 'active' );
-        $( 'body' ).on( 'click', paletteControlSelector, function() {
-            let $obj = $( this ),
-                $target = $( $obj.data( 'target' ) );
-
-            $obj.siblings( paletteControlSelector ).removeClass( 'active' );
-            $obj.addClass( 'active' );
-            $target.prop( 'checked', true ).trigger( 'change' );
-        } );
-    };
-
     const alterConnectedFields = swapMap => {
 	    let optionsToShow = [];
         _.each( swapMap, function( fromArray, to ) {
@@ -260,20 +239,20 @@ let FontPalettes = ( function( $, exports, wp ) {
 
     // Alter connected fields of the master fonts controls depending on the selected palette variation.
     const reloadConnectedFields = () => {
-        const setting = wp.customize( 'sm_font_palette_variation' );
-
-        if ( _.isUndefined( setting ) ) {
-            return;
-        }
-
-        const variation = setting();
-
-        if ( ! window.fontPalettesVariations.hasOwnProperty( variation ) ) {
-            return;
-        }
+//        const setting = wp.customize( 'sm_font_palette_variation' );
+//
+//        if ( _.isUndefined( setting ) ) {
+//            return;
+//        }
+//
+//        const variation = setting();
+//
+//        if ( ! window.fontPalettesVariations.hasOwnProperty( variation ) ) {
+//            return;
+//        }
 
         unbindConnectedFields();
-        alterConnectedFields( fontPalettesVariations[variation] );
+//        alterConnectedFields( fontPalettesVariations[variation] );
         bindConnectedFields();
     };
 
@@ -330,13 +309,6 @@ let FontPalettes = ( function( $, exports, wp ) {
         createCurrentPaletteControls();
 	    reloadConnectedFields();
         updateCurrentPalette();
-        bindVariationChange();
-
-        // when variation is changed reload connected fields from cached version of customizer settings config
-        $( document ).on( 'change', '[name="_customize-radio-sm_font_palette_variation_control"]', function() {
-            reloadConnectedFields();
-	        resetSettings( masterSettingIds );
-        });
 
         $( document ).on( 'click', '.customify_preset.font_palette input', onPaletteChange );
     };
