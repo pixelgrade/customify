@@ -21,93 +21,6 @@ let FontPalettes = ( function( $, exports, wp ) {
         }
     };
 
-    const updateCurrentPalette = ( label ) => {
-        const $palette = $( '.c-font-palette' );
-
-        if ( ! $palette.length ) {
-            return;
-        }
-
-        const $current = $palette.find( '.fonts.current' );
-        const $next = $palette.find( '.fonts.next' );
-
-        label = label || 'Custom Style';
-        $palette.find( '.c-font-palette__name' ).text( label );
-
-        // apply the last animate set of fonts to the "current" font palette
-        _.each( masterSettingIds, function( setting_id ) {
-            const font = $next.find( '.' + setting_id ).css( 'font' );
-            $current.find( '.' + setting_id ).css( 'font', font );
-        });
-
-        // removing the "animate" class will put the "next" font palette out view
-        // so we can update the fonts in it
-        $palette.removeClass( 'animate' );
-
-        // update the fonts in the "next" palette with the new values
-        _.each( masterSettingIds, function( setting_id ) {
-            const setting = wp.customize( setting_id );
-
-            if ( typeof setting !== "undefined" ) {
-                $next.find( '.' + setting_id ).css( 'font', setting() );
-            }
-        });
-
-        // trigger transition to new font palette
-        setTimeout(function() {
-            $palette.addClass( 'animate' );
-            $palette.find( '.c-font-palette__control' ).css( 'font', wp.customize( 'sm_font_primary' )() );
-        });
-    };
-
-    const alterConnectedFields = swapMap => {
-	    let optionsToShow = [];
-        _.each( swapMap, function( fromArray, to ) {
-            if ( typeof wp.customize.settings.settings[to] !== "undefined" ) {
-                let newConnectedFields = [];
-                if ( fromArray instanceof Array ) {
-
-                    _.each( fromArray, function( from ) {
-                        if ( typeof window.settingsClone[from] !== "undefined" ) {
-                            let oldConnectedFields;
-                            if ( ! _.isUndefined( window.settingsClone[from]['connected_fields'] ) ) {
-	                            oldConnectedFields = Object.values( window.settingsClone[from]['connected_fields'] );
-                                newConnectedFields = newConnectedFields.concat( oldConnectedFields );
-                            }
-                        }
-                    } );
-
-	                newConnectedFields = Object.keys( newConnectedFields ).map( function(key) {
-		                return newConnectedFields[key];
-	                });
-                }
-                wp.customize.settings.settings[to]['connected_fields'] = newConnectedFields;
-
-
-	            if ( fromArray instanceof Array && fromArray.length && newConnectedFields.length ) {
-		            optionsToShow.push( to );
-	            }
-            }
-        } );
-
-        if ( optionsToShow.length ) {
-            let optionsSelector = '.' + optionsToShow.join(', .');
-            $('.c-font-palette .font').addClass('hidden').filter(optionsSelector).removeClass('hidden');
-        }
-    };
-
-    const resetSettings = settings => {
-        _.each( settings, function( setting_id ) {
-            const setting = wp.customize( setting_id );
-
-            if ( typeof setting !== "undefined" ) {
-                let value = setting();
-                setting.set( value + "ff" );
-                setting.set( value );
-            }
-        });
-    };
-
     const getConnectedFieldsCallback = function (parent_setting_data, parent_setting_id) {
         return function (new_value, old_value) {
             _.each(parent_setting_data.connected_fields, function (connected_field_data) {
@@ -176,8 +89,10 @@ let FontPalettes = ( function( $, exports, wp ) {
 
                     // The line height is determined by getting the value of the polynomial function determined by points.
                     if ( typeof fonts_logic.font_size_to_line_height_points !== "undefined" && _.isArray(fonts_logic.font_size_to_line_height_points)) {
-                        let f = linear(fonts_logic.font_size_to_line_height_points);
-                        newFontData['line_height'] = { value: Number(f(connected_field_data.font_size.value)).toPrecision(2) };
+                    	let result = regression.logarithmic( fonts_logic.font_size_to_line_height_points, { precision: 2 } );
+                        let fontsize = connected_field_data.font_size.value;
+                        let lineheight = result.predict( fontsize )[1];
+                        newFontData['line_height'] = { value: lineheight };
                     }
                 }
 
@@ -185,123 +100,6 @@ let FontPalettes = ( function( $, exports, wp ) {
                 setting.set(serializedNewFontData);
             });
         }
-    };
-
-    const help = {};
-
-	/**
-	 * Makes argument to be an array if it's not
-	 *
-	 * @param input
-	 * @returns {Array}
-	 */
-
-	help.makeItArrayIfItsNot = function (input) {
-		return Object.prototype.toString.call( input ) !== '[object Array]'
-			? [input]
-			: input
-	};
-
-	/**
-	 *
-	 * Utilizes bisection method to search an interval to which
-	 * point belongs to, then returns an index of left border
-	 * of the interval
-	 *
-	 * @param {Number} point
-	 * @param {Array} intervals
-	 * @returns {Number}
-	 */
-
-	help.findIntervalLeftBorderIndex = function (point, intervals) {
-		//If point is beyond given intervals
-		if (point < intervals[0])
-			return 0
-		if (point > intervals[intervals.length - 1])
-			return intervals.length - 1
-		//If point is inside interval
-		//Start searching on a full range of intervals
-		var indexOfNumberToCompare
-			, leftBorderIndex = 0
-			, rightBorderIndex = intervals.length - 1
-		//Reduce searching range till it find an interval point belongs to using binary search
-		while (rightBorderIndex - leftBorderIndex !== 1) {
-			indexOfNumberToCompare = leftBorderIndex + Math.floor((rightBorderIndex - leftBorderIndex)/2)
-			point >= intervals[indexOfNumberToCompare]
-				? leftBorderIndex = indexOfNumberToCompare
-				: rightBorderIndex = indexOfNumberToCompare
-		}
-		return leftBorderIndex
-	};
-
-	function evaluateLinear(pointsToEvaluate, functionValuesX, functionValuesY) {
-		var results = [];
-		pointsToEvaluate = help.makeItArrayIfItsNot(pointsToEvaluate);
-		pointsToEvaluate.forEach(function (point) {
-			var index = help.findIntervalLeftBorderIndex(point, functionValuesX);
-			if ( index === functionValuesX.length - 1) {
-				index--;
-            }
-			results.push(linearInterpolation(point, functionValuesX[index], functionValuesY[index], functionValuesX[index + 1], functionValuesY[index + 1]));
-		});
-		return results
-	}
-
-	/**
-	 *
-	 * Evaluates y-value at given x point for line that passes
-	 * through the points (x0,y0) and (y1,y1)
-	 *
-	 * @param x
-	 * @param x0
-	 * @param y0
-	 * @param x1
-	 * @param y1
-	 * @returns {Number}
-	 */
-	function linearInterpolation(x, x0, y0, x1, y1) {
-		var a = (y1 - y0) / (x1 - x0);
-		var b = -a * x0 + y0;
-		return a * x + b
-	}
-
-	const linear = function(points) {
-	    let xvalues = [];
-	    let yvalues = [];
-
-	    for (let i = 0; i < points.length; i++) {
-	        xvalues.push(i[0]);
-	        yvalues.push(i[1]);
-        }
-
-	    return function( x ) {
-		    if ( points.length === 0 ) {
-			    return 0;
-		    }
-		    return evaluateLinear([x], xvalues, yvalues)[0];
-        }
-    };
-
-    // Neville's algorithm for polynomial interpolation.
-    const interpolatingPolynomial = function (points) {
-        let n = points.length - 1, p;
-
-        p = function (i, j, x) {
-            if (i === j) {
-                return points[i][1];
-            }
-
-            return ((points[j][0] - x) * p(i, j - 1, x) +
-                (x - points[i][0]) * p(i + 1, j, x)) /
-                (points[j][0] - points[i][0]);
-        };
-
-        return function (x) {
-            if (points.length === 0) {
-                return 0;
-            }
-            return p(0, n, x);
-        };
     };
 
     const bindConnectedFields = function() {
@@ -334,43 +132,14 @@ let FontPalettes = ( function( $, exports, wp ) {
 
     // Alter connected fields of the master fonts controls depending on the selected palette variation.
     const reloadConnectedFields = () => {
-//        const setting = wp.customize( 'sm_font_palette_variation' );
-//
-//        if ( _.isUndefined( setting ) ) {
-//            return;
-//        }
-//
-//        const variation = setting();
-//
-//        if ( ! window.fontPalettesVariations.hasOwnProperty( variation ) ) {
-//            return;
-//        }
-
         unbindConnectedFields();
-//        alterConnectedFields( fontPalettesVariations[variation] );
         bindConnectedFields();
     };
 
-    const createCurrentPaletteControls = () => {
-        let $palette = $( '.c-font-palette' );
-
-        if ( ! $palette.length ) {
-            return;
-        }
-
-        let $fonts = $palette.find( '.fonts.next .font' );
-    };
-
     const onPaletteChange = function() {
-        let $label = $( this ).next( 'label' ).clone();
-        let label;
-
-        $label.find( '.preview__letter' ).remove();
-        label = $label.text();
-        $label.remove();
-
         // Take the fonts config for each setting and distribute it to each (master) setting.
         let data = $( this ).data( 'fonts_logic' );
+
         if ( ! _.isUndefined( data ) ) {
             $.each( data, function( setting_id, config ) {
                 set_field_fonts_logic_config( setting_id, config );
@@ -379,7 +148,6 @@ let FontPalettes = ( function( $, exports, wp ) {
 
         // In case this palette has values (options) attached to it, let it happen.
         $( this ).trigger( 'customify:preset-change' );
-        updateCurrentPalette( label );
     };
 
     const set_field_fonts_logic_config = function( setting_id, config ) {
@@ -401,9 +169,7 @@ let FontPalettes = ( function( $, exports, wp ) {
 
     const handlePalettes = () => {
         initializePalettes();
-        createCurrentPaletteControls();
 	    reloadConnectedFields();
-        updateCurrentPalette();
 
         $( document ).on( 'click', '.customify_preset.font_palette input', onPaletteChange );
     };

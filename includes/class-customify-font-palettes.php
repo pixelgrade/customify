@@ -82,7 +82,9 @@ class Customify_Font_Palettes {
 	 * Register Customizer admin scripts
 	 */
 	public function register_admin_customizer_scripts() {
+		wp_register_script( PixCustomifyPlugin()->get_slug() . '-regression', plugins_url( 'js/vendor/regression.js', PixCustomifyPlugin()->get_file() ), array(), PixCustomifyPlugin()->get_version() );
 		wp_register_script( PixCustomifyPlugin()->get_slug() . '-font-palettes', plugins_url( 'js/customizer/font-palettes.js', PixCustomifyPlugin()->get_file() ), array(
+			PixCustomifyPlugin()->get_slug() . '-regression',
 			'jquery',
 			PixCustomifyPlugin()->get_slug() . '-fontselectfields',
 		), PixCustomifyPlugin()->get_version() );
@@ -735,8 +737,6 @@ class Customify_Font_Palettes {
 						// "Generate" the graph to be used for font-size and line-height.
 						'font_size_to_line_height_points' => array(
 							array( 17, 1.7 ),
-							array( 20, 1.3 ),
-							array( 32, 1.3 ),
 							array( 48, 1.2 ),
 						),
 
@@ -769,7 +769,6 @@ class Customify_Font_Palettes {
 						'font_weights'     => array( 200, 400 ),
 						'font_size_to_line_height_points' => array(
 							array( 10, 1.6 ),
-							array( 12, 1.5 ),
 							array( 18, 1.5 )
 						),
 						'font_styles_intervals'      => array(
@@ -793,8 +792,7 @@ class Customify_Font_Palettes {
 						'font_family'      => 'Montserrat',
 						'font_weights'     => array( 200, '200italic', 700, '700italic' ),
 						'font_size_to_line_height_points' => array(
-							array( 15, 1.7 ),
-							array( 16, 1.8 ),
+							array( 15, 1.8 ),
 							array( 18, 1.7 ),
 						),
 
@@ -841,7 +839,6 @@ class Customify_Font_Palettes {
 						// "Generate" the graph to be used for font-size and line-height.
 						'font_size_to_line_height_points' => array(
 							array( 24, 1.25 ),
-							array( 44, 1.2 ),
 							array( 66, 1.15 ),
 						),
 
@@ -861,7 +858,7 @@ class Customify_Font_Palettes {
 						'font_family'      => 'Montserrat',
 						'font_weights'     => array( 'regular', 600 ),
 						'font_size_to_line_height_points' => array(
-							array( 14, 1.2 ),
+							array( 14, 1.3 ),
 							array( 16, 1.2 )
 						),
 						'font_styles_intervals'      => array(
@@ -904,7 +901,6 @@ class Customify_Font_Palettes {
 						'font_weights'     => array( 'regular', '400italic', 700, '700italic' ),
 						'font_size_to_line_height_points' => array(
 							array( 15, 1.7 ),
-							array( 17, 1.6 ),
 							array( 18, 1.5 ),
 						),
 
@@ -952,7 +948,6 @@ class Customify_Font_Palettes {
 						// "Generate" the graph to be used for font-size and line-height.
 						'font_size_to_line_height_points' => array(
 							array( 20, 1.55 ),
-							array( 26, 1.45 ),
 							array( 56, 1.25 ),
 						),
 
@@ -991,7 +986,6 @@ class Customify_Font_Palettes {
 						'font_weights'     => array( 200, '200italic', 500, '500italic' ),
 						'font_size_to_line_height_points' => array(
 							array( 14, 1.625 ),
-							array( 22, 1.55 ),
 							array( 24, 1.5 ),
 						),
 						'font_styles_intervals'      => array(
@@ -1021,9 +1015,8 @@ class Customify_Font_Palettes {
 						'font_family'      => 'Roboto',
 						'font_weights'     => array( 300, '300italic', 400, '400italic', 500, '500italic' ),
 						'font_size_to_line_height_points' => array(
-							array( 10, 1.6 ),
-							array( 16, 1.625 ),
-							array( 18, 1.75 ),
+							array( 14, 1.5 ),
+							array( 24, 1.45 ),
 						),
 
 						// Define how fonts will look based on their size
@@ -1084,8 +1077,6 @@ class Customify_Font_Palettes {
 						// "Generate" the graph to be used for font-size and line-height.
 						'font_size_to_line_height_points' => array(
 							array( 20, 1.55 ),
-							array( 28, 1.5 ),
-							array( 40, 1.35 ),
 							array( 65, 1.15 ),
 						),
 
