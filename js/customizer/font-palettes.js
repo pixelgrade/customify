@@ -16,8 +16,8 @@ let FontPalettes = ( function( $, exports, wp ) {
 
         // Create a stack of callbacks bound to parent settings to be able to unbind them
         // when altering the connected_fields attribute.
-        if ( typeof window.connectedFieldsCallbacks === "undefined" ) {
-            window.connectedFieldsCallbacks = {};
+        if ( typeof window.fontsConnectedFieldsCallbacks === "undefined" ) {
+            window.fontsConnectedFieldsCallbacks = {};
         }
     };
 
@@ -109,8 +109,8 @@ let FontPalettes = ( function( $, exports, wp ) {
                 let parent_setting = wp.customize( parent_setting_id );
 
                 if ( typeof parent_setting_data.connected_fields !== "undefined" ) {
-                    connectedFieldsCallbacks[parent_setting_id] = getConnectedFieldsCallback( parent_setting_data, parent_setting_id );
-                    parent_setting.bind( connectedFieldsCallbacks[parent_setting_id] );
+                    fontsConnectedFieldsCallbacks[parent_setting_id] = getConnectedFieldsCallback( parent_setting_data, parent_setting_id );
+                    parent_setting.bind( fontsConnectedFieldsCallbacks[parent_setting_id] );
                 }
             }
         } );
@@ -122,10 +122,10 @@ let FontPalettes = ( function( $, exports, wp ) {
                 let parent_setting_data = wp.customize.settings.settings[parent_setting_id];
                 let parent_setting = wp.customize(parent_setting_id);
 
-                if (typeof parent_setting_data.connected_fields !== "undefined" && typeof connectedFieldsCallbacks[parent_setting_id] !== "undefined") {
-                    parent_setting.unbind(connectedFieldsCallbacks[parent_setting_id]);
+                if (typeof parent_setting_data.connected_fields !== "undefined" && typeof fontsConnectedFieldsCallbacks[parent_setting_id] !== "undefined") {
+                    parent_setting.unbind(fontsConnectedFieldsCallbacks[parent_setting_id]);
                 }
-                delete connectedFieldsCallbacks[parent_setting_id];
+                delete fontsConnectedFieldsCallbacks[parent_setting_id];
             }
         } );
     };

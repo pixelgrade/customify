@@ -45,8 +45,8 @@ let ColorPalettes = ( function( $, exports, wp ) {
 
         // Create a stack of callbacks bound to parent settings to be able to unbind them
         // when altering the connected_fields attribute.
-        if ( typeof window.connectedFieldsCallbacks === "undefined" ) {
-            window.connectedFieldsCallbacks = {};
+        if ( typeof window.colorsConnectedFieldsCallbacks === "undefined" ) {
+            window.colorsConnectedFieldsCallbacks = {};
         }
 
         setupGlobalsDone = true;
@@ -177,16 +177,16 @@ let ColorPalettes = ( function( $, exports, wp ) {
                 let parent_setting = wp.customize(parent_setting_id);
 
                 if ( ! _.isUndefined( parent_setting_data.connected_fields ) ) {
-                    window.connectedFieldsCallbacks[parent_setting_id] = getMasterFieldCallback(parent_setting_data, parent_setting_id);
-                    parent_setting.bind(window.connectedFieldsCallbacks[parent_setting_id]);
+                    window.colorsConnectedFieldsCallbacks[parent_setting_id] = getMasterFieldCallback(parent_setting_data, parent_setting_id);
+                    parent_setting.bind(window.colorsConnectedFieldsCallbacks[parent_setting_id]);
 
                     _.each( parent_setting_data.connected_fields, function( connected_field_data ) {
                         let connected_setting_id = connected_field_data.setting_id;
                         let connected_setting = wp.customize(connected_setting_id);
 
                         if ( typeof connected_setting !== "undefined" ) {
-                            window.connectedFieldsCallbacks[connected_setting_id] = toggleAlteredClassOnMasterControls;
-                            connected_setting.bind(window.connectedFieldsCallbacks[connected_setting_id]);
+                            window.colorsConnectedFieldsCallbacks[connected_setting_id] = toggleAlteredClassOnMasterControls;
+                            connected_setting.bind(window.colorsConnectedFieldsCallbacks[connected_setting_id]);
                         }
                     } );
                 }
@@ -195,11 +195,11 @@ let ColorPalettes = ( function( $, exports, wp ) {
     };
 
     const unbindConnectedFields = function() {
-        _.each( window.connectedFieldsCallbacks, function( callback, setting_id ) {
+        _.each( window.colorsConnectedFieldsCallbacks, function( callback, setting_id ) {
             let setting = wp.customize(setting_id);
             setting.unbind( callback );
         } );
-        window.connectedFieldsCallbacks = {};
+        window.colorsConnectedFieldsCallbacks = {};
     };
 
     // alter connected fields of the master colors controls depending on the selected palette variation
@@ -780,7 +780,9 @@ let ColorPalettes = ( function( $, exports, wp ) {
             tempSettings = swapConnectedFields( tempSettings, dark_mmode_variation );
         }
 
-		wp.customize.settings.settings = tempSettings;
+		_.each( masterSettingIds, function( masterSettingId ) {
+			wp.customize.settings.settings[masterSettingId] = tempSettings[masterSettingId];
+		});
     };
 
     const getPixelsFromColors = function( colors ) {
@@ -789,7 +791,7 @@ let ColorPalettes = ( function( $, exports, wp ) {
             pixels.push( hex2rgba( color ) );
         });
         return pixels;
-    }
+    };
 
     const getAveragePixel = function( pixels ) {
         var averagePixel = {
