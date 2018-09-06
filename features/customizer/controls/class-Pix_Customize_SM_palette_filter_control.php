@@ -29,7 +29,9 @@ class Pix_Customize_SM_palette_filter_Control extends Pix_Customize_Control {
                     <?php checked( $this->value(), $value, true ); ?>
                 >
 				<label for="<?php echo esc_attr( $input_id . '-radio-' . $value ); ?>">
-                    <span class="filter-label"> <?php echo esc_html( $label ); ?> </span>
+                    <div class="filter-label">
+                        <span><?php echo esc_html( $label ); ?></span>
+                    </div>
 
                     <?php
                     $master_color_controls_ids = [
@@ -48,11 +50,8 @@ class Pix_Customize_SM_palette_filter_Control extends Pix_Customize_Control {
                         foreach ( $master_color_controls_ids as $setting_id ) {
                         $current_palette .=
                         '<div class="color ' . $setting_id . '" data-setting="' . $setting_id . '">' . PHP_EOL .
-                            '<div class="picker">' .
-                                '<div class="disc"></div>'.
-                                '<i></i>'.
-                                '</div>' . PHP_EOL .
-                            '</div>' . PHP_EOL;
+                            '<div class="picker"></div>' . PHP_EOL .
+                        '</div>' . PHP_EOL;
                         }
                     $current_palette .= '</div>';
 

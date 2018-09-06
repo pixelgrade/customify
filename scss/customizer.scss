@@ -2568,14 +2568,24 @@ input.c-color-palette__input[class] {
 .sm-palette-filter {
 
 	.colors {
-		border-radius: 6px;
-		padding: 10px 10px;
-		margin-bottom: 10px;
-		border: 1px solid transparent;
+		width: auto;
+		height: auto;
 
-		&:hover {
-			border-color: #DDD;
-			background-color: #EEE;
+		padding: 10px 10px;
+		border-radius: 999em;
+	}
+
+	.picker:after {
+		box-shadow: inset 0 0 3px 0 rgba(0, 0, 0, 0.2);
+	}
+
+	> label {
+		position: relative;
+		display: block;
+		margin: 0 0 10px;
+
+		&:hover .filter-label {
+			opacity: 1;
 		}
 	}
 
@@ -2584,13 +2594,60 @@ input.c-color-palette__input[class] {
 	}
 
 	.filter-label {
-		display: none;
+		position: absolute;
+		top: 0;
+		left: 0;
+		z-index: 10;
+
+		width: 100%;
+		height: 100%;
+
+		display: flex;
+		align-items: center;
+		justify-content: center;
+
+		opacity: 0;
+		transition: opacity .2s ease-out;
+
+		span {
+			position: relative;
+			z-index: 20;
+		}
+
+		&:after {
+			content: "";
+			display: block;
+
+			position: absolute;
+			top: 0;
+			left: 0;
+			z-index: 10;
+
+			width: 100%;
+			height: 100%;
+
+			background-color: #ffffff;
+			box-shadow: #d6e0e5 0 0 0 1px;
+			border-radius: 999em;
+		}
 	}
 
-	> input:checked + label .colors {
-		border-color: #DDD;
-		background-color: #FAFAFA;
+	> input:checked + label {
+
+		.filter-label:after {
+			background-color: #f7f9fa;
+			box-shadow: none;
+		}
+
+		.colors {
+			background-color: #f7f9fa;
+			box-shadow: #57ABD5 0 0 0 2px;
+		}
 	}
+}
+
+.customize-control-sm_palette_filter .customize-control-title {
+	display: none;
 }
 
 // FONT PALETTES OVERWRITES

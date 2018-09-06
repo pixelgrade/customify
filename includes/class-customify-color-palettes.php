@@ -186,9 +186,9 @@ class Customify_Color_Palettes {
 						'greyish'   => esc_html__( 'Greyish', 'customify' ),
 //						 'warm'      => esc_html__( 'Warming', 'customify' ),
 //						 'cold'      => esc_html__( 'Cooling', 'customify' ),
-						 'sierra'    => esc_html__( 'Sierra', 'customify' ),
-						 'mayfair'   => esc_html__( 'Mayfair', 'customify' ),
-						 'dumb'      => esc_html__( 'Dumb', 'customify' ),
+//						 'sierra'    => esc_html__( 'Sierra', 'customify' ),
+//						 'mayfair'   => esc_html__( 'Mayfair', 'customify' ),
+//						 'dumb'      => esc_html__( 'Dumb', 'customify' ),
 					),
 				),
 				'sm_color_primary'           => array(

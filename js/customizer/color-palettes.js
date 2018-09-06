@@ -668,7 +668,8 @@ let ColorPalettes = ( function( $, exports, wp ) {
 
         optionsSelector = '.' + optionsToShow.join(', .');
 
-        $( '.c-color-palette .color' ).addClass( 'hidden' ).filter( optionsSelector ).removeClass( 'hidden' )
+        $( '.sm-palette-filter .color' ).addClass( 'hidden' ).filter( optionsSelector ).removeClass( 'hidden' );
+	    $( '.c-color-palette .color' ).addClass( 'hidden' ).filter( optionsSelector ).removeClass( 'hidden' );
         $( '.customify_preset.color_palette .palette__item' ).addClass( 'hidden' ).filter( optionsSelector ).removeClass( 'hidden' );
     }, 30 );
 
