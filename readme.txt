@@ -47,6 +47,7 @@ With [Customify](https://github.com/pixelgrade/customify), developers can easily
 
 = 2.1.0 =
 * This new version of Customify lets you conveniently change the design of your site with font palettes. Easy as pie.
+* Added previews for color palette filters.
 
 = 2.0.2 =
 * Fixed bug where no CSS was output for some settings with default value.
