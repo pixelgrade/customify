@@ -450,7 +450,7 @@ let ColorPalettes = ( function( $, exports, wp ) {
                     }
 
 	                setPalettesOnConnectedFields();
-                    buildColorMatrix();
+//                    buildColorMatrix();
                 },
             } );
 
@@ -837,7 +837,7 @@ let ColorPalettes = ( function( $, exports, wp ) {
 
     const reinitializeConnectedFields = () => {
         reloadConnectedFields();
-        buildColorMatrix();
+//        buildColorMatrix();
         unbindConnectedFields();
         bindConnectedFields();
 	    refreshCurrentPaletteControl();
@@ -918,7 +918,7 @@ let ColorPalettes = ( function( $, exports, wp ) {
 	    unbindConnectedFields();
 	    bindConnectedFields();
 	    refreshCurrentPaletteControl();
-	    buildColorMatrix();
+//	    buildColorMatrix();
 
 	    bindEvents();
     } );
