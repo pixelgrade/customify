@@ -2456,6 +2456,8 @@ input.c-color-palette__input[class] {
 	}
 
 	[id="customize-control-sm_current_color_palette_control"] ~ * {
+
+
 		display: none !important;
 	}
 
@@ -2734,4 +2736,82 @@ input.c-color-palette__input[class] {
       border-color: #5AB9E8;
     }
   }
+}
+
+
+.c-color-palette__form {
+	canvas {
+		display: none;
+	}
+}
+
+.c-color-palette {
+	position: relative;
+
+	.c-color-palette__form-overlay,
+	.c-color-palette__form-overlay:after {
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+
+	.c-color-palette__form {
+
+		* {
+			pointer-events: none;
+		}
+
+		img {
+			display: none;
+			margin-bottom: 20px;
+		}
+	}
+
+	.c-color-palette__form-overlay {
+		opacity: 0;
+		z-index: 20;
+
+		span {
+			position: relative;
+		}
+	}
+
+	.is-dragging .c-color-palette__form-overlay,
+	.is-dragover .c-color-palette__form-overlay {
+		opacity: 1;
+	}
+
+	.is-dragover .c-color-palette__form-overlay:before {
+		background-color: #ffffff;
+	}
+
+	.c-color-palette__form-overlay:before,
+	.c-color-palette__form-overlay span {
+		z-index: 30;
+	}
+
+	.c-color-palette__form-overlay:before {
+		content: "";
+		display: block;
+		position: absolute;
+		top: 10px;
+		right: 10px;
+		bottom: 10px;
+		left: 10px;
+		border-radius: 10px;
+		border: 2px dashed;
+	}
+
+	.c-color-palette__form-overlay:after {
+		content: "";
+		display: block;
+		background: #f7f9fa;
+		opacity: 0.9;
+	}
 }

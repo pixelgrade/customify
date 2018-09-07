@@ -76,9 +76,15 @@ class Customify_Color_Palettes {
 	 * Register Customizer admin scripts
 	 */
 	public function register_admin_customizer_scripts() {
+		wp_register_script( PixCustomifyPlugin()->get_slug() . '-color-palettes-drag-drop', plugins_url( 'js/customizer/color-palettes-drag-drop.js', PixCustomifyPlugin()->get_file() ), array( 'jquery' ), PixCustomifyPlugin()->get_version() );
 		wp_register_script( PixCustomifyPlugin()->get_slug() . '-swap-values', plugins_url( 'js/customizer/swap-values.js', PixCustomifyPlugin()->get_file() ), array( 'jquery' ), PixCustomifyPlugin()->get_version() );
 		wp_register_script( PixCustomifyPlugin()->get_slug() . '-color-palettes-variations', plugins_url( 'js/customizer/color-palettes-variations.js', PixCustomifyPlugin()->get_file() ), array( 'jquery' ), PixCustomifyPlugin()->get_version() );
-		wp_register_script( PixCustomifyPlugin()->get_slug() . '-color-palettes', plugins_url( 'js/customizer/color-palettes.js', PixCustomifyPlugin()->get_file() ), array( 'jquery', PixCustomifyPlugin()->get_slug() . '-color-palettes-variations', PixCustomifyPlugin()->get_slug() . '-swap-values' ), PixCustomifyPlugin()->get_version() );
+		wp_register_script( PixCustomifyPlugin()->get_slug() . '-color-palettes', plugins_url( 'js/customizer/color-palettes.js', PixCustomifyPlugin()->get_file() ), array(
+			'jquery',
+			PixCustomifyPlugin()->get_slug() . '-color-palettes-drag-drop',
+			PixCustomifyPlugin()->get_slug() . '-color-palettes-variations',
+			PixCustomifyPlugin()->get_slug() . '-swap-values' ),
+		PixCustomifyPlugin()->get_version() );
 	}
 
 	/**
@@ -520,14 +526,19 @@ class Customify_Color_Palettes {
                   'type'       => 'html',
                   'setting_id' => 'sm_current_color_palette',
                   'html'       =>
-                      '<div class="c-color-palette">' . "\n" .
-                      '<div class="c-color-palette__colors">' . $current_palette . '</div>' . "\n" .
-                      '<div class="sm_color_matrix"></div>' . "\n" .
-                      '</div>' . "\n" .
-                      '<div class="sm-tabs">' . "\n" .
-	                      '<div class="sm-tabs__item" data-target="palettes">' . esc_html__( 'Palettes', 'customify' ) . '</div>' . "\n" .
-	                      '<div class="sm-tabs__item" data-target="filters">' . esc_html__( 'Filters', 'customify' ) . '</div>' . "\n" .
-	                      '<div class="sm-tabs__item" data-target="customize">' . esc_html__( 'Customize', 'customify' ) . '</div>' . "\n" .
+	                  '<div class="c-color-palette">' . PHP_EOL .
+		                  '<form class="c-color-palette__form" method="post" action="">'  . PHP_EOL .
+			                  '<canvas id="color-palette-canvas"></canvas>' .PHP_EOL .
+			                  '<img src="" alt="" id="color-palette-output-image" />' .PHP_EOL .
+			                  '<div class="c-color-palette__form-overlay"><span>' . esc_html__( 'Drag image here', 'customify' ) . '</span></div>' .
+			                  '<div class="c-color-palette__colors">' . $current_palette . '</div>' . PHP_EOL .
+			                  '<div class="sm_color_matrix"></div>' . PHP_EOL .
+		                  '</div>' . PHP_EOL .
+	                  '</form>' . PHP_EOL .
+                      '<div class="sm-tabs">' . PHP_EOL .
+	                      '<div class="sm-tabs__item" data-target="palettes">' . esc_html__( 'Palettes', 'customify' ) . '</div>' . PHP_EOL .
+	                      '<div class="sm-tabs__item" data-target="filters">' . esc_html__( 'Filters', 'customify' ) . '</div>' . PHP_EOL .
+	                      '<div class="sm-tabs__item" data-target="customize">' . esc_html__( 'Customize', 'customify' ) . '</div>' . PHP_EOL .
                       '</div>',
               ),
               'sm_palettes_description'  => array(
