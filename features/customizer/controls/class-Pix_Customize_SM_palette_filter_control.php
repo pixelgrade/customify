@@ -34,7 +34,7 @@ class Pix_Customize_SM_palette_filter_Control extends Pix_Customize_Control {
                     </div>
 
                     <?php
-                    $master_color_controls_ids = [
+                    $master_color_controls_ids = array(
 	                    "sm_color_primary",
 	                    "sm_color_secondary",
 	                    "sm_color_tertiary",
@@ -44,7 +44,7 @@ class Pix_Customize_SM_palette_filter_Control extends Pix_Customize_Control {
 	                    "sm_light_primary",
 	                    "sm_light_secondary",
 	                    "sm_light_tertiary"
-                    ];
+                    );
 
                     $current_palette = '<div class="colors">';
                         foreach ( $master_color_controls_ids as $setting_id ) {
