@@ -320,8 +320,8 @@ class Customify_Font_Palettes {
 	 * @return bool
 	 */
 	public function is_supported() {
-		// For now we will only use the fact that Style Manager is supported.
-		return apply_filters( 'customify_font_palettes_are_supported', Customify_Style_Manager::instance()->is_supported() );
+		$has_support = (bool) current_theme_supports( 'style_manager_font_palettes' );
+		return apply_filters( 'style_manager_font_palettes_are_supported', $has_support );
 	}
 
 	/**
