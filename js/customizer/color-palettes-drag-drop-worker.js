@@ -336,8 +336,6 @@ addEventListener( 'message', function(event) {
     var colorArray = rgbArray.filter( filterColor );
     var darkArray = rgbArray.filter( filterDark );
 
-
-
     var colors = getAveragePixelFromBuckets( getClusterBuckets( colorArray ) );
     colors.sort(function(a, b) {
         return b.count - a.count
@@ -355,8 +353,16 @@ addEventListener( 'message', function(event) {
 
     lightArray = [].concat.apply([], lightArray);
 
-    var light = orderColorsBy( getAveragePixelFromBuckets( getClusterBuckets( lightArray ) ), 'lightness' );
+    var light = orderColorsBy( getAveragePixelFromBuckets( getClusterBuckets( lightArray ) ), 'saturation' );
+
+    light = light.map( function(color) {
+        return color;
+    } );
+
     var palette = [].concat.apply([], [colors,dark,light]);
+
+    console.trace();
+
     sendPalette( 'Palette', palette );
 });
 

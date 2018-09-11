@@ -37,6 +37,16 @@
     return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
   }
 
+var w = new Worker("../wp-content/plugins/customify/js/customizer/color-palettes-drag-drop-worker.js");
+
+w.onmessage = function(event) {
+  var type = event.data.type;
+
+  if ( 'palette' === type ) {
+   outputPalette( event.data );
+  }
+};
+
 function outputPalette( data ) {
   var pixels = data.colors;
   var colors = [];
@@ -57,8 +67,6 @@ function outputPalette( data ) {
 
     colors.push(color);
   }
-
-  console.log(colors);
 
   $fields.filter( '.sm_color_primary' ).iris( 'color', colors[0] );
   $fields.filter( '.sm_color_secondary' ).iris( 'color', colors[1] );
@@ -106,6 +114,25 @@ function outputPalette( data ) {
         $form.removeClass( 'is-dragover is-dragging' );
       });
 
+      var img = document.getElementById('color-palette-output-image');
+      var canvas = document.getElementById('color-palette-canvas');
+      var context = canvas.getContext('2d');
+
+      img.addEventListener('load', function() {
+        canvas.width = 400;
+        canvas.height = canvas.width * img.height / img.width;
+        context.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+        var imageData = context.getImageData(0, 0, canvas.width, canvas.height).data;
+
+        w.postMessage({
+          type: 'image',
+          imageData: imageData,
+          width: canvas.width,
+          height: canvas.height
+        });
+      });
+
       $form.on('drop', function(e) {
           var files = e.originalEvent.dataTransfer.files;
 
@@ -113,41 +140,10 @@ function outputPalette( data ) {
           if (FileReader && files && files.length) {
               var fr = new FileReader();
               fr.onload = function () {
-                var img = document.getElementById('color-palette-output-image');
-
                 img.src = fr.result;
                 $(img).show();
-                var canvas = document.getElementById('color-palette-canvas');
-                var context = canvas.getContext('2d');
-
-                img.addEventListener('load', function() {
-                  canvas.width = 400;
-                  canvas.height = canvas.width * img.height / img.width;
-                  context.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-                  var imageData = context.getImageData(0, 0, canvas.width, canvas.height).data;
-                  var w = new Worker("../wp-content/plugins/customify/js/customizer/color-palettes-drag-drop-worker.js");
-
-                  w.postMessage({
-                    type: 'image',
-                    imageData: imageData,
-                    width: canvas.width,
-                    height: canvas.height
-                  });
-
-                  w.onmessage = function(event) {
-                    var type = event.data.type;
-
-                    if ( 'palette' === type ) {
-                     outputPalette( event.data );
-                    }
-
-                  };
-
-                });
               }
               fr.readAsDataURL(files[0]);
-
           }
 
           // Not supported
