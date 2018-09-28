@@ -135,25 +135,9 @@ $background-hover 	: #f5fcff;
 	.customize-section-title {
 		margin-top: -$container-spacing;
 		margin-right: -$container-spacing;
-		// margin-left: -$container-spacing;
-	}
-
-	.control-panel-content {
-		.control-section:nth-child(2),
-		.control-section:nth-child(3) {
-			border-top: none;
-		}
-
-		// Select the Second to Last Element
-		// https://css-tricks.com/useful-nth-child-recipies/
-		.control-section:nth-last-child(2) {
-			// border-bottom: 1px solid $borders;
-		}
 	}
 
 	#accordion-section-add_menu {
-		// text-align: right;
-		// overflow: visible;
 		border-bottom: none;
 
 		.add-menu-toggle {
@@ -2270,21 +2254,6 @@ input.c-color-palette__input[class] {
 		  margin: 0 0 15px 0;
 		}
 	}
-
-		// Theme Options Spacing between Sections
-		li[id$="[general]"],
-		li[id$="[footer_section]"] {
-			border-bottom: 1px solid #ddd;
-			border-left: none;
-			border-right: none;
-			margin: 0 0 15px 0;
-		}
-
-		li[id$="[general]"] {
-			h3.accordion-section-title {
-				border-top: none;
-			}
-		}
 }
 
 .color .disc {
@@ -2692,4 +2661,11 @@ input.c-color-palette__input[class] {
 	.label__inner {
 		display: none;
 	}
+}
+
+// remove ugly top border top
+#customize-theme-controls .control-panel-content:not(.control-panel-nav_menus) .control-section:nth-child(2),
+#customize-theme-controls .control-panel-nav_menus .control-section-nav_menu,
+#customize-theme-controls .control-section-nav_menu_locations .accordion-section-title {
+	border-top: 0;
 }
