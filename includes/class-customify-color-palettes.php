@@ -773,6 +773,11 @@ class Customify_Color_Palettes {
 
 		$total = $colors + $dark;
 
+		// Avoid division by zero.
+		if ( 0 === $total ) {
+			$total = 1;
+		}
+
 		return round( $colors * 100 / $total, 2 );
 	}
 
