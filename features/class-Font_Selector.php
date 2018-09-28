@@ -392,6 +392,10 @@ class Customify_Font_Selector {
 					}
 				}
 
+				if ( $value['font_size']['unit'] == 'em' && $value['font_size']['value'] >= 9 ) {
+					$value['font_size']['unit'] = 'px';
+                }
+
 				$this->display_property( 'font-size', $font_size, $unit );
 			}
 
