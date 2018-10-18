@@ -1102,7 +1102,14 @@ class Customify_Font_Palettes {
 						'font_styles_intervals'      => array(
 							array(
 								'start'          => 0,
+								'end'          	 => 15,
 								'font_weight'    => 400,
+								'letter_spacing' => '0em',
+								'text_transform' => 'none',
+							),
+							array(
+								'start'          => 15,
+								'font_weight'    => 700,
 								'letter_spacing' => '0em',
 								'text_transform' => 'none',
 							),
