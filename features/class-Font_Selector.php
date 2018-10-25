@@ -123,7 +123,7 @@ class Customify_Font_Selector {
 		return $to_return;
 	}
 
-	function output_font_dynamic_style() {
+	function output_font_dynamic_style( $editor = false ) {
 
 		/** @var PixCustomifyPlugin $local_plugin */
 		$local_plugin = PixCustomifyPlugin();
@@ -227,9 +227,16 @@ class Customify_Font_Selector {
 		}
 
 		foreach ( self::$typo_settings as $key => $font ) {
-			if ( empty( $font['selector'] ) || empty( $font['value'] ) ) {
+			$selector = $font['selector'];
+
+			if ( ! empty( $editor ) ) {
+				$selector = $font['editor_selector'];
+			}
+
+			if ( empty( $selector ) || empty( $font['value'] ) ) {
 				continue;
 			}
+
 			$value = $this->maybe_decode_value( $font['value'] );
 
 			if ( $value === null ) {
@@ -246,7 +253,7 @@ class Customify_Font_Selector {
 				$value = $local_plugin->standardize_non_associative_font_default( $value );
 			}
 
-			$this->output_font_style( $key, $font, $value );
+			$this->output_font_style( $key, $font, $value, $editor );
 		}
 
 		// in customizer the CSS is printed per option, in front-end we need to print them in bulk
@@ -294,7 +301,13 @@ class Customify_Font_Selector {
 		<?php
 	}
 
-	function output_font_style( $field, $font, $value ) {
+	function output_font_style( $field, $font, $value, $editor ) {
+		$selector = $font['selector'];
+
+		if ( ! empty( $editor ) ) {
+			$selector = $font['editor_selector'];
+		}
+
 		$value = $this->validate_font_values( $value );
 		// some sanitizing
 		$load_all_weights = false;
@@ -316,7 +329,7 @@ class Customify_Font_Selector {
 			$output = call_user_func( $font['callback'], $value, $font );
 			echo $output;
 		} else {
-			echo $font['selector'] . " {" . PHP_EOL;
+			echo $selector . " {" . PHP_EOL;
 
 			// First handle the case where we have the font-family in the selected variant (usually this means a custom font from our Fonto plugin)
 			if ( ! empty( $selected_variant ) && is_array( $selected_variant ) && ! empty( $selected_variant['font-family'] ) ) {
