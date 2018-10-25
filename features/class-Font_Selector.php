@@ -405,7 +405,7 @@ class Customify_Font_Selector {
 					}
 				}
 
-				if ( $value['font_size']['unit'] == 'em' && $value['font_size']['value'] >= 9 ) {
+				if ( isset( $value['font_size']['unit'] ) && $value['font_size']['unit'] == 'em' && $value['font_size']['value'] >= 9 ) {
 					$value['font_size']['unit'] = 'px';
                 }
 
