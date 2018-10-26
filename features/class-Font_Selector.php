@@ -227,11 +227,11 @@ class Customify_Font_Selector {
 		}
 
 		foreach ( self::$typo_settings as $key => $font ) {
-			$selector = $font['selector'];
-
-			if ( ! empty( $editor ) ) {
-				$selector = $font['editor_selector'];
+			if ( ! isset( $font['selector'] ) ) {
+				continue;
 			}
+
+			$selector = apply_filters( 'customify_font_css_selector', $font['selector'], $font );
 
 			if ( empty( $selector ) || empty( $font['value'] ) ) {
 				continue;
@@ -302,11 +302,7 @@ class Customify_Font_Selector {
 	}
 
 	function output_font_style( $field, $font, $value, $editor ) {
-		$selector = $font['selector'];
-
-		if ( ! empty( $editor ) ) {
-			$selector = $font['editor_selector'];
-		}
+		$selector = apply_filters( 'customify_font_css_selector', $font['selector'], $font );
 
 		$value = $this->validate_font_values( $value );
 		// some sanitizing
