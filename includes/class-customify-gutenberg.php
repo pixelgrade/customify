@@ -37,6 +37,7 @@ class Customify_Gutenberg {
 	public static $gutenbergy_selector_regex = '/^(\.edit-post-visual-editor|\.editor-block-list__block).*$/';
 	public static $root_regex = '/^(body|html).*$/';
 	public static $title_regex = '/^(h1|h1\s+.*|\.single\s*\.entry-title.*|\.entry-title.*|\.page-title.*|\.article__?title.*)$/';
+	/* Regexes based on which we will ignore selectors = do not include them in the selector list for a certain rule. */
 	public static $excluded_selectors_regex = array(
 		// We don't want to mess with buttons as we have a high likelihood of messing with the Gutenberg toolbar.
 		'/^\s*button/',
@@ -50,6 +51,7 @@ class Customify_Gutenberg {
 		'/\.c-/',
 		'/\.o-/',
 		'/\.site-/',
+		'/\.card/',
 
 		'/^\s*\.archive/',
 		'/^\s*\.search/',
@@ -59,6 +61,8 @@ class Customify_Gutenberg {
 		'/^\s*\.site-/',
 		'/\.search/',
 		'/\.page/',
+		'/\.attachment/',
+		'/\.mobile/',
 
 		'/^\s*\.sticky/',
 		'/\.custom-logo-link/',
@@ -79,6 +83,7 @@ class Customify_Gutenberg {
 		'/\.posted-on/',
 		'/\.cat-links/',
 		'/\.posted-by/',
+		'/\.more-link/',
 
 		'/jetpack/',
 		'/wpforms/',
