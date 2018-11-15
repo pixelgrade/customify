@@ -11,7 +11,7 @@ $accent 				: #3677bd;
 $dark 					: #232527;
 $gray 					: #303235;
 $light 					: #cbcfd4;
-$lighter 				: #3b3f45; //borders
+$lighter 				: #3b3f45; // borders
 $descriptions			: #4d7b90;
 
 $borders                :#e0e8ef;
@@ -2392,7 +2392,7 @@ input.c-color-palette__input[class] {
 	justify-content: space-between;
 	padding: 0 16px;
 	text-align: center;
-	
+
 	border-bottom: 1px solid #DFE8EF;
 
 	&__item {
@@ -2400,12 +2400,12 @@ input.c-color-palette__input[class] {
 		margin-bottom: -1px;
 		// flex-grow: 1;
 		flex-basis: 31%;
-		
+
 		font-size: 14px;
 		// font-weight: 500;
 		color: $blue-dark;
 		opacity: 0.7;
-		
+
 		border-bottom: 3px solid transparent;
 		cursor: pointer;
 
@@ -2445,7 +2445,7 @@ input.c-color-palette__input[class] {
 	}
 
 	[id="customize-control-sm_current_color_palette_control"] ~ * {
-		
+
 
 		display: none !important;
 	}

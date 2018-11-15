@@ -127,6 +127,14 @@ class PixCustomifyPlugin {
 	public $style_manager = null;
 
 	/**
+	 * Gutenberg class object.
+	 * @var Customify_Gutenberg
+	 * @access  public
+	 * @since   2.2.0
+	 */
+	public $gutenberg = null;
+
+	/**
 	 * Minimal Required PHP Version
 	 * @var string
 	 * @access  private
@@ -158,7 +166,13 @@ class PixCustomifyPlugin {
 		/* Initialize the Style Manager logic. */
 		require_once( $this->get_base_path() . 'includes/class-customify-style-manager.php' );
 		if ( is_null( $this->style_manager ) ) {
-			$this->style_manager = Customify_Style_Manager::instance( $this );
+			$this->style_manager = Customify_Style_Manager::instance();
+		}
+
+		/* Initialize the Gutenberg logic. */
+		require_once( $this->get_base_path() . 'includes/class-customify-gutenberg.php' );
+		if ( is_null( $this->gutenberg ) ) {
+			$this->gutenberg = Customify_Gutenberg::instance();
 		}
 
 		// Register all the needed hooks
@@ -532,7 +546,7 @@ class PixCustomifyPlugin {
 			}
 
 			if ( isset( $option['type'] ) && $option['type'] === 'custom_background' ) {
-				$option['value']         = $this->get_option( $option_id );
+				$option['value'] = $this->get_option( $option_id );
 				$custom_css .= $this->process_custom_background_field_output( $option_id, $option ) . PHP_EOL;
 			}
 		}
@@ -545,22 +559,33 @@ class PixCustomifyPlugin {
 					continue;
 				}
 
-				$custom_css .= PHP_EOL . '@media ' . $media_query . " { " . PHP_EOL . PHP_EOL;
+				$media_query_custom_css = '';
 
 				foreach ( $properties as $key => $property ) {
 					$property_settings = $property['property'];
 					$property_value    = $property['value'];
-					$custom_css .= "\t" . $this->proccess_css_property( $property_settings, $property_value ) . PHP_EOL;
+					$css_output = $this->process_css_property( $property_settings, $property_value );
+					if ( ! empty( $css_output ) ) {
+						$media_query_custom_css .= "\t" . $css_output . PHP_EOL;
+					}
 				}
 
-				$custom_css .= "}" . PHP_EOL;
+				if ( ! empty( $media_query_custom_css ) ) {
+					$media_query_custom_css = PHP_EOL . '@media ' . $media_query . " { " . PHP_EOL . PHP_EOL . $custom_css . "}" . PHP_EOL;
+				}
+
+				if ( ! empty( $media_query_custom_css ) ) {
+					$custom_css .= $media_query_custom_css;
+				}
 
 			}
 		}
 		?>
-		<style id="customify_output_style">
-		<?php echo apply_filters( 'customify_dynamic_style', $custom_css ); ?>
-		</style><?php
+
+<style id="customify_output_style">
+<?php echo apply_filters( 'customify_dynamic_style', $custom_css ); ?>
+</style>
+<?php
 
 		/**
 		 * from now on we output only style tags only for the preview purpose
@@ -578,7 +603,7 @@ class PixCustomifyPlugin {
 
 				<style id="custom_background_output_for_<?php echo sanitize_html_class( $option_id ); ?>">
 					<?php
-					if ( isset( $custom_background_output ) && ! empty( $custom_background_output )) {
+					if ( ! empty( $custom_background_output )) {
 						echo $custom_background_output;
 					} ?>
 				</style>
@@ -602,7 +627,10 @@ class PixCustomifyPlugin {
 					}
 
 					if ( isset( $properties_set['selector'] ) && isset( $properties_set['property'] ) ) {
-						echo $this->proccess_css_property($properties_set, $this_value) . PHP_EOL;
+						$css_output = $this->process_css_property($properties_set, $this_value);
+						if ( ! empty( $css_output ) ) {
+							echo $css_output . PHP_EOL;
+						}
 					}
 
 					if ( isset( $properties_set['media'] ) && ! empty( $properties_set['media'] ) ) {
@@ -744,13 +772,16 @@ class PixCustomifyPlugin {
 		<?php } ?>
 		<style id="customify_typography_output_style">
 			<?php
-			foreach ( $this->typo_settings as $key => $font ) {
+
+			foreach ( $this->typo_settings as $font ) {
+				$selector = apply_filters( 'customify_typography_css_selector', $font['selector'], $font );
+
 				$load_all_weights = false;
 				if ( isset( $font['load_all_weights'] ) && $font['load_all_weights'] == 'true' ) {
 					$load_all_weights = true;
 				}
 
-				if ( isset( $font['selector'] ) && isset( $font['value'] ) && ! empty( $font['value'] ) ) {
+				if ( isset( $selector ) && isset( $font['value'] ) && ! empty( $font['value'] ) ) {
 					// Make sure that the value is in the proper format
 					$value = PixCustomifyPlugin::decodeURIComponent( $font['value'] );
 					if ( is_string( $value ) ) {
@@ -790,7 +821,7 @@ class PixCustomifyPlugin {
 					// First handle the case where we have the font-family in the selected variant (usually this means a custom font from our Fonto plugin)
 					if ( ! empty( $selected_variant ) && is_array( $selected_variant ) && ! empty( $selected_variant['font-family'] ) ) {
 						// The variant's font-family
-						echo $font['selector'] . " {\nfont-family: " . $selected_variant['font-family'] . ";\n";
+						echo $selector . " {\nfont-family: " . $selected_variant['font-family'] . ";\n";
 
 						if ( ! $load_all_weights ) {
 							// If this is a custom font (like from our plugin Fonto) with individual styles & weights - i.e. the font-family says it all
@@ -814,7 +845,7 @@ class PixCustomifyPlugin {
 						echo "}\n";
 					} elseif ( isset( $value['font_family'] ) ) {
 						// The selected font family
-						echo $font['selector'] . " {\n font-family: " . $value['font_family'] . ";\n";
+						echo $selector . " {\n font-family: " . $value['font_family'] . ";\n";
 
 						if ( ! empty( $selected_variant ) && ! $load_all_weights ) {
 							$weight_and_style = strtolower( $selected_variant );
@@ -942,14 +973,14 @@ class PixCustomifyPlugin {
 			}
 
 			if ( isset( $css_property['selector'] ) && isset( $css_property['property'] ) ) {
-				$output .= $this->proccess_css_property( $css_property, $this_value ) . PHP_EOL;
+				$output .= $this->process_css_property( $css_property, $this_value );
 			}
 		}
 
 		return $output;
 	}
 
-	protected function proccess_css_property( $css_property, $this_value ) {
+	protected function process_css_property( $css_property, $this_value, $editor = false ) {
 		$unit = '';
 
 		if ( isset( $css_property['unit'] ) ) {
@@ -960,9 +991,15 @@ class PixCustomifyPlugin {
 		if ( empty( $unit ) && in_array( $css_property['property'], self::$pixel_dependent_css_properties ) ) {
 			$unit = 'px';
 		}
-		// lose the tons of tabs
-		$css_property['selector'] = trim( preg_replace( '/\t+/', '', $css_property['selector'] ) );
 
+		// lose the tons of tabs
+		$css_property['selector'] = trim( $css_property['selector'] );
+
+		$css_property['selector'] = apply_filters( 'customify_css_selector', $css_property['selector'], $css_property );
+
+		if ( empty( $css_property['selector'] ) ) {
+			return '';
+		}
 		$this_property_output = $css_property['selector'] . ' { ' . $css_property['property'] . ': ' . $this_value . $unit . "; }" . PHP_EOL;
 
 		// Handle the value filter callback.
@@ -974,6 +1011,10 @@ class PixCustomifyPlugin {
 		if ( isset( $css_property['callback_filter'] ) && is_callable( $css_property['callback_filter'] ) ) {
 			$this_property_output = call_user_func( $css_property['callback_filter'], $this_value, $css_property['selector'], $css_property['property'], $unit );
 		}
+
+//		if ( ! empty( $editor ) && empty( $css_property['editor'] ) ) {
+//			$this_property_output = '';
+//		}
 
 		return $this_property_output;
 	}
@@ -1834,7 +1875,7 @@ class PixCustomifyPlugin {
 
 				$control_class_name = 'Pix_Customize_Select2_Control';
 				break;
-				
+
 			case 'sm_radio' :
 				if ( ! isset( $field_config['choices'] ) || empty( $field_config['choices'] ) ) {
 					return;
@@ -1854,7 +1895,7 @@ class PixCustomifyPlugin {
 
 				$control_class_name = 'Pix_Customize_SM_palette_filter_Control';
 				break;
-				
+
 			case 'sm_switch' :
 				if ( ! isset( $field_config['choices'] ) || empty( $field_config['choices'] ) ) {
 					return;
