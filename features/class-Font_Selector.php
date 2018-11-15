@@ -231,9 +231,9 @@ class Customify_Font_Selector {
 				continue;
 			}
 
-			$selector = apply_filters( 'customify_font_css_selector', $font['selector'], $font );
+			$font['selector'] = apply_filters( 'customify_font_css_selector', $font['selector'], $font );
 
-			if ( empty( $selector ) || empty( $font['value'] ) ) {
+			if ( empty( $font['selector'] ) || empty( $font['value'] ) ) {
 				continue;
 			}
 
@@ -302,7 +302,6 @@ class Customify_Font_Selector {
 	}
 
 	function output_font_style( $field, $font, $value, $editor ) {
-		$selector = apply_filters( 'customify_font_css_selector', $font['selector'], $font );
 
 		$value = $this->validate_font_values( $value );
 		// some sanitizing
@@ -324,8 +323,8 @@ class Customify_Font_Selector {
 		if ( isset( $font['callback'] ) && function_exists( $font['callback'] ) ) {
 			$output = call_user_func( $font['callback'], $value, $font );
 			echo $output;
-		} else {
-			echo $selector . " {" . PHP_EOL;
+		} elseif ( isset( $font['selector'] ) ) {
+			echo $font['selector'] . " {" . PHP_EOL;
 
 			// First handle the case where we have the font-family in the selected variant (usually this means a custom font from our Fonto plugin)
 			if ( ! empty( $selected_variant ) && is_array( $selected_variant ) && ! empty( $selected_variant['font-family'] ) ) {

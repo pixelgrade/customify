@@ -546,7 +546,7 @@ class PixCustomifyPlugin {
 			}
 
 			if ( isset( $option['type'] ) && $option['type'] === 'custom_background' ) {
-				$option['value']         = $this->get_option( $option_id );
+				$option['value'] = $this->get_option( $option_id );
 				$custom_css .= $this->process_custom_background_field_output( $option_id, $option ) . PHP_EOL;
 			}
 		}
@@ -559,22 +559,33 @@ class PixCustomifyPlugin {
 					continue;
 				}
 
-				$custom_css .= PHP_EOL . '@media ' . $media_query . " { " . PHP_EOL . PHP_EOL;
+				$media_query_custom_css = '';
 
 				foreach ( $properties as $key => $property ) {
 					$property_settings = $property['property'];
 					$property_value    = $property['value'];
-					$custom_css .= "\t" . $this->process_css_property( $property_settings, $property_value ) . PHP_EOL;
+					$css_output = $this->process_css_property( $property_settings, $property_value );
+					if ( ! empty( $css_output ) ) {
+						$media_query_custom_css .= "\t" . $css_output . PHP_EOL;
+					}
 				}
 
-				$custom_css .= "}" . PHP_EOL;
+				if ( ! empty( $media_query_custom_css ) ) {
+					$media_query_custom_css = PHP_EOL . '@media ' . $media_query . " { " . PHP_EOL . PHP_EOL . $custom_css . "}" . PHP_EOL;
+				}
+
+				if ( ! empty( $media_query_custom_css ) ) {
+					$custom_css .= $media_query_custom_css;
+				}
 
 			}
 		}
 		?>
-		<style id="customify_output_style">
-		<?php echo apply_filters( 'customify_dynamic_style', $custom_css ); ?>
-		</style><?php
+
+<style id="customify_output_style">
+<?php echo apply_filters( 'customify_dynamic_style', $custom_css ); ?>
+</style>
+<?php
 
 		/**
 		 * from now on we output only style tags only for the preview purpose
@@ -592,7 +603,7 @@ class PixCustomifyPlugin {
 
 				<style id="custom_background_output_for_<?php echo sanitize_html_class( $option_id ); ?>">
 					<?php
-					if ( isset( $custom_background_output ) && ! empty( $custom_background_output )) {
+					if ( ! empty( $custom_background_output )) {
 						echo $custom_background_output;
 					} ?>
 				</style>
@@ -616,7 +627,10 @@ class PixCustomifyPlugin {
 					}
 
 					if ( isset( $properties_set['selector'] ) && isset( $properties_set['property'] ) ) {
-						echo $this->process_css_property($properties_set, $this_value) . PHP_EOL;
+						$css_output = $this->process_css_property($properties_set, $this_value);
+						if ( ! empty( $css_output ) ) {
+							echo $css_output . PHP_EOL;
+						}
 					}
 
 					if ( isset( $properties_set['media'] ) && ! empty( $properties_set['media'] ) ) {
@@ -959,7 +973,7 @@ class PixCustomifyPlugin {
 			}
 
 			if ( isset( $css_property['selector'] ) && isset( $css_property['property'] ) ) {
-				$output .= $this->process_css_property( $css_property, $this_value ) . PHP_EOL;
+				$output .= $this->process_css_property( $css_property, $this_value );
 			}
 		}
 
@@ -979,10 +993,13 @@ class PixCustomifyPlugin {
 		}
 
 		// lose the tons of tabs
-		$css_property['selector'] = trim( preg_replace( '/\t+/', '', $css_property['selector'] ) );
+		$css_property['selector'] = trim( $css_property['selector'] );
 
 		$css_property['selector'] = apply_filters( 'customify_css_selector', $css_property['selector'], $css_property );
 
+		if ( empty( $css_property['selector'] ) ) {
+			return '';
+		}
 		$this_property_output = $css_property['selector'] . ' { ' . $css_property['property'] . ': ' . $this_value . $unit . "; }" . PHP_EOL;
 
 		// Handle the value filter callback.

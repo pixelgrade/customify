@@ -26,9 +26,65 @@ class Customify_Gutenberg {
 	/*
 	 * Selectors that we will use to constrain CSS rules to certain scopes.
 	 */
-	public static $editor_namespace_selector = '.edit-post-visual-editor[class]';
-	public static $title_namespace_selector = '.editor-post-title__block[class]';
-	public static $block_namespace_selector = '.editor-block-list__block[class]';
+	public static $editor_namespace_selector = '.edit-post-visual-editor.editor-styles-wrapper';
+	public static $title_namespace_selector = '.editor-styles-wrapper .editor-post-title__block';
+	public static $title_input_namespace_selector = '.editor-styles-wrapper .editor-post-title__block .editor-post-title__input';
+	public static $block_namespace_selector = '.edit-post-visual-editor.editor-styles-wrapper .editor-block-list__block';
+
+	/**
+	 * Regexes
+	 */
+	public static $gutenbergy_selector_regex = '/^(\.edit-post-visual-editor|\.editor-block-list__block).*$/';
+	public static $root_regex = '/^(body|html).*$/';
+	public static $title_regex = '/^(h1|h1\s+.*|\.single\s*\.entry-title.*|\.entry-title.*|\.page-title.*|\.article__?title.*)$/';
+	public static $excluded_selectors_regex = array(
+		// We don't want to mess with buttons as we have a high likelihood of messing with the Gutenberg toolbar.
+		'/^\s*button/',
+		'/^\s*\.button/',
+		'/^\s*input/',
+		'/^\s*select/',
+		'/^\s*#/', // ignore all ids
+		'/^\s*div#/', // ignore all ids
+
+		'/\.u-/',
+		'/\.c-/',
+		'/\.o-/',
+		'/\.site-/',
+
+		'/^\s*\.archive/',
+		'/^\s*\.search/',
+		'/^\s*\.no-results/',
+		'/^\s*\.home/',
+		'/^\s*\.blog/',
+		'/^\s*\.site-/',
+		'/\.search/',
+		'/\.page/',
+
+		'/^\s*\.sticky/',
+		'/\.custom-logo-link/',
+
+		'/\.entry-meta/',
+		'/\.entry-footer/',
+		'/\.header-meta/',
+		'/\.nav/',
+		'/\.main-navigation/',
+		'/navbar/',
+		'/comment/',
+		'/\.dummy/',
+		'/\.back-to-top/',
+		'/\.page-numbers/',
+		'/\.featured/',
+		'/\.widget/',
+		'/\.edit-link/',
+		'/\.posted-on/',
+		'/\.cat-links/',
+		'/\.posted-by/',
+
+		'/jetpack/',
+		'/wpforms/',
+		'/contact-form/',
+		'/sharedaddy/',
+	);
 
 	/**
 	 * Constructor.
@@ -100,15 +156,22 @@ class Customify_Gutenberg {
 	}
 
 	public function gutenbergify_css_selectors( $selectors, $css_property ) {
-		$root_regex = '/^(body|html).*$/';
 
 		// Treat the selector(s) as an array.
 		$selectors = $this->maybeExplodeSelectors( $selectors );
 
 		$new_selectors = array();
 		foreach ( $selectors as $selector ) {
+			// Clean up
+			$selector = trim( $selector );
+
+			// If the selector matches the excluded, skip it.
+			if ( $this->preg_match_any( self::$excluded_selectors_regex, $selector ) ) {
+				continue;
+			}
+
 			// If the selector is already Gutenbergy, we will not do anything to it
-			if ( preg_match( '/^(\.edit-post-visual-editor|\.editor-block-list__block).*$/', $selector ) ) {
+			if ( preg_match( self::$gutenbergy_selector_regex, $selector ) ) {
 				$new_selectors[] = $selector;
 				continue;
 			}
@@ -120,15 +183,26 @@ class Customify_Gutenberg {
 			}
 
 			// For root html elements, we will not prefix them, but replace them with the block and title namespace.
-			if ( preg_match( $root_regex, $selector ) ) {
+			if ( preg_match( self::$root_regex, $selector ) ) {
 				// We will ignore pseudo-selectors
 				if ( preg_match( '/^(body|html)[\:\+]+.*$/', $selector ) ) {
 					continue;
 				}
 
-				$new_selectors[] = preg_replace( '/^(html body|body|html)/', self::$block_namespace_selector, $selector );
-				$new_selectors[] = preg_replace( '/^(html body|body|html)/', self::$title_namespace_selector, $selector );
+				// When it comes to background properties applied at the body level, we need to scope to the editor namespace
+				if ( isset( $css_property['property'] ) && 0 === strpos( $css_property['property'], 'background' ) ) {
+					$new_selectors[] = preg_replace( '/^(html body|body|html)/', self::$editor_namespace_selector, $selector );
+				} else {
+					$new_selectors[] = preg_replace( '/^(html body|body|html)/', self::$block_namespace_selector, $selector );
+					$new_selectors[] = preg_replace( '/^(html body|body|html)/', self::$title_namespace_selector, $selector );
+				}
 				continue;
+			}
+
+			// If we encounter selectors that seem that they could target the post title,
+			// we will add selectors for the Gutenberg title also.
+			if ( preg_match( self::$title_regex, $selector ) ) {
+				$new_selectors[] = preg_replace( self::$title_regex, self::$title_input_namespace_selector, $selector );
 			}
 
 			$new_selectors[] = self::$block_namespace_selector . ' ' . $selector;
@@ -138,16 +212,22 @@ class Customify_Gutenberg {
 	}
 
 	public function gutenbergify_font_css_selectors( $selectors, $font ) {
-		$root_regex = '/^(body|html).*$/';
-		$title_regex = '/^(h1|h1\s+.*|\.entry-title.*|\.page-title.*|\.article__?title.*)$/';
 
 		// Treat the selector(s) as an array.
 		$selectors = $this->maybeExplodeSelectors( $selectors );
 
 		$new_selectors = array();
 		foreach ( $selectors as $selector ) {
+			// Clean up
+			$selector = trim( $selector );
+
+			// If the selector matches the excluded, skip it.
+			if ( $this->preg_match_any( self::$excluded_selectors_regex, $selector ) ) {
+				continue;
+			}
+
 			// If the selector is already Gutenbergy, we will not do anything to it
-			if ( preg_match( '/^(\.edit-post-visual-editor|\.editor-block-list__block).*$/', $selector ) ) {
+			if ( preg_match( self::$gutenbergy_selector_regex, $selector ) ) {
 				$new_selectors[] = $selector;
 				continue;
 			}
@@ -159,7 +239,7 @@ class Customify_Gutenberg {
 			}
 
 			// For root html elements, we will not prefix them, but replace them with the block and title namespace.
-			if ( preg_match( $root_regex, $selector ) ) {
+			if ( preg_match( self::$root_regex, $selector ) ) {
 				$new_selectors[] = preg_replace( '/^(html body|body|html|)/', self::$block_namespace_selector, $selector );
 				$new_selectors[] = preg_replace( '/^(html body|body|html)/', self::$title_namespace_selector, $selector );
 				continue;
@@ -167,14 +247,40 @@ class Customify_Gutenberg {
 
 			// If we encounter selectors that seem that they could target the post title,
 			// we will add selectors for the Gutenberg title also.
-			if ( preg_match( $title_regex, $selector ) ) {
-				$new_selectors[] = self::$title_namespace_selector . ' ' . $selector;
+			if ( preg_match( self::$title_regex, $selector ) ) {
+				$new_selectors[] = preg_replace( self::$title_regex, self::$title_input_namespace_selector, $selector );
 			}
 
 			$new_selectors[] = self::$block_namespace_selector . ' ' . $selector;
 		}
 
 		return implode( ', ', $new_selectors );
+	}
+
+	/**
+	 * Preg_match a series of regex against a subject.
+	 *
+	 * @param string|array $regexes
+	 * @param string $subject
+	 *
+	 * @return bool Returns true if at least one of the regex matches, false otherwise.
+	 */
+	public function preg_match_any( $regexes, $subject ) {
+		if ( is_string( $regexes ) ) {
+			$regexes = array( $regexes );
+		}
+
+		if ( ! is_array( $regexes ) ) {
+			return false;
+		}
+
+		foreach ( $regexes as $regex ) {
+			if ( preg_match( $regex, $subject ) ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**
