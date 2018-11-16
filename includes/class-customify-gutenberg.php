@@ -64,7 +64,7 @@ class Customify_Gutenberg {
 		'/\.attachment/',
 		'/\.mobile/',
 
-		'/^\s*\.sticky/',
+		'/\.sticky/',
 		'/\.custom-logo-link/',
 
 		'/\.entry-meta/',
@@ -117,7 +117,13 @@ class Customify_Gutenberg {
 	 * @since 2.2.0
 	 */
 	public function add_hooks() {
-		add_action( 'enqueue_block_editor_assets', array( $this, 'dynamic_styles' ) );
+
+		add_action( 'enqueue_block_editor_assets', array( $this, 'dynamic_styles' ), 999 );
+
+		// Styles on the front end.
+		add_action( 'wp_enqueue_scripts', array( $this, 'frontend_styles' ), 999 );
+
+		add_action( 'init', array( $this, 'editor_color_palettes' ), 20 );
 	}
 
 	/**
@@ -137,14 +143,78 @@ class Customify_Gutenberg {
 		return apply_filters( 'customify_gutenberg_is_supported', $gutenberg );
 	}
 
+	public function get_editor_style_handle() {
+		global $wp_styles;
+		if ( ! ( $wp_styles instanceof WP_Styles ) ) {
+			return '';
+		}
+
+		// We need to look into the registered theme stylesheets and get the one most likely to be used for Gutenberg.
+		// Thus we can attach inline styles to it.
+		$theme_dir_uri = get_stylesheet_directory_uri();
+		$theme_slug = get_stylesheet();
+
+		$handle = 'wp-edit-post'; // this is better than nothing as it is the main editor style.
+		$reversed = array_reverse( $wp_styles->registered );
+		/** @var _WP_Dependency $style */
+		foreach ( $reversed as $style ) {
+			// This is the most precise.
+			if ( 0 === strpos( $style->src, $theme_dir_uri ) ) {
+				$handle = $style->handle;
+				break;
+			}
+
+			// If it is prefixed with the theme slug, it is good also.
+			if ( 0 === strpos( $style->handle, $theme_slug . '-' ) || 0 === strpos( $style->handle, $theme_slug . '_' ) ) {
+				$handle = $style->handle;
+				break;
+			}
+		}
+
+		return $handle;
+	}
+
+	public function get_frontend_style_handle() {
+		global $wp_styles;
+		if ( ! ( $wp_styles instanceof WP_Styles ) ) {
+			return '';
+		}
+
+		// We need to look into the registered theme stylesheets and get the one most likely to be used for Gutenberg.
+		// Thus we can attach inline styles to it.
+		$style_css_uri = get_stylesheet_uri();
+		$theme_slug = get_stylesheet();
+
+		$handle = 'wp-edit-post'; // this is better than nothing as it is the main editor style.
+		$reversed = array_reverse( $wp_styles->registered );
+		/** @var _WP_Dependency $style */
+		foreach ( $reversed as $style ) {
+			// This is the most precise.
+			if ( 0 === strpos( $style->src, $style_css_uri ) ) {
+				$handle = $style->handle;
+				break;
+			}
+
+			// If it is prefixed with the theme slug, it is good also.
+			if ( ( 0 === strpos( $style->handle, $theme_slug . '-' ) || 0 === strpos( $style->handle, $theme_slug . '_' ) )
+				&& false !== strpos( $style->src, '.css') ) {
+				$handle = $style->handle;
+				break;
+			}
+		}
+
+		return $handle;
+	}
+
 	/**
 	 * Output Customify's dynamic styles in the Gutenberg context.
 	 *
 	 * @since 2.2.0
 	 */
 	public function dynamic_styles() {
-		if ( PixCustomifyPlugin()->get_plugin_setting( 'enable_editor_style', true ) ) {
+		$enqueue_parent_handle = $this->get_editor_style_handle();
 
+		if ( PixCustomifyPlugin()->get_plugin_setting( 'enable_editor_style', true ) ) {
 			add_filter( 'customify_typography_css_selector', array( $this, 'gutenbergify_font_css_selectors' ), 10, 2 );
 			PixCustomifyPlugin()->output_typography_dynamic_style();
 			remove_filter( 'customify_typography_css_selector', array( $this, 'gutenbergify_font_css_selectors' ), 10 );
@@ -157,7 +227,16 @@ class Customify_Gutenberg {
 			PixCustomifyPlugin()->output_dynamic_style();
 			remove_filter( 'customify_css_selector', array( $this, 'gutenbergify_css_selectors' ), 10 );
 
+			// Add color palettes classes.
+			wp_add_inline_style( $enqueue_parent_handle, $this->editor_color_palettes_css_classes() );
 		}
+	}
+
+	public function frontend_styles() {
+		$enqueue_parent_handle = $this->get_editor_style_handle();
+
+		// Add color palettes classes.
+		wp_add_inline_style( $enqueue_parent_handle, $this->editor_color_palettes_css_classes() );
 	}
 
 	public function gutenbergify_css_selectors( $selectors, $css_property ) {
@@ -302,6 +381,99 @@ class Customify_Gutenberg {
 		}
 
 		return preg_split( '#[\s]*,[\s]*#', $value, -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE );
+	}
+
+	/**
+	 * Add the SM Color Palettes to the editor.
+	 */
+	public function editor_color_palettes() {
+		// Bail if Color Palettes are not supported
+		if ( ! Customify_Color_Palettes::instance()->is_supported() ) {
+			return;
+		}
+
+		$options = PixCustomifyPlugin()->get_options_configs();
+
+		$master_color_control_ids = Customify_Color_Palettes::instance()->get_all_master_color_controls_ids();
+		if ( empty( $master_color_control_ids ) ) {
+			return;
+		}
+
+		$editor_color_palettes = array();
+		foreach ( $master_color_control_ids as $control_id ) {
+			if ( empty( $options[ $control_id ] ) ) {
+				continue;
+			}
+
+			$value = get_option( $control_id . '_final' );
+			if ( empty( $value ) ) {
+				continue;
+			}
+
+			$editor_color_palettes[] = array(
+				'name'  => $options[ $control_id ]['label'],
+				'slug'  => $control_id,
+				'color' => esc_html( $value ),
+			);
+		}
+
+		if ( ! empty( $editor_color_palettes ) ) {
+			/**
+			 * Custom colors for use in the editor.
+			 *
+			 * @link https://wordpress.org/gutenberg/handbook/reference/theme-support/
+			 */
+			add_theme_support(
+				'editor-color-palette',
+				$editor_color_palettes
+			);
+		}
+	}
+
+	/**
+	 * Generate the special classes for our colors.
+	 */
+	public function editor_color_palettes_css_classes() {
+		// Bail if Color Palettes are not supported
+		if ( ! Customify_Color_Palettes::instance()->is_supported() ) {
+			return '';
+		}
+
+		$options = PixCustomifyPlugin()->get_options_configs();
+
+		$master_color_control_ids = Customify_Color_Palettes::instance()->get_all_master_color_controls_ids();
+		if ( empty( $master_color_control_ids ) ) {
+			return '';
+		}
+
+		// Build styles.
+		$css  = '';
+		foreach ( $master_color_control_ids as $control_id ) {
+			if ( empty( $options[ $control_id ] ) ) {
+				continue;
+			}
+
+			$value = get_option( $control_id . '_final' );
+			if ( empty( $value ) ) {
+				continue;
+			}
+
+			$editor_color_palettes[] = array(
+				'name'  => $options[ $control_id ]['label'],
+				'slug'  => $control_id,
+				'color' => esc_html( $value ),
+			);
+
+			$color_in_kebab_case = self::to_kebab_case($control_id);
+
+			$css .= '.has-' . $color_in_kebab_case . '-color { color: ' . esc_attr( $value ) . ' !important; }';
+			$css .= '.has-' . $color_in_kebab_case . '-background-color { background-color: ' . esc_attr( $value ) . '; }';
+		}
+		return wp_strip_all_tags( $css );
+	}
+
+	public static function to_kebab_case( $string ) {
+		return implode('-', array_map('\strtolower', preg_split( "/[\n\r\t -_]+/", preg_replace("/['\x{2019}]/u", '', $string), -1, PREG_SPLIT_NO_EMPTY )));
 	}
 
 	/**
