@@ -1,6 +1,6 @@
 <?php
 /**
- * This is the class that handles the overall logic for integration with the new Gutenberg Editor.
+ * This is the class that handles the overall logic for integration with the new Gutenberg Editor (WordPress 5.0+).
  *
  * @see         https://pixelgrade.com
  * @author      Pixelgrade
@@ -384,7 +384,7 @@ class Customify_Gutenberg {
 	}
 
 	/**
-	 * Add the SM Color Palettes to the editor.
+	 * Add the SM Color Palettes to the editor sidebar.
 	 */
 	public function editor_color_palettes() {
 		// Bail if Color Palettes are not supported

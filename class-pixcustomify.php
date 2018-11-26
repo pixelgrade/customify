@@ -5,7 +5,7 @@
  * @author    Pixelgrade <contact@pixelgrade.com>
  * @license   GPL-2.0+
  * @link      https://pixelgrade.com
- * @copyright 2014-2017 Pixelgrade
+ * @copyright 2014-2018 Pixelgrade
  */
 
 /**
@@ -2604,11 +2604,6 @@ class PixCustomifyPlugin {
 		</script>
 	<?php }
 
-	/**
-	 * Return an instance of this class.
-	 * @since     1.0.0
-	 * @return    PixCustomifyPlugin    A single instance of this class.
-	 */
 	/**
 	 * Main PixCustomifyPlugin Instance
 	 *
