@@ -98,11 +98,11 @@ class Customify_Style_Manager {
 		require_once 'class-customify-color-palettes.php';
 		$this->color_palettes = Customify_Color_Palettes::instance();
 
-//		/**
-//		 * Initialize the Font Palettes logic.
-//		 */
-//		require_once 'class-customify-font-palettes.php';
-//		$this->font_palettes = Customify_Font_Palettes::instance();
+		/**
+		 * Initialize the Font Palettes logic.
+		 */
+		require_once 'class-customify-font-palettes.php';
+		$this->font_palettes = Customify_Font_Palettes::instance();
 
 		/**
 		 * Initialize the Notifications logic.
@@ -234,35 +234,47 @@ class Customify_Style_Manager {
 			return $config;
 		}
 
-		// If there is no Style Manager section, bail.
-		if ( ! isset( $config['sections']['style_manager_section'] ) ) {
+		// If there is no Style Manager section or panel, bail.
+		if ( ! isset( $config['sections']['style_manager_section'] ) &&
+			! isset( $config['panels']['style_manager_panel'] ) ) {
+
 			return $config;
 		}
 
-		$style_manager_section_config = $config['sections']['style_manager_section'];
-		unset( $config['sections']['style_manager_section'] );
+		$style_manager_section_config = false;
+		if ( isset( $config['sections']['style_manager_section'] ) ) {
+			$style_manager_section_config = $config['sections']['style_manager_section'];
+			unset( $config['sections']['style_manager_section'] );
+		}
+
 		// All the other sections.
 		$other_theme_sections_config = $config['sections'];
 		unset( $config['sections'] );
 
-		// Now group them in panels.
-		if ( ! isset( $config['panels'] ) ) {
-			$config['panels'] = array();
+		// The Style Manager panel.
+		if ( empty( $config['panels']['style_manager_panel'] ) ) {
+			$style_manager_panel_config = array(
+				'priority'                 => 22,
+				'capability'               => 'edit_theme_options',
+				'panel_id'                 => 'style_manager_panel',
+				'title'                    => esc_html__( 'Style Manager', 'customify' ),
+				'description'              => __( '<strong>Style Manager</strong> is an intuitive system to help you change the look of your website and make an excellent impression.', 'customify' ),
+				'sections'                 => array(),
+				'auto_expand_sole_section' => true, // If there is only one section in the panel, auto-expand it.
+			);
+		} else {
+			$style_manager_panel_config = $config['panels']['style_manager_panel'];
+			unset( $config['panels']['style_manager_panel'] );
 		}
 
-		// The Style Manager panel.
-		$config['panels']['style_manager_panel'] = array(
-			'priority'    => 22,
-			'capability'  => 'edit_theme_options',
-			'panel_id'    => 'style_manager_panel',
-			'title'       => esc_html__( 'Style Manager', 'customify' ),
-			'description' => __( '<strong>Style Manager</strong> is an intuitive system to help you change the look of your website and make an excellent impression.', 'customify' ),
-			'sections' => array(),
-			'auto_expand_sole_section' => true, // If there is only one section in the panel, auto-expand it.
-		);
+		$other_panels_config = false;
+		if ( ! empty( $config['panels'] ) ) {
+			$other_panels_config = $config['panels'];
+			unset( $config['panels'] );
+		}
 
 		// Maybe handle the color palettes.
-		if ( class_exists( 'Customify_Color_Palettes' ) && Customify_Color_Palettes::instance()->is_supported() ) {
+		if ( is_array( $style_manager_section_config ) && class_exists( 'Customify_Color_Palettes' ) && Customify_Color_Palettes::instance()->is_supported() ) {
 
 			// We need to split the fields in the Style Manager section into two: color palettes and fonts.
 			$color_palettes_fields = array(
@@ -285,23 +297,23 @@ class Customify_Style_Manager {
 				'sm_color_palette',
 				'sm_color_palette_variation',
 				'sm_color_primary',
-				'sm_color_primary_connected',
+				'sm_color_primary_final',
 				'sm_color_secondary',
-				'sm_color_secondary_connected',
+				'sm_color_secondary_final',
 				'sm_color_tertiary',
-				'sm_color_tertiary_connected',
+				'sm_color_tertiary_final',
 				'sm_dark_primary',
-				'sm_dark_primary_connected',
+				'sm_dark_primary_final',
 				'sm_dark_secondary',
-				'sm_dark_secondary_connected',
+				'sm_dark_secondary_final',
 				'sm_dark_tertiary',
-				'sm_dark_tertiary_connected',
+				'sm_dark_tertiary_final',
 				'sm_light_primary',
-				'sm_light_primary_connected',
+				'sm_light_primary_final',
 				'sm_light_secondary',
-				'sm_light_secondary_connected',
+				'sm_light_secondary_final',
 				'sm_light_tertiary',
-				'sm_light_tertiary_connected',
+				'sm_light_tertiary_final',
 				'sm_swap_colors',
 				'sm_swap_dark_light',
 				'sm_swap_colors_dark',
@@ -328,11 +340,11 @@ class Customify_Style_Manager {
 				}
 			}
 
-			$config['panels']['style_manager_panel']['sections']['sm_color_palettes_section'] = $color_palettes_section_config;
+			$style_manager_panel_config['sections']['sm_color_palettes_section'] = $color_palettes_section_config;
 		}
 
 		// Maybe handle the font palettes.
-		if ( class_exists( 'Customify_Font_Palettes' ) && Customify_Font_Palettes::instance()->is_supported() ) {
+		if ( is_array( $style_manager_section_config ) && class_exists( 'Customify_Font_Palettes' ) && Customify_Font_Palettes::instance()->is_supported() ) {
 
 			$font_palettes_fields = array(
 				'sm_font_palette',
@@ -362,18 +374,75 @@ class Customify_Style_Manager {
 				}
 			}
 
-			$config['panels']['style_manager_panel']['sections']['sm_font_palettes_section'] = $font_palettes_section_config;
+			$style_manager_panel_config['sections']['sm_font_palettes_section'] = $font_palettes_section_config;
 		}
 
+		// Start fresh and add the Style Manager panel config
+		if ( empty( $config['panels'] ) ) {
+			$config['panels'] = array();
+		}
+		$config['panels']['style_manager_panel'] = $style_manager_panel_config;
+
 		// The Theme Options panel.
-		$config['panels']['theme_options_panel'] = array(
+		$theme_options_panel_config = array(
 			'priority'    => 23,
 			'capability'  => 'edit_theme_options',
 			'panel_id'    => 'theme_options_panel',
 			'title'       => esc_html__( 'Theme Options', 'customify' ),
 			'description' => esc_html__( 'Advanced options to change your site look-and-feel on a detailed level.', 'customify' ),
-			'sections' => $other_theme_sections_config,
+			'sections'    => array(),
 		);
+
+		// If we have other panels we will make their sections parts of the Theme Options panel.
+		if ( ! empty( $other_panels_config ) ) {
+			// If we have another panel that is called Theme Options we will extract it's sections and put them directly in the Theme Options panel.
+			$second_theme_options_sections = array();
+			foreach ( $other_panels_config as $panel_id => $panel_config ) {
+				$found = false;
+				// First try the panel ID.
+				if ( false !== strpos( strtolower( str_replace( '-', '_', $panel_id ) ), 'theme_options' ) ) {
+					$found = true;
+				}
+
+				// Second, try the panel title.
+				if ( ! $found &&  ! empty( $panel_config['title'] ) && false !== strpos( strtolower( str_replace( array( '-', '_'), ' ', $panel_config['title'] ) ), ' theme options' ) ) {
+					$found = true;
+				}
+
+				if ( $found && ! empty( $panel_config['sections'] ) ) {
+					$second_theme_options_sections = array_merge( $second_theme_options_sections, $panel_config['sections'] );
+					unset( $other_panels_config[ $panel_id ] );
+				}
+			}
+			if ( ! empty( $second_theme_options_sections ) ) {
+				$theme_options_panel_config['sections'] = array_merge( $theme_options_panel_config['sections'], $second_theme_options_sections );
+			}
+
+			// For the remaining panels, we will put their section into the Theme Options panel, but prefix their title with their respective panel title.
+			$prefixed_sections = array();
+			foreach ( $other_panels_config as $panel_id => $panel_config ) {
+				if ( ! empty( $panel_config['sections'] ) ) {
+					foreach ( $panel_config['sections'] as $section_id => $section_config ) {
+						if ( ! empty( $section_config['title'] ) && ! empty( $panel_config['title'] ) ) {
+							$section_config['title'] = $panel_config['title'] . ' - ' . $section_config['title'];
+						}
+						$prefixed_sections[ $panel_id . '_' . $section_id ] = $section_config;
+					}
+				}
+			}
+			$theme_options_panel_config['sections'] = array_merge( $theme_options_panel_config['sections'], $prefixed_sections );
+		}
+
+		// If we have other sections we will add them to the Theme Options panel.
+		if ( ! empty( $other_theme_sections_config ) ) {
+			$theme_options_panel_config['sections'] = array_merge( $theme_options_panel_config['sections'], $other_theme_sections_config );
+		}
+
+		if ( empty( $config['panels']['theme_options_panel'] ) ) {
+			$config['panels']['theme_options_panel'] = $theme_options_panel_config;
+		} else {
+			$config['panels']['theme_options_panel'] = array_merge( $config['panels']['theme_options_panel'], $theme_options_panel_config );
+		}
 
 		// Add the logic that handles sections and controls added directly to WP_Customizer, not through the config.
 		add_action( 'customize_register', array( $this, 'reorganize_direct_sections_and_controls' ), 100 );

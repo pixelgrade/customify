@@ -3,7 +3,7 @@ Contributors: pixelgrade, euthelup, babbardel, vlad.olaru, cristianfrumusanu, ra
 Tags: customizer, css, editor, live, preview, customizer
 Requires at least: 4.7.0
 Tested up to: 4.9.8
-Stable tag: 2.0.1
+Stable tag: 2.1.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -44,6 +44,23 @@ With [Customify](https://github.com/pixelgrade/customify), developers can easily
 * Default [image](https://unsplash.com/photos/OgM4RKdr2kY) for Style Manager Color Palette control - License: (Unsplash)[https://unsplash.com/license]
 
 == Changelog ==
+
+= 2.1.3 =
+* Improve Customizer section grouping in the Theme Options Panel
+* Fix Font Palettes giving huge sizes to font options set in ems
+
+= 2.1.2 =
+* Avoid short array syntax to ensure PHP 5.2 compatibility
+
+= 2.1.1 =
+* Hide the Fonts section for themes that do not declare support for Font Palettes
+
+= 2.1.0 =
+* This new version of Customify lets you conveniently change the design of your site with font palettes. Easy as pie.
+* Added previews for color palette filters.
+
+= 2.0.2 =
+* Fixed bug where no CSS was output for some settings with default value.
 
 = 2.0.1 =
 * Minor fix for the color pickers.

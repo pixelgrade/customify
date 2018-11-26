@@ -11,7 +11,7 @@ $accent 				: #3677bd;
 $dark 					: #232527;
 $gray 					: #303235;
 $light 					: #cbcfd4;
-$lighter 				: #3b3f45; //borders
+$lighter 				: #3b3f45; // borders
 $descriptions			: #4d7b90;
 
 $borders                :#e0e8ef;
@@ -135,25 +135,9 @@ $background-hover 	: #f5fcff;
 	.customize-section-title {
 		margin-top: -$container-spacing;
 		margin-right: -$container-spacing;
-		// margin-left: -$container-spacing;
-	}
-
-	.control-panel-content {
-		.control-section:nth-child(2),
-		.control-section:nth-child(3) {
-			border-top: none;
-		}
-
-		// Select the Second to Last Element
-		// https://css-tricks.com/useful-nth-child-recipies/
-		.control-section:nth-last-child(2) {
-			// border-bottom: 1px solid $borders;
-		}
 	}
 
 	#accordion-section-add_menu {
-		// text-align: right;
-		// overflow: visible;
 		border-bottom: none;
 
 		.add-menu-toggle {
@@ -1833,6 +1817,7 @@ $palette_box_shadow: inset 0 0 3px 0 rgba(0,0,0,0.2);
 $palette_box_shadow_stronger: inset 0 0 3px 0 rgba(0,0,0,0.4);
 
 .pix_customizer_setting {
+
 	.customize-inside-control-row {
 		position: relative;
 		width: 100% !important;
@@ -1917,7 +1902,7 @@ $palette_box_shadow_stronger: inset 0 0 3px 0 rgba(0,0,0,0.4);
 			transition: all .2s ease;
 		}
 
-			// Colors Bars
+        // Colors Bars
 		.palette__item {
 			flex: 1;
 			transform: translateY(100%);
@@ -2269,21 +2254,6 @@ input.c-color-palette__input[class] {
 		  margin: 0 0 15px 0;
 		}
 	}
-
-		// Theme Options Spacing between Sections
-		li[id$="[general]"],
-		li[id$="[footer_section]"] {
-			border-bottom: 1px solid #ddd;
-			border-left: none;
-			border-right: none;
-			margin: 0 0 15px 0;
-		}
-
-		li[id$="[general]"] {
-			h3.accordion-section-title {
-				border-top: none;
-			}
-		}
 }
 
 .color .disc {
@@ -2422,7 +2392,7 @@ input.c-color-palette__input[class] {
 	justify-content: space-between;
 	padding: 0 16px;
 	text-align: center;
-	
+
 	border-bottom: 1px solid #DFE8EF;
 
 	&__item {
@@ -2430,12 +2400,12 @@ input.c-color-palette__input[class] {
 		margin-bottom: -1px;
 		// flex-grow: 1;
 		flex-basis: 31%;
-		
+
 		font-size: 14px;
 		// font-weight: 500;
 		color: $blue-dark;
 		opacity: 0.7;
-		
+
 		border-bottom: 3px solid transparent;
 		cursor: pointer;
 
@@ -2475,7 +2445,7 @@ input.c-color-palette__input[class] {
 	}
 
 	[id="customize-control-sm_current_color_palette_control"] ~ * {
-		
+
 
 		display: none !important;
 	}
@@ -2562,4 +2532,140 @@ input.c-color-palette__input[class] {
 [id="sub-accordion-section-sm_color_palettes_section"] > .customize-section-description-container {
 	margin-bottom: 0;
 	border-bottom: 1px solid #DFE8EF;
+}
+
+.sm-palette-filter {
+
+	.colors {
+		width: auto;
+		height: auto;
+
+		padding: 10px 10px;
+		border-radius: 999em;
+	}
+
+	.picker:after {
+		box-shadow: inset 0 0 3px 0 rgba(0, 0, 0, 0.2);
+	}
+
+	> label {
+		position: relative;
+		display: block;
+		margin: 0 0 10px;
+
+		&:hover .filter-label {
+			opacity: 1;
+		}
+	}
+
+	> input {
+		display: none;
+	}
+
+	.filter-label {
+		position: absolute;
+		top: 0;
+		left: 0;
+		z-index: 10;
+
+		width: 100%;
+		height: 100%;
+
+		display: flex;
+		align-items: center;
+		justify-content: center;
+
+		opacity: 0;
+		transition: opacity .2s ease-out;
+
+		span {
+			position: relative;
+			z-index: 20;
+		}
+
+		&:after {
+			content: "";
+			display: block;
+
+			position: absolute;
+			top: 0;
+			left: 0;
+			z-index: 10;
+
+			width: 100%;
+			height: 100%;
+
+			background-color: #ffffff;
+			box-shadow: #d6e0e5 0 0 0 1px;
+			border-radius: 999em;
+		}
+	}
+
+	> input:checked + label {
+
+		.filter-label:after {
+			background-color: #f7f9fa;
+			box-shadow: none;
+		}
+
+		.colors {
+			background-color: #f7f9fa;
+			box-shadow: #57ABD5 0 0 0 2px;
+		}
+	}
+}
+
+.customize-control-sm_palette_filter .customize-control-title {
+	display: none;
+}
+
+// FONT PALETTES OVERWRITES
+#customize-control-sm_font_palette_control ~ .customize-control {
+	display: none !important;
+}
+
+.pix_customizer_setting .font_palette[class][class] .customize-inside-control-row {
+	height: auto;
+	padding-top: 52%;
+	background-color: white;
+	border-radius: 6px;
+	overflow: hidden;
+
+	&:before {
+		border: 1px solid #DFE8EF;
+		border-radius: 6px;
+	}
+
+	&:before,
+	&:hover:before {
+		box-shadow: 0 1px 0 0 #B8DAEB;
+	}
+
+	input {
+		display: none;
+	}
+
+	label {
+		border-radius: 6px;
+		left: 0;
+	}
+
+	input + label {
+		border: 2px solid transparent;
+	}
+
+	input:checked + label {
+		border-color: #57ABD5;
+	}
+
+	.label__inner {
+		display: none;
+	}
+}
+
+// remove ugly top border top
+#customize-theme-controls .control-panel-content:not(.control-panel-nav_menus) .control-section:nth-child(2),
+#customize-theme-controls .control-panel-nav_menus .control-section-nav_menu,
+#customize-theme-controls .control-section-nav_menu_locations .accordion-section-title {
+	border-top: 0;
 }

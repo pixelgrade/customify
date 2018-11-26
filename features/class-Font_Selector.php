@@ -123,7 +123,7 @@ class Customify_Font_Selector {
 		return $to_return;
 	}
 
-	function output_font_dynamic_style() {
+	function output_font_dynamic_style( $editor = false ) {
 
 		/** @var PixCustomifyPlugin $local_plugin */
 		$local_plugin = PixCustomifyPlugin();
@@ -227,9 +227,16 @@ class Customify_Font_Selector {
 		}
 
 		foreach ( self::$typo_settings as $key => $font ) {
+			if ( ! isset( $font['selector'] ) ) {
+				continue;
+			}
+
+			$font['selector'] = apply_filters( 'customify_font_css_selector', $font['selector'], $font );
+
 			if ( empty( $font['selector'] ) || empty( $font['value'] ) ) {
 				continue;
 			}
+
 			$value = $this->maybe_decode_value( $font['value'] );
 
 			if ( $value === null ) {
@@ -246,7 +253,7 @@ class Customify_Font_Selector {
 				$value = $local_plugin->standardize_non_associative_font_default( $value );
 			}
 
-			$this->output_font_style( $key, $font, $value );
+			$this->output_font_style( $key, $font, $value, $editor );
 		}
 
 		// in customizer the CSS is printed per option, in front-end we need to print them in bulk
@@ -294,7 +301,8 @@ class Customify_Font_Selector {
 		<?php
 	}
 
-	function output_font_style( $field, $font, $value ) {
+	function output_font_style( $field, $font, $value, $editor ) {
+
 		$value = $this->validate_font_values( $value );
 		// some sanitizing
 		$load_all_weights = false;
@@ -315,7 +323,7 @@ class Customify_Font_Selector {
 		if ( isset( $font['callback'] ) && function_exists( $font['callback'] ) ) {
 			$output = call_user_func( $font['callback'], $value, $font );
 			echo $output;
-		} else {
+		} elseif ( isset( $font['selector'] ) ) {
 			echo $font['selector'] . " {" . PHP_EOL;
 
 			// First handle the case where we have the font-family in the selected variant (usually this means a custom font from our Fonto plugin)
@@ -391,6 +399,10 @@ class Customify_Font_Selector {
 						$font_size = $value['font_size']['value'];
 					}
 				}
+
+				if ( isset( $value['font_size']['unit'] ) && $value['font_size']['unit'] == 'em' && $value['font_size']['value'] >= 9 ) {
+					$value['font_size']['unit'] = 'px';
+                }
 
 				$this->display_property( 'font-size', $font_size, $unit );
 			}
