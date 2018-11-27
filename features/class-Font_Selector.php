@@ -127,9 +127,9 @@ class Customify_Font_Selector {
 	protected function get_fonts_args() {
 
 		$args = array(
-			'google_families' => '',
-			'local_families'  => '',
-			'local_srcs'      => '',
+			'google_families' => array(),
+			'local_families'  => array(),
+			'local_srcs'      => array(),
 		);
 
 		/** @var PixCustomifyPlugin $local_plugin */
@@ -155,7 +155,7 @@ class Customify_Font_Selector {
 
 				$value = $this->validate_font_values( $value );
 
-				// in case the value is still null, try default value(mostly for google fonts)
+				// in case the value is still null, try default value (mostly for google fonts)
 				if ( ! is_array( $value ) || $value === null ) {
 					$value = $local_plugin->get_font_defaults_value( str_replace( '"', '', $font['value'] ) );
 				}
@@ -165,45 +165,52 @@ class Customify_Font_Selector {
 					continue;
 				}
 
-				//Handle special logic for when the $value array is not an associative array
+				// Handle special logic for when the $value array is not an associative array
 				if ( ! $local_plugin->is_assoc( $value ) ) {
 					$value = $local_plugin->standardize_non_associative_font_default( $value );
 				}
 
-				if ( isset( $value['font_family'] ) && isset( $value['type'] ) && $value['type'] == 'google' ) {
-					$args['google_families'] .= "'" . $value['font_family'];
+				// If we have reached this far and we don't have a type, we will assume it's a google font.
+				if ( ! isset( $value['type'] ) ) {
+					$value['type'] = 'google';
+				}
 
-					if ( $load_all_weights && is_array( $value['variants'] ) ) {
-						$args['google_families'] .= ":" . implode( ',', $value['variants'] );
-					} elseif ( isset( $value['selected_variants'] ) && ! empty( $value['selected_variants'] ) ) {
+				if ( isset( $value['font_family'] ) && isset( $value['type'] ) && $value['type'] === 'google' ) {
+					$family = "'" . $value['font_family'];
+
+					if ( $load_all_weights && ! empty( $value['variants'] ) && is_array( $value['variants'] ) ) {
+						$family .= ":" . implode( ',', $value['variants'] );
+					} elseif ( ! empty( $value['selected_variants'] ) ) {
 						if ( is_array( $value['selected_variants'] ) ) {
-							$args['google_families'] .= ":" . implode( ',', $value['selected_variants'] );
+							$family .= ":" . implode( ',', $value['selected_variants'] );
 						} elseif ( is_string( $value['selected_variants'] ) || is_numeric( $value['selected_variants'] ) ) {
-							$args['google_families'] .= ":" . $value['selected_variants'];
+							$family .= ":" . $value['selected_variants'];
 						}
-					} elseif ( isset( $value['variants'] ) && ! empty( $value['variants'] ) ) {
+					} elseif ( ! empty( $value['variants'] ) ) {
 						if ( is_array( $value['variants'] ) ) {
-							$args['google_families'] .= ":" . implode( ',', $value['variants'] );
+							$family .= ":" . implode( ',', $value['variants'] );
 						} else {
-							$args['google_families'] .= ":" . $value['variants'];
+							$family .= ":" . $value['variants'];
 						}
 					}
 
-					if ( isset( $value['selected_subsets'] ) && ! empty( $value['selected_subsets'] ) ) {
+					if ( ! empty( $value['selected_subsets'] ) ) {
 						if ( is_array( $value['selected_subsets'] ) ) {
-							$args['google_families'] .= ":" . implode( ',', $value['selected_subsets'] );
+							$family .= ":" . implode( ',', $value['selected_subsets'] );
 						} else {
-							$args['google_families'] .= ":" . $value['selected_subsets'];
+							$family .= ":" . $value['selected_subsets'];
 						}
-					} elseif ( isset( $value['subsets'] ) && ! empty( $value['subsets'] ) ) {
+					} elseif ( ! empty( $value['subsets'] ) ) {
 						if ( is_array( $value['subsets'] ) ) {
-							$args['google_families'] .= ":" . implode( ',', $value['subsets'] );
+							$family .= ":" . implode( ',', $value['subsets'] );
 						} else {
-							$args['google_families'] .= ":" . $value['subsets'];
+							$family .= ":" . $value['subsets'];
 						}
 					}
 
-					$args['google_families'] .= '\',';
+					$family .= "'";
+
+					$args['google_families'][] = $family;
 				} elseif ( isset( $this->theme_fonts[ $value['font_family'] ] ) ) {
 
 //					$value['type']     = 'theme_font';
@@ -211,15 +218,21 @@ class Customify_Font_Selector {
 //					$value['variants'] = $this->theme_fonts[ $value['font_family'] ]['variants'];
 
 					if ( false === strpos( $args['local_families'], $value['font_family'] ) ) {
-						$args['local_families'] .= "'" . $value['font_family'] . "',";
+						$args['local_families'][] = "'" . $value['font_family'] . "'";
 					}
 
 					if ( false === strpos( $args['local_srcs'], $this->theme_fonts[ $value['font_family'] ]['src'] ) ) {
-						$args['local_srcs'] .= "'" . $this->theme_fonts[ $value['font_family'] ]['src'] . "',";
+						$args['local_srcs'][] = "'" . $this->theme_fonts[ $value['font_family'] ]['src'] . "'";
 					}
 				}
 			}
 		}
+
+		$args = array(
+			'google_families' => array_unique( $args['google_families'] ),
+			'local_families'  => array_unique( $args['local_families'] ),
+			'local_srcs'      => array_unique( $args['local_srcs'] ),
+		);
 
 		return $args;
 	}
@@ -508,12 +521,12 @@ class Customify_Font_Selector {
 		events: false
 		};
 		<?php if ( ! empty( $args['google_families'] ) ) { ?>
-			webfontargs.google = {families: [<?php echo( rtrim( $args['google_families'], ',' ) ); ?>]};
+			webfontargs.google = {families: [<?php echo join( ',', $args['google_families'] ); ?>]};
 		<?php }
 		if ( ! empty( $args['local_families'] ) && ! empty( $args['local_srcs'] ) ) { ?>
 			webfontargs.custom = {
-			families: [<?php echo( rtrim( $args['local_families'], ',' ) ); ?>],
-			urls: [<?php echo rtrim( $args['local_srcs'], ',' ) ?>]
+			families: [<?php echo join( ',', $args['local_families'] ); ?>],
+			urls: [<?php echo join( ',', $args['local_srcs'] ) ?>]
 			};
 		<?php } ?>
 		WebFont.load(webfontargs);
