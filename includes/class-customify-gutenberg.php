@@ -61,6 +61,7 @@ class Customify_Gutenberg {
 		'/^\s*\.site-/',
 		'/\.search/',
 		'/\.page/',
+		'/\.mce-content-body/',
 		'/\.attachment/',
 		'/\.mobile/',
 
