@@ -216,15 +216,17 @@ class Customify_Gutenberg {
 
 		if ( PixCustomifyPlugin()->get_plugin_setting( 'enable_editor_style', true ) ) {
 			add_filter( 'customify_typography_css_selector', array( $this, 'gutenbergify_font_css_selectors' ), 10, 2 );
-			PixCustomifyPlugin()->output_typography_dynamic_style();
+			wp_add_inline_script( $enqueue_parent_handle, PixCustomifyPlugin()->get_typography_dynamic_script() );
+			wp_add_inline_style( $enqueue_parent_handle, PixCustomifyPlugin()->get_typography_dynamic_style() );
 			remove_filter( 'customify_typography_css_selector', array( $this, 'gutenbergify_font_css_selectors' ), 10 );
 
 			add_filter( 'customify_font_css_selector', array( $this, 'gutenbergify_font_css_selectors' ), 10, 2 );
-			Customify_Font_Selector::instance()->output_font_dynamic_style();
+			wp_add_inline_script( $enqueue_parent_handle, Customify_Font_Selector::instance()->get_fonts_dynamic_script() );
+			wp_add_inline_style( $enqueue_parent_handle, Customify_Font_Selector::instance()->get_fonts_dynamic_style() );
 			remove_filter( 'customify_font_css_selector', array( $this, 'gutenbergify_font_css_selectors' ), 10 );
 
 			add_filter( 'customify_css_selector', array( $this, 'gutenbergify_css_selectors' ), 10, 2 );
-			PixCustomifyPlugin()->output_dynamic_style();
+			wp_add_inline_style( $enqueue_parent_handle, PixCustomifyPlugin()->get_dynamic_style() );
 			remove_filter( 'customify_css_selector', array( $this, 'gutenbergify_css_selectors' ), 10 );
 
 			// Add color palettes classes.

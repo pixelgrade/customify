@@ -19,7 +19,8 @@ class Customify_Font_Selector {
 		$this->theme_fonts = apply_filters( 'customify_theme_fonts', array() );
 
 		$load_location = PixCustomifyPlugin()->get_plugin_setting( 'style_resources_location', 'wp_head' );
-		add_action( $load_location, array( $this, 'output_font_dynamic_style' ), 100 );
+		add_action( $load_location, array( $this, 'output_webfont_script' ), 99 );
+		add_action( $load_location, array( $this, 'output_fonts_dynamic_style' ), 100 );
 		add_action( 'customify_font_family_before_options', array( $this, 'add_customify_theme_fonts' ), 11, 2 );
 
 		if ( PixCustomifyPlugin()->get_plugin_setting( 'enable_editor_style', true ) ) {
@@ -31,7 +32,7 @@ class Customify_Font_Selector {
 	function add_customizer_settings_into_wp_editor() {
 
 		ob_start();
-		$this->output_font_dynamic_style();
+		$this->output_fonts_dynamic_style();
 
 		$custom_css = ob_get_clean(); ?>
 		<script type="text/javascript">
@@ -123,7 +124,13 @@ class Customify_Font_Selector {
 		return $to_return;
 	}
 
-	function output_font_dynamic_style( $editor = false ) {
+	protected function get_fonts_args() {
+
+		$args = array(
+			'google_families' => '',
+			'local_families'  => '',
+			'local_srcs'      => '',
+		);
 
 		/** @var PixCustomifyPlugin $local_plugin */
 		$local_plugin = PixCustomifyPlugin();
@@ -133,16 +140,8 @@ class Customify_Font_Selector {
 		$local_plugin->get_typography_fields( self::$options_list, 'type', 'font', self::$typo_settings );
 
 		if ( empty( self::$typo_settings ) ) {
-			return;
+			return $args;
 		}
-
-		$google_families = $local_families = '';
-
-		$args = array(
-			'google_families' => '',
-			'local_families'  => '',
-			'local_srcs'      => '',
-		);
 
 		foreach ( self::$typo_settings as $id => $font ) {
 			if ( isset ( $font['value'] ) ) {
@@ -222,86 +221,105 @@ class Customify_Font_Selector {
 			}
 		}
 
-		if ( ( ! empty ( $args['local_families'] ) || ! empty ( $args['google_families'] ) ) && PixCustomifyPlugin()->get_plugin_setting( 'typography', '1' ) && PixCustomifyPlugin()->get_plugin_setting( 'typography_google_fonts', 1 ) ) {
-			$this->display_webfont_script( $args );
+		return $args;
+	}
+
+	function output_fonts_dynamic_style() {
+
+		/** @var PixCustomifyPlugin $local_plugin */
+		$local_plugin = PixCustomifyPlugin();
+
+		self::$options_list = $local_plugin->get_options();
+		$local_plugin->get_typography_fields( self::$options_list, 'type', 'font', self::$typo_settings );
+
+		if ( empty( self::$typo_settings ) ) {
+			return;
 		}
 
+		$output = '';
+
 		foreach ( self::$typo_settings as $key => $font ) {
-			if ( ! isset( $font['selector'] ) ) {
+			$font_output = $this->get_font_style( $font );
+			if ( empty( $font_output ) ) {
 				continue;
 			}
 
-			$font['selector'] = apply_filters( 'customify_font_css_selector', $font['selector'], $font );
+			$output .= $font_output . PHP_EOL;
 
-			if ( empty( $font['selector'] ) || empty( $font['value'] ) ) {
-				continue;
+			// If we are in a Customizer context we will output CSS rules grouped so we can target them.
+			// In the frontend we want a whole bulk.
+			if ( isset( $GLOBALS['wp_customize'] ) ) { ?>
+			<style id="customify_font_output_for_<?php echo sanitize_html_class( $key ); ?>">
+				<?php echo $font_output; ?>
+				</style><?php
 			}
-
-			$value = $this->maybe_decode_value( $font['value'] );
-
-			if ( $value === null ) {
-				$value = $local_plugin->get_font_defaults_value( $font['value'] );
-			}
-
-			// shim the old case when the default was only the font name
-			if ( is_string( $value ) && ! empty( $value ) ) {
-				$value = array( 'font_family' => $value );
-			}
-
-			// Handle special logic for when the $value array is not an associative array
-			if ( ! $local_plugin->is_assoc( $value ) ) {
-				$value = $local_plugin->standardize_non_associative_font_default( $value );
-			}
-
-			$this->output_font_style( $key, $font, $value, $editor );
 		}
 
 		// in customizer the CSS is printed per option, in front-end we need to print them in bulk
 		if ( ! isset( $GLOBALS['wp_customize'] ) ) { ?>
-<style id="customify_fonts_output">
-<?php echo join( "\n", $this->customify_CSS_output ); ?>
-</style><?php
-			return;
+			<style id="customify_fonts_output">
+			<?php echo $output; ?>
+			</style><?php
 		}
 	}
 
-	function display_webfont_script( $args ) { ?>
-		<script type="text/javascript">
-			var customify_font_loader = function () {
-				var webfontargs = {
-					classes: false,
-					events: false
-				};
-				<?php if ( ! empty( $args['google_families'] ) ) { ?>
-				webfontargs.google = {families: [<?php echo( rtrim( $args['google_families'], ',' ) ); ?>]};
-				<?php }
-				if ( ! empty( $args['local_families'] ) && ! empty( $args['local_srcs'] ) ) { ?>
-				webfontargs.custom = {
-					families: [<?php echo( rtrim( $args['local_families'], ',' ) ); ?>],
-					urls: [<?php echo rtrim( $args['local_srcs'], ',' ) ?>]
-				};
-				<?php } ?>
-				WebFont.load(webfontargs);
-			};
+	function get_fonts_dynamic_style() {
 
-			if (typeof WebFont !== 'undefined') { <?php // if there is a WebFont object, use it ?>
-				customify_font_loader();
-			} else { <?php // basically when we don't have the WebFont object we create the google script dynamically  ?>
-				var tk = document.createElement('script');
-				tk.src = '//ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
-				tk.type = 'text/javascript';
+		$output = '';
 
-				tk.onload = tk.onreadystatechange = function () {
-					customify_font_loader();
-				};
-				var s = document.getElementsByTagName('script')[0];
-				s.parentNode.insertBefore(tk, s);
+		/** @var PixCustomifyPlugin $local_plugin */
+		$local_plugin = PixCustomifyPlugin();
+
+		self::$options_list = $local_plugin->get_options();
+		$local_plugin->get_typography_fields( self::$options_list, 'type', 'font', self::$typo_settings );
+
+		if ( empty( self::$typo_settings ) ) {
+			return $output;
+		}
+
+		foreach ( self::$typo_settings as $key => $font ) {
+
+			$font_output = $this->get_font_style( $font );
+			if ( empty( $font_output ) ) {
+				continue;
 			}
-		</script>
-		<?php
+
+			$output .= $font_output . PHP_EOL;
+		}
+
+		return $output;
 	}
 
-	function output_font_style( $field, $font, $value, $editor ) {
+	function get_font_style( $font ) {
+
+		if ( ! isset( $font['selector'] ) ) {
+			return '';
+		}
+
+		$font['selector'] = apply_filters( 'customify_font_css_selector', $font['selector'], $font );
+
+		if ( empty( $font['selector'] ) || empty( $font['value'] ) ) {
+			return '';
+		}
+
+		/** @var PixCustomifyPlugin $local_plugin */
+		$local_plugin = PixCustomifyPlugin();
+
+		$value = $this->maybe_decode_value( $font['value'] );
+
+		if ( $value === null ) {
+			$value = $local_plugin->get_font_defaults_value( $font['value'] );
+		}
+
+		// shim the old case when the default was only the font name
+		if ( is_string( $value ) && ! empty( $value ) ) {
+			$value = array( 'font_family' => $value );
+		}
+
+		// Handle special logic for when the $value array is not an associative array
+		if ( ! $local_plugin->is_assoc( $value ) ) {
+			$value = $local_plugin->standardize_non_associative_font_default( $value );
+		}
 
 		$value = $this->validate_font_values( $value );
 		// some sanitizing
@@ -463,14 +481,61 @@ class Customify_Font_Selector {
 
 		$CSS = ob_get_clean();
 
-		if ( isset( $GLOBALS['wp_customize'] ) ) { ?>
-			<style id="customify_font_output_for_<?php echo sanitize_html_class( $field ); ?>">
-				<?php echo $CSS ?>
-			</style><?php
-			return;
-		} else {
-			$this->customify_CSS_output[] = $CSS;
+		return $CSS;
+	}
+
+	function output_webfont_script() {
+		$script = $this->get_fonts_dynamic_script();
+		if ( ! empty( $script ) ) { ?>
+		<script type="text/javascript">
+			<?php echo $script; ?>
+		</script>
+		<?php }
+	}
+
+	function get_fonts_dynamic_script() {
+		$args = $this->get_fonts_args();
+
+		if ( ( empty ( $args['local_families'] ) && empty ( $args['google_families'] ) ) || ! PixCustomifyPlugin()->get_plugin_setting( 'typography', '1' ) || ! PixCustomifyPlugin()->get_plugin_setting( 'typography_google_fonts', 1 ) ) {
+			return '';
 		}
+
+		ob_start();
+		?>
+		var customify_font_loader = function () {
+		var webfontargs = {
+		classes: false,
+		events: false
+		};
+		<?php if ( ! empty( $args['google_families'] ) ) { ?>
+			webfontargs.google = {families: [<?php echo( rtrim( $args['google_families'], ',' ) ); ?>]};
+		<?php }
+		if ( ! empty( $args['local_families'] ) && ! empty( $args['local_srcs'] ) ) { ?>
+			webfontargs.custom = {
+			families: [<?php echo( rtrim( $args['local_families'], ',' ) ); ?>],
+			urls: [<?php echo rtrim( $args['local_srcs'], ',' ) ?>]
+			};
+		<?php } ?>
+		WebFont.load(webfontargs);
+		};
+
+		if (typeof WebFont !== 'undefined') { <?php // if there is a WebFont object, use it ?>
+		customify_font_loader();
+		} else { <?php // basically when we don't have the WebFont object we create the google script dynamically  ?>
+		var tk = document.createElement('script');
+		tk.src = '//ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
+		tk.type = 'text/javascript';
+
+		tk.onload = tk.onreadystatechange = function () {
+		customify_font_loader();
+		};
+		var s = document.getElementsByTagName('script')[0];
+		s.parentNode.insertBefore(tk, s);
+		}
+		<?php
+		$output = ob_get_clean();
+
+		return apply_filters( 'customify_fonts_webfont_script', $output );
 	}
 
 	function get_field_unit( $font, $field ) {
