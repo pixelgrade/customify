@@ -1,4 +1,6 @@
-<?php return array(
+<?php defined( 'ABSPATH' ) or die;
+
+return array(
 
 	# Hidden fields
 	'settings_saved_once'                   => '0',

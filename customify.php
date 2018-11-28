@@ -71,5 +71,4 @@ function PixCustomifyPlugin() {
 $pixcustomify_plugin = PixCustomifyPlugin();
 
 // Load custom modules
-require_once( 'features/class-CSS_Editor.php' );
 require_once( 'features/class-Font_Selector.php' );

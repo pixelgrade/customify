@@ -188,11 +188,6 @@ class PixCustomifyPlugin {
 	 * Register our actions and filters
 	 */
 	function register_hooks() {
-		/*
-		 * Register hooks that are fired when the plugin is activated, deactivated, and uninstalled, respectively.
-		 */
-		register_activation_hook( $this->file, array( $this, 'activate' ) );
-		register_deactivation_hook( $this->file, array( $this, 'deactivate' ) );
 
 		/*
 		 * Load plugin text domain
@@ -347,26 +342,6 @@ class PixCustomifyPlugin {
 
 	public function get_slug() {
 		return $this->plugin_slug;
-	}
-
-	/**
-	 * Fired when the plugin is activated.
-	 * @since    1.0.0
-	 *
-	 * @param    boolean $network_wide True if WPMU superadmin uses "Network Activate" action, false if WPMU is disabled or plugin is activated on an individual blog.
-	 */
-	public static function activate( $network_wide ) {
-		//@todo Define activation functionality here
-	}
-
-	/**
-	 * Fired when the plugin is deactivated.
-	 * @since    1.0.0
-	 *
-	 * @param    boolean $network_wide True if WPMU superadmin uses "Network Deactivate" action, false if WPMU is disabled or plugin is deactivated on an individual blog.
-	 */
-	static function deactivate( $network_wide ) {
-		//@todo Define deactivation functionality here
 	}
 
 	/**
