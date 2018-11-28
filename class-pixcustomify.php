@@ -158,6 +158,11 @@ class PixCustomifyPlugin {
 	 * Initialize plugin
 	 */
 	private function init() {
+		// We don't want to put extra load on the heartbeat AJAX request.
+		if ( wp_doing_ajax() && isset( $_REQUEST['action'] ) && 'heartbeat' === $_REQUEST['action'] ) {
+			return;
+		}
+
 		// Load the config file
 		$this->config = $this->get_config();
 		// Load the plugin's settings from the DB
@@ -310,10 +315,6 @@ class PixCustomifyPlugin {
 	 * Load the plugin configuration and options.
 	 */
 	function load_plugin_configs() {
-		// We don't want to put extra load on the heartbeat AJAX request.
-		if ( is_ajax() && isset( $_REQUEST['action'] ) && 'heartbeat' === $_REQUEST['action'] ) {
-			return;
-		}
 
 		// Allow themes or other plugins to filter the config.
 		$this->customizer_config = apply_filters( 'customify_filter_fields', $this->customizer_config );
