@@ -24,75 +24,76 @@ class Customify_Font_Selector {
 		add_action( 'customify_font_family_before_options', array( $this, 'add_customify_theme_fonts' ), 11, 2 );
 
 		if ( PixCustomifyPlugin()->get_plugin_setting( 'enable_editor_style', true ) ) {
-			add_action( 'admin_head', array( $this, 'add_customizer_settings_into_wp_editor' ) );
+			add_action( 'admin_head', array( $this, 'script_to_add_customizer_settings_into_wp_editor' ) );
 		}
 
 	}
 
-	function add_customizer_settings_into_wp_editor() {
+	function script_to_add_customizer_settings_into_wp_editor() {
 
 		ob_start();
 		$this->output_fonts_dynamic_style();
 
-		$custom_css = ob_get_clean(); ?>
-		<script type="text/javascript">
-			/* <![CDATA[ */
-			(function ($) {
-				$(window).load(function () {
-					/**
-					 * @param iframe_id the id of the frame you want to append the style
-					 * @param style_element the style element you want to append
-					 */
-					var append_script_to_iframe = function (ifrm_id, scriptEl) {
-						var myIframe = document.getElementById(ifrm_id);
+		$custom_css = ob_get_clean();
 
-						var script = myIframe.contentWindow.document.createElement("script");
-						script.type = "text/javascript";
-						script.innerHTML = scriptEl.innerHTML;
+		ob_start(); ?>
+	(function ($) {
+		$(window).load(function () {
+			/**
+			 * @param iframe_id the id of the frame you want to append the style
+			 * @param style_element the style element you want to append
+			 */
+			var append_script_to_iframe = function (ifrm_id, scriptEl) {
+				var myIframe = document.getElementById(ifrm_id);
 
-						myIframe.contentWindow.document.head.appendChild(script);
-					};
+				var script = myIframe.contentWindow.document.createElement("script");
+				script.type = "text/javascript";
+				script.innerHTML = scriptEl.innerHTML;
 
-					var append_style_to_iframe = function (ifrm_id, styleElment) {
-						var ifrm = window.frames[ifrm_id];
-						if ( typeof ifrm === "undefined" ) {
-						    return;
+				myIframe.contentWindow.document.head.appendChild(script);
+			};
+
+			var append_style_to_iframe = function (ifrm_id, styleElment) {
+				var ifrm = window.frames[ifrm_id];
+				if ( typeof ifrm === "undefined" ) {
+				    return;
+				}
+				ifrm = ( ifrm.contentDocument || ifrm.document );
+				var head = ifrm.getElementsByTagName('head')[0];
+
+				if (typeof styleElment !== "undefined") {
+					head.appendChild(styleElment);
+				}
+			};
+
+			var xmlString = <?php echo json_encode( str_replace( "\n", "", $custom_css ) ); ?>,
+				parser = new DOMParser(),
+				doc = parser.parseFromString(xmlString, "text/html");
+
+			if (typeof window.frames['content_ifr'] !== 'undefined') {
+
+				$.each(doc.head.childNodes, function (key, el) {
+					if (typeof el !== "undefined" && typeof el.tagName !== "undefined") {
+
+						switch (el.tagName) {
+							case 'STYLE' :
+								append_style_to_iframe('content_ifr', el);
+								break;
+							case 'SCRIPT' :
+								append_script_to_iframe('content_ifr', el);
+								break;
+							default:
+								break;
 						}
-						ifrm = ( ifrm.contentDocument || ifrm.document );
-						var head = ifrm.getElementsByTagName('head')[0];
-
-						if (typeof styleElment !== "undefined") {
-							head.appendChild(styleElment);
-						}
-					};
-
-					var xmlString = <?php echo json_encode( str_replace( "\n", "", $custom_css ) ); ?>,
-						parser = new DOMParser(),
-						doc = parser.parseFromString(xmlString, "text/html");
-
-					if (typeof window.frames['content_ifr'] !== 'undefined') {
-
-						$.each(doc.head.childNodes, function (key, el) {
-							if (typeof el !== "undefined" && typeof el.tagName !== "undefined") {
-
-								switch (el.tagName) {
-									case 'STYLE' :
-										append_style_to_iframe('content_ifr', el);
-										break;
-									case 'SCRIPT' :
-										append_script_to_iframe('content_ifr', el);
-										break;
-									default:
-										break;
-								}
-							}
-						});
 					}
 				});
-			})(jQuery);
-			/* ]]> */
-		</script>
-	<?php }
+			}
+		});
+	})(jQuery);
+		<?php
+		$script = ob_get_clean();
+		wp_add_inline_script( 'editor', $script );
+	}
 
 	public function get_theme_fonts() {
 		return $this->theme_fonts;
