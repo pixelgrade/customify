@@ -209,6 +209,11 @@ class PixCustomifyPlugin {
 		// We need to be able to load things like components configs depending on those firing up or not
 		// DO NOT TRY to use the Customify values before this!
 		add_action( 'init', array( $this, 'load_plugin_configs' ), 15 );
+		// Also handle the force clearing of the cached config. Since we can't know wo can influence it, we need to be proactive.
+		add_action( 'activated_plugin', array( $this, 'clear_customizer_config_cache' ), 10 );
+		add_action( 'deactivated_plugin', array( $this, 'clear_customizer_config_cache' ), 10 );
+		add_action( 'switch_theme', array( $this, 'clear_customizer_config_cache' ), 10 );
+		add_action( 'upgrader_process_complete', array( $this, 'clear_customizer_config_cache' ), 10 );
 
 		/*
 		 * Now setup the admin side of things
@@ -311,10 +316,7 @@ class PixCustomifyPlugin {
 	 */
 	function load_plugin_configs() {
 
-		// Allow themes or other plugins to filter the config.
-		$this->customizer_config = apply_filters( 'customify_filter_fields', $this->customizer_config );
-		// We apply a second filter for those that wish to work with the final config and not rely on a a huge priority number.
-		$this->customizer_config = apply_filters( 'customify_final_config', $this->customizer_config );
+		$this->load_customizer_config();
 
 		$this->opt_name          = $this->localized['options_name'] = $this->customizer_config['opt-name'];
 		$this->options_list      = $this->get_options();
@@ -334,6 +336,69 @@ class PixCustomifyPlugin {
 		$this->localized['ajax_url'] = admin_url( 'admin-ajax.php' );
 		$this->localized['style_manager_user_feedback_nonce'] = wp_create_nonce( 'customify_style_manager_user_feedback' );
 		$this->localized['style_manager_user_feedback_provided'] = get_option( 'style_manager_user_feedback_provided', false );
+	}
+
+	/**
+	 * Set the customizer configuration.
+	 *
+	 * @since 2.2.1
+	 *
+	 * @param bool $skip_cache Optional. Whether to use the cached config or generate a new one.
+	 */
+	protected function load_customizer_config( $skip_cache = false ) {
+		// First try and get the cached data
+		$data = get_option( $this->_get_customizer_config_cache_key() );
+
+		// We don't force skip the cache for AJAX requests for performance reasons.
+		if ( ! wp_doing_ajax() && defined('CUSTOMIFY_ALWAYS_GENERATE_CUSTOMIZER_CONFIG' ) && true === CUSTOMIFY_ALWAYS_GENERATE_CUSTOMIZER_CONFIG ) {
+			$skip_cache = true;
+		}
+
+		// For performance reasons, we will ONLY regenerate when in the WP ADMIN area or via an ADMIN AJAX call.
+		if ( false !== $data && false === $skip_cache && ! is_admin() && ! is_customize_preview() ) {
+			$this->customizer_config = $data;
+			return;
+		}
+
+		// Get the cache data expiration timestamp.
+		$expire_timestamp = get_option( $this->_get_customizer_config_cache_key() . '_timestamp' );
+
+		// The data isn't set, is expired or we were instructed to skip the cache; we need to regenerate the config.
+		if ( true === $skip_cache || false === $data || false === $expire_timestamp || $expire_timestamp < time() ) {
+			// Allow themes or other plugins to filter the config.
+			// We use $this->customizer_config so we can start from whatever default configuration it may be.
+			$data = apply_filters( 'customify_filter_fields', $this->customizer_config );
+			// We apply a second filter for those that wish to work with the final config and not rely on a a huge priority number.
+			$data = apply_filters( 'customify_final_config', $data );
+
+			// Cache the data in an option for 6 hours
+			update_option( $this->_get_customizer_config_cache_key() , $data, true );
+			update_option( $this->_get_customizer_config_cache_key() . '_timestamp' , time() + 6 * HOUR_IN_SECONDS, true );
+		}
+
+		$this->customizer_config = $data;
+		return;
+	}
+
+	/**
+	 * Clear the customizer config cache.
+	 *
+	 * @since 2.2.1
+	 */
+	public function clear_customizer_config_cache() {
+		delete_option( $this->_get_customizer_config_cache_key() );
+		delete_option( $this->_get_customizer_config_cache_key() . '_timestamp' );
+	}
+
+	/**
+	 * Get the customizer config cache key.
+	 *
+	 * @since 2.2.1
+	 *
+	 * @return string
+	 */
+	private function _get_customizer_config_cache_key() {
+		return 'customify_customizer_config';
 	}
 
 	public function get_version() {
@@ -553,26 +618,27 @@ class PixCustomifyPlugin {
 				foreach ( $options['css'] as $key => $properties_set ) {
 					// We need to use a class because we may have multiple <style>s with the same "ID" for example
 					// when targeting the same property but with different selectors.
-					?>
-					<style class="dynamic_setting_<?php echo sanitize_html_class( $option_id ) . '_property_' . str_replace( '-', '_', $properties_set['property'] ) . '_' . $key; ?>"
-					       type="text/css"><?php
+
+					$inline_style = '<style class="dynamic_setting_ ' . sanitize_html_class( $option_id ) . '_property_' . str_replace( '-', '_', $properties_set['property'] ) . '_' . $key .'" type="text/css">';
 
 					if ( isset( $properties_set['media'] ) && ! empty( $properties_set['media'] ) ) {
-						echo '@media '. $properties_set['media'] . " {" . PHP_EOL;
+						$inline_style .= '@media '. $properties_set['media'] . ' {';
 					}
 
 					if ( isset( $properties_set['selector'] ) && isset( $properties_set['property'] ) ) {
 						$css_output = $this->process_css_property($properties_set, $this_value);
 						if ( ! empty( $css_output ) ) {
-							echo $css_output . PHP_EOL;
+							$inline_style .= $css_output;
 						}
 					}
 
 					if ( isset( $properties_set['media'] ) && ! empty( $properties_set['media'] ) ) {
-						echo "}" . PHP_EOL;
-					} ?>
-					</style>
-				<?php }
+						$inline_style .= '}';
+					}
+					$inline_style .= '</style>';
+
+					echo $inline_style;
+				}
 			}
 		}
 	}
@@ -1015,7 +1081,7 @@ class PixCustomifyPlugin {
 		}
 
 		// lose the tons of tabs
-		$css_property['selector'] = trim( $css_property['selector'] );
+		$css_property['selector'] = trim( preg_replace( '/\t+/', '', $css_property['selector'] ) );
 
 		$css_property['selector'] = apply_filters( 'customify_css_selector', $css_property['selector'], $css_property );
 
@@ -1102,6 +1168,8 @@ class PixCustomifyPlugin {
 			$selector = implode( ' ', $options['output'] );
 		}
 
+		// Loose the ton of tabs.
+		$selector = trim( preg_replace( '/\t+/', '', $selector ) );
 
 		$output .= $selector . " {";
 		if ( isset( $value['background-image'] ) && ! empty( $value['background-image'] ) ) {
