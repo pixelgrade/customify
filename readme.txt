@@ -1,9 +1,9 @@
 === Customify - A Theme Customizer Booster ===
-Contributors: pixelgrade, euthelup, babbardel, vlad.olaru, cristianfrumusanu, raduconstantin, razvanonofrei
+Contributors: pixelgrade, euthelup, babbardel, vlad.olaru, raduconstantin, razvanonofrei
 Tags: customizer, css, editor, live, preview, customizer
 Requires at least: 4.7.0
 Tested up to: 5.0.0
-Stable tag: 2.2.0
+Stable tag: 2.1.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -44,6 +44,11 @@ With [Customify](https://github.com/pixelgrade/customify), developers can easily
 * Default [image](https://unsplash.com/photos/OgM4RKdr2kY) for Style Manager Color Palette control - License: (Unsplash)[https://unsplash.com/license]
 
 == Changelog ==
+
+= 2.3.0 =
+* Improved support for the new **Gutenberg block editor.** Compatible with the latest WordPress 5.0 beta version.
+* Big **performance improvements** both in the frontend and also in the Customizer.
+* Cleanup regarding old and deprecated features.
 
 = 2.2.0 =
 * Added support for the new **Gutenberg block editor.**
