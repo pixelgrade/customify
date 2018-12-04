@@ -21,6 +21,8 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 
 	private static $std_fonts = null;
 
+	protected static $font_control_instance_count = 0;
+
 	/**
 	 * Constructor.
 	 *
@@ -60,7 +62,11 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 		) );
 
 		$this->CSSID    = $this->get_CSS_ID();
-		$this->load_google_fonts();
+		$this->maybe_load_google_fonts();
+
+		self::$font_control_instance_count += 1;
+
+		$this->add_hooks();
 
 		// This is intentionally commented as it is only used in development to refresh the Google Fonts list
 //		$this->generate_google_fonts_json();
@@ -77,6 +83,16 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 		}
 
 		$this->current_value = $this->value();
+	}
+
+	protected function add_hooks() {
+		// We will only add the google fonts select options only once as they will be reused for all controls.
+		if ( self::$font_control_instance_count === 1 ) {
+			add_action( 'customize_controls_print_footer_scripts', array(
+				$this,
+				'customize_pane_settings_google_fonts_options'
+			), 10000 );
+		}
 	}
 
 	/**
@@ -111,12 +127,12 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 		//make sure it is an object from here going forward
 		$current_value = (object) $current_value;
 
-		$font_family = '';
+		$active_font_family = '';
 		if ( isset( $current_value->font_family ) ) {
-			$font_family = $current_value->font_family;
+			$active_font_family = $current_value->font_family;
 		}
 
-		$select_data = '';
+		$select_data = 'data-active_font_family="' . esc_attr( $active_font_family ) . '"';
 		if ( isset( $current_value->load_all_weights ) ) {
 			$this->load_all_weights = $current_value->font_load_all_weights;
 
@@ -125,7 +141,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 		<div class="font-options__wrapper">
 			<?php
 			$this->display_value_holder( $current_value );
-			$this->display_field_title( $font_family, esc_attr( $this->CSSID ) ); ?>
+			$this->display_field_title( $active_font_family, esc_attr( $this->CSSID ) ); ?>
 
 			<input type="checkbox" class="customify_font_tooltip"
 			       id="tooltip_toogle_<?php echo esc_attr( $this->CSSID ); ?>">
@@ -135,40 +151,17 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 					<select id="select_font_font_family_<?php echo esc_attr( $this->CSSID ); ?>" class="customify_font_family"<?php echo $select_data; ?> data-field="font_family">
 						<?php
 						// Allow others to add options here
-						do_action( 'customify_font_family_before_options', $font_family, $current_value );
+						do_action( 'customify_font_family_before_options', $active_font_family, $current_value );
 
-						$this->display_recommended_options_group( $font_family, $current_value );
+						$this->display_recommended_options_group( $active_font_family, $current_value );
 
-						$this->display_standard_options_group( $font_family, $current_value );
+						$this->display_standard_options_group( $active_font_family, $current_value );
 
 						do_action( 'customify_font_family_before_google_fonts_options' );
 
 						if ( PixCustomifyPlugin()->get_plugin_setting( 'typography_google_fonts' ) ) {
 
-							if ( PixCustomifyPlugin()->get_plugin_setting( 'typography_group_google_fonts' ) ) {
-
-								$grouped_google_fonts = array();
-								foreach ( self::$google_fonts as $key => $font ) {
-									if ( isset( $font['category'] ) ) {
-										$grouped_google_fonts[ $font['category'] ][] = $font;
-									}
-								}
-
-								foreach ( $grouped_google_fonts as $group_name => $group ) {
-									echo '<optgroup label="' . __( 'Google fonts', 'customify' ) . ' ' . $group_name . '">';
-									foreach ( $group as $key => $font ) {
-										self::output_font_option( $key, $font_family, $font );
-									}
-									echo "</optgroup>";
-								}
-
-							} else {
-								echo '<optgroup label="' . __( 'Google fonts', 'customify' ) . '">';
-								foreach ( self::$google_fonts as $key => $font ) {
-									self::output_font_option( $key, $font_family, $font );
-								}
-								echo "</optgroup>";
-							}
+							echo '<optgroup class="google-fonts-opts-placeholder" label="' . __( 'Google fonts', 'customify' ) . '"></optgroup>';
 						} ?>
 					</select>
 				</li>
@@ -204,6 +197,67 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 
 		?>
 	<?php }
+
+	public function get_google_fonts_opts_html() {
+		$html = '';
+		if ( ! PixCustomifyPlugin()->get_plugin_setting( 'typography_google_fonts' ) ) {
+			return $html;
+		}
+
+		ob_start();
+		if ( PixCustomifyPlugin()->get_plugin_setting( 'typography_group_google_fonts' ) ) {
+
+			$grouped_google_fonts = array();
+			foreach ( self::$google_fonts as $key => $font ) {
+				if ( isset( $font['category'] ) ) {
+					$grouped_google_fonts[ $font['category'] ][] = $font;
+				}
+			}
+
+			foreach ( $grouped_google_fonts as $group_name => $group ) {
+				echo '<optgroup label="' . __( 'Google fonts', 'customify' ) . ' ' . $group_name . '">';
+				foreach ( $group as $key => $font ) {
+					self::output_font_option( $font );
+				}
+				echo "</optgroup>";
+			}
+
+		} else {
+			echo '<optgroup label="' . __( 'Google fonts', 'customify' ) . '">';
+			foreach ( self::$google_fonts as $key => $font ) {
+				self::output_font_option( $font );
+			}
+			echo "</optgroup>";
+		}
+
+		$html = ob_get_clean();
+
+		return $html;
+	}
+
+	public function customize_pane_settings_google_fonts_options() {
+		if ( ! PixCustomifyPlugin()->get_plugin_setting( 'typography_google_fonts' ) ) {
+			return;
+		}
+
+		?>
+		<script type="text/javascript">
+          if ( 'undefined' === typeof _wpCustomizeSettings.settings ) {
+            _wpCustomizeSettings.settings = {};
+          }
+
+		  <?php
+		  echo "(function ( sAdditional ){\n";
+
+		  printf(
+			  "sAdditional['google_fonts_opts'] = %s;\n",
+			  wp_json_encode( $this->get_google_fonts_opts_html() )
+		  );
+		  echo "})( _wpCustomizeSettings );\n";
+		  ?>
+		</script>
+		<?php
+	}
 
 	/**
 	 * This input will hold the values of this typography field
@@ -241,7 +295,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 					$font = $key;
 				}
 
-				self::output_font_option( $key, $font_family, $font, $font_type );
+				self::output_font_option( $font, $font_family, $font_type );
 			}
 			echo "</optgroup>";
 		}
@@ -255,7 +309,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 
 			echo '<optgroup label="' . __( 'Standard fonts', 'customify' ) . '">';
 			foreach ( self::$std_fonts as $key => $font ) {
-				self::output_font_option( $key, $font_family, $font, 'std' );
+				self::output_font_option( $font, $font_family, 'std' );
 			}
 			echo "</optgroup>";
 		}
@@ -505,49 +559,61 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 	/**
 	 * This method displays an <option> tag from the given params
 	 *
-	 * @param string $key
-	 * @param string $active_font_family
 	 * @param string|array $font
-	 * @param string string $type
+	 * @param string|false $active_font_family Optional. The active font family to add the selected attribute to the appropriate opt.
+	 *                                         False to not mark any opt as selected.
+	 * @param string $type
 	 */
-	public static function output_font_option( $key, $active_font_family, $font, $type = 'google' ) {
-		//initialize data attributes
-		$data = '';
+	public static function output_font_option( $font, $active_font_family = false, $type = 'google' ) {
+		echo self::get_font_option( $font, $active_font_family, $type );
+	}
 
-		$data .= ' data-type="' . esc_attr( $type ) . '"';
+	/**
+	 * This method returns an <option> tag from the given params
+	 *
+	 * @param string|array $font
+	 * @param string|false $active_font_family Optional. The active font family to add the selected attribute to the appropriate opt.
+	 *                                         False to not mark any opt as selected.
+	 * @param string $type
+	 * @return string
+	 */
+	public static function get_font_option( $font, $active_font_family = false, $type = 'google' ) {
 
-		//we will handle Google Fonts separately
+		$html = '';
+
+		$data_attrs = ' data-type="' . esc_attr( $type ) . '"';
+
+		// We will handle Google Fonts separately
 		if ( $type === 'google' ) {
 			// Handle the font variants markup, if available
 			if ( isset( $font['variants'] ) && ! empty( $font['variants'] ) ) {
-				$data .= ' data-variants="' . PixCustomifyPlugin::encodeURIComponent( json_encode( (object) $font['variants'] ) ) . '"';
+				$data_attrs .= ' data-variants="' . PixCustomifyPlugin::encodeURIComponent( json_encode( (object) $font['variants'] ) ) . '"';
 			}
 
 			if ( isset( $font['subsets'] ) && ! empty( $font['subsets'] ) ) {
-				$data .= ' data-subsets="' . PixCustomifyPlugin::encodeURIComponent( json_encode( (object) $font['subsets'] ) ) . '"';
+				$data_attrs .= ' data-subsets="' . PixCustomifyPlugin::encodeURIComponent( json_encode( (object) $font['subsets'] ) ) . '"';
 			}
 
 			//determine if it's selected
-			$selected = ( $active_font_family === $font['family'] ) ? ' selected="selected" ' : '';
+			$selected = ( false !== $active_font_family && $active_font_family === $font['family'] ) ? ' selected="selected" ' : '';
 
-			//output the markup
-			echo '<option value="' . $font['family'] . '"' . $selected . $data . '>' . $font['family'] . '</option>';
+			$html .= '<option value="' . $font['family'] . '"' . $selected . $data_attrs . '>' . $font['family'] . '</option>';
 		} elseif ( $type === 'theme_font' ) {
-			$data = '';
+			$data_attrs = '';
 
 			// Handle the font variants markup, if available
 			if ( isset( $font['variants'] ) && ! empty( $font['variants'] ) ) {
-				$data .= ' data-variants="' . PixCustomifyPlugin::encodeURIComponent( json_encode( (object) $font['variants'] ) ) . '"';
+				$data_attrs .= ' data-variants="' . PixCustomifyPlugin::encodeURIComponent( json_encode( (object) $font['variants'] ) ) . '"';
 			}
 
-			$selected = ( $active_font_family === $font['family'] ) ? ' selected="selected" ' : '';
-			$data .= ' data-src="' . $font['src'] . '" data-type="theme_font"';
-			//output the markup
-			echo '<option value="' . $font['family'] . '"' . $selected . $data . '>' . $font['family'] . '</option>';
+			$selected = ( false !== $active_font_family && $active_font_family === $font['family'] ) ? ' selected="selected" ' : '';
+			$data_attrs .= ' data-src="' . $font['src'] . '" data-type="theme_font"';
+
+			$html .= '<option value="' . $font['family'] . '"' . $selected . $data_attrs . '>' . $font['family'] . '</option>';
 		} else {
 			// Handle the font variants markup, if available
 			if ( is_array( $font ) && isset( $font['variants'] ) && ! empty( $font['variants'] ) ) {
-				$data .= ' data-variants="' . PixCustomifyPlugin::encodeURIComponent( json_encode( (object) $font['variants'] ) ) . '"';
+				$data_attrs .= ' data-variants="' . PixCustomifyPlugin::encodeURIComponent( json_encode( (object) $font['variants'] ) ) . '"';
 			}
 
 			// by default, we assume we only get a font family string
@@ -558,7 +624,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 			}
 
 			//determine if it's selected
-			$selected = ( $active_font_family === $font_family ) ? ' selected="selected" ' : '';
+			$selected = ( false !== $active_font_family && $active_font_family === $font_family ) ? ' selected="selected" ' : '';
 
 			//now determine if we have a "pretty" display for this font family
 			$font_family_display = $font_family;
@@ -572,27 +638,31 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 			}
 			$option_class = $type . '_font';
 
-			//output the markup
-			echo '<option class="' . esc_attr( $option_class ) . '" value="' . esc_attr( $font_family ) . '" ' . $selected . $data . '>' . $font_family_display . '</option>';
+			$html .= '<option class="' . esc_attr( $option_class ) . '" value="' . esc_attr( $font_family ) . '" ' . $selected . $data_attrs . '>' . $font_family_display . '</option>';
 		}
+
+		return $html;
 	}
 
 	/** ==== Helpers ==== */
 
 	/**
-	 * Load the google fonts list from the local file
+	 * Load the google fonts list from the local file, if not already loaded.
+	 *
 	 * @return bool|mixed|null
 	 */
-	protected function load_google_fonts() {
+	protected function maybe_load_google_fonts() {
 
-		$fonts_path = plugin_dir_path( __FILE__ ) . 'resources/google.fonts.php';
+		if ( empty( self::$google_fonts ) ) {
+			$fonts_path = plugin_dir_path( __FILE__ ) . 'resources/google.fonts.php';
 
-		if ( file_exists( $fonts_path ) ) {
-			self::$google_fonts = require( $fonts_path );
+			if ( file_exists( $fonts_path ) ) {
+				self::$google_fonts = apply_filters( 'customify_filter_google_fonts_list', require( $fonts_path ) );
+			}
 		}
 
 		if ( ! empty( self::$google_fonts ) ) {
-			return apply_filters( 'customify_filter_google_fonts_list', self::$google_fonts );
+			return self::$google_fonts;
 		}
 
 		return false;
