@@ -218,11 +218,11 @@ class Customify_Font_Selector {
 //					$args['local_srcs'] .= $this->theme_fonts[ $value['font_family'] ]['src'] . ',';
 //					$value['variants'] = $this->theme_fonts[ $value['font_family'] ]['variants'];
 
-					if ( false === strpos( $args['local_families'], $value['font_family'] ) ) {
+					if ( false === array_search( $value['font_family'], $args['local_families'] ) ) {
 						$args['local_families'][] = "'" . $value['font_family'] . "'";
 					}
 
-					if ( false === strpos( $args['local_srcs'], $this->theme_fonts[ $value['font_family'] ]['src'] ) ) {
+					if ( false === array_search( $this->theme_fonts[ $value['font_family'] ]['src'], $args['local_srcs'] ) ) {
 						$args['local_srcs'][] = "'" . $this->theme_fonts[ $value['font_family'] ]['src'] . "'";
 					}
 				}
