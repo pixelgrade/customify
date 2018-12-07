@@ -45,6 +45,9 @@ With [Customify](https://github.com/pixelgrade/customify), developers can easily
 
 == Changelog ==
 
+= 2.3.1 =
+* Fixed some warnings that appeared in certain situations.
+
 = 2.3.0 =
 * Improved support for the new **Gutenberg block editor.** Compatible with the latest WordPress 5.0 beta version.
 * Big **performance improvements** both in the frontend and also in the Customizer.
