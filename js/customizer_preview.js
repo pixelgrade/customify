@@ -54,9 +54,9 @@
 
               // Replace all dashes with underscores thus making the CSS property safe to us in a HTML ID.
               let regex_for_multiple_replace = new RegExp('-', 'g'),
-                cssStyleSelector = '.dynamic_setting_' + el.html_safe_option_id + '_property_' + property_config.property.replace(regex_for_multiple_replace, '_') + '_' + counter
+                cssStyleSelector = '.dynamic_setting_' + el.html_safe_option_id + '_property_' + property_config.property.replace(regex_for_multiple_replace, '_') + '_' + counter;
 
-              $(cssStyleSelector).cssUpdate(css_update_args)
+              $(cssStyleSelector).cssUpdate(css_update_args);
             })
 
           })

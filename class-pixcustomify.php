@@ -470,7 +470,7 @@ class PixCustomifyPlugin {
 	/** Register Customizer scripts loaded only on previewer page */
 	function customizer_live_preview_register_scripts() {
 		wp_register_script( $this->plugin_slug . 'CSSOM', plugins_url( 'js/CSSOM.js', $this->file ), array( 'jquery' ), $this->_version, true );
-		wp_register_script( $this->plugin_slug . 'cssUpdate', plugins_url( 'js/jquery.cssUpdate.js', $this->file ), array(), $this->_version, true );
+		wp_register_script( $this->plugin_slug . 'cssUpdate', plugins_url( 'js/jquery.cssUpdate.js', $this->file ), array( 'jquery' ), $this->_version, true );
 		wp_register_script( $this->plugin_slug . '-previewer-scripts', plugins_url( 'js/customizer_preview.js', $this->file ), array(
 			'jquery',
 			'customize-preview',
@@ -618,8 +618,9 @@ class PixCustomifyPlugin {
 				foreach ( $options['css'] as $key => $properties_set ) {
 					// We need to use a class because we may have multiple <style>s with the same "ID" for example
 					// when targeting the same property but with different selectors.
+					$unique_class = 'dynamic_setting_' .  $option_id . '_property_' . str_replace( '-', '_', $properties_set['property'] ) . '_' . $key;
 
-					$inline_style = '<style class="dynamic_setting_ ' . sanitize_html_class( $option_id ) . '_property_' . str_replace( '-', '_', $properties_set['property'] ) . '_' . $key .'" type="text/css">';
+					$inline_style = '<style class="' . sanitize_html_class( $unique_class ) . '" type="text/css">';
 
 					if ( isset( $properties_set['media'] ) && ! empty( $properties_set['media'] ) ) {
 						$inline_style .= '@media '. $properties_set['media'] . ' {';
