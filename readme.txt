@@ -45,6 +45,9 @@ With [Customify](https://github.com/pixelgrade/customify), developers can easily
 
 == Changelog ==
 
+= 2.3.2 =
+* Fixed the fact that Customizer style changes were not reflected in the live preview. A problem introduced in the previous update.
+
 = 2.3.1 =
 * Fixed some warnings that appeared in certain situations.
 
