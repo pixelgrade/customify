@@ -172,11 +172,24 @@ class Customify_Font_Selector {
 				}
 
 				// If we have reached this far and we don't have a type, we will assume it's a google font.
-//				if ( ! isset( $value['type'] ) ) {
-//					$value['type'] = 'google';
-//				}
+				if ( ! isset( $value['type'] ) ) {
+					$value['type'] = 'google';
+				}
 
-				if ( isset( $value['font_family'] ) && isset( $value['type'] ) && $value['type'] === 'google' ) {
+				if ( isset( $this->theme_fonts[ $value['font_family'] ] ) ) {
+
+//					$value['type']     = 'theme_font';
+//					$args['local_srcs'] .= $this->theme_fonts[ $value['font_family'] ]['src'] . ',';
+//					$value['variants'] = $this->theme_fonts[ $value['font_family'] ]['variants'];
+
+					if ( false === array_search( $value['font_family'], $args['local_families'] ) ) {
+						$args['local_families'][] = "'" . $value['font_family'] . "'";
+					}
+
+					if ( false === array_search( $this->theme_fonts[ $value['font_family'] ]['src'], $args['local_srcs'] ) ) {
+						$args['local_srcs'][] = "'" . $this->theme_fonts[ $value['font_family'] ]['src'] . "'";
+					}
+				} elseif ( isset( $value['font_family'] ) && isset( $value['type'] ) && $value['type'] === 'google' ) {
 					$family = "'" . $value['font_family'];
 
 					if ( $load_all_weights && ! empty( $value['variants'] ) && is_array( $value['variants'] ) ) {
@@ -212,19 +225,6 @@ class Customify_Font_Selector {
 					$family .= "'";
 
 					$args['google_families'][] = $family;
-				} elseif ( isset( $this->theme_fonts[ $value['font_family'] ] ) ) {
-
-//					$value['type']     = 'theme_font';
-//					$args['local_srcs'] .= $this->theme_fonts[ $value['font_family'] ]['src'] . ',';
-//					$value['variants'] = $this->theme_fonts[ $value['font_family'] ]['variants'];
-
-					if ( false === array_search( $value['font_family'], $args['local_families'] ) ) {
-						$args['local_families'][] = "'" . $value['font_family'] . "'";
-					}
-
-					if ( false === array_search( $this->theme_fonts[ $value['font_family'] ]['src'], $args['local_srcs'] ) ) {
-						$args['local_srcs'][] = "'" . $this->theme_fonts[ $value['font_family'] ]['src'] . "'";
-					}
 				}
 			}
 		}
@@ -285,8 +285,7 @@ class Customify_Font_Selector {
 		$local_plugin = PixCustomifyPlugin();
 
 		self::$options_list = $local_plugin->get_options();
-//		$local_plugin->get_typography_fields( self::$options_list, 'type', 'font', self::$typo_settings );
-		$local_plugin->get_typography_fields( self::$options_list, 'type', 'typography', self::$typo_settings );
+		$local_plugin->get_typography_fields( self::$options_list, 'type', 'font', self::$typo_settings );
 
 		if ( empty( self::$typo_settings ) ) {
 			return $output;
