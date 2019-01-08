@@ -172,9 +172,9 @@ class Customify_Font_Selector {
 				}
 
 				// If we have reached this far and we don't have a type, we will assume it's a google font.
-				if ( ! isset( $value['type'] ) ) {
-					$value['type'] = 'google';
-				}
+//				if ( ! isset( $value['type'] ) ) {
+//					$value['type'] = 'google';
+//				}
 
 				if ( isset( $value['font_family'] ) && isset( $value['type'] ) && $value['type'] === 'google' ) {
 					$family = "'" . $value['font_family'];
@@ -285,7 +285,8 @@ class Customify_Font_Selector {
 		$local_plugin = PixCustomifyPlugin();
 
 		self::$options_list = $local_plugin->get_options();
-		$local_plugin->get_typography_fields( self::$options_list, 'type', 'font', self::$typo_settings );
+//		$local_plugin->get_typography_fields( self::$options_list, 'type', 'font', self::$typo_settings );
+		$local_plugin->get_typography_fields( self::$options_list, 'type', 'typography', self::$typo_settings );
 
 		if ( empty( self::$typo_settings ) ) {
 			return $output;
@@ -514,38 +515,40 @@ class Customify_Font_Selector {
 			return '';
 		}
 
-		ob_start();
-		?>
-		var customify_font_loader = function () {
-		var webfontargs = {
-		classes: false,
-		events: false
-		};
-		<?php if ( ! empty( $args['google_families'] ) ) { ?>
-			webfontargs.google = {families: [<?php echo join( ',', $args['google_families'] ); ?>]};
-		<?php }
-		if ( ! empty( $args['local_families'] ) && ! empty( $args['local_srcs'] ) ) { ?>
-			webfontargs.custom = {
-			families: [<?php echo join( ',', $args['local_families'] ); ?>],
-			urls: [<?php echo join( ',', $args['local_srcs'] ) ?>]
-			};
-		<?php } ?>
-		WebFont.load(webfontargs);
-		};
+		ob_start(); ?>
+function customify_font_loader() {
+                var webfontargs = {
+                    classes: false,
+                    events: false
+                };
+            <?php if ( ! empty( $args['google_families'] ) ) { ?>
+    webfontargs.google = {
+                    families: [<?php echo join( ',', $args['google_families'] ); ?>]
+                };
+            <?php }
+                if ( ! empty( $args['local_families'] ) && ! empty( $args['local_srcs'] ) ) { ?>
+    webfontargs.custom = {
+                    families: [<?php echo join( ',', $args['local_families'] ); ?>],
+                    urls: [<?php echo join( ',', $args['local_srcs'] ) ?>]
+                };
+            <?php } ?>
+    WebFont.load(webfontargs);
+            };
 
-		if (typeof WebFont !== 'undefined') { <?php // if there is a WebFont object, use it ?>
-		customify_font_loader();
-		} else { <?php // basically when we don't have the WebFont object we create the google script dynamically  ?>
-		var tk = document.createElement('script');
-		tk.src = '//ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
-		tk.type = 'text/javascript';
+            if (typeof WebFont !== 'undefined') {
+                customify_font_loader();
+            } else {
+                var tk = document.createElement('script');
+                tk.src = '//ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
+                tk.type = 'text/javascript';
 
-		tk.onload = tk.onreadystatechange = function () {
-		customify_font_loader();
-		};
-		var s = document.getElementsByTagName('script')[0];
-		s.parentNode.insertBefore(tk, s);
-		}
+                tk.onload = tk.onreadystatechange = function () {
+                    customify_font_loader();
+                };
+
+                var s = document.getElementsByTagName('script')[0];
+                s.parentNode.insertBefore(tk, s);
+            }
 		<?php
 		$output = ob_get_clean();
 

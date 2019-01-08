@@ -937,30 +937,29 @@ class PixCustomifyPlugin {
 		if ( ! empty ( $families ) && $this->get_plugin_setting( 'typography', '1' ) && $this->get_plugin_setting( 'typography_google_fonts', 1 ) ) {
 			ob_start();
 			?>
-              if (typeof WebFont !== 'undefined') {<?php // if there is a WebFont object, use it ?>
-                WebFont.load({
-                  google: {families: [<?php echo( rtrim( $families, ',' ) ); ?>]},
-                  classes: false,
-                  events: false
-                });
-              } else {<?php // basically when we don't have the WebFont object we create the google script dynamically  ?>
+if (typeof WebFont !== 'undefined') {<?php // if there is a WebFont object, use it ?>
+    WebFont.load({
+        google: {families: [<?php echo( rtrim( $families, ',' ) ); ?>]},
+        classes: false,
+        events: false
+    });
+} else {<?php // basically when we don't have the WebFont object we create the google script dynamically  ?>
 
-                var tk = document.createElement('script');
-                tk.src = '//ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
-                tk.type = 'text/javascript';
+    var tk = document.createElement('script');
+    tk.src = '//ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
+    tk.type = 'text/javascript';
 
-                tk.onload = tk.onreadystatechange = function () {
-                  WebFont.load({
-                    google: {families: [<?php echo( rtrim( $families, ',' ) ); ?>]},
-                    classes: false,
-                    events: false
-                  });
-                };
+    tk.onload = tk.onreadystatechange = function () {
+        WebFont.load({
+            google: {families: [<?php echo( rtrim( $families, ',' ) ); ?>]},
+            classes: false,
+            events: false
+        });
+    };
 
-                var s = document.getElementsByTagName('script')[0];
-                s.parentNode.insertBefore(tk, s);
-              }
-		<?php
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(tk, s);
+}<?php
 			$output = ob_get_clean();
 		}
 
