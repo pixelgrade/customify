@@ -109,7 +109,7 @@ class Customify_Font_Selector {
 		foreach ( $this->theme_fonts as $font ) {
 			if ( ! empty( $font ) ) {
 				//display the select option's HTML
-				Pix_Customize_Font_Control::output_font_option( $font['family'], $active_font_family, $font, 'theme_font' );
+				Pix_Customize_Font_Control::output_font_option( $font, $active_font_family, 'theme_font' );
 			}
 		}
 		echo "</optgroup>";
@@ -516,38 +516,38 @@ class Customify_Font_Selector {
 
 		ob_start(); ?>
 function customify_font_loader() {
-                var webfontargs = {
-                    classes: false,
-                    events: false
-                };
-            <?php if ( ! empty( $args['google_families'] ) ) { ?>
+    var webfontargs = {
+        classes: false,
+        events: false
+    };
+        <?php if ( ! empty( $args['google_families'] ) ) { ?>
     webfontargs.google = {
-                    families: [<?php echo join( ',', $args['google_families'] ); ?>]
-                };
-            <?php }
-                if ( ! empty( $args['local_families'] ) && ! empty( $args['local_srcs'] ) ) { ?>
+	        families: [<?php echo join( ',', $args['google_families'] ); ?>]
+	    };
+        <?php }
+        if ( ! empty( $args['local_families'] ) && ! empty( $args['local_srcs'] ) ) { ?>
     webfontargs.custom = {
-                    families: [<?php echo join( ',', $args['local_families'] ); ?>],
-                    urls: [<?php echo join( ',', $args['local_srcs'] ) ?>]
-                };
-            <?php } ?>
+            families: [<?php echo join( ',', $args['local_families'] ); ?>],
+            urls: [<?php echo join( ',', $args['local_srcs'] ) ?>]
+        };
+        <?php } ?>
     WebFont.load(webfontargs);
-            };
+};
 
-            if (typeof WebFont !== 'undefined') {
-                customify_font_loader();
-            } else {
-                var tk = document.createElement('script');
-                tk.src = '//ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
-                tk.type = 'text/javascript';
+if (typeof WebFont !== 'undefined') {
+    customify_font_loader();
+} else {
+    var tk = document.createElement('script');
+    tk.src = '//ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
+    tk.type = 'text/javascript';
 
-                tk.onload = tk.onreadystatechange = function () {
-                    customify_font_loader();
-                };
+    tk.onload = tk.onreadystatechange = function () {
+        customify_font_loader();
+    };
 
-                var s = document.getElementsByTagName('script')[0];
-                s.parentNode.insertBefore(tk, s);
-            }
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(tk, s);
+}
 		<?php
 		$output = ob_get_clean();
 
