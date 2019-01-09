@@ -176,7 +176,20 @@ class Customify_Font_Selector {
 					$value['type'] = 'google';
 				}
 
-				if ( isset( $value['font_family'] ) && isset( $value['type'] ) && $value['type'] === 'google' ) {
+				if ( isset( $this->theme_fonts[ $value['font_family'] ] ) ) {
+
+//					$value['type']     = 'theme_font';
+//					$args['local_srcs'] .= $this->theme_fonts[ $value['font_family'] ]['src'] . ',';
+//					$value['variants'] = $this->theme_fonts[ $value['font_family'] ]['variants'];
+
+					if ( false === array_search( $value['font_family'], $args['local_families'] ) ) {
+						$args['local_families'][] = "'" . $value['font_family'] . "'";
+					}
+
+					if ( false === array_search( $this->theme_fonts[ $value['font_family'] ]['src'], $args['local_srcs'] ) ) {
+						$args['local_srcs'][] = "'" . $this->theme_fonts[ $value['font_family'] ]['src'] . "'";
+					}
+				} elseif ( isset( $value['font_family'] ) && isset( $value['type'] ) && $value['type'] === 'google' ) {
 					$family = "'" . $value['font_family'];
 
 					if ( $load_all_weights && ! empty( $value['variants'] ) && is_array( $value['variants'] ) ) {
@@ -212,19 +225,6 @@ class Customify_Font_Selector {
 					$family .= "'";
 
 					$args['google_families'][] = $family;
-				} elseif ( isset( $this->theme_fonts[ $value['font_family'] ] ) ) {
-
-//					$value['type']     = 'theme_font';
-//					$args['local_srcs'] .= $this->theme_fonts[ $value['font_family'] ]['src'] . ',';
-//					$value['variants'] = $this->theme_fonts[ $value['font_family'] ]['variants'];
-
-					if ( false === array_search( $value['font_family'], $args['local_families'] ) ) {
-						$args['local_families'][] = "'" . $value['font_family'] . "'";
-					}
-
-					if ( false === array_search( $this->theme_fonts[ $value['font_family'] ]['src'], $args['local_srcs'] ) ) {
-						$args['local_srcs'][] = "'" . $this->theme_fonts[ $value['font_family'] ]['src'] . "'";
-					}
 				}
 			}
 		}
@@ -514,38 +514,40 @@ class Customify_Font_Selector {
 			return '';
 		}
 
-		ob_start();
-		?>
-		var customify_font_loader = function () {
-		var webfontargs = {
-		classes: false,
-		events: false
-		};
-		<?php if ( ! empty( $args['google_families'] ) ) { ?>
-			webfontargs.google = {families: [<?php echo join( ',', $args['google_families'] ); ?>]};
-		<?php }
-		if ( ! empty( $args['local_families'] ) && ! empty( $args['local_srcs'] ) ) { ?>
-			webfontargs.custom = {
-			families: [<?php echo join( ',', $args['local_families'] ); ?>],
-			urls: [<?php echo join( ',', $args['local_srcs'] ) ?>]
-			};
-		<?php } ?>
-		WebFont.load(webfontargs);
-		};
+		ob_start(); ?>
+function customify_font_loader() {
+                var webfontargs = {
+                    classes: false,
+                    events: false
+                };
+            <?php if ( ! empty( $args['google_families'] ) ) { ?>
+    webfontargs.google = {
+                    families: [<?php echo join( ',', $args['google_families'] ); ?>]
+                };
+            <?php }
+                if ( ! empty( $args['local_families'] ) && ! empty( $args['local_srcs'] ) ) { ?>
+    webfontargs.custom = {
+                    families: [<?php echo join( ',', $args['local_families'] ); ?>],
+                    urls: [<?php echo join( ',', $args['local_srcs'] ) ?>]
+                };
+            <?php } ?>
+    WebFont.load(webfontargs);
+            };
 
-		if (typeof WebFont !== 'undefined') { <?php // if there is a WebFont object, use it ?>
-		customify_font_loader();
-		} else { <?php // basically when we don't have the WebFont object we create the google script dynamically  ?>
-		var tk = document.createElement('script');
-		tk.src = '//ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
-		tk.type = 'text/javascript';
+            if (typeof WebFont !== 'undefined') {
+                customify_font_loader();
+            } else {
+                var tk = document.createElement('script');
+                tk.src = '//ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
+                tk.type = 'text/javascript';
 
-		tk.onload = tk.onreadystatechange = function () {
-		customify_font_loader();
-		};
-		var s = document.getElementsByTagName('script')[0];
-		s.parentNode.insertBefore(tk, s);
-		}
+                tk.onload = tk.onreadystatechange = function () {
+                    customify_font_loader();
+                };
+
+                var s = document.getElementsByTagName('script')[0];
+                s.parentNode.insertBefore(tk, s);
+            }
 		<?php
 		$output = ob_get_clean();
 

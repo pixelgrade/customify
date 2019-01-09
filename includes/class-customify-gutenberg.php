@@ -232,6 +232,11 @@ class Customify_Gutenberg {
 
 			// Add color palettes classes.
 			wp_add_inline_style( $enqueue_parent_handle, $this->editor_color_palettes_css_classes() );
+
+			echo '<script id="customify-dynamic-scripts">';
+			echo PixCustomifyPlugin()->get_typography_dynamic_script();
+			echo Customify_Font_Selector::instance()->get_fonts_dynamic_script();
+			echo '</script>';
 		}
 	}
 
