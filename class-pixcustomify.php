@@ -209,11 +209,15 @@ class PixCustomifyPlugin {
 		// We need to be able to load things like components configs depending on those firing up or not
 		// DO NOT TRY to use the Customify values before this!
 		add_action( 'init', array( $this, 'load_plugin_configs' ), 15 );
-		// Also handle the force clearing of the cached config. Since we can't know wo can influence it, we need to be proactive.
-		add_action( 'activated_plugin', array( $this, 'clear_customizer_config_cache' ), 10 );
-		add_action( 'deactivated_plugin', array( $this, 'clear_customizer_config_cache' ), 10 );
-		add_action( 'switch_theme', array( $this, 'clear_customizer_config_cache' ), 10 );
-		add_action( 'upgrader_process_complete', array( $this, 'clear_customizer_config_cache' ), 10 );
+
+		// Also handle the force clearing of the cached config. Since we can't know who can influence it, we need to be proactive.
+		add_action( 'activated_plugin', array( $this, 'invalidate_customizer_config_cache' ), 1 );
+		add_action( 'deactivated_plugin', array( $this, 'invalidate_customizer_config_cache' ), 1 );
+		add_action( 'switch_theme', array( $this, 'invalidate_customizer_config_cache' ), 1 );
+		add_action( 'upgrader_process_complete', array( $this, 'invalidate_customizer_config_cache' ), 1 );
+		// We also want to invalidate the cache whenever the Pixelgrade Care license is updated since it may unlock new features
+		// and so unlock new Customify options.
+		add_filter( 'pre_set_theme_mod_pixcare_license', array( $this, 'filter_invalidate_customizer_config_cache' ), 10, 1 );
 
 		/*
 		 * Now setup the admin side of things
@@ -350,12 +354,15 @@ class PixCustomifyPlugin {
 		$data = get_option( $this->_get_customizer_config_cache_key() );
 
 		// We don't force skip the cache for AJAX requests for performance reasons.
-		if ( ! wp_doing_ajax() && defined('CUSTOMIFY_ALWAYS_GENERATE_CUSTOMIZER_CONFIG' ) && true === CUSTOMIFY_ALWAYS_GENERATE_CUSTOMIZER_CONFIG ) {
+		if ( ! wp_doing_ajax()
+		     && defined('CUSTOMIFY_ALWAYS_GENERATE_CUSTOMIZER_CONFIG' )
+		     && true === CUSTOMIFY_ALWAYS_GENERATE_CUSTOMIZER_CONFIG ) {
 			$skip_cache = true;
 		}
 
-		// For performance reasons, we will ONLY regenerate when in the WP ADMIN area or via an ADMIN AJAX call.
-		if ( false !== $data && false === $skip_cache && ! is_admin() && ! is_customize_preview() ) {
+		// For performance reasons, we will use the cached data (even if stale)
+		// when a user is not logged in or a user without administrative capabilities is logged in.
+		if ( false !== $data && false === $skip_cache && ! current_user_can( 'manage_options' ) ) {
 			$this->customizer_config = $data;
 			return;
 		}
@@ -381,13 +388,26 @@ class PixCustomifyPlugin {
 	}
 
 	/**
-	 * Clear the customizer config cache.
+	 * Invalidate the customizer config cache.
 	 *
 	 * @since 2.2.1
 	 */
-	public function clear_customizer_config_cache() {
-		delete_option( $this->_get_customizer_config_cache_key() );
-		delete_option( $this->_get_customizer_config_cache_key() . '_timestamp' );
+	public function invalidate_customizer_config_cache() {
+		update_option( $this->_get_customizer_config_cache_key() . '_timestamp' , time() - 24 * HOUR_IN_SECONDS, true );
+	}
+
+	/**
+	 * Invalidate the customizer config cache, when hooked via a filter.
+	 *
+	 * @since 2.3.4
+	 *
+	 * @param mixed $value
+	 * @return mixed
+	 */
+	public function filter_invalidate_customizer_config_cache( $value ) {
+		$this->invalidate_customizer_config_cache();
+
+		return $value;
 	}
 
 	/**
