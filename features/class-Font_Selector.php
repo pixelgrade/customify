@@ -21,7 +21,7 @@ class Customify_Font_Selector {
 		$load_location = PixCustomifyPlugin()->get_plugin_setting( 'style_resources_location', 'wp_head' );
 		add_action( $load_location, array( $this, 'output_webfont_script' ), 99 );
 		add_action( $load_location, array( $this, 'output_fonts_dynamic_style' ), 100 );
-		add_action( 'customify_font_family_before_options', array( $this, 'add_customify_theme_fonts' ), 11, 2 );
+		add_action( 'customify_font_family_before_options', array( $this, 'add_customify_theme_fonts' ), 11, 1 );
 
 		if ( PixCustomifyPlugin()->get_plugin_setting( 'enable_editor_style', true ) ) {
 			add_action( 'admin_head', array( $this, 'script_to_add_customizer_settings_into_wp_editor' ) );
@@ -99,7 +99,7 @@ class Customify_Font_Selector {
 		return $this->theme_fonts;
 	}
 
-	function add_customify_theme_fonts( $active_font_family, $val ) {
+	function add_customify_theme_fonts( $active_font_family ) {
 		//first get all the published custom fonts
 		if ( empty( $this->theme_fonts ) ) {
 			return;
@@ -136,9 +136,9 @@ class Customify_Font_Selector {
 		/** @var PixCustomifyPlugin $local_plugin */
 		$local_plugin = PixCustomifyPlugin();
 
-		self::$options_list = $local_plugin->get_options();
+		self::$options_list = $local_plugin->get_options_details();
 
-		$local_plugin->get_typography_fields( self::$options_list, 'type', 'font', self::$typo_settings );
+		$local_plugin->customizer->get_typography_fields( self::$options_list, 'type', 'font', self::$typo_settings );
 
 		if ( empty( self::$typo_settings ) ) {
 			return $args;
@@ -158,7 +158,7 @@ class Customify_Font_Selector {
 
 				// in case the value is still null, try default value (mostly for google fonts)
 				if ( ! is_array( $value ) || $value === null ) {
-					$value = $local_plugin->get_font_defaults_value( str_replace( '"', '', $font['value'] ) );
+					$value = $local_plugin->customizer->get_font_defaults_value( str_replace( '"', '', $font['value'] ) );
 				}
 
 				//bail if by this time we don't have a value of some sort
@@ -168,7 +168,7 @@ class Customify_Font_Selector {
 
 				// Handle special logic for when the $value array is not an associative array
 				if ( ! $local_plugin->is_assoc( $value ) ) {
-					$value = $local_plugin->standardize_non_associative_font_default( $value );
+					$value = $local_plugin->customizer->standardize_non_associative_font_default( $value );
 				}
 
 				// If we have reached this far and we don't have a type, we will assume it's a google font.
@@ -243,8 +243,8 @@ class Customify_Font_Selector {
 		/** @var PixCustomifyPlugin $local_plugin */
 		$local_plugin = PixCustomifyPlugin();
 
-		self::$options_list = $local_plugin->get_options();
-		$local_plugin->get_typography_fields( self::$options_list, 'type', 'font', self::$typo_settings );
+		self::$options_list = $local_plugin->get_options_details();
+		$local_plugin->customizer->get_typography_fields( self::$options_list, 'type', 'font', self::$typo_settings );
 
 		if ( empty( self::$typo_settings ) ) {
 			return;
@@ -284,8 +284,8 @@ class Customify_Font_Selector {
 		/** @var PixCustomifyPlugin $local_plugin */
 		$local_plugin = PixCustomifyPlugin();
 
-		self::$options_list = $local_plugin->get_options();
-		$local_plugin->get_typography_fields( self::$options_list, 'type', 'font', self::$typo_settings );
+		self::$options_list = $local_plugin->get_options_details();
+		$local_plugin->customizer->get_typography_fields( self::$options_list, 'type', 'font', self::$typo_settings );
 
 		if ( empty( self::$typo_settings ) ) {
 			return $output;
@@ -322,7 +322,7 @@ class Customify_Font_Selector {
 		$value = $this->maybe_decode_value( $font['value'] );
 
 		if ( $value === null ) {
-			$value = $local_plugin->get_font_defaults_value( $font['value'] );
+			$value = $local_plugin->customizer->get_font_defaults_value( $font['value'] );
 		}
 
 		// shim the old case when the default was only the font name
@@ -332,7 +332,7 @@ class Customify_Font_Selector {
 
 		// Handle special logic for when the $value array is not an associative array
 		if ( ! $local_plugin->is_assoc( $value ) ) {
-			$value = $local_plugin->standardize_non_associative_font_default( $value );
+			$value = $local_plugin->customizer->standardize_non_associative_font_default( $value );
 		}
 
 		$value = $this->validate_font_values( $value );
@@ -412,7 +412,7 @@ class Customify_Font_Selector {
 			}
 
 			if ( ! empty( $value['font_weight'] ) ) {
-				$italic_font = $this->display_weight_property( $value['font_weight'] );
+				$this->display_weight_property( $value['font_weight'] );
 			}
 
 			if ( ! empty( $value['font_size'] ) ) {

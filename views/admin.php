@@ -41,7 +41,9 @@ $errors    = $processor->errors(); ?>
 				<?php _e( 'Settings have been updated.', 'customify' ); ?>
 			</p>
 		<?php endif;
-		echo $f = pixcustomify::form( $config, $processor );
+		$f = pixcustomify::form( $config, $processor );
+		echo $f->startform();
+
 		echo $f->field( 'hiddens' )->render();
 		echo $f->field( 'general' )->render();
 		echo $f->field( 'output' )->render();

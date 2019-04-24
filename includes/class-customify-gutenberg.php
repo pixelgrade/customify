@@ -216,18 +216,18 @@ class Customify_Gutenberg {
 		$enqueue_parent_handle = $this->get_editor_style_handle();
 
 		if ( PixCustomifyPlugin()->get_plugin_setting( 'enable_editor_style', true ) ) {
-			add_filter( 'customify_typography_css_selector', array( $this, 'gutenbergify_font_css_selectors' ), 10, 2 );
-			wp_add_inline_script( 'wp-editor', PixCustomifyPlugin()->get_typography_dynamic_script() );
-			wp_add_inline_style( $enqueue_parent_handle, PixCustomifyPlugin()->get_typography_dynamic_style() );
+			add_filter( 'customify_typography_css_selector', array( $this, 'gutenbergify_font_css_selectors' ), 10, 1 );
+			wp_add_inline_script( 'wp-editor', PixCustomifyPlugin()->customizer->get_typography_dynamic_script() );
+			wp_add_inline_style( $enqueue_parent_handle, PixCustomifyPlugin()->customizer->get_typography_dynamic_style() );
 			remove_filter( 'customify_typography_css_selector', array( $this, 'gutenbergify_font_css_selectors' ), 10 );
 
-			add_filter( 'customify_font_css_selector', array( $this, 'gutenbergify_font_css_selectors' ), 10, 2 );
+			add_filter( 'customify_font_css_selector', array( $this, 'gutenbergify_font_css_selectors' ), 10, 1 );
 			wp_add_inline_script( 'wp-editor', Customify_Font_Selector::instance()->get_fonts_dynamic_script() );
 			wp_add_inline_style( $enqueue_parent_handle, Customify_Font_Selector::instance()->get_fonts_dynamic_style() );
 			remove_filter( 'customify_font_css_selector', array( $this, 'gutenbergify_font_css_selectors' ), 10 );
 
-			add_filter( 'customify_css_selector', array( $this, 'gutenbergify_css_selectors' ), 10, 2 );
-			wp_add_inline_style( $enqueue_parent_handle, PixCustomifyPlugin()->get_dynamic_style() );
+			add_filter( 'customify_css_selector', array( $this, 'gutenbergify_css_selectors' ), 10, 1 );
+			wp_add_inline_style( $enqueue_parent_handle, PixCustomifyPlugin()->customizer->get_dynamic_style() );
 			remove_filter( 'customify_css_selector', array( $this, 'gutenbergify_css_selectors' ), 10 );
 
 			// Add color palettes classes.
@@ -298,7 +298,7 @@ class Customify_Gutenberg {
 		return implode( ', ', $new_selectors );
 	}
 
-	public function gutenbergify_font_css_selectors( $selectors, $font ) {
+	public function gutenbergify_font_css_selectors( $selectors ) {
 
 		// Treat the selector(s) as an array.
 		$selectors = $this->maybeExplodeSelectors( $selectors );

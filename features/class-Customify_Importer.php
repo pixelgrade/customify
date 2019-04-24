@@ -144,7 +144,7 @@ final class Customify_Importer_Controller {
 					wp_send_json_error( 'i don\'t evan kno\'' );
 				}
 
-				$data = $this->process_remote_data( $data );
+				$this->process_remote_data( $data );
 				break;
 			}
 
@@ -193,7 +193,7 @@ final class Customify_Importer_Controller {
 									continue;
 								}
 
-								$updated = update_option( $step_id, $value );
+								update_option( $step_id, $value );
 							}
 						}
 
@@ -382,8 +382,6 @@ final class Customify_Importer_Controller {
 			$this->add_step( 'widgets', 'widgets', $data['widgets'] );
 		}
 
-		if ( isset( $data['widgets'] ) && ! empty( $data['widgets'] ) ) {}
-
 		// select what you can get from the export
 		if ( isset( $data['taxonomies'] ) && ! empty( $data['taxonomies'] ) ) {
 
@@ -471,10 +469,8 @@ final class Customify_Importer_Controller {
 		$options = PixCustomifyPlugin()->get_options_configs();
 
 		if ( ! isset( $options[ $option_key ] ) ) {
-			wp_send_json_error( 'inexistent key' );
+			wp_send_json_error( 'nonexistent key' );
 		}
-
-		$option_config = $options[ $option_key ];
 
 		if ( ! isset( $options[ $option_key ]['imports'] ) ) {
 			wp_send_json_error( 'where is imports????' );

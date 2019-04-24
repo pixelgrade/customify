@@ -386,8 +386,10 @@ class Pix_Customize_Preset_Control extends Pix_Customize_Control {
 	 * @return boolean
 	 */
 	public function isLight( $color = FALSE ){
-		// Get our color
-		$color = ($color) ? $color : $this->_hex;
+		if ( false === $color ) {
+			return false;
+		}
+
 		// Calculate straight from rbg
 		$r = hexdec($color[0].$color[1]);
 		$g = hexdec($color[2].$color[3]);

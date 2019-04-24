@@ -2,7 +2,7 @@
 /*
 Plugin Name: Customify
 Plugin URI:  https://wordpress.org/plugins/customify/
-Description: A Theme Customizer Booster
+Description: A Theme Customizer Booster to easily customize Fonts, Colors, and other options for your site.
 Version: 2.3.3
 Author: Pixelgrade
 Author URI: https://pixelgrade.com
@@ -11,8 +11,8 @@ Text Domain: customify
 License:     GPL-2.0+
 License URI: http://www.gnu.org/licenses/gpl-2.0.txt
 Domain Path: /languages/
-Requires at least: 4.9
-Tested up to: 5.0.2
+Requires at least: 4.9.9
+Tested up to: 5.2.0
 */
 
 // If this file is called directly, abort.
