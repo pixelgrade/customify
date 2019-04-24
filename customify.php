@@ -27,28 +27,8 @@ if ( ! defined('EXT')) {
 
 require 'core/bootstrap.php';
 
-// Include our helper array class.
-require 'includes/lib/class-customify-array.php';
-
-$config = include 'plugin-config.php';
-
-// set textdomain
-pixcustomify::settextdomain( 'customify' );
-
-// Ensure Test Data
-// ----------------
-
-$defaults = include 'plugin-defaults.php';
-
-$current_data = get_option( $config['settings-key'] );
-
-if ( $current_data === false ) {
-	add_option( $config['settings-key'], $defaults );
-} elseif ( count( array_diff_key( $defaults, $current_data ) ) != 0)  {
-	$plugindata = array_merge( $defaults, $current_data );
-	update_option( $config['settings-key'], $plugindata );
-}
-# else: data is available; do nothing
+require_once 'includes/lib/class-customify-array.php';
+require_once 'includes/extras.php';
 
 /**
  * Returns the main instance of PixCustomifyPlugin to prevent the need to use globals.
@@ -57,20 +37,11 @@ if ( $current_data === false ) {
  * @return PixCustomifyPlugin
  */
 function PixCustomifyPlugin() {
-	/**
-	 * The core plugin class that is used to define internationalization,
-	 * admin-specific hooks, and public-facing site hooks.
-	 */
 	require_once plugin_dir_path( __FILE__ ) . 'class-pixcustomify.php';
 
-	$instance = PixCustomifyPlugin::instance( __FILE__, '2.3.3' );
-
-	return $instance;
+	return PixCustomifyPlugin::instance( __FILE__, '2.3.3' );
 }
 
 // Now get the party started
 // We will keep this global variable for legacy
 $pixcustomify_plugin = PixCustomifyPlugin();
-
-// Load custom modules
-require_once( 'features/class-Font_Selector.php' );

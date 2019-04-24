@@ -1,16 +1,17 @@
 <?php
-
 /**
- * This filter is used to change the Customizer Options
- * You can also copy this function inside your functions.php
- * file but DO NOT FORGET TO CHANGE ITS NAME
- *
- * @param $config array This holds required keys for the plugin config like 'opt-name', 'panels', 'settings'
- * @return $config
+ * Extra functionality.
  */
 
 if ( ! function_exists('add_customify_base_options') ) {
-
+	/**
+	 * This filter is used to change the Customizer Options
+	 * You can also copy this function inside your functions.php
+	 * file but DO NOT FORGET TO CHANGE ITS NAME
+	 *
+	 * @param $config array This holds required keys for the plugin config like 'opt-name', 'panels', 'settings'
+	 * @return $config
+	 */
 	function add_customify_base_options( $config ) {
 
 		$config['opt-name'] = 'customify_defaults';
@@ -20,17 +21,17 @@ if ( ! function_exists('add_customify_base_options') ) {
 			 * Presets - This section will handle other options
 			 */
 			'presets_section' => array(
-				'title'    => __( 'Style Presets', 'customify' ),
+				'title'    => esc_html__( 'Style Presets', 'customify' ),
 				'options' => array(
 					'theme_style'   => array(
 						'type'      => 'preset',
-						'label'     => __( 'Select a style:', 'customify' ),
-						'desc' => __( 'Conveniently change the design of your site with built-in style presets. Easy as pie.', 'customify' ),
+						'label'     => esc_html__( 'Select a style:', 'customify' ),
+						'desc' => esc_html__( 'Conveniently change the design of your site with built-in style presets. Easy as pie.', 'customify' ),
 						'default'   => 'royal',
 						'choices_type' => 'awesome',
 						'choices'  => array(
 							'royal' => array(
-								'label' => __( 'Royal', 'customify' ),
+								'label' => esc_html__( 'Royal', 'customify' ),
 								'preview' => array(
 									'color-text' => '#ffffff',
 									'background-card' => '#615375',
@@ -48,7 +49,7 @@ if ( ! function_exists('add_customify_base_options') ) {
 								)
 							),
 							'lovely' => array(
-								'label' => __( 'Lovely', 'customify' ),
+								'label' => esc_html__( 'Lovely', 'customify' ),
 								'preview' => array(
 									'color-text' => '#ffffff',
 									'background-card' => '#d15c57',
@@ -66,7 +67,7 @@ if ( ! function_exists('add_customify_base_options') ) {
 								)
 							),
 							'queen' => array(
-								'label' => __( 'Queen', 'customify' ),
+								'label' => esc_html__( 'Queen', 'customify' ),
 								'preview' => array(
 									'color-text' => '#fbedec',
 									'background-card' => '#773347',
@@ -84,7 +85,7 @@ if ( ! function_exists('add_customify_base_options') ) {
 								)
 							),
 							'carrot' => array(
-								'label' => __( 'Carrot', 'customify' ),
+								'label' => esc_html__( 'Carrot', 'customify' ),
 								'preview' => array(
 									'color-text' => '#ffffff',
 									'background-card' => '#df421d',
@@ -105,7 +106,7 @@ if ( ! function_exists('add_customify_base_options') ) {
 
 
 							'adler' => array(
-								'label' => __( 'Adler', 'customify' ),
+								'label' => esc_html__( 'Adler', 'customify' ),
 								'preview' => array(
 									'color-text' => '#fff',
 									'background-card' => '#0e364f',
@@ -123,7 +124,7 @@ if ( ! function_exists('add_customify_base_options') ) {
 								)
 							),
 							'velvet' => array(
-								'label' => __( 'Velvet', 'customify' ),
+								'label' => esc_html__( 'Velvet', 'customify' ),
 								'preview' => array(
 									'color-text' => '#ffffff',
 									'background-card' => '#282828',
@@ -150,11 +151,11 @@ if ( ! function_exists('add_customify_base_options') ) {
 			 * COLORS - This section will handle different elements colors (eg. links, headings)
 			 */
 			'colors_section' => array(
-				'title'    => __( 'Colors', 'customify' ),
+				'title'    => esc_html__( 'Colors', 'customify' ),
 				'options' => array(
 					'links_color'   => array(
 						'type'      => 'color',
-						'label'     => __( 'Links Color', 'customify' ),
+						'label'     => esc_html__( 'Links Color', 'customify' ),
 						'live' => true,
 						'default'   => '#6c6e70',
 						'css'  => array(
@@ -166,7 +167,7 @@ if ( ! function_exists('add_customify_base_options') ) {
 					),
 					'headings_color' => array(
 						'type'      => 'color',
-						'label'     => __( 'Headings Color', 'customify' ),
+						'label'     => esc_html__( 'Headings Color', 'customify' ),
 						'live' => true,
 						'default'   => '#0aa0d9',
 						'css'  => array(
@@ -181,7 +182,7 @@ if ( ! function_exists('add_customify_base_options') ) {
 					),
 					'body_color'     => array(
 						'type'      => 'color',
-						'label'     => __( 'Body Color', 'customify' ),
+						'label'     => esc_html__( 'Body Color', 'customify' ),
 						'live' => true,
 						'default'   => '#2d3033',
 						'css'  => array(
@@ -198,11 +199,11 @@ if ( ! function_exists('add_customify_base_options') ) {
 			 * FONTS - This section will handle different elements fonts (eg. headings, body)
 			 */
 			'typography_section' => array(
-				'title'    => __( 'Fonts', 'customify' ),
+				'title'    => esc_html__( 'Fonts', 'customify' ),
 				'options' => array(
 					'headings_font' => array(
 						'type'     => 'typography',
-						'label'    => __( 'Headings', 'customify' ),
+						'label'    => esc_html__( 'Headings', 'customify' ),
 						'default'  => 'Playfair Display',
 						'selector' => '.site-title a, h1, h2, h3, h4, h5, h6,
 										h1 a, h2 a, h3 a, h4 a, h5 a, h6 a,
@@ -233,7 +234,7 @@ if ( ! function_exists('add_customify_base_options') ) {
 					),
 					'body_font'     => array(
 						'type'    => 'typography',
-						'label'   => __( 'Body Text', 'customify' ),
+						'label'   => esc_html__( 'Body Text', 'customify' ),
 						'default' => 'Lato',
 						'selector' => 'html body',
 						'load_all_weights' => true,
@@ -254,11 +255,11 @@ if ( ! function_exists('add_customify_base_options') ) {
 			 * BACKGROUNDS - This section will handle different elements colors (eg. links, headings)
 			 */
 			'backgrounds_section' => array(
-				'title'    => __( 'Backgrounds', 'customify' ),
+				'title'    => esc_html__( 'Backgrounds', 'customify' ),
 				'options' => array(
 					'page_background'   => array(
 						'type'      => 'color',
-						'label'     => __( 'Page Background', 'customify' ),
+						'label'     => esc_html__( 'Page Background', 'customify' ),
 						'live' => true,
 						'default'   => '#ffffff',
 						'css'  => array(
@@ -274,7 +275,7 @@ if ( ! function_exists('add_customify_base_options') ) {
 			 * LAYOUTS - This section will handle different elements colors (eg. links, headings)
 			 */
 			'layout_options' => array(
-				'title'    => __( 'Layout', 'customify' ),
+				'title'    => esc_html__( 'Layout', 'customify' ),
 				'options' => array(
 					'site_title_size' => array(
 						'type'  => 'range',
@@ -324,14 +325,14 @@ if ( ! function_exists('add_customify_base_options') ) {
 		 **/
 //		$config['panels'] = array(
 //			'panel_id' => array(
-//				'title'    => __( 'Panel Title', 'customify' ),
+//				'title'    => esc_html__( 'Panel Title', 'customify' ),
 //				'sections' => array(
 //					'panel_section' => array(
-//						'title'    => __( 'Section Title', 'customify' ),
+//						'title'    => esc_html__( 'Section Title', 'customify' ),
 //						'options' => array(
 //							'setting_id'   => array(
 //								'type'      => 'color',
-//								'label'     => __( 'Label', 'customify' ),
+//								'label'     => esc_html__( 'Label', 'customify' ),
 //								'live' => true, // or false
 //								'default'   => '#6c6e70',
 //								'css'  => array(

@@ -204,7 +204,7 @@ class Pix_Customize_Preset_Control extends Pix_Customize_Control {
                             </label>
                             <div class="palette">
                                 <?php foreach ( $choice_config['options'] as $color_setting_id => $color_value ) {
-                                	$field_config = PixCustomifyPlugin()->get_option_customizer_config( $color_setting_id );
+                                	$field_config = PixCustomifyPlugin()->get_option_details( $color_setting_id );
 		                            echo '<div class="palette__item ' . esc_attr( $color_setting_id ) . '" style="background: ' . esc_attr( $color_value ) . '"></div>' . PHP_EOL;
                                 } ?>
                             </div>
@@ -452,7 +452,7 @@ class Pix_Customize_Preset_Control extends Pix_Customize_Control {
 		}
 
 		foreach ( $options as $option_id => $option_value ) {
-			$option_config = $localPlugin->get_option_customizer_config( $option_id );
+			$option_config = $localPlugin->get_option_details( $option_id );
 			if ( empty( $option_config ) ) {
 				continue;
 			}

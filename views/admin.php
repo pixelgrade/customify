@@ -12,7 +12,7 @@
  * @copyright 2013 Pixel Grade Media
  */
 
-$config = include PixCustomifyPlugin()->get_base_path() . 'plugin-config' . EXT;
+$config = PixCustomifyPlugin::get_plugin_config();
 
 // invoke processor
 $processor = pixcustomify::processor( $config );

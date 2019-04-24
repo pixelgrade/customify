@@ -1049,25 +1049,25 @@ class Customify_Color_Palettes {
 	/**
 	 * Get all the defined Style Manager master color field ids.
 	 *
-	 * @since 1.7.4
-	 *
-	 * @param array $options
+	 * @param array $options_details
 	 *
 	 * @return array
+	 *@since 1.7.4
+	 *
 	 */
-	public function get_all_master_color_controls_ids( $options = null ) {
+	public function get_all_master_color_controls_ids( $options_details = null ) {
 		$control_ids = array();
 
-		if ( empty( $options ) ) {
-			$options = PixCustomifyPlugin()->get_options_configs();
+		if ( empty( $options_details ) ) {
+			$options_details = PixCustomifyPlugin()->get_options_configs(true);
 		}
 
-		if ( empty( $options ) ) {
+		if ( empty( $options_details ) ) {
 			return $control_ids;
 		}
 
-		foreach ( $options as $option_id => $option_settings ) {
-			if ( ! empty( $option_settings['type'] ) && 'color' === $option_settings['type'] && 0 === strpos( $option_id, 'sm_' ) ) {
+		foreach ( $options_details as $option_id => $option_details ) {
+			if ( ! empty( $option_details['type'] ) && 'color' === $option_details['type'] && 0 === strpos( $option_id, 'sm_' ) ) {
 				$control_ids[] = $option_id;
 			}
 		}
@@ -1078,26 +1078,24 @@ class Customify_Color_Palettes {
 	/**
 	 * Get all the defined Style Manager final (master) color field ids.
 	 *
-	 * @since 2.2.0
-	 *
-	 * @param array $options
+	 * @param array $options_details
 	 *
 	 * @return array
 	 */
-	public function get_all_final_master_color_controls_ids( $options = null ) {
+	public function get_all_final_master_color_controls_ids( $options_details = null ) {
 		$control_ids = array();
 
-		if ( empty( $options ) ) {
-			$options = PixCustomifyPlugin()->get_options_configs();
+		if ( empty( $options_details ) ) {
+			$options_details = PixCustomifyPlugin()->get_options_configs(true);
 		}
 
-		if ( empty( $options ) ) {
+		if ( empty( $options_details ) ) {
 			return $control_ids;
 		}
 
-		foreach ( $options as $option_id => $option_settings ) {
-			if ( ! empty( $option_settings['type'] )
-			     && 'hidden' === $option_settings['type']
+		foreach ( $options_details as $option_id => $option_details ) {
+			if ( ! empty( $option_details['type'] )
+			     && 'hidden' === $option_details['type']
 			     && 0 === strpos( $option_id, 'sm_' )
 			     && '__final' === substr( $option_id, - strlen( '__final' ) ) ) {
 				$control_ids[] = $option_id;

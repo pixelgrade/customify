@@ -78,7 +78,7 @@ if ( ! class_exists( 'Customify_Customizer' ) ) :
 		 */
 		protected function __construct() {
 			// We will initialize the Customizer logic after the plugin has finished with it's configuration (at priority 15).
-			add_action( 'init', array( $this, 'init' ), 20 );
+			add_action( 'init', array( $this, 'init' ), 15 );
 		}
 
 		/**
@@ -97,6 +97,7 @@ if ( ! class_exists( 'Customify_Customizer' ) ) :
 				$this->register_import_api();
 			}
 
+			require_once( PixCustomifyPlugin()->get_base_path() . 'features/class-Font_Selector.php' );
 			$this->localized['theme_fonts'] = $this->theme_fonts = Customify_Font_Selector::instance()->get_theme_fonts();
 
 			$this->localized['ajax_url'] = admin_url( 'admin-ajax.php' );
@@ -112,7 +113,7 @@ if ( ! class_exists( 'Customify_Customizer' ) ) :
 		 * @return bool
 		 */
 		protected function import_button_exists() {
-			$options_details = PixCustomifyPlugin()->get_options_details();
+			$options_details = PixCustomifyPlugin()->get_options_details(true);
 
 			foreach ( $options_details as $option ) {
 				if ( isset( $option['type'] ) && 'import_demo_data' === $option['type'] ) {
@@ -308,7 +309,7 @@ if ( ! class_exists( 'Customify_Customizer' ) ) :
 				return;
 			}
 
-			foreach ( PixCustomifyPlugin()->get_options_details() as $option_id => $option_details ) {
+			foreach ( PixCustomifyPlugin()->get_options_details( false, true) as $option_id => $option_details ) {
 
 				if ( isset( $option_details['type'] ) && $option_details['type'] === 'custom_background' ) {
 					$custom_background_output = $this->process_custom_background_field_output( $option_details ); ?>
@@ -358,7 +359,7 @@ if ( ! class_exists( 'Customify_Customizer' ) ) :
 		function get_dynamic_style() {
 			$custom_css = '';
 
-			foreach ( PixCustomifyPlugin()->get_options_details() as $option_id => $option_details ) {
+			foreach ( PixCustomifyPlugin()->get_options_details(true) as $option_id => $option_details ) {
 
 				if ( isset( $option_details['css'] ) && ! empty( $option_details['css'] ) ) {
 					// now process each
@@ -430,7 +431,7 @@ if ( ! class_exists( 'Customify_Customizer' ) ) :
 		function get_typography_dynamic_style() {
 			$output = '';
 
-			$this->get_typography_fields( PixCustomifyPlugin()->get_options_details(), 'type', 'typography', $this->typo_settings );
+			$this->get_typography_fields( PixCustomifyPlugin()->get_options_details(true), 'type', 'typography', $this->typo_settings );
 
 			if ( empty( $this->typo_settings ) ) {
 				return $output;
@@ -558,7 +559,7 @@ if ( ! class_exists( 'Customify_Customizer' ) ) :
 		function get_typography_dynamic_script() {
 			$output = '';
 
-			$this->get_typography_fields( PixCustomifyPlugin()->get_options_details(), 'type', 'typography', $this->typo_settings );
+			$this->get_typography_fields( PixCustomifyPlugin()->get_options_details(true), 'type', 'typography', $this->typo_settings );
 
 			if ( empty( $this->typo_settings ) ) {
 				return $output;
@@ -916,13 +917,13 @@ if ( ! class_exists( 'Customify_Customizer' ) ) :
 			$custom_css = ob_get_clean();
 
 			ob_start(); ?>
-			(function ($) {
-			$(window).load(function () {
-			/**
-			* @param iframe_id the id of the frame you want to append the style
-			* @param style_element the style element you want to append - boooom
-			*/
-			var append_script_to_iframe = function (ifrm_id, scriptEl) {
+(function ($) {
+	$(window).load(function () {
+		/**
+		* @param iframe_id the id of the frame you want to append the style
+		* @param style_element the style element you want to append - boooom
+		*/
+		var append_script_to_iframe = function (ifrm_id, scriptEl) {
 			var myIframe = document.getElementById(ifrm_id);
 
 			var script = myIframe.contentWindow.document.createElement("script");
@@ -930,46 +931,46 @@ if ( ! class_exists( 'Customify_Customizer' ) ) :
 			script.innerHTML = scriptEl.innerHTML;
 
 			myIframe.contentWindow.document.head.appendChild(script);
-			};
+		};
 
-			var append_style_to_iframe = function (ifrm_id, styleElment) {
+		var append_style_to_iframe = function (ifrm_id, styleElment) {
 			var ifrm = window.frames[ifrm_id];
 			if ( typeof ifrm === "undefined" ) {
-			return;
+				return;
 			}
 			ifrm = ( ifrm.contentDocument || ifrm.contentDocument || ifrm.document );
 			var head = ifrm.getElementsByTagName('head')[0];
 
 			if (typeof styleElment !== "undefined") {
-			head.appendChild(styleElment);
+				head.appendChild(styleElment);
 			}
-			};
+		};
 
-			var xmlString = <?php echo json_encode( str_replace( "\n", "", $custom_css ) ); ?>,
-			parser = new DOMParser(),
-			doc = parser.parseFromString(xmlString, "text/html");
+		var xmlString = <?php echo json_encode( str_replace( "\n", "", $custom_css ) ); ?>,
+		parser = new DOMParser(),
+		doc = parser.parseFromString(xmlString, "text/html");
 
-			if (typeof window.frames['content_ifr'] !== 'undefined') {
+		if (typeof window.frames['content_ifr'] !== 'undefined') {
 
 			$.each(doc.head.childNodes, function (key, el) {
-			if (typeof el !== "undefined" && typeof el.tagName !== "undefined") {
+				if (typeof el !== "undefined" && typeof el.tagName !== "undefined") {
 
-			switch (el.tagName) {
-			case 'STYLE' :
-			append_style_to_iframe('content_ifr', el);
-			break;
-			case 'SCRIPT' :
-			append_script_to_iframe('content_ifr', el);
-			break;
-			default:
-			break;
-			}
-			}
+					switch (el.tagName) {
+						case 'STYLE' :
+							append_style_to_iframe('content_ifr', el);
+							break;
+						case 'SCRIPT' :
+							append_script_to_iframe('content_ifr', el);
+							break;
+						default:
+							break;
+					}
+				}
 			});
-			}
-			});
-			})(jQuery);
-			<?php
+		}
+	});
+})(jQuery);
+<?php
 			$script = ob_get_clean();
 			wp_add_inline_script( 'editor', $script );
 
@@ -995,26 +996,28 @@ if ( ! class_exists( 'Customify_Customizer' ) ) :
 		 * @param WP_Customize_Manager $wp_customize
 		 */
 		public function maybe_process_config_extras( $wp_customize ) {
+			$customizer_config = PixCustomifyPlugin()->get_customizer_config();
+
 			// Bail if we have no external theme config data.
-			if ( empty( $this->customizer_config ) || ! is_array( $this->customizer_config ) ) {
+			if ( empty( $customizer_config ) || ! is_array( $customizer_config ) ) {
 				return;
 			}
 
 			// Maybe remove panels
-			if ( ! empty( $this->customizer_config['remove_panels'] ) ) {
+			if ( ! empty( $customizer_config['remove_panels'] ) ) {
 				// Standardize it.
-				if ( is_string( $this->customizer_config['remove_panels'] ) ) {
-					$this->customizer_config['remove_panels'] = array( $this->customizer_config['remove_panels'] );
+				if ( is_string( $customizer_config['remove_panels'] ) ) {
+					$customizer_config['remove_panels'] = array( $customizer_config['remove_panels'] );
 				}
 
-				foreach ( $this->customizer_config['remove_panels'] as $panel_id ) {
+				foreach ( $customizer_config['remove_panels'] as $panel_id ) {
 					$wp_customize->remove_panel( $panel_id );
 				}
 			}
 
 			// Maybe change panel props.
-			if ( ! empty( $this->customizer_config['change_panel_props'] ) ) {
-				foreach ( $this->customizer_config['change_panel_props'] as $panel_id => $panel_props ) {
+			if ( ! empty( $customizer_config['change_panel_props'] ) ) {
+				foreach ( $customizer_config['change_panel_props'] as $panel_id => $panel_props ) {
 					if ( ! is_array( $panel_props ) ) {
 						continue;
 					}
@@ -1037,13 +1040,13 @@ if ( ! class_exists( 'Customify_Customizer' ) ) :
 			}
 
 			// Maybe remove sections
-			if ( ! empty( $this->customizer_config['remove_sections'] ) ) {
+			if ( ! empty( $customizer_config['remove_sections'] ) ) {
 				// Standardize it.
-				if ( is_string( $this->customizer_config['remove_sections'] ) ) {
-					$this->customizer_config['remove_sections'] = array( $this->customizer_config['remove_sections'] );
+				if ( is_string( $customizer_config['remove_sections'] ) ) {
+					$customizer_config['remove_sections'] = array( $customizer_config['remove_sections'] );
 				}
 
-				foreach ( $this->customizer_config['remove_sections'] as $section_id ) {
+				foreach ( $customizer_config['remove_sections'] as $section_id ) {
 
 					if ( 'widgets' === $section_id ) {
 						global $wp_registered_sidebars;
@@ -1059,8 +1062,8 @@ if ( ! class_exists( 'Customify_Customizer' ) ) :
 			}
 
 			// Maybe change section props.
-			if ( ! empty( $this->customizer_config['change_section_props'] ) ) {
-				foreach ( $this->customizer_config['change_section_props'] as $section_id => $section_props ) {
+			if ( ! empty( $customizer_config['change_section_props'] ) ) {
+				foreach ( $customizer_config['change_section_props'] as $section_id => $section_props ) {
 					if ( ! is_array( $section_props ) ) {
 						continue;
 					}
@@ -1083,20 +1086,20 @@ if ( ! class_exists( 'Customify_Customizer' ) ) :
 			}
 
 			// Maybe remove settings
-			if ( ! empty( $this->customizer_config['remove_settings'] ) ) {
+			if ( ! empty( $customizer_config['remove_settings'] ) ) {
 				// Standardize it.
-				if ( is_string( $this->customizer_config['remove_settings'] ) ) {
-					$this->customizer_config['remove_settings'] = array( $this->customizer_config['remove_settings'] );
+				if ( is_string( $customizer_config['remove_settings'] ) ) {
+					$customizer_config['remove_settings'] = array( $customizer_config['remove_settings'] );
 				}
 
-				foreach ( $this->customizer_config['remove_settings'] as $setting_id ) {
+				foreach ( $customizer_config['remove_settings'] as $setting_id ) {
 					$wp_customize->remove_setting( $setting_id );
 				}
 			}
 
 			// Maybe change setting props.
-			if ( ! empty( $this->customizer_config['change_setting_props'] ) ) {
-				foreach ( $this->customizer_config['change_setting_props'] as $setting_id => $setting_props ) {
+			if ( ! empty( $customizer_config['change_setting_props'] ) ) {
+				foreach ( $customizer_config['change_setting_props'] as $setting_id => $setting_props ) {
 					if ( ! is_array( $setting_props ) ) {
 						continue;
 					}
@@ -1119,20 +1122,20 @@ if ( ! class_exists( 'Customify_Customizer' ) ) :
 			}
 
 			// Maybe remove controls
-			if ( ! empty( $this->customizer_config['remove_controls'] ) ) {
+			if ( ! empty( $customizer_config['remove_controls'] ) ) {
 				// Standardize it.
-				if ( is_string( $this->customizer_config['remove_controls'] ) ) {
-					$this->customizer_config['remove_controls'] = array( $this->customizer_config['remove_controls'] );
+				if ( is_string( $customizer_config['remove_controls'] ) ) {
+					$customizer_config['remove_controls'] = array( $customizer_config['remove_controls'] );
 				}
 
-				foreach ( $this->customizer_config['remove_controls'] as $control_id ) {
+				foreach ( $customizer_config['remove_controls'] as $control_id ) {
 					$wp_customize->remove_control( $control_id );
 				}
 			}
 
 			// Maybe change control props.
-			if ( ! empty( $this->customizer_config['change_control_props'] ) ) {
-				foreach ( $this->customizer_config['change_control_props'] as $control_id => $control_props ) {
+			if ( ! empty( $customizer_config['change_control_props'] ) ) {
+				foreach ( $customizer_config['change_control_props'] as $control_id => $control_props ) {
 					if ( ! is_array( $control_props ) ) {
 						continue;
 					}
@@ -1870,24 +1873,24 @@ if ( ! class_exists( 'Customify_Customizer' ) ) :
 			<?php
 		}
 
-		public function get_typography_fields( $array, $key, $value, &$results, $input_key = 0 ) {
-			if ( ! is_array( $array ) ) {
+		public function get_typography_fields( $fields_config, $key, $value, &$results, $input_key = 0 ) {
+			if ( ! is_array( $fields_config ) ) {
 				return;
 			}
 
-			if ( isset( $array[ $key ] ) && $array[ $key ] == $value ) {
-				$results[ $input_key ] = $array;
+			if ( isset( $fields_config[ $key ] ) && $fields_config[ $key ] == $value ) {
+				$results[ $input_key ] = $fields_config;
 
 				$default = null;
 
-				if ( isset( $array['default'] ) && is_array( $array['default'] ) ) {
-					$default = json_encode( $array['default'] );
+				if ( isset( $fields_config['default'] ) && is_array( $fields_config['default'] ) ) {
+					$default = json_encode( $fields_config['default'] );
 				}
 
 				$results[ $input_key ]['value'] = PixCustomifyPlugin()->get_option( $input_key, $default );
 			}
 
-			foreach ( $array as $i => $subarray ) {
+			foreach ( $fields_config as $i => $subarray ) {
 				$this->get_typography_fields( $subarray, $key, $value, $results, $i );
 			}
 		}
