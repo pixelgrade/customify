@@ -171,15 +171,19 @@ class PixCustomifyPlugin {
 		 */
 		add_action( 'activated_plugin', array( $this, 'invalidate_customizer_config_cache' ), 1 );
 		add_action( 'activated_plugin', array( $this, 'invalidate_options_details_cache' ), 1 );
+		add_action( 'activated_plugin', array( $this, 'invalidate_customizer_opt_name_cache' ), 1 );
 
 		add_action( 'deactivated_plugin', array( $this, 'invalidate_customizer_config_cache' ), 1 );
 		add_action( 'deactivated_plugin', array( $this, 'invalidate_options_details_cache' ), 1 );
+		add_action( 'deactivated_plugin', array( $this, 'invalidate_customizer_opt_name_cache' ), 1 );
 
 		add_action( 'switch_theme', array( $this, 'invalidate_customizer_config_cache' ), 1 );
 		add_action( 'switch_theme', array( $this, 'invalidate_options_details_cache' ), 1 );
+		add_action( 'switch_theme', array( $this, 'invalidate_customizer_opt_name_cache' ), 1 );
 
 		add_action( 'upgrader_process_complete', array( $this, 'invalidate_customizer_config_cache' ), 1 );
 		add_action( 'upgrader_process_complete', array( $this, 'invalidate_options_details_cache' ), 1 );
+		add_action( 'upgrader_process_complete', array( $this, 'invalidate_customizer_opt_name_cache' ), 1 );
 
 		// Whenever we update data from the Customizer, we will invalidate the options details (that include the value).
 		add_filter( 'customize_changeset_save_data', array( $this, 'filter_invalidate_options_details_cache' ), 50, 1 );
@@ -188,6 +192,7 @@ class PixCustomifyPlugin {
 		// and so unlock new Customify options.
 		add_filter( 'pre_set_theme_mod_pixcare_license', array( $this, 'filter_invalidate_customizer_config_cache' ), 10, 1 );
 		add_filter( 'pre_set_theme_mod_pixcare_license', array( $this, 'filter_invalidate_options_details_cache' ), 10, 1 );
+		add_filter( 'pre_set_theme_mod_pixcare_license', array( $this, 'filter_invalidate_customizer_opt_name_cache' ), 10, 1 );
 
 		/*
 		 * Now setup the admin side of things
@@ -257,6 +262,12 @@ class PixCustomifyPlugin {
 
 	public function invalidate_customizer_opt_name_cache() {
 		update_option( $this->get_customizer_opt_name_cache_key() . '_timestamp' , time() - 24 * HOUR_IN_SECONDS, true );
+	}
+
+	public function filter_invalidate_customizer_opt_name_cache( $value ) {
+		$this->invalidate_customizer_opt_name_cache();
+
+		return $value;
 	}
 
 
@@ -678,8 +689,6 @@ class PixCustomifyPlugin {
 		$domain = $this->plugin_slug;
 		load_plugin_textdomain( $domain, false, basename( dirname( $this->file ) ) . '/languages/' );
 	}
-
-	/** === RESOURCES === **/
 
 	/**
 	 * Add dynamic style only on the previewer page
