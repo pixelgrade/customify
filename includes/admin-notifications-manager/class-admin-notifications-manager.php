@@ -1167,7 +1167,7 @@ class Pixcloud_Admin_Notifications_Manager {
 	 * @param   int $user_id User ID from whom to remove dismissals. Set to 0 for all users.
 	 * @param   array $notice_ids Array of notice ids to remove
 	 */
-	public function remove_user_notifications_data( $user_id = 0, array $notice_ids ) {
+	public function remove_user_notifications_data( $user_id = 0, $notice_ids = array() ) {
 
 		if ( ! empty( $notice_ids ) ) {
 

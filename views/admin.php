@@ -12,7 +12,7 @@
  * @copyright 2013 Pixel Grade Media
  */
 
-$config = include PixCustomifyPlugin()->get_base_path() . 'plugin-config' . EXT;
+$config = PixCustomifyPlugin::get_plugin_config();
 
 // invoke processor
 $processor = pixcustomify::processor( $config );
@@ -41,7 +41,9 @@ $errors    = $processor->errors(); ?>
 				<?php _e( 'Settings have been updated.', 'customify' ); ?>
 			</p>
 		<?php endif;
-		echo $f = pixcustomify::form( $config, $processor );
+		$f = pixcustomify::form( $config, $processor );
+		echo $f->startform();
+
 		echo $f->field( 'hiddens' )->render();
 		echo $f->field( 'general' )->render();
 		echo $f->field( 'output' )->render();

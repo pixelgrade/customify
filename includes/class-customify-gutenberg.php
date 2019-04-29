@@ -124,7 +124,7 @@ class Customify_Gutenberg {
 		// Styles on the front end.
 		add_action( 'wp_enqueue_scripts', array( $this, 'frontend_styles' ), 999 );
 
-		add_action( 'init', array( $this, 'editor_color_palettes' ), 20 );
+		add_action( 'admin_init', array( $this, 'editor_color_palettes' ), 20 );
 	}
 
 	/**
@@ -217,17 +217,18 @@ class Customify_Gutenberg {
 
 		if ( PixCustomifyPlugin()->get_plugin_setting( 'enable_editor_style', true ) ) {
 			add_filter( 'customify_typography_css_selector', array( $this, 'gutenbergify_font_css_selectors' ), 10, 2 );
-			wp_add_inline_script( 'wp-editor', PixCustomifyPlugin()->get_typography_dynamic_script() );
-			wp_add_inline_style( $enqueue_parent_handle, PixCustomifyPlugin()->get_typography_dynamic_style() );
+			wp_add_inline_script( 'wp-editor', PixCustomifyPlugin()->customizer->get_typography_dynamic_script() );
+			wp_add_inline_style( $enqueue_parent_handle, PixCustomifyPlugin()->customizer->get_typography_dynamic_style() );
 			remove_filter( 'customify_typography_css_selector', array( $this, 'gutenbergify_font_css_selectors' ), 10 );
 
 			add_filter( 'customify_font_css_selector', array( $this, 'gutenbergify_font_css_selectors' ), 10, 2 );
+			require_once( PixCustomifyPlugin()->get_base_path() . 'features/class-Font_Selector.php' );
 			wp_add_inline_script( 'wp-editor', Customify_Font_Selector::instance()->get_fonts_dynamic_script() );
 			wp_add_inline_style( $enqueue_parent_handle, Customify_Font_Selector::instance()->get_fonts_dynamic_style() );
 			remove_filter( 'customify_font_css_selector', array( $this, 'gutenbergify_font_css_selectors' ), 10 );
 
 			add_filter( 'customify_css_selector', array( $this, 'gutenbergify_css_selectors' ), 10, 2 );
-			wp_add_inline_style( $enqueue_parent_handle, PixCustomifyPlugin()->get_dynamic_style() );
+			wp_add_inline_style( $enqueue_parent_handle, PixCustomifyPlugin()->customizer->get_dynamic_style() );
 			remove_filter( 'customify_css_selector', array( $this, 'gutenbergify_css_selectors' ), 10 );
 
 			// Add color palettes classes.
@@ -298,7 +299,7 @@ class Customify_Gutenberg {
 		return implode( ', ', $new_selectors );
 	}
 
-	public function gutenbergify_font_css_selectors( $selectors, $font ) {
+	public function gutenbergify_font_css_selectors( $selectors ) {
 
 		// Treat the selector(s) as an array.
 		$selectors = $this->maybeExplodeSelectors( $selectors );
@@ -395,7 +396,7 @@ class Customify_Gutenberg {
 			return;
 		}
 
-		$options = PixCustomifyPlugin()->get_options_configs();
+		$options_details = PixCustomifyPlugin()->get_options_configs();
 
 		$master_color_control_ids = Customify_Color_Palettes::instance()->get_all_master_color_controls_ids();
 		if ( empty( $master_color_control_ids ) ) {
@@ -404,7 +405,7 @@ class Customify_Gutenberg {
 
 		$editor_color_palettes = array();
 		foreach ( $master_color_control_ids as $control_id ) {
-			if ( empty( $options[ $control_id ] ) ) {
+			if ( empty( $options_details[ $control_id ] ) ) {
 				continue;
 			}
 
@@ -414,7 +415,7 @@ class Customify_Gutenberg {
 			}
 
 			$editor_color_palettes[] = array(
-				'name'  => $options[ $control_id ]['label'],
+				'name'  => $options_details[ $control_id ]['label'],
 				'slug'  => $control_id,
 				'color' => esc_html( $value ),
 			);
@@ -442,7 +443,7 @@ class Customify_Gutenberg {
 			return '';
 		}
 
-		$options = PixCustomifyPlugin()->get_options_configs();
+		$options_details = PixCustomifyPlugin()->get_options_configs();
 
 		$master_color_control_ids = Customify_Color_Palettes::instance()->get_all_master_color_controls_ids();
 		if ( empty( $master_color_control_ids ) ) {
@@ -452,7 +453,7 @@ class Customify_Gutenberg {
 		// Build styles.
 		$css  = '';
 		foreach ( $master_color_control_ids as $control_id ) {
-			if ( empty( $options[ $control_id ] ) ) {
+			if ( empty( $options_details[ $control_id ] ) ) {
 				continue;
 			}
 
@@ -462,7 +463,7 @@ class Customify_Gutenberg {
 			}
 
 			$editor_color_palettes[] = array(
-				'name'  => $options[ $control_id ]['label'],
+				'name'  => $options_details[ $control_id ]['label'],
 				'slug'  => $control_id,
 				'color' => esc_html( $value ),
 			);

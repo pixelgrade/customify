@@ -1,13 +1,13 @@
 === Customify - A Theme Customizer Booster ===
 Contributors: pixelgrade, euthelup, babbardel, vlad.olaru, raduconstantin, razvanonofrei
 Tags: customizer, css, editor, gutenberg, live, preview, customizer
-Requires at least: 4.9.0
-Tested up to: 5.0.2
+Requires at least: 4.9.9
+Tested up to: 5.2.0
 Stable tag: 2.3.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Customify is a Theme Customizer Booster that you can easily use to customizer Fonts, Colors, Live CSS Editor and other options for your site.
+Customify is a Theme Customizer Booster to easily customize Fonts, Colors, and other options for your site.
 
 == Description ==
 
