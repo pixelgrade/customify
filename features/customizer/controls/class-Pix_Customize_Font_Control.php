@@ -159,7 +159,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 
 						do_action( 'customify_font_family_before_google_fonts_options' );
 
-						if ( PixCustomifyPlugin()->get_plugin_setting( 'typography_google_fonts' ) ) {
+						if ( PixCustomifyPlugin()->settings->get_plugin_setting( 'typography_google_fonts' ) ) {
 
 							echo '<optgroup class="google-fonts-opts-placeholder" label="' . __( 'Google fonts', 'customify' ) . '"></optgroup>';
 						} ?>
@@ -200,12 +200,12 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 
 	public function get_google_fonts_opts_html() {
 		$html = '';
-		if ( ! PixCustomifyPlugin()->get_plugin_setting( 'typography_google_fonts' ) ) {
+		if ( ! PixCustomifyPlugin()->settings->get_plugin_setting( 'typography_google_fonts' ) ) {
 			return $html;
 		}
 
 		ob_start();
-		if ( PixCustomifyPlugin()->get_plugin_setting( 'typography_group_google_fonts' ) ) {
+		if ( PixCustomifyPlugin()->settings->get_plugin_setting( 'typography_group_google_fonts' ) ) {
 
 			$grouped_google_fonts = array();
 			foreach ( self::$google_fonts as $key => $font ) {
@@ -236,7 +236,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 	}
 
 	public function customize_pane_settings_google_fonts_options() {
-		if ( ! PixCustomifyPlugin()->get_plugin_setting( 'typography_google_fonts' ) ) {
+		if ( ! PixCustomifyPlugin()->settings->get_plugin_setting( 'typography_google_fonts' ) ) {
 			return;
 		}
 
@@ -305,7 +305,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 		// Allow others to add options here
 		do_action( 'customify_font_family_before_standard_fonts_options', $font_family, $current_value );
 
-		if ( PixCustomifyPlugin()->get_plugin_setting( 'typography_standard_fonts' ) ) {
+		if ( PixCustomifyPlugin()->settings->get_plugin_setting( 'typography_standard_fonts' ) ) {
 
 			echo '<optgroup label="' . __( 'Standard fonts', 'customify' ) . '">';
 			foreach ( self::$std_fonts as $key => $font ) {

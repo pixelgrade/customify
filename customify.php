@@ -20,13 +20,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	die;
 }
 
-// ensure EXT is defined
-if ( ! defined('EXT')) {
-	define('EXT', '.php');
-}
-
-require 'core/bootstrap.php';
-
 require_once 'includes/lib/class-customify-array.php';
 require_once 'includes/extras.php';
 
@@ -37,7 +30,7 @@ require_once 'includes/extras.php';
  * @return PixCustomifyPlugin
  */
 function PixCustomifyPlugin() {
-	require_once plugin_dir_path( __FILE__ ) . 'class-pixcustomify.php';
+	require_once plugin_dir_path( __FILE__ ) . 'includes/class-pixcustomify.php';
 
 	return PixCustomifyPlugin::instance( __FILE__, '2.3.3' );
 }

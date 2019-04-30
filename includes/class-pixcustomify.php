@@ -38,23 +38,20 @@ class PixCustomifyPlugin {
 	protected static $_instance = null;
 
 	/**
-	 * Slug of the plugin screen.
-	 * @since    1.0.0
-	 * @var      string
-	 */
-	protected $plugin_screen_hook_suffix = null;
-
-	public $display_admin_menu = false;
-
-	public $plugin_settings;
-
-	/**
 	 * The main plugin file.
 	 * @var     string
 	 * @access  public
 	 * @since   1.5.0
 	 */
 	public $file;
+
+	/**
+	 * Settings class object.
+	 * @var Customify_Settings
+	 * @access  public
+	 * @since   2.4.0
+	 */
+	public $settings = null;
 
 	/**
 	 * Customizer class object.
@@ -89,7 +86,6 @@ class PixCustomifyPlugin {
 	protected $jetpack_blocked_modules = array();
 	protected $jetpack_sharing_default_options = array();
 
-	private $plugin_config = array();
 	private $customizer_config = array();
 
 	/**
@@ -98,7 +94,7 @@ class PixCustomifyPlugin {
 	 * @access  private
 	 * @since   1.5.0
 	 */
-	private $minimalRequiredPhpVersion = 5.2;
+	private $minimalRequiredPhpVersion = '5.2';
 
 	protected function __construct( $file, $version = '1.0.0' ) {
 		//the main plugin file (the one that loads all this)
@@ -124,10 +120,11 @@ class PixCustomifyPlugin {
 		// Handle the install and uninstall logic
 		register_activation_hook( $this->get_file(), array( 'PixCustomifyPlugin', 'install' ) );
 
-		// Load the config file
-		$this->plugin_config = self::get_plugin_config();
-		// Load the plugin's settings from the DB
-		$this->plugin_settings = get_option( $this->plugin_config['settings-key'] );
+		/* Initialize the plugin settings logic. */
+		require_once( $this->get_base_path() . 'includes/class-customify-settings.php' );
+		if ( is_null( $this->settings ) ) {
+			$this->settings = Customify_Settings::instance( $this->get_file(), $this->get_slug(), $this->get_version() );
+		}
 
 		/* Initialize the Customizer logic. */
 		require_once( $this->get_base_path() . 'includes/class-customify-customizer.php' );
@@ -193,23 +190,6 @@ class PixCustomifyPlugin {
 		add_filter( 'pre_set_theme_mod_pixcare_license', array( $this, 'filter_invalidate_customizer_config_cache' ), 10, 1 );
 		add_filter( 'pre_set_theme_mod_pixcare_license', array( $this, 'filter_invalidate_options_details_cache' ), 10, 1 );
 		add_filter( 'pre_set_theme_mod_pixcare_license', array( $this, 'filter_invalidate_customizer_opt_name_cache' ), 10, 1 );
-
-		/*
-		 * Now setup the admin side of things
-		 */
-		// Starting with the menu item for this plugin
-		add_action( 'admin_menu', array( $this, 'add_plugin_admin_menu' ) );
-
-		// Add an action link pointing to the options page.
-		$plugin_basename = plugin_basename( plugin_dir_path( $this->file ) . 'pixcustomify.php' );
-		add_filter( 'plugin_action_links_' . $plugin_basename, array( $this, 'add_action_links' ) );
-
-		// Load admin stylesheet and JavaScript.
-		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_styles' ) );
-		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_scripts' ) );
-
-
-		add_action( 'rest_api_init', array( $this, 'add_rest_routes_api' ) );
 	}
 
 	/**
@@ -530,6 +510,18 @@ class PixCustomifyPlugin {
 		return false;
 	}
 
+	/**
+	 * This is just a wrapper for get_options_details() for backwards compatibility.
+	 *
+	 * @param bool $only_minimal_details
+	 * @param bool $skip_cache
+	 *
+	 * @return array|mixed|void
+	 */
+	public function get_options_configs( $only_minimal_details = false, $skip_cache = false ) {
+		return $this->get_options_details( $only_minimal_details, $skip_cache );
+	}
+
 	protected function get_theme_mod_value( $setting_id ) {
 		global $wp_customize;
 
@@ -691,212 +683,6 @@ class PixCustomifyPlugin {
 	}
 
 	/**
-	 * Add dynamic style only on the previewer page
-	 */
-
-	/**
-	 * Settings page styles
-	 */
-	function enqueue_admin_styles() {
-
-		if ( ! isset( $this->plugin_screen_hook_suffix ) ) {
-			return;
-		}
-
-		$screen = get_current_screen();
-		if ( $screen->id == $this->plugin_screen_hook_suffix ) {
-			wp_enqueue_style( $this->get_slug() . '-admin-styles', plugins_url( 'css/admin.css', $this->get_file() ), array(), $this->get_version() );
-		}
-	}
-
-	/**
-	 * Settings page scripts
-	 */
-	function enqueue_admin_scripts() {
-
-		if ( ! isset( $this->plugin_screen_hook_suffix ) ) {
-			return;
-		}
-
-		$screen = get_current_screen();
-		if ( $screen->id == $this->plugin_screen_hook_suffix ) {
-			wp_enqueue_script( $this->get_slug() . '-admin-script', plugins_url( 'js/admin.js', $this->get_file() ), array( 'jquery' ), $this->get_version() );
-			wp_localize_script( $this->get_slug() . '-admin-script', 'customify_settings', array(
-				'ajax_url' => admin_url( 'admin-ajax.php' ),
-				'wp_rest' => array(
-					'root'  => esc_url_raw( rest_url() ),
-					'nonce' => wp_create_nonce( 'wp_rest' ),
-					'customify_settings_nonce' => wp_create_nonce( 'customify_settings_nonce' )
-				),
-			) );
-		}
-
-		wp_localize_script( $this->get_slug() . '-customizer-scripts', 'WP_API_Settings', array(
-			'root'  => esc_url_raw( rest_url() ),
-			'nonce' => wp_create_nonce( 'wp_rest' )
-		) );
-	}
-
-	/**
-	 * Register the administration menu for this plugin into the WordPress Dashboard menu.
-	 */
-	function add_plugin_admin_menu() {
-		$this->plugin_screen_hook_suffix = add_options_page( esc_html__( 'Customify', 'customify' ), esc_html__( 'Customify', 'customify' ), 'edit_plugins', $this->get_slug(), array(
-			$this,
-			'display_plugin_admin_page'
-		) );
-	}
-
-	/**
-	 * Render the settings page for this plugin.
-	 */
-	function display_plugin_admin_page() {
-		include_once( 'views/admin.php' );
-	}
-
-	/**
-	 * Add settings action link to the plugins page.
-	 */
-	function add_action_links( $links ) {
-		return array_merge( array( 'settings' => '<a href="' . admin_url( 'options-general.php?page=pixcustomify' ) . '">' . esc_html__( 'Settings', 'customify' ) . '</a>' ), $links );
-	}
-
-	function add_rest_routes_api(){
-		register_rest_route( 'customify/v1', '/delete_theme_mod', array(
-			'methods'             => 'POST',
-			'callback'            => array( $this, 'delete_theme_mod' ),
-			'permission_callback' => array( $this, 'permission_nonce_callback' ),
-		) );
-	}
-
-	function delete_theme_mod(){
-		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_send_json_error( esc_html__('You don\'t have admin privileges.', 'customify' ) );
-		}
-
-		$config = apply_filters('customify_filter_fields', array() );
-
-		if ( empty( $config['opt-name'] ) ) {
-			wp_send_json_error('no option key');
-		}
-
-		$key = $config['opt-name'];
-
-		remove_theme_mod( $key );
-
-		wp_send_json_success('Deleted ' . $key . ' theme mod!');
-	}
-
-	function permission_nonce_callback() {
-		return wp_verify_nonce( $this->get_nonce(), 'customify_settings_nonce' );
-	}
-
-	private function get_nonce() {
-		$nonce = null;
-
-		if ( isset( $_REQUEST['customify_settings_nonce'] ) ) {
-			$nonce = wp_unslash( $_REQUEST['customify_settings_nonce'] );
-		} elseif ( isset( $_POST['customify_settings_nonce'] ) ) {
-			$nonce = wp_unslash( $_POST['customify_settings_nonce'] );
-		}
-
-		return $nonce;
-	}
-
-	static public function get_plugin_config() {
-
-		$debug = false;
-		if ( isset( $_GET['debug'] ) && $_GET['debug'] == 'true' ) {
-			$debug = true;
-		}
-
-		return array(
-			'plugin-name'           => 'pixcustomify',
-			'settings-key'          => 'pixcustomify_settings',
-			'textdomain'            => 'customify',
-			'template-paths'        => array(
-				plugin_dir_path( __FILE__ ) . 'core/views/form-partials/',
-				plugin_dir_path( __FILE__ ) . 'views/form-partials/',
-			),
-			'fields'                => array(
-				'hiddens' => include 'settings/hiddens.php',
-				'general' => include 'settings/general.php',
-				'output' => include 'settings/output.php',
-				'typography' => include 'settings/typography.php',
-				'tools' => include 'settings/tools.php',
-			),
-			'processor'             => array(
-				// callback signature: (array $input, customifyProcessor $processor)
-				'preupdate'  => array(
-					// callbacks to run before update process
-					// cleanup and validation has been performed on data
-				),
-			),
-			'cleanup'               => array(
-				'switch' => array( 'switch_not_available' ),
-			),
-			'checks'                => array(
-				'counter' => array( 'is_numeric', 'not_empty' ),
-			),
-			'errors'                => array(
-				'not_empty' => __( 'Invalid Value.', 'customify' ),
-			),
-			// shows exception traces on error
-			'debug'                 => $debug,
-
-		); # config
-	}
-
-	/**
-	 * Get an option's value from the config file
-	 *
-	 * @param $option
-	 * @param null $default
-	 *
-	 * @return bool|null
-	 */
-	public function get_config_option( $option, $default = null ) {
-
-		if ( isset( $this->plugin_config[ $option ] ) ) {
-			return $this->plugin_config[ $option ];
-		} elseif ( $default !== null ) {
-			return $default;
-		}
-
-		return false;
-	}
-
-	public function get_plugin_setting( $option, $default = null ) {
-
-		if ( isset( $this->plugin_settings[ $option ] ) ) {
-			return $this->plugin_settings[ $option ];
-		} elseif ( $default !== null ) {
-			return $default;
-		}
-
-		return false;
-	}
-
-	/**
-	 * Sanitize functions
-	 */
-
-	/**
-	 * Sanitize the checkbox.
-	 *
-	 * @param boolean $input .
-	 *
-	 * @return boolean true if is 1 or '1', false if anything else
-	 */
-	function setting_sanitize_checkbox( $input ) {
-		if ( 1 == $input ) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	/**
 	 * Checks whether an array is associative or not
 	 *
 	 * @param array $array
@@ -915,10 +701,6 @@ class PixCustomifyPlugin {
 		// If the array keys of the keys match the keys, then the array must
 		// not be associative (e.g. the keys array looked like {0:0, 1:1...}).
 		return array_keys( $keys ) !== $keys;
-	}
-
-	public function get_options_configs( $only_minimal_details = false, $skip_cache = false ) {
-		return $this->get_options_details( $only_minimal_details, $skip_cache );
 	}
 
 	/**
@@ -977,7 +759,7 @@ class PixCustomifyPlugin {
 	 * Install everything needed
 	 */
 	static public function install() {
-		$config = self::get_plugin_config();
+		$config = Customify_Settings::get_plugin_config();
 
 		$defaults = array(
 

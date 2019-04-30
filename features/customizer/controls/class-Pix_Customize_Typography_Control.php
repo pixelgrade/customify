@@ -188,7 +188,7 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 				// Allow others to add options here
 				do_action( 'customify_typography_font_family_before_standard_fonts_options', $font_family, $current_value );
 
-				if ( PixCustomifyPlugin()->get_plugin_setting( 'typography_standard_fonts' ) ) {
+				if ( PixCustomifyPlugin()->settings->get_plugin_setting( 'typography_standard_fonts' ) ) {
 
 					echo '<optgroup label="' . __( 'Standard fonts', 'customify' ) . '">';
 					foreach ( self::$std_fonts as $key => $font ) {
@@ -200,9 +200,9 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 				// Allow others to add options here
 				do_action( 'customify_typography_font_family_before_google_fonts_options' );
 
-				if ( PixCustomifyPlugin()->get_plugin_setting( 'typography_google_fonts' ) ) {
+				if ( PixCustomifyPlugin()->settings->get_plugin_setting( 'typography_google_fonts' ) ) {
 
-					if ( PixCustomifyPlugin()->get_plugin_setting( 'typography_group_google_fonts' ) ) {
+					if ( PixCustomifyPlugin()->settings->get_plugin_setting( 'typography_group_google_fonts' ) ) {
 
 						$grouped_google_fonts = array();
 						foreach ( self::$google_fonts as $key => $font ) {

@@ -154,7 +154,7 @@ if ( ! class_exists( 'Customify_Customizer' ) ) :
 			add_action( 'customize_controls_print_footer_scripts', array( $this, 'customize_pane_settings_additional_data' ), 10000 );
 
 			// The frontend effects of the Customizer controls
-			$load_location = PixCustomifyPlugin()->get_plugin_setting( 'style_resources_location', 'wp_head' );
+			$load_location = PixCustomifyPlugin()->settings->get_plugin_setting( 'style_resources_location', 'wp_head' );
 
 			add_action( $load_location, array( $this, 'output_dynamic_style' ), 99 );
 			add_action( 'wp_head', array( $this, 'output_typography_dynamic_script' ), 10 );
@@ -165,7 +165,7 @@ if ( ! class_exists( 'Customify_Customizer' ) ) :
 			// Maybe the theme has instructed us to do things like removing sections or controls.
 			add_action( 'customize_register', array( $this, 'maybe_process_config_extras' ), 13 );
 
-			if ( PixCustomifyPlugin()->get_plugin_setting( 'enable_editor_style', true ) ) {
+			if ( PixCustomifyPlugin()->settings->get_plugin_setting( 'enable_editor_style', true ) ) {
 				add_action( 'admin_enqueue_scripts', array( $this, 'script_to_add_customizer_settings_into_wp_editor' ), 10, 1 );
 			}
 
@@ -645,8 +645,8 @@ if ( ! class_exists( 'Customify_Customizer' ) ) :
 				}
 			}
 
-			if ( ! empty ( $families ) && PixCustomifyPlugin()->get_plugin_setting( 'typography', '1' )
-			     && PixCustomifyPlugin()->get_plugin_setting( 'typography_google_fonts', 1 ) ) {
+			if ( ! empty ( $families ) && PixCustomifyPlugin()->settings->get_plugin_setting( 'typography', '1' )
+			     && PixCustomifyPlugin()->settings->get_plugin_setting( 'typography_google_fonts', 1 ) ) {
 				ob_start();
 				?>
 				if (typeof WebFont !== 'undefined') {<?php // if there is a WebFont object, use it ?>
@@ -1235,7 +1235,7 @@ if ( ! class_exists( 'Customify_Customizer' ) ) :
 					}
 				}
 
-				if ( PixCustomifyPlugin()->get_plugin_setting('enable_reset_buttons') ) {
+				if ( PixCustomifyPlugin()->settings->get_plugin_setting('enable_reset_buttons') ) {
 					// create a toolbar section which will be present all the time
 					$reset_section_settings = array(
 						'title'   => 'Customify Toolbox',
@@ -1284,10 +1284,6 @@ if ( ! class_exists( 'Customify_Customizer' ) ) :
 		 * @param WP_Customize_Manager $wp_customize
 		 */
 		protected function register_section( $panel_id, $section_key, $options_name, $section_config, $wp_customize ) {
-
-			if ( isset( $this->plugin_settings['disable_customify_sections'] ) && isset( $this->plugin_settings['disable_customify_sections'][ $section_key ] ) ) {
-				return;
-			}
 
 			// If we have been explicitly given a section ID we will use that
 			if ( ! empty( $section_config['section_id'] ) ) {
@@ -1386,7 +1382,7 @@ if ( ! class_exists( 'Customify_Customizer' ) ) :
 				} else {
 					$setting_args['type'] = 'theme_mod';
 				}
-			} elseif ( PixCustomifyPlugin()->get_plugin_setting('values_store_mod') === 'option' ) {
+			} elseif ( PixCustomifyPlugin()->settings->get_plugin_setting('values_store_mod') === 'option' ) {
 				$setting_args['type'] = 'option';
 			}
 
@@ -1553,7 +1549,7 @@ if ( ! class_exists( 'Customify_Customizer' ) ) :
 
 				// Custom types
 				case 'typography' :
-					$use_typography = PixCustomifyPlugin()->get_plugin_setting( 'typography', '1' );
+					$use_typography = PixCustomifyPlugin()->settings->get_plugin_setting( 'typography', '1' );
 
 					if ( $use_typography === false ) {
 						$add_control = false;
@@ -1589,7 +1585,7 @@ if ( ! class_exists( 'Customify_Customizer' ) ) :
 					break;
 
 				case 'font' :
-					$use_typography = PixCustomifyPlugin()->get_plugin_setting( 'typography', '1' );
+					$use_typography = PixCustomifyPlugin()->settings->get_plugin_setting( 'typography', '1' );
 
 					if ( $use_typography === false ) {
 						$add_control = false;
@@ -1769,7 +1765,7 @@ if ( ! class_exists( 'Customify_Customizer' ) ) :
 		function remove_default_sections( $wp_customize ) {
 			global $wp_registered_sidebars;
 
-			$to_remove = PixCustomifyPlugin()->get_plugin_setting( 'disable_default_sections' );
+			$to_remove = PixCustomifyPlugin()->settings->get_plugin_setting( 'disable_default_sections' );
 
 			if ( ! empty( $to_remove ) ) {
 				foreach ( $to_remove as $section => $nothing ) {
@@ -1892,6 +1888,25 @@ if ( ! class_exists( 'Customify_Customizer' ) ) :
 
 			foreach ( $fields_config as $i => $subarray ) {
 				$this->get_typography_fields( $subarray, $key, $value, $results, $i );
+			}
+		}
+
+		/**
+		 * Sanitize functions
+		 */
+
+		/**
+		 * Sanitize the checkbox.
+		 *
+		 * @param boolean $input .
+		 *
+		 * @return boolean true if is 1 or '1', false if anything else
+		 */
+		function setting_sanitize_checkbox( $input ) {
+			if ( 1 == $input ) {
+				return true;
+			} else {
+				return false;
 			}
 		}
 
