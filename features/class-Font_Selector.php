@@ -18,12 +18,12 @@ class Customify_Font_Selector {
 	function __construct() {
 		$this->theme_fonts = apply_filters( 'customify_theme_fonts', array() );
 
-		$load_location = PixCustomifyPlugin()->get_plugin_setting( 'style_resources_location', 'wp_head' );
+		$load_location = PixCustomifyPlugin()->settings->get_plugin_setting( 'style_resources_location', 'wp_head' );
 		add_action( $load_location, array( $this, 'output_webfont_script' ), 99 );
 		add_action( $load_location, array( $this, 'output_fonts_dynamic_style' ), 100 );
 		add_action( 'customify_font_family_before_options', array( $this, 'add_customify_theme_fonts' ), 11, 1 );
 
-		if ( PixCustomifyPlugin()->get_plugin_setting( 'enable_editor_style', true ) ) {
+		if ( PixCustomifyPlugin()->settings->get_plugin_setting( 'enable_editor_style', true ) ) {
 			add_action( 'admin_head', array( $this, 'script_to_add_customizer_settings_into_wp_editor' ) );
 		}
 
@@ -510,7 +510,9 @@ class Customify_Font_Selector {
 	function get_fonts_dynamic_script() {
 		$args = $this->get_fonts_args();
 
-		if ( ( empty ( $args['local_families'] ) && empty ( $args['google_families'] ) ) || ! PixCustomifyPlugin()->get_plugin_setting( 'typography', '1' ) || ! PixCustomifyPlugin()->get_plugin_setting( 'typography_google_fonts', 1 ) ) {
+		if ( ( empty ( $args['local_families'] ) && empty ( $args['google_families'] ) )
+		     || ! PixCustomifyPlugin()->settings->get_plugin_setting( 'typography', '1' )
+		     || ! PixCustomifyPlugin()->settings->get_plugin_setting( 'typography_google_fonts', 1 ) ) {
 			return '';
 		}
 
