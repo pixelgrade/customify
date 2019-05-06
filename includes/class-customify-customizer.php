@@ -933,7 +933,7 @@ if ( ! class_exists( 'Customify_Customizer' ) ) :
 			myIframe.contentWindow.document.head.appendChild(script);
 		};
 
-		var append_style_to_iframe = function (ifrm_id, styleElment) {
+		var append_style_to_iframe = function (ifrm_id, styleElement) {
 			var ifrm = window.frames[ifrm_id];
 			if ( typeof ifrm === "undefined" ) {
 				return;
@@ -941,8 +941,8 @@ if ( ! class_exists( 'Customify_Customizer' ) ) :
 			ifrm = ( ifrm.contentDocument || ifrm.contentDocument || ifrm.document );
 			var head = ifrm.getElementsByTagName('head')[0];
 
-			if (typeof styleElment !== "undefined") {
-				head.appendChild(styleElment);
+			if (typeof styleElement !== "undefined") {
+				head.appendChild(styleElement);
 			}
 		};
 
