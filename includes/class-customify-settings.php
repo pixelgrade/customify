@@ -140,7 +140,7 @@ class Customify_Settings {
 	 * Add settings action link to the plugins page.
 	 */
 	public function add_action_links( $links ) {
-		return array_merge( array( 'settings' => '<a href="' . menu_page_url( $this->slug ) . '">' . esc_html__( 'Settings', 'customify' ) . '</a>' ), $links );
+		return array_merge( array( 'settings' => '<a href="' . esc_url( menu_page_url( $this->slug, false ) ) . '">' . esc_html__( 'Settings', 'customify' ) . '</a>' ), $links );
 	}
 
 	public function add_rest_routes_api() {

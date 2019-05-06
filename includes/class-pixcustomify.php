@@ -714,11 +714,7 @@ class PixCustomifyPlugin {
 		//if we get an array we just let it be
 		if ( is_string( $str ) ) {
 			$revert = array( '%21' => '!', '%2A' => '*', '%27' => "'", '%28' => '(', '%29' => ')' );
-
 			$str = strtr( rawurlencode( $str ), $revert );
-		} else {
-			var_dump( 'boooom' );
-			die;
 		}
 
 		return $str;
