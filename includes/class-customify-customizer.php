@@ -1553,7 +1553,7 @@ if ( ! class_exists( 'Customify_Customizer' ) ) :
 
 					if ( $use_typography === false ) {
 						$add_control = false;
-						continue;
+						break;
 					}
 
 					$control_class_name = 'Pix_Customize_Typography_Control';
@@ -1589,7 +1589,7 @@ if ( ! class_exists( 'Customify_Customizer' ) ) :
 
 					if ( $use_typography === false ) {
 						$add_control = false;
-						continue;
+						break;
 					}
 
 					$control_class_name = 'Pix_Customize_Font_Control';
