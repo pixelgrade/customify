@@ -217,7 +217,7 @@ class Customify_Settings {
 							'name'    => 'values_store_mod',
 							'label'   => esc_html__( 'Store values as:', 'customify' ),
 							'desc'    => esc_html__( 'You can store the values globally so you can use them with other themes or store them as a "theme_mod" which will make an individual set of options only for the current theme', 'customify' ),
-							'default' => 'option',
+							'default' => 'theme_mod',
 							'type'    => 'select',
 							'options' => array(
 								'option'    => esc_html__( 'Option (global options)', 'customify' ),

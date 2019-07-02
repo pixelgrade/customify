@@ -1351,6 +1351,7 @@ if ( ! class_exists( 'Customify_Customizer' ) ) :
 			$add_control = true;
 			// defaults
 			$setting_args = array(
+                'type'       => 'theme_mod',
 				'default'    => '',
 				'capability' => 'edit_theme_options',
 				'transport'  => 'refresh',
@@ -1376,12 +1377,8 @@ if ( ! class_exists( 'Customify_Customizer' ) ) :
 			}
 
 			// If the setting defines it's own type we will respect that, otherwise we will follow the global plugin setting.
-			if ( ! empty( $field_config['setting_type'] ) ) {
-				if ( 'option' === $field_config['setting_type'] ) {
-					$setting_args['type'] = 'option';
-				} else {
-					$setting_args['type'] = 'theme_mod';
-				}
+			if ( ! empty( $field_config['setting_type'] ) && 'option' === $field_config['setting_type'] ) {
+                $setting_args['type'] = 'option';
 			} elseif ( PixCustomifyPlugin()->settings->get_plugin_setting('values_store_mod') === 'option' ) {
 				$setting_args['type'] = 'option';
 			}
