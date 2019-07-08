@@ -2,8 +2,8 @@
 Contributors: pixelgrade, euthelup, babbardel, vlad.olaru, raduconstantin, razvanonofrei
 Tags: customizer, css, editor, gutenberg, live, preview, customizer
 Requires at least: 4.9.9
-Tested up to: 5.2.0
-Stable tag: 2.3.4
+Tested up to: 5.2.2
+Stable tag: 2.3.5.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -44,6 +44,13 @@ With [Customify](https://github.com/pixelgrade/customify), developers can easily
 * Default [image](https://unsplash.com/photos/OgM4RKdr2kY) for Style Manager Color Palette control - License: (Unsplash)[https://unsplash.com/license]
 
 == Changelog ==
+
+= 2.3.5.1 =
+* Minor configuration fix.
+
+= 2.3.5 =
+* Minor refactoring.
+* Fixed issues where customization values were not stored properly.
 
 = 2.3.4 =
 * Fixed warnings that were appearing when PHP has version 7.2.0+.
