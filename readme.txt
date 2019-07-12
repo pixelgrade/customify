@@ -45,6 +45,11 @@ With [Customify](https://github.com/pixelgrade/customify), developers can easily
 
 == Changelog ==
 
+= 2.4.0 =
+* Big performance enhancements related to how customization settings and configurations get loaded.
+* Fixed a nasty regression that caused customization settings saved in a option to not be loaded, causing styles to be missing.
+* Pretty important code refactoring to make things more predictable and stable.
+
 = 2.3.5.1 =
 * Minor configuration fix.
 
