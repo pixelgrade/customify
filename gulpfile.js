@@ -2,22 +2,11 @@ var plugin = 'customify',
 	source_SCSS = 'scss/**/*.scss',
 	dest_CSS = './css/',
 
-	gulp 		= require('gulp'),
-	sass 		= require('gulp-sass'),
-	prefix 		= require('gulp-autoprefixer'),
-	exec 		= require('gulp-exec'),
-	replace 	= require('gulp-replace'),
-	minify 		= require('gulp-minify-css'),
-	concat 		= require('gulp-concat'),
-	notify 		= require('gulp-notify'),
-	beautify 	= require('gulp-beautify'),
-	csscomb 	= require('gulp-csscomb'),
-	cmq 		= require('gulp-combine-media-queries'),
-	fs          = require('fs'),
-	rtlcss 		= require('rtlcss'),
-	postcss 	= require('gulp-postcss'),
-	del         = require('del'),
-	rename 		= require('gulp-rename');
+	gulp = require('gulp'),
+	fs = require('fs'),
+	plugins = require('gulp-load-plugins')(),
+	del = require('del'),
+	cp = require('child_process')
 
 require('es6-promise').polyfill();
 
@@ -38,102 +27,89 @@ var options = {
 };
 
 // styles related
-gulp.task('styles-dev', function () {
+function stylesDev() {
 	return gulp.src(source_SCSS)
-		.pipe(sass({'sourcemap': true, outputStyle: 'expanded'}))
-			.on('error', function (e) {
-				console.log(e.message);
-			})
-		.pipe(prefix("last 1 version", "> 1%", "ie 8", "ie 7"))
-        .pipe(gulp.dest(dest_CSS));
-		// .pipe(postcss([
-		//     require('rtlcss')({ /* options */ })
-		// ]))
-		// .pipe(rename("rtl.css"))
-		// .pipe(gulp.dest('./'))
-});
+		.pipe(plugins.sass({'sourcemap': true, outputStyle: 'expanded'}))
+		.on('error', function (e) {
+			console.log(e.message);
+		})
+		.pipe(plugins.autoprefixer())
+		.pipe(plugins.replace(/^@charset \"UTF-8\";\n/gm, ''))
+		.pipe(gulp.dest(dest_CSS));
+}
+gulp.task('styles-dev', stylesDev);
 
-gulp.task('styles', function () {
+function stylesProd() {
 	return gulp.src(source_SCSS)
-		.pipe(sass({'sourcemap': false, outputStyle: 'compressed'}))
-		.pipe(prefix("last 1 version", "> 1%", "ie 8", "ie 7"))
-		.pipe(csscomb())
-        .pipe(gulp.dest(dest_CSS, {"mode": "0644"}))
-});
+		.pipe(plugins.sass({'sourcemap': false, outputStyle: 'compressed'}))
+		.pipe(plugins.autoprefixer())
+		.pipe(plugins.replace(/^@charset \"UTF-8\";\n/gm, ''))
+		.pipe(gulp.dest(dest_CSS, {"mode": "0644"}))
+}
+gulp.task('styles', stylesProd);
 
-gulp.task('styles-watch', [ 'styles-dev' ], function () {
-	return gulp.watch(source_SCSS, ['styles']);
+gulp.task('styles-watch', function () {
+	return gulp.watch(source_SCSS, stylesDev);
 });
 
 // javascript stuff
-gulp.task('scripts', function () {
+function scriptsMain() {
 	return gulp.src(jsFiles)
-		.pipe(concat('main.js'))
-		.pipe(beautify({indentSize: 2}))
+		.pipe(plugins.concat('main.js'))
+		.pipe(plugins.beautify({indentSize: 2}))
 		.pipe(gulp.dest('./assets/js/', {"mode": "0644"}));
-});
+}
+gulp.task('scripts', scriptsMain);
 
 gulp.task('scripts-watch', function () {
-	return gulp.watch(source_SCSS, ['scripts']);
+	return gulp.watch(source_SCSS, scriptsMain);
 });
 
 gulp.task('watch', function () {
-	gulp.watch(source_SCSS, ['styles-dev']);
-	// gulp.watch('assets/js/**/*.js', ['scripts']);
+	gulp.watch(source_SCSS, stylesDev);
+	gulp.watch(source_SCSS, scriptsMain);
 });
 
 // usually there is a default task for lazy people who just wanna type gulp
-gulp.task('start', ['styles', 'scripts'], function () {
-	// silence
+gulp.task('start', function (cb) {
+	return gulp.series( 'styles', 'scripts' )(cb);
 });
 
-gulp.task('server', ['styles', 'scripts'], function () {
-	console.log('The styles and scripts have been compiled for production! Go and clear the caches!');
-});
+// ============
+// TASKS FOR CREATING THE PLUGIN ZIP FILE
+// ============
 
-/**
- * Create a zip archive out of the cleaned folder and delete the folder
- */
-gulp.task( 'zip', ['build'], function() {
-    var versionString = '';
-    // get plugin version from the main plugin file
-    var contents = fs.readFileSync("./" + plugin + ".php", "utf8");
+// -----------------------------------------------------------------------------
+// Copy plugin folder outside in a build folder
+// -----------------------------------------------------------------------------
+function copyFolder() {
+	var dir = process.cwd();
+	return gulp.src( './*' )
+		.pipe( plugins.exec( 'rm -Rf ./../build; mkdir -p ./../build/customify;', {
+			silent: true,
+			continueOnError: true // default: false
+		} ) )
+		.pipe(plugins.rsync({
+			root: dir,
+			destination: '../build/customify/',
+			// archive: true,
+			progress: false,
+			silent: true,
+			compress: false,
+			recursive: true,
+			emptyDirectories: true,
+			clean: true,
+			exclude: ['node_modules']
+		}));
+}
+copyFolder.description = 'Copy plugin production files to a build folder';
+gulp.task( 'copy-folder', copyFolder );
 
-    // split it by lines
-    var lines = contents.split(/[\r\n]/);
 
-    function checkIfVersionLine(value, index, ar) {
-        var myRegEx = /^[\s\*]*[Vv]ersion:/;
-        if (myRegEx.test(value)) {
-            return true;
-        }
-        return false;
-    }
-
-    // apply the filter
-    var versionLine = lines.filter(checkIfVersionLine);
-
-    versionString = versionLine[0].replace(/^[\s\*]*[Vv]ersion:/, '').trim();
-    versionString = '-' + versionString.replace(/\./g, '-');
-
-    return gulp.src('./')
-        .pipe(exec('cd ./../; rm -rf ' + plugin[0].toUpperCase() + plugin.slice(1) + '*.zip; cd ./build/; zip -r -X ./../' + plugin[0].toUpperCase() + plugin.slice(1) + versionString + '.zip ./; cd ./../; rm -rf build'));
-
-} );
-
-/**
- * Copy theme folder outside in a build folder, recreate styles before that
- */
-gulp.task( 'copy-folder', function() {
-
-	return gulp.src( './' )
-		.pipe( exec( 'rm -Rf ./../build; mkdir -p ./../build/customify; cp -Rf ./* ./../build/customify/' ) );
-} );
-
-/**
- * Clean the folder of unneeded files and folders
- */
-gulp.task( 'build', ['copy-folder'], function() {
+// -----------------------------------------------------------------------------
+// Remove unneeded files and folders from the build folder
+// -----------------------------------------------------------------------------
+function removeUnneededFiles() {
 
 	// files that should not be present in build zip
 	files_to_remove = [
@@ -173,13 +149,82 @@ gulp.task( 'build', ['copy-folder'], function() {
 		files_to_remove[k] = '../build/customify/' + e;
 	} );
 
-	return del.sync(files_to_remove, {force: true});
-} );
+	return del( files_to_remove, {force: true} );
+}
+removeUnneededFiles.description = 'Remove unneeded files and folders from the build folder';
+gulp.task( 'remove-unneeded-files', removeUnneededFiles );
 
-// usually there is a default task  for lazy people who just wanna type gulp
-gulp.task('default', ['start'], function () {
-	// silence
-});
+function maybeFixBuildDirPermissions(done) {
+
+	cp.execSync('find ./../build -type d -exec chmod 755 {} \\;');
+
+	return done();
+}
+maybeFixBuildDirPermissions.description = 'Make sure that all directories in the build directory have 755 permissions.';
+gulp.task( 'fix-build-dir-permissions', maybeFixBuildDirPermissions );
+
+function maybeFixBuildFilePermissions(done) {
+
+	cp.execSync('find ./../build -type f -exec chmod 644 {} \\;');
+
+	return done();
+}
+maybeFixBuildFilePermissions.description = 'Make sure that all files in the build directory have 644 permissions.';
+gulp.task( 'fix-build-file-permissions', maybeFixBuildFilePermissions );
+
+function maybeFixIncorrectLineEndings(done) {
+
+	cp.execSync('find ./../build -type f -print0 | xargs -0 -n 1 -P 4 dos2unix');
+
+	return done();
+}
+maybeFixIncorrectLineEndings.description = 'Make sure that all line endings in the files in the build directory are UNIX line endings.';
+gulp.task( 'fix-line-endings', maybeFixIncorrectLineEndings );
+
+function buildSequence(cb) {
+	return gulp.series( 'copy-folder', 'remove-unneeded-files', 'fix-build-dir-permissions', 'fix-build-file-permissions', 'fix-line-endings' )(cb);
+}
+buildSequence.description = 'Sets up the build folder';
+gulp.task( 'build', buildSequence );
+
+// -----------------------------------------------------------------------------
+// Create the plugin installer archive and delete the build folder
+// -----------------------------------------------------------------------------
+function makeZip() {
+	var versionString = '';
+	// get plugin version from the main plugin file
+	var contents = fs.readFileSync("./" + plugin + ".php", "utf8");
+
+	// split it by lines
+	var lines = contents.split(/[\r\n]/);
+
+	function checkIfVersionLine(value, index, ar) {
+		var myRegEx = /^[\s\*]*[Vv]ersion:/;
+		if (myRegEx.test(value)) {
+			return true;
+		}
+		return false;
+	}
+
+	// apply the filter
+	var versionLine = lines.filter(checkIfVersionLine);
+
+	versionString = versionLine[0].replace(/^[\s\*]*[Vv]ersion:/, '').trim();
+	versionString = '-' + versionString.replace(/\./g, '-');
+
+	return gulp.src('./')
+		.pipe(plugins.exec('cd ./../; rm -rf ' + plugin[0].toUpperCase() + plugin.slice(1) + '*.zip; cd ./build/; zip -r -X ./../' + plugin[0].toUpperCase() + plugin.slice(1) + versionString + '.zip ./; cd ./../; rm -rf build'));
+
+}
+makeZip.description = 'Create the plugin installer archive and delete the build folder';
+gulp.task( 'make-zip', makeZip );
+
+function zipSequence(cb) {
+	return gulp.series( 'build', 'make-zip' )(cb);
+}
+zipSequence.description = 'Creates the zip file';
+gulp.task( 'zip', zipSequence  );
+
 
 /**
  * Short commands help

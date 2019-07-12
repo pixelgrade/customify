@@ -1,22 +1,17 @@
 {
     "name": "customify",
     "devDependencies": {
-        "gulp": "*",
-        "gulp-sass": "*",
-        "gulp-autoprefixer": "~1.0.1",
-        "gulp-minify-css": "*",
-        "gulp-ignore": "*",
-        "gulp-notify": "*",
-        "gulp-concat": "~2.1.7",
-        "gulp-exec": "~2.0.1",
-        "gulp-replace": "~0.4.0",
-        "gulp-beautify": "*",
-        "gulp-csscomb": "*",
+        "gulp": "^4.0.2",
+        "gulp-sass": "^4.0.2",
+        "gulp-autoprefixer": "^6.1.0",
+        "gulp-concat": "^2.6.1",
+        "gulp-exec": "^3.0.2",
+        "gulp-beautify": "^3.0.0",
+        "gulp-load-plugins": "^2.0.0",
         "gulp-rename": "*",
-        "gulp-combine-media-queries": "*",
-        "del": "*",
-        "gulp-postcss": "*",
-        "rtlcss": "*",
+        "gulp-replace": "^1.0.0",
+        "gulp-rsync": "^0.0.8",
+        "del": "^5.0.0",
         "es6-promise": "*"
     }
 }
