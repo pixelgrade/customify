@@ -142,7 +142,8 @@ function removeUnneededFiles() {
         '.labels',
         '.jscsrc',
         '.jshintignore',
-        'browserslist'
+        'browserslist',
+		'palettes.md'
 	];
 
 	files_to_remove.forEach( function( e, k ) {
