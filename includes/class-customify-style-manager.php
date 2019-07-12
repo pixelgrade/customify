@@ -56,14 +56,6 @@ class Customify_Style_Manager {
 	protected $font_palettes = null;
 
 	/**
-	 * The notifications object.
-	 * @var     null|Pixcloud_Admin_Notifications_Manager
-	 * @access  public
-	 * @since   1.9.0
-	 */
-	protected $notifications = null;
-
-	/**
 	 * The Cloud API object.
 	 * @var     null|Customify_Cloud_Api
 	 * @access  public
@@ -103,18 +95,6 @@ class Customify_Style_Manager {
 		 */
 		require_once 'class-customify-font-palettes.php';
 		$this->font_palettes = Customify_Font_Palettes::instance();
-
-		/**
-		 * Initialize the Notifications logic.
-		 */
-		require_once 'admin-notifications-manager/class-admin-notifications-manager.php';
-		$this->notifications = Pixcloud_Admin_Notifications_Manager::instance(
-			array(
-				'plugin_name'       => 'Customify',
-				'text_domain'       => 'customify',
-				'version'           => '',
-			)
-		);
 
 		/**
 		 * Initialize the Cloud API logic.
