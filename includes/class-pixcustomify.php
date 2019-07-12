@@ -522,6 +522,43 @@ class PixCustomifyPlugin {
 		return $this->get_options_details( $only_minimal_details, $skip_cache );
 	}
 
+	/**
+	 * Get the value of a setting ID saved in a wp_options array entry.
+	 *
+	 * @param string $setting_id
+	 *
+	 * @return mixed|null
+	 */
+	protected function get_option_mod_value( $setting_id ) {
+		global $wp_customize;
+
+		if ( empty( $setting_id ) ) {
+			return null;
+		}
+
+		if ( ! empty( $wp_customize ) && method_exists( $wp_customize, 'get_setting' ) ) {
+			$setting    = $wp_customize->get_setting( $setting_id );
+			if ( ! empty( $setting ) ) {
+				return $setting->value();
+			}
+		}
+
+		$values = get_option( $this->get_options_key() );
+
+		if ( ! empty( $values ) && is_array( $values ) && isset( $values[ $setting_id ] ) ) {
+			return $values[ $setting_id ];
+		}
+
+		return null;
+	}
+
+	/**
+	 * Get the value of a certain setting ID saved in the theme mod array.
+	 *
+	 * @param string $setting_id
+	 *
+	 * @return mixed|null
+	 */
 	protected function get_theme_mod_value( $setting_id ) {
 		global $wp_customize;
 
@@ -578,19 +615,39 @@ class PixCustomifyPlugin {
 				// If we already have the value cached in the option details, we will use that.
 				$value = $option_details['value'];
 			} else {
+				$value = null;
+
+				/*
+				 * First determine the setting ID.
+				 */
 				$setting_id = $this->get_options_key() . '[' . $option_id . ']';
-				// If we have been explicitly given a setting ID we will use that
+				// If we have been explicitly given a setting ID we will use that.
 				if ( ! empty( $option_details['setting_id'] ) ) {
 					$setting_id = $option_details['setting_id'];
 				}
 
+				/*
+				 * Second, try to get the stored value of the setting.
+				 */
+
+				// If we have a setting that directly declares it (not deduced like when registering fields in the Customizer)
+				// should be saved in the wp_options table, not in theme_mods, we will attempt to fetch it directly, first.
 				if ( isset( $option_details['setting_type'] ) && $option_details['setting_type'] === 'option' ) {
-					// We have a setting that is saved in the wp_options table, not in theme_mods.
-					// We will fetch it directly.
 					$value = get_option( $setting_id, null );
-				} else {
-					// Get the value stores in theme_mods.
-					$value = $this->get_theme_mod_value( $option_id );
+				}
+
+				// If we don't have a value, we will grab the setting value from the array of values stored in either
+				// a wp_option entry or in the theme_mods.
+				// The "save as array" behavior happens even in the case of 'option' setting type if
+				// the setting ID is of the form 'rosa_option[some_key]' (aka a multidimensional setting ID).
+				if ( null === $value ) {
+					if ( PixCustomifyPlugin()->settings->get_plugin_setting( 'values_store_mod' ) === 'option' ) {
+						// Get the value stored in a option.
+						$value = $this->get_option_mod_value( $option_id );
+					} else {
+						// Get the value stored in theme_mods.
+						$value = $this->get_theme_mod_value( $option_id );
+					}
 				}
 			}
 		}
