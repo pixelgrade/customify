@@ -80,10 +80,13 @@ class Customify_Settings {
 	 * Register the administration menu for this plugin into the WordPress Dashboard menu.
 	 */
 	function add_plugin_admin_menu() {
-		$this->plugin_screen_hook_suffix = add_options_page( esc_html__( 'Customify', 'customify' ), esc_html__( 'Customify', 'customify' ), 'edit_plugins', $this->slug, array(
-			$this,
-			'display_plugin_admin_page'
-		) );
+		$this->plugin_screen_hook_suffix = add_options_page(
+			esc_html__( 'Customify', 'customify' ),
+			esc_html__( 'Customify', 'customify' ),
+			'manage_options',
+			$this->slug,
+			array( $this, 'display_plugin_admin_page' )
+		);
 	}
 
 	/**
