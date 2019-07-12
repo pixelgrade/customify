@@ -254,19 +254,24 @@ class PixCustomifyPlugin {
 	public function get_options_details( $only_minimal_details = false, $skip_cache = false ) {
 
 		// If we already have the data, do as little as possible.
-		if ( true === $only_minimal_details && ! empty( $this->options_minimal_details ) ) {
+		if ( true === $only_minimal_details && ! empty( $this->options_minimal_details ) && ! $this->should_completely_rebuild_available_data() ) {
 			return $this->options_minimal_details;
 		}
 
-		if ( ! empty( $this->options_details ) ) {
+		if ( ! empty( $this->options_details ) && ! $this->should_completely_rebuild_available_data() ) {
 			return $this->options_details;
 		}
 
 		// We will first look for cached data
 
-		// We don't force skip the cache for AJAX requests for performance reasons.
+		// If our development constant is defined and true, we will always skip the cache.
 		if ( defined('CUSTOMIFY_ALWAYS_GENERATE_CUSTOMIZER_CONFIG' )
 		     && true === CUSTOMIFY_ALWAYS_GENERATE_CUSTOMIZER_CONFIG ) {
+			$skip_cache = true;
+		}
+
+
+		if ( $this->should_completely_rebuild_available_data() ) {
 			$skip_cache = true;
 		}
 
@@ -368,6 +373,16 @@ class PixCustomifyPlugin {
 		}
 
 		return $data;
+	}
+
+	private function should_completely_rebuild_available_data() {
+		// If we are in the Customizer and the request has a $_POST['customized'] parameter, we will skip the cache
+		// since this means that the preview is being reloaded with temporary settings values.
+		if ( ! empty( $_POST['customized'] ) ) {
+			return true;
+		}
+
+		return false;
 	}
 
 	private function get_options_minimal_details_cache_key() {
@@ -525,14 +540,15 @@ class PixCustomifyPlugin {
 	/**
 	 * Get the value of a setting ID saved in a wp_options array entry.
 	 *
-	 * @param string $setting_id
+	 * @param string $option_id This is only the option ID, that may differ from setting ID ( like in `body_font` vs `rosa_opt[body_font]`)
+	 * @param string $setting_id We will use this to get the Customizer value, when in that context.
 	 *
 	 * @return mixed|null
 	 */
-	protected function get_option_mod_value( $setting_id ) {
+	protected function get_option_mod_value( $option_id, $setting_id ) {
 		global $wp_customize;
 
-		if ( empty( $setting_id ) ) {
+		if ( empty( $option_id ) || empty( $setting_id ) ) {
 			return null;
 		}
 
@@ -545,8 +561,8 @@ class PixCustomifyPlugin {
 
 		$values = get_option( $this->get_options_key() );
 
-		if ( ! empty( $values ) && is_array( $values ) && isset( $values[ $setting_id ] ) ) {
-			return $values[ $setting_id ];
+		if ( ! empty( $values ) && is_array( $values ) && isset( $values[ $option_id ] ) ) {
+			return $values[ $option_id ];
 		}
 
 		return null;
@@ -555,14 +571,15 @@ class PixCustomifyPlugin {
 	/**
 	 * Get the value of a certain setting ID saved in the theme mod array.
 	 *
-	 * @param string $setting_id
+	 * @param string $option_id This is only the option ID, that may differ from setting ID ( like in `body_font` vs `rosa_opt[body_font]`)
+	 * @param string $setting_id We will use this to get the Customizer value, when in that context.
 	 *
 	 * @return mixed|null
 	 */
-	protected function get_theme_mod_value( $setting_id ) {
+	protected function get_theme_mod_value( $option_id, $setting_id ) {
 		global $wp_customize;
 
-		if ( empty( $setting_id ) ) {
+		if ( empty( $option_id ) || empty( $setting_id ) ) {
 			return null;
 		}
 
@@ -575,8 +592,8 @@ class PixCustomifyPlugin {
 
 		$values = get_theme_mod( $this->get_options_key() );
 
-		if ( ! empty( $values ) && is_array( $values ) && isset( $values[ $setting_id ] ) ) {
-			return $values[ $setting_id ];
+		if ( ! empty( $values ) && is_array( $values ) && isset( $values[ $option_id ] ) ) {
+			return $values[ $option_id ];
 		}
 
 		return null;
@@ -643,10 +660,10 @@ class PixCustomifyPlugin {
 				if ( null === $value ) {
 					if ( PixCustomifyPlugin()->settings->get_plugin_setting( 'values_store_mod' ) === 'option' ) {
 						// Get the value stored in a option.
-						$value = $this->get_option_mod_value( $option_id );
+						$value = $this->get_option_mod_value( $option_id, $setting_id );
 					} else {
 						// Get the value stored in theme_mods.
-						$value = $this->get_theme_mod_value( $option_id );
+						$value = $this->get_theme_mod_value( $option_id, $setting_id );
 					}
 				}
 			}
