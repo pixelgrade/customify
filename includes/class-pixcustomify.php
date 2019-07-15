@@ -489,7 +489,7 @@ class PixCustomifyPlugin {
 	}
 
 	/**
-	 * Invalidate the customizer config cache, when hooked via a filter.
+	 * Invalidate the customizer config cache, when hooked via a filter (just pass through the value).
 	 *
 	 * @since 2.4.0
 	 *
