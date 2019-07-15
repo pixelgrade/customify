@@ -216,20 +216,30 @@ class PixCustomifyPlugin {
 			return $this->opt_name;
 		}
 
+		if ( $this->should_force_skip_cache() ) {
+			$skip_cache = true;
+		}
+
 		// First try and get the cached data
 		$data = get_option( $this->get_customizer_opt_name_cache_key() );
+		$expire_timestamp = false;
 
-		// Get the cache data expiration timestamp.
-		$expire_timestamp = get_option( $this->get_customizer_opt_name_cache_key() . '_timestamp' );
+		// Only try to get the expire timestamp if we really need to.
+		if ( true !== $skip_cache && false !== $data ) {
+			// Get the cache data expiration timestamp.
+			$expire_timestamp = get_option( $this->get_customizer_opt_name_cache_key() . '_timestamp' );
+		}
 
 		// The data isn't set, is expired or we were instructed to skip the cache; we need to regenerate the config.
 		if ( true === $skip_cache || false === $data || false === $expire_timestamp || $expire_timestamp < time() ) {
 
 			$data = $this->get_customizer_config( 'opt-name' );
 
-			// Cache the data in an option for 6 hours
-			update_option( $this->get_customizer_opt_name_cache_key() , $data, true );
-			update_option( $this->get_customizer_opt_name_cache_key() . '_timestamp' , time() + 6 * HOUR_IN_SECONDS, true );
+			if ( true !== $skip_cache ) {
+				// Cache the data in an option for 6 hours, but only if we are not supposed to skip the cache entirely.
+				update_option( $this->get_customizer_opt_name_cache_key(), $data, true );
+				update_option( $this->get_customizer_opt_name_cache_key() . '_timestamp', time() + 6 * HOUR_IN_SECONDS, true );
+			}
 		}
 
 		$this->opt_name = $data;
@@ -242,6 +252,8 @@ class PixCustomifyPlugin {
 
 	public function invalidate_customizer_opt_name_cache() {
 		update_option( $this->get_customizer_opt_name_cache_key() . '_timestamp' , time() - 24 * HOUR_IN_SECONDS, true );
+
+		$this->clear_locally_cached_data();
 	}
 
 	public function filter_invalidate_customizer_opt_name_cache( $value ) {
@@ -254,26 +266,18 @@ class PixCustomifyPlugin {
 	public function get_options_details( $only_minimal_details = false, $skip_cache = false ) {
 
 		// If we already have the data, do as little as possible.
-		if ( true === $only_minimal_details && ! empty( $this->options_minimal_details ) && ! $this->should_completely_rebuild_available_data() ) {
+		if ( true === $only_minimal_details && ! empty( $this->options_minimal_details ) ) {
 			return $this->options_minimal_details;
 		}
-
-		if ( ! empty( $this->options_details ) && ! $this->should_completely_rebuild_available_data() ) {
+		if ( ! empty( $this->options_details ) ) {
 			return $this->options_details;
 		}
 
+		if ( $this->should_force_skip_cache() ) {
+			$skip_cache = true;
+		}
+
 		// We will first look for cached data
-
-		// If our development constant is defined and true, we will always skip the cache.
-		if ( defined('CUSTOMIFY_ALWAYS_GENERATE_CUSTOMIZER_CONFIG' )
-		     && true === CUSTOMIFY_ALWAYS_GENERATE_CUSTOMIZER_CONFIG ) {
-			$skip_cache = true;
-		}
-
-
-		if ( $this->should_completely_rebuild_available_data() ) {
-			$skip_cache = true;
-		}
 
 		$data = $this->options_minimal_details = get_option( $this->get_options_minimal_details_cache_key() );
 		if ( false !== $data && false === $only_minimal_details ) {
@@ -282,7 +286,7 @@ class PixCustomifyPlugin {
 				$data = $this->options_details = Customify_Array::array_merge_recursive_distinct( $data, $extra_details_data );
 			} else {
 				// Something is wrong with the extra details and we need to regenerate.
-				$skip_cache = true;
+				$this->invalidate_options_details_cache();
 			}
 		}
 
@@ -292,8 +296,13 @@ class PixCustomifyPlugin {
 			return $data;
 		}
 
-		// Get the cached data expiration timestamp.
-		$expire_timestamp = get_option( $this->get_options_details_cache_timestamp_key() );
+		$expire_timestamp = false;
+
+		// Only try to get the expire timestamp if we really need to.
+		if ( true !== $skip_cache && false !== $data ) {
+			// Get the cached data expiration timestamp.
+			$expire_timestamp = get_option( $this->get_options_details_cache_timestamp_key() );
+		}
 
 		// The data isn't set, is expired or we were instructed to skip the cache; we need to regenerate the config.
 		if ( true === $skip_cache || false === $data || false === $expire_timestamp || $expire_timestamp < time() ) {
@@ -360,10 +369,12 @@ class PixCustomifyPlugin {
 				}
 			}
 
-			// Cache the data for 6 hours
-			update_option( $this->get_options_minimal_details_cache_key() , $options_minimal_details, true );
-			update_option( $this->get_options_extra_details_cache_key() , $options_extra_details, false ); // we will not autoload extra details for performance reasons.
-			update_option( $this->get_options_details_cache_timestamp_key(), time() + 6 * HOUR_IN_SECONDS, true );
+			if ( true !== $skip_cache ) {
+				// Cache the data for 6 hours, but only if we are not supposed to skip the cache entirely.
+				update_option( $this->get_options_minimal_details_cache_key(), $options_minimal_details, true );
+				update_option( $this->get_options_extra_details_cache_key(), $options_extra_details, false ); // we will not autoload extra details for performance reasons.
+				update_option( $this->get_options_details_cache_timestamp_key(), time() + 6 * HOUR_IN_SECONDS, true );
+			}
 
 			$data = $this->options_minimal_details = $options_minimal_details;
 			$this->options_details = Customify_Array::array_merge_recursive_distinct( $options_minimal_details, $options_extra_details );
@@ -375,14 +386,52 @@ class PixCustomifyPlugin {
 		return $data;
 	}
 
-	private function should_completely_rebuild_available_data() {
+	private function should_force_skip_cache() {
+		// If our development constant is defined and true, we will always skip the cache, except for AJAX calls.
+		// Other, more specific cases may impose skipping the cache also on AJAX calls.
+		if ( ! wp_doing_ajax()
+			 && defined('CUSTOMIFY_ALWAYS_GENERATE_CUSTOMIZER_CONFIG' )
+		     && true === CUSTOMIFY_ALWAYS_GENERATE_CUSTOMIZER_CONFIG ) {
+			return true;
+		}
+
 		// If we are in the Customizer and the request has a $_POST['customized'] parameter, we will skip the cache
 		// since this means that the preview is being reloaded with temporary settings values.
 		if ( ! empty( $_POST['customized'] ) ) {
 			return true;
 		}
 
+		// If we are currently previewing a theme without being actually active, we should not use cached data.
+
+		if ( ! empty( $_REQUEST['theme'] ) || ! empty( $_REQUEST['customize_theme'] ) ) {
+			return true;
+		}
+
+		/** @var WP_Customize_Manager $wp_customize */
+		global $wp_customize;
+		if ( ! empty( $wp_customize )
+		     && method_exists( $wp_customize, 'is_theme_active' )
+		     && ! $wp_customize->is_theme_active() ) {
+
+			return true;
+		}
+
 		return false;
+	}
+
+	/**
+	 * This will clear any instance properties that are used as local cache during a request to avoid
+	 * fetching the data from DB on each method call.
+	 *
+	 * This may be called during a request when something happens that (potentially) invalidates our data mid-request.
+	 */
+	public function clear_locally_cached_data() {
+		$this->opt_name = null;
+
+		$this->customizer_config = null;
+
+		$this->options_minimal_details = null;
+		$this->options_details = null;
 	}
 
 	private function get_options_minimal_details_cache_key() {
@@ -399,6 +448,8 @@ class PixCustomifyPlugin {
 
 	public function invalidate_options_details_cache() {
 		update_option( $this->get_options_details_cache_timestamp_key(), time() - 24 * HOUR_IN_SECONDS, true );
+
+		$this->clear_locally_cached_data();
 	}
 
 	public function filter_invalidate_options_details_cache( $value ) {
@@ -440,19 +491,16 @@ class PixCustomifyPlugin {
 	 * @return array
 	 */
 	protected function load_customizer_config( $skip_cache = false ) {
-		if ( ! empty( $this->customizer_config ) && true !== $skip_cache ) {
+		if ( ! empty( $this->customizer_config ) ) {
 			return $this->customizer_config;
+		}
+
+		if ( $this->should_force_skip_cache() ) {
+			$skip_cache = true;
 		}
 
 		// First try and get the cached data
 		$data = get_option( $this->get_customizer_config_cache_key() );
-
-		// We don't force skip the cache for AJAX requests for performance reasons.
-		if ( ! wp_doing_ajax()
-		     && defined('CUSTOMIFY_ALWAYS_GENERATE_CUSTOMIZER_CONFIG' )
-		     && true === CUSTOMIFY_ALWAYS_GENERATE_CUSTOMIZER_CONFIG ) {
-			$skip_cache = true;
-		}
 
 		// For performance reasons, we will use the cached data (even if stale)
 		// when a user is not logged in or a user without administrative capabilities is logged in.
@@ -461,8 +509,13 @@ class PixCustomifyPlugin {
 			return $data;
 		}
 
-		// Get the cache data expiration timestamp.
-		$expire_timestamp = get_option( $this->get_customizer_config_cache_key() . '_timestamp' );
+		$expire_timestamp = false;
+
+		// Only try to get the expire timestamp if we really need to.
+		if ( true !== $skip_cache && false !== $data ) {
+			// Get the cache data expiration timestamp.
+			$expire_timestamp = get_option( $this->get_customizer_config_cache_key() . '_timestamp' );
+		}
 
 		// The data isn't set, is expired or we were instructed to skip the cache; we need to regenerate the config.
 		if ( true === $skip_cache || false === $data || false === $expire_timestamp || $expire_timestamp < time() ) {
@@ -471,9 +524,11 @@ class PixCustomifyPlugin {
 			// We apply a second filter for those that wish to work with the final config and not rely on a a huge priority number.
 			$data = apply_filters( 'customify_final_config', $data );
 
-			// Cache the data in an option for 6 hours
-			update_option( $this->get_customizer_config_cache_key() , $data, false );
-			update_option( $this->get_customizer_config_cache_key() . '_timestamp' , time() + 6 * HOUR_IN_SECONDS, true );
+			if ( true !== $skip_cache ) {
+				// Cache the data in an option for 6 hours, but only if we are not supposed to skip the cache entirely.
+				update_option( $this->get_customizer_config_cache_key(), $data, false );
+				update_option( $this->get_customizer_config_cache_key() . '_timestamp', time() + 6 * HOUR_IN_SECONDS, true );
+			}
 		}
 
 		$this->customizer_config = $data;
@@ -486,6 +541,8 @@ class PixCustomifyPlugin {
 
 	public function invalidate_customizer_config_cache() {
 		update_option( $this->get_customizer_config_cache_key() . '_timestamp' , time() - 24 * HOUR_IN_SECONDS, true );
+
+		$this->clear_locally_cached_data();
 	}
 
 	/**
