@@ -90,13 +90,6 @@ if ( ! class_exists( 'Customify_Customizer' ) ) :
 
 			$this->localized['options_name'] = PixCustomifyPlugin()->get_options_key();
 
-			if ( $this->import_button_exists() ) {
-				$this->localized['import_rest_url']   = get_rest_url( '/customify/1.0/' );
-				$this->localized['import_rest_nonce'] = wp_create_nonce( 'wp_rest' );
-
-				$this->register_import_api();
-			}
-
 			require_once( PixCustomifyPlugin()->get_base_path() . 'features/class-Font_Selector.php' );
 			$this->localized['theme_fonts'] = $this->theme_fonts = Customify_Font_Selector::instance()->get_theme_fonts();
 
@@ -106,30 +99,6 @@ if ( ! class_exists( 'Customify_Customizer' ) ) :
 
 			// Hook up.
 			$this->add_hooks();
-		}
-
-		/**
-		 * Use this function when you need to know if an import button is used
-		 * @return bool
-		 */
-		protected function import_button_exists() {
-			$options_details = PixCustomifyPlugin()->get_options_details(true);
-
-			foreach ( $options_details as $option ) {
-				if ( isset( $option['type'] ) && 'import_demo_data' === $option['type'] ) {
-					return true;
-					break;
-				}
-			}
-
-			return false;
-		}
-
-		protected function register_import_api() {
-
-			include_once( PixCustomifyPlugin()->get_base_path() . 'features/class-Customify_Importer.php' );
-			$controller = new Customify_Importer_Controller();
-			$controller->init();
 		}
 
 		/**
@@ -309,7 +278,7 @@ if ( ! class_exists( 'Customify_Customizer' ) ) :
 				return;
 			}
 
-			foreach ( PixCustomifyPlugin()->get_options_details( false, true) as $option_id => $option_details ) {
+			foreach ( PixCustomifyPlugin()->get_options_details( false, true ) as $option_id => $option_details ) {
 
 				if ( isset( $option_details['type'] ) && $option_details['type'] === 'custom_background' ) {
 					$custom_background_output = $this->process_custom_background_field_output( $option_details ); ?>
@@ -359,7 +328,7 @@ if ( ! class_exists( 'Customify_Customizer' ) ) :
 		function get_dynamic_style() {
 			$custom_css = '';
 
-			foreach ( PixCustomifyPlugin()->get_options_details(true) as $option_id => $option_details ) {
+			foreach ( PixCustomifyPlugin()->get_options_details( true ) as $option_id => $option_details ) {
 
 				if ( isset( $option_details['css'] ) && ! empty( $option_details['css'] ) ) {
 					// now process each
@@ -431,7 +400,7 @@ if ( ! class_exists( 'Customify_Customizer' ) ) :
 		function get_typography_dynamic_style() {
 			$output = '';
 
-			$this->get_typography_fields( PixCustomifyPlugin()->get_options_details(true), 'type', 'typography', $this->typo_settings );
+			$this->get_typography_fields( PixCustomifyPlugin()->get_options_details( true ), 'type', 'typography', $this->typo_settings );
 
 			if ( empty( $this->typo_settings ) ) {
 				return $output;
@@ -559,7 +528,7 @@ if ( ! class_exists( 'Customify_Customizer' ) ) :
 		function get_typography_dynamic_script() {
 			$output = '';
 
-			$this->get_typography_fields( PixCustomifyPlugin()->get_options_details(true), 'type', 'typography', $this->typo_settings );
+			$this->get_typography_fields( PixCustomifyPlugin()->get_options_details( true ), 'type', 'typography', $this->typo_settings );
 
 			if ( empty( $this->typo_settings ) ) {
 				return $output;
@@ -1717,24 +1686,6 @@ if ( ! class_exists( 'Customify_Customizer' ) ) :
 					}
 
 					$control_class_name = 'Pix_Customize_HTML_Control';
-					break;
-
-				case 'import_demo_data' :
-					if ( isset( $field_config['html'] ) || ! empty( $field_config['html'] ) ) {
-						$control_args['html'] = $field_config['html'];
-					}
-
-					if ( ! isset( $field_config['label'] ) || empty( $field_config['label'] ) ) {
-						$control_args['label'] = esc_html__( 'Import', 'customify' );
-					} else {
-						$control_args['label'] = $field_config['label'];
-					}
-
-					if ( isset( $field_config['notices'] ) && ! empty( $field_config['notices'] ) ) {
-						$control_args['notices'] = $field_config['notices'];
-					}
-
-					$control_class_name = 'Pix_Customize_Import_Demo_Data_Control';
 					break;
 
 				default:
