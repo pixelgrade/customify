@@ -347,7 +347,7 @@ class Customify_Font_Palettes {
 		}
 
 		// The section might be already defined, thus we merge, not replace the entire section config.
-		$config['sections']['style_manager_section'] = array_replace_recursive( $config['sections']['style_manager_section'], array(
+		$config['sections']['style_manager_section'] = Customify_Array::array_merge_recursive_distinct( $config['sections']['style_manager_section'], array(
 			'options' => array(
 				'sm_font_palette' => array(
 					'type'         => 'preset',
@@ -486,10 +486,10 @@ class Customify_Font_Palettes {
 			foreach ( $master_font_controls_ids as $setting_id ) {
 				if ( ! empty( $config['sections']['style_manager_section']['options'][ $setting_id ]['connected_fields'] ) ) {
 					$current_palette .=
-						'<div class="font ' . $setting_id . '" data-setting="' . $setting_id . '">' . PHP_EOL .
-						'<div class="fill"></div>' . PHP_EOL .
-						'<div class="picker"><i></i></div>' . PHP_EOL .
-						'</div>' . PHP_EOL;
+						'<div class="font ' . $setting_id . '" data-setting="' . $setting_id . '">' . "\n" .
+						'<div class="fill"></div>' . "\n" .
+						'<div class="picker"><i></i></div>' . "\n" .
+						'</div>' . "\n";
 				}
 			}
 			$current_palette .= '</div>';
@@ -500,12 +500,12 @@ class Customify_Font_Palettes {
               'sm_current_font_palette' => array(
                   'type' => 'html',
                   'html' =>
-                      '<div class="font-palette-container">' . PHP_EOL .
-                      '<span class="customize-control-title">Current Font Palette:</span>' . PHP_EOL .
-                      '<span class="description customize-control-description">Choose a font palette to start with. Adjust its style using the variation buttons below.</span>' . PHP_EOL .
-                      '<div class="c-font-palette">' . PHP_EOL .
+                      '<div class="font-palette-container">' . "\n" .
+                      '<span class="customize-control-title">Current Font Palette:</span>' . "\n" .
+                      '<span class="description customize-control-description">Choose a font palette to start with. Adjust its style using the variation buttons below.</span>' . "\n" .
+                      '<div class="c-font-palette">' . "\n" .
                       $current_palette .
-                      '<div class="c-font-palette__overlay">' . PHP_EOL .
+                      '<div class="c-font-palette__overlay">' . "\n" .
                       '<div class="c-font-palette__label">' .
                       '<div class="c-font-palette__name">' . 'Original Style' . '</div>' .
                       '<div class="c-font-palette__control variation-light active" data-target="#_customize-input-sm_font_palette_variation_control-radio-light">' .
@@ -520,18 +520,18 @@ class Customify_Font_Palettes {
                       '<span class="dashicons dashicons-admin-appearance"></span>' .
                       '<div class="c-font-palette__tooltip">Fontful</div>' .
                       '</div>' .
-                      '</div>' . PHP_EOL .
-                      '</div>' . PHP_EOL .
-                      '</div>' . PHP_EOL .
-                      '</div>' . PHP_EOL .
-                      '<svg class="c-font-palette__blur" width="15em" height="15em" viewBox="0 0 15 15" xmlns="http://www.w3.org/2000/svg" version="1.1">' . PHP_EOL .
-                      '<defs>' . PHP_EOL .
-                      '<filter id="goo">' . PHP_EOL .
-                      '<feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />' . PHP_EOL .
-                      '<feFontMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 50 -20" result="goo" />' . PHP_EOL .
-                      '<feBlend in="SourceGraphic" in2="goo" />' . PHP_EOL .
-                      '</filter>' . PHP_EOL .
-                      '</defs>' . PHP_EOL .
+                      '</div>' . "\n" .
+                      '</div>' . "\n" .
+                      '</div>' . "\n" .
+                      '</div>' . "\n" .
+                      '<svg class="c-font-palette__blur" width="15em" height="15em" viewBox="0 0 15 15" xmlns="http://www.w3.org/2000/svg" version="1.1">' . "\n" .
+                      '<defs>' . "\n" .
+                      '<filter id="goo">' . "\n" .
+                      '<feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />' . "\n" .
+                      '<feFontMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 50 -20" result="goo" />' . "\n" .
+                      '<feBlend in="SourceGraphic" in2="goo" />' . "\n" .
+                      '</filter>' . "\n" .
+                      '</defs>' . "\n" .
                       '</svg>',
               ),
           ) + $config['sections']['style_manager_section']['options'];
@@ -1292,8 +1292,8 @@ class Customify_Font_Palettes {
 	 */
 	public function __clone() {
 
-		_doing_it_wrong( __FUNCTION__,esc_html( __( 'Cheatin&#8217; huh?' ) ), null );
-	} // End __clone ()
+		_doing_it_wrong( __FUNCTION__,esc_html__( 'You should not do that!', 'customify' ), null );
+	}
 
 	/**
 	 * Unserializing instances of this class is forbidden.
@@ -1302,8 +1302,8 @@ class Customify_Font_Palettes {
 	 */
 	public function __wakeup() {
 
-		_doing_it_wrong( __FUNCTION__, esc_html( __( 'Cheatin&#8217; huh?' ) ),  null );
-	} // End __wakeup ()
+		_doing_it_wrong( __FUNCTION__, esc_html__( 'You should not do that!', 'customify' ),  null );
+	}
 }
 
 endif;

@@ -49,9 +49,9 @@ class Pix_Customize_SM_palette_filter_Control extends Pix_Customize_Control {
                     $current_palette = '<div class="colors">';
                         foreach ( $master_color_controls_ids as $setting_id ) {
                         $current_palette .=
-                        '<div class="color ' . $setting_id . '" data-setting="' . $setting_id . '">' . PHP_EOL .
-                            '<div class="picker"></div>' . PHP_EOL .
-                        '</div>' . PHP_EOL;
+                        '<div class="color ' . $setting_id . '" data-setting="' . $setting_id . '">' . "\n" .
+                            '<div class="picker"></div>' . "\n" .
+                        '</div>' . "\n";
                         }
                     $current_palette .= '</div>';
 

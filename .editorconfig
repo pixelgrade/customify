@@ -17,7 +17,7 @@ indent_size=4
 indent_style=tab
 tab_width=2
 
-[{*.ats,*.ts}]
+[{*.ats,*.ts,*.js}]
 indent_style=space
 indent_size=2
 

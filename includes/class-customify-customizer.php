@@ -155,7 +155,7 @@ if ( ! class_exists( 'Customify_Customizer' ) ) :
 		 */
 		function register_admin_customizer_styles() {
 			wp_register_style( 'customify_select2', plugins_url( 'js/select2/css/select2.css', PixCustomifyPlugin()->get_file() ), array(), PixCustomifyPlugin()->get_version() );
-			wp_register_style( 'customify_style', plugins_url( 'css/customizer.css', PixCustomifyPlugin()->get_file() ), array( 'customify_select2' ), PixCustomifyPlugin()->get_version() );
+			wp_register_style( 'customify_style', plugins_url( 'css/customizer.css', PixCustomifyPlugin()->get_file() ), array( 'customify_select2', 'dashicons' ), PixCustomifyPlugin()->get_version() );
 		}
 
 		/**
@@ -336,7 +336,7 @@ if ( ! class_exists( 'Customify_Customizer' ) ) :
 				}
 
 				if ( isset( $option_details['type'] ) && $option_details['type'] === 'custom_background' ) {
-					$custom_css .= $this->process_custom_background_field_output( $option_details ) . PHP_EOL;
+					$custom_css .= $this->process_custom_background_field_output( $option_details ) . "\n";
 				}
 			}
 
@@ -355,12 +355,12 @@ if ( ! class_exists( 'Customify_Customizer' ) ) :
 						$property_value    = $property['value'];
 						$css_output = $this->process_css_property( $property_settings, $property_value );
 						if ( ! empty( $css_output ) ) {
-							$media_query_custom_css .= "\t" . $css_output . PHP_EOL;
+							$media_query_custom_css .= "\t" . $css_output . "\n";
 						}
 					}
 
 					if ( ! empty( $media_query_custom_css ) ) {
-						$media_query_custom_css = PHP_EOL . '@media ' . $media_query . " { " . PHP_EOL . PHP_EOL . $media_query_custom_css . "}" . PHP_EOL;
+						$media_query_custom_css = "\n" . '@media ' . $media_query . " { " . "\n" . "\n" . $media_query_custom_css . "}" . "\n";
 					}
 
 					if ( ! empty( $media_query_custom_css ) ) {
@@ -767,7 +767,7 @@ if ( ! class_exists( 'Customify_Customizer' ) ) :
 			if ( empty( $css_property['selector'] ) ) {
 				return '';
 			}
-			$property_output = $css_property['selector'] . ' { ' . $css_property['property'] . ': ' . $value . $unit . "; }" . PHP_EOL;
+			$property_output = $css_property['selector'] . ' { ' . $css_property['property'] . ': ' . $value . $unit . "; }" . "\n";
 
 			// Handle the value filter callback.
 			if ( isset( $css_property['filter_value_cb'] ) ) {
@@ -1275,7 +1275,10 @@ if ( ! class_exists( 'Customify_Customizer' ) ) :
 					'description_hidden' => false,
 				) );
 
-				$wp_customize->add_section( $section_id, $section_args );
+				// Only add the section if it is not of type `hidden`
+				if ( 'hidden' !== $section_args['type'] ) {
+					$wp_customize->add_section( $section_id, $section_args );
+				}
 			}
 
 			// Now go through each section option and add the fields
@@ -1884,8 +1887,8 @@ if ( ! class_exists( 'Customify_Customizer' ) ) :
 		 */
 		public function __clone() {
 
-			_doing_it_wrong( __FUNCTION__,esc_html( __( 'Cheatin&#8217; huh?' ) ), null );
-		} // End __clone ()
+			_doing_it_wrong( __FUNCTION__,esc_html__( 'You should not do that!', 'customify' ), null );
+		}
 
 		/**
 		 * Unserializing instances of this class is forbidden.
@@ -1894,8 +1897,8 @@ if ( ! class_exists( 'Customify_Customizer' ) ) :
 		 */
 		public function __wakeup() {
 
-			_doing_it_wrong( __FUNCTION__, esc_html( __( 'Cheatin&#8217; huh?' ) ),  null );
-		} // End __wakeup ()
+			_doing_it_wrong( __FUNCTION__, esc_html__( 'You should not do that!', 'customify' ),  null );
+		}
 	}
 
 endif;

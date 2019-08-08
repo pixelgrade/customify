@@ -258,7 +258,7 @@ class Customify_Font_Selector {
 				continue;
 			}
 
-			$output .= $font_output . PHP_EOL;
+			$output .= $font_output . "\n";
 
 			// If we are in a Customizer context we will output CSS rules grouped so we can target them.
 			// In the frontend we want a whole bulk.
@@ -298,7 +298,7 @@ class Customify_Font_Selector {
 				continue;
 			}
 
-			$output .= $font_output . PHP_EOL;
+			$output .= $font_output . "\n";
 		}
 
 		return $output;
@@ -356,7 +356,7 @@ class Customify_Font_Selector {
 			$output = call_user_func( $font['callback'], $value, $font );
 			echo $output;
 		} elseif ( isset( $font['selector'] ) ) {
-			echo $font['selector'] . " {" . PHP_EOL;
+			echo $font['selector'] . " {" . "\n";
 
 			// First handle the case where we have the font-family in the selected variant (usually this means a custom font from our Fonto plugin)
 			if ( ! empty( $selected_variant ) && is_array( $selected_variant ) && ! empty( $selected_variant['font-family'] ) ) {
@@ -644,8 +644,8 @@ if (typeof WebFont !== 'undefined') {
 	 */
 	public function __clone() {
 
-		_doing_it_wrong( __FUNCTION__,esc_html( __( 'Cheatin&#8217; huh?' ) ), '' );
-	} // End __clone ()
+		_doing_it_wrong( __FUNCTION__,esc_html__( 'You should not do that!', 'customify' ), '' );
+	}
 
 	/**
 	 * Unserializing instances of this class is forbidden.
@@ -654,6 +654,6 @@ if (typeof WebFont !== 'undefined') {
 	 */
 	public function __wakeup() {
 
-		_doing_it_wrong( __FUNCTION__, esc_html( __( 'Cheatin&#8217; huh?' ) ), '' );
-	} // End __wakeup ()
+		_doing_it_wrong( __FUNCTION__, esc_html__( 'You should not do that!', 'customify' ), '' );
+	}
 }

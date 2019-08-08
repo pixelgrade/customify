@@ -64,6 +64,13 @@ class Customify_Style_Manager {
 	protected $cloud_api = null;
 
 	/**
+	 * Cache for the wupdates identification data to avoid firing the filter multiple times.
+	 * @var array
+	 * @access protected
+	 */
+	protected static $wupdates_ids = array();
+
+	/**
 	 * Constructor.
 	 *
 	 * @since 1.7.0
@@ -121,6 +128,12 @@ class Customify_Style_Manager {
 		 * Handle the grouping and reorganization of the Customizer theme sections when the Style Manager is active.
 		 */
 		add_filter( 'customify_final_config', array( $this, 'reorganize_sections' ), 10, 1 );
+
+		/*
+		 * Handle the filtering based on theme type.
+		 */
+		add_filter( 'customify_filter_fields', array( $this, 'pre_filter_based_on_theme_type' ), 20, 1 );
+		add_filter( 'customify_final_config', array( $this, 'filter_based_on_theme_type' ), 20, 1 );
 
 		/*
 		 * Handle the logic for user feedback.
@@ -190,7 +203,7 @@ class Customify_Style_Manager {
 		}
 
 		// The section might be already defined, thus we merge, not replace the entire section config.
-		$config['sections']['style_manager_section'] = array_replace_recursive( $config['sections']['style_manager_section'], array(
+		$config['sections']['style_manager_section'] = Customify_Array::array_merge_recursive_distinct( $config['sections']['style_manager_section'], array(
 			'title'   => esc_html__( 'Style Manager', 'customify' ),
 			'section_id' => 'style_manager_section', // We will force this section id preventing prefixing and other regular processing.
 			'priority' => 1,
@@ -431,6 +444,114 @@ class Customify_Style_Manager {
 		add_action( 'customize_register', array( $this, 'remove_switch_theme_panel' ), 12 );
 
 		return $config;
+	}
+
+	/**
+	 * Filter the config during the build up.
+	 *
+	 * @param array $config
+	 *
+	 * @return array
+	 */
+	public function pre_filter_based_on_theme_type( $config ) {
+		if ( in_array( self::get_theme_type(), array( 'theme_wporg', 'theme_modular_wporg' ) ) ) {
+
+			add_filter( 'customify_style_manager_color_palettes_colors_classes', function( $classes ) {
+				$classes[] = 'js-no-picker';
+
+				return $classes;
+			} );
+
+			add_filter( 'customify_style_manager_sm_palettes_description_html', function( $html ) {
+				$html .= '<br /><strong>More color palettes</strong> are available with the PRO version of your theme.';
+
+				return $html;
+			} );
+			add_filter( 'customify_style_manager_sm_filters_description_html', function( $html ) {
+				$html .= '<br /><strong>More filters</strong> are available with the PRO version of your theme.';
+
+				return $html;
+			} );
+			add_filter( 'customify_style_manager_sm_customize_description_html', function( $html ) {
+				$html .= '<br /><strong>More options</strong> are available with the PRO version of your theme.';
+
+				return $html;
+			} );
+		}
+
+		return $config;
+	}
+
+	/**
+	 * Filter the final config.
+	 *
+	 * @param array $config
+	 *
+	 * @return array
+	 */
+	public function filter_based_on_theme_type( $config ) {
+		if ( ! empty( $config['panels']['style_manager_panel']['sections']['sm_color_palettes_section']['options'] ) && in_array( self::get_theme_type(), array( 'theme_wporg', 'theme_modular_wporg' ) ) ) {
+			$color_palettes_options = $config['panels']['style_manager_panel']['sections']['sm_color_palettes_section']['options'];
+
+			$options_to_remove = array(
+				'sm_color_diversity',
+				'sm_shuffle_colors',
+				'sm_dark_mode',
+			);
+			foreach ( $options_to_remove as $option_key ) {
+				if ( isset( $color_palettes_options[ $option_key ] ) ) {
+					unset( $color_palettes_options[ $option_key ] );
+				}
+			}
+
+			if ( ! empty( $color_palettes_options['sm_palette_filter']['choices'] ) ) {
+				unset( $color_palettes_options['sm_palette_filter']['choices']['pastel'] );
+				unset( $color_palettes_options['sm_palette_filter']['choices']['greyish'] );
+			}
+
+			$config['panels']['style_manager_panel']['sections']['sm_color_palettes_section']['options'] = $color_palettes_options;
+		}
+
+		return $config;
+	}
+
+	/**
+	 * Get the current theme type from the WUpdates code.
+	 *
+	 * Generally, this is a 'theme', but it could also be 'plugin', 'theme_modular', 'theme_wporg' or other markers we wish to use.
+	 *
+	 * @return string
+	 */
+	public static function get_theme_type() {
+		$wupdates_identification = self::get_wupdates_identification_data();
+		if ( empty( $wupdates_identification['type'] ) ) {
+			return 'theme_wporg';
+		}
+
+		return sanitize_title( $wupdates_identification['type'] );
+	}
+
+	public static function get_wupdates_identification_data( $slug = '' ) {
+		if ( empty( $slug ) ) {
+			$slug = basename( get_template_directory() );
+		}
+
+		$wupdates_ids = self::get_all_wupdates_identification_data();
+
+		// We really want an id (hash_id) and a type.
+		if ( empty( $slug ) || empty( $wupdates_ids[ $slug ] ) || ! isset( $wupdates_ids[ $slug ]['id'] ) || ! isset( $wupdates_ids[ $slug ]['type'] ) ) {
+			return false;
+		}
+
+		return $wupdates_ids[ $slug ];
+	}
+
+	public static function get_all_wupdates_identification_data() {
+		if ( empty( self::$wupdates_ids ) ) {
+			self::$wupdates_ids = apply_filters( 'wupdates_gather_ids', array() );
+		}
+
+		return self::$wupdates_ids;
 	}
 
 	/**
@@ -690,7 +811,7 @@ class Customify_Style_Manager {
 		}
 
 		return self::$_instance;
-	} // End instance ()
+	}
 
 	/**
 	 * Cloning is forbidden.
@@ -699,8 +820,8 @@ class Customify_Style_Manager {
 	 */
 	public function __clone() {
 
-		_doing_it_wrong( __FUNCTION__,esc_html( __( 'Cheatin&#8217; huh?' ) ), null );
-	} // End __clone ()
+		_doing_it_wrong( __FUNCTION__,esc_html__( 'You should not do that!', 'customify' ), null );
+	}
 
 	/**
 	 * Unserializing instances of this class is forbidden.
@@ -709,8 +830,8 @@ class Customify_Style_Manager {
 	 */
 	public function __wakeup() {
 
-		_doing_it_wrong( __FUNCTION__, esc_html( __( 'Cheatin&#8217; huh?' ) ),  null );
-	} // End __wakeup ()
+		_doing_it_wrong( __FUNCTION__, esc_html__( 'You should not do that!', 'customify' ),  null );
+	}
 }
 
 endif;

@@ -152,7 +152,7 @@ class Customify_Color_Palettes {
 		}
 
 		// The section might be already defined, thus we merge, not replace the entire section config.
-		$config['sections']['style_manager_section'] = array_replace_recursive( $config['sections']['style_manager_section'], array(
+		$config['sections']['style_manager_section'] = Customify_Array::array_merge_recursive_distinct( $config['sections']['style_manager_section'], array(
 			'options' => array(
 				'sm_color_palette' => array(
 					'type'         => 'preset',
@@ -496,23 +496,24 @@ class Customify_Color_Palettes {
 		$master_color_controls_ids = $this->get_all_master_color_controls_ids( $config['sections']['style_manager_section']['options'] );
 
 		$current_palette .= '<div class="colors">';
+		$color_classes = apply_filters( 'customify_style_manager_color_palettes_colors_classes', array( 'color' ) );
 		foreach ( $master_color_controls_ids as $setting_id ) {
 			$current_palette .=
-				'<div class="color ' . $setting_id . '" data-setting="' . $setting_id . '">' . PHP_EOL .
+				'<div class="' . esc_attr( join( ' ', $color_classes ) ) . ' ' . esc_attr( $setting_id ) . '" data-setting="' . esc_attr( $setting_id ) . '">' . "\n" .
 				'<div class="picker">' .
 				'<div class="disc"></div>'.
 				'<i></i>'.
-				'</div>' . PHP_EOL .
-				'</div>' . PHP_EOL;
+				'</div>' . "\n" .
+				'</div>' . "\n";
 		}
 		$current_palette .= '</div>';
 
 		$current_palette .= '<div class="c-color-palette__fields">';
-		$current_palette .= '<div class="c-color-palette__notification  description  hidden  js-altered-notification">' . PHP_EOL .
-		                    wp_kses( __( 'One or more colors connected to your color palette have been modified. By changing or altering the current palette you will lose changes made prior to this action.', 'customify' ), array( 'em' => array(), 'b' => array(), 'strong' => array(), 'i' => array() ) ) . PHP_EOL .
-		'</div>'  . PHP_EOL;
+		$current_palette .= '<div class="c-color-palette__notification  description  hidden  js-altered-notification">' . "\n" .
+		                    wp_kses( __( 'One or more colors connected to your color palette have been modified. By changing or altering the current palette you will lose changes made prior to this action.', 'customify' ), array( 'em' => array(), 'b' => array(), 'strong' => array(), 'i' => array() ) ) . "\n" .
+		'</div>'  . "\n";
 		foreach ( $master_color_controls_ids as $setting_id ) {
-			$current_palette .= '<input id="current-palette-' . $setting_id . '" class="c-color-palette__input ' . $setting_id . '" type="text" value="' . get_option( $setting_id ) . '">';
+			$current_palette .= '<input id="current-palette-' . esc_attr( $setting_id ) . '" class="c-color-palette__input ' . esc_attr( $setting_id ) . '" type="text" value="' . get_option( $setting_id ) . '">';
 		}
 		$current_palette .= '</div>';
 
@@ -522,44 +523,48 @@ class Customify_Color_Palettes {
                   'type'       => 'html',
                   'setting_id' => 'sm_current_color_palette',
                   'html'       =>
-                      '<div class="c-color-palette">' . PHP_EOL .
-                      '<div class="c-color-palette__colors">' . $current_palette . '</div>' . PHP_EOL .
-                      '<div class="sm_color_matrix"></div>' . PHP_EOL .
-                      '</div>' . PHP_EOL .
-                      '<div class="sm-tabs">' . PHP_EOL .
-	                      '<div class="sm-tabs__item" data-target="palettes">' . esc_html__( 'Palettes', 'customify' ) . '</div>' . PHP_EOL .
-	                      '<div class="sm-tabs__item" data-target="filters">' . esc_html__( 'Filters', 'customify' ) . '</div>' . PHP_EOL .
-	                      '<div class="sm-tabs__item" data-target="customize">' . esc_html__( 'Customize', 'customify' ) . '</div>' . PHP_EOL .
+                      '<div class="c-color-palette">' . "\n" .
+                      '<div class="c-color-palette__colors">' . $current_palette . '</div>' . "\n" .
+                      '<div class="sm_color_matrix"></div>' . "\n" .
+                      '</div>' . "\n" .
+                      '<div class="sm-tabs">' . "\n" .
+	                      '<div class="sm-tabs__item" data-target="palettes">' . esc_html__( 'Palettes', 'customify' ) . '</div>' . "\n" .
+	                      '<div class="sm-tabs__item" data-target="filters">' . esc_html__( 'Filters', 'customify' ) . '</div>' . "\n" .
+	                      '<div class="sm-tabs__item" data-target="customize">' . esc_html__( 'Customize', 'customify' ) . '</div>' . "\n" .
                       '</div>',
               ),
               'sm_palettes_description'  => array(
 	              'type'       => 'html',
 	              'setting_id' => 'sm_palettes_description',
-	              'html'       => '<span class="description customize-control-description">' . wp_kses( __( 'Choose your <em>base color palette</em> and go deeper with the <em>Filters</em> and <em>Customize</em> tabs. Make it shine, mate!', 'customify' ), array(
+	              'html'       => '<span class="description customize-control-description">' .
+                      apply_filters( 'customify_style_manager_sm_palettes_description_html', wp_kses( __( 'Choose your <em>base color palette</em> and go deeper with the <em>Filters</em> and <em>Customize</em> tabs. Make it shine, mate!', 'customify' ), array(
 			              'em'     => array(),
 			              'b'      => array(),
 			              'strong' => array(),
 			              'i'      => array(),
-		              ) ) . '</span>' . PHP_EOL,
+		              ) ) ) . '</span>' . "\n",
               ),
               'sm_filters_description'   => array(
 	              'type'       => 'html',
 	              'setting_id' => 'sm_filters_description',
-	              'html'       => '<span class="description customize-control-description">' . wp_kses( __( 'Adjust the <i>colors properties</i> by using the filters. Keep the look fresh and engaging!', 'customify' ), array(
+	              'html'       => '<span class="description customize-control-description">' .
+                      apply_filters( 'customify_style_manager_sm_filters_description_html', wp_kses( __( 'Adjust the <i>colors properties</i> by using the filters. Keep the look fresh and engaging!', 'customify' ), array(
 			              'em'     => array(),
 			              'b'      => array(),
 			              'strong' => array(),
 			              'i'      => array(),
-		              ) ) . '</span>' . PHP_EOL,
+		              ) ) ) . '</span>' . "\n",
               ),
               'sm_customize_description' => array(
 	              'type'       => 'html',
 	              'setting_id' => 'sm_customize_description',
-	              'html'       => '<span class="description customize-control-description">' . wp_kses( __( 'Adjust how the colors are used on your site with ease. Modify their usage level to craft a playful design!', 'customify' ), array( 'em'     => array(),
-	                                                                                                                                                                                                                                            'b'      => array(),
-	                                                                                                                                                                                                                                            'strong' => array(),
-	                                                                                                                                                                                                                                            'i'      => array(),
-		              ) ) . '</span>' . PHP_EOL,
+	              'html'       => '<span class="description customize-control-description">' .
+                      apply_filters( 'customify_style_manager_sm_customize_description_html', wp_kses( __( 'Adjust how the colors are used on your site with ease. Modify their usage level to craft a playful design!', 'customify' ), array(
+			              'em'     => array(),
+			              'b'      => array(),
+			              'strong' => array(),
+			              'i'      => array(),
+		              ) ) ) . '</span>' . "\n",
               ),
               'sm_coloration_level' => array(
 	              'type'         => 'sm_radio',
@@ -1154,8 +1159,8 @@ class Customify_Color_Palettes {
 	 */
 	public function __clone() {
 
-		_doing_it_wrong( __FUNCTION__,esc_html( __( 'Cheatin&#8217; huh?' ) ), null );
-	} // End __clone ()
+		_doing_it_wrong( __FUNCTION__,esc_html__( 'You should not do that!', 'customify' ), null );
+	}
 
 	/**
 	 * Unserializing instances of this class is forbidden.
@@ -1164,8 +1169,8 @@ class Customify_Color_Palettes {
 	 */
 	public function __wakeup() {
 
-		_doing_it_wrong( __FUNCTION__, esc_html( __( 'Cheatin&#8217; huh?' ) ),  null );
-	} // End __wakeup ()
+		_doing_it_wrong( __FUNCTION__, esc_html__( 'You should not do that!', 'customify' ),  null );
+	}
 }
 
 endif;

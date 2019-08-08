@@ -187,7 +187,7 @@ add_filter( 'customify_filter_fields', 'pixelgrade_add_customify_style_manager_s
 ### 3.3. Extend Style Manager fields with proper defaults and connected fields
 ```php
 // The section might be already defined, thus we merge, not replace the entire section config.
-$options['sections']['style_manager_section'] = array_replace_recursive( $options['sections']['style_manager_section'], array(
+$options['sections']['style_manager_section'] = Customify_Array::array_merge_recursive_distinct( $options['sections']['style_manager_section'], array(
     'options' => array(
         'sm_color_primary' => array(
             'default' => SM_COLOR_PRIMARY,

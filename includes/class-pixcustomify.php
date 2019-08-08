@@ -82,10 +82,6 @@ class PixCustomifyPlugin {
 
 	protected $opt_name;
 
-	protected $jetpack_default_modules = array();
-	protected $jetpack_blocked_modules = array();
-	protected $jetpack_sharing_default_options = array();
-
 	private $customizer_config = array();
 
 	/**
@@ -94,7 +90,7 @@ class PixCustomifyPlugin {
 	 * @access  private
 	 * @since   1.5.0
 	 */
-	private $minimalRequiredPhpVersion = '5.2';
+	private $minimalRequiredPhpVersion = '5.3';
 
 	protected function __construct( $file, $version = '1.0.0' ) {
 		//the main plugin file (the one that loads all this)
@@ -946,8 +942,8 @@ class PixCustomifyPlugin {
 	 */
 	public function __clone() {
 
-		_doing_it_wrong( __FUNCTION__, esc_html( __( 'Cheatin&#8217; huh?' ) ), null );
-	} // End __clone ()
+		_doing_it_wrong( __FUNCTION__, esc_html__( 'You should not do that!', 'customify' ), null );
+	}
 
 	/**
 	 * Unserializing instances of this class is forbidden.
@@ -956,6 +952,6 @@ class PixCustomifyPlugin {
 	 */
 	public function __wakeup() {
 
-		_doing_it_wrong( __FUNCTION__, esc_html( __( 'Cheatin&#8217; huh?' ) ), null );
-	} // End __wakeup ()
+		_doing_it_wrong( __FUNCTION__, esc_html__( 'You should not do that!', 'customify' ), null );
+	}
 }

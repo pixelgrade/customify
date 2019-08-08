@@ -223,8 +223,8 @@ class Customify_Design_Assets {
 	 */
 	public function __clone() {
 
-		_doing_it_wrong( __FUNCTION__,esc_html( __( 'Cheatin&#8217; huh?' ) ), null );
-	} // End __clone ()
+		_doing_it_wrong( __FUNCTION__,esc_html__( 'You should not do that!', 'customify' ), null );
+	}
 
 	/**
 	 * Unserializing instances of this class is forbidden.
@@ -233,8 +233,8 @@ class Customify_Design_Assets {
 	 */
 	public function __wakeup() {
 
-		_doing_it_wrong( __FUNCTION__, esc_html( __( 'Cheatin&#8217; huh?' ) ),  null );
-	} // End __wakeup ()
+		_doing_it_wrong( __FUNCTION__, esc_html__( 'You should not do that!', 'customify' ),  null );
+	}
 }
 
 endif;

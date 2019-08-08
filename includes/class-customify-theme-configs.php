@@ -331,7 +331,7 @@ class Customify_Theme_Configs {
 		if ( ! empty( $this->external_theme_config['config'] ) ) {
 			// Also output the JSON in a special hidden div for easy copy pasting.
 			// Also remove any multiple tabs.
-			echo PHP_EOL . '<!--' . PHP_EOL . 'Just copy&paste this:' . PHP_EOL . PHP_EOL . trim( str_replace( '\t\t', '', json_encode( $this->external_theme_config['config'] ) ) ) . PHP_EOL . PHP_EOL . '-->' . PHP_EOL;
+			echo "\n" . '<!--' . "\n" . 'Just copy&paste this:' . "\n" . "\n" . trim( str_replace( '\t\t', '', json_encode( $this->external_theme_config['config'] ) ) ) . "\n" . "\n" . '-->' . "\n";
 		}
 	}
 
@@ -361,8 +361,8 @@ class Customify_Theme_Configs {
 	 */
 	public function __clone() {
 
-		_doing_it_wrong( __FUNCTION__,esc_html( __( 'Cheatin&#8217; huh?' ) ), null );
-	} // End __clone ()
+		_doing_it_wrong( __FUNCTION__,esc_html__( 'You should not do that!', 'customify' ), null );
+	}
 
 	/**
 	 * Unserializing instances of this class is forbidden.
@@ -371,8 +371,8 @@ class Customify_Theme_Configs {
 	 */
 	public function __wakeup() {
 
-		_doing_it_wrong( __FUNCTION__, esc_html( __( 'Cheatin&#8217; huh?' ) ),  null );
-	} // End __wakeup ()
+		_doing_it_wrong( __FUNCTION__, esc_html__( 'You should not do that!', 'customify' ),  null );
+	}
 }
 
 endif;

@@ -2132,6 +2132,12 @@ $palette_border-radius: 5px;
 	&.inactive .picker:hover {
 		opacity: 1;
 	}
+
+  &.js-no-picker {
+    .picker {
+      cursor: not-allowed;
+    }
+  }
 }
 
 input.c-color-palette__input[class] {
@@ -2185,15 +2191,16 @@ input.c-color-palette__input[class] {
 
 @mixin section_icon($icon) {
 	h3.accordion-section-title:before {
-        position: relative;
-        float: right;
-        content: $icon;
-        color: #aed2e5;
-        font-family: dashicons;
-        padding: 1px;
-        margin-right: 28px;
-        font-size: 17px;
-        -webkit-font-smoothing: antialiased;
+    position: absolute;
+    content: $icon;
+    color: #aed2e5;
+    font-family: dashicons;
+    margin-right: 28px;
+    font-size: 17px;
+    top: 8px;
+    right: 10px;
+    z-index: 1;
+    -webkit-font-smoothing: antialiased;
 	}
 }
 

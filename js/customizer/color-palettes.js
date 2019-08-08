@@ -470,6 +470,8 @@ let ColorPalettes = (function ($, exports, wp) {
 
       $obj.data('target', $input)
 
+		  if( $obj.hasClass('js-no-picker') ) { return }
+
       $input.iris({
         change: (event, ui) => {
           const currentColor = ui.color.toString()
@@ -552,7 +554,9 @@ let ColorPalettes = (function ($, exports, wp) {
       $colors.each(function (i, obj) {
         const $input = $(obj).data('target')
 
-        $input.iris('hide')
+		    if( !$(obj).hasClass('js-no-picker') ) {
+          $input.iris('hide')
+        }
         $input.hide()
       })
     })
