@@ -249,44 +249,50 @@ if ( ! class_exists( 'Customify_Array' ) ) :
 		}
 
 		/**
-		 * Great answer from here: http://be2.php.net/manual/en/function.array-merge-recursive.php#92195
+		 * Marge arrays recursively and distinct
 		 *
-		 * array_merge_recursive does indeed merge arrays, but it converts values with duplicate
-		 * keys to arrays rather than overwriting the value in the first array with the duplicate
-		 * value in the second array, as array_merge does. I.e., with array_merge_recursive,
-		 * this happens (documented behavior):
+		 * Merges any number of arrays / parameters recursively, replacing
+		 * entries with string keys with values from latter arrays.
+		 * If the entry or the next value to be assigned is an array, then it
+		 * automagically treats both arguments as an array.
+		 * Numeric entries are appended, not replaced, but only if they are
+		 * unique
 		 *
-		 * array_merge_recursive(array('key' => 'org value'), array('key' => 'new value'));
-		 *     => array('key' => array('org value', 'new value'));
-		 *
-		 * array_merge_recursive_distinct does not change the datatypes of the values in the arrays.
-		 * Matching keys' values in the second array overwrite those in the first array, as is the
-		 * case with array_merge, i.e.:
-		 *
-		 * array_merge_recursive_distinct(array('key' => 'org value'), array('key' => 'new value'));
-		 *     => array('key' => array('new value'));
-		 *
-		 * Parameters are passed by reference, though only for performance reasons. They're not
-		 * altered by this function.
-		 *
-		 * @param array $array1
-		 * @param array $array2
+		 * @param  array $base Initial array to merge.
+		 * @param  array ...     Variable list of arrays to recursively merge.
 		 * @return array
-		 * @author Daniel <daniel (at) danielsmedegaardbuus (dot) dk>
-		 * @author Gabriel Sobrinho <gabriel (dot) sobrinho (at) gmail (dot) com>
+		 *
+		 * @link   http://www.php.net/manual/en/function.array-merge-recursive.php#96201
+		 * @author Mark Roduner <mark.roduner@gmail.com>
 		 */
-		public static function array_merge_recursive_distinct( array &$array1, array &$array2 ) {
-			$merged = $array1;
-
-			foreach ( $array2 as $key => &$value ) {
-				if ( is_array( $value ) && isset( $merged [ $key ] ) && is_array( $merged [ $key ] ) ) {
-					$merged [ $key ] = self::array_merge_recursive_distinct( $merged [ $key ], $value );
-				} else {
-					$merged [ $key ] = $value;
+		public static function array_merge_recursive_distinct() {
+			$arrays = func_get_args();
+			$base   = array_shift( $arrays );
+			if ( ! is_array( $base ) ) {
+				$base = empty( $base ) ? array() : array( $base );
+			}
+			foreach ( $arrays as $append ) {
+				if ( ! is_array( $append ) ) {
+					$append = array( $append );
+				}
+				foreach ( $append as $key => $value ) {
+					if ( ! array_key_exists( $key, $base ) and ! is_numeric( $key ) ) {
+						$base[ $key ] = $append[ $key ];
+						continue;
+					}
+					if ( is_array( $value ) or ( array_key_exists( $key, $base ) and is_array( $base[ $key ] ) ) ) {
+						$base[ $key ] = self::array_merge_recursive_distinct( $base[ $key ], $append[ $key ] );
+					} else if ( is_numeric( $key ) ) {
+						if ( ! in_array( $value, $base ) ) {
+							$base[] = $value;
+						}
+					} else {
+						$base[ $key ] = $value;
+					}
 				}
 			}
 
-			return $merged;
+			return $base;
 		}
 
 		/**
