@@ -251,7 +251,7 @@ if ( ! class_exists( 'Customify_Customizer' ) ) :
                     'customify_force_defaults',
                     {
                       type: 'warning',
-                      message: <?php echo wp_kses_post( __( '<strong>Customify: Development Mode</strong><p>All options are switched to default. While they are changing in the live preview, they will not be kept when you hit publish.</p>', 'customify' ) ); ?>
+                      message: '<?php echo wp_kses_post( __( '<strong>Customify: Development Mode</strong><p>All options are switched to default. While they are changing in the live preview, they will not be kept when you hit publish.</p>', 'customify' ) ); ?>'
                     }
                   ) );
                 });

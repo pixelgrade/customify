@@ -176,6 +176,10 @@ class Customify_Font_Selector {
 					$value['type'] = 'google';
 				}
 
+				if ( ! isset( $value['font_family'] ) ) {
+					continue;
+				}
+
 				if ( isset( $this->theme_fonts[ $value['font_family'] ] ) ) {
 
 //					$value['type']     = 'theme_font';
