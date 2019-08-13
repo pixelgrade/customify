@@ -68,8 +68,8 @@ let ColorPalettes = (function ($, exports, wp) {
   }
 
   function hex2rgba (hex) {
-    var matches = /^#([A-Fa-f0-9]{3,4}){1,2}$/.test(hex)
-    var r = 0, g = 0, b = 0, a = 0
+    const matches = /^#([A-Fa-f0-9]{3,4}){1,2}$/.test(hex)
+    let r = 0, g = 0, b = 0, a = 0
     if (matches) {
       hex = hex.substring(1).split('')
       if (hex.length === 3) {
@@ -83,8 +83,8 @@ let ColorPalettes = (function ($, exports, wp) {
       b = parseInt([hex[4], hex[5]].join(''), 16)
       a = parseInt([hex[6], hex[7]].join(''), 16)
     }
-    var hsl = rgbToHsl(r, g, b)
-    var rgba = {
+    const hsl = rgbToHsl(r, g, b)
+    return {
       red: r,
       green: g,
       blue: b,
@@ -94,13 +94,14 @@ let ColorPalettes = (function ($, exports, wp) {
       lightness: hsl[2],
       luma: 0.2126 * r + 0.7152 * g + 0.0722 * b
     }
-    return rgba
   }
 
   function rgbToHsl (r, g, b) {
-    r /= 255, g /= 255, b /= 255
-    var max = Math.max(r, g, b), min = Math.min(r, g, b)
-    var h, s, l = (max + min) / 2
+    r /= 255;
+    g /= 255;
+    b /= 255;
+    const max = Math.max(r, g, b), min = Math.min(r, g, b)
+    let h, s, l = (max + min) / 2
 
     if (max == min) {
       h = s = 0 // achromatic
@@ -271,12 +272,12 @@ let ColorPalettes = (function ($, exports, wp) {
   }
 
   function hsl2Rgb (h, s, l) {
-    var r, g, b
+    let r, g, b
 
     if (s == 0) {
       r = g = b = l // achromatic
     } else {
-      var hue2rgb = function hue2rgb (p, q, t) {
+      const hue2rgb = function hue2rgb (p, q, t) {
         if (t < 0) t += 1
         if (t > 1) t -= 1
         if (t < 1 / 6) return p + (q - p) * 6 * t
@@ -285,8 +286,8 @@ let ColorPalettes = (function ($, exports, wp) {
         return p
       }
 
-      var q = l < 0.5 ? l * (1 + s) : l + s - l * s
-      var p = 2 * l - q
+      const q = l < 0.5 ? l * (1 + s) : l + s - l * s
+      const p = 2 * l - q
       r = hue2rgb(p, q, h + 1 / 3)
       g = hue2rgb(p, q, h)
       b = hue2rgb(p, q, h - 1 / 3)
@@ -315,12 +316,12 @@ let ColorPalettes = (function ($, exports, wp) {
     filter = typeof filter === 'undefined' ? $('[name*="sm_palette_filter"]:checked').val() : filter
 
     let newColor = hex2rgba(color)
-    var palette = getCurrentPaletteColors()
-    var paletteColors = palette.slice(0, 3)
-    var paletteDark = palette.slice(3, 6)
-    var average = getAveragePixel(getPixelsFromColors(palette))
-    var averageColor = getAveragePixel(getPixelsFromColors(paletteColors))
-    var averageDark = getAveragePixel(getPixelsFromColors(paletteDark))
+    const palette = getCurrentPaletteColors()
+    const paletteColors = palette.slice(0, 3)
+    const paletteDark = palette.slice(3, 6)
+    const average = getAveragePixel(getPixelsFromColors(palette))
+    const averageColor = getAveragePixel(getPixelsFromColors(paletteColors))
+    const averageDark = getAveragePixel(getPixelsFromColors(paletteDark))
 
     // Intensity Filters
     if (filter === 'vivid') {
@@ -329,7 +330,7 @@ let ColorPalettes = (function ($, exports, wp) {
     }
 
     if (filter === 'warm' && color !== palette[0]) {
-      var sepia = hex2rgba('#704214')
+      let sepia = hex2rgba('#704214')
       sepia.saturation = mix('saturation', sepia, newColor, 1)
       sepia.lightness = mix('lightness', sepia, newColor, 1)
       sepia = hex2rgba(hsl2hex(sepia))
@@ -389,14 +390,14 @@ let ColorPalettes = (function ($, exports, wp) {
 
     // Inactive Below
     if (filter === 'cold' && color !== palette[0]) {
-      var targetHue = 0.55
+      const targetHue = 0.55
 
       newColor.saturation = mix('saturation', newColor, hex2rgba('#FFF'), 0.4)
       newColor.hue = (newColor.hue - targetHue) / 18 + targetHue
       newColor = hex2rgba(hsl2hex(newColor))
 
       // increase contrast ( saturation +10%, lightness +/- 20% );
-      var newColorHSL = rgbToHsl(newColor.red, newColor.green, newColor.blue)
+      const newColorHSL = rgbToHsl(newColor.red, newColor.green, newColor.blue)
       newColor.hue = newColorHSL[0]
       newColor.saturation = mixValues(newColorHSL[1], 1, 0.1)
       newColor.lightness = mix('lightness', newColor, hex2rgba(newColor.lightness > 0.5 ? '#FFF' : '#000'), 0.2)
@@ -822,7 +823,7 @@ let ColorPalettes = (function ($, exports, wp) {
   }
 
   const getPixelsFromColors = function (colors) {
-    var pixels = []
+    let pixels = []
     _.each(colors, function (color) {
       pixels.push(hex2rgba(color))
     })
@@ -830,7 +831,7 @@ let ColorPalettes = (function ($, exports, wp) {
   }
 
   const getAveragePixel = function (pixels) {
-    var averagePixel = {
+    let averagePixel = {
       red: 0,
       green: 0,
       blue: 0,
@@ -841,15 +842,15 @@ let ColorPalettes = (function ($, exports, wp) {
       luma: 0
     }
 
-    for (var i = 0; i < pixels.length; i++) {
-      var pixel = pixels[i]
+    for (let i = 0; i < pixels.length; i++) {
+      const pixel = pixels[i]
 
-      for (var k in averagePixel) {
+      for (let k in averagePixel) {
         averagePixel[k] += pixel[k]
       }
     }
 
-    for (var k in averagePixel) {
+    for (let k in averagePixel) {
       averagePixel[k] /= pixels.length
     }
 
@@ -857,20 +858,20 @@ let ColorPalettes = (function ($, exports, wp) {
   }
 
   const applyColorationValueToFields = () => {
-    var setting_id = 'sm_coloration_level'
-    var setting = wp.customize(setting_id)
-    var coloration = $('[name*="sm_coloration_level"]:checked').val()
+    const setting_id = 'sm_coloration_level'
+    const setting = wp.customize(setting_id)
+    const coloration = $('[name*="sm_coloration_level"]:checked').val()
 
     if (typeof $('[name*="sm_coloration_level"]:checked').data('default') !== 'undefined') {
 
-      var sliders = ['sm_dark_color_primary_slider', 'sm_dark_color_secondary_slider', 'sm_dark_color_tertiary_slider']
+      const sliders = ['sm_dark_color_primary_slider', 'sm_dark_color_secondary_slider', 'sm_dark_color_tertiary_slider']
       _.each(sliders, function (slider_id) {
-        var slider_setting = customify_settings.settings[slider_id]
+        const slider_setting = customify_settings.settings[slider_id]
         wp.customize(slider_id).set(slider_setting.default)
         $('#_customize-input-' + slider_id + '_control ').val(slider_setting.default)
       })
     } else {
-      var ratio = parseFloat(coloration)
+      const ratio = parseFloat(coloration)
       $(color_sliders_selector).val(ratio)
     }
     reinitializeConnectedFields()

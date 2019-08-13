@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-if ( ! class_exists( 'Customify_Cloud_Api' ) ) :
+if ( ! class_exists( 'Customify_Cloud_Api' ) ) {
 
 class Customify_Cloud_Api {
 
@@ -212,4 +212,4 @@ class Customify_Cloud_Api {
 	}
 }
 
-endif;
+}

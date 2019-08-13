@@ -279,7 +279,7 @@ if ( ! function_exists('add_customify_base_options') ) {
 				'options' => array(
 					'site_title_size' => array(
 						'type'  => 'range',
-						'label' => 'Site Title Size',
+						'label' => esc_html__( 'Site Title Size', 'customify' ),
 						'live' => true,
 						'input_attrs' => array(
 							'min'   => 24,
@@ -319,34 +319,6 @@ if ( ! function_exists('add_customify_base_options') ) {
 				)
 			)
 		);
-
-		/**
-		 * A self explanatory example of panels **
-		 **/
-//		$config['panels'] = array(
-//			'panel_id' => array(
-//				'title'    => esc_html__( 'Panel Title', 'customify' ),
-//				'sections' => array(
-//					'panel_section' => array(
-//						'title'    => esc_html__( 'Section Title', 'customify' ),
-//						'options' => array(
-//							'setting_id'   => array(
-//								'type'      => 'color',
-//								'label'     => esc_html__( 'Label', 'customify' ),
-//								'live' => true, // or false
-//								'default'   => '#6c6e70',
-//								'css'  => array(
-//									array(
-//										'property'     => 'color',
-//										'selector' => 'a, .entry-meta a',
-//									),
-//								)
-//							),
-//						)
-//					)
-//				)
-//			)
-//		);
 
 		return $config;
 	}

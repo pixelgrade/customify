@@ -500,13 +500,10 @@ class Customify_Color_Palettes {
 		foreach ( $master_color_controls_ids as $setting_id ) {
 			$current_palette .=
 				'<div class="' . esc_attr( join( ' ', $color_classes ) ) . ' ' . esc_attr( $setting_id ) . '" data-setting="' . esc_attr( $setting_id ) . '">' . "\n" .
-				'<div class="picker">' .
-				'<div class="disc"></div>'.
-				'<i></i>'.
-				'</div>' . "\n" .
+				'<div class="picker"><div class="disc"></div><i></i></div>' . "\n" .
 				'</div>' . "\n";
 		}
-		$current_palette .= '</div>';
+		$current_palette .= '</div><!-- .colors -->' . "\n";
 
 		$current_palette .= '<div class="c-color-palette__fields">';
 		$current_palette .= '<div class="c-color-palette__notification  description  hidden  js-altered-notification">' . "\n" .
@@ -1102,7 +1099,7 @@ class Customify_Color_Palettes {
 			if ( ! empty( $option_details['type'] )
 			     && 'hidden' === $option_details['type']
 			     && 0 === strpos( $option_id, 'sm_' )
-			     && '__final' === substr( $option_id, - strlen( '__final' ) ) ) {
+			     && '_final' === substr( $option_id, - strlen( '_final' ) ) ) {
 				$control_ids[] = $option_id;
 			}
 		}

@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-if ( ! class_exists( 'Customify_Array' ) ) :
+if ( ! class_exists( 'Customify_Array' ) ) {
 
 	class Customify_Array {
 		/**
@@ -31,6 +31,7 @@ if ( ! class_exists( 'Customify_Array' ) ) :
 			if ( ! is_array( $insert ) ) {
 				$insert = array( $insert );
 			}
+
 			return array_merge( array_slice( $array, 0, $pos ), $insert, array_slice( $array, $pos ) );
 		}
 
@@ -51,6 +52,7 @@ if ( ! class_exists( 'Customify_Array' ) ) :
 			if ( ! is_array( $insert ) ) {
 				$insert = array( $insert );
 			}
+
 			return array_merge( array_slice( $array, 0, $pos ), $insert, array_slice( $array, $pos ) );
 		}
 
@@ -62,7 +64,7 @@ if ( ! class_exists( 'Customify_Array' ) ) :
 		 * you can search for the key of the subarray containing the 'two' key with the 'value2', that is 1
 		 *
 		 * @param array  $array The array in which to search
-		 * @param string $key The key to search for
+		 * @param string $key   The key to search for
 		 * @param mixed  $value The value to search for
 		 *
 		 * @return mixed|false
@@ -97,6 +99,7 @@ if ( ! class_exists( 'Customify_Array' ) ) :
 					return $key;
 				}
 			}
+
 			return false;
 		}
 
@@ -207,6 +210,7 @@ if ( ! class_exists( 'Customify_Array' ) ) :
 			}
 			$value = $array[ $key ];
 			unset( $array[ $key ] );
+
 			return $value;
 		}
 
@@ -223,6 +227,7 @@ if ( ! class_exists( 'Customify_Array' ) ) :
 			if ( ! $key ) {
 				return false;
 			}
+
 			return self::detach( $array, $key );
 		}
 
@@ -245,6 +250,7 @@ if ( ! class_exists( 'Customify_Array' ) ) :
 					array_slice( $array, $new_index, count( $array ) )
 				)
 			);
+
 			return $array;
 		}
 
@@ -258,8 +264,9 @@ if ( ! class_exists( 'Customify_Array' ) ) :
 		 * Numeric entries are appended, not replaced, but only if they are
 		 * unique
 		 *
-		 * @param  array $base Initial array to merge.
-		 * @param  array ...     Variable list of arrays to recursively merge.
+		 * @param array $base Initial array to merge.
+		 * @param array ...     Variable list of arrays to recursively merge.
+		 *
 		 * @return array
 		 *
 		 * @link   http://www.php.net/manual/en/function.array-merge-recursive.php#96201
@@ -323,4 +330,4 @@ if ( ! class_exists( 'Customify_Array' ) ) :
 		}
 	}
 
-endif;
+}

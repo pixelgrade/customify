@@ -15,16 +15,16 @@
 
 			// add ace editors
 			$('.customify_ace_editor').each(function (key, el) {
-				var id = $(this).attr('id'),
+				const id = $(this).attr('id'),
 					css_editor = ace.edit(id)
 
-				var editor_type = $(this).data('editor_type')
+				const editor_type = $(this).data('editor_type')
 				// init the ace editor
 				css_editor.setTheme('ace/theme/github')
 				css_editor.getSession().setMode('ace/mode/' + editor_type)
 
 				// hide the textarea and enable the ace editor
-				var textarea = $('#' + id + '_textarea').hide()
+				const textarea = $('#' + id + '_textarea').hide()
 				css_editor.getSession().setValue(textarea.val())
 
 				// each time a change is triggered start a timeout of 1,5s and when is finished refresh the previewer
@@ -86,8 +86,8 @@
 					}
 
 					$.each(api.settings.controls, function (key, ctrl) {
-						var setting_id = key.replace('_control', '')
-						var setting = customify_settings.settings[setting_id]
+						const setting_id = key.replace('_control', '')
+						const setting = customify_settings.settings[setting_id]
 
 						if (!_.isUndefined(setting) && !_.isUndefined(setting.default)) {
 							api_set_setting_value(setting_id, setting.default)
@@ -99,11 +99,11 @@
 
 				// add a reset button for each panel
 				$('.panel-meta').each(function (el, key) {
-					var container = $(this).parents('.control-panel'),
+					const container = $(this).parents('.control-panel'),
 						id = container.attr('id')
 
 					if (typeof id !== 'undefined') {
-						var panel_id = id.replace('accordion-panel-', '')
+						const panel_id = id.replace('accordion-panel-', '')
 						$(this).parent().append('<button class="reset_panel button" data-panel="' + panel_id + '">Panel\'s defaults</button>')
 					}
 				})
@@ -112,7 +112,7 @@
 				$(document).on('click', '.reset_panel', function (e) {
 					e.preventDefault()
 
-					var panel_id = $(this).data('panel'),
+					const panel_id = $(this).data('panel'),
 						panel = api.panel(panel_id),
 						sections = panel.sections(),
 						iAgree = confirm('Do you really want to reset ' + panel.params.title + '?')
@@ -123,11 +123,11 @@
 					if (sections.length > 0) {
 						$.each(sections, function () {
 							//var settings = this.settings();
-							var controls = this.controls()
+							const controls = this.controls()
 
 							if (controls.length > 0) {
 								$.each(controls, function (key, ctrl) {
-									var setting_id = ctrl.id.replace('_control', ''),
+									const setting_id = ctrl.id.replace('_control', ''),
 										setting = customify_settings.settings[setting_id]
 
 									if (!_.isUndefined(setting) && !_.isUndefined(setting.default)) {
@@ -141,7 +141,7 @@
 
 				//add reset section
 				$('.accordion-section-content').each(function (el, key) {
-					var section_id = $(this).attr('id')
+					const section_id = $(this).attr('id')
 
 					if ((
 						(
@@ -152,7 +152,7 @@
 					}
 
 					if (!_.isUndefined(section_id) && section_id.indexOf('sub-accordion-section-') > -1) {
-						var id = section_id.replace('sub-accordion-section-', '')
+						const id = section_id.replace('sub-accordion-section-', '')
 						$(this).append('<button class="reset_section button" data-section="' + id + '">Reset All Options for This Section</button>')
 					}
 				})
@@ -161,11 +161,11 @@
 				$(document).on('click', '.reset_section', function (e) {
 					e.preventDefault()
 
-					var section_id = $(this).data('section'),
+					const section_id = $(this).data('section'),
 						section = api.section(section_id),
 						controls = section.controls()
 
-					var iAgree = confirm('Do you really want to reset ' + section.params.title + '?')
+					const iAgree = confirm('Do you really want to reset ' + section.params.title + '?')
 
 					if (!iAgree) {
 						return
@@ -173,7 +173,7 @@
 
 					if (controls.length > 0) {
 						$.each(controls, function (key, ctrl) {
-							var setting_id = ctrl.id.replace('_control', ''),
+							const setting_id = ctrl.id.replace('_control', ''),
 								setting = customify_settings.settings[setting_id]
 
 							if (!_.isUndefined(setting) && !_.isUndefined(setting.default)) {
@@ -185,15 +185,15 @@
 			}
 
 			$(document).on('change keyup', '.customize-control-range input.range-value', function () {
-				var range = $(this).siblings('input[type="range"]')
+				const range = $(this).siblings('input[type="range"]')
 				range.val($(this).val())
 				range.trigger('change')
 			})
 
 			$(document).on('change', '.customify_typography_font_subsets', function (ev) {
 
-				var $input = $(this).parents('.options').siblings('.customify_typography').children('.customify_typography_values'),
-					current_val = $input.val()
+				const $input = $(this).parents('.options').siblings('.customify_typography').children('.customify_typography_values');
+				let current_val = $input.val()
 
 				current_val = JSON.parse(decodeURIComponent(current_val))
 
@@ -207,8 +207,8 @@
 
 			$(document).on('change', '.customify_typography_font_weight', function (ev) {
 
-				var $input = $(this).parents('.options').siblings('.customify_typography').children('.customify_typography_values'),
-					current_val = $input.val()
+				 const $input = $(this).parents('.options').siblings('.customify_typography').children('.customify_typography_values');
+				 let current_val = $input.val();
 
 				current_val = maybeJsonParse(current_val)
 				// @todo currently the font weight selector works for one value only
@@ -255,11 +255,11 @@
 			// Handle the section tabs (ex: Layout | Fonts | Colors)
 			(
 				function () {
-					var $navs = $('.js-section-navigation')
+					const $navs = $('.js-section-navigation')
 
 					$navs.each(function () {
-						var $nav = $(this)
-						var $title = $nav.parents('.accordion-section-content').find('.customize-section-title')
+						const $nav = $(this)
+						const $title = $nav.parents('.accordion-section-content').find('.customize-section-title')
 
 						$nav.closest('.customize-control').addClass('screen-reader-text')
 						$title.append($nav).parent().addClass('has-nav')
@@ -268,9 +268,9 @@
 					$('.js-section-navigation a').on('click', function (e) {
 						e.preventDefault()
 
-						var $sidebar = $(this).parents('.customize-pane-child')
-						var $parent = $(this).parents('.accordion-section-content')
-						var href = $.attr(this, 'href')
+						const $sidebar = $(this).parents('.customize-pane-child'),
+              $parent = $(this).parents('.accordion-section-content'),
+              href = $.attr(this, 'href')
 
 						if (href != '#') {
 							$sidebar.animate({
@@ -363,7 +363,7 @@
 			// For each range input add a number field (for preview mainly - but it can also be used for input)
 			$(el).find('input[type="range"]').each(function () {
 				if (!$(this).siblings('.range-value').length) {
-					var $clone = $(this).clone()
+					const $clone = $(this).clone()
 
 					$clone
 						.attr('type', 'number')
@@ -371,16 +371,16 @@
 						.removeAttr('data-field')
 
 					$(this).after($clone)
+
+          // Update the range field when changing the number
+          $($clone).on('change', function () {
+            $(this).siblings('input[type="range"]').val($(this).val())
+          })
 				}
 
 				// Update the number field when changing the range
 				$(this).on('change', function () {
 					$(this).siblings('.range-value').val($(this).val())
-				})
-
-				// And the other way around, update the range field when changing the number
-				$($clone).on('change', function () {
-					$(this).siblings('input[type="range"]').val($(this).val())
 				})
 			})
 		}
@@ -390,7 +390,7 @@
 		 * So whenever a target is changed, it will take actions to the dependent fields.
 		 * @TODO  this is still written in a barbaric way, refactor when needed
 		 */
-		var customifyFoldingFields = function () {
+		const customifyFoldingFields = function () {
 
 			if (_.isUndefined(customify_settings) || _.isUndefined(customify_settings.settings)) {
 				return // bail
@@ -417,11 +417,11 @@
 				$(this).find(':enabled').attr({disabled: true})
 			}
 
-			var IS = $.extend({}, $.fn.reactor.helpers)
+			let IS = $.extend({}, $.fn.reactor.helpers)
 
-			var bind_folding_events = function (parent_id, field, relation) {
+			let bind_folding_events = function (parent_id, field, relation) {
 
-				var key = null
+				let key = null
 
 				if (_.isString(field)) {
 					key = field
@@ -433,14 +433,13 @@
 					return // no key, no fun
 				}
 
-				var value = 1, // by default we use 1 the most used value for checkboxes or inputs
+				let value = 1, // by default we use 1 the most used value for checkboxes or inputs
 					compare = '==', // ... ye
 					action = 'show',
 					between = [0, 1] // can only be `show` or `hide`
 
-				var target_key = customify_settings.options_name + '[' + key + ']'
-
-				var target_type = customify_settings.settings[target_key].type
+				const target_key = customify_settings.options_name + '[' + key + ']'
+				const target_type = customify_settings.settings[target_key].type
 
 				// we support the usual syntax like a config array like `array( 'id' => $id, 'value' => $value, 'compare' => $compare )`
 				// but we also support a non-associative array like `array( $id, $value, $compare )`
@@ -476,7 +475,7 @@
 				/**
 				 * Now for each target we have, we will bind a change event to hide or show the dependent fields
 				 */
-				var target_selector = '[data-customize-setting-link="' + customify_settings.options_name + '[' + key + ']"]'
+				const target_selector = '[data-customize-setting-link="' + customify_settings.options_name + '[' + key + ']"]'
 
 				switch (target_type) {
 					case 'checkbox':
@@ -505,7 +504,7 @@
 						break
 
 					case 'range':
-						var x = IS.Between(between[0], between[1])
+						const x = IS.Between(between[0], between[1])
 
 						$(parent_id).reactIf(target_selector, x)
 						break
@@ -535,13 +534,13 @@
 				 * Here we have the id of the fields. but we know for sure that we just need his parent selector
 				 * So we just create it
 				 */
-				var parent_id = id.replace('[', '-')
+				let parent_id = id.replace('[', '-')
 				parent_id = parent_id.replace(']', '')
 				parent_id = '#customize-control-' + parent_id + '_control'
 
 				// get only the fields that have a 'show_if' property
 				if (field.hasOwnProperty('show_if')) {
-					var relation = 'AND'
+					let relation = 'AND'
 
 					if (!_.isUndefined(field.show_if.relation)) {
 						relation = field.show_if.relation
@@ -565,9 +564,9 @@
 			})
 		}
 
-		var get_typography_font_family = function ($el) {
+		const get_typography_font_family = function ($el) {
 
-			var font_family_value = $el.val()
+			let font_family_value = $el.val()
 			// first time this will not be a json so catch that error
 			try {
 				font_family_value = JSON.parse(font_family_value)
@@ -584,9 +583,9 @@
 
 		// get each typography field and bind events
 		// @todo Are we still using the typography field since we have the font field?
-		var prepare_typography_field = function () {
+		const prepare_typography_field = function () {
 
-			var $typos = $('.customify_typography_font_family')
+			const $typos = $('.customify_typography_font_family')
 
 			$typos.each(function () {
 				var font_family_select = this,
@@ -600,7 +599,7 @@
 			})
 		}
 
-		var api_set_setting_value = function (setting_id, value) {
+		const api_set_setting_value = function (setting_id, value) {
 			let setting = api(setting_id),
 				field = $('[data-customize-setting-link="' + setting_id + '"]'),
 				field_class = $(field).parent().attr('class')
@@ -685,8 +684,8 @@
 			}
 		}
 
-		var update_siblings_selects = function (font_select) {
-			var selected_font = $(font_select).val(),
+		const update_siblings_selects = function (font_select) {
+			let selected_font = $(font_select).val(),
 				$input = $(font_select).siblings('.customify_typography_values'),
 				current_val = $input.attr('value')
 
@@ -695,7 +694,7 @@
 			} else if (_.isString(current_val) && !isJsonString(current_val) && current_val.substr(0, 1) == '[') {
 				// a rare case when the value isn't a json but is a representative string like [family,weight]
 				current_val = current_val.split(',')
-				var new_current_value = {}
+				let new_current_value = {}
 				if (!_.isUndefined(current_val[0])) {
 					new_current_value['font_family'] = current_val[0]
 				}
@@ -707,7 +706,7 @@
 				current_val = JSON.stringify(new_current_value)
 			}
 
-			var $font_weight = $(font_select).parent().siblings('ul.options').find('.customify_typography_font_weight'),
+			let $font_weight = $(font_select).parent().siblings('ul.options').find('.customify_typography_font_weight'),
 				$font_subsets = $(font_select).parent().siblings('ul.options').find('.customify_typography_font_subsets')
 
 			try {
@@ -726,7 +725,7 @@
 			}
 
 			// first try to get the font from sure sources, not from the recommended list.
-			var option_data = $(font_select).find(':not(optgroup[label=Recommended]) option[value="' + selected_font + '"]')
+			let option_data = $(font_select).find(':not(optgroup[label=Recommended]) option[value="' + selected_font + '"]')
 			// however, if there isn't an option found, get what you can
 			if (option_data.length < 1) {
 				option_data = $(font_select).find('option[value="' + selected_font + '"]')
@@ -734,7 +733,7 @@
 
 			if (option_data.length > 0) {
 
-				var font_type = option_data.data('type'),
+				let font_type = option_data.data('type'),
 					value_to_add = {'type': font_type, 'font_family': selected_font},
 					variants = null,
 					subsets = null
@@ -770,13 +769,13 @@
 					// when a font is selected force the first weight to load
 					value_to_add['selected_variants'] = {0: variants[0]}
 
-					var variants_options = '',
+					let variants_options = '',
 						count_weights = 0
 
 					if (_.isArray(variants) || _.isObject(variants)) {
 						// Take each variant and produce the option markup
 						$.each(variants, function (key, el) {
-							var is_selected = ''
+							let is_selected = ''
 							if (_.isObject(current_val.selected_variants) && inObject(el, current_val.selected_variants)) {
 								is_selected = ' selected="selected"'
 							} else if (_.isString(current_val.selected_variants) && el === current_val.selected_variants) {
@@ -784,7 +783,7 @@
 							}
 
 							// initialize
-							var variant_option_value = el,
+							let variant_option_value = el,
 								variant_option_display = el
 
 							// If we are dealing with a object variant then it means things get tricky (probably it's our fault but bear with us)
@@ -831,10 +830,10 @@
 					value_to_add['subsets'] = subsets
 					// when a font is selected force the first subset to load
 					value_to_add['selected_subsets'] = {0: subsets[0]}
-					var subsets_options = '',
+					let subsets_options = '',
 						count_subsets = 0
 					$.each(subsets, function (key, el) {
-						var is_selected = ''
+						let is_selected = ''
 						if (_.isObject(current_val.selected_subsets) && inObject(el, current_val.selected_subsets)) {
 							is_selected = ' selected="selected"'
 						}
@@ -863,7 +862,7 @@
 
 		/** Modules **/
 
-		var customifyBackgroundJsControl = (
+		const customifyBackgroundJsControl = (
 			function () {
 				'use strict'
 
@@ -920,7 +919,7 @@
 					// When an image is selected, run a callback.
 					frame.on('select', function () {
 						// Grab the selected attachment.
-						var attachment = frame.state().get('selection').first()
+						const attachment = frame.state().get('selection').first()
 						frame.close()
 
 						if (attachment.attributes.type !== 'image') {
@@ -932,13 +931,13 @@
 						selector.find('.upload-height').attr('value', attachment.attributes.height)
 						selector.find('.upload-width').attr('value', attachment.attributes.width)
 
-						var thumbSrc = attachment.attributes.url
+						let thumbSrc = attachment.attributes.url
 						if (!_.isUndefined(attachment.attributes.sizes) && !_.isUndefined(attachment.attributes.sizes.thumbnail)) {
 							thumbSrc = attachment.attributes.sizes.thumbnail.url
 						} else if (!_.isUndefined(attachment.attributes.sizes)) {
-							var height = attachment.attributes.height
-							for (var key in attachment.attributes.sizes) {
-								var object = attachment.attributes.sizes[key]
+							let height = attachment.attributes.height
+							for (let key in attachment.attributes.sizes) {
+								const object = attachment.attributes.sizes[key]
 								if (object.height < height) {
 									height = object.height
 									thumbSrc = object.url
@@ -967,7 +966,7 @@
 				// Update the background preview
 				function preview (selector) {
 
-					var $parent = selector.parents('.customize-control-custom_background:first')
+					let $parent = selector.parents('.customize-control-custom_background:first')
 
 					if (selector.hasClass('customize-control-custom_background')) {
 						$parent = selector
@@ -979,16 +978,16 @@
 						return
 					}
 
-					var image_holder = $parent.find('.background-preview')
+					const image_holder = $parent.find('.background-preview')
 
 					if (!image_holder) { // No preview present
 						return
 					}
 
-					var the_id = $parent.find('.button.background_upload_button').data('setting_id'),
+					const the_id = $parent.find('.button.background_upload_button').data('setting_id'),
 						this_setting = api.instance(the_id)
 
-					var background_data = {}
+					let background_data = {}
 
 					$parent.find('.customify_background_select, .customify_background_input').each(function () {
 						var data = $(this).serializeArray()
@@ -1017,7 +1016,7 @@
 
 				// Update the background preview
 				function removeImage (parent) {
-					var selector = parent.find('.upload_button_div')
+					const selector = parent.find('.upload_button_div')
 					// This shouldn't have been run...
 					if (!selector.find('.remove-image').addClass('hide')) {
 						return
@@ -1032,7 +1031,7 @@
 					selector.find('.upload-width').val('')
 					parent.find('.customify_background_input.background-image').val('')
 
-					var customizer_id = selector.find('.background_upload_button').data('setting_id'),
+					let customizer_id = selector.find('.background_upload_button').data('setting_id'),
 						this_setting = api.control(customizer_id + '_control'),
 						current_vals = this_setting.setting(),
 						screenshot = parent.find('.preview_screenshot'),
@@ -1061,8 +1060,8 @@
 		 * @param obj
 		 * @returns {boolean}
 		 */
-		var inObject = function (value, obj) {
-			for (var k in obj) {
+		const inObject = function (value, obj) {
+			for (let k in obj) {
 				if (!obj.hasOwnProperty(k)) {
 					continue
 				}
@@ -1073,8 +1072,8 @@
 			return false
 		}
 
-		var maybeJsonParse = function (value) {
-			var parsed
+		const maybeJsonParse = function (value) {
+			let parsed
 
 			//try and parse it, with decodeURIComponent
 			try {
@@ -1088,10 +1087,10 @@
 			return parsed
 		}
 
-		var getUrlVars = function (name) {
-			var vars = [], hash
-			var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&')
-			for (var i = 0; i < hashes.length; i++) {
+		const getUrlVars = function (name) {
+			let vars = [], hash
+			const hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&')
+			for (let i = 0; i < hashes.length; i++) {
 				hash = hashes[i].split('=')
 
 				vars.push(hash[0])
@@ -1104,7 +1103,7 @@
 			return false
 		}
 
-		var isJsonString = function (str) {
+		const isJsonString = function (str) {
 			try {
 				JSON.parse(str)
 			} catch (e) {

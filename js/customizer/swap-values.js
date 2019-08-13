@@ -1,8 +1,8 @@
 ( function( $, exports, wp ) {
 
     function swap_values( setting_one, setting_two ) {
-        var color_primary = wp.customize( setting_one )();
-        var color_secondary = wp.customize( setting_two )();
+        const color_primary = wp.customize( setting_one )();
+        const color_secondary = wp.customize( setting_two )();
 
 	    wp.customize( setting_one ).set( color_secondary );
 	    wp.customize( setting_two ).set( color_primary );

@@ -45,6 +45,11 @@ With [Customify](https://github.com/pixelgrade/customify), developers can easily
 
 == Changelog ==
 
+= 2.5.0 =
+* JavaScript cleanup and performance enhancements
+* Fixed some bugs with the Style Manager.
+* Fixed some rare bugs with the plugin config merge.
+
 = 2.4.0 =
 * Big performance enhancements related to how customization settings and configurations get loaded.
 * Fixed a nasty regression that caused customization settings saved in a option to not be loaded, causing styles to be missing.

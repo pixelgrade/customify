@@ -6,9 +6,9 @@
 		wp.customize.bind('ready', function () {
 
 			// Handle the Style Manager user feedback logic.
-			var $styleManagerUserFeedbackModal = $('#style-manager-user-feedback-modal')
+			const $styleManagerUserFeedbackModal = $('#style-manager-user-feedback-modal')
 			if ($styleManagerUserFeedbackModal.length) {
-				var $styleManagerUserFeedbackForm = $styleManagerUserFeedbackModal.find('form'),
+				let $styleManagerUserFeedbackForm = $styleManagerUserFeedbackModal.find('form'),
 					$styleManagerUserFeedbackCloseBtn = $styleManagerUserFeedbackModal.find('.close'),
 					$styleManagerUserFeedbackFirstStep = $styleManagerUserFeedbackModal.find('.first-step'),
 					$styleManagerUserFeedbackSecondStep = $styleManagerUserFeedbackModal.find('.second-step'),
@@ -123,7 +123,7 @@ function customifyInverseHexColor (hex, bw) {
 	if (hex.length !== 6) {
 		throw new Error('Invalid HEX color.')
 	}
-	var r = parseInt(hex.slice(0, 2), 16),
+	let r = parseInt(hex.slice(0, 2), 16),
 		g = parseInt(hex.slice(2, 4), 16),
 		b = parseInt(hex.slice(4, 6), 16)
 	if (bw) {
@@ -150,7 +150,7 @@ function customifyInverseHexColor (hex, bw) {
 
 function customifyPadZero (str, len) {
 	len = len || 2
-	var zeros = new Array(len).join('0')
+	const zeros = new Array(len).join('0')
 	return (
 		zeros + str
 	).slice(-len)

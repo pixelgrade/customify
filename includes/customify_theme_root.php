@@ -76,7 +76,7 @@ $config['sections'] = [
 	 * Fonts - This section will handle all elements fonts (eg. links, headings)
 	 */
 	'fonts_section' => [
-		'title'    => __( 'Fonts', 'customify' ),
+		'title'    => esc_html__( 'Fonts', 'customify' ),
 		'priority' => 3, // This will put this section right after Colors section that has a priority of 2.
 		'options'  => [
 			/**
@@ -515,7 +515,7 @@ $config['sections'] = [
 	 * COLORS - This section will handle all elements colors (eg. links, headings)
 	 */
 	'colors_section' => [
-		'title'    => __( 'Colors', 'customify' ),
+		'title'    => esc_html__( 'Colors', 'customify' ),
 		'priority' => 3, // This will put this section right after Style Manager that has a priority of 1.
 		'options'  => [
 			/**
@@ -527,7 +527,7 @@ $config['sections'] = [
 			],
 			'header_navigation_text_color'                 => [
 				'type'    => 'color',
-				'label'   => __( 'Header Text Color', 'customify' ),
+				'label'   => esc_html__( 'Header Text Color', 'customify' ),
 				'live'    => true,
 				'default' => '#404040',
 				'css'     => [
@@ -559,7 +559,7 @@ $config['sections'] = [
 			],
 			'header_navigation_links_color'                => [
 				'type'    => 'color',
-				'label'   => __( 'Navigation Links Color', 'customify' ),
+				'label'   => esc_html__( 'Navigation Links Color', 'customify' ),
 				'live'    => true,
 				'default' => '#333333',
 				'css'     => [
@@ -593,7 +593,7 @@ $config['sections'] = [
 			],
 			'header_navigation_links_active_color'         => [
 				'type'    => 'color',
-				'label'   => __( 'Links Active Color', 'customify' ),
+				'label'   => esc_html__( 'Links Active Color', 'customify' ),
 				'live'    => true,
 				'default' => '#282828',
 				'css'     => [
@@ -611,7 +611,7 @@ $config['sections'] = [
 			],
 			'header_background_color'                      => [
 				'type'    => 'color',
-				'label'   => __( 'Header Background', 'customify' ),
+				'label'   => esc_html__( 'Header Background', 'customify' ),
 				'live'    => true,
 				'default' => '#ffffff',
 				'css'     => [
@@ -684,7 +684,7 @@ $config['sections'] = [
 			],
 			'page_title_color'                             => [
 				'type'    => 'color',
-				'label'   => __( 'Page Title Color', 'customify' ),
+				'label'   => esc_html__( 'Page Title Color', 'customify' ),
 				'live'    => true,
 				'default' => '#282828',
 				'css'     => [
@@ -697,7 +697,7 @@ $config['sections'] = [
 			],
 			'body_text_color'                              => [
 				'type'    => 'color',
-				'label'   => __( 'Body Text Color', 'customify' ),
+				'label'   => esc_html__( 'Body Text Color', 'customify' ),
 				'live'    => true,
 				'default' => '#6d6d6d',
 				'css'     => [
@@ -764,7 +764,7 @@ $config['sections'] = [
 			],
 			'body_link_color'                              => [
 				'type'    => 'color',
-				'label'   => __( 'Body Link Color', 'customify' ),
+				'label'   => esc_html__( 'Body Link Color', 'customify' ),
 				'live'    => true,
 				'default' => '#96588A',
 				'css'     => [
@@ -804,7 +804,7 @@ $config['sections'] = [
 			],
 			'body_link_active_color'                       => [
 				'type'    => 'color',
-				'label'   => __( 'Body Link Active Color', 'customify' ),
+				'label'   => esc_html__( 'Body Link Active Color', 'customify' ),
 				'live'    => true,
 				'default' => '#282828',
 				'css'     => [
@@ -1030,7 +1030,7 @@ $config['sections'] = [
 			],
 			'buttons_text_color'                    => [
 				'type'    => 'color',
-				'label'   => __( 'Text Color', 'customify' ),
+				'label'   => esc_html__( 'Text Color', 'customify' ),
 				'live'    => true,
 				'default' => '#333333',
 				'css'     => [
@@ -1050,7 +1050,7 @@ $config['sections'] = [
 			],
 			'buttons_background_color'              => [
 				'type'    => 'color',
-				'label'   => __( 'Background Color', 'customify' ),
+				'label'   => esc_html__( 'Background Color', 'customify' ),
 				'live'    => true,
 				'default' => '#eeeeee',
 				'css'     => [
@@ -1093,7 +1093,7 @@ $config['sections'] = [
 			],
 			'buttons_alt_text_color'                => [
 				'type'    => 'color',
-				'label'   => __( 'Alternate Text Color', 'customify' ),
+				'label'   => esc_html__( 'Alternate Text Color', 'customify' ),
 				'live'    => true,
 				'default' => '#ffffff',
 				'css'     => [
@@ -1105,7 +1105,7 @@ $config['sections'] = [
 			],
 			'buttons_alt_background_color'          => [
 				'type'    => 'color',
-				'label'   => __( 'Alternate Background Color', 'customify' ),
+				'label'   => esc_html__( 'Alternate Background Color', 'customify' ),
 				'live'    => true,
 				'default' => '#333333',
 				'css'     => [
@@ -1151,7 +1151,7 @@ $config['sections'] = [
 			],
 			'footer_text_color'                     => [
 				'type'    => 'color',
-				'label'   => __( 'Footer Text Color', 'customify' ),
+				'label'   => esc_html__( 'Footer Text Color', 'customify' ),
 				'live'    => true,
 				'default' => '#6d6d6d',
 				'css'     => [
@@ -1163,7 +1163,7 @@ $config['sections'] = [
 			],
 			'footer_links_color'                    => [
 				'type'    => 'color',
-				'label'   => __( 'Footer Links Color', 'customify' ),
+				'label'   => esc_html__( 'Footer Links Color', 'customify' ),
 				'live'    => true,
 				'default' => '#333333',
 				'css'     => [
@@ -1175,7 +1175,7 @@ $config['sections'] = [
 			],
 			'footer_heading_color'                  => [
 				'type'    => 'color',
-				'label'   => __( 'Footer Headings Color', 'customify' ),
+				'label'   => esc_html__( 'Footer Headings Color', 'customify' ),
 				'live'    => true,
 				'default' => '#333333',
 				'css'     => [
@@ -1187,7 +1187,7 @@ $config['sections'] = [
 			],
 			'footer_background_color'               => [
 				'type'    => 'color',
-				'label'   => __( 'Footer Background', 'customify' ),
+				'label'   => esc_html__( 'Footer Background', 'customify' ),
 				'live'    => true,
 				'default' => '#f0f0f0',
 				'css'     => [
@@ -1208,7 +1208,7 @@ $config['sections'] = [
 
 			'woocommerce_info_background_color' => [
 				'type'    => 'background-color',
-				'label'   => __( 'WooCommerce Info', 'customify' ),
+				'label'   => esc_html__( 'WooCommerce Info', 'customify' ),
 				'live'    => true,
 				'default' => '#3d9cd2',
 				'css'     => [

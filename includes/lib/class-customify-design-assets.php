@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-if ( ! class_exists( 'Customify_Design_Assets' ) ) :
+if ( ! class_exists( 'Customify_Design_Assets' ) ) {
 
 class Customify_Design_Assets {
 
@@ -237,4 +237,4 @@ class Customify_Design_Assets {
 	}
 }
 
-endif;
+}
