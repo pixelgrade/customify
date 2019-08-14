@@ -59,6 +59,14 @@ class Customify_Design_Assets {
 		 */
 		require_once 'class-customify-cloud-api.php';
 		$this->cloud_api = new Customify_Cloud_Api();
+
+		/*
+		 * Handle the force clearing of the caches. We clear in a proactive manner.
+		 */
+		add_action( 'activated_plugin', array( $this, 'invalidate_cache' ), 1 );
+		add_action( 'deactivated_plugin', array( $this, 'invalidate_cache' ), 1 );
+		add_action( 'switch_theme', array( $this, 'invalidate_cache' ), 1 );
+		add_action( 'upgrader_process_complete', array( $this, 'invalidate_cache' ), 1 );
 	}
 
 	/**
@@ -98,19 +106,24 @@ class Customify_Design_Assets {
 	 */
 	protected function maybe_fetch( $skip_cache = false ) {
 		// First try and get the cached data
-		$data = get_option( $this->_get_cache_key() );
+		$data = get_option( $this->get_cache_key() );
 
 		// For performance reasons, we will ONLY fetch remotely when in the WP ADMIN area or via an ADMIN AJAX call, regardless of settings.
 		if ( ! is_admin() ) {
 			return  $data;
 		}
 
-		// Get the cache data expiration timestamp.
-		$expire_timestamp = get_option( $this->_get_cache_key() . '_timestamp' );
-
 		// We don't force skip the cache for AJAX requests for performance reasons.
 		if ( ! wp_doing_ajax() && defined('CUSTOMIFY_SM_ALWAYS_FETCH_DESIGN_ASSETS' ) && true === CUSTOMIFY_SM_ALWAYS_FETCH_DESIGN_ASSETS ) {
 			$skip_cache = true;
+		}
+
+		$expire_timestamp = false;
+
+		// Only try to get the expire timestamp if we really need to.
+		if ( true !== $skip_cache && false !== $data ) {
+			// Get the cache data expiration timestamp.
+			$expire_timestamp = get_option( $this->get_cache_key() . '_timestamp' );
 		}
 
 		// The data isn't set, is expired or we were instructed to skip the cache; we need to fetch fresh data.
@@ -125,9 +138,11 @@ class Customify_Design_Assets {
 
 			$data = $fetched_data;
 
-			// Cache the data in an option for 6 hours
-			update_option( $this->_get_cache_key() , $data, true );
-			update_option( $this->_get_cache_key() . '_timestamp' , time() + 6 * HOUR_IN_SECONDS, true );
+			if ( true !== $skip_cache ) {
+				// Cache the data in an option for 6 hours
+				update_option( $this->get_cache_key(), $data, true );
+				update_option( $this->get_cache_key() . '_timestamp', time() + 6 * HOUR_IN_SECONDS, true );
+			}
 		}
 
 		return apply_filters( 'customify_style_manager_maybe_fetch_design_assets', $data );
@@ -140,8 +155,12 @@ class Customify_Design_Assets {
 	 *
 	 * @return string
 	 */
-	private function _get_cache_key() {
+	private function get_cache_key() {
 		return 'customify_style_manager_design_assets';
+	}
+
+	public function invalidate_cache() {
+		update_option( $this->get_cache_key() . '_timestamp' , time() - 24 * HOUR_IN_SECONDS, true );
 	}
 
 	/**
