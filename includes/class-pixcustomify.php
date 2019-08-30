@@ -54,8 +54,8 @@ class PixCustomifyPlugin {
 	public $settings = null;
 
 	/**
-	 * Customizer class object.
-	 * @var Customify_Customizer
+	 * Customizer class object to handle customizer controls and logic.
+	 * @var PixCustomify_Customizer
 	 * @access  public
 	 * @since   2.4.0
 	 */
@@ -125,7 +125,7 @@ class PixCustomifyPlugin {
 		/* Initialize the Customizer logic. */
 		require_once( $this->get_base_path() . 'includes/class-customify-customizer.php' );
 		if ( is_null( $this->customizer ) ) {
-			$this->customizer = Customify_Customizer::instance();
+			$this->customizer = PixCustomify_Customizer::instance();
 		}
 
 		/* Initialize the Style Manager logic. */
@@ -797,7 +797,7 @@ class PixCustomifyPlugin {
 	}
 
 	public function get_base_path() {
-		return plugin_dir_path( $this->file );
+		return wp_normalize_path( plugin_dir_path( $this->file ) );
 	}
 
 	/**

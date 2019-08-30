@@ -11,13 +11,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-if ( ! class_exists( 'Customify_Customizer' ) ) :
+if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 
-	class Customify_Customizer {
+	class PixCustomify_Customizer {
 
 		/**
 		 * Holds the only instance of this class.
-		 * @var     null|Customify_Customizer
+		 * @var     null|PixCustomify_Customizer
 		 * @access  protected
 		 * @since   2.4.0
 		 */
@@ -1860,14 +1860,14 @@ if ( ! class_exists( 'Customify_Customizer' ) ) :
 		}
 
 		/**
-		 * Main Customify_Customizer Instance
+		 * Main PixCustomify_Customizer Instance
 		 *
-		 * Ensures only one instance of Customify_Customizer is loaded or can be loaded.
+		 * Ensures only one instance of PixCustomify_Customizer is loaded or can be loaded.
 		 *
 		 * @since  2.4.0
 		 * @static
 		 *
-		 * @return Customify_Customizer Main Customify_Customizer instance
+		 * @return PixCustomify_Customizer Main PixCustomify_Customizer instance
 		 */
 		public static function instance() {
 
