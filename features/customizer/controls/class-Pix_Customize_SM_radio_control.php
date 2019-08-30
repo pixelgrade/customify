@@ -13,10 +13,12 @@ class Pix_Customize_SM_radio_Control extends Pix_Customize_Control {
 	public function render_content() {
 		$input_id = '_customize-input-' . $this->id;
 		$name = '_customize-radio-' . $this->id;
-	    ?>
-		<?php if ( ! empty( $this->label ) ) : ?>
+
+		do_action( 'customify_before_sm_radio_control', $this );
+
+		if ( ! empty( $this->label ) ) { ?>
             <span class="customize-control-title"><?php echo esc_html( $this->label ); ?></span>
-		<?php endif; ?>
+		<?php } ?>
         <div class="sm-radio-group">
 		    <?php foreach ( $this->choices as $value => $label ) { ?>
 				<input
@@ -32,5 +34,7 @@ class Pix_Customize_SM_radio_Control extends Pix_Customize_Control {
 		    <?php } ?>
         </div>
 
-	<?php }
+	<?php
+		do_action( 'customify_after_sm_radio_control', $this );
+	}
 }

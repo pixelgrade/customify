@@ -2253,14 +2253,19 @@ input.c-color-palette__input[class] {
 	// ----------------------------------------
 	li#accordion-panel-theme_options_panel {
 		@include section_icon("\f538");
-
-		h3.accordion-section-title {
-		  border-bottom: 1px solid #ddd;
-		  border-left: none;
-		  border-right: none;
-		  margin: 0 0 15px 0;
-		}
 	}
+
+  // Theme Options Panel and PRO Section should have some space after them to make theme stand out.
+  // ----------------------------------------
+  li#accordion-panel-theme_options_panel,
+  li#accordion-section-pro__section {
+    h3.accordion-section-title {
+      border-bottom: 1px solid #ddd;
+      border-left: none;
+      border-right: none;
+      margin: 0 0 15px 0;
+    }
+  }
 }
 
 .color .disc {
@@ -2440,7 +2445,6 @@ input.c-color-palette__input[class] {
 
 	#customize-control-sm_color_palette_control {
 		flex-shrink: 0;
-		flex-grow: 1;
 		overflow-y: scroll;
 		margin-bottom: 0;
 		padding-top: 12px;
@@ -2452,21 +2456,31 @@ input.c-color-palette__input[class] {
 	}
 
 	[id="customize-control-sm_current_color_palette_control"] ~ * {
-
-
 		display: none !important;
 	}
 
 	[id="customize-control-sm_palettes_description_control"],
+	[id="customize-control-sm_palettes_description_after_control"],
 	[id="customize-control-sm_filters_description_control"],
-	[id="customize-control-sm_customize_description_control"] {
+	[id="customize-control-sm_filters_description_after_control"],
+	[id="customize-control-sm_customize_description_control"],
+	[id="customize-control-sm_customize_description_after_control"] {
 		span {
 			margin: 0;
 		}
 	}
 
+  [id="customize-control-sm_palettes_description_after_control"][id].customize-control {
+    padding-top: 0;
+  }
+
+  [id="customize-control-sm_filters_description_after_control"][id].customize-control {
+    padding-top: 12px;
+  }
+
 	&.sm-view-palettes {
 		[id="customize-control-sm_palettes_description_control"],
+		[id="customize-control-sm_palettes_description_after_control"],
 		[id="customize-control-sm_color_palette_control"] {
 			display: block !important;
 		}
@@ -2474,6 +2488,7 @@ input.c-color-palette__input[class] {
 
 	&.sm-view-filters {
 		[id="customize-control-sm_filters_description_control"],
+		[id="customize-control-sm_filters_description_after_control"],
 		[id="customize-control-sm_palette_filter_control"] {
 			display: block !important;
 		}
@@ -2481,6 +2496,7 @@ input.c-color-palette__input[class] {
 
 	&.sm-view-customize {
 		[id="customize-control-sm_customize_description_control"],
+		[id="customize-control-sm_customize_description_after_control"],
 		[id="customize-control-sm_coloration_level_control"],
 		[id="customize-control-sm_color_diversity_control"],
 		[id="customize-control-sm_shuffle_colors_control"],

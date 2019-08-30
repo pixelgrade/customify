@@ -23,7 +23,7 @@ $errors    = $processor->errors(); ?>
 
 	<div id="icon-options-general" class="icon32"><br></div>
 
-	<h2><?php esc_html_e( 'PixCustomify', 'customify' ); ?></h2>
+	<h2><?php esc_html_e( 'Customify', 'customify' ); ?></h2>
 
 	<?php if ( $processor->ok() ): ?>
 

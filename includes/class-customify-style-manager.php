@@ -127,13 +127,17 @@ if ( ! class_exists( 'Customify_Style_Manager' ) ) {
 			/*
 			 * Handle the grouping and reorganization of the Customizer theme sections when the Style Manager is active.
 			 */
-			add_filter( 'customify_final_config', array( $this, 'reorganize_sections' ), 10, 1 );
+			add_filter( 'customify_final_config', array( $this, 'reorganize_customify_sections' ), 10, 1 );
+			add_action( 'customize_register', array( $this, 'general_reorganization_of_customize_sections' ), 999, 1 );
 
 			/*
-			 * Handle the filtering based on theme type.
+			 * Handle the customization of controls based on theme type.
 			 */
 			add_filter( 'customify_filter_fields', array( $this, 'pre_filter_based_on_theme_type' ), 20, 1 );
 			add_filter( 'customify_final_config', array( $this, 'filter_based_on_theme_type' ), 20, 1 );
+			add_action( 'customify_after_preset_control', array( $this, 'maybe_add_text_after_color_palettes' ), 10, 1 );
+			add_action( 'customify_after_sm_palette_filter_control', array( $this, 'maybe_add_text_after_color_palette_filters' ), 10, 1 );
+			add_action( 'customify_after_sm_radio_control', array( $this, 'maybe_add_text_after_color_palettes_customize_controls' ), 10, 1 );
 
 			/*
 			 * Handle the logic for user feedback.
@@ -224,7 +228,7 @@ if ( ! class_exists( 'Customify_Style_Manager' ) ) {
 		 * @since 1.7.4
 		 *
 		 */
-		public function reorganize_sections( $config ) {
+		public function reorganize_customify_sections( $config ) {
 			// If there is no style manager support, bail early.
 			if ( ! $this->is_supported() ) {
 				return $config;
@@ -250,7 +254,7 @@ if ( ! class_exists( 'Customify_Style_Manager' ) ) {
 			// The Style Manager panel.
 			if ( empty( $config['panels']['style_manager_panel'] ) ) {
 				$style_manager_panel_config = array(
-					'priority'                 => 22,
+					'priority'                 => 22, // after the Site Identity panel
 					'capability'               => 'edit_theme_options',
 					'panel_id'                 => 'style_manager_panel',
 					'title'                    => esc_html__( 'Style Manager', 'customify' ),
@@ -381,7 +385,7 @@ if ( ! class_exists( 'Customify_Style_Manager' ) ) {
 
 			// The Theme Options panel.
 			$theme_options_panel_config = array(
-				'priority'    => 23,
+				'priority'    => 24, // after the Style Manager panel.
 				'capability'  => 'edit_theme_options',
 				'panel_id'    => 'theme_options_panel',
 				'title'       => esc_html__( 'Theme Options', 'customify' ),
@@ -453,6 +457,21 @@ if ( ! class_exists( 'Customify_Style_Manager' ) ) {
 		}
 
 		/**
+		 * Reorganize the Customizer sections and panels, without accounting for Customify's configured ones.
+		 *
+		 * @param WP_Customize_Manager $wp_customize WP_Customize_Manager instance.
+		 */
+		public function general_reorganization_of_customize_sections( $wp_customize ) {
+			$sections = $wp_customize->sections();
+			if ( ! empty( $sections['pro__section'] ) ) {
+				$sections['pro__section']->priority = 24; // After the Style Manager panel.
+			}
+
+			// Add a pretty icon to Site Identity
+			$wp_customize->get_section( 'title_tagline' )->title = '&#x1f465; ' . esc_html__( 'Site Identity', 'customify' );
+		}
+
+		/**
 		 * Filter the config during the build up.
 		 *
 		 * @param array $config
@@ -467,25 +486,33 @@ if ( ! class_exists( 'Customify_Style_Manager' ) ) {
 
 					return $classes;
 				} );
-
-				add_filter( 'customify_style_manager_sm_palettes_description_html', function ( $html ) {
-					$html .= '<br /><strong>More color palettes</strong> are available with the PRO version of your theme.';
-
-					return $html;
-				} );
-				add_filter( 'customify_style_manager_sm_filters_description_html', function ( $html ) {
-					$html .= '<br /><strong>More filters</strong> are available with the PRO version of your theme.';
-
-					return $html;
-				} );
-				add_filter( 'customify_style_manager_sm_customize_description_html', function ( $html ) {
-					$html .= '<br /><strong>More options</strong> are available with the PRO version of your theme.';
-
-					return $html;
-				} );
 			}
 
 			return $config;
+		}
+
+		public function maybe_add_text_after_color_palettes( $control ) {
+			if ( 'sm_color_palette' === $control->setting->id && in_array( self::get_theme_type(), array( 'theme_wporg', 'theme_modular_wporg' ) ) ) { ?>
+				<li id="customize-control-sm_palettes_description_after_control" class="pix_customizer_setting customize-control customize-control-html" style="display: list-item;">
+					<span class="description customize-control-description"><strong>Many more color palettes</strong> are available with the PRO version of your theme.</span>
+				</li>
+			<?php }
+		}
+
+		public function maybe_add_text_after_color_palette_filters( $control ) {
+			if ( in_array( self::get_theme_type(), array( 'theme_wporg', 'theme_modular_wporg' ) ) ) { ?>
+				<li id="customize-control-sm_filters_description_after_control" class="pix_customizer_setting customize-control customize-control-html" style="display: list-item;">
+					<span class="description customize-control-description"><strong>More filters</strong> are available with the PRO version of your theme.</span>
+				</li>
+			<?php }
+		}
+
+		public function maybe_add_text_after_color_palettes_customize_controls( $control ) {
+			if ( 'sm_coloration_level' === $control->setting->id && in_array( self::get_theme_type(), array( 'theme_wporg', 'theme_modular_wporg' ) ) ) { ?>
+				<li id="customize-control-sm_customize_description_after_control" class="pix_customizer_setting customize-control customize-control-html" style="display: list-item;">
+					<span class="description customize-control-description"><strong>More options</strong> are available with the PRO version of your theme.</span>
+				</li>
+			<?php }
 		}
 
 		/**

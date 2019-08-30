@@ -16,6 +16,8 @@ class Pix_Customize_Preset_Control extends Pix_Customize_Control {
 	 */
 	public function render_content() {
 
+		do_action( 'customify_before_preset_control', $this );
+
 		switch ( $this->choices_type ) {
 
 			case 'select' : { ?>
@@ -378,6 +380,8 @@ class Pix_Customize_Preset_Control extends Pix_Customize_Control {
 			default:
 				break;
 		}
+
+		do_action( 'customify_after_preset_control', $this );
 	}
 
 	/**
