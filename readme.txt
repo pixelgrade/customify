@@ -45,6 +45,10 @@ With [Customify](https://github.com/pixelgrade/customify), developers can easily
 
 == Changelog ==
 
+= 2.5.1 =
+* Styling improvements to the Style Manager controls.
+* Fixed a strange bug that would result in a fatal error upon activation.
+
 = 2.5.0 =
 * JavaScript cleanup and performance enhancements
 * Fixed some bugs with the Style Manager.
