@@ -779,10 +779,21 @@ let ColorPalettes = (function ($, exports, wp) {
   }
 
   const reloadConnectedFields = () => {
-    let tempSettings = JSON.parse(JSON.stringify(window.settingsClone))
+    var tempSettings = JSON.parse(JSON.stringify(window.settingsClone));
+    var diversityOptions = $('[name*="sm_color_diversity"]');
+    var colorationOptions = $('[name*="sm_coloration_level"]');
 
-    if (typeof $('[name*="sm_color_diversity"]:checked').data('default') === 'undefined'
-      || typeof $('[name*="sm_coloration_level"]:checked').data('default') === 'undefined') {
+    var hasDiversityOption = !! diversityOptions.length;
+    var isDefaultDiversitySelected = typeof diversityOptions.filter( 'checked' ).data( 'default' ) !== 'undefined';
+    var isDefaultDiversity = hasDiversityOption ? isDefaultDiversitySelected : true;
+
+    var hasColorationOptions = !! colorationOptions.length;
+    var isDefaultColorationSelected = typeof $('[name*="sm_coloration_level"]:checked').data('default') !== 'undefined';
+    var isDefaultColoration = hasColorationOptions ? isDefaultColorationSelected : true;
+
+    var selectedDiversity = hasDiversityOption ? $('[name*="sm_color_diversity"]:checked').val() : wp.customize( 'sm_color_diversity' )();
+
+    if ( ! isDefaultDiversity || ! isDefaultColoration ) {
       const primaryRatio = $(primary_color_selector).val() / 100
       const secondaryRatio = $(secondary_color_selector).val() / 100
       const tertiaryRatio = $(tertiary_color_selector).val() / 100
@@ -791,15 +802,14 @@ let ColorPalettes = (function ($, exports, wp) {
       tempSettings = moveConnectedFields(tempSettings, 'sm_dark_secondary', 'sm_color_secondary', secondaryRatio)
       tempSettings = moveConnectedFields(tempSettings, 'sm_dark_tertiary', 'sm_color_tertiary', tertiaryRatio)
 
-      var diversity = $('[name*="sm_color_diversity"]:checked').val()
-      var diversity_variation = getSwapMap('color_diversity_low')
-      tempSettings = swapConnectedFields(tempSettings, diversity_variation)
+      var diversity_variation = getSwapMap('color_diversity_low');
+      tempSettings = swapConnectedFields(tempSettings, diversity_variation);
 
-      if (diversity === 'medium') {
+      if (selectedDiversity === 'medium') {
         tempSettings = moveConnectedFields(tempSettings, 'sm_color_primary', 'sm_color_secondary', 0.5)
       }
 
-      if (diversity === 'high') {
+      if (selectedDiversity === 'high') {
         tempSettings = moveConnectedFields(tempSettings, 'sm_color_primary', 'sm_color_secondary', 0.67)
         tempSettings = moveConnectedFields(tempSettings, 'sm_color_secondary', 'sm_color_tertiary', 0.50)
       }
