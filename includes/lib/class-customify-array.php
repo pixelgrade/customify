@@ -283,11 +283,14 @@ if ( ! class_exists( 'Customify_Array' ) ) {
 					$append = array( $append );
 				}
 				foreach ( $append as $key => $value ) {
-					if ( ! array_key_exists( $key, $base ) and ! is_numeric( $key ) ) {
+					if ( ! array_key_exists( $key, $base ) && ! is_numeric( $key ) ) {
 						$base[ $key ] = $append[ $key ];
 						continue;
 					}
-					if ( is_array( $value ) or ( array_key_exists( $key, $base ) and is_array( $base[ $key ] ) ) ) {
+					if ( is_array( $value ) || ( array_key_exists( $key, $base ) && is_array( $base[ $key ] ) ) ) {
+						if ( ! isset( $base[ $key ] ) ) {
+							$base[ $key ] = array();
+						}
 						$base[ $key ] = self::array_merge_recursive_distinct( $base[ $key ], $append[ $key ] );
 					} else if ( is_numeric( $key ) ) {
 						if ( ! in_array( $value, $base ) ) {
