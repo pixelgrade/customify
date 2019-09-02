@@ -536,7 +536,7 @@ if ( ! class_exists( 'Customify_Style_Manager' ) ) {
 				);
 				foreach ( $options_to_remove as $option_key ) {
 					if ( isset( $color_palettes_options[ $option_key ] ) ) {
-						unset( $color_palettes_options[ $option_key ] );
+						$color_palettes_options[ $option_key ]['type'] = 'hidden_control';
 					}
 				}
 
