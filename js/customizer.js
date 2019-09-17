@@ -488,6 +488,7 @@
 					case 'sm_radio':
 					case 'sm_switch':
 					case 'radio_image':
+					case 'radio_html':
 
 						// in case of an array of values we use the ( val in array) condition
 						if (_.isObject(value)) {
