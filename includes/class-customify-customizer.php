@@ -1677,6 +1677,10 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 
 	                $control_args['choices'] = $field_config['choices'];
 
+	                if ( isset( $field_config['desc'] ) || ! empty( $field_config['desc'] ) ) {
+		                $control_args['description'] = $field_config['desc'];
+	                }
+
 	                $control_class_name = 'Pix_Customize_Radio_HTML_Control';
 	                break;
 

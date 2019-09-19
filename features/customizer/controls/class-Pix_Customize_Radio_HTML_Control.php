@@ -25,7 +25,7 @@ class Pix_Customize_Radio_HTML_Control extends Pix_Customize_Control {
 					<label>
 						<input
 							type="radio"
-							name="<?php echo $this->setting->id; ?>"
+							name="<?php echo esc_attr( $this->setting->id ); ?>"
 							value="<?php echo esc_attr( $value ); ?>"
 							<?php $this->link(); ?>
 							<?php echo selected( $this->value(), $value, false ); ?>
