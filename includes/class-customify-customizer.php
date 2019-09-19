@@ -1670,6 +1670,20 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 					$control_class_name = 'Pix_Customize_Radio_Image_Control';
 					break;
 
+                case 'radio_html' :
+	                if ( ! isset( $field_config['choices'] ) || empty( $field_config['choices'] ) ) {
+		                return;
+	                }
+
+	                $control_args['choices'] = $field_config['choices'];
+
+	                if ( isset( $field_config['desc'] ) || ! empty( $field_config['desc'] ) ) {
+		                $control_args['description'] = $field_config['desc'];
+	                }
+
+	                $control_class_name = 'Pix_Customize_Radio_HTML_Control';
+	                break;
+
 				case 'button' :
 					if ( ! isset( $field_config['action'] ) || empty( $field_config['action'] ) ) {
 						return;
