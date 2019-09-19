@@ -170,9 +170,9 @@ class PixCustomifyPlugin {
 		add_action( 'deactivated_plugin', array( $this, 'invalidate_options_details_cache' ), 1 );
 		add_action( 'deactivated_plugin', array( $this, 'invalidate_customizer_opt_name_cache' ), 1 );
 
-		add_action( 'switch_theme', array( $this, 'invalidate_customizer_config_cache' ), 1 );
-		add_action( 'switch_theme', array( $this, 'invalidate_options_details_cache' ), 1 );
-		add_action( 'switch_theme', array( $this, 'invalidate_customizer_opt_name_cache' ), 1 );
+		add_action( 'after_switch_theme', array( $this, 'invalidate_customizer_config_cache' ), 1 );
+		add_action( 'after_switch_theme', array( $this, 'invalidate_options_details_cache' ), 1 );
+		add_action( 'after_switch_theme', array( $this, 'invalidate_customizer_opt_name_cache' ), 1 );
 
 		add_action( 'upgrader_process_complete', array( $this, 'invalidate_customizer_config_cache' ), 1 );
 		add_action( 'upgrader_process_complete', array( $this, 'invalidate_options_details_cache' ), 1 );

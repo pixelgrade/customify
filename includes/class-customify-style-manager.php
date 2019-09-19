@@ -109,6 +109,9 @@ if ( ! class_exists( 'Customify_Style_Manager' ) ) {
 			require_once 'lib/class-customify-cloud-api.php';
 			$this->cloud_api = new Customify_Cloud_Api();
 
+			// Make sure that the Design Assets class is loaded.
+			require_once 'lib/class-customify-design-assets.php';
+
 			// Hook up.
 			$this->add_hooks();
 		}

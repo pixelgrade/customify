@@ -784,7 +784,7 @@ let ColorPalettes = (function ($, exports, wp) {
     var colorationOptions = $('[name*="sm_coloration_level"]');
 
     var hasDiversityOption = !! diversityOptions.length;
-    var isDefaultDiversitySelected = typeof diversityOptions.filter( 'checked' ).data( 'default' ) !== 'undefined';
+    var isDefaultDiversitySelected = typeof diversityOptions.filter( ':checked' ).data( 'default' ) !== 'undefined';
     var isDefaultDiversity = hasDiversityOption ? isDefaultDiversitySelected : true;
 
     var hasColorationOptions = !! colorationOptions.length;
