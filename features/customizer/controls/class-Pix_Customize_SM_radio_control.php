@@ -27,7 +27,7 @@ class Pix_Customize_SM_radio_Control extends Pix_Customize_Control {
                     id="<?php echo esc_attr( $input_id . '-radio-' . $value ); ?>"
                     name="<?php echo esc_attr( $name ) ?>"
 					<?php $this->link(); ?>
-                    <?php if ( $value === $this->settings['default']->default ) { echo 'data-default="true"'; }; ?>
+                    <?php if ( $value == $this->settings['default']->default ) { echo 'data-default="true"'; }; ?>
                     <?php checked( $this->value(), $value, true ); ?>
                 >
 				<label for="<?php echo esc_attr( $input_id . '-radio-' . $value ); ?>"><?php echo esc_html( $label ) ?></label>
