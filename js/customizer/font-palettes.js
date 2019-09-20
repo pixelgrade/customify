@@ -3,7 +3,8 @@ let FontPalettes = ( function( $, exports, wp ) {
     const masterSettingIds = [
         'sm_font_primary',
         'sm_font_secondary',
-        'sm_font_body'
+        'sm_font_body',
+        'sm_font_accent',
     ];
 
     const defaultFontType = 'google';

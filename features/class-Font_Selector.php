@@ -315,6 +315,11 @@ class Customify_Font_Selector {
 		}
 
 		$font['selector'] = apply_filters( 'customify_font_css_selector', $font['selector'], $font );
+		$properties_prefix = '';
+
+		if ( ! empty ( $font['properties_prefix'] ) ) {
+			$properties_prefix = $font['properties_prefix'];
+		}
 
 		if ( empty( $font['selector'] ) || empty( $font['value'] ) ) {
 			return '';
@@ -365,7 +370,7 @@ class Customify_Font_Selector {
 			// First handle the case where we have the font-family in the selected variant (usually this means a custom font from our Fonto plugin)
 			if ( ! empty( $selected_variant ) && is_array( $selected_variant ) && ! empty( $selected_variant['font-family'] ) ) {
 				//the variant's font-family
-				$this->display_property( 'font-family', $selected_variant['font-family'] );
+				$this->display_property( 'font-family', $selected_variant['font-family'], '', $properties_prefix );
 
 				if ( ! $load_all_weights ) {
 					// if this is a custom font (like from our plugin Fonto) with individual styles & weights - i.e. the font-family says it all
@@ -385,13 +390,13 @@ class Customify_Font_Selector {
 
 					// output the font style, if available and if it wasn't displayed already
 					if ( ! $italic_font && ! empty( $selected_variant['font-style'] ) ) {
-						$this->display_property( 'font-style', $selected_variant['font-style'] );
+						$this->display_property( 'font-style', $selected_variant['font-style'], '', $properties_prefix );
 					}
 				}
 
 			} elseif ( isset( $value['font_family'] ) ) {
 				// the selected font family
-				$this->display_property( 'font-family', $value['font_family'] );
+				$this->display_property( 'font-family', $value['font_family'], '', $properties_prefix );
 
 				if ( ! empty( $selected_variant ) && ! $load_all_weights ) {
 					$weight_and_style = strtolower( $selected_variant );
@@ -408,11 +413,11 @@ class Customify_Font_Selector {
 
 					// output the font style, if available
 					if ( ! $italic_font && ! empty( $selected_variant['font-style'] ) ) {
-						$this->display_property( 'font-style', $selected_variant['font-style'] );
+						$this->display_property( 'font-style', $selected_variant['font-style'], '', $properties_prefix );
 					}
 				}
 			} else if (  isset( $value['font-family'] ) ) {
-				$this->display_property( 'font-family', $value['font-family'] );
+				$this->display_property( 'font-family', $value['font-family'], '', $properties_prefix );
 			}
 
 			if ( ! empty( $value['font_weight'] ) ) {
@@ -440,7 +445,7 @@ class Customify_Font_Selector {
 					$value['font_size']['unit'] = 'px';
                 }
 
-				$this->display_property( 'font-size', $font_size, $unit );
+				$this->display_property( 'font-size', $font_size, $unit, $properties_prefix );
 			}
 
 			if ( isset( $value['line_height'] ) ) {
@@ -460,7 +465,7 @@ class Customify_Font_Selector {
 					}
 				}
 
-				$this->display_property( 'line-height', $line_height, $unit );
+				$this->display_property( 'line-height', $line_height, $unit, $properties_prefix );
 			}
 
 			if ( isset( $value['letter_spacing'] ) ) {
@@ -480,19 +485,19 @@ class Customify_Font_Selector {
 					}
 				}
 
-				$this->display_property( 'letter-spacing', $letter_spacing, $unit );
+				$this->display_property( 'letter-spacing', $letter_spacing, $unit, $properties_prefix );
 			}
 
 			if ( ! empty( $value['text_align'] ) ) {
-				$this->display_property( 'text-align', $value['text_align'] );
+				$this->display_property( 'text-align', $value['text_align'], '', $properties_prefix );
 			}
 
 			if ( ! empty( $value['text_transform'] ) ) {
-				$this->display_property( 'text-transform', $value['text_transform'] );
+				$this->display_property( 'text-transform', $value['text_transform'], '', $properties_prefix );
 			}
 
 			if ( ! empty( $value['text_decoration'] ) ) {
-				$this->display_property( 'text-decoration', $value['text_decoration'] );
+				$this->display_property( 'text-decoration', $value['text_decoration'], '', $properties_prefix );
 			}
 			echo "}\n";
 		}
@@ -601,8 +606,8 @@ if (typeof WebFont !== 'undefined') {
 
 	}
 
-	function display_property( $property, $value, $unit = '' ) {
-		echo $property . ": " . $value . $unit . ";\n";
+	function display_property( $property, $value, $unit = '', $prefix = '' ) {
+		echo $prefix . $property . ": " . $value . $unit . ";\n";
 	}
 
 	// well weight sometimes comes from google as 600italic which in CSS syntax should come in two separate properties

@@ -451,6 +451,37 @@ class Customify_Font_Palettes {
 					),
 					'connected_fields' => array(),
 				),
+				'sm_font_accent'              => array(
+					'type'             => 'font',
+					// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
+					'setting_type'     => 'option',
+					// We will force this setting id preventing prefixing and other regular processing.
+					'setting_id'       => 'sm_font_accent',
+					// We don't want to refresh the preview window, even though we have no direct effect on it through this field.
+					'live'             => true,
+					'priority'         => 7,
+					'label'            => esc_html__( 'Font Accent', 'customify' ),
+					'default'  => array(
+						'font-family'    => 'Montserrat',
+						'font-weight'    => '400',
+						'font-size'      => 20,
+						'line-height'    => 1.25,
+						'letter-spacing' => 0.029,
+						'text-transform' => 'uppercase'
+					),
+					// Sub Fields Configuration
+					'fields'   => array(
+						// These subfields are disabled because they are calculated through the font palette logic.
+						'font-size'       => false,
+						'font-weight'     => false,
+						'line-height'     => false,
+						'letter-spacing'  => false,
+						'text-align'      => false,
+						'text-transform'  => false,
+						'text-decoration' => false,
+					),
+					'connected_fields' => array(),
+				),
 			),
 		) );
 
