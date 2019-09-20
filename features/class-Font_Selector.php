@@ -315,14 +315,13 @@ class Customify_Font_Selector {
 		}
 
 		$font['selector'] = apply_filters( 'customify_font_css_selector', $font['selector'], $font );
-		$properties_prefix = '';
-
-		if ( ! empty ( $font['properties_prefix'] ) ) {
-			$properties_prefix = $font['properties_prefix'];
-		}
-
 		if ( empty( $font['selector'] ) || empty( $font['value'] ) ) {
 			return '';
+		}
+
+		$properties_prefix = '';
+		if ( ! empty ( $font['properties_prefix'] ) ) {
+			$properties_prefix = $font['properties_prefix'];
 		}
 
 		/** @var PixCustomifyPlugin $local_plugin */
@@ -385,7 +384,7 @@ class Customify_Font_Selector {
 					// output the font weight, if available
 					if ( ! empty( $selected_variant['font-weight'] ) ) {
 						echo ": " . $selected_variant['font-weight'] . ";\n";
-						$italic_font = $this->display_weight_property( $selected_variant['font-weight'] );
+						$italic_font = $this->display_weight_property( $selected_variant['font-weight'], $properties_prefix );
 					}
 
 					// output the font style, if available and if it wasn't displayed already
@@ -408,7 +407,7 @@ class Customify_Font_Selector {
 						if( $weight_and_style === 'regular' ) {
 							$weight_and_style = 'normal';
 						}
-						$italic_font = $this->display_weight_property( $weight_and_style );
+						$italic_font = $this->display_weight_property( $weight_and_style, $properties_prefix );
 					}
 
 					// output the font style, if available
@@ -421,7 +420,7 @@ class Customify_Font_Selector {
 			}
 
 			if ( ! empty( $value['font_weight'] ) ) {
-				$this->display_weight_property( $value['font_weight'] );
+				$this->display_weight_property( $value['font_weight'], $properties_prefix );
 			}
 
 			if ( ! empty( $value['font_size'] ) ) {
@@ -611,17 +610,17 @@ if (typeof WebFont !== 'undefined') {
 	}
 
 	// well weight sometimes comes from google as 600italic which in CSS syntax should come in two separate properties
-	function display_weight_property( $value ) {
+	function display_weight_property( $value, $prefix = '' ) {
 		$has_style = false;
 
 		if ( strpos( $value, 'italic' ) !== false ) {
 
 			$value = str_replace( 'italic', '', $value );
-			echo 'font-weight' . ": " . $value . ";\n";
-			echo 'font-style' . ": italic;\n";
+			echo $prefix . 'font-weight' . ": " . $value . ";\n";
+			echo $prefix . 'font-style' . ": italic;\n";
 			$has_style = true;
 		} else {
-			echo 'font-weight' . ": " . $value . ";\n";
+			echo $prefix . 'font-weight' . ": " . $value . ";\n";
 		}
 
 
