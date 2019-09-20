@@ -1173,8 +1173,6 @@ class Customify_Font_Palettes {
 		return apply_filters( 'customify_style_manager_default_font_palettes', $default_config );
 	}
 
-
-
 	/**
 	 * Get the current font palette ID or false if none is selected.
 	 *
