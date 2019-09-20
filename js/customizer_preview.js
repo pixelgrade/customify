@@ -9,7 +9,7 @@
 		load_webfont_once()
 
 		$.each(customify_settings.settings, function (key, el) {
-
+      var properties_prefix = typeof el.properties_prefix === "undefined" ? '' : el.properties_prefix;
 			if (el.type === 'font') {
 				api(key, function (setting) {
 					setting.bind(function (to) {
@@ -21,7 +21,7 @@
 							}
 
 							let vls = get_CSS_values(this.id, $values),
-								CSS = get_CSS_code(this.id, vls),
+								CSS = get_CSS_code(this.id, vls, properties_prefix),
 								field_style = $('#customify_font_output_for_' + el.html_safe_option_id)
 
 							field_style.html(CSS)
@@ -193,7 +193,7 @@
 			return store
 		}
 
-		const get_CSS_code = function (ID, values) {
+		const get_CSS_code = function (ID, values, prefix) {
 
 			let field = customify_settings.settings[ID]
 			let output = ''
@@ -203,7 +203,7 @@
 			} else {
 				output = field.selector + '{\n'
 				$.each(values, function (k, v) {
-					output += k + ': ' + v + ';\n'
+					output += prefix + k + ': ' + v + ';\n'
 				})
 				output += '}\n'
 			}

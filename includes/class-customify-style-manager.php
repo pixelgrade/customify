@@ -355,6 +355,7 @@ if ( ! class_exists( 'Customify_Style_Manager' ) ) {
 					'sm_font_primary',
 					'sm_font_secondary',
 					'sm_font_body',
+					'sm_font_accent',
 					'sm_swap_fonts',
 					'sm_swap_primary_secondary_fonts',
 				);
