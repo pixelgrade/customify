@@ -228,7 +228,8 @@ class Pix_Customize_Preset_Control extends Pix_Customize_Control {
 
 				<div class="customify_preset font_palette customize-control customize-control-radio">
 					<?php
-					foreach ( $this->choices as $choice_value => $choice_config ){
+					$choices = Customify_Font_Palettes::instance()->preprocess_config( $this->choices );
+					foreach ( $choices as $choice_value => $choice_config ){
 						if ( empty( $choice_config['options'] ) && empty( $choice_config['fonts_logic'] ) ) {
 							continue;
 						}

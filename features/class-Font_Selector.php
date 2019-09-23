@@ -567,6 +567,11 @@ if (typeof WebFont !== 'undefined') {
 	function get_field_unit( $font, $field ) {
 
 		if ( empty( $font ) || empty( $font['fields'] ) || empty( $font['fields'][ $field ] ) ) {
+
+			if ( 'line-height' == $field ){
+				return '';
+			}
+
 			return 'px';
 		}
 
