@@ -640,6 +640,17 @@ class PixCustomifyPlugin {
 			$setting    = $wp_customize->get_setting( $setting_id );
 			if ( ! empty( $setting ) ) {
 				return $setting->value();
+			} elseif ( $wp_customize->is_preview() ) {
+				// If the setting is not registered (like in asking for the value before wp_loaded), we will read directly from the posted values via the changeset.
+				// Not really the best way, but ok.
+				$post_values = $wp_customize->unsanitized_post_values();
+				if ( array_key_exists( $setting_id, $post_values ) ) {
+					$value = $post_values[ $setting_id ];
+					// Skip validation and sanitization since it is too early.
+					if ( ! is_null( $value ) && ! is_wp_error( $value ) ) {
+						return $value;
+					}
+				}
 			}
 		}
 
