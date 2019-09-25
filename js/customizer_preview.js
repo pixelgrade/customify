@@ -229,7 +229,7 @@
 
 			if (typeof WebFont === 'undefined') {
 				let tk = document.createElement('script')
-				tk.src = '//ajax.googleapis.com/ajax/libs/webfont/1/webfont.js'
+				tk.src = '//ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js'
 				tk.type = 'text/javascript'
 				let s = document.getElementsByTagName('script')[0]
 				s.parentNode.insertBefore(tk, s)
