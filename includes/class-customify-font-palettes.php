@@ -622,11 +622,15 @@ class Customify_Font_Palettes {
 
 					// If we don't have an unit, maybe we can make an educated guess.
 					// If the value is bellow 9, then probably we are talking about ems, else pxs.
-					if ( ! empty( $value['font_size'] ) && ! empty( $value['font_size']['value'] ) && ! isset( $value['font_size']['unit'] ) ) {
-						if ( $value['font_size']['value'] < 9 ) {
-							$value['font_size']['unit'] = 'em';
+					if ( ! empty( $value['font_size']['value'] ) && ! isset( $value['font_size']['unit'] ) ) {
+						if ( isset( $option_config['fields']['font-size']['unit'] ) ) {
+							$value['font_size']['unit'] = $option_config['fields']['font-size']['unit'];
 						} else {
-							$value['font_size']['unit'] = 'px';
+							if ( $value['font_size']['value'] < 9 ) {
+								$value['font_size']['unit'] = 'em';
+							} else {
+								$value['font_size']['unit'] = 'px';
+							}
 						}
 					}
 

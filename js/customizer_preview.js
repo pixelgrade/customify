@@ -229,7 +229,7 @@
 
 			if (typeof WebFont === 'undefined') {
 				let tk = document.createElement('script')
-				tk.src = '//ajax.googleapis.com/ajax/libs/webfont/1/webfont.js'
+				tk.src = '//ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js'
 				tk.type = 'text/javascript'
 				let s = document.getElementsByTagName('script')[0]
 				s.parentNode.insertBefore(tk, s)
@@ -241,6 +241,20 @@
 			}
 
 			if (font.type === 'theme_font') {
+
+        if (typeof font.src === 'undefined') {
+          var themeFontsArray = Object.keys(customify_settings.theme_fonts).map(key => customify_settings.theme_fonts[key]);
+          var index = themeFontsArray.findIndex(fontObj => fontObj.family === font.font_family );
+
+          if ( index > -1 ) {
+            font.src = themeFontsArray[index].src;
+          }
+        }
+
+        if ( typeof font.src === "undefined" ) {
+          return;
+        }
+
 				WebFont.load({
 					custom: {
 						families: [font.font_family],

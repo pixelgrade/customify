@@ -527,8 +527,17 @@ class Customify_Font_Selector {
 		ob_start(); ?>
 function customify_font_loader() {
     var webfontargs = {
-        classes: false,
-        events: false
+        classes: true,
+        events: true,
+		loading: function() {
+			jQuery( window ).trigger( 'wf-loading' );
+		},
+		active: function() {
+			jQuery( window ).trigger( 'wf-active' );
+		},
+		inactive: function() {
+			jQuery( window ).trigger( 'wf-inactive' );
+		},
     };
         <?php if ( ! empty( $args['google_families'] ) ) { ?>
     webfontargs.google = {
