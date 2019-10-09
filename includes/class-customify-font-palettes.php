@@ -376,7 +376,7 @@ class Customify_Font_Palettes {
 					'label'            => esc_html__( 'Font Primary', 'customify' ),
 					'default'  => array(
 						'font-family'    => 'Montserrat',
-						'font-weight'    => '400',
+						'font-weight'    => 'regular',
 						'font-size'      => 20,
 						'line-height'    => 1.25,
 						'letter-spacing' => 0.029,
@@ -463,7 +463,7 @@ class Customify_Font_Palettes {
 					'label'            => esc_html__( 'Font Accent', 'customify' ),
 					'default'  => array(
 						'font-family'    => 'Montserrat',
-						'font-weight'    => '400',
+						'font-weight'    => 'regular',
 						'font-size'      => 20,
 						'line-height'    => 1.25,
 						'letter-spacing' => 0.029,
@@ -815,7 +815,7 @@ class Customify_Font_Palettes {
 							),
 							array(
 								'start'          => 13,
-								'font_weight'    => 400,
+								'font_weight'    => 'regular',
 								'letter_spacing' => '0.015em',
 								'text_transform' => 'uppercase',
 							),
@@ -933,7 +933,7 @@ class Customify_Font_Palettes {
 					// Used for Body Font [eg. entry-content]
 					'sm_font_body' => array(
 						'font_family'      => 'PT Serif',
-						'font_weights'     => array( 'regular', '400italic', 700, '700italic' ),
+						'font_weights'     => array( 400, '400italic', 700, '700italic' ),
 						'font_size_to_line_height_points' => array(
 							array( 15, 1.7 ),
 							array( 18, 1.5 ),
@@ -1002,7 +1002,7 @@ class Customify_Font_Palettes {
 							),
 							array(
 								'start'          => 25,
-								'font_weight'    => 400,
+								'font_weight'    => 'regular',
 								'letter_spacing' => '0.04em',
 								'text_transform' => 'uppercase',
 							),
@@ -1119,7 +1119,7 @@ class Customify_Font_Palettes {
 						'font_styles_intervals'      => array(
 							array(
 								'start'          => 0,
-								'font_weight'    => 400,
+								'font_weight'    => 'regular',
 								'letter_spacing' => '0em',
 								'text_transform' => 'none',
 							),
@@ -1138,7 +1138,7 @@ class Customify_Font_Palettes {
 							array(
 								'start'          => 0,
 								'end'          	 => 15,
-								'font_weight'    => 400,
+								'font_weight'    => 'regular',
 								'letter_spacing' => '0em',
 								'text_transform' => 'none',
 							),
@@ -1164,7 +1164,7 @@ class Customify_Font_Palettes {
 						'font_styles_intervals'      => array(
 							array(
 								'start'          => 0,
-								'font_weight'    => 400,
+								'font_weight'    => 'regular',
 								'letter_spacing' => 0,
 								'text_transform' => 'none',
 							),
