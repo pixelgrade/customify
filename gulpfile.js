@@ -10,22 +10,6 @@ var plugin = 'customify',
 
 require('es6-promise').polyfill();
 
-var jsFiles = [
-	'./assets/js/vendor/*.js',
-	'./assets/js/main/wrapper_start.js',
-	'./assets/js/main/shared_vars.js',
-	'./assets/js/modules/*.js',
-	'./assets/js/main/main.js',
-	'./assets/js/main/functions.js',
-	'./assets/js/main/wrapper_end.js'
-];
-
-
-var options = {
-	silent: true,
-	continueOnError: true // default: false
-};
-
 // styles related
 function stylesDev() {
 	return gulp.src(source_SCSS)
@@ -52,22 +36,8 @@ gulp.task('styles-watch', function () {
 	return gulp.watch(source_SCSS, stylesDev);
 });
 
-// javascript stuff
-function scriptsMain() {
-	return gulp.src(jsFiles)
-		.pipe(plugins.concat('main.js'))
-		.pipe(plugins.beautify({indentSize: 2}))
-		.pipe(gulp.dest('./assets/js/', {"mode": "0644"}));
-}
-gulp.task('scripts', scriptsMain);
-
-gulp.task('scripts-watch', function () {
-	return gulp.watch(source_SCSS, scriptsMain);
-});
-
 gulp.task('watch', function () {
 	gulp.watch(source_SCSS, stylesDev);
-	gulp.watch(source_SCSS, scriptsMain);
 });
 
 // usually there is a default task for lazy people who just wanna type gulp
