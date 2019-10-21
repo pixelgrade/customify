@@ -703,7 +703,11 @@ let ColorPalettes = (function ($, exports, wp) {
       }
     })
 
-    optionsSelector = '.' + optionsToShow.join(', .')
+    if ( !_.isEmpty( optionsToShow ) ) {
+      optionsSelector = '.' + optionsToShow.join(', .')
+    } else {
+      optionsSelector = '*';
+    }
 
     $('.sm-palette-filter .color').addClass('hidden').filter(optionsSelector).removeClass('hidden')
     $('.c-color-palette .color').addClass('hidden').filter(optionsSelector).removeClass('hidden')
