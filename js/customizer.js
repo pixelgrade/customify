@@ -184,12 +184,6 @@
 				})
 			}
 
-			$(document).on('change keyup', '.customize-control-range input.range-value', function () {
-				const range = $(this).siblings('input[type="range"]')
-				range.val($(this).val())
-				range.trigger('change')
-			})
-
 			$(document).on('change', '.customify_typography_font_subsets', function (ev) {
 
 				const $input = $(this).parents('.options').siblings('.customify_typography').children('.customify_typography_values');
@@ -371,17 +365,39 @@
 						.removeAttr('data-field')
 
 					$(this).after($clone)
-
-          // Update the range field when changing the number
-          $($clone).on('change', function () {
-            $(this).siblings('input[type="range"]').val($(this).val())
-          })
 				}
+
+        const debouncedRangeUpdate = _.debounce(function() {
+          const $numericalInput = $(this),
+            $range = $numericalInput.siblings('input[type="range"]'),
+            value = $numericalInput.val();
+
+          // We will shake the numerical control to signal that the value is out of bounds and it will be forced back into range.
+          let shake = false;
+          if ( $range.attr('min') !== undefined && parseFloat( $range.attr('min') ) > parseFloat(value) ) {
+            shake = true;
+          }
+          if ( $range.attr('max') !== undefined && parseFloat( $range.attr('max') ) < parseFloat(value) ) {
+            shake = true;
+          }
+
+          if ( shake ) {
+            $numericalInput.addClass('animated error-shake');
+            setTimeout( function() {
+              $numericalInput.removeClass('animated error-shake');
+            }, 1000) // The animation has a 1 second duration.
+          }
+          $range.val(value);
+          $range.trigger('change')
+        }, 700 );
+
+        // Update the range field when changing the number
+        $(this).siblings('.range-value').on('change keyup', debouncedRangeUpdate );
 
 				// Update the number field when changing the range
 				$(this).on('change', function () {
-					$(this).siblings('.range-value').val($(this).val())
-				})
+          $(this).siblings('.range-value').val($(this).val());
+				});
 			})
 		}
 
