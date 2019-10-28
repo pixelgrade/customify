@@ -584,6 +584,7 @@
 
 		// get each typography field and bind events
 		// @todo Are we still using the typography field since we have the font field?
+    // Yes we do, in older themes.
 		const prepare_typography_field = function () {
 
 			const $typos = $('.customify_typography_font_family')
@@ -692,7 +693,7 @@
 
 			if (current_val === '[object Object]') {
 				current_val = $input.data('default')
-			} else if (_.isString(current_val) && !isJsonString(current_val) && current_val.substr(0, 1) == '[') {
+			} else if (_.isString(current_val) && !isJsonString(current_val)) {
 				// a rare case when the value isn't a json but is a representative string like [family,weight]
 				current_val = current_val.split(',')
 				let new_current_value = {}

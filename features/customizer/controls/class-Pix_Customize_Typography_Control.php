@@ -145,7 +145,12 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 			/**
 			 * This input will hold the values of this typography field
 			 */ ?>
-			<input class="customify_typography_values" id="<?php echo esc_attr( $this_id ); ?>" type="hidden" <?php $this->link(); ?> value="<?php echo esc_attr( PixCustomifyPlugin::encodeURIComponent( json_encode( $current_value ) ) ); ?>" data-default="<?php echo esc_attr( PixCustomifyPlugin::encodeURIComponent( json_encode( $current_value ) ) ); ?>"/>
+			<input class="customify_typography_values"
+			       id="<?php echo esc_attr( $this_id ); ?>"
+			       type="hidden" <?php $this->link(); ?>
+			       value="<?php echo esc_attr( PixCustomifyPlugin::encodeURIComponent( json_encode( $current_value ) ) ); ?>"
+			       data-default="<?php echo esc_attr( PixCustomifyPlugin::encodeURIComponent( json_encode( $current_value ) ) ); ?>"
+			/>
 			<select class="customify_typography_font_family"<?php echo $select_data; ?>>
 
 				<?php
@@ -241,13 +246,13 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 					<?php
 					$selected = array();
 					if ( isset( $current_value->selected_variants ) ) {
-						$selected = $current_value->selected_variants;
+						$selected = (array) $current_value->selected_variants;
 					}
 
 					if ( isset( $current_value->variants ) && ! empty( $current_value->variants ) && is_array( $current_value->variants ) ) {
 						foreach ( $current_value->variants as $weight ) {
 							$attrs = '';
-							if ( in_array( $weight, (array) $selected ) ) {
+							if ( in_array( $weight, $selected ) ) {
 								$attrs = ' selected="selected"';
 							}
 
