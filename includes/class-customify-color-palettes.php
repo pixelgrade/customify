@@ -70,6 +70,11 @@ class Customify_Color_Palettes {
 		 * Add color palettes usage to site data.
 		 */
 		add_filter( 'customify_style_manager_get_site_data', array( $this, 'add_palettes_to_site_data' ), 10, 1 );
+
+		/**
+		 * Reset various Color Palettes options on theme switch to ensure consistency.
+		 */
+		add_action( 'after_switch_theme', array( $this, 'reset_various_options_on_switch_theme' ), 100 );
 	}
 
 	/**
@@ -568,16 +573,16 @@ class Customify_Color_Palettes {
 	              'setting_type' => 'option',
 	              'setting_id'   => 'sm_coloration_level',
 	              'label'        => esc_html__( 'Coloration Level', 'customify' ),
-	              'default'      => $this->get_coloration_level_default_value( $config ),
+	              'default'      => $this->get_coloration_level_default_value( $config['sections']['style_manager_section']['options'] ),
 	              'live'         => true,
-	              'choices'      => $this->get_coloration_level_choices( $config ),
+	              'choices'      => $this->get_coloration_level_choices( $config['sections']['style_manager_section']['options'] ),
               ),
               'sm_color_diversity' => array(
 	              'type'         => 'sm_radio',
 	              'setting_type' => 'option',
 	              'setting_id'   => 'sm_color_diversity',
 	              'label'        => esc_html__( 'Color Diversity', 'customify' ),
-	              'default'      => $this->get_color_diversity_default_value( $config ),
+	              'default'      => $this->get_color_diversity_default_value( $config['sections']['style_manager_section']['options'] ),
 	              'live'         => true,
 	              'choices'      => array(
 		              'low'    => esc_html__( 'Low', 'customify' ),
@@ -662,8 +667,8 @@ class Customify_Color_Palettes {
 		return $config;
 	}
 
-	private function get_color_diversity_default_value( $config ) {
-		$optionsArrayObject = new ArrayObject( $config['sections']['style_manager_section']['options'] );
+	private function get_color_diversity_default_value( $options_config ) {
+		$optionsArrayObject = new ArrayObject( $options_config );
 		$optionsCopy = $optionsArrayObject->getArrayCopy();
 
 		$pos1 = array_search('sm_color_primary_final', $optionsCopy['sm_color_primary']['connected_fields'] );
@@ -697,17 +702,16 @@ class Customify_Color_Palettes {
 		return 'low';
 	}
 
-	private function get_coloration_level_average( $config ) {
-		$options = $config['sections']['style_manager_section']['options'];
+	private function get_coloration_level_average( $options_config ) {
 
-		$colors1 = count( $options['sm_color_primary']['connected_fields'] );
-		$colors2 = count( $options['sm_color_secondary']['connected_fields'] );
-		$colors3 = count( $options['sm_color_tertiary']['connected_fields'] );
+		$colors1 = count( $options_config['sm_color_primary']['connected_fields'] );
+		$colors2 = count( $options_config['sm_color_secondary']['connected_fields'] );
+		$colors3 = count( $options_config['sm_color_tertiary']['connected_fields'] );
 		$colors = $colors1 + $colors2 + $colors3;
 
-		$dark1 = count( $options['sm_dark_primary']['connected_fields'] );
-		$dark2 = count( $options['sm_dark_secondary']['connected_fields'] );
-		$dark3 = count( $options['sm_dark_tertiary']['connected_fields'] );
+		$dark1 = count( $options_config['sm_dark_primary']['connected_fields'] );
+		$dark2 = count( $options_config['sm_dark_secondary']['connected_fields'] );
+		$dark3 = count( $options_config['sm_dark_tertiary']['connected_fields'] );
 		$dark = $dark1 + $dark2 + $dark3;
 
 		$total = $colors + $dark;
@@ -720,22 +724,22 @@ class Customify_Color_Palettes {
 		return round( $colors * 100 / $total, 2 );
 	}
 
-	private function get_coloration_level_default_value( $config ) {
-		$label = $this->get_coloration_level_default_label( $config );
-		return $this->get_coloration_level_point_value( $config, $label );
+	private function get_coloration_level_default_value( $options_config ) {
+		$label = $this->get_coloration_level_default_label( $options_config );
+		return $this->get_coloration_level_point_value( $options_config, $label );
 	}
 
-	private function get_coloration_level_choices( $config ) {
+	private function get_coloration_level_choices( $options_config ) {
 		return array(
-			$this->get_coloration_level_point_value( $config, 'low' )      => esc_html__( 'Low', 'customify' ),
-			$this->get_coloration_level_point_value( $config, 'medium' )   => esc_html__( 'Medium', 'customify' ),
-			$this->get_coloration_level_point_value( $config, 'high' )     => esc_html__( 'High', 'customify' ),
-			$this->get_coloration_level_point_value( $config, 'striking' ) => esc_html__( 'Striking', 'customify' ),
+			$this->get_coloration_level_point_value( $options_config, 'low' )      => esc_html__( 'Low', 'customify' ),
+			$this->get_coloration_level_point_value( $options_config, 'medium' )   => esc_html__( 'Medium', 'customify' ),
+			$this->get_coloration_level_point_value( $options_config, 'high' )     => esc_html__( 'High', 'customify' ),
+			$this->get_coloration_level_point_value( $options_config, 'striking' ) => esc_html__( 'Striking', 'customify' ),
 		);
 	}
 
-	private function get_coloration_level_default_label( $config ) {
-		$average = $this->get_coloration_level_average( $config );
+	private function get_coloration_level_default_label( $options_config ) {
+		$average = $this->get_coloration_level_average( $options_config );
 
 		if ( $average < 25 ) {
 			return 'low';
@@ -752,9 +756,9 @@ class Customify_Color_Palettes {
 		return 'striking';
 	}
 
-	private function get_coloration_levels( $config ) {
-		$average = $this->get_coloration_level_average( $config );
-		$default = $this->get_coloration_level_default_label( $config );
+	private function get_coloration_levels( $options_config ) {
+		$average = $this->get_coloration_level_average( $options_config );
+		$default = $this->get_coloration_level_default_label( $options_config );
 
 		$values = array(
 			'low' => $average,
@@ -790,13 +794,13 @@ class Customify_Color_Palettes {
 		return $values;
 	}
 
-	private function get_coloration_level_point_value( $config, $point ) {
-		$values = $this->get_coloration_levels( $config );
+	private function get_coloration_level_point_value( $options_config, $point ) {
+		$values = $this->get_coloration_levels( $options_config );
 		return $values[$point] . '';
 	}
 
-	private function get_dark_to_color_slider_default_value( $options, $dark_id, $color_id ) {
-		$optionsArrayObject = new ArrayObject( $options );
+	private function get_dark_to_color_slider_default_value( $options_config, $dark_id, $color_id ) {
+		$optionsArrayObject = new ArrayObject( $options_config );
 		$optionsCopy = $optionsArrayObject->getArrayCopy();
 
 		$pos1 = array_search($color_id . '_final', $optionsCopy[$color_id]['connected_fields'] );
@@ -818,6 +822,25 @@ class Customify_Color_Palettes {
 		}
 
 		return 100 * $color_count / $total_count;
+	}
+
+	public function reset_various_options_on_switch_theme() {
+		if ( ! $this->is_supported() ) {
+			return;
+		}
+
+		// The coloration level and diversity values are calculated dynamically and it is different for each theme (depending on connected fields).
+		// That is why we will set it's value to the default value so we don't end up with invalid values (i.e. nothing is selected).
+		$config = PixCustomifyPlugin()->get_customizer_config();
+		if ( ! empty( $config['sections']['style_manager_section']['options'] ) ) {
+			$options_config = $config['sections']['style_manager_section']['options'];
+		} elseif ( ! empty( $config['panels']['style_manager_panel']['sections']['sm_color_palettes_section']['options'] ) ) {
+			$options_config = $config['panels']['style_manager_panel']['sections']['sm_color_palettes_section']['options'];
+		}
+
+		update_option( 'sm_coloration_level', $this->get_coloration_level_default_value( $options_config ) );
+		update_option( 'sm_color_diversity', $this->get_color_diversity_default_value( $options_config ) );
+		update_option( 'sm_shuffle_colors', 'default' );
 	}
 
 	/**
