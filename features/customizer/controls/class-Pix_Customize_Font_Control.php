@@ -322,15 +322,16 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 		$display = 'none';
 		if ( ! $this->load_all_weights && $this->font_weight ) {
 			$display = 'inline-block';
-		} ?>
-		<li class="customify_weights_wrapper customize-control font-options__option" style="display: <?php echo $display; ?>;">
-			<select class="customify_font_weight" data-field="selected_variants" <?php echo ! empty( $current_value->selected_variants ) ? 'data-default="' . $current_value->selected_variants . '"' : ''; echo ( isset( $this->fields['font-weight'] ) && false === $this->fields['font-weight'] ) ? 'data-disabled' : ''; ?>>
-				<?php
-				$selected = array();
-				if ( isset( $current_value->selected_variants ) ) {
-					$selected = $current_value->selected_variants;
-				}
+		}
 
+		$selected = array();
+		if ( isset( $current_value->selected_variants ) ) {
+			$selected = $current_value->selected_variants;
+		}
+		?>
+		<li class="customify_weights_wrapper customize-control font-options__option" style="display: <?php echo $display; ?>;">
+			<select class="customify_font_weight" data-field="selected_variants" <?php echo ! empty( $selected ) ? 'data-default="' . $selected[0] . '"' : ''; echo ( isset( $this->fields['font-weight'] ) && false === $this->fields['font-weight'] ) ? 'data-disabled' : ''; ?>>
+				<?php
 				if ( isset( $current_value->variants ) && ! empty( $current_value->variants ) && is_object( $current_value->variants ) ) {
 					foreach ( $current_value->variants as $weight ) {
 						$attrs = '';

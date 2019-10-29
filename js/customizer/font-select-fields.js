@@ -66,7 +66,7 @@ let CustomifyFontSelectFields = (function ($, exports, wp) {
             option = font[0].options[font[0].selectedIndex],
             variants = maybeJsonParse($(option).data('variants')),
             data = [],
-            selecter_variants = $(el).data('default') || null
+            selected_variants = $(el).data('default') || null
 
           if (typeof variants === 'undefined') {
             $(this).hide()
@@ -79,7 +79,8 @@ let CustomifyFontSelectFields = (function ($, exports, wp) {
               text: weight
             }
 
-            if (selecter_variants !== null && weight == selecter_variants) {
+            // @todo We actually do not support multiple selected variants. Maybe we should? Right now we don't use multiple selections.
+            if (selected_variants !== null && weight == selected_variants) {
               this_value.selected = true
             }
 
