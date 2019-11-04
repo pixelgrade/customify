@@ -56,7 +56,9 @@ let CustomifyFontSelectFields = (function ($, exports, wp) {
       $(fontWeightSelector).each(function (i, el) {
 
         let select2_args = {
-          placeholder: weightPlaceholder
+          theme: 'classic',
+          placeholder: weightPlaceholder,
+          minimumResultsForSearch: 10,
         }
 
         // all this fuss is for the case when the font doesn't come with variants from PHP, like a theme_font
@@ -105,7 +107,9 @@ let CustomifyFontSelectFields = (function ($, exports, wp) {
       // Initialize the select2 field for the font subsets
       $(fontSubsetsSelector)
         .select2({
-          placeholder: subsetPlaceholder
+          placeholder: subsetPlaceholder,
+          theme: 'classic',
+          minimumResultsForSearch: 10,
         })
         .on('change', function (e) {
           let wrapper = $(e.target).closest(wrapperSelector)
@@ -198,7 +202,9 @@ let CustomifyFontSelectFields = (function ($, exports, wp) {
       // We need to clear the old select2 field and reinitialize it.
       $(font_weights).select2().empty()
       $(font_weights).select2({
-        data: new_variants
+        theme: 'classic',
+        data: new_variants,
+        minimumResultsForSearch: 10,
       }).on('change', function (e) {
         let wrapper = $(e.target).closest(wrapperSelector)
 
@@ -452,7 +458,10 @@ let CustomifyFontSelectFields = (function ($, exports, wp) {
     }
 
     const renderFonts = function () {
-      $('.customify_font_family').select2().trigger('change')
+      $( '.customify_font_family' ).select2({
+        theme: 'classic',
+        minimumResultsForSearch: 10,
+      }).trigger( 'change' )
     }
 
     return {

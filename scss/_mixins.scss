@@ -1,0 +1,98 @@
+@mixin select-focus {
+  border-color: $blue;
+  background-color: $blue-light;
+  background-image: url($select-svg-arrow-white);
+  color: #FFFFFF;
+}
+
+@mixin top-arrow {
+
+  &:after {
+    content: "";
+    position: absolute;
+    bottom: 100%;
+    right: 12px;
+
+    width: 0;
+    height: 0;
+
+    border: 9px solid transparent;
+    border-top: 0;
+    border-bottom-color: #FFFFFF;
+    border-collapse: separate;
+  }
+}
+
+@mixin clearfix {
+  &:after {
+    content: " ";
+    display: table;
+    clear: both;
+  }
+}
+
+@mixin input {
+  display: flex;
+  align-items: center;
+
+  width: 100%;
+  height: $fields-height;
+  margin: 0;
+  padding: 10px 14px;
+  border: 2px solid $fields-border-color;
+  border-radius: $fields-border-radius;
+
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.5;
+
+  background: #FFFFFF;
+  color: $blue-dark;
+  outline: 0;
+
+  &:focus {
+    border-color: #73C5EE;
+    box-shadow: none;
+  }
+}
+
+@mixin select {
+  width: 100%;
+  padding-right: 44px;
+
+  background-color: #FFFFFF;
+  background-image: url($select-svg-arrow-dark);
+  background-repeat: no-repeat;
+  background-position: right 16px top 16px;
+
+  -webkit-appearance: initial;
+
+  &[multiple] {
+    background-image: none;
+  }
+}
+
+@mixin dropdown-arrow {
+
+  &:before,
+  &:after {
+    content: "";
+    position: absolute;
+    bottom: 100%;
+    right: 25px;
+
+    border: 10px solid transparent;
+  }
+
+  &:before {
+    z-index: 100;
+    border-bottom-color: $blue-lightest;
+    border-width: 11px;
+  }
+
+  &:after {
+    z-index: 101;
+    border-bottom-color: #FFFFFF;
+    margin-right: 1px;
+  }
+}

@@ -1,0 +1,21 @@
+.customize-control {
+  margin-bottom: 0;
+
+  & + & {
+    margin-top: $fields-spacing;
+  }
+
+  .control-section:not(.control-section-themes) & {
+    padding: 0;
+    width: 100%;
+    min-height: initial;
+  }
+}
+
+.customize-control-title {
+  color: $blue-darker;
+}
+
+.customize-control-description {
+  margin-top: 6px;
+}

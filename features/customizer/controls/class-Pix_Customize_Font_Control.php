@@ -139,12 +139,13 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 			$select_data .= ' data-load_all_weights="true"';
 		} ?>
 		<div class="font-options__wrapper">
+
+			<input type="checkbox" class="font-options__checkbox js-font-option-toggle"
+			       id="tooltip_toogle_<?php echo esc_attr( $this->CSSID ); ?>">
+
 			<?php
 			$this->display_value_holder( $current_value );
 			$this->display_field_title( $active_font_family, esc_attr( $this->CSSID ) ); ?>
-
-			<input type="checkbox" class="customify_font_tooltip"
-			       id="tooltip_toogle_<?php echo esc_attr( $this->CSSID ); ?>">
 
 			<ul class="font-options__options-list">
 				<li class="font-options__option customize-control">
@@ -330,6 +331,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 		}
 		?>
 		<li class="customify_weights_wrapper customize-control font-options__option" style="display: <?php echo $display; ?>;">
+			<label><?php _e( 'Font Weight', 'customify' ); ?></label>
 			<select class="customify_font_weight" data-field="selected_variants" <?php echo ! empty( $selected ) ? 'data-default="' . $selected[0] . '"' : ''; echo ( isset( $this->fields['font-weight'] ) && false === $this->fields['font-weight'] ) ? 'data-disabled' : ''; ?>>
 				<?php
 				if ( isset( $current_value->variants ) && ! empty( $current_value->variants ) && is_object( $current_value->variants ) ) {
@@ -355,6 +357,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 			$display = 'inline-block';
 		} ?>
 		<li class="customify_subsets_wrapper customize-control font-options__option" style="display: <?php echo $display; ?>;">
+			<label><?php _e( 'Languages', 'customify' ); ?></label>
 			<select multiple class="customify_font_subsets" data-field="selected_subsets" <?php echo ( isset( $this->fields['subsets'] ) && false === $this->fields['subsets'] ) ? 'data-disabled' : ''; ?>>
 				<?php
 				$selected = array();

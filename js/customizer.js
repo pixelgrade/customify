@@ -275,17 +275,16 @@
 				}
 			)();
 
-			(
-				function () {
-					// Close a font field when clicking on another field
-					$('.customify_font_tooltip').on('click', function () {
-						if ($(this).prop('checked') === true) {
-							$('.customify_font_tooltip').prop('checked', false)
-							$(this).prop('checked', true)
-						}
-					})
-				}
-			)()
+      (function() {
+        var $allCheckboxes = $( '.js-font-option-toggle' );
+        // Close a font field when clicking on another field
+        $allCheckboxes.on( 'click', function() {
+          var $checkbox = $( this );
+          if ( $checkbox.prop( 'checked' ) === true ) {
+            $allCheckboxes.not( $checkbox ).prop( 'checked', false );
+          }
+        } )
+      })();
 
 			// Bind any connected fields, except those in the Style Manager.
 			// Those are handled by the appropriate Style Manager component (Color Palettes, Font Palettes, etc ).
@@ -355,49 +354,55 @@
 		const customifyHandleRangeFields = function (el) {
 
 			// For each range input add a number field (for preview mainly - but it can also be used for input)
-			$(el).find('input[type="range"]').each(function () {
-				if (!$(this).siblings('.range-value').length) {
-					const $clone = $(this).clone()
+      $( el ).find( 'input[type="range"]' ).each( function() {
+        var $this = $( this ),
+            $range = $this.siblings( 'input[type="range"]' );
 
-					$clone
-						.attr('type', 'number')
-						.attr('class', 'range-value')
-						.removeAttr('data-field')
+        if ( ! $range.length ) {
+					var $wrapper = $( '<div class="font-options__range">' );
+					$range = $this.clone();
 
-					$(this).after($clone)
+          $range
+            .attr( 'type', 'number' )
+            .attr( 'class', 'range-value' )
+            .removeAttr( 'data-field' )
+
+          $this.replaceWith( $wrapper );
+
+          $wrapper.append( $this );
+          $wrapper.append( $range );
 				}
 
-        const debouncedRangeUpdate = _.debounce(function() {
-          const $numericalInput = $(this),
-            $range = $numericalInput.siblings('input[type="range"]'),
-            value = $numericalInput.val();
+        function hasValidValue() {
+          var value = $this.val();
 
-          // We will shake the numerical control to signal that the value is out of bounds and it will be forced back into range.
-          let shake = false;
-          if ( $range.attr('min') !== undefined && parseFloat( $range.attr('min') ) > parseFloat(value) ) {
-            shake = true;
-          }
-          if ( $range.attr('max') !== undefined && parseFloat( $range.attr('max') ) < parseFloat(value) ) {
-            shake = true;
+          if ( $range.attr( 'min' ) !== undefined && parseFloat( $range.attr( 'min' ) ) > parseFloat( value ) ) {
+            return false;
           }
 
-          if ( shake ) {
-            $numericalInput.addClass('animated error-shake');
+          if ( $range.attr( 'max' ) !== undefined && parseFloat( $range.attr( 'max' ) ) < parseFloat( value ) ) {
+            return false;
+          }
+
+          return true;
+        }
+
+        const debouncedRangeUpdate = _.debounce( function() {
+          if ( ! hasValidValue() ) {
+            $this.addClass( 'animated error-shake' );
             setTimeout( function() {
-              $numericalInput.removeClass('animated error-shake');
-            }, 1000) // The animation has a 1 second duration.
+              $this.removeClass( 'animated error-shake' );
+            }, 1000 ) // The animation has a 1 second duration.
           }
-          $range.val(value);
-          $range.trigger('change')
         }, 700 );
 
         // Update the range field when changing the number
-        $(this).siblings('.range-value').on('change keyup', debouncedRangeUpdate );
+        $this.siblings( '.range-value' ).on( 'change keyup', debouncedRangeUpdate );
 
-				// Update the number field when changing the range
-				$(this).on('change', function () {
-          $(this).siblings('.range-value').val($(this).val());
-				});
+        // Update the number field when changing the range
+        $this.on( 'input', function() {
+          $this.siblings( '.range-value' ).val( $this.val() ).change();
+        } );
 			})
 		}
 

@@ -154,8 +154,7 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 		 * Register Customizer admin styles
 		 */
 		function register_admin_customizer_styles() {
-			wp_register_style( 'customify_select2', plugins_url( 'js/select2/css/select2.css', PixCustomifyPlugin()->get_file() ), array(), PixCustomifyPlugin()->get_version() );
-			wp_register_style( 'customify_style', plugins_url( 'css/customizer.css', PixCustomifyPlugin()->get_file() ), array( 'customify_select2', 'dashicons' ), PixCustomifyPlugin()->get_version() );
+			wp_register_style( 'customify_style', plugins_url( 'css/customizer.css', PixCustomifyPlugin()->get_file() ), array( 'dashicons' ), PixCustomifyPlugin()->get_version() );
 		}
 
 		/**
@@ -170,7 +169,7 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 		 */
 		function register_admin_customizer_scripts() {
 
-			wp_register_script( 'customify_select2', plugins_url( 'js/select2/js/select2.js', PixCustomifyPlugin()->get_file() ), array( 'jquery' ), PixCustomifyPlugin()->get_version() );
+			wp_register_script( 'customify_select2', plugins_url( 'js/select2.min.js', PixCustomifyPlugin()->get_file() ), array( 'jquery' ), PixCustomifyPlugin()->get_version() );
 			wp_register_script( 'jquery-react', plugins_url( 'js/jquery-react.js', PixCustomifyPlugin()->get_file() ), array( 'jquery' ), PixCustomifyPlugin()->get_version() );
 
 			wp_register_script( 'customify-scale', plugins_url( 'js/customizer/scale-iframe.js', PixCustomifyPlugin()->get_file() ), array( 'jquery' ), PixCustomifyPlugin()->get_version() );
