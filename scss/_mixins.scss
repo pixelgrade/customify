@@ -31,45 +31,48 @@
   }
 }
 
-@mixin input {
+@mixin field {
   display: flex;
   align-items: center;
 
   width: 100%;
-  height: $fields-height;
-  margin: 0;
   padding: 10px 14px;
+  margin: 0;
+
   border: 2px solid $border-color;
   border-radius: $fields-border-radius;
+  background: $white;
+  color: $blue-dark;
 
   font-size: 14px;
   font-weight: 500;
   line-height: 1.5;
 
-  background: #FFFFFF;
-  color: $blue-dark;
   outline: 0;
 
   &:focus {
-    border-color: #73C5EE;
+    border-color: $blue;
     box-shadow: none;
   }
 }
 
-@mixin select {
-  width: 100%;
-  padding-right: 44px;
+@mixin input {
+  @include field;
+  height: $fields-height;
+}
 
-  background-color: #FFFFFF;
+@mixin field-select {
+  padding-right: 44px;
+  height: $fields-height;
+
   background-image: url($select-svg-arrow-dark);
   background-repeat: no-repeat;
   background-position: right 16px top 16px;
+}
 
-  -webkit-appearance: initial;
-
-  &[multiple] {
-    background-image: none;
-  }
+@mixin select {
+  @include field;
+  @include field-select;
 }
 
 @mixin dropdown-arrow {
@@ -92,7 +95,7 @@
 
   &:after {
     z-index: 101;
-    border-bottom-color: #FFFFFF;
+    border-bottom-color: $blue-white;
     margin-right: 1px;
   }
 }

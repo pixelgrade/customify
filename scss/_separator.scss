@@ -15,6 +15,11 @@
 
   &.section,
   &.sub-section {
+
+    .customize-section-description-container:first-child + .customize-control-html & {
+      margin-top: -16px;
+    }
+
     &:before {
       content: "";
 

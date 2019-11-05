@@ -20,6 +20,28 @@
 .font-options__range {
   display: flex;
   align-items: center;
+
+  input[type="range"] {
+    flex-grow: 1;
+  }
+
+  input[type="number"] {
+    width: auto;
+    height: auto;
+    padding: 2px 2px 3px 3px;
+    margin-left: 10px;
+
+    flex: 0 0 50px;
+
+    font-size: 13px;
+    text-align: center;
+
+    &::-webkit-inner-spin-button,
+    &::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+  }
 }
 //------------------------------------*\
 //    Font Selector
@@ -34,7 +56,6 @@
 }
 
 .font-options__head {
-  @include input;
   @include select;
 
   display: flex;

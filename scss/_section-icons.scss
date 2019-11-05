@@ -14,7 +14,7 @@
 
     h3.accordion-section-title:before {
       font-size: 18px;
-      color: #f8bc30; // Yellow color
+      color: #F8BC30; // Yellow color
     }
   }
 
@@ -24,7 +24,7 @@
     h3.accordion-section-title {
 
       &:before {
-        color: $blue;
+        color: $blue-light;
       }
 
       img {
