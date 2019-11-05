@@ -517,10 +517,7 @@ class Customify_Font_Palettes {
 			foreach ( $master_font_controls_ids as $setting_id ) {
 				if ( ! empty( $config['sections']['style_manager_section']['options'][ $setting_id ]['connected_fields'] ) ) {
 					$current_palette .=
-						'<div class="font ' . $setting_id . '" data-setting="' . $setting_id . '">' . "\n" .
-						'<div class="fill"></div>' . "\n" .
-						'<div class="picker"><i></i></div>' . "\n" .
-						'</div>' . "\n";
+						'<div class="font ' . $setting_id . '" data-setting="' . $setting_id . '"></div>' . "\n";
 				}
 			}
 			$current_palette .= '</div>';

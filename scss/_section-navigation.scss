@@ -1,0 +1,62 @@
+// Section tabs
+.section-navigation-wrapper {
+  position: relative;
+
+  height: 43px;
+  margin: -15px -12px 0 -12px;
+  margin-right: -$container-spacing;
+  margin-left: -$container-spacing;
+}
+
+.section-navigation {
+  display: flex;
+  margin-top: -1px;
+
+  clear: both;
+
+  border-top: 1px solid $border-color;
+
+  a {
+    flex: 1 1 auto;
+    display: block;
+    padding: 12px 0;
+
+    color: $blue-darker;
+    background-color: #ffffff;
+
+    border-bottom: 1px solid $border-color;
+    border-right: 1px solid $border-color;
+
+    text-align: center;
+    text-decoration: none;
+
+    transition: background-color .15s ease-in-out;
+
+    &:last-child {
+      border-right: 0;
+    }
+  }
+}
+
+#customize-controls {
+
+  .customize-info,
+  .customize-section-title {
+    &.is-sticky.is-sticky {
+      top: 40px;
+    }
+
+    &.is-in-view.is-in-view {
+      box-shadow: none;
+    }
+  }
+
+  .has-nav .customize-info,
+  .has-nav .customize-section-title {
+    margin-right: -12px;
+  }
+}
+
+.customize-section-description-container.section-meta.has-nav {
+  margin-bottom: 0;
+}

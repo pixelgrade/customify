@@ -1,0 +1,202 @@
+//------------------------------------*\
+//    PRESETS
+//------------------------------------*/
+
+.default-preset-button {
+  background-color: #F5F6F6;
+  float: right;
+  padding: 1px 8px;
+  border-radius: $fields-border-radius;
+  border: 1px solid #CBCBCB;
+  margin-right: 4px;
+  font-family: "Open Sans",sans-serif;
+}
+
+.customize-control-preset {
+
+  .description {
+    margin-right: 5px;
+    font-style: normal;
+  }
+}
+
+.customify_preset {
+
+  &.radio_buttons {
+
+    .customify_radio_button {
+      border: none;
+      display: inline-block;
+      padding: 2px;
+      margin: 3px;
+      position: relative;
+      overflow: hidden;
+      height: auto;
+
+      input[type="radio"] {
+        opacity: 0;
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        z-index: 9999;
+
+        &:checked {
+
+          & + label {
+            background-color: #ebebeb;
+
+            &:before {
+              content: '>';
+              color: inherit;
+            }
+
+            &:after {
+              content: '<';
+              color: inherit;
+            }
+          }
+
+          &:before {
+            opacity: 0;
+          }
+        }
+      }
+
+      label {
+        position: relative;
+        z-index: 999;
+        border-left: 4px solid;
+
+      }
+    }
+  }
+
+  .awesome_preset {
+    position: relative;
+
+    display: inline-block;
+    width: 45%;
+    margin-top: 5px;
+    margin-bottom: 25px;
+
+    text-align: center;
+    color: #FFFFFF;
+
+    transition: all 0.2s;
+
+    &:hover {
+      opacity: 0.9;
+    }
+
+    &:before {
+      content: '';
+      position: absolute;
+      top: 1px;
+      left: 1px;
+      right: 1px;
+      bottom: 1px;
+      z-index: 5;
+
+      border: 1px solid #FFF;
+      border-radius: $fields-border-radius;
+      background: transparent;
+      opacity: .5;
+    }
+
+    .preset-wrap {
+
+      .preset-color {
+        height: 128px;
+        border-radius: $fields-border-radius $fields-border-radius 0 0;
+        padding: 17px 0 27px;
+
+        .first-font {
+          display: inline-block;
+          width: 100%;
+          font-size: 55px;
+          line-height: 1;
+        }
+
+        .secondary-font {
+          display: inline-block;
+          width: 100%;
+          font-size: 20px;
+          line-height: 1;
+          margin-top: 8px;
+        }
+      }
+
+      .preset-name {
+        position: relative;
+        font-size: 11px;
+        text-transform: uppercase;
+        border-radius: 0 0 $fields-border-radius $fields-border-radius;
+        padding: 1px;
+
+        &:before {
+          content: '';
+          position: absolute;
+          border-color: inherit;
+          border: 10px solid;
+          border-left-color: transparent;
+          border-right-color: transparent;
+          border-top: transparent;
+          top: -10px;
+          border-bottom-color: inherit;
+          left: 40%;
+
+        }
+      }
+    }
+
+    &:nth-child(odd) {
+      margin-right: 7%
+    }
+
+    input[type=radio] {
+      height: 100%;
+      width: 100%;
+      position: absolute;
+      border: 0;
+      box-shadow: none;
+      color: #006505;
+      background-color: transparent;
+      border-radius: 0;
+      margin: 0;
+      display: inline-block;
+      top: 0;
+      left: 0;
+      z-index: 10;
+
+      &:checked {
+        background: transparent;
+
+        &:before {
+          position: absolute;
+          height: 25px;
+          width: 25px;
+          top: -13px;
+          right: -14px;
+          background: #FFF;
+          z-index: 1;
+        }
+
+        &:after {
+          -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+          filter: alpha(opacity=0);
+          content: '';
+          position: absolute;
+          width: 26px;
+          height: 26px;
+          border-radius: 50%;
+          top: -5px;
+          right: -5px;
+          z-index: 10;
+
+          background: #73C5EE url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+Cjxzdmcgd2lkdGg9IjEzcHgiIGhlaWdodD0iOXB4IiB2aWV3Qm94PSIwIDAgMTMgOSIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIj4KICAgIDxkZWZzPjwvZGVmcz4KICAgIDxnIGlkPSJQYWdlLTEiIHN0cm9rZT0ibm9uZSIgc3Ryb2tlLXdpZHRoPSIxIiBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPgogICAgICAgIDxnIGlkPSJDdXN0b21pZnktQ29weSIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTIxLjAwMDAwMCwgLTQwOC4wMDAwMDApIiBmaWxsPSIjRkZGRkZGIj4KICAgICAgICAgICAgPGcgaWQ9IkhlYWRlciIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTIxLjAwMDAwMCwgNDcuMDAwMDAwKSI+CiAgICAgICAgICAgICAgICA8ZyBpZD0iQ29udGVudCIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMTAuMDAwMDAwLCA3NS4wMDAwMDApIj4KICAgICAgICAgICAgICAgICAgICA8ZyBpZD0iRmllbGQtLS1DaGVja2JveC1Db3B5IiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgyNy4wMDAwMDAsIDI0OS4wMDAwMDApIj4KICAgICAgICAgICAgICAgICAgICAgICAgPGcgaWQ9IkNoZWNrYm94IiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgwLjAwMDAwMCwgMzAuMDAwMDAwKSI+CiAgICAgICAgICAgICAgICAgICAgICAgICAgICA8cGF0aCBkPSJNMTAuMDM4NDk1LDE2IEwxNy4xMTYxMzc1LDguOTIxNDg3NiBMMTUuMTk0NjQ5OCw3IEwxMC4wMzg0OTUsMTIuMTU1MDY3NCBMNi45MjE0ODc2LDkuMDM4OTI5OTcgTDUsMTAuOTYwNDE3NiBMMTAuMDM4NDk1LDE2IFoiIGlkPSJQYWdlLTEiPjwvcGF0aD4KICAgICAgICAgICAgICAgICAgICAgICAgPC9nPgogICAgICAgICAgICAgICAgICAgIDwvZz4KICAgICAgICAgICAgICAgIDwvZz4KICAgICAgICAgICAgPC9nPgogICAgICAgIDwvZz4KICAgIDwvZz4KPC9zdmc+) no-repeat;
+          background-position: center center;
+        }
+      }
+    }
+  }
+}

@@ -48,11 +48,11 @@ class Pix_Customize_SM_palette_filter_Control extends Pix_Customize_Control {
 	                    "sm_light_tertiary"
                     );
 
-                    $current_palette = '<div class="colors">';
+                    $current_palette = '<div class="sm-color-palette__colors">';
                         foreach ( $master_color_controls_ids as $setting_id ) {
                         $current_palette .=
-                        '<div class="color ' . $setting_id . '" data-setting="' . $setting_id . '">' . "\n" .
-                            '<div class="picker"></div>' . "\n" .
+                        '<div class="sm-color-palette__color ' . $setting_id . '" data-setting="' . $setting_id . '">' . "\n" .
+                            '<div class="sm-color-palette__picker"></div>' . "\n" .
                         '</div>' . "\n";
                         }
                     $current_palette .= '</div>';

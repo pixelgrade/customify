@@ -1,0 +1,70 @@
+#customize-theme-controls {
+
+  #sub-accordion-panel-style_manager_panel,
+  #sub-accordion-panel-theme_options_panel {
+    .customize-panel-description {
+      display: block;
+    }
+  }
+
+  // Style Manager Section
+  // ----------------------------------------
+  li#accordion-panel-style_manager_panel {
+    @include section-icon("\f155");
+
+    h3.accordion-section-title:before {
+      font-size: 18px;
+      color: #f8bc30; // Yellow color
+    }
+  }
+
+  li#accordion-section-title_tagline {
+    @include section-icon("\f110");
+
+    h3.accordion-section-title {
+
+      &:before {
+        color: $blue;
+      }
+
+      img {
+        display: none !important;
+      }
+    }
+  }
+
+  li#accordion-section-sm_color_palettes_section {
+    @include section-icon("\f100");
+  }
+
+  li#accordion-section-sm_font_palettes_section {
+    @include section-icon("\f122");
+  }
+
+  li#accordion-section-sm_color_palettes_section,
+  li#accordion-section-sm_font_palettes_section {
+
+    h3.accordion-section-title:before {
+      padding: 3px;
+      margin-right: 20px;
+      margin-top: -2px;
+    }
+  }
+
+  li#accordion-panel-theme_options_panel {
+    @include section-icon("\f538");
+  }
+
+  // Theme Options Panel and PRO Section should have some space after them to make theme stand out.
+  // ----------------------------------------
+  li#accordion-panel-theme_options_panel,
+  li#accordion-section-pro__section {
+
+    h3.accordion-section-title {
+      border-bottom: 1px solid $border-color;
+      border-left: 0;
+      border-right: 0;
+      margin: 0 0 15px 0;
+    }
+  }
+}

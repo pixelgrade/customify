@@ -39,7 +39,7 @@
   height: $fields-height;
   margin: 0;
   padding: 10px 14px;
-  border: 2px solid $fields-border-color;
+  border: 2px solid $border-color;
   border-radius: $fields-border-radius;
 
   font-size: 14px;
@@ -94,5 +94,21 @@
     z-index: 101;
     border-bottom-color: #FFFFFF;
     margin-right: 1px;
+  }
+}
+
+@mixin section-icon($icon) {
+
+  h3.accordion-section-title:before {
+    position: absolute;
+    content: $icon;
+    color: #aed2e5;
+    font-family: dashicons;
+    margin-right: 28px;
+    font-size: 17px;
+    top: 8px;
+    right: 10px;
+    z-index: 1;
+    -webkit-font-smoothing: antialiased;
   }
 }

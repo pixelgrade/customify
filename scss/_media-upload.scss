@@ -1,0 +1,42 @@
+//------------------------------------*\
+//    Media Uploader (Logo)
+//------------------------------------*/
+
+.customize-control-media,
+.customize-control-site_icon,
+li#customize-control-site_logo {
+  .current {
+    margin-bottom: 10px;
+    min-height: $fields-height;
+    background: $blue-white;
+    border: 2px solid $border-color;
+    border-radius: $fields-border-radius;
+
+    .container, span {
+      border: none;
+    }
+  }
+
+
+  .inner, .current span {
+    font-size: 13px;
+    color: $blue-lighter;
+  }
+
+  .inner {
+    line-height: 1.4;
+  }
+
+  .thumbnail-image {
+    padding: 14px;
+    text-align: center;
+
+    img {
+      width: auto;
+    }
+  }
+
+  .actions {
+    margin-bottom: 0;
+  }
+}

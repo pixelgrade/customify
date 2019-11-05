@@ -454,14 +454,14 @@ let ColorPalettes = (function ($, exports, wp) {
   }
 
   const createCurrentPaletteControls = () => {
-    const $palette = $('.c-color-palette')
-    const $fields = $palette.find('.c-color-palette__fields').find('input')
+    const $palette = $( '.c-color-palette' );
+    const $fields = $palette.find( '.c-color-palette__fields' ).find( 'input' );
 
-    if (!$palette.length) {
+    if ( !$palette.length ) {
       return
     }
 
-    const $colors = $palette.find('.colors .color')
+    const $colors = $palette.find( '.sm-color-palette__color' );
 
     $colors.each((i, obj) => {
       const $obj = $(obj)
@@ -483,11 +483,11 @@ let ColorPalettes = (function ($, exports, wp) {
           setting.set(currentColor)
 
           if (event.originalEvent.type !== 'external') {
-            $palette.find('.color.' + setting_id).removeClass('altered')
+            $palette.find( '.sm-color-palette__color.' + setting_id ).removeClass( 'altered' )
           }
 
           setPalettesOnConnectedFields()
-//                    buildColorMatrix();
+//          buildColorMatrix();
         },
       })
 
@@ -565,7 +565,7 @@ let ColorPalettes = (function ($, exports, wp) {
 
   const showNewColors = function () {
     _.each(masterSettingIds, function (id) {
-      $('.c-color-palette').find('.color.' + id).css('color', getFilteredColor(id))
+      $( '.c-color-palette' ).find( '.sm-color-palette__color.' + id ).css( 'color', getFilteredColor( id ) );
     })
   }
 
@@ -573,7 +573,7 @@ let ColorPalettes = (function ($, exports, wp) {
     _.each(masterSettingIds, function (id) {
       const setting = wp.customize(id)
       const initialColor = setting()
-      $('.c-color-palette').find('.color.' + id).css('color', initialColor)
+      $( '.c-color-palette' ).find( '.sm-color-palette__color.' + id ).css( 'color', initialColor );
     })
   }
 
@@ -971,7 +971,7 @@ let ColorPalettes = (function ($, exports, wp) {
         let $input = $(obj)
         let $label = $input.next('label')
         let label = $input.val()
-        let $colors = $label.find('.color')
+        let $colors = $label.find('.sm-color-palette__color')
 
         $colors.each(function (j, color) {
           let $color = $(color)

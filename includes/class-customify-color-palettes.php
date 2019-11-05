@@ -500,12 +500,12 @@ class Customify_Color_Palettes {
 
 		$master_color_controls_ids = $this->get_all_master_color_controls_ids( $config['sections']['style_manager_section']['options'] );
 
-		$current_palette .= '<div class="colors">';
-		$color_classes = apply_filters( 'customify_style_manager_color_palettes_colors_classes', array( 'color' ) );
+		$current_palette .= '<div class="sm-color-palette__colors">';
+		$color_classes = apply_filters( 'customify_style_manager_color_palettes_colors_classes', array( 'sm-color-palette__color' ) );
 		foreach ( $master_color_controls_ids as $setting_id ) {
 			$current_palette .=
 				'<div class="' . esc_attr( join( ' ', $color_classes ) ) . ' ' . esc_attr( $setting_id ) . '" data-setting="' . esc_attr( $setting_id ) . '">' . "\n" .
-				'<div class="picker"><div class="disc"></div><i></i></div>' . "\n" .
+				'<div class="sm-color-palette__picker"><div class="sm-color-palette__disc"></div><i></i></div>' . "\n" .
 				'</div>' . "\n";
 		}
 		$current_palette .= '</div><!-- .colors -->' . "\n";

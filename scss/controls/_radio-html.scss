@@ -1,0 +1,42 @@
+.customify_radio_html {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+
+  margin-top: -10px;
+  margin-left: -10px;
+
+  label {
+    display: block;
+    padding-top: 10px;
+    padding-left: 10px;
+    flex: 0 0 50%;
+
+    > input + div {
+      border-color: $border-color;
+      height: 100%;
+    }
+
+    &:hover {
+      background-color: rgba(255,255,255,0.2);
+    }
+  }
+
+  input {
+    display: none;
+
+    + div {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      border: 2px solid transparent;
+      border-radius: 0.5em;
+      padding: 20px;
+    }
+
+    &:checked + div {
+      border-color: #5AB9E8;
+    }
+  }
+}

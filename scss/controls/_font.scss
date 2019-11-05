@@ -21,6 +21,17 @@
   display: flex;
   align-items: center;
 }
+//------------------------------------*\
+//    Font Selector
+//------------------------------------*/
+
+.customize-control-font {
+
+  // Add extra bottom spacing to better view the modal
+  &:last-child {
+    margin-bottom: 150px;
+  }
+}
 
 .font-options__head {
   @include input;

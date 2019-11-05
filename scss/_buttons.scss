@@ -1,0 +1,73 @@
+.button-controls {
+  @include clearfix;
+}
+
+.wp-core-ui {
+
+  // Primary & Secondary Buttons
+  .button:not(.theme-details):not(.collapse-sidebar):not(.wp-color-result),
+  .button-primary,
+  .button-secondary {
+    width: auto;
+    padding-left: 15px;
+    padding-right: 15px;
+
+    border: 0;
+    border-radius: $fields_border-radius;
+
+    font-weight: 400;
+    text-shadow: none;
+    color: $blue-white;
+    background: #AED2E5;
+
+    box-shadow: 0 2px 0 0 #8DBED7;
+
+    &:hover {
+      color: white;
+      text-shadow: none;
+      background: $blue-lighter;
+      box-shadow: 0 2px 0 0 #74A7C2;
+    }
+  }
+
+  #customize-header-actions {
+    .button-primary {
+      background: #73C5EE;
+      box-shadow: 0 2px 0 0 #57ABD5;
+
+      &:hover {
+        background: #58B0DD;
+        box-shadow: 0 2px 0 0 #3F8AAF;
+      }
+
+      &.has-next-sibling {
+        border-right: 1px solid #57ABD5;
+      }
+
+      &:disabled {
+        color: white !important;
+        background: #AED2E5 !important;
+        opacity: 0.7;
+        box-shadow: 0 2px 0 0 #8db5ca !important;
+
+        &.has-next-sibling {
+          border-right: none;
+        }
+      }
+    }
+  }
+
+  // Reset Buttons
+  .reset_section,
+  .reset_panel {
+    width: 100%;
+    height: 4em;
+    display: block;
+    margin: 0 0 25px;
+  }
+
+  .reset_panel {
+    margin-top: 10px;
+  }
+}
+

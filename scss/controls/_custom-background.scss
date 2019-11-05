@@ -1,0 +1,22 @@
+.customize-control-custom_background {
+  .hide {
+    display: none;
+  }
+
+  .upload_button_div {
+    margin: 10px 0;
+
+    & > * {
+      margin-right: 10px;
+    }
+  }
+
+  .preview_screenshot {
+    text-align: center;
+    margin: 10px 0;
+
+    img {
+      border: 2px solid #ccc;
+    }
+  }
+}

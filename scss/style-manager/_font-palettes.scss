@@ -1,0 +1,45 @@
+//------------------------------------*\
+//    FONT PALETTES
+//------------------------------------*/
+#customize-control-sm_font_palette_control ~ .customize-control {
+  display: none !important;
+}
+
+.pix_customizer_setting .font_palette[class][class] .customize-inside-control-row {
+  height: auto;
+  padding-top: 52%;
+  background-color: #FFFFFF;
+  border-radius: 6px;
+  overflow: hidden;
+
+  &:before {
+    border: 1px solid $border-color;
+    border-radius: 6px;
+  }
+
+  &:before,
+  &:hover:before {
+    box-shadow: 0 1px 0 0 #B8DAEB;
+  }
+
+  input {
+    display: none;
+  }
+
+  label {
+    border-radius: 6px;
+    left: 0;
+  }
+
+  input + label {
+    border: 2px solid transparent;
+  }
+
+  input:checked + label {
+    border-color: #57ABD5;
+  }
+
+  .label__inner {
+    display: none;
+  }
+}

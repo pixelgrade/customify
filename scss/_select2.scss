@@ -1,7 +1,6 @@
 $dropdown-z-index: 999999;
 $border-radius: $fields_border-radius;
 
-$border-color: $lighter;
 $focus-border-color: $blue;
 $container-focus-border-color: $blue;
 
@@ -16,15 +15,9 @@ $results-choice-fg-hover-color: #FFFFFF;
 }
 
 .select2-search {
-//  padding: 0;
-//
+
   .select2-search__field[class] {
     @include input;
-//    margin: 0;
-//    border: 0;
-//    outline: 0;
-//    border-radius: 0;
-//    box-shadow: none;
   }
 }
 

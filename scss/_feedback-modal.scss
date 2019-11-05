@@ -3,37 +3,37 @@
    ========================================================================== */
 
 // Modals
-$zindex-modal:              1050 !default;
-$zindex-modal-backdrop:     1040 !default;
-$white:  #fff !default;
-$black:  #000 !default;
+$zindex-modal: 1050 !default;
+$zindex-modal-backdrop: 1040 !default;
+$white: #fff !default;
+$black: #000 !default;
 $gray-200: #e9ecef !default;
 $purple-light: #9660C6 !default;
 
 // Padding applied to the modal body
-$modal-inner-padding:         30px !default;
+$modal-inner-padding: 30px !default;
 
-$modal-dialog-margin:         10px !default;
+$modal-dialog-margin: 10px !default;
 $modal-dialog-margin-y-sm-up: 30px !default;
 
-$modal-title-line-height:     1.5 !default;
+$modal-title-line-height: 1.5 !default;
 
-$modal-content-bg:            $white !default;
-$modal-content-border-color:  rgba($black,.2) !default;
-$modal-content-border-width:  1px;
-$modal-backdrop-bg:           #000 !default;
-$modal-backdrop-opacity:      .8 !default;
-$modal-header-border-color:   $gray-200 !default;
-$modal-footer-border-color:   $modal-header-border-color !default;
-$modal-header-border-width:   $modal-content-border-width !default;
-$modal-footer-border-width:   $modal-header-border-width !default;
-$modal-header-padding:        48px !default;
+$modal-content-bg: $white !default;
+$modal-content-border-color: rgba($black, .2) !default;
+$modal-content-border-width: 1px;
+$modal-backdrop-bg: #000 !default;
+$modal-backdrop-opacity: .8 !default;
+$modal-header-border-color: $gray-200 !default;
+$modal-footer-border-color: $modal-header-border-color !default;
+$modal-header-border-width: $modal-content-border-width !default;
+$modal-footer-border-width: $modal-header-border-width !default;
+$modal-header-padding: 48px !default;
 
-$modal-lg:                    800px !default;
-$modal-md:                    655px !default;
-$modal-sm:                    300px !default;
+$modal-lg: 800px !default;
+$modal-md: 655px !default;
+$modal-sm: 300px !default;
 
-$modal-transition:            transform .3s ease-out !default;
+$modal-transition: transform .3s ease-out !default;
 
 // .modal-open      - body class for killing the scroll
 // .modal           - container to scroll within
@@ -87,7 +87,7 @@ body.modal-open
     transform: translate(0, -10%);
 
     // Font Styling
-    font-family: 'Galano Grotesque Alt', -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;
+    font-family: 'Galano Grotesque Alt', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
     font-weight: 400;
     font-size: 16px;
     line-height: 1.7;
@@ -313,7 +313,7 @@ body.modal-open
       border: 1px solid #dddddd;
       border-radius: 4px;
       box-shadow: none;
-      font-family: 'Galano Grotesque Alt', -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;
+      font-family: 'Galano Grotesque Alt', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
       font-size: 16px;
       line-height: 26px;
       color: #473850;
@@ -324,13 +324,13 @@ body.modal-open
     margin-top: 0;
     margin-bottom: 34px;
 
-    font-family: 'Galano Classic', -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;
+    font-family: 'Galano Classic', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
     font-weight: 600;
     font-size: 28px;
     line-height: 1.4;
     text-align: center;
   }
-  
+
 
   // Button Style
   .button {
@@ -340,12 +340,12 @@ body.modal-open
     position: relative;
     transition-duration: .2s;
     transition-timing-function: cubic-bezier(0, 0, 0.58, 1);
-    transition-property: transform,background,background-color,color,box-shadow;
+    transition-property: transform, background, background-color, color, box-shadow;
 
     display: inline-block;
     padding: 15px 50px;
     border-radius: 2px;
-    font-family: "Galano Classic", -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;
+    font-family: "Galano Classic", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
     font-size: 16px;
     line-height: 23px;
     font-weight: 600;
@@ -397,14 +397,14 @@ body.modal-open
   justify-content: space-evenly;
 
   color: $purple-light;
-  font-family: "Galano Classic", -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;  
-  font-size: 18px;  
-  font-weight: 600; 
+  font-family: "Galano Classic", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+  font-size: 18px;
+  font-weight: 600;
   text-align: center;
 
 
   > span {
-      // line-height: 39px;  
+    // line-height: 39px;
   }
 
   > label {
@@ -429,7 +429,7 @@ body.modal-open
       display: none;
     }
 
-    span:hover, 
+    span:hover,
     input[type="radio"]:checked ~ span {
       background: $purple-light;
       color: #FFF;

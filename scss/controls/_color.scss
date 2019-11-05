@@ -9,15 +9,10 @@
     float: left;
   }
 
-  .customize-control-content {
-
-  }
-
   .wp-picker-container {
     position: relative;
     float: right;
     top: -3px;
-
 
     .wp-picker-holder {
       position: relative;
@@ -49,18 +44,10 @@
       z-index: 1000;
       width: $popup !important;
       border-top: none;
-      border-color: #DFDFDE;
+      border-color: $blue-whitish;
       border-radius: 0 0 3px 3px;
       border: none;
-      background: white;
-
-      &, * {
-        box-sizing: content-box;
-      }
-
-      .iris-picker-inner {
-
-      }
+      background: #FFFFFF;
 
       .iris-square {
         width: 215px !important;
@@ -98,7 +85,7 @@
       border: none;
       border-radius: 3px 3px 0 0;
 
-      background: white;
+      background: #FFFFFF;
       @include top-arrow;
 
       input {
