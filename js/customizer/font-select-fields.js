@@ -35,22 +35,46 @@ let CustomifyFontSelectFields = (function ($, exports, wp) {
         })
       }
 
+      $fontFamilyFields.each( function( i, obj ) {
+        var $field = $( obj );
+        var data = [];
+
+        $.each( this.options, function( i, option ) {
+          data.push( {
+            id: option.value,
+            text: option.textContent,
+            html: '<span>' + option.textContent + '</span><span>Google Font</span>',
+            title: option.textContent
+          } )
+        } );
+
+        function formatState (state) {
+          var baseUrl = "/user/pages/images/flags";
+          var $state = $(
+            '<span><img src="' + baseUrl + '/' + state.element.value.toLowerCase() + '.png" class="img-flag" /> ' + state.text + '</span>'
+          );
+          return $state;
+        };
+
+        $field.select2({
+          templateResult: formatState
+        });
+      } );
+
       // Initialize the select2 field for the font family
-      $fontFamilyFields.select2({
-        placeholder: selectPlaceholder
-      }).on('change', function (e) {
-        let new_option = $(e.target).find('option:selected'),
-          wrapper = $(e.target).closest(wrapperSelector)
+      $fontFamilyFields.on( 'change', function( e ) {
+        let new_option = $( e.target ).find( 'option:selected' ),
+          wrapper = $( e.target ).closest( wrapperSelector )
 
         // Update the weight subfield with the new options given by the selected font family.
-        updateWeightField(new_option, wrapper)
+        updateWeightField( new_option, wrapper );
 
         // Update the subset subfield with the new options given by the selected font family.
-        updateSubsetField(new_option, wrapper)
+        updateSubsetField( new_option, wrapper );
 
         // Serialize subfield values and refresh the fonts in the preview window.
-        selfUpdateValue(wrapper)
-      })
+        selfUpdateValue( wrapper );
+      } );
 
       // Initialize the select2 field for the font weight
       $(fontWeightSelector).each(function (i, el) {

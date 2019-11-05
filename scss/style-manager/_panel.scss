@@ -1,0 +1,73 @@
+// simplify Style Manager panel header
+#customize-theme-controls {
+
+  #sub-accordion-panel-style_manager_panel {
+    height: 100%;
+
+    .preview-notice {
+      visibility: hidden;
+    }
+
+    .panel-title {
+      visibility: visible;
+      font-size: 20px;
+      font-weight: 400;
+      color: $blue-dark;
+    }
+
+    .customize-help-toggle {
+      display: none;
+    }
+
+    .customize-panel-description {
+      padding: 0 $container-spacing $container-spacing;
+      font-size: 14px;
+    }
+
+    .panel-meta {
+
+      &,
+      .customize-panel-back,
+      .accordion-section-title,
+      .customize-panel-description {
+        background: transparent;
+        border: 0;
+        margin: 0;
+      }
+
+      .customize-panel-back {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+
+        display: flex;
+        align-items: center;
+
+        width: 100%;
+        height: auto;
+        min-height: 0;
+        padding: $container-spacing;
+        border-top: 1px solid $border-color;
+
+        font-size: 14px;
+
+        float: none;
+
+        &:before {
+          content: "\f340";
+          position: static;
+          line-height: 1;
+          margin-right: $container-spacing / 2;
+          color: $blue;
+        }
+
+        &:after {
+          content: "Go back to Pixelgrade.com";
+          display: block;
+          margin-bottom: 0.1em;
+          color: $blue-dark;
+        }
+      }
+    }
+  }
+}

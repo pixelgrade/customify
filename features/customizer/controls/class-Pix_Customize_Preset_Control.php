@@ -126,7 +126,7 @@ class Pix_Customize_Preset_Control extends Pix_Customize_Control {
                     <span class="description customize-control-description"><?php echo $this->description; ?></span>
                 <?php } ?>
 
-                <div class="customify_preset color_palette customize-control customize-control-radio">
+                <div class="customify_preset color_palette customize-control customize-control-color-palette">
                     <?php
                     foreach ( $this->choices as $choice_value => $choice_config ){
                         if ( empty( $choice_config['options'] ) ) {
@@ -226,7 +226,7 @@ class Pix_Customize_Preset_Control extends Pix_Customize_Control {
 					<span class="description customize-control-description"><?php echo $this->description; ?></span>
 				<?php } ?>
 
-				<div class="customify_preset font_palette customize-control customize-control-radio">
+				<div class="customify_preset font_palette customize-control customize-control-font-palette">
 					<?php
 					$choices = Customify_Font_Palettes::instance()->preprocess_config( $this->choices );
 					foreach ( $choices as $choice_value => $choice_config ){

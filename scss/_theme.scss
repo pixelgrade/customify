@@ -44,8 +44,8 @@
 
 		.accordion-section-title {
 			font-weight: 400;
-		    border-top: 1px solid $border-color;
-		    border-bottom: none;
+      border-top: 1px solid $border-color;
+      border-bottom: none;
 		}
 
 		&:last-of-type > .accordion-section-title {
@@ -92,7 +92,7 @@
 #customize-controls .customize-info .customize-section-description,
 #customize-outer-theme-controls .customize-info .customize-section-description,
 #customize-controls .no-widget-areas-rendered-notice {
-  color: $blue-darker;
+  color: $blue-dark;
   border-color: $border-color;
 }
 
