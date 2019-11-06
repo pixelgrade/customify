@@ -1,5 +1,5 @@
 var plugin = 'customify',
-	source_SCSS = 'scss/**/*.scss',
+	source_SCSS = 'scss/*.scss',
 	dest_CSS = './css/',
 
 	gulp = require('gulp'),
