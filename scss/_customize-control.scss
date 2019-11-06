@@ -151,10 +151,6 @@
     background: $white center no-repeat;
   }
 
-  //+ label:hover:before {
-  //  border-color: $blue-light;
-  //}
-
   &:focus + label:before {
     border-color: $blue;
   }
@@ -164,11 +160,6 @@
     background-color: $blue;
     background-image: url($checkmark-svg-white);
   }
-
-  //&:checked + label:hover:before {
-  //  border-color: $blue-light;
-  //  background-color: $blue-light;
-  //}
 }
 
 // Checkbox
@@ -198,10 +189,20 @@
   }
 }
 
-#customize-theme-controls .control-section.open {
-  border-bottom: 0;
-}
+#customize-theme-controls {
 
-.customize-control-description {
-  margin-top: 6px;
+  .customize-control-title {
+    margin-bottom: 10px;
+  }
+
+  .customize-control-description {
+    margin-top: -5px;
+    margin-bottom: 10px;
+    font-style: normal;
+    opacity: 0.75;
+  }
+
+  .control-section.open {
+    border-bottom: 0;
+  }
 }

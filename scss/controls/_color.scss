@@ -1,6 +1,7 @@
 //------------------------------------*\
 //    Color Picker
 //------------------------------------*/
+$picker-popup-width: 275px;
 
 .customize-control-color {
   display: block;
@@ -28,7 +29,7 @@
 
       border-radius: $fields-border-radius;
       background: #2ECC71;
-      border: 2px solid #B8DAEB;
+      border: 2px solid $blue-lightest;
       box-shadow: none;
 
       &:after,
@@ -42,7 +43,7 @@
       top: 40px;
       right: 0;
       z-index: 1000;
-      width: $popup !important;
+      width: $picker-popup-width !important;
       border-top: none;
       border-color: $blue-whitish;
       border-radius: 0 0 3px 3px;
@@ -80,7 +81,7 @@
       right: 0;
       z-index: 1000;
 
-      width: $popup;
+      width: $picker-popup-width;
       padding: 9px 12px;
       border: none;
       border-radius: 3px 3px 0 0;

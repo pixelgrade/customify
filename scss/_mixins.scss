@@ -102,3 +102,15 @@
     margin-right: 1px;
   }
 }
+
+@mixin section-title-with-icon {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  &:before {
+    font-family: dashicons;
+    font-size: 17px;
+    -webkit-font-smoothing: antialiased;
+  }
+}

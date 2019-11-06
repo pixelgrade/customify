@@ -1,3 +1,211 @@
+.wp-full-overlay-sidebar *, .wp-full-overlay-sidebar *:before, .wp-full-overlay-sidebar *:after {
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+.iris-picker,
+.iris-picker * {
+  -webkit-box-sizing: content-box;
+          box-sizing: content-box;
+}
+
+#customize-save-button-wrapper {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: stretch;
+      -ms-flex-align: stretch;
+          align-items: stretch;
+  margin-top: 6px;
+}
+
+.customize-controls-close {
+  width: 45px;
+  height: 45px;
+  padding: 0;
+  border-top: 0;
+  color: #98C6DD;
+  background: #FFFFFF;
+  border-color: #DFE8EF;
+}
+
+.customize-controls-close:focus, .customize-controls-close:hover {
+  background: #F7FBFF;
+}
+
+.customize-controls-close:before {
+  top: 0;
+}
+
+#customize-controls #customize-theme-controls .customize-info,
+#customize-controls #customize-theme-controls .customize-section-title {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+}
+
+#customize-controls #customize-theme-controls .customize-info > .customize-control-notifications-container,
+#customize-controls #customize-theme-controls .customize-section-title > .customize-control-notifications-container {
+  -ms-flex-preferred-size: 100%;
+      flex-basis: 100%;
+}
+
+#customize-controls #customize-theme-controls .customize-info > .accordion-section-title,
+#customize-controls #customize-theme-controls .customize-section-title > h3 {
+  -webkit-box-flex: 1;
+      -ms-flex-positive: 1;
+          flex-grow: 1;
+  margin-left: 0;
+  color: #2A3B44;
+}
+
+#customize-controls #customize-theme-controls .customize-panel-back,
+#customize-controls #customize-theme-controls .customize-section-back {
+  position: relative;
+  width: 45px;
+  height: auto;
+  padding: 0;
+  color: #98C6DD;
+  border-color: #DFE8EF;
+  border-left: 0;
+}
+
+#customize-controls #customize-theme-controls .customize-panel-back:hover, #customize-controls #customize-theme-controls .customize-panel-back:focus,
+#customize-controls #customize-theme-controls .customize-section-back:hover,
+#customize-controls #customize-theme-controls .customize-section-back:focus {
+  background: #F7FBFF;
+}
+
+#customize-controls #customize-theme-controls .customize-panel-back:before,
+#customize-controls #customize-theme-controls .customize-section-back:before {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-40%, -50%);
+          transform: translate(-40%, -50%);
+  line-height: 1;
+}
+
+.customize-controls-preview-toggle {
+  background-color: #FFFFFF;
+  border-color: #DFE8EF;
+}
+
+.in-sub-panel .wp-full-overlay-sidebar .wp-full-overlay-header {
+  padding-left: 45px;
+}
+
+.wp-full-overlay-sidebar .wp-full-overlay-header {
+  height: 46px;
+}
+
+.wp-full-overlay-footer .devices button {
+  float: left;
+  border-radius: 0;
+}
+
+#customize-controls h3.customize-section-title,
+#customize-controls .customize-section-title h3 {
+  padding: 10px 20px 11px 20px;
+  color: #416B7E;
+  background: #FFFFFF;
+}
+
+#customize-controls .accordion-section-title {
+  font-size: 14px;
+  line-height: 21px;
+  padding: 10px 40px 11px 20px;
+  color: #416B7E;
+  background: #FFFFFF;
+}
+
+#customize-controls .accordion-section-title:before {
+  line-height: inherit;
+}
+
+#customize-controls h3.accordion-section-title {
+  font-weight: normal;
+}
+
+#customize-theme-controls .accordion-section > .accordion-section-title {
+  border: 0 solid #DFE8EF;
+}
+
+#customize-theme-controls .accordion-section:last-of-type > .accordion-section-title {
+  border-bottom: 1px solid #DFE8EF;
+}
+
+#customize-theme-controls .accordion-section:not(.panel-meta) > .accordion-section-title {
+  border-top: 1px solid #DFE8EF;
+}
+
+#customize-theme-controls .accordion-section:not(.panel-meta) > .accordion-section-title:focus,
+#customize-theme-controls .accordion-section:not(.panel-meta):hover > .accordion-section-title {
+  background: #F7FBFF;
+}
+
+#customize-controls .panel-meta > .customize-control-notifications-container,
+#customize-controls .customize-section-title > .customize-control-notifications-container {
+  border-color: #DFE8EF;
+}
+
+#customize-controls #customize-theme-controls .accordion-section[id*="theme_options_panel"] > .accordion-section-title, #customize-controls #customize-theme-controls .accordion-section[id*="accordion-section-pro__section"] > .accordion-section-title {
+  border-bottom-width: 1px;
+  margin-bottom: 10px;
+}
+
+#customize-controls #accordion-section-title_tagline .accordion-section-title,
+#customize-controls #accordion-panel-style_manager_panel .accordion-section-title,
+#customize-controls #accordion-panel-theme_options_panel .accordion-section-title {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+}
+
+#customize-controls #accordion-section-title_tagline .accordion-section-title:before,
+#customize-controls #accordion-panel-style_manager_panel .accordion-section-title:before,
+#customize-controls #accordion-panel-theme_options_panel .accordion-section-title:before {
+  font-family: dashicons;
+  font-size: 17px;
+  -webkit-font-smoothing: antialiased;
+}
+
+#customize-controls #accordion-section-title_tagline .accordion-section-title:before,
+#customize-controls #accordion-panel-style_manager_panel .accordion-section-title:before,
+#customize-controls #accordion-panel-theme_options_panel .accordion-section-title:before {
+  color: #B8DAEB;
+  -webkit-box-ordinal-group: 3;
+      -ms-flex-order: 2;
+          order: 2;
+}
+
+#customize-controls #accordion-section-title_tagline > .accordion-section-title:before {
+  content: "\f110";
+  color: #85C4EA;
+}
+
+#customize-controls #accordion-section-title_tagline > .accordion-section-title img {
+  display: none !important;
+}
+
+#customize-controls #accordion-panel-style_manager_panel > .accordion-section-title:before {
+  content: "\f155";
+  font-size: 18px;
+  color: #F8BC30;
+}
+
+#customize-controls #accordion-panel-theme_options_panel > .accordion-section-title:before {
+  content: "\f538";
+}
+
 .customize-control {
   margin-bottom: 0;
 }
@@ -268,12 +476,19 @@
   text-indent: 0;
 }
 
-#customize-theme-controls .control-section.open {
-  border-bottom: 0;
+#customize-theme-controls .customize-control-title {
+  margin-bottom: 10px;
 }
 
-.customize-control-description {
-  margin-top: 6px;
+#customize-theme-controls .customize-control-description {
+  margin-top: -5px;
+  margin-bottom: 10px;
+  font-style: normal;
+  opacity: 0.75;
+}
+
+#customize-theme-controls .control-section.open {
+  border-bottom: 0;
 }
 
 .sm-palette-filter .sm-color-palette__colors {
@@ -337,9 +552,9 @@
   z-index: 10;
   width: 100%;
   height: 100%;
-  background-color: #ffffff;
-  -webkit-box-shadow: #d6e0e5 0 0 0 1px;
-          box-shadow: #d6e0e5 0 0 0 1px;
+  background-color: #FFFFFF;
+  -webkit-box-shadow: #DFE8EF 0 0 0 1px;
+          box-shadow: #DFE8EF 0 0 0 1px;
   border-radius: 999em;
 }
 
@@ -351,8 +566,8 @@
 
 .sm-palette-filter > input:checked + label .sm-color-palette__colors {
   background-color: #F7FBFF;
-  -webkit-box-shadow: #57ABD5 0 0 0 2px;
-          box-shadow: #57ABD5 0 0 0 2px;
+  -webkit-box-shadow: #48A9D7 0 0 0 2px;
+          box-shadow: #48A9D7 0 0 0 2px;
 }
 
 .customize-control-sm_palette_filter .customize-control-title {
@@ -1275,40 +1490,41 @@ input.c-color-palette__input[class] {
   cursor: not-allowed;
 }
 
-#customize-theme-controls #sub-accordion-panel-style_manager_panel {
+#customize-controls #sub-accordion-panel-style_manager_panel {
   height: 100%;
 }
 
-#customize-theme-controls #sub-accordion-panel-style_manager_panel .preview-notice {
+#customize-controls #sub-accordion-panel-style_manager_panel .preview-notice {
   visibility: hidden;
 }
 
-#customize-theme-controls #sub-accordion-panel-style_manager_panel .panel-title {
+#customize-controls #sub-accordion-panel-style_manager_panel .panel-title {
   visibility: visible;
   font-size: 20px;
   font-weight: 400;
   color: #416B7E;
 }
 
-#customize-theme-controls #sub-accordion-panel-style_manager_panel .customize-help-toggle {
+#customize-controls #sub-accordion-panel-style_manager_panel .customize-help-toggle {
   display: none;
 }
 
-#customize-theme-controls #sub-accordion-panel-style_manager_panel .customize-panel-description {
+#customize-controls #sub-accordion-panel-style_manager_panel .customize-panel-description {
+  display: block;
   padding: 0 20px 20px;
   font-size: 14px;
 }
 
-#customize-theme-controls #sub-accordion-panel-style_manager_panel .panel-meta,
-#customize-theme-controls #sub-accordion-panel-style_manager_panel .panel-meta .customize-panel-back,
-#customize-theme-controls #sub-accordion-panel-style_manager_panel .panel-meta .accordion-section-title,
-#customize-theme-controls #sub-accordion-panel-style_manager_panel .panel-meta .customize-panel-description {
+#customize-controls #sub-accordion-panel-style_manager_panel .panel-meta,
+#customize-controls #sub-accordion-panel-style_manager_panel .panel-meta .customize-panel-back,
+#customize-controls #sub-accordion-panel-style_manager_panel .panel-meta .accordion-section-title,
+#customize-controls #sub-accordion-panel-style_manager_panel .panel-meta .customize-panel-description {
   background: transparent;
   border: 0;
   margin: 0;
 }
 
-#customize-theme-controls #sub-accordion-panel-style_manager_panel .panel-meta .customize-panel-back {
+#customize-controls #sub-accordion-panel-style_manager_panel .customize-panel-back {
   position: absolute;
   bottom: 0;
   left: 0;
@@ -1327,142 +1543,122 @@ input.c-color-palette__input[class] {
   float: none;
 }
 
-#customize-theme-controls #sub-accordion-panel-style_manager_panel .panel-meta .customize-panel-back:before {
+#customize-controls #sub-accordion-panel-style_manager_panel .customize-panel-back:before {
   content: "\f340";
   position: static;
   line-height: 1;
   margin-right: 10px;
   color: #48A9D7;
+  -webkit-transform: none;
+          transform: none;
 }
 
-#customize-theme-controls #sub-accordion-panel-style_manager_panel .panel-meta .customize-panel-back:after {
-  content: "Go back to Pixelgrade.com";
+#customize-controls #sub-accordion-panel-style_manager_panel .customize-panel-back:after {
+  content: "Go back";
   display: block;
   margin-bottom: 0.1em;
   color: #416B7E;
 }
 
+#customize-controls #accordion-section-sm_color_palettes_section > .accordion-section-title {
+  border-bottom: 1px solid #DFE8EF;
+}
+
+#customize-controls #accordion-section-sm_color_palettes_section + #accordion-section-sm_font_palettes_section > .accordion-section-title {
+  margin-top: 5px;
+  border-top-width: 1px;
+}
+
+#customize-controls #accordion-section-sm_color_palettes_section > .accordion-section-title,
+#customize-controls #accordion-section-sm_font_palettes_section > .accordion-section-title {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  -webkit-box-pack: start;
+      -ms-flex-pack: start;
+          justify-content: flex-start;
+}
+
+#customize-controls #accordion-section-sm_color_palettes_section > .accordion-section-title:before,
+#customize-controls #accordion-section-sm_font_palettes_section > .accordion-section-title:before {
+  font-family: dashicons;
+  font-size: 17px;
+  -webkit-font-smoothing: antialiased;
+}
+
+#customize-controls #accordion-section-sm_color_palettes_section > .accordion-section-title:before,
+#customize-controls #accordion-section-sm_font_palettes_section > .accordion-section-title:before {
+  width: 2em;
+  height: 2em;
+  margin-right: 15px;
+  padding-left: 0.1em;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  text-align: center;
+  background-color: #85C4EA;
+  color: #F7FBFF;
+  border-radius: 50%;
+}
+
+#customize-controls #accordion-section-sm_color_palettes_section > .accordion-section-title:before {
+  content: "\f100";
+}
+
+#customize-controls #accordion-section-sm_font_palettes_section > .accordion-section-title:before {
+  content: "\f122";
+}
+
+.customize-control-font-palette .customize-inside-control-row {
+  position: relative;
+  padding-top: 52%;
+  overflow: hidden;
+  background-color: #FFFFFF;
+  background-size: contain;
+  background-position: right center;
+  border-radius: 4px;
+}
+
+.customize-control-font-palette .customize-inside-control-row + .customize-inside-control-row {
+  margin-top: 15px;
+}
+
+.customize-control-font-palette .customize-inside-control-row input {
+  display: none;
+}
+
+.customize-control-font-palette .customize-inside-control-row input + label {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  border: 2px solid #DFE8EF;
+  border-radius: inherit;
+}
+
+.customize-control-font-palette .customize-inside-control-row:hover input + label {
+  border-color: #B8DAEB;
+}
+
+.customize-control-font-palette .customize-inside-control-row input:checked + label {
+  border-color: #48A9D7;
+}
+
 #customize-control-sm_font_palette_control ~ .customize-control {
   display: none !important;
-}
-
-.pix_customizer_setting .font_palette[class][class] .customize-inside-control-row {
-  height: auto;
-  padding-top: 52%;
-  background-color: #FFFFFF;
-  border-radius: 6px;
-  overflow: hidden;
-}
-
-.pix_customizer_setting .font_palette[class][class] .customize-inside-control-row:before {
-  border: 1px solid #DFE8EF;
-  border-radius: 6px;
-}
-
-.pix_customizer_setting .font_palette[class][class] .customize-inside-control-row:before, .pix_customizer_setting .font_palette[class][class] .customize-inside-control-row:hover:before {
-  -webkit-box-shadow: 0 1px 0 0 #B8DAEB;
-          box-shadow: 0 1px 0 0 #B8DAEB;
-}
-
-.pix_customizer_setting .font_palette[class][class] .customize-inside-control-row input {
-  display: none;
-}
-
-.pix_customizer_setting .font_palette[class][class] .customize-inside-control-row label {
-  border-radius: 6px;
-  left: 0;
-}
-
-.pix_customizer_setting .font_palette[class][class] .customize-inside-control-row input + label {
-  border: 2px solid transparent;
-}
-
-.pix_customizer_setting .font_palette[class][class] .customize-inside-control-row input:checked + label {
-  border-color: #57ABD5;
-}
-
-.pix_customizer_setting .font_palette[class][class] .customize-inside-control-row .label__inner {
-  display: none;
-}
-
-.wp-full-overlay-sidebar,
-.customize-themes-panel,
-#customize-sidebar-outer-content {
-  background: #F7FBFF;
-  border-right: 1px solid #DFE8EF;
-}
-
-.outer-section-open #customize-controls .wp-full-overlay-sidebar-content,
-.attachment-media-view, .media-widget-preview.media_audio, .media-widget-preview.media_image {
-  background: #F7FBFF;
-}
-
-#customize-theme-controls #accordion-section-menu_locations {
-  border-bottom: 1px solid #DFE8EF;
-}
-
-#customize-controls #accordion-section-themes > .accordion-section-title {
-  font-weight: 600;
-  border-bottom: 1px solid #DFE8EF;
-}
-
-#customize-controls #accordion-section-themes > .accordion-section-title:hover {
-  background: #FFFFFF;
-}
-
-#customize-controls .panel-meta.customize-info {
-  border-bottom-color: #DFE8EF;
-}
-
-#customize-theme-controls .control-section .accordion-section-title {
-  font-weight: 400;
-  border-top: 1px solid #DFE8EF;
-  border-bottom: none;
-}
-
-#customize-theme-controls .control-section:last-of-type > .accordion-section-title {
-  border-bottom: 1px solid #DFE8EF;
-}
-
-#customize-theme-controls .customize-section-title {
-  border-top: 1px solid #DFE8EF;
-  border-bottom: 1px solid #DFE8EF;
-}
-
-#customize-controls .control-section .accordion-section-title:focus,
-#customize-controls .control-section .accordion-section-title:hover,
-#customize-controls .control-section.open .accordion-section-title,
-#customize-controls .control-section:hover > .accordion-section-title {
-  color: #416B7E;
-  background: #F7FBFF;
-  border-left-color: #F7FBFF;
-}
-
-.wp-customizer .menu-item-edit-active .menu-item-handle,
-.wp-customizer .section-open .menu-item-settings,
-.wp-customizer .menu-item-bar .menu-item-handle:hover {
-  border-color: #DFE8EF;
-}
-
-.wp-customizer .section-open .menu-item-settings {
-  background: #F7FBFF;
-}
-
-.wp-customizer .control-section-nav_menu .menu-location-settings {
-  border-top-color: #DFE8EF !important;
-}
-
-#customize-controls .customize-info .customize-panel-description,
-#customize-controls .customize-info .customize-section-description,
-#customize-outer-theme-controls .customize-info .customize-section-description,
-#customize-controls .no-widget-areas-rendered-notice {
-  color: #416B7E;
-  border-color: #DFE8EF;
-}
-
-#customize-header-actions {
-  background: #FFFFFF;
-  border-color: #DFE8EF;
 }
 
 [data-balloon] {
@@ -2843,105 +3039,43 @@ body.modal-open
   pointer-events: none;
 }
 
-.wp-full-overlay-sidebar *, .wp-full-overlay-sidebar *:before, .wp-full-overlay-sidebar *:after {
-  -webkit-box-sizing: border-box;
-          box-sizing: border-box;
-}
-
-.iris-picker,
-.iris-picker * {
-  -webkit-box-sizing: content-box;
-          box-sizing: content-box;
-}
-
-.wp-full-overlay-sidebar-content .accordion-section-content {
-  overflow: visible;
-}
-
-#customize-header-actions #customize-save-button-wrapper {
-  margin-top: 7px;
-}
-
-.wp-full-overlay-footer .devices button {
-  float: left;
-  border-radius: 0;
-}
-
-.customize-controls-close {
-  width: 48px;
-  height: 44px;
-  color: #98C6DD;
-  background: #FFFFFF;
-  border-top: none;
-  border-right-color: #DFE8EF;
-}
-
-.customize-controls-close:focus, .customize-controls-close:hover {
+#customize-controls {
   background: #F7FBFF;
-}
-
-.customize-controls-close:before {
-  top: 0;
+  border-color: #DFE8EF;
 }
 
 #customize-controls .customize-info {
-  border-bottom-color: #DFE8EF;
+  border-color: #DFE8EF;
 }
 
-#customize-controls .description {
-  font-size: 12px;
-  font-weight: 300;
-  font-style: normal;
-  line-height: 1.6;
+#customize-header-actions,
+#customize-footer-actions {
+  background: #FFFFFF;
+  border-color: #DFE8EF;
+}
+
+#customize-controls .customize-info .customize-panel-description,
+#customize-controls .customize-info .customize-section-description,
+#customize-outer-theme-controls .customize-info .customize-section-description,
+#customize-controls .no-widget-areas-rendered-notice {
+  padding: 20px;
+  border-color: #DFE8EF;
+  background: #FFFFFF;
   color: #416B7E;
-  text-indent: 0;
-}
-
-#customize-controls .panel-meta.customize-info .accordion-section-title {
-  border-top: none;
-  height: 74px;
-}
-
-.customize-panel-back,
-.customize-section-back {
-  height: 74px;
-  color: #98C6DD;
-  border-right-color: #DFE8EF;
-}
-
-.customize-panel-back:hover, .customize-panel-back:focus,
-.customize-section-back:hover,
-.customize-section-back:focus {
-  border-left-color: #F7FBFF;
-  background: #F7FBFF;
-}
-
-#customize-theme-controls .theme * {
-  -webkit-box-sizing: content-box;
-          box-sizing: content-box;
 }
 
 #customize-theme-controls .customize-pane-child.accordion-section-content {
   padding: 20px;
 }
 
-#customize-theme-controls .customize-section-title {
-  margin-top: -20px;
-  margin-left: -20px;
-  margin-right: -20px;
-  border-top: 0;
+.customize-section-title {
+  margin: -20px;
+  margin-bottom: 0;
+  border-color: #DFE8EF;
 }
 
-#customize-theme-controls #accordion-section-add_menu {
-  border-bottom: none;
-}
-
-#customize-theme-controls #accordion-section-add_menu .add-menu-toggle {
-  float: none;
-}
-
-#accordion-section-themes + .control-section {
-  border-top: none;
+.wp-full-overlay-sidebar-content .accordion-section-content {
+  overflow: visible;
 }
 
 @-webkit-keyframes shake {
@@ -3256,117 +3390,6 @@ li#customize-control-site_logo .actions {
   margin-bottom: 0;
 }
 
-#customize-theme-controls .accordion-section-title {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
-  -webkit-box-pack: justify;
-      -ms-flex-pack: justify;
-          justify-content: space-between;
-  padding: 10px 40px 11px 20px;
-  border: 0;
-  background: #FFFFFF;
-  color: inherit;
-}
-
-#customize-theme-controls #sub-accordion-panel-style_manager_panel .customize-panel-description,
-#customize-theme-controls #sub-accordion-panel-theme_options_panel .customize-panel-description {
-  display: block;
-}
-
-#customize-theme-controls #accordion-section-title_tagline .accordion-section-title:before,
-#customize-theme-controls #accordion-panel-style_manager_panel .accordion-section-title:before,
-#customize-theme-controls #accordion-section-sm_color_palettes_section .accordion-section-title:before,
-#customize-theme-controls #accordion-section-sm_font_palettes_section .accordion-section-title:before,
-#customize-theme-controls #accordion-panel-theme_options_panel .accordion-section-title:before {
-  font-family: dashicons;
-  font-size: 17px;
-  color: #B8DAEB;
-  -webkit-box-ordinal-group: 3;
-      -ms-flex-order: 2;
-          order: 2;
-  -webkit-font-smoothing: antialiased;
-}
-
-#customize-theme-controls #accordion-section-title_tagline .accordion-section-title:before {
-  content: "\f110";
-  color: #85C4EA;
-}
-
-#customize-theme-controls #accordion-section-title_tagline .accordion-section-title img {
-  display: none !important;
-}
-
-#customize-theme-controls #accordion-panel-style_manager_panel .accordion-section-title:before {
-  content: "\f155";
-  font-size: 18px;
-  color: #F8BC30;
-}
-
-#customize-theme-controls #accordion-panel-theme_options_panel .accordion-section-title:before {
-  content: "\f538";
-}
-
-#customize-theme-controls #accordion-section-sm_color_palettes_section .accordion-section-title:before {
-  content: "\f100";
-}
-
-#customize-theme-controls #accordion-section-sm_font_palettes_section .accordion-section-title:before {
-  content: "\f122";
-}
-
-#customize-theme-controls #accordion-section-sm_color_palettes_section .accordion-section-title,
-#customize-theme-controls #accordion-section-sm_font_palettes_section .accordion-section-title {
-  -webkit-box-pack: start;
-      -ms-flex-pack: start;
-          justify-content: flex-start;
-}
-
-#customize-theme-controls #accordion-section-sm_color_palettes_section .accordion-section-title:before,
-#customize-theme-controls #accordion-section-sm_font_palettes_section .accordion-section-title:before {
-  width: 2em;
-  height: 2em;
-  margin-right: 15px;
-  padding-left: 0.1em;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
-  -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
-  text-align: center;
-  background-color: #85C4EA;
-  color: #F7FBFF;
-  border-radius: 50%;
-  -webkit-box-ordinal-group: 0;
-      -ms-flex-order: -1;
-          order: -1;
-}
-
-#customize-theme-controls #accordion-section-sm_color_palettes_section .accordion-section-title {
-  border-bottom: 1px solid #DFE8EF;
-}
-
-#customize-theme-controls #accordion-section-sm_color_palettes_section + #accordion-section-sm_font_palettes_section {
-  margin-top: 10px;
-}
-
-#customize-theme-controls #accordion-section-sm_color_palettes_section + #accordion-section-sm_font_palettes_section .accordion-section-title {
-  border-top: 1px solid #DFE8EF;
-}
-
-#customize-theme-controls #accordion-panel-theme_options_panel .accordion-section-title,
-#customize-theme-controls #accordion-section-pro__section .accordion-section-title {
-  border-bottom: 1px solid #DFE8EF;
-  margin-bottom: 10px;
-}
-
 .section-navigation-wrapper {
   position: relative;
   height: 43px;
@@ -3605,7 +3628,7 @@ li#customize-control-site_logo .actions {
   margin-left: 0;
   margin-right: 0;
   margin-bottom: 10px;
-  border-bottom: 1px solid #CBCFD4;
+  border-bottom: 1px solid #DFE8EF;
 }
 
 .wp-customizer .widget-conditional .condition:last-child .selection {
@@ -3947,12 +3970,7 @@ input.font-options__checkbox {
   border-radius: 4px;
   border: 1px solid #CBCBCB;
   margin-right: 4px;
-  font-family: "Open Sans",sans-serif;
-}
-
-.customize-control-preset .description {
-  margin-right: 5px;
-  font-style: normal;
+  font-family: "Open Sans", sans-serif;
 }
 
 .customify_preset.radio_buttons .customify_radio_button {
@@ -4021,7 +4039,7 @@ input.font-options__checkbox {
   right: 1px;
   bottom: 1px;
   z-index: 5;
-  border: 1px solid #FFF;
+  border: 1px solid #FFFFFF;
   border-radius: 4px;
   background: transparent;
   opacity: .5;
@@ -4215,6 +4233,19 @@ input.font-options__checkbox {
 .customize-control-typography ul li {
   width: 100%;
   margin: 0;
+}
+
+#customize-theme-controls .theme * {
+  -webkit-box-sizing: content-box;
+          box-sizing: content-box;
+}
+
+#customize-theme-controls #accordion-section-add_menu {
+  border-bottom: none;
+}
+
+#customize-theme-controls #accordion-section-add_menu .add-menu-toggle {
+  float: none;
 }
 
 .customify_ace_editor {

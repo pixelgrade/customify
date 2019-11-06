@@ -1,140 +1,64 @@
 @charset "UTF-8";
 
-@import 'fields';
 @import 'variables';
 @import 'mixins';
 
+@import "reset";
+
+@import "sidebar-header";
+@import "sidebar-footer";
+
+
+@import "accordion-section-title";
 @import "customize-control";
 
 @import "style-manager/core";
 
-@import 'theme';
 @import 'balloon';
 @import 'feedback-modal';
 @import 'select2';
 
 //------------------------------------*\
-//    RESETS
+//    COLOOR OVERWRITES
 //------------------------------------*/
-.wp-full-overlay-sidebar {
-
-	*, *:before, *:after {
-		box-sizing: border-box;
-	}
-}
-
-.iris-picker,
-.iris-picker * {
-	box-sizing: content-box;
-}
-
-// Change sections overflow
-.wp-full-overlay-sidebar-content .accordion-section-content {
-	overflow: visible;
-}
-
-
-// Header – Close + Save Controls
-#customize-header-actions {
-
-	#customize-save-button-wrapper {
-		margin-top: 7px;
-	}
-}
-
-// Footer
-.wp-full-overlay-footer .devices button {
-  float: left;
-  border-radius: 0;
-}
-
-// Temporary Fix to Make "Close" button align with the "Back"
-.customize-controls-close {
-  width: 48px;
-  height: 44px;
-  color: $blue-lighter;
-  background: #FFFFFF;
-  border-top: none;
-  border-right-color: $border-color;
-
-  &:focus,
-  &:hover {
-    background: $background-hover;
-  }
-
-  // "X" Icon
-  &:before {
-    top: 0;
-  }
-}
 
 #customize-controls {
+  background: $blue-white;
+  border-color: $border-color;
 
-  // Remove Accordion Section Title Margin
   .customize-info {
-    border-bottom-color: $border-color;
-  }
-
-  .description {
-    font-size: 12px;
-    font-weight: 300;
-    font-style: normal;
-    line-height: 1.6;
-    color: $blue-dark;
-    text-indent: 0;
-  }
-
-  // Subsection Info Title
-  .panel-meta.customize-info .accordion-section-title {
-    border-top: none;
-    height: 74px;
+    border-color: $border-color;
   }
 }
 
-.customize-panel-back,
-.customize-section-back {
-	height: 74px;
-	color: $blue-lighter;
-	border-right-color: $border-color;
-
-	&:hover, &:focus {
-		border-left-color: $background-hover;
-		background: $background-hover;
-	}
+#customize-header-actions,
+#customize-footer-actions {
+  background: $white;
+  border-color: $border-color;
 }
 
-
-#customize-theme-controls {
-
-	.theme * {
-		box-sizing: content-box;
-	}
-
-  .customize-pane-child.accordion-section-content {
-		padding: $container-spacing;
-	}
-
-	.customize-section-title {
-    margin-top: -$container-spacing;
-		margin-left: -$container-spacing;
-		margin-right: -$container-spacing;
-    border-top: 0;
-	}
-
-	#accordion-section-add_menu {
-		border-bottom: none;
-
-		.add-menu-toggle {
-		 	float: none;
-		}
-	}
+#customize-controls .customize-info .customize-panel-description,
+#customize-controls .customize-info .customize-section-description,
+#customize-outer-theme-controls .customize-info .customize-section-description,
+#customize-controls .no-widget-areas-rendered-notice {
+  padding: $container-spacing;
+  border-color: $border-color;
+  background: $white;
+  color: $blue-dark;
 }
 
-// Active Themes Section
-#accordion-section-themes {
-  + .control-section {
-    border-top: none;
-  }
+#customize-theme-controls .customize-pane-child.accordion-section-content {
+  padding: $container-spacing;
+}
+
+.customize-section-title {
+  margin: -$container-spacing;
+  margin-bottom: 0;
+  border-color: $border-color;
+}
+
+.wp-full-overlay-sidebar-content .accordion-section-content {
+  overflow: visible;
 }
 
 @import "animations";
@@ -142,7 +66,6 @@
 @import "css-editor";
 @import "import-demo";
 @import "media-upload";
-@import "section-icons";
 @import "section-navigation";
 @import "separator";
 @import "widgets";
@@ -155,12 +78,4 @@
 @import "controls/radio-image";
 @import "controls/typography";
 
-.customify_ace_editor {
-	display: block;
-	min-height: 200px;
-	border: 1px solid $border-color;
-}
-
-.ui-tooltip {
-	z-index: 999999;
-}
+@import "shame";

@@ -711,7 +711,7 @@ let ColorPalettes = (function ($, exports, wp) {
 
     $('.sm-palette-filter .color').addClass('hidden').filter(optionsSelector).removeClass('hidden')
     $('.c-color-palette .color').addClass('hidden').filter(optionsSelector).removeClass('hidden')
-    $('.customify_preset.color_palette .palette__item').addClass('hidden').filter(optionsSelector).removeClass('hidden')
+    $('.js-color-palette .palette__item').addClass('hidden').filter(optionsSelector).removeClass('hidden')
   }, 30)
 
   const refreshCurrentPaletteControl = () => {
@@ -926,7 +926,7 @@ let ColorPalettes = (function ($, exports, wp) {
     $paletteControl.removeClass('active')
     $paletteControl.filter('.variation-' + variation).addClass('active')
 
-    $(document).on('click', '.customify_preset.color_palette input', function (e) {
+    $(document).on('click', '.js-color-palette input', function (e) {
       if (!confirmChanges(onPaletteChange.bind(this))) {
         e.preventDefault()
       }

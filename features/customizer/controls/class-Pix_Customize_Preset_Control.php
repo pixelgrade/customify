@@ -29,7 +29,7 @@ class Pix_Customize_Preset_Control extends Pix_Customize_Control {
 					<span class="description customize-control-description"><?php echo $this->description; ?></span>
 				<?php } ?>
 
-				<select <?php $this->link(); ?> class="customify_preset select">
+				<select <?php $this->link(); ?> class="js-customify-preset select">
 					<?php
 					foreach ( $this->choices as $choice_value => $choice_config ){
 						if ( ! isset( $choice_config['options']) || ! isset( $choice_config['label'] ) ) {
@@ -54,7 +54,7 @@ class Pix_Customize_Preset_Control extends Pix_Customize_Control {
 						<span class="description customize-control-description"><?php echo $this->description; ?></span>
 					<?php } ?>
 
-					<div class="customify_preset radio customize-control customize-control-radio">
+					<div class="js-customify-preset radio customize-control customize-control-radio">
 						<?php
 						foreach ( $this->choices as $choice_value => $choice_config ){
 							if ( ! isset( $choice_config['options']) || ! isset( $choice_config['label'] ) ) {
@@ -90,7 +90,7 @@ class Pix_Customize_Preset_Control extends Pix_Customize_Control {
 						<span class="description customize-control-description"><?php echo $this->description; ?></span>
 					<?php } ?>
 
-					<div class="customify_preset radio_buttons">
+					<div class="js-customify-preset radio_buttons">
 						<?php
 						foreach ( $this->choices as $choice_value => $choice_config ){
 							if ( ! isset( $choice_config['options']) || ! isset( $choice_config['label'] ) ) {
@@ -126,7 +126,7 @@ class Pix_Customize_Preset_Control extends Pix_Customize_Control {
                     <span class="description customize-control-description"><?php echo $this->description; ?></span>
                 <?php } ?>
 
-                <div class="customify_preset color_palette customize-control customize-control-color-palette">
+                <div class="js-customify-preset js-color-palette customize-control customize-control-color-palette">
                     <?php
                     foreach ( $this->choices as $choice_value => $choice_config ){
                         if ( empty( $choice_config['options'] ) ) {
@@ -226,7 +226,7 @@ class Pix_Customize_Preset_Control extends Pix_Customize_Control {
 					<span class="description customize-control-description"><?php echo $this->description; ?></span>
 				<?php } ?>
 
-				<div class="customify_preset font_palette customize-control customize-control-font-palette">
+				<div class="js-customify-preset js-font-palette customize-control customize-control-font-palette">
 					<?php
 					$choices = Customify_Font_Palettes::instance()->preprocess_config( $this->choices );
 					foreach ( $choices as $choice_value => $choice_config ){
@@ -267,19 +267,10 @@ class Pix_Customize_Preset_Control extends Pix_Customize_Control {
 						<span class="customize-inside-control-row <?php echo ( (string) $this->value() === (string) $choice_value ? 'current-font-palette' : '' );?>" style="background-image: url( <?php echo esc_url( $choice_config['preview']['background_image_url'] ); ?> );">
                             <input <?php $this->link(); echo 'name="' . $this->setting->id . '" id="' . esc_attr( $choice_value ) . '-font-palette" type="radio" value="' . esc_attr( $choice_value ) . '" ' . selected( $this->value(), $choice_value, false ) . $data .' />'; ?>
 							<label for="<?php echo esc_attr( $choice_value ) . '-font-palette'; ?>">
-                                <span class="label__inner" style="">
-                                    <i class="preview__letter" style=""><?php echo $choice_config['preview']['sample_letter']; ?></i>
-                                    <i class="preview__letter--checked" style="background-image: url('<?php echo plugins_url( 'images/check.svg', PixCustomifyPlugin()->get_file() ); ?>')"></i>
-	                                <?php echo esc_html( $label ); ?>
-                                </span>
-                            </label>
-                            <div class="palette">
-                                <?php foreach ( $choice_config['fonts_logic'] as $font_name => $font_value ) {
-	                                if ( ! empty( $customizer_config['sections']['style_manager_section']['options'][$font_name]['connected_fields'] ) ) {
-		                                echo '<div class="palette__item ' . esc_attr( $font_name ) . '" style=""></div>' . "\n";
-	                                }
-                                } ?>
-                            </div>
+								<span class="screen-reader-text">
+									<?php echo esc_html( $label ); ?>
+								</span>
+							</label>
                         </span>
 					<?php } ?>
 				</div>
@@ -293,7 +284,7 @@ class Pix_Customize_Preset_Control extends Pix_Customize_Control {
 						<span class="customize-control-title"><?php echo esc_html( $this->label ); ?></span>
 					<?php } ?>
 
-					<div class="customify_preset awesome_presets">
+					<div class="js-customify-preset awesome_presets">
 						<?php
 
 						$google_links = array();

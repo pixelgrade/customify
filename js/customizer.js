@@ -225,13 +225,13 @@
 				}
 			})
 
-			$(document).on('change', '.customify_preset.select', function () {
+			$(document).on('change', 'select.js-customify-preset', function () {
 				const $source = $(this)
 				const $target = $source.children('[value="' + $source.val() + '"]')
 				$target.trigger('customify:preset-change')
 			})
 
-			$(document).on('click', '.customify_preset.radio input, .customify_preset.radio_buttons input, .awesome_presets input', function () {
+			$(document).on('click', '.js-customify-preset input', function () {
 				$(this).trigger('customify:preset-change')
 			})
 

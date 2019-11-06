@@ -172,7 +172,7 @@ let FontPalettes = ( function( $, exports, wp ) {
         initializePalettes();
 	    reloadConnectedFields();
 
-        $( document ).on( 'click', '.customify_preset.font_palette input', onPaletteChange );
+        $( document ).on( 'click', '.js-font-palette input', onPaletteChange );
     };
 
     wp.customize.bind( 'ready', handlePalettes );

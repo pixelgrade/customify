@@ -1,0 +1,11 @@
+.wp-full-overlay-sidebar {
+
+  *, *:before, *:after {
+    box-sizing: border-box;
+  }
+}
+
+.iris-picker,
+.iris-picker * {
+  box-sizing: content-box;
+}

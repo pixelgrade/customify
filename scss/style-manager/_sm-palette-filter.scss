@@ -59,8 +59,8 @@
       width: 100%;
       height: 100%;
 
-      background-color: #ffffff;
-      box-shadow: #d6e0e5 0 0 0 1px;
+      background-color: $white;
+      box-shadow: $border-color 0 0 0 1px;
       border-radius: 999em;
     }
   }
@@ -74,7 +74,7 @@
 
     .sm-color-palette__colors {
       background-color: $blue-white;
-      box-shadow: #57ABD5 0 0 0 2px;
+      box-shadow: $blue 0 0 0 2px;
     }
   }
 }

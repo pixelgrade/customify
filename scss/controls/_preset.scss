@@ -9,16 +9,9 @@
   border-radius: $fields-border-radius;
   border: 1px solid #CBCBCB;
   margin-right: 4px;
-  font-family: "Open Sans",sans-serif;
+  font-family: "Open Sans", sans-serif;
 }
 
-.customize-control-preset {
-
-  .description {
-    margin-right: 5px;
-    font-style: normal;
-  }
-}
 
 .customify_preset {
 
@@ -80,7 +73,7 @@
     margin-bottom: 25px;
 
     text-align: center;
-    color: #FFFFFF;
+    color: $white;
 
     transition: all 0.2s;
 
@@ -97,7 +90,7 @@
       bottom: 1px;
       z-index: 5;
 
-      border: 1px solid #FFF;
+      border: 1px solid $white;
       border-radius: $fields-border-radius;
       background: transparent;
       opacity: .5;
