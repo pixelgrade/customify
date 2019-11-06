@@ -41,7 +41,7 @@ $sm-fonts-id: unquote( '#accordion-section-sm_font_palettes_section' );
       }
     }
 
-    .customize-panel-back {
+    /* .customize-panel-back {
       position: absolute;
       bottom: 0;
       left: 0;
@@ -74,6 +74,14 @@ $sm-fonts-id: unquote( '#accordion-section-sm_font_palettes_section' );
         margin-bottom: 0.1em;
         color: $blue-dark;
       }
+    } */
+
+    .customize-panel-back {
+      min-height: 74px;
+    }
+
+    .panel-meta .accordion-section-title {
+      flex-basis: 100%;
     }
   }
 }
