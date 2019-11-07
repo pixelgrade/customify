@@ -8,15 +8,31 @@
 @import "sidebar-header";
 @import "sidebar-footer";
 
-
 @import "accordion-section-title";
 @import "customize-control";
-
-@import "style-manager/core";
 
 @import 'balloon';
 @import 'feedback-modal';
 @import 'select2';
+
+@import "animations";
+@import "buttons";
+@import "css-editor";
+@import "import-demo";
+@import "media-upload";
+@import "section-navigation";
+@import "separator";
+@import "widgets";
+
+@import "controls/color";
+@import "controls/custom-background";
+@import "controls/font";
+@import "controls/preset";
+@import "controls/radio-html";
+@import "controls/radio-image";
+@import "controls/typography";
+
+@import "style-manager/core";
 
 //------------------------------------*\
 //    COLOOR OVERWRITES
@@ -44,7 +60,7 @@
   padding: $container-spacing;
   border-color: $border-color;
   background: $white;
-  color: $blue-dark;
+  color: $blue-darker;
 }
 
 #customize-theme-controls .customize-pane-child.accordion-section-content {
@@ -60,22 +76,5 @@
 .wp-full-overlay-sidebar-content .accordion-section-content {
   overflow: visible;
 }
-
-@import "animations";
-@import "buttons";
-@import "css-editor";
-@import "import-demo";
-@import "media-upload";
-@import "section-navigation";
-@import "separator";
-@import "widgets";
-
-@import "controls/color";
-@import "controls/custom-background";
-@import "controls/font";
-@import "controls/preset";
-@import "controls/radio-html";
-@import "controls/radio-image";
-@import "controls/typography";
 
 @import "shame";

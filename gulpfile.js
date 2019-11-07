@@ -33,11 +33,11 @@ function stylesProd() {
 gulp.task('styles', stylesProd);
 
 gulp.task('styles-watch', function () {
-	return gulp.watch(source_SCSS, stylesDev);
+	return gulp.watch('scss/**/*.scss', stylesDev);
 });
 
 gulp.task('watch', function () {
-	gulp.watch(source_SCSS, stylesDev);
+	gulp.watch('scss/**/*.scss', stylesDev);
 });
 
 // usually there is a default task for lazy people who just wanna type gulp
