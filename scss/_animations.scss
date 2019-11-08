@@ -12,21 +12,17 @@
   75% { transform: translate3d(-1%, 0, 0) }
 }
 
-.error-shake {
-  animation-name: shake;
-  border-color: #9e362f !important;
+.input-error {
+  border-color: #9E362F !important;
 }
 
-.animated {
-  animation-duration: .5s;
-  animation-fill-mode: both;
+.input-shake {
+  animation: shake .5s both;
 }
 
 @media (print), (prefers-reduced-motion: reduce) {
-  .animated {
-    animation-duration: 1ms !important;
-    transition-duration: 1ms !important;
-    animation-iteration-count: 1 !important;
+  .input-shake {
+    animation: none;
   }
 }
 

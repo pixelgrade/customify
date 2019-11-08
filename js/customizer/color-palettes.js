@@ -553,7 +553,7 @@ let ColorPalettes = (function ($, exports, wp) {
     $('body').on('click', function () {
       $colors.removeClass('active inactive')
       $colors.each(function (i, obj) {
-        const $input = $(obj).data('target')
+        const $input = $(obj).data('target');
 
 		    if( !$(obj).hasClass('js-no-picker') ) {
           $input.iris('hide')

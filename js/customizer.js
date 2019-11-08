@@ -368,38 +368,41 @@
             .insertAfter( $range );
 				}
 
-        function hasValidValue() {
-          var min = $number.attr( 'min' );
-          var max = $number.attr( 'max' );
-          var value = $number.val();
+        function hasValidValue( $input ) {
+          var min = $input.attr( 'min' );
+          var max = $input.attr( 'max' );
+          var value = $input.val();
 
-          if ( min !== undefined && parseFloat( min ) > parseFloat( value ) ) {
+          if ( typeof min !== "undefined" && parseFloat( min ) > parseFloat( value ) ) {
             return false;
           }
 
-          if ( max !== undefined && parseFloat( max ) < parseFloat( value ) ) {
+          if ( typeof max !== "undefined" && parseFloat( max ) < value ) {
             return false;
           }
 
           return true;
         }
 
-        const debouncedRangeUpdate = _.debounce( function() {
-          if ( ! hasValidValue() ) {
-            $number.addClass( 'animated error-shake' );
-            setTimeout( function() {
-              $number.removeClass( 'animated error-shake' );
-            }, 300 ) // The animation has a 1 second duration.
-          }
-        }, 300 );
-
-        // Update the range field when changing the number
-        $number.on( 'change keyup', debouncedRangeUpdate );
-
-        // Update the number field when changing the range
         $range.on( 'input', function() {
-          $number.val( $range.val() ).change();
+          $number.val( $range.val() );
         } );
+
+        $number.on( 'blur', function() {
+          if ( ! hasValidValue( $number ) ) {
+            $number.val( $range.val() );
+            shake( $number );
+          } else {
+            $range.val( $number.val() );
+          }
+        } );
+
+        function shake( $field ) {
+          $field.addClass( 'input-shake input-error' );
+          $field.one( 'animationend', function() {
+            $field.removeClass( 'input-shake input-error' );
+          } );
+        }
 			})
 		}
 

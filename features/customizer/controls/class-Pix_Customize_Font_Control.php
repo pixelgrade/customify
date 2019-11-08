@@ -416,7 +416,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 				}
 			}
 			?>
-			<li class="customify_font_size_wrapper customize-control font-options__option">
+			<li class="customify_font_size_wrapper customize-control customize-control-range font-options__option">
 				<label><?php esc_html_e( 'Font Size', 'customify' ); ?></label>
 				<input type="range"
 				       data-field="font_size" <?php $this->input_field_atts( $this->fields['font-size'] ) ?>
@@ -455,7 +455,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 				}
 			}
 			?>
-			<li class="customify_line_height_wrapper customize-control font-options__option">
+			<li class="customify_line_height_wrapper customize-control customize-control-range font-options__option">
 				<label><?php esc_html_e( 'Line height', 'customify' ); ?></label>
 				<input type="range"
 				       data-field="line_height" <?php $this->input_field_atts( $this->fields['line-height'] ) ?>
@@ -495,7 +495,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 				}
 			}
 			?>
-			<li class="customify_letter_spacing_wrapper customize-control font-options__option">
+			<li class="customify_letter_spacing_wrapper customize-control customize-control-range font-options__option">
 				<label><?php esc_html_e( 'Letter Spacing', 'customify' ); ?></label>
 				<input type="range"
 				       data-field="letter_spacing" <?php $this->input_field_atts( $this->fields['letter-spacing'] ) ?>
