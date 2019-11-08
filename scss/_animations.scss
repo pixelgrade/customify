@@ -1,16 +1,15 @@
 @keyframes shake {
 
-  from, to {
+  0%, 87.5%, 100% {
     transform: translate3d(0, 0, 0);
   }
 
-  10%, 30%, 50%, 70%, 90% {
-    transform: translate3d(-8px, 0, 0);
-  }
-
-  20%, 40%, 60%, 80% {
-    transform: translate3d(8px, 0, 0);
-  }
+  12.5% { transform: translate3d(1%, 0, 0) }
+  25% { transform: translate3d(-2%, 0, 0) }
+  37.5% { transform: translate3d(3%, 0, 0) }
+  50% { transform: translate3d(-3%, 0, 0) }
+  62.5% { transform: translate3d(2%, 0, 0) }
+  75% { transform: translate3d(-1%, 0, 0) }
 }
 
 .error-shake {
@@ -19,7 +18,7 @@
 }
 
 .animated {
-  animation-duration: 1s;
+  animation-duration: .5s;
   animation-fill-mode: both;
 }
 

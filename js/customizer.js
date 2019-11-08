@@ -355,32 +355,29 @@
 
 			// For each range input add a number field (for preview mainly - but it can also be used for input)
       $( el ).find( 'input[type="range"]' ).each( function() {
-        var $this = $( this ),
-            $range = $this.siblings( 'input[type="range"]' );
+        var $range = $( this ),
+            $number = $range.siblings( '.range-value' );
 
-        if ( ! $range.length ) {
-					var $wrapper = $( '<div class="font-options__range">' );
-					$range = $this.clone();
+        if ( ! $number.length ) {
+					$number = $range.clone();
 
-          $range
+          $number
             .attr( 'type', 'number' )
             .attr( 'class', 'range-value' )
             .removeAttr( 'data-field' )
-
-          $this.replaceWith( $wrapper );
-
-          $wrapper.append( $this );
-          $wrapper.append( $range );
+            .insertAfter( $range );
 				}
 
         function hasValidValue() {
-          var value = $this.val();
+          var min = $number.attr( 'min' );
+          var max = $number.attr( 'max' );
+          var value = $number.val();
 
-          if ( $range.attr( 'min' ) !== undefined && parseFloat( $range.attr( 'min' ) ) > parseFloat( value ) ) {
+          if ( min !== undefined && parseFloat( min ) > parseFloat( value ) ) {
             return false;
           }
 
-          if ( $range.attr( 'max' ) !== undefined && parseFloat( $range.attr( 'max' ) ) < parseFloat( value ) ) {
+          if ( max !== undefined && parseFloat( max ) < parseFloat( value ) ) {
             return false;
           }
 
@@ -389,19 +386,19 @@
 
         const debouncedRangeUpdate = _.debounce( function() {
           if ( ! hasValidValue() ) {
-            $this.addClass( 'animated error-shake' );
+            $number.addClass( 'animated error-shake' );
             setTimeout( function() {
-              $this.removeClass( 'animated error-shake' );
-            }, 1000 ) // The animation has a 1 second duration.
+              $number.removeClass( 'animated error-shake' );
+            }, 300 ) // The animation has a 1 second duration.
           }
-        }, 700 );
+        }, 300 );
 
         // Update the range field when changing the number
-        $this.siblings( '.range-value' ).on( 'change keyup', debouncedRangeUpdate );
+        $number.on( 'change keyup', debouncedRangeUpdate );
 
         // Update the number field when changing the range
-        $this.on( 'input', function() {
-          $this.siblings( '.range-value' ).val( $this.val() ).change();
+        $range.on( 'input', function() {
+          $number.val( $range.val() ).change();
         } );
 			})
 		}
