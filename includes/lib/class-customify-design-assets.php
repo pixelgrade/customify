@@ -124,7 +124,7 @@ class Customify_Design_Assets {
 			$fetched_data = $this->cloud_api->fetch_design_assets();
 			// Bail in case of failure to retrieve data.
 			// We will return the data already available.
-			if ( false === $fetched_data ) {
+			if ( false === $fetched_data || null === $fetched_data ) {
 				return $data;
 			}
 

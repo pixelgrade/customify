@@ -668,6 +668,9 @@ class Customify_Color_Palettes {
 	}
 
 	private function get_color_diversity_default_value( $options_config ) {
+		if ( empty( $options_config ) ) {
+			return 'low';
+		}
 		$optionsArrayObject = new ArrayObject( $options_config );
 		$optionsCopy = $optionsArrayObject->getArrayCopy();
 
@@ -739,7 +742,11 @@ class Customify_Color_Palettes {
 	}
 
 	private function get_coloration_level_default_label( $options_config ) {
-		$average = $this->get_coloration_level_average( $options_config );
+		if ( empty( $options_config ) ) {
+			$average = 0;
+		} else {
+			$average = $this->get_coloration_level_average( $options_config );
+		}
 
 		if ( $average < 25 ) {
 			return 'low';
@@ -836,6 +843,10 @@ class Customify_Color_Palettes {
 			$options_config = $config['sections']['style_manager_section']['options'];
 		} elseif ( ! empty( $config['panels']['style_manager_panel']['sections']['sm_color_palettes_section']['options'] ) ) {
 			$options_config = $config['panels']['style_manager_panel']['sections']['sm_color_palettes_section']['options'];
+		}
+
+		if ( empty( $options_config ) ) {
+			return;
 		}
 
 		update_option( 'sm_coloration_level', $this->get_coloration_level_default_value( $options_config ) );
