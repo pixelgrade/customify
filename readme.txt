@@ -2,7 +2,7 @@
 Contributors: pixelgrade, vlad.olaru, babbardel, razvanonofrei
 Tags: customizer, css, editor, gutenberg, live, preview, customizer
 Requires at least: 4.9.9
-Tested up to: 5.2.4
+Tested up to: 5.3.0
 Stable tag: 2.5.5
 Requires PHP: 5.3.0
 License: GPLv2 or later
@@ -45,6 +45,12 @@ With [Customify](https://github.com/pixelgrade/customify), developers can easily
 * Default [image](https://unsplash.com/photos/OgM4RKdr2kY) for Style Manager Color Palette control - License: (Unsplash)[https://unsplash.com/license]
 
 == Changelog ==
+
+= 2.5.6 =
+* Improved styling for the Font control.
+* Improved handling of minimal required PHP version.
+* Cleanup stylesheets and scripts for better performance and easier maintenance.
+* Compatibility with WordPress 5.3.0.
 
 = 2.5.5 =
 * Fixed an issue with the default font weight for the Typography field.
