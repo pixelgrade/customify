@@ -1,73 +1,73 @@
-.separator {
+#customize-theme-controls {
 
-  &.label {
-    display: block;
-    font-size: 14px;
-    line-height: 24px;
-    font-weight: 500;
-  }
+  .separator {
 
-  &.large {
-    margin-top: $fields-spacing/2;
-    font-size: 16px;
-    color: #39474D;
-  }
-
-  &.section,
-  &.sub-section {
-
-    .customize-section-description-container:first-child + .customize-control-html & {
-      margin-top: -16px;
+    &.label {
+      display: block;
+      font-size: 14px;
+      line-height: 24px;
+      font-weight: 500;
     }
 
-    &:before {
-      content: "";
-
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      left: -$container-spacing - 1;
-      right: -$container-spacing - 1;
-      z-index: -1;
-
-      border: 0 solid $border-color;
+    &.large {
+      margin-top: $fields-spacing / 2;
+      font-size: 16px;
+      color: #39474D;
     }
-  }
 
-  &.section {
-    position: relative;
-    padding: 14px 0;
-    margin-bottom: 0;
-    background: none;
-    border: none;
+    &.section,
+    &.sub-section {
 
-    &[id*="layout"] {
-      margin-top: 0;
+      .customize-section-description-container:first-child + .customize-control-html & {
+        margin-top: -16px;
+      }
 
       &:before {
-        border: 0;
+        content: "";
+
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: -$container-spacing;
+        right: -$container-spacing;
+        z-index: -1;
+
+        border-width: 1px 0;
+        border-style: solid;
+        border-color: $border-color;
+
+        background-color: $white;
       }
     }
 
-    &:before {
-      border-width: 1px;
-      background-color: #FFFFFF;
-      box-shadow: 0 1px 0 0 $blue-whitish;
+    &.section {
+      position: relative;
+      padding: 14px 0;
+      margin-bottom: 0;
+      background: none;
+      border: none;
+
+      &[id*="layout"] {
+        margin-top: 0;
+
+        &:before {
+          border: 0;
+        }
+      }
+
+      &:before {
+        border-width: 1px 0;
+      }
     }
-  }
 
-  &.sub-section {
-    position: relative;
-    padding: 12px 0;
+    &.sub-section {
+      position: relative;
+      padding: 12px 0;
 
-    &:before {
-      border-width: 1px 0;
-      background-color: #FFFFFF;
-    }
-
-    + span {
-      margin-top: 20px;
-      font-style: normal;
+      &:before {
+        border-width: 1px 0;
+        background-color: $white;
+      }
     }
   }
 }

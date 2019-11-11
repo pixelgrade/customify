@@ -74,116 +74,6 @@
 				customifyHandleRangeFields(this)
 			})
 
-			if ($('button[data-action="reset_customify"]').length > 0) {
-				// reset_button
-				$(document).on('click', '#customize-control-reset_customify button', function (ev) {
-					ev.preventDefault()
-
-					var iAgree = confirm('Do you really want to reset to defaults all the fields? Watch out, this will reset all your Customify options and will save them!')
-
-					if (!iAgree) {
-						return
-					}
-
-					$.each(api.settings.controls, function (key, ctrl) {
-						const setting_id = key.replace('_control', '')
-						const setting = customify_settings.settings[setting_id]
-
-						if (!_.isUndefined(setting) && !_.isUndefined(setting.default)) {
-							api_set_setting_value(setting_id, setting.default)
-						}
-					})
-
-					api.previewer.save()
-				})
-
-				// add a reset button for each panel
-				$('.panel-meta').each(function (el, key) {
-					const container = $(this).parents('.control-panel'),
-						id = container.attr('id')
-
-					if (typeof id !== 'undefined') {
-						const panel_id = id.replace('accordion-panel-', '')
-						$(this).parent().append('<button class="reset_panel button" data-panel="' + panel_id + '">Panel\'s defaults</button>')
-					}
-				})
-
-				// reset panel
-				$(document).on('click', '.reset_panel', function (e) {
-					e.preventDefault()
-
-					const panel_id = $(this).data('panel'),
-						panel = api.panel(panel_id),
-						sections = panel.sections(),
-						iAgree = confirm('Do you really want to reset ' + panel.params.title + '?')
-
-					if (!iAgree) {
-						return
-					}
-					if (sections.length > 0) {
-						$.each(sections, function () {
-							//var settings = this.settings();
-							const controls = this.controls()
-
-							if (controls.length > 0) {
-								$.each(controls, function (key, ctrl) {
-									const setting_id = ctrl.id.replace('_control', ''),
-										setting = customify_settings.settings[setting_id]
-
-									if (!_.isUndefined(setting) && !_.isUndefined(setting.default)) {
-										api_set_setting_value(setting_id, setting.default)
-									}
-								})
-							}
-						})
-					}
-				})
-
-				//add reset section
-				$('.accordion-section-content').each(function (el, key) {
-					const section_id = $(this).attr('id')
-
-					if ((
-						(
-							!_.isUndefined(section_id)
-						) ? section_id.indexOf(customify_settings.options_name) : -1
-					) === -1) {
-						return
-					}
-
-					if (!_.isUndefined(section_id) && section_id.indexOf('sub-accordion-section-') > -1) {
-						const id = section_id.replace('sub-accordion-section-', '')
-						$(this).append('<button class="reset_section button" data-section="' + id + '">Reset All Options for This Section</button>')
-					}
-				})
-
-				// reset section event
-				$(document).on('click', '.reset_section', function (e) {
-					e.preventDefault()
-
-					const section_id = $(this).data('section'),
-						section = api.section(section_id),
-						controls = section.controls()
-
-					const iAgree = confirm('Do you really want to reset ' + section.params.title + '?')
-
-					if (!iAgree) {
-						return
-					}
-
-					if (controls.length > 0) {
-						$.each(controls, function (key, ctrl) {
-							const setting_id = ctrl.id.replace('_control', ''),
-								setting = customify_settings.settings[setting_id]
-
-							if (!_.isUndefined(setting) && !_.isUndefined(setting.default)) {
-								api_set_setting_value(setting_id, setting.default)
-							}
-						})
-					}
-				})
-			}
-
 			$(document).on('change', '.customify_typography_font_subsets', function (ev) {
 
 				const $input = $(this).parents('.options').siblings('.customify_typography').children('.customify_typography_values');
@@ -246,51 +136,177 @@
 				customifyFoldingFields()
 			}, 1000);
 
+			// Handle reset buttons
+      handleResetButtons();
+
 			// Handle the section tabs (ex: Layout | Fonts | Colors)
-			(
-				function () {
-					const $navs = $('.js-section-navigation')
-
-					$navs.each(function () {
-						const $nav = $(this)
-						const $title = $nav.parents('.accordion-section-content').find('.customize-section-title')
-
-						$nav.closest('.customize-control').addClass('screen-reader-text')
-						$title.append($nav).parent().addClass('has-nav')
-					})
-
-					$('.js-section-navigation a').on('click', function (e) {
-						e.preventDefault()
-
-						const $sidebar = $(this).parents('.customize-pane-child'),
-              $parent = $(this).parents('.accordion-section-content'),
-              href = $.attr(this, 'href')
-
-						if (href != '#') {
-							$sidebar.animate({
-								scrollTop: $($.attr(this, 'href')).position().top - $parent.find('.customize-section-title').outerHeight()
-							}, 500)
-						}
-					})
-				}
-			)();
-
-      (function() {
-        var $allCheckboxes = $( '.js-font-option-toggle' );
-        // Close a font field when clicking on another field
-        $allCheckboxes.on( 'click', function() {
-          var $checkbox = $( this );
-          if ( $checkbox.prop( 'checked' ) === true ) {
-            $allCheckboxes.not( $checkbox ).prop( 'checked', false );
-          }
-        } )
-      })();
+			handleSectionTabs();
+      handleFontPopupToggle();
 
 			// Bind any connected fields, except those in the Style Manager.
 			// Those are handled by the appropriate Style Manager component (Color Palettes, Font Palettes, etc ).
 			bindConnectedFields()
+		});
 
-		})
+		function handleResetButtons() {
+      var showResetButtons = $( 'button[data-action="reset_customify"]' ).length > 0;
+
+      if ( showResetButtons ) {
+        createResetPanelButtons();
+        createResetSectionButtons();
+
+        $( document ).on( 'click', '.reset_panel', onResetPanel );
+        $( document ).on( 'click', '.reset_section', onResetSection );
+        $( document ).on( 'click', '#customize-control-reset_customify button', onReset );
+      }
+    }
+
+    function handleFontPopupToggle() {
+      var $allCheckboxes = $( '.js-font-option-toggle' );
+      // Close a font field when clicking on another field
+      $allCheckboxes.on( 'click', function() {
+        var $checkbox = $( this );
+        if ( $checkbox.prop( 'checked' ) === true ) {
+          $allCheckboxes.not( $checkbox ).prop( 'checked', false );
+        }
+      } )
+    }
+
+    function createResetPanelButtons() {
+      $('.panel-meta').each(function (el, key) {
+        const container = $(this).parents('.control-panel'),
+          id = container.attr('id')
+
+        if (typeof id !== 'undefined') {
+          const panel_id = id.replace('accordion-panel-', '')
+          $(this).parent().append('<button class="reset_panel button" data-panel="' + panel_id + '">Panel\'s defaults</button>')
+        }
+      })
+    }
+
+    function createResetSectionButtons() {
+      $( '.accordion-section-content' ).each( function( el, key ) {
+        var $this = $( this );
+        var section_id = $this.attr( 'id' );
+
+        if ( _.isUndefined( section_id ) || section_id.indexOf( customify_settings.options_name ) === - 1 ) {
+          return;
+        }
+
+        var id = section_id.replace( 'sub-accordion-section-', '' );
+        var $button = $( '<button class="reset_section button" data-section="' + id + '"></button>' );
+        var $buttonWrapper = $( '<li class="customize-control customize-control-reset"></li>' );
+
+        $button.text( 'Reset All Options for This Section' );
+        $buttonWrapper.append( $button );
+
+        $this.append( $buttonWrapper );
+      } );
+    }
+
+    function onReset(ev) {
+      ev.preventDefault()
+
+      var iAgree = confirm( 'Do you really want to reset to defaults all the fields? Watch out, this will reset all your Customify options and will save them!' )
+
+      if ( ! iAgree ) {
+        return
+      }
+
+      $.each( api.settings.controls, function( key, ctrl ) {
+        const setting_id = key.replace( '_control', '' )
+        const setting = customify_settings.settings[setting_id]
+
+        if ( !_.isUndefined( setting ) && !_.isUndefined( setting.default ) ) {
+          api_set_setting_value( setting_id, setting.default )
+        }
+      } );
+
+      api.previewer.save();
+    }
+
+    function onResetPanel(e) {
+      e.preventDefault()
+
+      const panel_id = $(this).data('panel'),
+        panel = api.panel(panel_id),
+        sections = panel.sections(),
+        iAgree = confirm('Do you really want to reset ' + panel.params.title + '?')
+
+      if (!iAgree) {
+        return
+      }
+      if (sections.length > 0) {
+        $.each(sections, function () {
+          //var settings = this.settings();
+          const controls = this.controls()
+
+          if (controls.length > 0) {
+            $.each(controls, function (key, ctrl) {
+              const setting_id = ctrl.id.replace('_control', ''),
+                setting = customify_settings.settings[setting_id]
+
+              if (!_.isUndefined(setting) && !_.isUndefined(setting.default)) {
+                api_set_setting_value(setting_id, setting.default)
+              }
+            })
+          }
+        })
+      }
+    }
+
+    function onResetSection(e) {
+      e.preventDefault()
+
+      const section_id = $(this).data('section'),
+        section = api.section(section_id),
+        controls = section.controls()
+
+      const iAgree = confirm('Do you really want to reset ' + section.params.title + '?')
+
+      if (!iAgree) {
+        return
+      }
+
+      if (controls.length > 0) {
+        $.each(controls, function (key, ctrl) {
+          const setting_id = ctrl.id.replace('_control', ''),
+            setting = customify_settings.settings[setting_id]
+
+          if (!_.isUndefined(setting) && !_.isUndefined(setting.default)) {
+            api_set_setting_value(setting_id, setting.default)
+          }
+        })
+      }
+    }
+
+    function handleSectionTabs() {
+      const $navs = $( '.js-section-navigation' );
+
+      $navs.each( function() {
+        const $nav = $( this )
+        const $title = $nav.parents( '.accordion-section-content' ).find( '.customize-section-title' );
+        const $parent = $nav.closest( '.customize-control' );
+
+        $nav.appendTo( $title );
+        $title.parent().addClass( 'has-nav' );
+        $parent.addClass( 'screen-reader-text' );
+      } );
+
+      $( '.js-section-navigation a' ).on( 'click', function( e ) {
+        e.preventDefault();
+
+        const $sidebar = $( this ).parents( '.customize-pane-child' ),
+          $parent = $( this ).parents( '.accordion-section-content' ),
+          href = $.attr( this, 'href' )
+
+        if ( href != '#' ) {
+          $sidebar.animate( {
+            scrollTop: $( $.attr( this, 'href' ) ).position().top - $parent.find( '.customize-section-title' ).outerHeight()
+          }, 500 )
+        }
+      } );
+    }
 
 		const getConnectedFieldsCallback = function (parent_setting_data, parent_setting_id) {
 			return function (new_value, old_value) {
