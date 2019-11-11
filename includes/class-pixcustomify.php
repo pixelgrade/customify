@@ -722,7 +722,7 @@ class PixCustomifyPlugin {
 				// The "save as array" behavior happens even in the case of 'option' setting type if
 				// the setting ID is of the form 'rosa_option[some_key]' (aka a multidimensional setting ID).
 				if ( null === $value ) {
-					if ( PixCustomifyPlugin()->settings->get_plugin_setting( 'values_store_mod' ) === 'option' ) {
+					if ( ! empty( PixCustomifyPlugin()->settings ) && PixCustomifyPlugin()->settings->get_plugin_setting( 'values_store_mod' ) === 'option' ) {
 						// Get the value stored in a option.
 						$value = $this->get_option_mod_value( $option_id, $setting_id );
 					} else {
