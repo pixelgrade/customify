@@ -12,15 +12,11 @@
     &.large {
       margin-top: $fields-spacing / 2;
       font-size: 16px;
-      color: #39474D;
+      color: $blue-darker;
     }
 
     &.section,
     &.sub-section {
-
-      .customize-section-description-container:first-child + .customize-control-html & {
-        margin-top: -16px;
-      }
 
       &:before {
         content: "";
@@ -38,6 +34,10 @@
 
         background-color: $white;
       }
+
+      + .customize-control-description {
+        margin-top: $fields-spacing;
+      }
     }
 
     &.section {
@@ -46,14 +46,6 @@
       margin-bottom: 0;
       background: none;
       border: none;
-
-      &[id*="layout"] {
-        margin-top: 0;
-
-        &:before {
-          border: 0;
-        }
-      }
 
       &:before {
         border-width: 1px 0;

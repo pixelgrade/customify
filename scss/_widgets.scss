@@ -39,7 +39,7 @@
       }
 
       .accordion-section-title {
-        color: #39474D;
+        color: $blue-darker;
 
         &:after {
           content: "\f142"; // Change arrow style to be more consistent

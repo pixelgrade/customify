@@ -137,11 +137,11 @@
 			}, 1000);
 
 			// Handle reset buttons
-      handleResetButtons();
+            handleResetButtons();
 
 			// Handle the section tabs (ex: Layout | Fonts | Colors)
 			handleSectionTabs();
-      handleFontPopupToggle();
+            handleFontPopupToggle();
 
 			// Bind any connected fields, except those in the Style Manager.
 			// Those are handled by the appropriate Style Manager component (Color Palettes, Font Palettes, etc ).
@@ -149,17 +149,17 @@
 		});
 
 		function handleResetButtons() {
-      var showResetButtons = $( 'button[data-action="reset_customify"]' ).length > 0;
+	      var showResetButtons = $( 'button[data-action="reset_customify"]' ).length > 0;
 
-      if ( showResetButtons ) {
-        createResetPanelButtons();
-        createResetSectionButtons();
+	      if ( showResetButtons ) {
+	        createResetPanelButtons();
+	        createResetSectionButtons();
 
-        $( document ).on( 'click', '.reset_panel', onResetPanel );
-        $( document ).on( 'click', '.reset_section', onResetSection );
-        $( document ).on( 'click', '#customize-control-reset_customify button', onReset );
-      }
-    }
+	        $( document ).on( 'click', '.js-reset-panel', onResetPanel );
+	        $( document ).on( 'click', '.js-reset-section', onResetSection );
+	        $( document ).on( 'click', '#customize-control-reset_customify button', onReset );
+	      }
+	    }
 
     function handleFontPopupToggle() {
       var $allCheckboxes = $( '.js-font-option-toggle' );
@@ -173,14 +173,21 @@
     }
 
     function createResetPanelButtons() {
-      $('.panel-meta').each(function (el, key) {
-        const container = $(this).parents('.control-panel'),
-          id = container.attr('id')
 
-        if (typeof id !== 'undefined') {
-          const panel_id = id.replace('accordion-panel-', '')
-          $(this).parent().append('<button class="reset_panel button" data-panel="' + panel_id + '">Panel\'s defaults</button>')
-        }
+	    $( '.panel-meta' ).each( function( i, obj ) {
+	    	var $this = $( obj )
+	        var container = $this.parents('.control-panel');
+	        var id = container.attr('id');
+
+		    if ( typeof id !== 'undefined' ) {
+			    id = id.replace( 'sub-accordion-panel-', '' );
+			    id = id.replace( 'accordion-panel-', '' );
+			    var $buttonWrapper = $( '<li class="customize-control customize-control-reset"></li>' );
+			    var $button = $( '<button class="button js-reset-panel" data-panel="' + id + '"></button>' );
+
+			    $button.text( "Panel's defaults" ).appendTo( $buttonWrapper );
+			    $this.parent().append( $buttonWrapper );
+		    }
       })
     }
 
@@ -194,7 +201,7 @@
         }
 
         var id = section_id.replace( 'sub-accordion-section-', '' );
-        var $button = $( '<button class="reset_section button" data-section="' + id + '"></button>' );
+        var $button = $( '<button class="button js-reset-section" data-section="' + id + '"></button>' );
         var $buttonWrapper = $( '<li class="customize-control customize-control-reset"></li>' );
 
         $button.text( 'Reset All Options for This Section' );
@@ -284,9 +291,9 @@
       const $navs = $( '.js-section-navigation' );
 
       $navs.each( function() {
-        const $nav = $( this )
-        const $title = $nav.parents( '.accordion-section-content' ).find( '.customize-section-title' );
-        const $parent = $nav.closest( '.customize-control' );
+        var $nav = $( this )
+        var $title = $nav.parents( '.accordion-section-content' ).find( '.customize-section-title' );
+        var $parent = $nav.closest( '.customize-control' );
 
         $nav.appendTo( $title );
         $title.parent().addClass( 'has-nav' );
@@ -296,14 +303,18 @@
       $( '.js-section-navigation a' ).on( 'click', function( e ) {
         e.preventDefault();
 
-        const $sidebar = $( this ).parents( '.customize-pane-child' ),
-          $parent = $( this ).parents( '.accordion-section-content' ),
-          href = $.attr( this, 'href' )
+        var $this = $( this );
+        var $sidebar = $this.parents( '.wp-full-overlay-sidebar-content' );
+        var $parent = $this.parents( '.accordion-section-content' );
+        var href = $this.attr('href' );
 
         if ( href != '#' ) {
-          $sidebar.animate( {
-            scrollTop: $( $.attr( this, 'href' ) ).position().top - $parent.find( '.customize-section-title' ).outerHeight()
-          }, 500 )
+          var actionsHeight = $( '#customize-header-actions' ).outerHeight();
+          var titleHeight = $parent.find( '.customize-section-title' ).outerHeight();
+          var $target = $( href );
+          var offset = $target.position().top;
+
+          $sidebar.animate( { scrollTop: offset - titleHeight - actionsHeight }, 500 );
         }
       } );
     }

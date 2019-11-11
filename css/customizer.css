@@ -220,10 +220,6 @@
   padding: 0;
 }
 
-.customize-control .customize-inside-control-row {
-  margin-left: 0;
-}
-
 .customize-control input[type="text"]:not(#_customize-input-wpcom_custom_css_content_width_control):not(.wp-color-picker),
 .customize-control input[type="password"],
 .customize-control input[type="color"],
@@ -399,6 +395,11 @@
   cursor: grabbing;
 }
 
+.customize-control-checkbox .customize-inside-control-row,
+.customize-control-radio .customize-inside-control-row {
+  margin-left: 0;
+}
+
 .customize-control-checkbox input[type="checkbox"],
 .customize-control-radio input[type="radio"] {
   display: none;
@@ -476,7 +477,17 @@
   margin-bottom: 10px;
 }
 
+#customize-theme-controls li.customize-control-title {
+  margin-bottom: 0;
+}
+
+#customize-theme-controls li.customize-control-title + .customize-control-checkbox,
+#customize-theme-controls li.customize-control-title + .customize-control-radio {
+  margin-top: 0;
+}
+
 #customize-theme-controls .customize-control-description {
+  margin-bottom: 10px;
   font-style: normal;
   opacity: 0.75;
 }
@@ -2073,16 +2084,23 @@ body.modal-open
   border-right: none;
 }
 
-.wp-core-ui .reset_section,
-.wp-core-ui .reset_panel {
-  width: 100%;
-  height: 4em;
-  display: block;
-  margin: 0 0 25px;
+.wp-core-ui #customize-controls .customize-control-reset {
+  padding-top: 20px;
+  padding-bottom: 20px;
 }
 
-.wp-core-ui .reset_panel {
-  margin-top: 10px;
+.wp-core-ui #customize-controls .control-panel > .customize-control-reset {
+  border-top: 1px solid #DFE8EF;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+.wp-core-ui #customize-controls [class].customize-control-reset .button,
+.wp-core-ui #customize-controls [id="customize-control-reset_customify"] .button {
+  width: 100%;
+  padding: 10px 20px;
+  display: block;
+  margin-bottom: 2px;
 }
 
 #accordion-section-live_css_edit_section .customize-section-title {
@@ -2237,6 +2255,10 @@ li#customize-control-site_logo .actions {
   border-right: 1px solid #DFE8EF;
 }
 
+.section-navigation a:focus {
+  position: relative;
+}
+
 #customize-controls .customize-info.is-sticky.is-sticky,
 #customize-controls .customize-section-title.is-sticky.is-sticky {
   top: 40px;
@@ -2256,6 +2278,10 @@ li#customize-control-site_logo .actions {
   margin-top: -20px;
 }
 
+#customize-controls .customize-section-description-container.section-meta.has-nav + .screen-reader-text + .customize-control-html .separator.section:before {
+  border-top: 0;
+}
+
 #customize-theme-controls .separator.label {
   display: block;
   font-size: 14px;
@@ -2266,11 +2292,7 @@ li#customize-control-site_logo .actions {
 #customize-theme-controls .separator.large {
   margin-top: 10px;
   font-size: 16px;
-  color: #39474D;
-}
-
-.customize-section-description-container:first-child + .customize-control-html #customize-theme-controls .separator.section, .customize-section-description-container:first-child + .customize-control-html #customize-theme-controls .separator.sub-section {
-  margin-top: -16px;
+  color: #2A3B44;
 }
 
 #customize-theme-controls .separator.section:before, #customize-theme-controls .separator.sub-section:before {
@@ -2287,20 +2309,16 @@ li#customize-control-site_logo .actions {
   background-color: #FFFFFF;
 }
 
+#customize-theme-controls .separator.section + .customize-control-description, #customize-theme-controls .separator.sub-section + .customize-control-description {
+  margin-top: 20px;
+}
+
 #customize-theme-controls .separator.section {
   position: relative;
   padding: 14px 0;
   margin-bottom: 0;
   background: none;
   border: none;
-}
-
-#customize-theme-controls .separator.section[id*="layout"] {
-  margin-top: 0;
-}
-
-#customize-theme-controls .separator.section[id*="layout"]:before {
-  border: 0;
 }
 
 #customize-theme-controls .separator.section:before {
@@ -2345,7 +2363,7 @@ li#customize-control-site_logo .actions {
 }
 
 #customize-theme-controls .widget-content .accordion-container .accordion-section .accordion-section-title {
-  color: #39474D;
+  color: #2A3B44;
 }
 
 #customize-theme-controls .widget-content .accordion-container .accordion-section .accordion-section-title:after {

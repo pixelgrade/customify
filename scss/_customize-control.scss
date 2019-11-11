@@ -11,10 +11,6 @@
     padding: 0;
   }
 
-  .customize-inside-control-row {
-    margin-left: 0;
-  }
-
   input[type="text"]:not(#_customize-input-wpcom_custom_css_content_width_control):not(.wp-color-picker),
   input[type="password"],
   input[type="color"],
@@ -104,6 +100,14 @@
   }
 }
 
+.customize-control-checkbox,
+.customize-control-radio {
+
+  .customize-inside-control-row {
+    margin-left: 0;
+  }
+}
+
 .customize-control-checkbox input[type="checkbox"],
 .customize-control-radio input[type="radio"] {
   display: none;
@@ -178,10 +182,21 @@
 #customize-theme-controls {
 
   .customize-control-title {
-    margin-bottom: 10px;
+    margin-bottom: $fields-spacing / 2;
+  }
+
+  // adjustments for weird jetpack markup
+  li.customize-control-title {
+    margin-bottom: 0;
+
+    + .customize-control-checkbox,
+    + .customize-control-radio {
+      margin-top: 0;
+    }
   }
 
   .customize-control-description {
+    margin-bottom: $fields-spacing / 2;
     font-style: normal;
     opacity: 0.75;
   }

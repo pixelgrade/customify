@@ -29,6 +29,10 @@
     &:not(:last-child) {
       border-right: 1px solid $border-color;
     }
+
+    &:focus {
+      position: relative;
+    }
   }
 }
 
@@ -51,6 +55,10 @@
     + .screen-reader-text + .customize-control-html {
       .separator.section {
         margin-top: -$fields-spacing;
+
+        &:before {
+          border-top: 0;
+        }
       }
     }
   }
