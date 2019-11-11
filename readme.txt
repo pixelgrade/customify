@@ -50,6 +50,7 @@ With [Customify](https://github.com/pixelgrade/customify), developers can easily
 * Improved styling for the Font control.
 * Improved handling of minimal required PHP version.
 * Cleanup stylesheets and scripts for better performance and easier maintenance.
+* Updated Google Fonts list to include the latest additions.
 * Compatibility with WordPress 5.3.0.
 
 = 2.5.5 =
