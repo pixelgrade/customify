@@ -35,31 +35,21 @@ let CustomifyFontSelectFields = (function ($, exports, wp) {
         })
       }
 
-      $fontFamilyFields.each( function( i, obj ) {
-        var $field = $( obj );
-        var data = [];
+      $fontFamilyFields.select2({
+        placeholder: selectPlaceholder
+      }).on('change', function (e) {
+        let new_option = $(e.target).find('option:selected'),
+          wrapper = $(e.target).closest(wrapperSelector)
 
-        $.each( this.options, function( i, option ) {
-          data.push( {
-            id: option.value,
-            text: option.textContent,
-            html: '<span>' + option.textContent + '</span><span>Google Font</span>',
-            title: option.textContent
-          } )
-        } );
+        // Update the weight subfield with the new options given by the selected font family.
+        updateWeightField(new_option, wrapper)
 
-        function formatState (state) {
-          var baseUrl = "/user/pages/images/flags";
-          var $state = $(
-            '<span><img src="' + baseUrl + '/' + state.element.value.toLowerCase() + '.png" class="img-flag" /> ' + state.text + '</span>'
-          );
-          return $state;
-        };
+        // Update the subset subfield with the new options given by the selected font family.
+        updateSubsetField(new_option, wrapper)
 
-        $field.select2({
-          templateResult: formatState
-        });
-      } );
+        // Serialize subfield values and refresh the fonts in the preview window.
+        selfUpdateValue(wrapper)
+      });
 
       // Initialize the select2 field for the font family
       $fontFamilyFields.on( 'change', function( e ) {
@@ -485,7 +475,7 @@ let CustomifyFontSelectFields = (function ($, exports, wp) {
       $( '.customify_font_family' ).select2({
         theme: 'classic',
         minimumResultsForSearch: 10,
-      }).trigger( 'change' )
+      })
     }
 
     return {

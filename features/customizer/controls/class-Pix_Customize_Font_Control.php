@@ -328,11 +328,19 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 		$selected = array();
 		if ( isset( $current_value->selected_variants ) ) {
 			$selected = $current_value->selected_variants;
+
+			if ( is_array( $selected ) ) {
+				$selected = $selected[0];
+			}
 		}
 		?>
 		<li class="customify_weights_wrapper customize-control font-options__option" style="display: <?php echo $display; ?>;">
 			<label><?php _e( 'Font Weight', 'customify' ); ?></label>
-			<select class="customify_font_weight" data-field="selected_variants" <?php echo ! empty( $selected ) ? 'data-default="' . $selected[0] . '"' : ''; echo ( isset( $this->fields['font-weight'] ) && false === $this->fields['font-weight'] ) ? 'data-disabled' : ''; ?>>
+			<?php
+			$data_default = ! empty( $selected ) ? 'data-default="' . $selected . '"' : '';
+			$data_disabled = isset( $this->fields['font-weight'] ) && false === $this->fields['font-weight'] ? 'data-disabled' : '';
+			?>
+			<select class="customify_font_weight" data-field="selected_variants" <?php echo $data_default . ' ' . $data_disabled  ?>>
 				<?php
 				if ( isset( $current_value->variants ) && ! empty( $current_value->variants ) && is_object( $current_value->variants ) ) {
 					foreach ( $current_value->variants as $weight ) {
