@@ -475,7 +475,7 @@ let CustomifyFontSelectFields = (function ($, exports, wp) {
       $( '.customify_font_family' ).select2({
         theme: 'classic',
         minimumResultsForSearch: 10,
-      })
+      }).trigger( 'change' );
     }
 
     return {
