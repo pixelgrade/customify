@@ -267,10 +267,17 @@ let CustomifyFontSelectFields = (function ($, exports, wp) {
         }
 
         // current_subsets
-        if (typeof current_value !== 'undefined' && current_value !== null && current_value.indexOf(subset) !== -1) {
-          new_subsets[index].selected = true
+        if ( typeof current_value !== 'undefined' && current_value !== null ) {
+          if ( ! Array.isArray( current_value ) ) {
+            current_value = Object.keys( current_value ).map( function( key ) {
+              return current_value[ key ];
+            } );
+          }
+          if ( current_value.indexOf(subset) !== -1) {
+            new_subsets[index].selected = true
+          }
         }
-      })
+      });
 
       // We need to clear the old select2 field and reinitialize it.
       $(font_subsets).select2().empty()
