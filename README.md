@@ -16,7 +16,7 @@ So this plugin adds some fields in customizer, no big deal right? How about addi
 
 The Customify [$config](#about_config_var) can be filtered by any theme and this is how you do it, include this filter in your theme(probably in functions.php)
 
-```
+```php
  // Advice: change this function's name and make sure it is unique
  
 add_filter('customify_filter_fields', 'make_this_function_name_unique' );
@@ -65,7 +65,9 @@ function make_this_function_name_unique( $config ) {
 The Customify plugin also create's its own defaults this way. You can see that in `customify/customify_config.php`
 Personally I like to simply copy this file in my child theme and include it in `functions.php` with
 
-`require 'customify_config.php'`
+```php
+require 'customify_config.php'
+```
 
 And after that the sky is the limit, I can style any elements or group of elements in customizer.
 
@@ -105,7 +107,7 @@ This is the array which is processed by the `customify_filter_fields` filter and
 
 The `css` configuration can also hold a `media` parameter which will make the output of the CSS property, to wrap in the specified media query, for example:
 
-```
+```php
 'site_title_size' => array(
 	'type'  => 'range',
 	'label' => 'Site Title Size',
@@ -127,7 +129,7 @@ This will make the property take effect only on screens larger than 1000px, beca
 Each field can take a 'callback_filter' parameter.This should be a function name which should be called when a field is changed.
 
 For example let's take this range field:
-```
+```php
 'sidebar_width' => array(
 	'type'  => 'range',
 	'label' => 'Sidebar width',
@@ -151,7 +153,7 @@ For example let's take this range field:
 Now let's create a callback which multiplies the effect of this css property
 Let's say that we want the sidebar to grow faster in length and double its value when the slider is changed
 
-```
+```php
 function this_setting_can_call_this_function( $value, $selector, $property, $unit ) {
 
 	$this_property_output = $selector . ' { '. $property .': '. ( $value * 2 ) . $unit . "; } \n";
@@ -173,7 +175,7 @@ This is recommended for color fields because you won't need to stop drag-and-dro
 All the text fields have support for a **live preview** but they require an array of classes instead of the boolean `true` for the `live` parameter.
 
 For example a fields which would provide the copyright text from footer whould be like this:
-```
+```php
 'footer_copyright' => array(
 	'type'     => 'text',
 	'label'    => 'Footer Copyright'
@@ -199,7 +201,7 @@ This [gist](https://gist.github.com/andreilupu/3a71618fb6d2ea2c2b1429544c667cd1)
 Since version 1.1.0 we added support for presets options. With this fields, you can pre-define other options.
 Here is and example of how to config this.
 
-```
+```php
 'theme_style'   => array(
 	'type'      => 'preset',
 	'label'     => __( 'Select a style:', 'customify' ),
@@ -251,7 +253,7 @@ Wanna have a preset like this?
 
 Just add this section in your config
 
-```
+```php
 'presets_section' => array(
 	'title'    => __( 'Style Presets', 'customify' ),
 	'options' => array(
@@ -381,7 +383,7 @@ Just add this section in your config
 
 In 1.3.0 we introduced the new font selector, it works with live preview only and it has this possible configs:
 
-```
+```php
 'headings_font' => array(
     'type'        => 'font',
     'label'       => esc_html__( 'Headings', 'customify' ),
@@ -425,7 +427,7 @@ In 1.3.0 we introduced the new font selector, it works with live preview only an
 In the above example you can see the callback parameter, it supports a PHP or Javascript function
 which should replace the current output of the font
 
-```
+```php
 function your_custom_callback_function( $value, $font ) {
 	return $combined_css';
 }
@@ -447,7 +449,7 @@ add_action( 'customize_preview_init', 'add_javascript_callback_function' );
 Also this font selector comes with the ability to add custom fonts from a theme.
 If a theme comes with the name of a font and a stylesheet with its fontface it
 will be added as the first option of the font selector
-```
+```php
 function theme_add_customify_theme_fonts ( $fonts ) {
 	$fonts['Custom Font'] = array(
 		'family' => 'Custom Font',
