@@ -107,7 +107,8 @@ class Customify_Settings {
 
 		$screen = get_current_screen();
 		if ( $screen->id === $this->plugin_screen_hook_suffix ) {
-			wp_enqueue_style( $this->slug . '-admin-styles', plugins_url( 'css/admin.css', $this->file ), array(), $this->version );
+			$rtl_suffix = is_rtl() ? '-rtl' : '';
+			wp_enqueue_style( $this->slug . '-admin-styles', plugins_url( 'css/admin' . $rtl_suffix . '.css', $this->file ), array(), $this->version );
 		}
 	}
 

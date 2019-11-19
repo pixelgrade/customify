@@ -154,7 +154,8 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 		 * Register Customizer admin styles
 		 */
 		function register_admin_customizer_styles() {
-			wp_register_style( 'customify_style', plugins_url( 'css/customizer.css', PixCustomifyPlugin()->get_file() ), array( 'dashicons' ), PixCustomifyPlugin()->get_version() );
+			$rtl_suffix = is_rtl() ? '-rtl' : '';
+			wp_register_style( 'customify_style', plugins_url( 'css/customizer' . $rtl_suffix . '.css', PixCustomifyPlugin()->get_file() ), array( 'dashicons' ), PixCustomifyPlugin()->get_version() );
 		}
 
 		/**

@@ -6,31 +6,58 @@ var plugin = 'customify',
 	fs = require('fs'),
 	plugins = require('gulp-load-plugins')(),
 	del = require('del'),
-	cp = require('child_process')
+	cp = require('child_process'),
+  cleanCSS = require('gulp-clean-css'),
+  commandExistsSync = require('command-exists').sync;
+
+var u = plugins.util,
+  c = plugins.util.colors,
+  log = plugins.util.log;
 
 require('es6-promise').polyfill();
 
 // styles related
-function stylesDev() {
-	return gulp.src(source_SCSS)
-		.pipe(plugins.sass({'sourcemap': true, outputStyle: 'expanded'}))
-		.on('error', function (e) {
-			console.log(e.message);
-		})
-		.pipe(plugins.autoprefixer())
-		.pipe(plugins.replace(/^@charset \"UTF-8\";\n/gm, ''))
-		.pipe(gulp.dest(dest_CSS));
+
+function logError( err, res ) {
+  log( c.red( 'Sass failed to compile' ) );
+  log( c.red( '> ' ) + err.file.split( '/' )[err.file.split( '/' ).length - 1] + ' ' + c.underline( 'line ' + err.line ) + ': ' + err.message );
+}
+
+function stylesDev () {
+  return gulp.src(source_SCSS)
+    .pipe(plugins.sass({'sourcemap': true, outputStyle: 'expanded'})).on('error', logError)
+    .pipe(plugins.autoprefixer())
+    .pipe(plugins.replace(/^@charset \"UTF-8\";\n/gm, ''))
+    .pipe(gulp.dest(dest_CSS))
+    .pipe(plugins.rtlcss())
+    .pipe(plugins.rename(function (path) {
+      path.basename += '-rtl';
+    }))
+    .pipe(gulp.dest(dest_CSS));
 }
 gulp.task('styles-dev', stylesDev);
 
-function stylesProd() {
-	return gulp.src(source_SCSS)
-		.pipe(plugins.sass({'sourcemap': false, outputStyle: 'compressed'}))
-		.pipe(plugins.autoprefixer())
-		.pipe(plugins.replace(/^@charset \"UTF-8\";\n/gm, ''))
-		.pipe(gulp.dest(dest_CSS, {"mode": "0644"}))
+function stylesProd () {
+  return gulp.src(source_SCSS)
+    .pipe(plugins.sass({'sourcemap': false, outputStyle: 'compressed'}))
+    .pipe(plugins.autoprefixer())
+    .pipe(plugins.replace(/^@charset \"UTF-8\";\n/gm, ''))
+    .pipe(cleanCSS())
+    .pipe(gulp.dest(dest_CSS))
+    .pipe(plugins.rtlcss())
+    .pipe(cleanCSS())
+    .pipe(plugins.rename(function (path) {
+      path.basename += '-rtl';
+    }))
+    .pipe(gulp.dest(dest_CSS));
 }
-gulp.task('styles', stylesProd);
+gulp.task('styles-prod', stylesProd)
+
+function stylesSequence(cb) {
+  return gulp.series( 'styles-prod' )(cb);
+}
+stylesSequence.description = 'Compile styles';
+gulp.task( 'styles', stylesSequence );
 
 gulp.task('styles-watch', function () {
 	return gulp.watch('scss/**/*.scss', stylesDev);
@@ -55,14 +82,13 @@ gulp.task('start', function (cb) {
 function copyFolder() {
 	var dir = process.cwd();
 	return gulp.src( './*' )
-		.pipe( plugins.exec( 'rm -Rf ./../build; mkdir -p ./../build/customify;', {
+		.pipe( plugins.exec( 'rm -Rf ./../build; mkdir -p ./../build/'+plugin+';', {
 			silent: true,
 			continueOnError: true // default: false
 		} ) )
 		.pipe(plugins.rsync({
 			root: dir,
-			destination: '../build/customify/',
-			// archive: true,
+			destination: '../build/'+plugin+'/',
 			progress: false,
 			silent: true,
 			compress: false,
@@ -118,7 +144,7 @@ function removeUnneededFiles() {
 	];
 
 	files_to_remove.forEach( function( e, k ) {
-		files_to_remove[k] = '../build/customify/' + e;
+		files_to_remove[k] = '../build/'+plugin+'/' + e;
 	} );
 
 	return del( files_to_remove, {force: true} );
@@ -146,7 +172,12 @@ gulp.task( 'fix-build-file-permissions', maybeFixBuildFilePermissions );
 
 function maybeFixIncorrectLineEndings(done) {
 
-	cp.execSync('find ./../build -type f -print0 | xargs -0 -n 1 -P 4 dos2unix');
+  if (!commandExistsSync('dos2unix')) {
+    log( c.red( 'Could not ensure that line endings are correct on the build files since you are missing the "dos2unix" utility! You should install it.' ) );
+    log( c.red( 'However, this is not a very big deal. The build task will continue.' ) );
+  } else {
+    cp.execSync('find ./../build -type f -print0 | xargs -0 -n 1 -P 4 dos2unix');
+  }
 
 	return done();
 }

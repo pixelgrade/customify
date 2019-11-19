@@ -1,17 +1,21 @@
 {
     "name": "customify",
     "devDependencies": {
+        "command-exists": "^1.2.8",
         "gulp": "^4.0.2",
         "gulp-sass": "^4.0.2",
-        "gulp-autoprefixer": "^6.1.0",
+        "gulp-autoprefixer": "^7.0.1",
+        "gulp-clean-css": "^4.2.0",
         "gulp-concat": "^2.6.1",
-        "gulp-exec": "^3.0.2",
+        "gulp-exec": "^4.0.0",
         "gulp-beautify": "^3.0.0",
-        "gulp-load-plugins": "^2.0.0",
+        "gulp-load-plugins": "^2.0.1",
         "gulp-rename": "*",
         "gulp-replace": "^1.0.0",
         "gulp-rsync": "^0.0.8",
-        "del": "^5.0.0",
+        "gulp-rtlcss": "^1.4.0",
+        "gulp-util": "^3.0.8",
+        "del": "^5.1.0",
         "es6-promise": "*"
     }
 }
