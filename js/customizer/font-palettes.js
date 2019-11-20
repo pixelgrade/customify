@@ -115,7 +115,6 @@ let FontPalettes = ( function( $, exports, wp ) {
                     }
                 }
 
-                console.log( newFontData );
                 serializedNewFontData = CustomifyFontSelectFields.encodeValues( newFontData );
                 setting.set( serializedNewFontData );
             });
