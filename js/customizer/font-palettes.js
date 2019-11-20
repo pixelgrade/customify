@@ -51,6 +51,7 @@ let FontPalettes = ( function( $, exports, wp ) {
                     newFontData['line_height'] = defaultValue['line_height'] || defaultValue['line-height'];
                     newFontData['letter_spacing'] = defaultValue['letter_spacing'] || defaultValue['letter-spacing'];
                     newFontData['text_transform'] = defaultValue['text_transform'] || defaultValue['text-transform'];
+                    newFontData['selected_variants'] = defaultValue['selected_variants'] || defaultValue['font-weight'];
 
                     if ( typeof customify_settings.theme_fonts[ newFontData['font_family'] !== "undefined" ] ) {
                       newFontData['type'] = 'theme_font';
