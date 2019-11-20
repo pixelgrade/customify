@@ -39,6 +39,24 @@ let FontPalettes = ( function( $, exports, wp ) {
                  */
                 let newFontData = {};
                 let fonts_logic = parent_setting_data.fonts_logic;
+                let serializedNewFontData;
+
+                if (typeof fonts_logic.reset !== "undefined") {
+                  var setting_id = connected_field_data.setting_id;
+                  var defaultValue = customify_settings.settings[setting_id].default;
+
+                  if ( !_.isUndefined( setting ) && !_.isUndefined( defaultValue ) ) {
+                    newFontData['font_family'] = defaultValue['font_family'] || defaultValue['font-family'];
+                    newFontData['font_size'] = defaultValue['font_size'] || defaultValue['font-size'];
+                    newFontData['line_height'] = defaultValue['line_height'] || defaultValue['line-height'];
+                    newFontData['letter_spacing'] = defaultValue['letter_spacing'] || defaultValue['letter-spacing'];
+                    newFontData['text_transform'] = defaultValue['text_transform'] || defaultValue['text-transform'];
+
+                    if ( typeof customify_settings.theme_fonts[ newFontData['font_family'] !== "undefined" ] ) {
+                      newFontData['type'] = 'theme_font';
+                    }
+                  }
+                }
 
                 /* ===========
                  * We need to determine the 6 subfields values to be able to determine the value of the font field.
@@ -90,15 +108,16 @@ let FontPalettes = ( function( $, exports, wp ) {
 
                     // The line height is determined by getting the value of the polynomial function determined by points.
                     if ( typeof fonts_logic.font_size_to_line_height_points !== "undefined" && _.isArray(fonts_logic.font_size_to_line_height_points)) {
-                    	let result = regression.logarithmic( fonts_logic.font_size_to_line_height_points, { precision: 2 } );
+                        let result = regression.logarithmic( fonts_logic.font_size_to_line_height_points, { precision: 2 } );
                         let fontsize = connected_field_data.font_size.value;
                         let lineheight = result.predict( fontsize )[1];
                         newFontData['line_height'] = { value: lineheight };
                     }
                 }
 
-                let serializedNewFontData = CustomifyFontSelectFields.encodeValues(newFontData);
-                setting.set(serializedNewFontData);
+                console.log( newFontData );
+                serializedNewFontData = CustomifyFontSelectFields.encodeValues( newFontData );
+                setting.set( serializedNewFontData );
             });
         }
     };

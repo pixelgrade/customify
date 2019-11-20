@@ -164,6 +164,12 @@ class Customify_Font_Palettes {
 		}
 
 		foreach ( $fonts_logic_config as $font_setting_id => $font_logic ) {
+
+			if ( ! empty( $font_logic['reset'] ) ) {
+				$fonts_logic_config[ $font_setting_id ]['reset'] = true;
+				continue;
+			}
+
 			if ( empty( $font_logic['font_family'] ) ) {
 				// If we don't have a font family we can't do much with this config - remove it.
 				unset( $fonts_logic_config[ $font_setting_id ] );
