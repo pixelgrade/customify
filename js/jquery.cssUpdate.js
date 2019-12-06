@@ -63,8 +63,6 @@
 				});
 			}
 
-			$(window).trigger('resize');
-
 			//Insert the new properties into <style> tag
 			$(this.element).html(this._cssproperties.toString());
 		},
