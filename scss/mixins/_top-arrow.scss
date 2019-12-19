@@ -1,0 +1,17 @@
+@mixin top-arrow {
+
+  &:after {
+    content: "";
+    position: absolute;
+    bottom: 100%;
+    right: 12px;
+
+    width: 0;
+    height: 0;
+
+    border: 9px solid transparent;
+    border-top: 0;
+    border-bottom-color: #FFFFFF;
+    border-collapse: separate;
+  }
+}
