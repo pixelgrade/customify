@@ -417,6 +417,10 @@ if ( ! class_exists( 'Customify_Gutenberg' ) ) {
 
 				$value = get_option( $control_id . '_final' );
 				if ( empty( $value ) ) {
+					$value = $options_details[ $control_id ][ 'default' ];
+				}
+
+				if ( empty( $value ) ) {
 					continue;
 				}
 
