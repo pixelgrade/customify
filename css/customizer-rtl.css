@@ -2791,7 +2791,7 @@ input.font-options__checkbox {
   font-family: "Open Sans", sans-serif;
 }
 
-.customify_preset.radio_buttons .customify_radio_button {
+.js-customify-preset.radio_buttons .customify_radio_button {
   border: none;
   display: inline-block;
   padding: 2px;
@@ -2801,7 +2801,7 @@ input.font-options__checkbox {
   height: auto;
 }
 
-.customify_preset.radio_buttons .customify_radio_button input[type="radio"] {
+.js-customify-preset.radio_buttons .customify_radio_button input[type="radio"] {
   opacity: 0;
   width: 100%;
   height: 100%;
@@ -2809,31 +2809,31 @@ input.font-options__checkbox {
   z-index: 9999;
 }
 
-.customify_preset.radio_buttons .customify_radio_button input[type="radio"]:checked + label {
+.js-customify-preset.radio_buttons .customify_radio_button input[type="radio"]:checked + label {
   background-color: #ebebeb;
 }
 
-.customify_preset.radio_buttons .customify_radio_button input[type="radio"]:checked + label:before {
+.js-customify-preset.radio_buttons .customify_radio_button input[type="radio"]:checked + label:before {
   content: '>';
   color: inherit;
 }
 
-.customify_preset.radio_buttons .customify_radio_button input[type="radio"]:checked + label:after {
+.js-customify-preset.radio_buttons .customify_radio_button input[type="radio"]:checked + label:after {
   content: '<';
   color: inherit;
 }
 
-.customify_preset.radio_buttons .customify_radio_button input[type="radio"]:checked:before {
+.js-customify-preset.radio_buttons .customify_radio_button input[type="radio"]:checked:before {
   opacity: 0;
 }
 
-.customify_preset.radio_buttons .customify_radio_button label {
+.js-customify-preset.radio_buttons .customify_radio_button label {
   position: relative;
   z-index: 999;
   border-right: 4px solid;
 }
 
-.customify_preset .awesome_preset {
+.js-customify-preset .awesome_preset {
   position: relative;
   display: inline-block;
   width: 45%;
@@ -2845,11 +2845,11 @@ input.font-options__checkbox {
   transition: all 0.2s;
 }
 
-.customify_preset .awesome_preset:hover {
+.js-customify-preset .awesome_preset:hover {
   opacity: 0.9;
 }
 
-.customify_preset .awesome_preset:before {
+.js-customify-preset .awesome_preset:before {
   content: '';
   position: absolute;
   top: 1px;
@@ -2863,20 +2863,20 @@ input.font-options__checkbox {
   opacity: .5;
 }
 
-.customify_preset .awesome_preset .preset-wrap .preset-color {
+.js-customify-preset .awesome_preset .preset-wrap .preset-color {
   height: 128px;
   border-radius: 4px 4px 0 0;
   padding: 17px 0 27px;
 }
 
-.customify_preset .awesome_preset .preset-wrap .preset-color .first-font {
+.js-customify-preset .awesome_preset .preset-wrap .preset-color .first-font {
   display: inline-block;
   width: 100%;
   font-size: 55px;
   line-height: 1;
 }
 
-.customify_preset .awesome_preset .preset-wrap .preset-color .secondary-font {
+.js-customify-preset .awesome_preset .preset-wrap .preset-color .secondary-font {
   display: inline-block;
   width: 100%;
   font-size: 20px;
@@ -2884,7 +2884,7 @@ input.font-options__checkbox {
   margin-top: 8px;
 }
 
-.customify_preset .awesome_preset .preset-wrap .preset-name {
+.js-customify-preset .awesome_preset .preset-wrap .preset-name {
   position: relative;
   font-size: 11px;
   text-transform: uppercase;
@@ -2892,7 +2892,7 @@ input.font-options__checkbox {
   padding: 1px;
 }
 
-.customify_preset .awesome_preset .preset-wrap .preset-name:before {
+.js-customify-preset .awesome_preset .preset-wrap .preset-name:before {
   content: '';
   position: absolute;
   border-color: inherit;
@@ -2905,11 +2905,11 @@ input.font-options__checkbox {
   right: 40%;
 }
 
-.customify_preset .awesome_preset:nth-child(odd) {
+.js-customify-preset .awesome_preset:nth-child(odd) {
   margin-left: 7%;
 }
 
-.customify_preset .awesome_preset input[type=radio] {
+.js-customify-preset .awesome_preset input[type=radio] {
   height: 100%;
   width: 100%;
   position: absolute;
@@ -2926,11 +2926,11 @@ input.font-options__checkbox {
   z-index: 10;
 }
 
-.customify_preset .awesome_preset input[type=radio]:checked {
+.js-customify-preset .awesome_preset input[type=radio]:checked {
   background: transparent;
 }
 
-.customify_preset .awesome_preset input[type=radio]:checked:before {
+.js-customify-preset .awesome_preset input[type=radio]:checked:before {
   position: absolute;
   height: 25px;
   width: 25px;
@@ -2940,7 +2940,7 @@ input.font-options__checkbox {
   z-index: 1;
 }
 
-.customify_preset .awesome_preset input[type=radio]:checked:after {
+.js-customify-preset .awesome_preset input[type=radio]:checked:after {
   -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
   filter: alpha(opacity=0);
   content: '';
