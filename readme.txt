@@ -3,7 +3,7 @@ Contributors: pixelgrade, vlad.olaru, babbardel, razvanonofrei, gorby31
 Tags: customizer, css, editor, gutenberg, live, preview, customizer
 Requires at least: 4.9.9
 Tested up to: 5.3.2
-Stable tag: 2.5.8
+Stable tag: 2.5.9
 Requires PHP: 5.3.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
