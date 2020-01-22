@@ -46,6 +46,11 @@ With [Customify](https://github.com/pixelgrade/customify), developers can easily
 
 == Changelog ==
 
+= 2.5.9 =
+* Fixes Style Presets preview display
+* Fixex Color Palettes integration with Gutenberg
+* Improve display of radio and range controls in Customizer
+
 = 2.5.8 =
 * Styling fixes for Color Palettes.
 * Added reset font logic for better default font palettes.
