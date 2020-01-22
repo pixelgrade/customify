@@ -2,7 +2,7 @@
 Contributors: pixelgrade, vlad.olaru, babbardel, razvanonofrei, gorby31
 Tags: customizer, css, editor, gutenberg, live, preview, customizer
 Requires at least: 4.9.9
-Tested up to: 5.3.0
+Tested up to: 5.3.2
 Stable tag: 2.5.8
 Requires PHP: 5.3.0
 License: GPLv2 or later
@@ -48,7 +48,7 @@ With [Customify](https://github.com/pixelgrade/customify), developers can easily
 
 = 2.5.9 =
 * Fixes Style Presets preview display
-* Fixex Color Palettes integration with Gutenberg
+* Fixes Color Palettes integration with Gutenberg
 * Improve display of radio and range controls in Customizer
 
 = 2.5.8 =

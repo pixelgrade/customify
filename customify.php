@@ -3,7 +3,7 @@
  * Plugin Name: Customify
  * Plugin URI:  https://wordpress.org/plugins/customify/
  * Description: A Theme Customizer Booster to easily and consistently customize Fonts, Colors, and other options for your site.
- * Version: 2.5.8
+ * Version: 2.5.9
  * Author: Pixelgrade
  * Author URI: https://pixelgrade.com
  * Author Email: contact@pixelgrade.com
@@ -12,7 +12,7 @@
  * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
  * Domain Path: /languages/
  * Requires at least: 4.9.9
- * Tested up to: 5.3.0
+ * Tested up to: 5.3.2
  * Requires PHP: 5.3.0
  */
 
@@ -33,7 +33,7 @@ require_once 'includes/extras.php';
 function PixCustomifyPlugin() {
 	require_once plugin_dir_path( __FILE__ ) . 'includes/class-pixcustomify.php';
 
-	return PixCustomifyPlugin::instance( __FILE__, '2.5.8' );
+	return PixCustomifyPlugin::instance( __FILE__, '2.5.9' );
 }
 
 // Now get the party started
