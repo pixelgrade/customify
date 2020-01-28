@@ -171,7 +171,11 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 
 				$this->display_font_subset_field( $current_value );
 
-				$this->display_font_size_field( $current_value );
+				if ( empty( $this->fields['modular-scale'] ) ) {
+				    $this->display_font_size_field( $current_value );
+                }
+
+				$this->display_modular_scale_field( $current_value );
 
 				$this->display_line_height_field( $current_value );
 
@@ -432,6 +436,45 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 			</li>
 		<?php }
 	}
+
+	function display_modular_scale_field( $current_value ) {
+		if ( ! empty( $this->fields['modular-scale'] ) ) {
+			$ms_val = empty( $current_value->modular_scale ) ? 0 : $current_value->modular_scale;
+			// If the current val also contains the unit, we need to take that into account.
+			if ( ! is_numeric( $ms_val ) ) {
+				if ( is_string( $ms_val ) ) {
+					// We will get everything in front that is a valid part of a number (float including).
+					preg_match( "/^([\d.\-+]+)/i", $ms_val, $match );
+
+					if ( ! empty( $match ) && isset( $match[0] ) ) {
+						if ( ! PixCustomifyPlugin()->is_assoc( $this->fields['modular-scale'] ) ) {
+							$this->fields['modular-scale'][3] = substr( $ms_val, strlen( $match[0] ) );
+						} else {
+							$this->fields['modular-scale']['unit'] = substr( $ms_val, strlen( $match[0] ) );
+						}
+						$ms_val = $match[0];
+					}
+				} elseif ( is_array( $ms_val ) ) {
+					if ( isset( $ms_val['unit']) ) {
+						if ( ! PixCustomifyPlugin()->is_assoc( $this->fields['modular-scale'] ) ) {
+							$this->fields['modular-scale'][3] = $ms_val['unit'];
+						} else {
+							$this->fields['modular-scale']['unit'] = $ms_val['unit'];
+						}
+					}
+
+					$ms_val = $ms_val['value'];
+				}
+			}
+			?>
+            <li class="customify_modular_scale_wrapper customize-control customize-control-range font-options__option">
+                <label><?php esc_html_e( 'Modular Scale', 'customify' ); ?></label>
+                <input type="range"
+                       data-field="modular_scale" <?php $this->input_field_atts( $this->fields['modular-scale'] ) ?>
+                       value="<?php echo $ms_val; ?>">
+            </li>
+		<?php }
+    }
 
 	function display_line_height_field( $current_value ) {
 		if ( ! empty( $this->fields['line-height'] ) ) {

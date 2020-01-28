@@ -423,7 +423,7 @@ class Customify_Font_Selector {
 				$this->display_weight_property( $value['font_weight'], $properties_prefix );
 			}
 
-			if ( ! empty( $value['font_size'] ) ) {
+			if ( ! empty( $value['font_size'] ) && empty( $value['modular_scale'] ) ) {
 				// If the value already contains a unit, go with that.
 				// We also handle receiving the value in a standardized format ( array with 'value' and 'unit').
 				$font_size = $value['font_size'];
@@ -445,6 +445,12 @@ class Customify_Font_Selector {
                 }
 
 				$this->display_property( 'font-size', $font_size, $unit, $properties_prefix );
+			}
+
+
+			if ( ! empty( $value['modular_scale'] ) ) {
+				$modular_scale = $value['modular_scale'];
+				echo $properties_prefix . 'font-size: ' . 'var(--theme-ms-' . $modular_scale . '-font-size);' . PHP_EOL;
 			}
 
 			if ( isset( $value['line_height'] ) ) {
