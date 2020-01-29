@@ -31,6 +31,7 @@ let FontPalettes = ( function( $, exports, wp ) {
                 }
 
                 let setting = wp.customize(connected_field_data.setting_id);
+
                 if (_.isUndefined(setting)) {
                     return;
                 }
@@ -42,9 +43,11 @@ let FontPalettes = ( function( $, exports, wp ) {
                 let fonts_logic = parent_setting_data.fonts_logic;
                 let serializedNewFontData;
 
+                var setting_id = connected_field_data.setting_id;
+                var currentValue = JSON.parse( decodeURIComponent( setting() ) );
+                var defaultValue = customify_settings.settings[setting_id].default;
+
                 if (typeof fonts_logic.reset !== "undefined") {
-                  var setting_id = connected_field_data.setting_id;
-                  var defaultValue = customify_settings.settings[setting_id].default;
 
                   if ( !_.isUndefined( setting ) && !_.isUndefined( defaultValue ) ) {
 
@@ -52,9 +55,9 @@ let FontPalettes = ( function( $, exports, wp ) {
                       newFontData['font_family'] = defaultValue['font_family'] || defaultValue['font-family'];
                     }
 
-                    if ( defaultValue['modular_scale'] || defaultValue['modular-scale'] ) {
-                      newFontData['modular_scale'] = defaultValue['modular_scale'] || defaultValue['modular-scale'];
-                    } else if ( defaultValue['font_size'] || defaultValue['font-size'] ) {
+                    if ( ! defaultValue['modular_scale'] &&
+                         ! defaultValue['modular-scale'] &&
+                         ( defaultValue['font_size'] || defaultValue['font-size'] ) ) {
                       newFontData['font_size'] = defaultValue['font_size'] || defaultValue['font-size'];
                     }
 
@@ -78,68 +81,68 @@ let FontPalettes = ( function( $, exports, wp ) {
                       newFontData['type'] = 'theme_font';
                     }
                   }
-                }
-
-                /* ===========
-                 * We need to determine the 6 subfields values to be able to determine the value of the font field.
-                 */
-
-                // The font type is straight forward as it comes directly from the parent field font logic configuration.
-                if (typeof fonts_logic.type !== "undefined") {
-                    newFontData['type'] = fonts_logic.type;
                 } else {
-                    // We use the default
-                    newFontData['type'] = defaultFontType;
-                }
+                  /* ===========
+                   * We need to determine the 6 subfields values to be able to determine the value of the font field.
+                   */
 
-                // The font family is straight forward as it comes directly from the parent field font logic configuration.
-                if (typeof fonts_logic.font_family !== "undefined") {
-                    newFontData['font_family'] = fonts_logic.font_family;
-                }
+                  // The font type is straight forward as it comes directly from the parent field font logic configuration.
+                  if (typeof fonts_logic.type !== "undefined") {
+                      newFontData['type'] = fonts_logic.type;
+                  } else {
+                      // We use the default
+                      newFontData['type'] = defaultFontType;
+                  }
 
-                // The selected variants (subsets) also come straight from the font logic right now.
-                if (typeof fonts_logic.font_weights !== "undefined") {
-                    newFontData['variants'] = fonts_logic.font_weights;
-                }
+                  // The font family is straight forward as it comes directly from the parent field font logic configuration.
+                  if (typeof fonts_logic.font_family !== "undefined") {
+                      newFontData['font_family'] = fonts_logic.font_family;
+                  }
 
-                if (typeof connected_field_data.modular_scale !== "undefined" && false !== connected_field_data.modular_scale) {
-                    newFontData['modular_scale'] = connected_field_data.modular_scale;
-                } else if (typeof connected_field_data.font_size !== "undefined" && false !== connected_field_data.font_size) {
-                    newFontData['font_size'] = connected_field_data.font_size;
-                }
+                  // The selected variants (subsets) also come straight from the font logic right now.
+                  if (typeof fonts_logic.font_weights !== "undefined") {
+                      newFontData['variants'] = fonts_logic.font_weights;
+                  }
 
-                if (typeof connected_field_data.font_size !== "undefined" && false !== connected_field_data.font_size) {
+                  if (typeof connected_field_data.modular_scale !== "undefined" && false !== connected_field_data.modular_scale) {
+                      newFontData['modular_scale'] = currentValue['modular_scale'];
+                  } else if (typeof connected_field_data.font_size !== "undefined" && false !== connected_field_data.font_size) {
+                      newFontData['font_size'] = connected_field_data.font_size;
+                  }
 
-                    // The font weight (selected_variants), letter spacing and text transform all come together from the font styles (intervals).
-                    // We just need to find the one that best matches the connected field given font size (if given).
-                    // Please bear in mind that we expect the font logic styles to be preprocessed, without any overlapping and using numerical keys.
-                    if (typeof fonts_logic.font_styles !== "undefined" && _.isArray( fonts_logic.font_styles ) && fonts_logic.font_styles.length > 0) {
-                        let idx = 0;
-                        while ( idx < fonts_logic.font_styles.length-1 &&
-                                typeof fonts_logic.font_styles[idx].end !== "undefined" &&
-                                fonts_logic.font_styles[idx].end <= connected_field_data.font_size.value ) {
-                            idx++;
-                        }
+                  if (typeof connected_field_data.font_size !== "undefined" && false !== connected_field_data.font_size) {
 
-                        // We will apply what we've got.
-                        if (typeof fonts_logic.font_styles[idx].font_weight !== "undefined") {
-                            newFontData['selected_variants'] = fonts_logic.font_styles[idx].font_weight;
-                        }
-                        if (typeof fonts_logic.font_styles[idx].letter_spacing !== "undefined") {
-                            newFontData['letter_spacing'] = fonts_logic.font_styles[idx].letter_spacing;
-                        }
-                        if (typeof fonts_logic.font_styles[idx].text_transform !== "undefined") {
-                            newFontData['text_transform'] = fonts_logic.font_styles[idx].text_transform;
-                        }
-                    }
+                      // The font weight (selected_variants), letter spacing and text transform all come together from the font styles (intervals).
+                      // We just need to find the one that best matches the connected field given font size (if given).
+                      // Please bear in mind that we expect the font logic styles to be preprocessed, without any overlapping and using numerical keys.
+                      if (typeof fonts_logic.font_styles !== "undefined" && _.isArray( fonts_logic.font_styles ) && fonts_logic.font_styles.length > 0) {
+                          let idx = 0;
+                          while ( idx < fonts_logic.font_styles.length-1 &&
+                                  typeof fonts_logic.font_styles[idx].end !== "undefined" &&
+                                  fonts_logic.font_styles[idx].end <= connected_field_data.font_size.value ) {
+                              idx++;
+                          }
 
-                    // The line height is determined by getting the value of the polynomial function determined by points.
-                    if ( typeof fonts_logic.font_size_to_line_height_points !== "undefined" && _.isArray(fonts_logic.font_size_to_line_height_points)) {
-                        let result = regression.logarithmic( fonts_logic.font_size_to_line_height_points, { precision: 2 } );
-                        let fontsize = connected_field_data.font_size.value;
-                        let lineheight = result.predict( fontsize )[1];
-                        newFontData['line_height'] = { value: lineheight };
-                    }
+                          // We will apply what we've got.
+                          if (typeof fonts_logic.font_styles[idx].font_weight !== "undefined") {
+                              newFontData['selected_variants'] = fonts_logic.font_styles[idx].font_weight;
+                          }
+                          if (typeof fonts_logic.font_styles[idx].letter_spacing !== "undefined") {
+                              newFontData['letter_spacing'] = fonts_logic.font_styles[idx].letter_spacing;
+                          }
+                          if (typeof fonts_logic.font_styles[idx].text_transform !== "undefined") {
+                              newFontData['text_transform'] = fonts_logic.font_styles[idx].text_transform;
+                          }
+                      }
+
+                      // The line height is determined by getting the value of the polynomial function determined by points.
+                      if ( typeof fonts_logic.font_size_to_line_height_points !== "undefined" && _.isArray(fonts_logic.font_size_to_line_height_points)) {
+                          let result = regression.logarithmic( fonts_logic.font_size_to_line_height_points, { precision: 2 } );
+                          let fontsize = connected_field_data.font_size.value;
+                          let lineheight = result.predict( fontsize )[1];
+                          newFontData['line_height'] = { value: lineheight };
+                      }
+                  }
                 }
 
                 serializedNewFontData = CustomifyFontSelectFields.encodeValues( newFontData );
