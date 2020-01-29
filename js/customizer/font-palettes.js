@@ -25,7 +25,8 @@ let FontPalettes = ( function( $, exports, wp ) {
     const getConnectedFieldsCallback = function (parent_setting_data, parent_setting_id) {
         return function (new_value, old_value) {
             _.each(parent_setting_data.connected_fields, function (connected_field_data) {
-                if (_.isUndefined(connected_field_data) || _.isUndefined(connected_field_data.setting_id) || !_.isString(connected_field_data.setting_id) || _.isUndefined(parent_setting_data.fonts_logic)) {
+
+              if (_.isUndefined(connected_field_data) || _.isUndefined(connected_field_data.setting_id) || !_.isString(connected_field_data.setting_id) || _.isUndefined(parent_setting_data.fonts_logic)) {
                     return;
                 }
 
@@ -46,12 +47,32 @@ let FontPalettes = ( function( $, exports, wp ) {
                   var defaultValue = customify_settings.settings[setting_id].default;
 
                   if ( !_.isUndefined( setting ) && !_.isUndefined( defaultValue ) ) {
-                    newFontData['font_family'] = defaultValue['font_family'] || defaultValue['font-family'];
-                    newFontData['font_size'] = defaultValue['font_size'] || defaultValue['font-size'];
-                    newFontData['line_height'] = defaultValue['line_height'] || defaultValue['line-height'];
-                    newFontData['letter_spacing'] = defaultValue['letter_spacing'] || defaultValue['letter-spacing'];
-                    newFontData['text_transform'] = defaultValue['text_transform'] || defaultValue['text-transform'];
-                    newFontData['selected_variants'] = defaultValue['selected_variants'] || defaultValue['font-weight'];
+
+                    if ( defaultValue['font_family'] || defaultValue['font-family'] ) {
+                      newFontData['font_family'] = defaultValue['font_family'] || defaultValue['font-family'];
+                    }
+
+                    if ( defaultValue['modular_scale'] || defaultValue['modular-scale'] ) {
+                      newFontData['modular_scale'] = defaultValue['modular_scale'] || defaultValue['modular-scale'];
+                    } else if ( defaultValue['font_size'] || defaultValue['font-size'] ) {
+                      newFontData['font_size'] = defaultValue['font_size'] || defaultValue['font-size'];
+                    }
+
+                    if ( defaultValue['line_height'] || defaultValue['line-height'] ) {
+                      newFontData['line_height'] = defaultValue['line_height'] || defaultValue['line-height'];
+                    }
+
+                    if ( defaultValue['letter_spacing'] || defaultValue['letter-spacing'] ) {
+                      newFontData['letter_spacing'] = defaultValue['letter_spacing'] || defaultValue['letter-spacing'];
+                    }
+
+                    if ( defaultValue['text_transform'] || defaultValue['text-transform'] ) {
+                      newFontData['text_transform'] = defaultValue['text_transform'] || defaultValue['text-transform'];
+                    }
+
+                    if ( defaultValue['selected_variants'] || defaultValue['font-weight'] ) {
+                      newFontData['selected_variants'] = defaultValue['selected_variants'] || defaultValue['font-weight'];
+                    }
 
                     if ( typeof customify_settings.theme_fonts[ newFontData['font_family'] !== "undefined" ] ) {
                       newFontData['type'] = 'theme_font';
@@ -81,8 +102,13 @@ let FontPalettes = ( function( $, exports, wp ) {
                     newFontData['variants'] = fonts_logic.font_weights;
                 }
 
-                if (typeof connected_field_data.font_size !== "undefined" && false !== connected_field_data.font_size) {
+                if (typeof connected_field_data.modular_scale !== "undefined" && false !== connected_field_data.modular_scale) {
+                    newFontData['modular_scale'] = connected_field_data.modular_scale;
+                } else if (typeof connected_field_data.font_size !== "undefined" && false !== connected_field_data.font_size) {
                     newFontData['font_size'] = connected_field_data.font_size;
+                }
+
+                if (typeof connected_field_data.font_size !== "undefined" && false !== connected_field_data.font_size) {
 
                     // The font weight (selected_variants), letter spacing and text transform all come together from the font styles (intervals).
                     // We just need to find the one that best matches the connected field given font size (if given).

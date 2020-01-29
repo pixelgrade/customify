@@ -620,6 +620,15 @@ class Customify_Font_Palettes {
 						}
 					}
 
+					// If we didn't get a font_size we will try and grab the default value for the connected field.
+					if ( ! isset( $value['modular_scale'] ) ) {
+						if ( isset( $option_config['default']['modular-scale'] ) ) {
+							$value['modular_scale'] = $option_config['default']['modular-scale'];
+						} else {
+							$value['modular_scale'] = false;
+						}
+					}
+
 					// Handle the case when the received font_size value is a number with a unit - split them.
 					$value['font_size'] = $this->maybe_standardize_value( $value['font_size'] );
 
