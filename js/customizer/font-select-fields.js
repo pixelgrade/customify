@@ -177,7 +177,7 @@ let CustomifyFontSelectFields = (function ($, exports, wp) {
             loadFontValue(wrapper)
           }
         })
-      })
+      });
     }
 
     /**

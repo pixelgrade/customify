@@ -22,6 +22,85 @@ let FontPalettes = ( function( $, exports, wp ) {
         }
     };
 
+    const updateLineHeightOnSizeChange = function() {
+
+      if ( typeof wp === 'undefined' || typeof wp.customize === 'undefined' ) {
+        return;
+      }
+
+      var currentFontPaletteSetting = wp.customize( 'sm_font_palette' ),
+        currentFontPalette = currentFontPaletteSetting();
+
+      function getOptionValue( name ) {
+        var optionsName = customify_settings[ 'options_name' ],
+          settingId = optionsName + '[' + name + ']',
+          setting = wp.customize( settingId );
+
+        return setting();
+      }
+
+      var modularScale = getOptionValue( 'modular_scale' ),
+        modularScaleBase = getOptionValue( 'modular_scale_base' );
+
+      if ( ! currentFontPalette ) {
+        // @todo we could use a default here
+        return;
+      }
+
+      var $currentFontPaletteControl = $( '[data-customize-setting-link="sm_font_palette"][value="' + currentFontPalette + '"]' ),
+        fonts_logic = $currentFontPaletteControl.data( 'fonts_logic' );
+
+      if ( _.isUndefined( fonts_logic ) ) {
+        return;
+      }
+
+      _.each( masterSettingIds, function( parent_setting_id ) {
+        if ( typeof wp.customize.settings.settings[ parent_setting_id ] !== "undefined" ) {
+          let parent_setting_data = wp.customize.settings.settings[ parent_setting_id ];
+          let parent_setting = wp.customize( parent_setting_id );
+          let parent_font_logic = fonts_logic[ parent_setting_id ];
+
+          if ( typeof parent_setting_data.connected_fields !== "undefined" ) {
+            _.each(parent_setting_data.connected_fields, function( connected_field_data ) {
+
+              if ( _.isUndefined( connected_field_data ) ||
+                   _.isUndefined( connected_field_data.setting_id ) ||
+                   ! _.isString( connected_field_data.setting_id ) ||
+                   _.isUndefined( parent_font_logic ) ) {
+                return;
+              }
+
+              var settingName = connected_field_data.setting_id,
+                targetSelector = '[data-customize-setting-link="' + settingName + '"',
+                $target = $( targetSelector ),
+                $wrapper = $target.closest( '.font-options__wrapper' ),
+                $modularScaleField = $wrapper.find( 'input[data-field="modular_scale"]'),
+                $lineHeightField = $wrapper.find( 'input[data-field="line_height"]'),
+                $lineHeightWrapper = $lineHeightField.closest( '.font-options__option' );
+
+              if ( ! $modularScaleField.length ) {
+                return;
+              }
+
+              $lineHeightWrapper.hide();
+
+              $modularScaleField.on( 'change', function() {
+                if ( typeof parent_font_logic.font_size_to_line_height_points !== "undefined" &&
+                     _.isArray( parent_font_logic.font_size_to_line_height_points ) ) {
+                  var msValue = $modularScaleField.val(),
+                    fontSizeValue = modularScaleBase * Math.pow( modularScale, msValue ),
+                    result = regression.logarithmic( parent_font_logic.font_size_to_line_height_points, { precision: 2 } ),
+                    newLineHeight = result.predict( fontSizeValue )[1];
+
+                  $lineHeightField.val( newLineHeight ).trigger( 'input' );
+                }
+              } );
+            } );
+          }
+        }
+      } );
+  }
+
     const getConnectedFieldsCallback = function (parent_setting_data, parent_setting_id) {
         return function (new_value, old_value) {
             _.each(parent_setting_data.connected_fields, function (connected_field_data) {
@@ -217,8 +296,9 @@ let FontPalettes = ( function( $, exports, wp ) {
     };
 
     const handlePalettes = () => {
-        initializePalettes();
+      initializePalettes();
 	    reloadConnectedFields();
+      updateLineHeightOnSizeChange();
 
         $( document ).on( 'click', '.js-font-palette input', onPaletteChange );
     };
