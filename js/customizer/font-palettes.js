@@ -36,13 +36,17 @@ let FontPalettes = ( function( $, exports, wp ) {
           settingId = optionsName + '[' + name + ']',
           setting = wp.customize( settingId );
 
+        if ( ! setting ) {
+          return false;
+        }
+
         return setting();
       }
 
       var modularScale = getOptionValue( 'modular_scale' ),
         modularScaleBase = getOptionValue( 'modular_scale_base' );
 
-      if ( ! currentFontPalette ) {
+      if ( ! currentFontPalette || ! modularScale || ! modularScaleBase ) {
         // @todo we could use a default here
         return;
       }
