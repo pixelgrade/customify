@@ -103,11 +103,11 @@ class Pix_Customize_Background_Control extends Pix_Customize_Control {
 				$this->value['background-image'] = '';
 			}
 
-			echo '<input placeholder="' . $placeholder . '" type="text" class="customify_background_input background-image ' . $hide . 'upload ' . $this->field['class'] . '" name="' . $this->label . '[background-image]" id="' . $this->manager->options_key . '[' . $this->id . '][background-image]" value="' . $this->value['background-image'] . '"  data-select_name="background-image" data-customize-setting-link="' . esc_attr( $this->setting->id ) . '[background-image]"/>';
-			echo '<input type="hidden" class="upload-id ' . $this->field['class'] . '" name="' . $this->manager->options_key . '[media][id]" id="' . $this->manager->options_key . '[' . $this->id . '][media][id]" value="' . $this->value['media']['id'] . '" />';
-			echo '<input type="hidden" class="upload-height" name="' . $this->manager->options_key . '[media][height]" id="' . $this->manager->options_key . '[' . $this->id . '][media][height]" value="' . $this->value['media']['height'] . '" />';
-			echo '<input type="hidden" class="upload-width" name="' . $this->manager->options_key . '[media][width]" id="' . $this->manager->options_key . '[' . $this->id . '][media][width]" value="' . $this->value['media']['width'] . '" />';
-			echo '<input type="hidden" class="upload-thumbnail" name="' . $this->manager->options_key . '[media][thumbnail]" id="' . $this->manager->options_key . '[media][thumbnail]" value="' . $this->value['media']['thumbnail'] . '" />';
+			echo '<input placeholder="' . esc_attr( $placeholder ) . '" type="text" class="customify_background_input background-image ' . $hide . 'upload ' . $this->field['class'] . '" name="' . $this->label . '[background-image]" id="' . $this->manager->options_key . '[' . $this->id . '][background-image]" value="' . $this->value['background-image'] . '"  data-select_name="background-image" data-customize-setting-link="' . esc_attr( $this->setting->id ) . '[background-image]"/>';
+			echo '<input type="hidden" class="upload-id ' . esc_attr( $this->field['class'] ) . '" name="' . esc_attr( $this->manager->options_key ) . '[media][id]" id="' . $this->manager->options_key . '[' . $this->id . '][media][id]" value="' . esc_attr( $this->value['media']['id'] ) . '" />';
+			echo '<input type="hidden" class="upload-height" name="' . esc_attr( $this->manager->options_key ) . '[media][height]" id="' . esc_attr( $this->manager->options_key ) . '[' . $this->id . '][media][height]" value="' . esc_attr( $this->value['media']['height'] ) . '" />';
+			echo '<input type="hidden" class="upload-width" name="' . esc_attr( $this->manager->options_key ) . '[media][width]" id="' . esc_attr( $this->manager->options_key ) . '[' . $this->id . '][media][width]" value="' . esc_attr( $this->value['media']['width'] ) . '" />';
+			echo '<input type="hidden" class="upload-thumbnail" name="' . esc_attr( $this->manager->options_key ) . '[media][thumbnail]" id="' . esc_attr( $this->manager->options_key ) . '[media][thumbnail]" value="' . esc_attr( $this->value['media']['thumbnail'] ) . '" />';
 
 			//Preview
 			$hide = '';
@@ -135,14 +135,14 @@ class Pix_Customize_Background_Control extends Pix_Customize_Control {
 			echo '<div class="upload_button_div">';
 
 			//If the user has WP3.5+ show upload/remove button
-			echo '<span class="button background_upload_button" id="' . $this->id . '-media" data-setting_id="' . $this->setting->id . '" >' . __( 'Upload', 'customify' ) . '</span>';
+			echo '<span class="button background_upload_button" id="' . esc_attr( $this->id ) . '-media" data-setting_id="' . esc_attr( $this->setting->id ) . '" >' . esc_html__( 'Upload', 'customify' ) . '</span>';
 
 			$hide = '';
 			if ( empty( $this->value['background-image'] ) || $this->value['background-image'] == '' ) {
 				$hide = ' hide';
 			}
 
-			echo '<span class="button remove-image' . $hide . '" id="reset_' . $this->id . '" rel="' . $this->id . '">' . __( 'Remove', 'customify' ) . '</span>';
+			echo '<span class="button remove-image' . $hide . '" id="reset_' . esc_attr( $this->id ) . '" rel="' . esc_attr( $this->id ) . '">' . esc_html__( 'Remove', 'customify' ) . '</span>';
 
 			echo '</div>';
 		}

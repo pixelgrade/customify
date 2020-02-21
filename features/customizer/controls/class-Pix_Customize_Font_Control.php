@@ -162,7 +162,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 
 						if ( PixCustomifyPlugin()->settings->get_plugin_setting( 'typography_google_fonts' ) ) {
 
-							echo '<optgroup class="google-fonts-opts-placeholder" label="' . __( 'Google fonts', 'customify' ) . '"></optgroup>';
+							echo '<optgroup class="google-fonts-opts-placeholder" label="' . esc_attr__( 'Google fonts', 'customify' ) . '"></optgroup>';
 						} ?>
 					</select>
 				</li>
@@ -216,7 +216,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 			}
 
 			foreach ( $grouped_google_fonts as $group_name => $group ) {
-				echo '<optgroup label="' . __( 'Google fonts', 'customify' ) . ' ' . $group_name . '">';
+				echo '<optgroup label="' . esc_attr__( 'Google fonts', 'customify' ) . ' ' . $group_name . '">';
 				foreach ( $group as $key => $font ) {
 					self::output_font_option( $font );
 				}
@@ -224,7 +224,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 			}
 
 		} else {
-			echo '<optgroup label="' . __( 'Google fonts', 'customify' ) . '">';
+			echo '<optgroup label="' . esc_attr__( 'Google fonts', 'customify' ) . '">';
 			foreach ( self::$google_fonts as $key => $font ) {
 				self::output_font_option( $font );
 			}
@@ -285,7 +285,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 
 		if ( ! empty( $this->recommended ) ) {
 
-			echo '<optgroup label="' . __( 'Recommended', 'customify' ) . '">';
+			echo '<optgroup label="' . esc_attr__( 'Recommended', 'customify' ) . '">';
 
 			foreach ( $this->recommended as $key => $font ) {
 				$font_type = 'std';
@@ -308,7 +308,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 
 		if ( PixCustomifyPlugin()->settings->get_plugin_setting( 'typography_standard_fonts' ) ) {
 
-			echo '<optgroup label="' . __( 'Standard fonts', 'customify' ) . '">';
+			echo '<optgroup label="' . esc_attr__( 'Standard fonts', 'customify' ) . '">';
 			foreach ( self::$std_fonts as $key => $font ) {
 				self::output_font_option( $font, $font_family, 'std' );
 			}
@@ -335,7 +335,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 		}
 		?>
 		<li class="customify_weights_wrapper customize-control font-options__option" style="display: <?php echo $display; ?>;">
-			<label><?php _e( 'Font Weight', 'customify' ); ?></label>
+			<label><?php esc_html_e( 'Font Weight', 'customify' ); ?></label>
 			<?php
 			$data_default = ! empty( $selected ) ? 'data-default="' . $selected . '"' : '';
 			$data_disabled = isset( $this->fields['font-weight'] ) && false === $this->fields['font-weight'] ? 'data-disabled' : '';
@@ -349,10 +349,10 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 							$attrs = ' selected="selected"';
 						}
 
-						echo '<option value="' . $weight . '" ' . $attrs . '> ' . $weight . '</option>';
+						echo '<option value="' . esc_attr( $weight ) . '" ' . $attrs . '> ' . $weight . '</option>';
 					}
 				} else if ( ! empty( $current_value->variants ) && is_string( $current_value->variants ) ) {
-					echo '<option value="' . $current_value->variants . '" selected="selected"> ' . $current_value->variants . '</option>';
+					echo '<option value="' . esc_attr( $current_value->variants ) . '" selected="selected"> ' . $current_value->variants . '</option>';
 				} ?>
 			</select>
 		</li>
@@ -365,7 +365,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 			$display = 'inline-block';
 		} ?>
 		<li class="customify_subsets_wrapper customize-control font-options__option" style="display: <?php echo $display; ?>;">
-			<label><?php _e( 'Languages', 'customify' ); ?></label>
+			<label><?php esc_html_e( 'Languages', 'customify' ); ?></label>
 			<select multiple class="customify_font_subsets" data-field="selected_subsets" <?php echo ( isset( $this->fields['subsets'] ) && false === $this->fields['subsets'] ) ? 'data-disabled' : ''; ?>>
 				<?php
 				$selected = array();
@@ -385,7 +385,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 							$attrs .= ' selected="selected"';
 						}
 
-						echo '<option value="' . $subset . '"' . $attrs . '> ' . $subset . '</option>';
+						echo '<option value="' . esc_attr( $subset ) . '"' . $attrs . '> ' . $subset . '</option>';
 					}
 				} ?>
 			</select>
@@ -466,8 +466,8 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 			<li class="customify_line_height_wrapper customize-control customize-control-range font-options__option">
 				<label><?php esc_html_e( 'Line height', 'customify' ); ?></label>
 				<input type="range"
-				       data-field="line_height" <?php $this->input_field_atts( $this->fields['line-height'] ) ?>
-				       value="<?php echo $lh_val ?>">
+				       data-field="line_height" <?php $this->input_field_atts( $this->fields['line-height'] ); ?>
+				       value="<?php echo esc_attr( $lh_val ); ?>">
 			</li>
 		<?php }
 	}
@@ -507,7 +507,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 				<label><?php esc_html_e( 'Letter Spacing', 'customify' ); ?></label>
 				<input type="range"
 				       data-field="letter_spacing" <?php $this->input_field_atts( $this->fields['letter-spacing'] ) ?>
-				       value="<?php echo $ls_val ?>">
+				       value="<?php echo esc_attr( $ls_val ); ?>">
 			</li>
 		<?php }
 	}
