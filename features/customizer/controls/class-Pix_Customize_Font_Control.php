@@ -559,7 +559,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 
 	function display_option_value( $value, $current_value ) {
 
-		$return = 'value="' . $value . '"';
+		$return = 'value="' . esc_attr( $value ) . '"';
 
 		if ( $value === $current_value ) {
 			$return .= ' selected="selected"';
@@ -574,10 +574,10 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 	 * @param string|array $font
 	 * @param string|false $active_font_family Optional. The active font family to add the selected attribute to the appropriate opt.
 	 *                                         False to not mark any opt as selected.
-	 * @param string $type
+	 * @param string $type Optional.
 	 */
 	public static function output_font_option( $font, $active_font_family = false, $type = 'google' ) {
-		echo self::get_font_option( $font, $active_font_family, $type );
+		echo self::get_font_option_markup( $font, $active_font_family, $type );
 	}
 
 	/**
@@ -586,74 +586,76 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 	 * @param string|array $font
 	 * @param string|false $active_font_family Optional. The active font family to add the selected attribute to the appropriate opt.
 	 *                                         False to not mark any opt as selected.
-	 * @param string $type
+	 * @param string $type Optional.
 	 * @return string
 	 */
-	public static function get_font_option( $font, $active_font_family = false, $type = 'google' ) {
+	public static function get_font_option_markup( $font, $active_font_family = false, $type = 'google' ) {
 
 		$html = '';
+		$font_family = false;
 
+		if ( empty( $type ) ) {
+			$type = 'std';
+		}
 		$data_attrs = ' data-type="' . esc_attr( $type ) . '"';
 
 		// We will handle Google Fonts separately
 		if ( $type === 'google' ) {
+			$font_family = $font['family'];
+
 			// Handle the font variants markup, if available
 			if ( isset( $font['variants'] ) && ! empty( $font['variants'] ) ) {
-				$data_attrs .= ' data-variants="' . PixCustomifyPlugin::encodeURIComponent( json_encode( (object) $font['variants'] ) ) . '"';
+				$data_attrs .= ' data-variants="' . esc_attr( PixCustomifyPlugin::encodeURIComponent( json_encode( (object) $font['variants'] ) ) ) . '"';
 			}
 
 			if ( isset( $font['subsets'] ) && ! empty( $font['subsets'] ) ) {
-				$data_attrs .= ' data-subsets="' . PixCustomifyPlugin::encodeURIComponent( json_encode( (object) $font['subsets'] ) ) . '"';
+				$data_attrs .= ' data-subsets="' . esc_attr( PixCustomifyPlugin::encodeURIComponent( json_encode( (object) $font['subsets'] ) ) ) . '"';
 			}
 
-			//determine if it's selected
-			$selected = ( false !== $active_font_family && $active_font_family === $font['family'] ) ? ' selected="selected" ' : '';
 
-			$html .= '<option value="' . $font['family'] . '"' . $selected . $data_attrs . '>' . $font['family'] . '</option>';
 		} elseif ( $type === 'theme_font' ) {
-			$data_attrs = '';
+			$font_family = $font['family'];
 
 			// Handle the font variants markup, if available
 			if ( isset( $font['variants'] ) && ! empty( $font['variants'] ) ) {
-				$data_attrs .= ' data-variants="' . PixCustomifyPlugin::encodeURIComponent( json_encode( (object) $font['variants'] ) ) . '"';
+				$data_attrs .= ' data-variants="' . esc_attr( PixCustomifyPlugin::encodeURIComponent( json_encode( (object) $font['variants'] ) ) ) . '"';
 			}
 
-			$selected = ( false !== $active_font_family && $active_font_family === $font['family'] ) ? ' selected="selected" ' : '';
-			$data_attrs .= ' data-src="' . $font['src'] . '" data-type="theme_font"';
-
-			$html .= '<option value="' . $font['family'] . '"' . $selected . $data_attrs . '>' . $font['family'] . '</option>';
+			$data_attrs .= ' data-src="' . esc_attr( $font['src'] ) . '"';
 		} else {
 			// Handle the font variants markup, if available
-			if ( is_array( $font ) && isset( $font['variants'] ) && ! empty( $font['variants'] ) ) {
-				$data_attrs .= ' data-variants="' . PixCustomifyPlugin::encodeURIComponent( json_encode( (object) $font['variants'] ) ) . '"';
+			if ( is_array( $font ) && ! empty( $font['variants'] ) ) {
+				$data_attrs .= ' data-variants="' . esc_attr( PixCustomifyPlugin::encodeURIComponent( json_encode( (object) $font['variants'] ) ) ) . '"';
 			}
 
-			// by default, we assume we only get a font family string
+			// By default, we assume we only get a font family string
 			$font_family = $font;
 			// when we get an array we expect to get a font_family entry
 			if ( is_array( $font ) && isset( $font['font_family'] ) ) {
 				$font_family = $font['font_family'];
 			}
-
-			//determine if it's selected
-			$selected = ( false !== $active_font_family && $active_font_family === $font_family ) ? ' selected="selected" ' : '';
-
-			//now determine if we have a "pretty" display for this font family
-			$font_family_display = $font_family;
-			if ( is_array( $font ) && isset( $font['font_family_display'] ) ) {
-				$font_family_display = $font['font_family_display'];
-			}
-
-			//determine the option class
-			if ( empty( $type ) ) {
-				$type = 'std';
-			}
-			$option_class = $type . '_font';
-
-			$html .= '<option class="' . esc_attr( $option_class ) . '" value="' . esc_attr( $font_family ) . '" ' . $selected . $data_attrs . '>' . $font_family_display . '</option>';
 		}
 
-		return $html;
+		// Now determine if we have a "pretty" display for this font family
+		$font_family_display = $font_family;
+		if ( is_array( $font ) && isset( $font['font_family_display'] ) ) {
+			$font_family_display = $font['font_family_display'];
+		}
+
+		// Bail if we don't have a font family value.
+		if ( empty( $font_family ) ) {
+			return apply_filters( 'customify_filter_font_option_markup_no_family', $html, $font, $active_font_family, $type );
+		}
+
+		// Determine if the font is selected
+		$selected = ( false !== $active_font_family && $active_font_family === $font_family ) ? ' selected="selected" ' : '';
+
+		// Determine the option class
+		$option_class = ( false !== strpos( $type, '_font' ) ) ? $type : $type . '_font';
+
+		$html .= '<option class="' . esc_attr( $option_class ) . '" value="' . esc_attr( $font_family ) . '" ' . $selected . $data_attrs . '>' . $font_family_display . '</option>';
+
+		return apply_filters( 'customify_filter_font_option_markup', $html, $font, $active_font_family, $type );
 	}
 
 	/** ==== Helpers ==== */
