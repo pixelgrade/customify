@@ -133,6 +133,12 @@ if ( ! class_exists( 'Customify_Style_Manager' ) ) {
 			add_filter( 'customify_final_config', array( $this, 'reorganize_customify_sections' ), 10, 1 );
 			add_action( 'customize_register', array( $this, 'general_reorganization_of_customize_sections' ), 999, 1 );
 
+			// Add the logic that handles sections and controls added directly to WP_Customizer, not through the config.
+			add_action( 'customize_register', array( $this, 'reorganize_direct_sections_and_controls' ), 100 );
+
+			// Remove the switch theme panel from the Customizer.
+			add_action( 'customize_register', array( $this, 'remove_switch_theme_panel' ), 12 );
+
 			/*
 			 * Handle the customization of controls based on theme type.
 			 */
@@ -450,12 +456,6 @@ if ( ! class_exists( 'Customify_Style_Manager' ) ) {
 			} else {
 				$config['panels']['theme_options_panel'] = array_merge( $config['panels']['theme_options_panel'], $theme_options_panel_config );
 			}
-
-			// Add the logic that handles sections and controls added directly to WP_Customizer, not through the config.
-			add_action( 'customize_register', array( $this, 'reorganize_direct_sections_and_controls' ), 100 );
-
-			// Remove the switch theme panel from the Customizer.
-			add_action( 'customize_register', array( $this, 'remove_switch_theme_panel' ), 12 );
 
 			return $config;
 		}
