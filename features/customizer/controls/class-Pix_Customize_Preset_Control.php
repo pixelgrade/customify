@@ -386,11 +386,15 @@ class Pix_Customize_Preset_Control extends Pix_Customize_Control {
 			return false;
 		}
 
-		// Calculate straight from rbg
-		$r = hexdec($color[0].$color[1]);
-		$g = hexdec($color[2].$color[3]);
-		$b = hexdec($color[4].$color[5]);
-		return (( $r*299 + $g*587 + $b*114 )/1000 > 130);
+		// Make sure that the hex color string is free from whitespace and #
+		$color = trim( $color, ' \t\n\r #' );
+
+		// Extract the rbg values.
+		$c_r = hexdec( substr( $color, 0, 2 ) );
+		$c_g = hexdec( substr( $color, 2, 2 ) );
+		$c_b = hexdec( substr( $color, 4, 2 ) );
+
+		return ( ( $c_r * 299 + $c_g * 587 + $c_b * 114 ) / 1000 > 130 );
 	}
 
 	/**
@@ -408,11 +412,12 @@ class Pix_Customize_Preset_Control extends Pix_Customize_Control {
 	 */
 	function lightOrDark( $color, $dark = '#000000', $light = '#FFFFFF' ) {
 
-		$hex = str_replace( '#', '', $color );
+		// Make sure that the hex color string is free from whitespace and #
+		$color = trim( $color, ' \t\n\r #' );
 
-		$c_r = hexdec( substr( $hex, 0, 2 ) );
-		$c_g = hexdec( substr( $hex, 2, 2 ) );
-		$c_b = hexdec( substr( $hex, 4, 2 ) );
+		$c_r = hexdec( substr( $color, 0, 2 ) );
+		$c_g = hexdec( substr( $color, 2, 2 ) );
+		$c_b = hexdec( substr( $color, 4, 2 ) );
 
 		$brightness = ( ( $c_r * 299 ) + ( $c_g * 587 ) + ( $c_b * 114 ) ) / 1000;
 
