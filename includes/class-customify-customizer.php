@@ -130,7 +130,7 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 			add_action( 'wp_head', array( $this, 'output_typography_dynamic_style' ), 10 );
 
 			add_action( 'customize_register', array( $this, 'remove_default_sections' ), 11 );
-			add_action( 'customize_register', array( $this, 'register_customizer' ), 12 );
+			add_action( 'customize_register', array( $this, 'process_customizer_config' ), 12 );
 			// Maybe the theme has instructed us to do things like removing sections or controls.
 			add_action( 'customize_register', array( $this, 'maybe_process_config_extras' ), 13 );
 
@@ -943,304 +943,146 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 
 		}
 
-		protected function register_customizer_controls() {
+		protected function load_customizer_controls() {
 
-			// first get the base customizer extend class
+			// First require the base customizer extend class.
 			require_once( PixCustomifyPlugin()->get_base_path() . 'features/customizer/class-Pix_Customize_Control.php' );
 
-			// now get all the controls
-			$path = PixCustomifyPlugin()->get_base_path() . 'features/customizer/controls/';
+			// Now load all the controls' files.
+			$path = apply_filters( 'customify_customizer_controls_path', PixCustomifyPlugin()->get_base_path() . 'features/customizer/controls/' );
 			pixcustomify::require_all( $path );
+
+			do_action( 'customify_loaded_customizer_controls' );
 		}
 
 		/**
-		 * Maybe process certain "commands" from the config.
-		 *
-		 * Mainly things like removing sections, controls, etc.
-		 *
-		 * @since 1.9.0
+		 * Register all the panels, sections and controls we receive through the plugin's config.
 		 *
 		 * @param WP_Customize_Manager $wp_customize
 		 */
-		public function maybe_process_config_extras( $wp_customize ) {
-			$customizer_config = PixCustomifyPlugin()->get_customizer_config();
+		function process_customizer_config( $wp_customize ) {
 
-			// Bail if we have no external theme config data.
-			if ( empty( $customizer_config ) || ! is_array( $customizer_config ) ) {
+			do_action( 'customify_before_process_customizer_config', $wp_customize );
+
+			// Require all the control classes available.
+			$this->load_customizer_controls();
+
+			// Load the customizer config.
+			$customizer_config = apply_filters( 'customify_customizer_config_pre_processing', PixCustomifyPlugin()->get_customizer_config(), $wp_customize );
+
+			// Bail if we don't have a config, or we are missing the 'opt-name' entry.
+			if ( empty( $customizer_config ) || empty( $customizer_config['opt-name'] ) ) {
+				do_action( 'customify_skip_process_customizer_config', $customizer_config, $wp_customize );
 				return;
 			}
 
-			// Maybe remove panels
-			if ( ! empty( $customizer_config['remove_panels'] ) ) {
-				// Standardize it.
-				if ( is_string( $customizer_config['remove_panels'] ) ) {
-					$customizer_config['remove_panels'] = array( $customizer_config['remove_panels'] );
-				}
+			$options_name              = $customizer_config['opt-name'];
+			$wp_customize->options_key = $options_name;
 
-				foreach ( $customizer_config['remove_panels'] as $panel_id ) {
-					$wp_customize->remove_panel( $panel_id );
-				}
-			}
+			// Handle panels.
+			if ( isset( $customizer_config['panels'] ) && ! empty( $customizer_config['panels'] ) ) {
 
-			// Maybe change panel props.
-			if ( ! empty( $customizer_config['change_panel_props'] ) ) {
-				foreach ( $customizer_config['change_panel_props'] as $panel_id => $panel_props ) {
-					if ( ! is_array( $panel_props ) ) {
-						continue;
-					}
+				foreach ( $customizer_config['panels'] as $panel_id => $panel_config ) {
 
-					$panel = $wp_customize->get_panel( $panel_id );
-					if ( empty( $panel ) || ! $panel instanceof WP_Customize_Panel ) {
-						continue;
-					}
+					if ( ! empty( $panel_id ) && isset( $panel_config['sections'] ) && ! empty( $panel_config['sections'] ) ) {
 
-					$public_props = get_class_vars( get_class( $panel ) );
-					foreach ( $panel_props as $prop_name => $prop_value ) {
-
-						if ( ! in_array( $prop_name, array_keys( $public_props ) ) ) {
-							continue;
+						// If we have been explicitly given a panel ID we will use that
+						if ( ! empty( $panel_config['panel_id'] ) ) {
+							$panel_id = $panel_config['panel_id'];
+						} else {
+							$panel_id   = $options_name . '[' . $panel_id . ']';
 						}
 
-						$panel->$prop_name = $prop_value;
-					}
-				}
-			}
+						$panel_args = array(
+							'priority'                 => 10,
+							'capability'               => 'edit_theme_options',
+							'title'                    => esc_html__( 'Panel title is required', 'customify' ),
+							'description'              => esc_html__( 'Description of what this panel does.', 'customify' ),
+							'auto_expand_sole_section' => false,
+						);
 
-			// Maybe remove sections
-			if ( ! empty( $customizer_config['remove_sections'] ) ) {
-				// Standardize it.
-				if ( is_string( $customizer_config['remove_sections'] ) ) {
-					$customizer_config['remove_sections'] = array( $customizer_config['remove_sections'] );
-				}
-
-				foreach ( $customizer_config['remove_sections'] as $section_id ) {
-
-					if ( 'widgets' === $section_id ) {
-						global $wp_registered_sidebars;
-
-						foreach ( $wp_registered_sidebars as $widget => $settings ) {
-							$wp_customize->remove_section( 'sidebar-widgets-' . $widget );
-						}
-						continue;
-					}
-
-					$wp_customize->remove_section( $section_id );
-				}
-			}
-
-			// Maybe change section props.
-			if ( ! empty( $customizer_config['change_section_props'] ) ) {
-				foreach ( $customizer_config['change_section_props'] as $section_id => $section_props ) {
-					if ( ! is_array( $section_props ) ) {
-						continue;
-					}
-
-					$section = $wp_customize->get_section( $section_id );
-					if ( empty( $section ) || ! $section instanceof WP_Customize_Section ) {
-						continue;
-					}
-
-					$public_props = get_class_vars( get_class( $section ) );
-					foreach ( $section_props as $prop_name => $prop_value ) {
-
-						if ( ! in_array( $prop_name, array_keys( $public_props ) ) ) {
-							continue;
+						if ( isset( $panel_config['priority'] ) && ! empty( $panel_config['priority'] ) ) {
+							$panel_args['priority'] = $panel_config['priority'];
 						}
 
-						$section->$prop_name = $prop_value;
-					}
-				}
-			}
-
-			// Maybe remove settings
-			if ( ! empty( $customizer_config['remove_settings'] ) ) {
-				// Standardize it.
-				if ( is_string( $customizer_config['remove_settings'] ) ) {
-					$customizer_config['remove_settings'] = array( $customizer_config['remove_settings'] );
-				}
-
-				foreach ( $customizer_config['remove_settings'] as $setting_id ) {
-					$wp_customize->remove_setting( $setting_id );
-				}
-			}
-
-			// Maybe change setting props.
-			if ( ! empty( $customizer_config['change_setting_props'] ) ) {
-				foreach ( $customizer_config['change_setting_props'] as $setting_id => $setting_props ) {
-					if ( ! is_array( $setting_props ) ) {
-						continue;
-					}
-
-					$setting = $wp_customize->get_setting( $setting_id );
-					if ( empty( $setting ) || ! $setting instanceof WP_Customize_Setting ) {
-						continue;
-					}
-
-					$public_props = get_class_vars( get_class( $setting ) );
-					foreach ( $setting_props as $prop_name => $prop_value ) {
-
-						if ( ! in_array( $prop_name, array_keys( $public_props ) ) ) {
-							continue;
+						if ( isset( $panel_config['title'] ) && ! empty( $panel_config['title'] ) ) {
+							$panel_args['title'] = $panel_config['title'];
 						}
 
-						$setting->$prop_name = $prop_value;
-					}
-				}
-			}
-
-			// Maybe remove controls
-			if ( ! empty( $customizer_config['remove_controls'] ) ) {
-				// Standardize it.
-				if ( is_string( $customizer_config['remove_controls'] ) ) {
-					$customizer_config['remove_controls'] = array( $customizer_config['remove_controls'] );
-				}
-
-				foreach ( $customizer_config['remove_controls'] as $control_id ) {
-					$wp_customize->remove_control( $control_id );
-				}
-			}
-
-			// Maybe change control props.
-			if ( ! empty( $customizer_config['change_control_props'] ) ) {
-				foreach ( $customizer_config['change_control_props'] as $control_id => $control_props ) {
-					if ( ! is_array( $control_props ) ) {
-						continue;
-					}
-
-					$control = $wp_customize->get_control( $control_id );
-					if ( empty( $control ) || ! $control instanceof WP_Customize_Control ) {
-						continue;
-					}
-
-					$public_props = get_class_vars( get_class( $control ) );
-					foreach ( $control_props as $prop_name => $prop_value ) {
-
-						if ( ! in_array( $prop_name, array_keys( $public_props ) ) ) {
-							continue;
+						if ( isset( $panel_config['description'] ) && ! empty( $panel_config['description'] ) ) {
+							$panel_args['description'] = $panel_config['description'];
 						}
 
-						$control->$prop_name = $prop_value;
-					}
-				}
-			}
-		}
-
-		/**
-		 * @param WP_Customize_Manager $wp_customize
-		 */
-		function register_customizer( $wp_customize ) {
-
-			$this->register_customizer_controls();
-
-			$customizer_settings = PixCustomifyPlugin()->get_customizer_config();
-
-			if ( ! empty ( $customizer_settings ) ) {
-
-				// first check the very needed options name
-				if ( empty( $customizer_settings['opt-name'] ) ) {
-					return;
-				}
-				$options_name              = $customizer_settings['opt-name'];
-				$wp_customize->options_key = $options_name;
-
-				// let's check if we have sections or panels
-				if ( isset( $customizer_settings['panels'] ) && ! empty( $customizer_settings['panels'] ) ) {
-
-					foreach ( $customizer_settings['panels'] as $panel_id => $panel_config ) {
-
-						if ( ! empty( $panel_id ) && isset( $panel_config['sections'] ) && ! empty( $panel_config['sections'] ) ) {
-
-							// If we have been explicitly given a panel ID we will use that
-							if ( ! empty( $panel_config['panel_id'] ) ) {
-								$panel_id = $panel_config['panel_id'];
-							} else {
-								$panel_id   = $options_name . '[' . $panel_id . ']';
-							}
-
-							$panel_args = array(
-								'priority'                 => 10,
-								'capability'               => 'edit_theme_options',
-								'title'                    => __( 'Panel title is required', 'customify' ),
-								'description'              => __( 'Description of what this panel does.', 'customify' ),
-								'auto_expand_sole_section' => false,
-							);
-
-							if ( isset( $panel_config['priority'] ) && ! empty( $panel_config['priority'] ) ) {
-								$panel_args['priority'] = $panel_config['priority'];
-							}
-
-							if ( isset( $panel_config['title'] ) && ! empty( $panel_config['title'] ) ) {
-								$panel_args['title'] = $panel_config['title'];
-							}
-
-							if ( isset( $panel_config['description'] ) && ! empty( $panel_config['description'] ) ) {
-								$panel_args['description'] = $panel_config['description'];
-							}
-
-							if ( isset( $panel_config['auto_expand_sole_section'] ) ) {
-								$panel_args['auto_expand_sole_section'] = $panel_config['auto_expand_sole_section'];
-							}
+						if ( isset( $panel_config['auto_expand_sole_section'] ) ) {
+							$panel_args['auto_expand_sole_section'] = $panel_config['auto_expand_sole_section'];
+						}
 
 
-							$wp_customize->add_panel( $panel_id, $panel_args );
+						$panel = $wp_customize->add_panel( $panel_id, $panel_args );
+						// Fire a general added panel hook
+						do_action( 'customify_process_customizer_config_added_panel', $panel, $panel_args, $wp_customize );
 
-							foreach ( $panel_config['sections'] as $section_id => $section_config ) {
-								if ( ! empty( $section_id ) && isset( $section_config['options'] ) && ! empty( $section_config['options'] ) ) {
-									$this->register_section( $panel_id, $section_id, $options_name, $section_config, $wp_customize );
-								}
+						foreach ( $panel_config['sections'] as $section_id => $section_config ) {
+							if ( ! empty( $section_id ) && isset( $section_config['options'] ) && ! empty( $section_config['options'] ) ) {
+								$this->register_section( $panel_id, $section_id, $options_name, $section_config, $wp_customize );
 							}
 						}
+
+						// Fire a general finished panel hook
+						do_action( 'customify_process_customizer_config_finished_panel', $panel, $panel_args, $wp_customize );
 					}
-				}
-
-				if ( isset( $customizer_settings['sections'] ) && ! empty( $customizer_settings['sections'] ) ) {
-
-					foreach ( $customizer_settings['sections'] as $section_id => $section_config ) {
-						if ( ! empty( $section_id ) && isset( $section_config['options'] ) && ! empty( $section_config['options'] ) ) {
-							$this->register_section( $panel_id = false, $section_id, $options_name, $section_config, $wp_customize );
-						}
-					}
-				}
-
-				if ( PixCustomifyPlugin()->settings->get_plugin_setting('enable_reset_buttons') ) {
-					// create a toolbar section which will be present all the time
-					$reset_section_settings = array(
-						'title'   => 'Customify Toolbox',
-						'capability' => 'manage_options',
-						'priority' => 999999999,
-						'options' => array(
-							'reset_all_button' => array(
-								'type'   => 'button',
-								'label'  => 'Reset Customify',
-								'action' => 'reset_customify',
-								'value'  => 'Reset'
-							),
-						)
-					);
-
-					$wp_customize->add_section(
-						'customify_toolbar',
-						$reset_section_settings
-					);
-
-					$wp_customize->add_setting(
-						'reset_customify',
-						array()
-					);
-					$wp_customize->add_control( new Pix_Customize_Button_Control(
-						$wp_customize,
-						'reset_customify',
-						array(
-							'label'    => __( 'Reset All Customify Options to Default', 'customify' ),
-							'section'  => 'customify_toolbar',
-							'settings' => 'reset_customify',
-							'action'   => 'reset_customify',
-						)
-					) );
 				}
 			}
 
-			do_action( 'customify_create_custom_control', $wp_customize );
+			// Handle sections.
+			if ( isset( $customizer_config['sections'] ) && ! empty( $customizer_config['sections'] ) ) {
+
+				foreach ( $customizer_config['sections'] as $section_id => $section_config ) {
+					if ( ! empty( $section_id ) && isset( $section_config['options'] ) && ! empty( $section_config['options'] ) ) {
+						$this->register_section( $panel_id = false, $section_id, $options_name, $section_config, $wp_customize );
+					}
+				}
+			}
+
+			// Handle development helper buttons.
+			if ( PixCustomifyPlugin()->settings->get_plugin_setting('enable_reset_buttons') ) {
+				// create a toolbar section which will be present all the time
+				$reset_section_settings = array(
+					'title'   => esc_html__( 'Customify Toolbox', 'customify' ),
+					'capability' => 'manage_options',
+					'priority' => 999999999,
+					'options' => array(
+						'reset_all_button' => array(
+							'type'   => 'button',
+							'label'  => esc_html__( 'Reset Customify', 'customify' ),
+							'action' => 'reset_customify',
+							'value'  => 'Reset',
+						),
+					)
+				);
+
+				$wp_customize->add_section(
+					'customify_toolbar',
+					$reset_section_settings
+				);
+
+				$wp_customize->add_setting(
+					'reset_customify',
+					array()
+				);
+				$wp_customize->add_control( new Pix_Customize_Button_Control(
+					$wp_customize,
+					'reset_customify',
+					array(
+						'label'    => esc_html__( 'Reset All Customify Options to Default', 'customify' ),
+						'section'  => 'customify_toolbar',
+						'settings' => 'reset_customify',
+						'action'   => 'reset_customify',
+					)
+				) );
+			}
+
+			do_action( 'customify_after_process_customizer_config', $wp_customize );
 		}
 
 		/**
@@ -1275,7 +1117,9 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 
 				// Only add the section if it is not of type `hidden`
 				if ( 'hidden' !== $section_args['type'] ) {
-					$wp_customize->add_section( $section_id, $section_args );
+					$section = $wp_customize->add_section( $section_id, $section_args );
+					// Fire a general added section hook
+					do_action( 'customify_process_customizer_config_added_section', $section, $section_args, $wp_customize );
 				}
 			}
 
@@ -1303,6 +1147,8 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 				$this->register_field( $section_id, $setting_id, $option_config, $wp_customize );
 			}
 
+			// Fire a general finished section hook
+			do_action( 'customify_process_customizer_config_finished_section', $section_id, $wp_customize );
 		}
 
 		/**
@@ -1851,6 +1697,178 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 
 			foreach ( $fields_config as $i => $subarray ) {
 				$this->get_typography_fields( $subarray, $key, $value, $results, $i );
+			}
+		}
+
+		/**
+		 * Maybe process certain "commands" from the config.
+		 *
+		 * Mainly things like removing sections, controls, etc.
+		 *
+		 * @since 1.9.0
+		 *
+		 * @param WP_Customize_Manager $wp_customize
+		 */
+		public function maybe_process_config_extras( $wp_customize ) {
+			$customizer_config = PixCustomifyPlugin()->get_customizer_config();
+
+			// Bail if we have no external theme config data.
+			if ( empty( $customizer_config ) || ! is_array( $customizer_config ) ) {
+				return;
+			}
+
+			// Maybe remove panels
+			if ( ! empty( $customizer_config['remove_panels'] ) ) {
+				// Standardize it.
+				if ( is_string( $customizer_config['remove_panels'] ) ) {
+					$customizer_config['remove_panels'] = array( $customizer_config['remove_panels'] );
+				}
+
+				foreach ( $customizer_config['remove_panels'] as $panel_id ) {
+					$wp_customize->remove_panel( $panel_id );
+				}
+			}
+
+			// Maybe change panel props.
+			if ( ! empty( $customizer_config['change_panel_props'] ) ) {
+				foreach ( $customizer_config['change_panel_props'] as $panel_id => $panel_props ) {
+					if ( ! is_array( $panel_props ) ) {
+						continue;
+					}
+
+					$panel = $wp_customize->get_panel( $panel_id );
+					if ( empty( $panel ) || ! $panel instanceof WP_Customize_Panel ) {
+						continue;
+					}
+
+					$public_props = get_class_vars( get_class( $panel ) );
+					foreach ( $panel_props as $prop_name => $prop_value ) {
+
+						if ( ! in_array( $prop_name, array_keys( $public_props ) ) ) {
+							continue;
+						}
+
+						$panel->$prop_name = $prop_value;
+					}
+				}
+			}
+
+			// Maybe remove sections
+			if ( ! empty( $customizer_config['remove_sections'] ) ) {
+				// Standardize it.
+				if ( is_string( $customizer_config['remove_sections'] ) ) {
+					$customizer_config['remove_sections'] = array( $customizer_config['remove_sections'] );
+				}
+
+				foreach ( $customizer_config['remove_sections'] as $section_id ) {
+
+					if ( 'widgets' === $section_id ) {
+						global $wp_registered_sidebars;
+
+						foreach ( $wp_registered_sidebars as $widget => $settings ) {
+							$wp_customize->remove_section( 'sidebar-widgets-' . $widget );
+						}
+						continue;
+					}
+
+					$wp_customize->remove_section( $section_id );
+				}
+			}
+
+			// Maybe change section props.
+			if ( ! empty( $customizer_config['change_section_props'] ) ) {
+				foreach ( $customizer_config['change_section_props'] as $section_id => $section_props ) {
+					if ( ! is_array( $section_props ) ) {
+						continue;
+					}
+
+					$section = $wp_customize->get_section( $section_id );
+					if ( empty( $section ) || ! $section instanceof WP_Customize_Section ) {
+						continue;
+					}
+
+					$public_props = get_class_vars( get_class( $section ) );
+					foreach ( $section_props as $prop_name => $prop_value ) {
+
+						if ( ! in_array( $prop_name, array_keys( $public_props ) ) ) {
+							continue;
+						}
+
+						$section->$prop_name = $prop_value;
+					}
+				}
+			}
+
+			// Maybe remove settings
+			if ( ! empty( $customizer_config['remove_settings'] ) ) {
+				// Standardize it.
+				if ( is_string( $customizer_config['remove_settings'] ) ) {
+					$customizer_config['remove_settings'] = array( $customizer_config['remove_settings'] );
+				}
+
+				foreach ( $customizer_config['remove_settings'] as $setting_id ) {
+					$wp_customize->remove_setting( $setting_id );
+				}
+			}
+
+			// Maybe change setting props.
+			if ( ! empty( $customizer_config['change_setting_props'] ) ) {
+				foreach ( $customizer_config['change_setting_props'] as $setting_id => $setting_props ) {
+					if ( ! is_array( $setting_props ) ) {
+						continue;
+					}
+
+					$setting = $wp_customize->get_setting( $setting_id );
+					if ( empty( $setting ) || ! $setting instanceof WP_Customize_Setting ) {
+						continue;
+					}
+
+					$public_props = get_class_vars( get_class( $setting ) );
+					foreach ( $setting_props as $prop_name => $prop_value ) {
+
+						if ( ! in_array( $prop_name, array_keys( $public_props ) ) ) {
+							continue;
+						}
+
+						$setting->$prop_name = $prop_value;
+					}
+				}
+			}
+
+			// Maybe remove controls
+			if ( ! empty( $customizer_config['remove_controls'] ) ) {
+				// Standardize it.
+				if ( is_string( $customizer_config['remove_controls'] ) ) {
+					$customizer_config['remove_controls'] = array( $customizer_config['remove_controls'] );
+				}
+
+				foreach ( $customizer_config['remove_controls'] as $control_id ) {
+					$wp_customize->remove_control( $control_id );
+				}
+			}
+
+			// Maybe change control props.
+			if ( ! empty( $customizer_config['change_control_props'] ) ) {
+				foreach ( $customizer_config['change_control_props'] as $control_id => $control_props ) {
+					if ( ! is_array( $control_props ) ) {
+						continue;
+					}
+
+					$control = $wp_customize->get_control( $control_id );
+					if ( empty( $control ) || ! $control instanceof WP_Customize_Control ) {
+						continue;
+					}
+
+					$public_props = get_class_vars( get_class( $control ) );
+					foreach ( $control_props as $prop_name => $prop_value ) {
+
+						if ( ! in_array( $prop_name, array_keys( $public_props ) ) ) {
+							continue;
+						}
+
+						$control->$prop_name = $prop_value;
+					}
+				}
 			}
 		}
 
