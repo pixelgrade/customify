@@ -248,11 +248,8 @@ class Customify_Design_Assets {
 	}
 }
 
-// Handle various cache invalidations, in a proactive manner
-// We need to do the hooking here becuse by the time the class might be instantiated it might be too late.
-add_action( 'activated_plugin', array( 'Customify_Design_Assets', 'invalidate_cache' ), 1 );
-add_action( 'deactivated_plugin', array( 'Customify_Design_Assets', 'invalidate_cache' ), 1 );
-add_action( 'after_switch_theme', array( 'Customify_Design_Assets', 'invalidate_cache' ), 1 );
-add_action( 'upgrader_process_complete', array( 'Customify_Design_Assets', 'invalidate_cache' ), 1 );
+// Handle various cache invalidations, in a proactive manner.
+// We need to do the hooking here because by the time the class might be instantiated it might be too late.
+add_action( 'customify_invalidate_all_caches', array( 'Customify_Design_Assets', 'invalidate_cache' ), 1 );
 
 }

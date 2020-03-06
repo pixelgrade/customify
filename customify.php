@@ -36,6 +36,9 @@ function PixCustomifyPlugin() {
 	return PixCustomifyPlugin::instance( __FILE__, '2.5.9' );
 }
 
-// Now get the party started
-// We will keep this global variable for legacy
+// Now get the party started.
+// We will keep this global variable for legacy reasons.
 $pixcustomify_plugin = PixCustomifyPlugin();
+
+// Load all third-party plugins integrations.
+require_once 'includes/integrations.php';

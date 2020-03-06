@@ -1,6 +1,6 @@
 <?php
 /**
- * This is logic for integrating with the Pixelgrade Care plugin.
+ * Load all integrations.
  *
  * @see         https://pixelgrade.com
  * @author      Pixelgrade
@@ -11,3 +11,5 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
+require_once 'integrations/pixelgrade-care.php';
+require_once 'integrations/pixelgrade-assistant.php';

@@ -162,30 +162,13 @@ class PixCustomifyPlugin {
 		/*
 		 * Handle the force clearing of the caches. We clear in a proactive manner.
 		 */
-		add_action( 'activated_plugin', array( $this, 'invalidate_customizer_config_cache' ), 1 );
-		add_action( 'activated_plugin', array( $this, 'invalidate_options_details_cache' ), 1 );
-		add_action( 'activated_plugin', array( $this, 'invalidate_customizer_opt_name_cache' ), 1 );
-
-		add_action( 'deactivated_plugin', array( $this, 'invalidate_customizer_config_cache' ), 1 );
-		add_action( 'deactivated_plugin', array( $this, 'invalidate_options_details_cache' ), 1 );
-		add_action( 'deactivated_plugin', array( $this, 'invalidate_customizer_opt_name_cache' ), 1 );
-
-		add_action( 'after_switch_theme', array( $this, 'invalidate_customizer_config_cache' ), 1 );
-		add_action( 'after_switch_theme', array( $this, 'invalidate_options_details_cache' ), 1 );
-		add_action( 'after_switch_theme', array( $this, 'invalidate_customizer_opt_name_cache' ), 1 );
-
-		add_action( 'upgrader_process_complete', array( $this, 'invalidate_customizer_config_cache' ), 1 );
-		add_action( 'upgrader_process_complete', array( $this, 'invalidate_options_details_cache' ), 1 );
-		add_action( 'upgrader_process_complete', array( $this, 'invalidate_customizer_opt_name_cache' ), 1 );
+		add_action( 'activated_plugin', array( $this, 'invalidate_all_caches' ), 1 );
+		add_action( 'deactivated_plugin', array( $this, 'invalidate_all_caches' ), 1 );
+		add_action( 'after_switch_theme', array( $this, 'invalidate_all_caches' ), 1 );
+		add_action( 'upgrader_process_complete', array( $this, 'invalidate_all_caches' ), 1 );
 
 		// Whenever we update data from the Customizer, we will invalidate the options details (that include the value).
 		add_filter( 'customize_changeset_save_data', array( $this, 'filter_invalidate_options_details_cache' ), 50, 1 );
-
-		// We also want to invalidate the cache whenever the Pixelgrade Care license is updated since it may unlock new features
-		// and so unlock new Customify options.
-		add_filter( 'pre_set_theme_mod_pixcare_license', array( $this, 'filter_invalidate_customizer_config_cache' ), 10, 1 );
-		add_filter( 'pre_set_theme_mod_pixcare_license', array( $this, 'filter_invalidate_options_details_cache' ), 10, 1 );
-		add_filter( 'pre_set_theme_mod_pixcare_license', array( $this, 'filter_invalidate_customizer_opt_name_cache' ), 10, 1 );
 	}
 
 	/**
@@ -205,6 +188,49 @@ class PixCustomifyPlugin {
 
 		// Put the current version in the database.
 		update_option( 'customify_dbversion', $this->get_version(), true );
+	}
+
+	/**
+	 * Invalidate all caches.
+	 *
+	 * @since 2.6.0
+	 */
+	public function invalidate_all_caches() {
+		$this->invalidate_customizer_config_cache();
+		$this->invalidate_options_details_cache();
+		$this->invalidate_customizer_opt_name_cache();
+		$this->invalidate_options_details_cache();
+
+		do_action( 'customify_invalidate_all_caches' );
+	}
+
+	/**
+	 * Invalidate all caches, when hooked via a filter (just pass through the value).
+	 *
+	 * @since 2.6.0
+	 *
+	 * @param mixed $value
+	 * @return mixed
+	 */
+	public function filter_invalidate_all_caches( $value ) {
+		$this->invalidate_all_caches();
+
+		return $value;
+	}
+
+	/**
+	 * This will clear any instance properties that are used as local cache during a request to avoid
+	 * fetching the data from DB on each method call.
+	 *
+	 * This may be called during a request when something happens that (potentially) invalidates our data mid-request.
+	 */
+	public function clear_locally_cached_data() {
+		$this->opt_name = null;
+
+		$this->customizer_config = null;
+
+		$this->options_minimal_details = null;
+		$this->options_details = null;
 	}
 
 	public function get_options_key( $skip_cache = false ) {
@@ -413,21 +439,6 @@ class PixCustomifyPlugin {
 		}
 
 		return false;
-	}
-
-	/**
-	 * This will clear any instance properties that are used as local cache during a request to avoid
-	 * fetching the data from DB on each method call.
-	 *
-	 * This may be called during a request when something happens that (potentially) invalidates our data mid-request.
-	 */
-	public function clear_locally_cached_data() {
-		$this->opt_name = null;
-
-		$this->customizer_config = null;
-
-		$this->options_minimal_details = null;
-		$this->options_details = null;
 	}
 
 	private function get_options_minimal_details_cache_key() {
