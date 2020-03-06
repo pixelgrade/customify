@@ -128,9 +128,17 @@ if ( ! class_exists( 'Customify_Style_Manager' ) ) {
 			add_filter( 'customify_filter_fields', array( $this, 'style_manager_section_base_config' ), 12, 1 );
 
 			/*
-			 * Handle the grouping and reorganization of the Customizer theme sections when the Style Manager is active.
+			 * Handle the grouping and reorganization of the Customizer theme sections when Style Manager is active.
 			 */
 			add_filter( 'customify_final_config', array( $this, 'reorganize_customify_sections' ), 10, 1 );
+			// Remove the switch theme panel from the Customizer.
+			add_action( 'customize_register', array( $this, 'remove_switch_theme_panel' ), 12 );
+			// Add the logic that handles sections and controls registered directly to WP_Customizer, not through the Customify config.
+			add_action( 'customize_register', array( $this, 'reorganize_direct_sections_and_controls' ), 998 );
+
+			/*
+			 * Handle other, more general reorganization in the Customizer, independent of Style Manager.
+			 */
 			add_action( 'customize_register', array( $this, 'general_reorganization_of_customize_sections' ), 999, 1 );
 
 			/*
@@ -451,12 +459,6 @@ if ( ! class_exists( 'Customify_Style_Manager' ) ) {
 				$config['panels']['theme_options_panel'] = array_merge( $config['panels']['theme_options_panel'], $theme_options_panel_config );
 			}
 
-			// Add the logic that handles sections and controls added directly to WP_Customizer, not through the config.
-			add_action( 'customize_register', array( $this, 'reorganize_direct_sections_and_controls' ), 100 );
-
-			// Remove the switch theme panel from the Customizer.
-			add_action( 'customize_register', array( $this, 'remove_switch_theme_panel' ), 12 );
-
 			return $config;
 		}
 
@@ -606,13 +608,23 @@ if ( ! class_exists( 'Customify_Style_Manager' ) ) {
 		 *
 		 */
 		public function reorganize_direct_sections_and_controls( $wp_customize ) {
-			// We will do out best to identify direct sections and move their controls to the appropriate place.
+			// If there is no style manager support, bail.
+			if ( ! $this->is_supported() ) {
+				return;
+			}
+
+			$theme_options_panel = $wp_customize->get_panel( 'theme_options_panel' );
+			// Bail if we don't have a Theme Options panel since all that we do at the moment is related to it.
+			if ( empty( $theme_options_panel ) ) {
+				return;
+			}
+
 			/** @var WP_Customize_Section $section */
 			foreach ( $wp_customize->sections() as $section ) {
 				// These are general theme options sections that need to have their controls moved to the Theme Options > General section.
 				if ( false !== strpos( $section->id, 'theme_options' ) ) {
-					$theme_options_panel = $wp_customize->get_panel( 'theme_options_panel' );
-					$general_section     = false;
+					// Find the General theme options section, if any.
+					$general_section = false;
 					foreach ( $theme_options_panel->sections as $theme_options_section ) {
 						if ( false !== strpos( $theme_options_section->id, 'general' ) ) {
 							$general_section = $section;
@@ -655,6 +667,11 @@ if ( ! class_exists( 'Customify_Style_Manager' ) ) {
 		 *
 		 */
 		public function remove_switch_theme_panel( $wp_customize ) {
+			// If there is no style manager support, bail.
+			if ( ! $this->is_supported() ) {
+				return;
+			}
+
 			$wp_customize->remove_panel( 'themes' );
 		}
 

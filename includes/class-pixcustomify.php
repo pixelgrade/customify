@@ -539,6 +539,7 @@ class PixCustomifyPlugin {
 		}
 
 		$this->customizer_config = $data;
+
 		return $data;
 	}
 
