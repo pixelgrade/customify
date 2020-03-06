@@ -49,6 +49,7 @@ With [Customify](https://github.com/pixelgrade/customify), developers can easily
 = 2.6.0 =
 * Fixes related to cache invalidation.
 * Improvements to Font Palettes.
+* Fixes for missing Customizer theme controls.
 
 = 2.5.9 =
 * Fixes Style Presets preview display
