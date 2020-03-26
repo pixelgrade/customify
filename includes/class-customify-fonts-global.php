@@ -1,6 +1,6 @@
 <?php
 
-class Customify_Font_Selector {
+class Customify_Fonts_Global {
 
 	/**
 	 * Instance of this class.
@@ -11,22 +11,58 @@ class Customify_Font_Selector {
 
 	protected static $typo_settings = null;
 	protected static $options_list = null;
+
+	protected $std_fonts = null;
+	protected $google_fonts = null;
 	protected $theme_fonts = null;
-	protected $customify_CSS_output = array();
+	protected $cloud_fonts = null;
 
 
 	function __construct() {
+
+		$this->std_fonts = apply_filters( 'customify_filter_standard_fonts_list', array(
+			"Arial, Helvetica, sans-serif"                         => "Arial, Helvetica, sans-serif",
+			"'Arial Black', Gadget, sans-serif"                    => "'Arial Black', Gadget, sans-serif",
+			"'Bookman Old Style', serif"                           => "'Bookman Old Style', serif",
+			"'Comic Sans MS', cursive"                             => "'Comic Sans MS', cursive",
+			"Courier, monospace"                                   => "Courier, monospace",
+			"Garamond, serif"                                      => "Garamond, serif",
+			"Georgia, serif"                                       => "Georgia, serif",
+			"Impact, Charcoal, sans-serif"                         => "Impact, Charcoal, sans-serif",
+			"'Lucida Console', Monaco, monospace"                  => "'Lucida Console', Monaco, monospace",
+			"'Lucida Sans Unicode', 'Lucida Grande', sans-serif"   => "'Lucida Sans Unicode', 'Lucida Grande', sans-serif",
+			"'MS Sans Serif', Geneva, sans-serif"                  => "'MS Sans Serif', Geneva, sans-serif",
+			"'MS Serif', 'New York', sans-serif"                   => "'MS Serif', 'New York', sans-serif",
+			"'Palatino Linotype', 'Book Antiqua', Palatino, serif" => "'Palatino Linotype', 'Book Antiqua', Palatino, serif",
+			"Tahoma,Geneva, sans-serif"                            => "Tahoma, Geneva, sans-serif",
+			"'Times New Roman', Times,serif"                       => "'Times New Roman', Times, serif",
+			"'Trebuchet MS', Helvetica, sans-serif"                => "'Trebuchet MS', Helvetica, sans-serif",
+			"Verdana, Geneva, sans-serif"                          => "Verdana, Geneva, sans-serif",
+		) );
+
+		$this->maybe_load_google_fonts();
+		// This is intentionally commented as it is only used in development to refresh the Google Fonts list
+//		$this->generate_google_fonts_json();
+
 		$this->theme_fonts = apply_filters( 'customify_theme_fonts', array() );
+		$this->cloud_fonts = apply_filters( 'customify_cloud_fonts', array() );
 
 		$load_location = PixCustomifyPlugin()->settings->get_plugin_setting( 'style_resources_location', 'wp_head' );
 		add_action( $load_location, array( $this, 'output_webfont_script' ), 99 );
 		add_action( $load_location, array( $this, 'output_fonts_dynamic_style' ), 100 );
-		add_action( 'customify_font_family_before_options', array( $this, 'add_customify_theme_fonts' ), 11, 1 );
+
+		// We want the theme fonts first, then cloud fonts.
+		add_action( 'customify_font_family_before_options', array( $this, 'add_customify_cloud_fonts' ), 11, 1 );
+		add_action( 'customify_font_family_before_options', array( $this, 'add_customify_theme_fonts' ), 12, 1 );
 
 		if ( PixCustomifyPlugin()->settings->get_plugin_setting( 'enable_editor_style', true ) ) {
 			add_action( 'admin_head', array( $this, 'script_to_add_customizer_settings_into_wp_editor' ) );
 		}
 
+		add_action( 'customize_controls_print_footer_scripts', array(
+			$this,
+			'customize_pane_settings_google_fonts_options'
+		), 10000 );
 	}
 
 	function script_to_add_customizer_settings_into_wp_editor() {
@@ -100,7 +136,7 @@ class Customify_Font_Selector {
 	}
 
 	function add_customify_theme_fonts( $active_font_family ) {
-		//first get all the published custom fonts
+		// First get all the published custom fonts.
 		if ( empty( $this->theme_fonts ) ) {
 			return;
 		}
@@ -108,12 +144,34 @@ class Customify_Font_Selector {
 		echo '<optgroup label="' . esc_html__( 'Theme Fonts', 'customify' ) . '">';
 		foreach ( $this->theme_fonts as $font ) {
 			if ( ! empty( $font ) ) {
-				//display the select option's HTML
+				// Display the select option's HTML.
 				Pix_Customize_Font_Control::output_font_option( $font, $active_font_family, 'theme_font' );
 			}
 		}
 		echo "</optgroup>";
 	}
+
+	public function get_cloud_fonts() {
+		return $this->cloud_fonts;
+	}
+
+	function add_customify_cloud_fonts( $active_font_family ) {
+		// First get all the published custom fonts.
+		if ( empty( $this->cloud_fonts ) ) {
+			return;
+		}
+
+		echo '<optgroup label="' . esc_html__( 'Cloud Fonts', 'customify' ) . '">';
+		foreach ( $this->cloud_fonts as $font ) {
+			if ( ! empty( $font ) ) {
+				// Display the select option's HTML.
+				Pix_Customize_Font_Control::output_font_option( $font, $active_font_family, 'cloud_font' );
+			}
+		}
+		echo "</optgroup>";
+	}
+
+
 
 	function maybe_decode_value( $value ) {
 
@@ -131,6 +189,8 @@ class Customify_Font_Selector {
 			'google_families' => array(),
 			'local_families'  => array(),
 			'local_srcs'      => array(),
+			'cloud_families'  => array(),
+			'cloud_srcs'      => array(),
 		);
 
 		/** @var PixCustomifyPlugin $local_plugin */
@@ -158,7 +218,7 @@ class Customify_Font_Selector {
 
 				// in case the value is still null, try default value (mostly for google fonts)
 				if ( ! is_array( $value ) || $value === null ) {
-					$value = $local_plugin->customizer->get_font_defaults_value( str_replace( '"', '', $font['value'] ) );
+					$value = $this->get_font_defaults_value( str_replace( '"', '', $font['value'] ) );
 				}
 
 				//bail if by this time we don't have a value of some sort
@@ -168,7 +228,7 @@ class Customify_Font_Selector {
 
 				// Handle special logic for when the $value array is not an associative array
 				if ( ! $local_plugin->is_assoc( $value ) ) {
-					$value = $local_plugin->customizer->standardize_non_associative_font_default( $value );
+					$value = $this->standardize_non_associative_font_default( $value );
 				}
 
 				// If we have reached this far and we don't have a type, we will assume it's a google font.
@@ -180,20 +240,46 @@ class Customify_Font_Selector {
 					continue;
 				}
 
+				// Handle fonts defined by the current theme.
 				if ( isset( $this->theme_fonts[ $value['font_family'] ] ) ) {
 
-//					$value['type']     = 'theme_font';
-//					$args['local_srcs'] .= $this->theme_fonts[ $value['font_family'] ]['src'] . ',';
-//					$value['variants'] = $this->theme_fonts[ $value['font_family'] ]['variants'];
+					if ( false === array_search( $value['font_family'], $args['local_families'] )
+					     && false === array_search( $value['font_family'], $args['cloud_families'] ) ) {
 
-					if ( false === array_search( $value['font_family'], $args['local_families'] ) ) {
-						$args['local_families'][] = "'" . $value['font_family'] . "'";
+						$font_family = $value['font_family'];
+						if ( ! empty( $this->theme_fonts[ $value['font_family'] ]['variants'] ) ) {
+							$font_family .= join( ',', $this->convert_font_variants_to_fvds( $this->theme_fonts[ $value['font_family'] ]['variants'] ) );
+						}
+						$args['local_families'][] = "'" . $font_family . "'";
 					}
 
-					if ( false === array_search( $this->theme_fonts[ $value['font_family'] ]['src'], $args['local_srcs'] ) ) {
+					if ( false === array_search( $this->theme_fonts[ $value['font_family'] ]['src'], $args['local_srcs'] )
+						&& false === array_search( $this->theme_fonts[ $value['font_family'] ]['src'], $args['cloud_srcs'] ) ) {
+
 						$args['local_srcs'][] = "'" . $this->theme_fonts[ $value['font_family'] ]['src'] . "'";
 					}
-				} elseif ( isset( $value['font_family'] ) && isset( $value['type'] ) && $value['type'] === 'google' ) {
+				} else
+					// Handle fonts from the cloud.
+					if ( isset( $this->cloud_fonts[ $value['font_family'] ] ) && isset( $value['type'] ) && $value['type'] === 'cloud_font' ) {
+
+					if ( false === array_search( $value['font_family'], $args['local_families'] )
+					     && false === array_search( $value['font_family'], $args['cloud_families'] ) ) {
+
+						$font_family = $value['font_family'];
+						if ( ! empty( $this->cloud_fonts[ $value['font_family'] ]['variants'] ) ) {
+							$font_family .= join( ',', $this->convert_font_variants_to_fvds( $this->cloud_fonts[ $value['font_family'] ]['variants'] ) );
+						}
+						$args['cloud_families'][] = "'" . $font_family . "'";
+					}
+
+					if ( false === array_search( $this->cloud_fonts[ $value['font_family'] ]['src'], $args['local_srcs'] )
+					     && false === array_search( $this->cloud_fonts[ $value['font_family'] ]['src'], $args['cloud_srcs'] ) ) {
+
+						$args['cloud_srcs'][] = "'" . $this->cloud_fonts[ $value['font_family'] ]['src'] . "'";
+					}
+				} else
+					// Handle Google fonts.
+					if ( isset( $value['font_family'] ) && isset( $value['type'] ) && $value['type'] === 'google' ) {
 					$family = "'" . $value['font_family'];
 
 					if ( $load_all_weights && ! empty( $value['variants'] ) && is_array( $value['variants'] ) ) {
@@ -237,10 +323,159 @@ class Customify_Font_Selector {
 			'google_families' => array_unique( $args['google_families'] ),
 			'local_families'  => array_unique( $args['local_families'] ),
 			'local_srcs'      => array_unique( $args['local_srcs'] ),
+			'cloud_families'  => array_unique( $args['cloud_families'] ),
+			'cloud_srcs'      => array_unique( $args['cloud_srcs'] ),
 		);
 
 		return $args;
 	}
+
+	/**
+	 * Will convert an array of CSS like variants into their FVD equivalents. Web Font Loader expects this format.
+	 * @link https://github.com/typekit/fvd
+	 *
+	 * @param array $variants
+	 * @return array
+	 */
+	function convert_font_variants_to_fvds( $variants ) {
+		$fvds = array();
+		if ( ! is_array( $variants ) || empty( $variants ) ) {
+			return $fvds;
+		}
+
+		foreach ( $variants as $variant ) {
+			if ( ! is_string( $variant ) ) {
+				continue;
+			}
+
+			$font_style = 'n'; // normal
+			if ( false !== strrpos( 'italic', $variant ) ) {
+				$font_style = 'i';
+				$variant = str_replace( 'italic', '', $variant );
+			} elseif ( false !== strrpos( 'oblique', $variant ) ) {
+				$font_style = 'o';
+				$variant = str_replace( 'oblique', '', $variant );
+			}
+
+//          The equivalence:
+//
+//			1: 100
+//			2: 200
+//			3: 300
+//			4: 400 (default, also recognized as 'normal')
+//			5: 500
+//			6: 600
+//			7: 700 (also recognized as 'bold')
+//			8: 800
+//			9: 900
+
+			switch ( $variant ) {
+				case 100:
+					$font_weight = 1;
+					break;
+				case 200:
+					$font_weight = 2;
+					break;
+				case 300:
+					$font_weight = 3;
+					break;
+				case 500:
+					$font_weight = 5;
+					break;
+				case 600:
+					$font_weight = 6;
+					break;
+				case 700:
+				case 'bold':
+					$font_weight = 7;
+					break;
+				case 800:
+					$font_weight = 8;
+					break;
+				case 900:
+					$font_weight = 9;
+					break;
+				default:
+					$font_weight = 4;
+					break;
+			}
+
+			$fvds[] = $font_style . '' .  $font_weight;
+		}
+
+		return $fvds;
+	}
+
+	/**
+	 *
+	 * @param $font_name
+	 *
+	 * @return null
+	 */
+	public function get_font_defaults_value( $font_name ) {
+
+		if ( isset( $this->google_fonts[ $font_name ] ) ) {
+			$value                = $this->google_fonts[ $font_name ];
+			$value['font_family'] = $font_name;
+			$value['type']        = 'google';
+
+			return $value;
+		} elseif ( isset( $this->theme_fonts[ $font_name ] ) ) {
+			$value['type']        = 'theme_font';
+			$value['src']         = $this->theme_fonts[ $font_name ]['src'];
+			$value['variants']    = $this->theme_fonts[ $font_name ]['variants'];
+			$value['font_family'] = $this->theme_fonts[ $font_name ]['family'];
+
+			return $value;
+		} elseif ( isset( $this->cloud_fonts[ $font_name ] ) ) {
+			$value['type']        = 'cloud_font';
+			$value['src']         = $this->cloud_fonts[ $font_name ]['src'];
+			$value['variants']    = $this->cloud_fonts[ $font_name ]['variants'];
+			$value['font_family'] = $this->cloud_fonts[ $font_name ]['family'];
+
+			return $value;
+		}
+
+		return null;
+	}
+
+	/**
+	 * Handle special logic for when the $value array is not an associative array
+	 * Return a new associative array with proper keys
+	 */
+	public function standardize_non_associative_font_default( $value ) {
+		// If the value provided is not array, simply return it
+		if ( ! is_array( $value ) ) {
+			return $value;
+		}
+
+		$new_value = array();
+
+		// Let's determine some type of font
+		if ( ! isset( $value[2] ) || 'google' == $value[2] ) {
+			$new_value = $this->get_font_defaults_value( $value[0] );
+		} else {
+			$new_value['type'] = $value[2];
+		}
+
+		if ( null == $new_value ) {
+			$new_value = array();
+		}
+
+		// The first entry is the font-family
+		if ( isset( $value[0] ) ) {
+			$new_value['font_family'] = $value[0];
+		}
+
+		// In case we don't have an associative array
+		// The second entry is the variants
+		if ( isset( $value[1] ) ) {
+			$new_value['selected_variants'] = $value[1];
+		}
+
+		return $new_value;
+	}
+
 
 	function output_fonts_dynamic_style() {
 
@@ -330,7 +565,7 @@ class Customify_Font_Selector {
 		$value = $this->maybe_decode_value( $font['value'] );
 
 		if ( $value === null ) {
-			$value = $local_plugin->customizer->get_font_defaults_value( $font['value'] );
+			$value = $this->get_font_defaults_value( $font['value'] );
 		}
 
 		// shim the old case when the default was only the font name
@@ -340,7 +575,7 @@ class Customify_Font_Selector {
 
 		// Handle special logic for when the $value array is not an associative array
 		if ( ! $local_plugin->is_assoc( $value ) ) {
-			$value = $local_plugin->customizer->standardize_non_associative_font_default( $value );
+			$value = $this->standardize_non_associative_font_default( $value );
 		}
 
 		$value = $this->validate_font_values( $value );
@@ -518,7 +753,7 @@ class Customify_Font_Selector {
 	function get_fonts_dynamic_script() {
 		$args = $this->get_fonts_args();
 
-		if ( ( empty ( $args['local_families'] ) && empty ( $args['google_families'] ) )
+		if ( ( empty ( $args['local_families'] ) && empty ( $args['cloud_families'] ) && empty ( $args['google_families'] ) )
 		     || ! PixCustomifyPlugin()->settings->get_plugin_setting( 'typography', '1' )
 		     || ! PixCustomifyPlugin()->settings->get_plugin_setting( 'typography_google_fonts', 1 ) ) {
 			return '';
@@ -544,10 +779,23 @@ function customify_font_loader() {
 	        families: [<?php echo join( ',', $args['google_families'] ); ?>]
 	    };
         <?php }
-        if ( ! empty( $args['local_families'] ) && ! empty( $args['local_srcs'] ) ) { ?>
+        $custom_families = array();
+        $custom_urls = array();
+
+		if ( ! empty( $args['local_families'] ) && ! empty( $args['local_srcs'] ) ) {
+			$custom_families += $args['local_families'];
+			$custom_urls += $args['local_srcs'];
+		}
+
+		if ( ! empty( $args['cloud_families'] ) && ! empty( $args['cloud_srcs'] ) ) {
+			$custom_families += $args['cloud_families'];
+			$custom_urls += $args['cloud_srcs'];
+		}
+
+        if ( ! empty( $custom_families ) && ! empty( $custom_urls ) ) { ?>
     webfontargs.custom = {
-            families: [<?php echo join( ',', $args['local_families'] ); ?>],
-            urls: [<?php echo join( ',', $args['local_srcs'] ) ?>]
+            families: [<?php echo join( ',', $custom_families ); ?>],
+            urls: [<?php echo join( ',', $custom_urls ) ?>]
         };
         <?php } ?>
     WebFont.load(webfontargs);
@@ -557,7 +805,7 @@ if (typeof WebFont !== 'undefined') {
     customify_font_loader();
 } else {
     var tk = document.createElement('script');
-    tk.src = '//ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
+    tk.src = '//ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js';
     tk.type = 'text/javascript';
 
     tk.onload = tk.onreadystatechange = function () {
@@ -641,15 +889,86 @@ if (typeof WebFont !== 'undefined') {
 		return $has_style;
 	}
 
+	public function customize_pane_settings_google_fonts_options() {
+		if ( ! PixCustomifyPlugin()->settings->get_plugin_setting( 'typography_google_fonts' ) || empty( $this->google_fonts ) ) {
+			return;
+		}
+
+		?>
+		<script type="text/javascript">
+			if ( 'undefined' === typeof _wpCustomizeSettings.settings ) {
+				_wpCustomizeSettings.settings = {};
+			}
+
+			<?php
+			echo "(function ( sAdditional ){\n";
+
+			printf(
+				"sAdditional['google_fonts_opts'] = %s;\n",
+				wp_json_encode( Pix_Customize_Font_Control::get_google_fonts_opts_html( $this->google_fonts ) )
+			);
+			echo "})( _wpCustomizeSettings );\n";
+			?>
+		</script>
+		<?php
+	}
+
+	/** HELPERS */
+
 	/**
-	 * Main Customify_Font_Selector Instance
+	 * Load the google fonts list from the local file, if not already loaded.
 	 *
-	 * Ensures only one instance of Customify_Font_Selector is loaded or can be loaded.
+	 * @return bool|mixed|null
+	 */
+	protected function maybe_load_google_fonts() {
+
+		if ( empty( $this->google_fonts ) ) {
+			$fonts_path = plugin_dir_path( __FILE__ ) . 'resources/google.fonts.php';
+
+			if ( file_exists( $fonts_path ) ) {
+				$this->google_fonts = apply_filters( 'customify_filter_google_fonts_list', require( $fonts_path ) );
+			}
+		}
+
+		if ( ! empty( $this->google_fonts ) ) {
+			return $this->google_fonts;
+		}
+
+		return false;
+	}
+
+	/**
+	 * This method is used only to update the google fonts json file
+	 * Even if it sounds weird you need to go to https://www.googleapis.com/webfonts/v1/webfonts?key=AIzaSyB7Yj842mK5ogSiDa3eRrZUIPTzgiGopls
+	 * copy all the content and put it into google.fonts.php
+	 * call this
+	 * the result needs to be put back into google.fonts.php
+	 * remove this call
+	 * before rage about file_get_content + json file think about the security avoided with this simple call
+	 */
+	protected function generate_google_fonts_json() {
+		$new_array = array();
+		foreach ( $this->google_fonts as $key => $font ) {
+			// unset unused data
+			unset( $font['kind'] );
+			unset( $font['version'] );
+			unset( $font['lastModified'] );
+			unset( $font['files'] );
+			$new_array[ $font['family'] ] = $font;
+		}
+
+		file_put_contents( plugin_dir_path( __FILE__ ) . 'resources/google.fonts.json', json_encode( $new_array ) );
+	}
+
+	/**
+	 * Main Customify_Fonts_Global Instance
 	 *
-	 * @since  1.0.0
+	 * Ensures only one instance of Customify_Fonts_Global is loaded or can be loaded.
+	 *
+	 * @since  2.7.0
 	 * @static
 	 *
-	 * @return Customify_Font_Selector Main Customify_Font_Selector instance
+	 * @return Customify_Fonts_Global Main Customify_Fonts_Global instance
 	 */
 	public static function instance() {
 
@@ -661,8 +980,6 @@ if (typeof WebFont !== 'undefined') {
 
 	/**
 	 * Cloning is forbidden.
-	 *
-	 * @since 1.0.0
 	 */
 	public function __clone() {
 
@@ -671,8 +988,6 @@ if (typeof WebFont !== 'undefined') {
 
 	/**
 	 * Unserializing instances of this class is forbidden.
-	 *
-	 * @since 1.0.0
 	 */
 	public function __wakeup() {
 
