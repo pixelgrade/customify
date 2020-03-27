@@ -42,8 +42,8 @@ let FontPalettes = ( function( $, exports, wp ) {
                 let serializedNewFontData;
 
                 if (typeof fonts_logic.reset !== "undefined") {
-                  var setting_id = connected_field_data.setting_id;
-                  var defaultValue = customify_settings.settings[setting_id].default;
+                  let setting_id = connected_field_data.setting_id;
+                  let defaultValue = customify_settings.settings[setting_id].default;
 
                   if ( !_.isUndefined( setting ) && !_.isUndefined( defaultValue ) ) {
                     newFontData['font_family'] = defaultValue['font_family'] || defaultValue['font-family'];
@@ -55,6 +55,8 @@ let FontPalettes = ( function( $, exports, wp ) {
 
                     if ( typeof customify_settings.theme_fonts[ newFontData['font_family'] !== "undefined" ] ) {
                       newFontData['type'] = 'theme_font';
+                    } else if ( typeof customify_settings.cloud_fonts[ newFontData['font_family'] !== "undefined" ] ) {
+                      newFontData['type'] = 'cloud_font';
                     }
                   }
                 }
