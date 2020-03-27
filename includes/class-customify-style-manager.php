@@ -56,6 +56,14 @@ if ( ! class_exists( 'Customify_Style_Manager' ) ) {
 		protected $font_palettes = null;
 
 		/**
+		 * The cloud fonts object.
+		 * @var     null|Customify_Cloud_Fonts
+		 * @access  public
+		 * @since   2.7.0
+		 */
+		protected $cloud_fonts = null;
+
+		/**
 		 * The Cloud API object.
 		 * @var     null|Customify_Cloud_Api
 		 * @access  public
@@ -102,6 +110,12 @@ if ( ! class_exists( 'Customify_Style_Manager' ) ) {
 			 */
 			require_once 'class-customify-font-palettes.php';
 			$this->font_palettes = Customify_Font_Palettes::instance();
+
+			/**
+			 * Initialize the Cloud Fonts logic.
+			 */
+			require_once 'class-customify-cloud-fonts.php';
+			$this->cloud_fonts = Customify_Cloud_Fonts::instance();
 
 			/**
 			 * Initialize the Cloud API logic.
@@ -155,6 +169,7 @@ if ( ! class_exists( 'Customify_Style_Manager' ) ) {
 			 */
 			add_action( 'customize_controls_print_footer_scripts', array( $this, 'output_user_feedback_modal' ) );
 			add_action( 'wp_ajax_customify_style_manager_user_feedback', array( $this, 'user_feedback_callback' ) );
+			add_filter( 'customify_localized_js_settings', array( $this, 'add_user_feedback_localized_data' ), 10, 1 );
 
 			/*
 			 * Scripts enqueued in the Customizer.
@@ -673,6 +688,22 @@ if ( ! class_exists( 'Customify_Style_Manager' ) ) {
 			}
 
 			$wp_customize->remove_panel( 'themes' );
+		}
+
+		/**
+		 * Add the JS needed data to the global `customify_settings` variable.
+		 *
+		 * @since 2.7.0
+		 *
+		 * @param $localized
+		 *
+		 * @return mixed
+		 */
+		public function add_user_feedback_localized_data( $localized ) {
+			$localized['style_manager_user_feedback_nonce'] = wp_create_nonce( 'customify_style_manager_user_feedback' );
+			$localized['style_manager_user_feedback_provided'] = get_option( 'style_manager_user_feedback_provided', false );
+
+			return $localized;
 		}
 
 		/**

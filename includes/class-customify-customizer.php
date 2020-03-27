@@ -25,12 +25,6 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 
 		protected $localized = array();
 
-		protected $typo_settings;
-
-		protected $google_fonts = null;
-
-		protected $theme_fonts = null;
-
 		protected $media_queries = array();
 
 		// these properties will get 'px' as a default unit
@@ -87,15 +81,12 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 		 * @since 2.4.0
 		 */
 		public function init() {
-
-			$this->localized['options_name'] = PixCustomifyPlugin()->get_options_key();
-
-			require_once( PixCustomifyPlugin()->get_base_path() . 'features/class-Font_Selector.php' );
-			$this->localized['theme_fonts'] = $this->theme_fonts = Customify_Font_Selector::instance()->get_theme_fonts();
-
-			$this->localized['ajax_url'] = admin_url( 'admin-ajax.php' );
-			$this->localized['style_manager_user_feedback_nonce'] = wp_create_nonce( 'customify_style_manager_user_feedback' );
-			$this->localized['style_manager_user_feedback_provided'] = get_option( 'style_manager_user_feedback_provided', false );
+			// Others will be able to add data here via the 'customify_localized_js_settings' filter.
+			// This is a just-in-time filter, triggered as late as possible.
+			$this->localized  = array(
+				'options_name' => PixCustomifyPlugin()->get_options_key(),
+				'ajax_url' => admin_url( 'admin-ajax.php' ),
+			);
 
 			// Hook up.
 			$this->add_hooks();
@@ -126,8 +117,6 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 			$load_location = PixCustomifyPlugin()->settings->get_plugin_setting( 'style_resources_location', 'wp_head' );
 
 			add_action( $load_location, array( $this, 'output_dynamic_style' ), 99 );
-			add_action( 'wp_head', array( $this, 'output_typography_dynamic_script' ), 10 );
-			add_action( 'wp_head', array( $this, 'output_typography_dynamic_style' ), 10 );
 
 			add_action( 'customize_register', array( $this, 'remove_default_sections' ), 11 );
 			add_action( 'customize_register', array( $this, 'process_customizer_config' ), 12 );
@@ -194,19 +183,32 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 			wp_enqueue_script( 'jquery-react' );
 			wp_enqueue_script( PixCustomifyPlugin()->get_slug() . '-customizer-scripts' );
 
-			wp_localize_script( PixCustomifyPlugin()->get_slug() . '-customizer-scripts', 'customify_settings', apply_filters( 'customify_localized_js_settings', $this->localized ) );
+			wp_localize_script( PixCustomifyPlugin()->get_slug() . '-customizer-scripts',
+				'customify_settings',
+				apply_filters( 'customify_localized_js_settings', $this->localized ) );
 		}
 
 		/** Register Customizer scripts loaded only on previewer page */
 		function customizer_live_preview_register_scripts() {
-			wp_register_script( PixCustomifyPlugin()->get_slug() . 'CSSOM', plugins_url( 'js/CSSOM.js', PixCustomifyPlugin()->get_file() ), array( 'jquery' ), PixCustomifyPlugin()->get_version(), true );
-			wp_register_script( PixCustomifyPlugin()->get_slug() . 'cssUpdate', plugins_url( 'js/jquery.cssUpdate.js', PixCustomifyPlugin()->get_file() ), array( 'jquery' ), PixCustomifyPlugin()->get_version(), true );
-			wp_register_script( PixCustomifyPlugin()->get_slug() . '-previewer-scripts', plugins_url( 'js/customizer_preview.js', PixCustomifyPlugin()->get_file() ), array(
-				'jquery',
-				'customize-preview',
-				PixCustomifyPlugin()->get_slug() . 'CSSOM',
-				PixCustomifyPlugin()->get_slug() . 'cssUpdate'
-			), PixCustomifyPlugin()->get_version(), true );
+			wp_register_script( PixCustomifyPlugin()->get_slug() . '-CSSOM',
+				plugins_url( 'js/CSSOM.js', PixCustomifyPlugin()->get_file() ),
+				array( 'jquery' ),
+				PixCustomifyPlugin()->get_version(), true );
+
+			wp_register_script( PixCustomifyPlugin()->get_slug() . '-cssUpdate',
+				plugins_url( 'js/jquery.cssUpdate.js', PixCustomifyPlugin()->get_file() ),
+				array( 'jquery' ),
+				PixCustomifyPlugin()->get_version(), true );
+
+			wp_register_script( PixCustomifyPlugin()->get_slug() . '-previewer-scripts',
+				plugins_url( 'js/customizer_preview.js', PixCustomifyPlugin()->get_file() ),
+				array(
+					'jquery',
+					'customize-preview',
+					PixCustomifyPlugin()->get_slug() . '-CSSOM',
+					PixCustomifyPlugin()->get_slug() . '-cssUpdate'
+				),
+				PixCustomifyPlugin()->get_version(), true );
 		}
 
 		/** Enqueue Customizer scripts loaded only on previewer page */
@@ -216,7 +218,9 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 			// when a live preview field is in action we need to know which props need 'px' as defaults
 			$this->localized['px_dependent_css_props'] = self::$pixel_dependent_css_properties;
 
-			wp_localize_script( PixCustomifyPlugin()->get_slug() . '-previewer-scripts', 'customify_settings', $this->localized );
+			wp_localize_script( PixCustomifyPlugin()->get_slug() . '-previewer-scripts',
+				'customify_settings',
+				apply_filters( 'customify_localized_js_settings', $this->localized ) );
 		}
 
 		/**
@@ -369,347 +373,6 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 			}
 
 			return apply_filters( 'customify_dynamic_style', $custom_css );
-		}
-
-		protected function load_google_fonts() {
-			$fonts_path = PixCustomifyPlugin()->get_base_path() . 'features/customizer/controls/resources/google.fonts.php';
-
-			if ( file_exists( $fonts_path ) ) {
-				$this->google_fonts = require( $fonts_path );
-			}
-
-			if ( ! empty( $this->google_fonts ) ) {
-				return $this->google_fonts;
-			}
-
-			return false;
-		}
-
-		function output_typography_dynamic_style() {
-			$style = $this->get_typography_dynamic_style();
-
-			if ( ! empty( $style ) ) { ?>
-				<style id="customify_typography_output_style">
-					<?php echo $style; ?>
-				</style>
-			<?php }
-		}
-
-		function get_typography_dynamic_style() {
-			$output = '';
-
-			$this->get_typography_fields( PixCustomifyPlugin()->get_options_details( true ), 'type', 'typography', $this->typo_settings );
-
-			if ( empty( $this->typo_settings ) ) {
-				return $output;
-			}
-
-			ob_start();
-			foreach ( $this->typo_settings as $font ) {
-				$selector = apply_filters( 'customify_typography_css_selector', $font['selector'], $font );
-
-				$load_all_weights = false;
-				if ( isset( $font['load_all_weights'] ) && $font['load_all_weights'] == 'true' ) {
-					$load_all_weights = true;
-				}
-
-				if ( isset( $selector ) && isset( $font['value'] ) && ! empty( $font['value'] ) ) {
-					// Make sure that the value is in the proper format
-					$value = PixCustomifyPlugin::decodeURIComponent( $font['value'] );
-					if ( is_string( $value ) ) {
-						$value = json_decode( $value, true );
-					}
-
-					// In case the value is null (most probably because the json_decode failed),
-					// try the default value (mostly for google fonts)
-					if ( $value === null ) {
-						$value = $this->get_font_defaults_value( $font['value'] );
-					}
-
-					// Shim the old case when the default was only the font name
-					if ( ! empty( $value ) && is_string( $value ) ) {
-						$value = array( 'font_family' => $value );
-					}
-
-					// Handle special logic for when the $value array is not an associative array
-					if ( ! PixCustomifyPlugin()->is_assoc( $value ) ) {
-						$value = $this->standardize_non_associative_font_default( $value );
-					}
-
-					// Bail if empty or we don't have an array
-					if ( empty( $value ) || ! is_array( $value ) ) {
-						continue;
-					}
-
-					$selected_variant = '';
-					if ( ! empty( $value['selected_variants'] ) ) {
-						if ( is_array( $value['selected_variants'] ) ) {
-							$selected_variant = $value['selected_variants'][0];
-						} else {
-							$selected_variant = $value['selected_variants'];
-						}
-					}
-
-					// First handle the case where we have the font-family in the selected variant (usually this means a custom font from our Fonto plugin)
-					if ( ! empty( $selected_variant ) && is_array( $selected_variant ) && ! empty( $selected_variant['font-family'] ) ) {
-						// The variant's font-family
-						echo $selector . " {\nfont-family: " . $selected_variant['font-family'] . ";\n";
-
-						if ( ! $load_all_weights ) {
-							// If this is a custom font (like from our plugin Fonto) with individual styles & weights - i.e. the font-family says it all
-							// we need to "force" the font-weight and font-style
-							if ( ! empty( $value['type'] ) && 'custom_individual' == $value['type'] ) {
-								$selected_variant['font-weight'] = '400 !important';
-								$selected_variant['font-style'] = 'normal !important';
-							}
-
-							// Output the font weight, if available
-							if ( ! empty( $selected_variant['font-weight'] ) ) {
-								echo "font-weight: " . $selected_variant['font-weight'] . ";\n";
-							}
-
-							// Output the font style, if available
-							if ( ! empty( $selected_variant['font-style'] ) ) {
-								echo "font-style: " . $selected_variant['font-style'] . ";\n";
-							}
-						}
-
-						echo "}\n";
-					} elseif ( isset( $value['font_family'] ) ) {
-						// The selected font family
-						echo $selector . " {\n font-family: " . $value['font_family'] . ";\n";
-
-						if ( ! empty( $selected_variant ) && ! $load_all_weights ) {
-							$weight_and_style = strtolower( $selected_variant );
-
-							$italic_font = false;
-
-							//determine if this is an italic font (the $weight_and_style is usually like '400' or '400italic' )
-							if ( strpos( $weight_and_style, 'italic' ) !== false ) {
-								$weight_and_style = str_replace( 'italic', '', $weight_and_style);
-								$italic_font = true;
-							}
-
-							if ( ! empty( $weight_and_style ) ) {
-								//a little bit of sanity check - in case it's not a number
-								if( $weight_and_style === 'regular' ) {
-									$weight_and_style = 'normal';
-								}
-								echo "font-weight: " . $weight_and_style . ";\n";
-							}
-
-							if ( $italic_font ) {
-								echo "font-style: italic;\n";
-							}
-						}
-
-						echo "}\n";
-					}
-				}
-			}
-
-			$output = ob_get_clean();
-
-			return $output;
-		}
-
-		function output_typography_dynamic_script() {
-
-			$script = $this->get_typography_dynamic_script();
-			if ( ! empty ( $script ) ) { ?>
-				<script type="text/javascript">
-					<?php echo $script; ?>
-				</script>
-			<?php }
-		}
-
-		function get_typography_dynamic_script() {
-			$output = '';
-
-			$this->get_typography_fields( PixCustomifyPlugin()->get_options_details( true ), 'type', 'typography', $this->typo_settings );
-
-			if ( empty( $this->typo_settings ) ) {
-				return $output;
-			}
-
-			$families = '';
-
-			foreach ( $this->typo_settings as $id => $font ) {
-				if ( isset ( $font['value'] ) ) {
-
-					$load_all_weights = false;
-					if ( isset( $font['load_all_weights'] ) && $font['load_all_weights'] == 'true' ) {
-						$load_all_weights = true;
-					}
-
-					// shim the time when this was an array
-					// @todo Is this really needed? Or does it make sense?
-					if ( is_array( $font['value'] ) ) {
-						$font['value'] = stripslashes_deep( $font['value'] );
-						$font['value'] = json_encode( $font['value'] );
-					}
-
-					$value = wp_unslash( PixCustomifyPlugin::decodeURIComponent( $font['value'] ) );
-					if ( is_string( $value ) ) {
-						$value = json_decode( $value, true );
-					}
-
-					// In case the value is still null, try default value (mostly for google fonts)
-					if ( $value === null || ! is_array( $value ) ) {
-						$value = $this->get_font_defaults_value( str_replace( '"', '', $font['value'] ) );
-					}
-
-					// Bail if by this time we don't have a value of some sort
-					if ( empty( $value ) ) {
-						continue;
-					}
-
-					// Handle special logic for when the $value array is not an associative array
-					if ( ! PixCustomifyPlugin()->is_assoc( $value ) ) {
-						$value = $this->standardize_non_associative_font_default( $value );
-					}
-
-					// Bail if empty or we don't have an array
-					if ( empty( $value ) || ! is_array( $value ) ) {
-						continue;
-					}
-
-					if ( isset( $value['font_family'] ) && isset( $value['type'] ) && $value['type'] == 'google' ) {
-						$families .= "'" . $value['font_family'];
-
-						if ( $load_all_weights && is_array( $value['variants'] ) ) {
-							$families .= ":" . implode( ',', $value['variants'] );
-						} elseif ( isset( $value['selected_variants'] ) && ! empty( $value['selected_variants'] ) ) {
-							if ( is_array( $value['selected_variants'] ) ) {
-								$families .= ":" . implode( ',', $value['selected_variants'] );
-							} elseif ( is_string( $value['selected_variants'] ) || is_numeric( $value['selected_variants'] ) ) {
-								$families .= ":" . $value['selected_variants'];
-							}
-						} elseif ( isset( $value['variants'] ) && ! empty( $value['variants'] ) ) {
-							if ( is_array( $value['variants'] ) ) {
-								$families .= ":" . implode( ',', $value['variants'] );
-							} else {
-								$families .= ":" . $value['variants'];
-							}
-						}
-
-						if ( isset( $value['selected_subsets'] ) && ! empty( $value['selected_subsets'] ) ) {
-							if ( is_array( $value['selected_subsets'] ) ) {
-								$families .= ":" . implode( ',', $value['selected_subsets'] );
-							} else {
-								$families .= ":" . $value['selected_subsets'];
-							}
-						} elseif ( isset( $value['subsets'] ) && ! empty( $value['subsets'] ) ) {
-							if ( is_array( $value['subsets'] ) ) {
-								$families .= ":" . implode( ',', $value['subsets'] );
-							} else {
-								$families .= ":" . $value['subsets'];
-							}
-						}
-
-						$families .= '\',';
-					}
-				}
-			}
-
-			if ( ! empty ( $families ) && PixCustomifyPlugin()->settings->get_plugin_setting( 'typography', '1' )
-			     && PixCustomifyPlugin()->settings->get_plugin_setting( 'typography_google_fonts', 1 ) ) {
-				ob_start();
-				?>
-				if (typeof WebFont !== 'undefined') {<?php // if there is a WebFont object, use it ?>
-				WebFont.load({
-				google: {families: [<?php echo( rtrim( $families, ',' ) ); ?>]},
-				classes: false,
-				events: false
-				});
-				} else {<?php // basically when we don't have the WebFont object we create the google script dynamically  ?>
-
-				var tk = document.createElement('script');
-				tk.src = '//ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
-				tk.type = 'text/javascript';
-
-				tk.onload = tk.onreadystatechange = function () {
-				WebFont.load({
-				google: {families: [<?php echo( rtrim( $families, ',' ) ); ?>]},
-				classes: false,
-				events: false
-				});
-				};
-
-				var s = document.getElementsByTagName('script')[0];
-				s.parentNode.insertBefore(tk, s);
-				}<?php
-				$output = ob_get_clean();
-			}
-
-			return $output;
-		}
-
-		/**
-		 * Handle special logic for when the $value array is not an associative array
-		 * Return a new associative array with proper keys
-		 */
-		public function standardize_non_associative_font_default( $value ) {
-			// If the value provided is not array, simply return it
-			if ( ! is_array( $value ) ) {
-				return $value;
-			}
-
-			$new_value = array();
-
-			// Let's determine some type of font
-			if ( ! isset( $value[2] ) || 'google' == $value[2] ) {
-				$new_value = $this->get_font_defaults_value( $value[0] );
-			} else {
-				$new_value['type'] = $value[2];
-			}
-
-			if ( null == $new_value ) {
-				$new_value = array();
-			}
-
-			// The first entry is the font-family
-			if ( isset( $value[0] ) ) {
-				$new_value['font_family'] = $value[0];
-			}
-
-			// In case we don't have an associative array
-			// The second entry is the variants
-			if ( isset( $value[1] ) ) {
-				$new_value['selected_variants'] = $value[1];
-			}
-
-			return $new_value;
-		}
-
-		/**
-		 *
-		 * @param $font_name
-		 *
-		 * @return null
-		 */
-		public function get_font_defaults_value( $font_name ) {
-
-			if ( empty( $this->google_fonts ) ) {
-				$this->load_google_fonts();
-			}
-
-			if ( isset( $this->google_fonts[ $font_name ] ) ) {
-				$value                = $this->google_fonts[ $font_name ];
-				$value['font_family'] = $font_name;
-				$value['type']        = 'google';
-
-				return $value;
-			} elseif ( isset( $this->theme_fonts[ $font_name ] ) ) {
-				$value['type']        = 'theme_font';
-				$value['src']         = $this->theme_fonts[ $font_name ]['src'];
-				$value['variants']    = $this->theme_fonts[ $font_name ]['variants'];
-				$value['font_family'] = $this->theme_fonts[ $font_name ]['family'];
-
-				return $value;
-			}
-
-			return null;
 		}
 
 		/**
@@ -872,13 +535,12 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 		}
 
 		/**
-		 * add our customizer styling edits into the wp_editor
+		 * Add our customizer styling edits into the wp_editor
 		 */
 		function script_to_add_customizer_settings_into_wp_editor() {
 
 			ob_start();
-			$this->output_typography_dynamic_script();
-			$this->output_typography_dynamic_style();
+
 			$this->output_dynamic_style();
 
 			$custom_css = ob_get_clean();
@@ -895,6 +557,7 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 
 			var script = myIframe.contentWindow.document.createElement("script");
 			script.type = "text/javascript";
+			script.src = scriptEl.getAttribute("src");
 			script.innerHTML = scriptEl.innerHTML;
 
 			myIframe.contentWindow.document.head.appendChild(script);
@@ -1678,28 +1341,6 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 			<?php
 		}
 
-		public function get_typography_fields( $fields_config, $key, $value, &$results, $input_key = 0 ) {
-			if ( ! is_array( $fields_config ) ) {
-				return;
-			}
-
-			if ( isset( $fields_config[ $key ] ) && $fields_config[ $key ] == $value ) {
-				$results[ $input_key ] = $fields_config;
-
-				$default = null;
-
-				if ( isset( $fields_config['default'] ) && is_array( $fields_config['default'] ) ) {
-					$default = json_encode( $fields_config['default'] );
-				}
-
-				$results[ $input_key ]['value'] = PixCustomifyPlugin()->get_option( $input_key, $default );
-			}
-
-			foreach ( $fields_config as $i => $subarray ) {
-				$this->get_typography_fields( $subarray, $key, $value, $results, $i );
-			}
-		}
-
 		/**
 		 * Maybe process certain "commands" from the config.
 		 *
@@ -1872,9 +1513,31 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 			}
 		}
 
-		/**
-		 * Sanitize functions
-		 */
+		/* HELPERS */
+
+		public function get_fields_by_key( $fields_config, $key, $value, &$results, $input_key = 0 ) {
+			if ( ! is_array( $fields_config ) ) {
+				return;
+			}
+
+			if ( isset( $fields_config[ $key ] ) && $fields_config[ $key ] == $value ) {
+				$results[ $input_key ] = $fields_config;
+
+				$default = null;
+
+				if ( isset( $fields_config['default'] ) && is_array( $fields_config['default'] ) ) {
+					$default = json_encode( $fields_config['default'] );
+				}
+
+				$results[ $input_key ]['value'] = PixCustomifyPlugin()->get_option( $input_key, $default );
+			}
+
+			foreach ( $fields_config as $i => $subarray ) {
+				$this->get_fields_by_key( $subarray, $key, $value, $results, $i );
+			}
+		}
+
+		/* SANITIZATION HELPERS */
 
 		/**
 		 * Sanitize the checkbox.

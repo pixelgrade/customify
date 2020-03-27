@@ -62,6 +62,14 @@ class PixCustomifyPlugin {
 	public $customizer = null;
 
 	/**
+	 * Fonts class object to handle fonts global logic.
+	 * @var Customify_Fonts_Global
+	 * @access  public
+	 * @since   2.7.0
+	 */
+	public $fonts_global = null;
+
+	/**
 	 * Style Manager class object.
 	 * @var Customify_Style_Manager
 	 * @access  public
@@ -126,6 +134,12 @@ class PixCustomifyPlugin {
 		require_once( $this->get_base_path() . 'includes/class-customify-customizer.php' );
 		if ( is_null( $this->customizer ) ) {
 			$this->customizer = PixCustomify_Customizer::instance();
+		}
+
+		/* Initialize the Fonts logic. */
+		require_once( $this->get_base_path() . 'includes/class-customify-fonts-global.php' );
+		if ( is_null( $this->fonts_global ) ) {
+			$this->fonts_global = Customify_Fonts_Global::instance();
 		}
 
 		/* Initialize the Style Manager logic. */

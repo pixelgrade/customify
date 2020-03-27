@@ -90,17 +90,17 @@ let CustomifyFontSelectFields = (function ($, exports, wp) {
           }
 
           $.each(variants, function (index, weight) {
-            let this_value = {
+            let thisValue = {
               id: weight,
               text: weight
             }
 
             // @todo We actually do not support multiple selected variants. Maybe we should? Right now we don't use multiple selections.
             if (selected_variants !== null && weight == selected_variants) {
-              this_value.selected = true
+              thisValue.selected = true
             }
 
-            data.push(this_value)
+            data.push(thisValue)
           })
 
           if (data !== []) {
@@ -184,40 +184,42 @@ let CustomifyFontSelectFields = (function ($, exports, wp) {
      * This function updates the data in font weight selector from the given <option> element
      *
      * @param option
-     * @param wraper
+     * @param wrapper
      */
-    function updateWeightField (option, wraper) {
-      let variants = $(option).data('variants'),
-        font_weights = wraper.find(fontWeightSelector),
-        selected_variant = font_weights.val() ? font_weights.val() : font_weights.data('default'),
-        new_variants = [],
-        id = wraper.find(valueHolderSelector).data('customizeSettingLink')
+    function updateWeightField (option, wrapper) {
+      let variants = maybeJsonParse($(option).data('variants')),
+        font_weights = wrapper.find(fontWeightSelector),
+        selectedVariant = font_weights.val() ? font_weights.val() : font_weights.data('default'),
+        newVariants = [],
+        id = wrapper.find(valueHolderSelector).data('customizeSettingLink')
 
-      variants = maybeJsonParse(variants)
-
-      if (customify_settings.settings[id].load_all_weights || typeof variants === 'undefined' || Object.keys(variants).length < 2 || font_weights.data('disabled') !== undefined) {
+      if (customify_settings.settings[id].load_all_weights || typeof variants === 'undefined' || Object.keys(variants).length < 2 || !_.isUndefined(font_weights.data('disabled'))) {
         font_weights.parent().hide()
-      } else {
-        font_weights.parent().show()
+        return
       }
+
+      font_weights.parent().show()
 
       // we need to turn the data array into a specific form like [{id:"id", text:"Text"}]
       $.each(variants, function (index, variant) {
-        new_variants[index] = {
+        let newVariant = {
           'id': variant,
           'text': variant
         }
 
-        if (selected_variant == variant) {
-          new_variants[index].selected = true
+        // Leave the comparison loose.
+        if (selectedVariant == variant) {
+          newVariant.selected = true
         }
+
+        newVariants.push(newVariant)
       })
 
       // We need to clear the old select2 field and reinitialize it.
       $(font_weights).select2().empty()
       $(font_weights).select2({
         theme: 'classic',
-        data: new_variants,
+        data: newVariants,
         minimumResultsForSearch: 10,
       }).on('change', function (e) {
         let wrapper = $(e.target).closest(wrapperSelector)
@@ -230,59 +232,57 @@ let CustomifyFontSelectFields = (function ($, exports, wp) {
     /**
      *  This function updates the data in font subset selector from the given <option> element
      * @param option
-     * @param wraper
+     * @param wrapper
      */
-    function updateSubsetField (option, wraper) {
-      let subsets = $(option).data('subsets'),
-        font_subsets = wraper.find(fontSubsetsSelector),
-        new_subsets = [],
+    function updateSubsetField (option, wrapper) {
+      let subsets = maybeJsonParse($(option).data('subsets')),
+        font_subsets = wrapper.find(fontSubsetsSelector),
+        newSubsets = [],
         type = $(option).data('type')
 
-      if (type !== 'google') {
+      if (type !== 'google' || typeof subsets === 'undefined' || Object.keys(subsets).length < 2 || !_.isUndefined(font_subsets.data('disabled'))) {
         font_subsets.parent().hide()
         return
       }
 
-      let current_value = wraper.children(valueHolderSelector).val()
+      font_subsets.parent().show()
 
-      current_value = maybeJsonParse(current_value)
-      if (_.isUndefined(current_value.selected_subsets)) {
-        return
-      }
-      current_value = current_value.selected_subsets
-
-      subsets = maybeJsonParse(subsets)
-
-      if (typeof subsets !== 'undefined' && Object.keys(subsets).length < 2 || font_subsets.data('disabled') !== undefined) {
-        font_subsets.parent().hide()
-      } else {
-        font_subsets.parent().show()
+      // Attempt to keep (some of) the previously selected subsets, depending on what the new font supports.
+      let currentFontValue = maybeJsonParse(wrapper.children(valueHolderSelector).val())
+      let selectedSubsets = [];
+      if (!_.isUndefined(currentFontValue.selected_subsets) && !_.isEmpty(currentFontValue.selected_subsets)) {
+        selectedSubsets = currentFontValue.selected_subsets
+        // Make sure it is an array
+        if ( ! Array.isArray( selectedSubsets ) ) {
+          selectedSubsets = Object.keys( selectedSubsets ).map( function( key ) {
+            return selectedSubsets[ key ];
+          } );
+        }
       }
 
       // we need to turn the data array into a specific form like [{id:"id", text:"Text"}]
       $.each(subsets, function (index, subset) {
-        new_subsets[index] = {
+        // We want to skip the 'latin' subset since that is loaded by default.
+        if ( 'latin' === subset ) {
+          return;
+        }
+
+        let newSubset = {
           'id': subset,
           'text': subset
         }
 
-        // current_subsets
-        if ( typeof current_value !== 'undefined' && current_value !== null ) {
-          if ( ! Array.isArray( current_value ) ) {
-            current_value = Object.keys( current_value ).map( function( key ) {
-              return current_value[ key ];
-            } );
-          }
-          if ( current_value.indexOf(subset) !== -1) {
-            new_subsets[index].selected = true
-          }
+        if ( selectedSubsets.indexOf(subset) !== -1) {
+          newSubset.selected = true
         }
+
+        newSubsets.push(newSubset)
       });
 
       // We need to clear the old select2 field and reinitialize it.
       $(font_subsets).select2().empty()
       $(font_subsets).select2({
-        data: new_subsets
+        data: newSubsets
       }).on('change', function (e) {
         let wrapper = $(e.target).closest(wrapperSelector)
 

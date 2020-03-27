@@ -34,7 +34,7 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 	 */
 	public function __construct( $manager, $id, $args = array() ) {
 
-		self::$std_fonts = apply_filters( 'customify_filter_standard_fonts_list', array(
+		self::$std_fonts = apply_filters( 'customify_standard_fonts_list', array(
 			"Arial, Helvetica, sans-serif"                         => "Arial, Helvetica, sans-serif",
 			"'Arial Black', Gadget, sans-serif"                    => "'Arial Black', Gadget, sans-serif",
 			"'Bookman Old Style', serif"                           => "'Bookman Old Style', serif",
@@ -92,7 +92,6 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 
 
 		$this->current_value = $this->value();
-//		$this->generate_google_fonts_json();
 	}
 
 	/**
@@ -367,7 +366,7 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 	 */
 	protected function load_google_fonts() {
 
-		$fonts_path = plugin_dir_path( __FILE__ ) . 'resources/google.fonts.php';
+		$fonts_path = PixCustomifyPlugin()->get_base_path() . 'includes/resources/google.fonts.php';
 
 		if ( file_exists( $fonts_path ) ) {
 			self::$google_fonts = require( $fonts_path );
@@ -378,26 +377,6 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 		}
 
 		return false;
-	}
-
-	/**
-	 * This method is used only to update the google fonts json file
-	 */
-	protected function generate_google_fonts_json() {
-
-		$fonts_path = plugin_dir_path( __FILE__ ) . 'resources/google.fonts.php';
-
-		$new_array = array();
-		foreach ( self::$google_fonts as $key => $font ) {
-			// unset unused data
-			unset( $font['kind'] );
-			unset( $font['version'] );
-			unset( $font['lastModified'] );
-			unset( $font['files'] );
-			$new_array[ $font['family'] ] = $font;
-		}
-
-		file_put_contents( plugin_dir_path( __FILE__ ) . 'resources/google.fonts.json', json_encode( $new_array ) );
 	}
 
 	function get_default_values( ) {

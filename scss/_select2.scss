@@ -21,10 +21,15 @@ $results-choice-fg-hover-color: #FFFFFF;
   }
 }
 
-.select2-search__field[class][class],
 .select2-results__option {
   padding-left: 14px;
   padding-right: 14px;
+}
+.select2-search__field[class][class] {
+  padding-left: 0;
+  padding-right: 0;
+  margin-left: 0;
+  margin-right:14px;
 }
 
 #customize-theme-controls {
@@ -39,6 +44,7 @@ $results-choice-fg-hover-color: #FFFFFF;
 
   .select2-selection--multiple {
     @include field;
+    padding: 8px 8px 2px;
   }
 
   .select2-selection__rendered {

@@ -216,21 +216,27 @@ if ( ! class_exists( 'Customify_Gutenberg' ) ) {
 			$enqueue_parent_handle = $this->get_editor_style_handle();
 
 			if ( PixCustomifyPlugin()->settings->get_plugin_setting( 'enable_editor_style', true ) ) {
+				require_once( PixCustomifyPlugin()->get_base_path() . 'includes/class-customify-fonts-global.php' );
+
 				add_filter( 'customify_typography_css_selector', array(
 					$this,
 					'gutenbergify_font_css_selectors'
 				), 10, 2 );
-				wp_add_inline_script( 'wp-editor', PixCustomifyPlugin()->customizer->get_typography_dynamic_script() );
-				wp_add_inline_style( $enqueue_parent_handle, PixCustomifyPlugin()->customizer->get_typography_dynamic_style() );
+
+				wp_register_script( PixCustomifyPlugin()->get_slug() . '-web-font-loader',
+					'//ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js', array('wp-editor'), null );
+
+				Customify_Fonts_Global::instance()->enqueue_typography_frontend_scripts();
+				wp_add_inline_style( $enqueue_parent_handle, Customify_Fonts_Global::instance()->get_typography_dynamic_style() );
 				remove_filter( 'customify_typography_css_selector', array(
 					$this,
 					'gutenbergify_font_css_selectors'
 				), 10 );
 
 				add_filter( 'customify_font_css_selector', array( $this, 'gutenbergify_font_css_selectors' ), 10, 2 );
-				require_once( PixCustomifyPlugin()->get_base_path() . 'features/class-Font_Selector.php' );
-				wp_add_inline_script( 'wp-editor', Customify_Font_Selector::instance()->get_fonts_dynamic_script() );
-				wp_add_inline_style( $enqueue_parent_handle, Customify_Font_Selector::instance()->get_fonts_dynamic_style() );
+
+				Customify_Fonts_Global::instance()->enqueue_frontend_scripts();
+				wp_add_inline_style( $enqueue_parent_handle, Customify_Fonts_Global::instance()->get_fonts_dynamic_style() );
 				remove_filter( 'customify_font_css_selector', array( $this, 'gutenbergify_font_css_selectors' ), 10 );
 
 				add_filter( 'customify_css_selector', array( $this, 'gutenbergify_css_selectors' ), 10, 2 );
