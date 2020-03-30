@@ -5,14 +5,14 @@
 
   $(window).load(function () {
     // We need to do this on window.load because on document.ready might be too early.
-    maybe_load_webfontloader_script()
+    maybeLoadWebfontloaderScript()
   })
 
   const fonts_cache = []
 
   $(document).ready(function () {
-    let api = parent.wp.customize,
-      wp_settings = api.settings.settings
+    const api = parent.wp.customize,
+      apiSettings = api.settings.settings
 
     $.each(customify_settings.settings, function (key, el) {
       const properties_prefix = typeof el.properties_prefix === 'undefined' ? '' : el.properties_prefix
@@ -26,17 +26,17 @@
                 maybeLoadFontFamily($values)
               }
 
-              const vls = get_CSS_values(this.id, $values),
-                CSS = get_CSS_code(this.id, vls, properties_prefix),
-                field_style = $('#customify_font_output_for_' + el.html_safe_option_id)
+              const vls = getCSSValues(this.id, $values),
+                CSS = getCSSCode(this.id, vls, properties_prefix),
+                fieldStyle = $('#customify_font_output_for_' + el.html_safe_option_id)
 
-              field_style.html(CSS)
+              fieldStyle.html(CSS)
             }
           })
         })
 
-      } else if (typeof wp_settings !== 'undefined'
-        && typeof wp_settings[key] !== 'undefined'
+      } else if (typeof apiSettings !== 'undefined'
+        && typeof apiSettings[key] !== 'undefined'
         && typeof el.css !== 'undefined'
         && typeof el.live !== 'undefined'
         && el.live === true) {
@@ -53,21 +53,21 @@
                 properties['callback'] = property_config.callback_filter
               }
 
-              let css_update_args = {
+              let cssUpdateArgs = {
                 properties: properties,
                 propertyValue: to,
                 negative_value: property_config.hasOwnProperty('negative_value') ? property_config['negative_value'] : false
               }
 
               if (typeof this.unit !== 'undefined') {
-                css_update_args.unit = this.unit
+                cssUpdateArgs.unit = this.unit
               }
 
               // Replace all dashes with underscores thus making the CSS property safe to us in a HTML ID.
-              const regex_for_multiple_replace = new RegExp('-', 'g'),
-                cssStyleSelector = '.dynamic_setting_' + el.html_safe_option_id + '_property_' + property_config.property.replace(regex_for_multiple_replace, '_') + '_' + counter
+              const regexForMultipleReplace = new RegExp('-', 'g'),
+                cssStyleSelector = '.dynamic_setting_' + el.html_safe_option_id + '_property_' + property_config.property.replace(regexForMultipleReplace, '_') + '_' + counter
 
-              $(cssStyleSelector).cssUpdate(css_update_args)
+              $(cssStyleSelector).cssUpdate(cssUpdateArgs)
             })
 
           })
@@ -75,7 +75,7 @@
       } else if (typeof el.live === 'object' && el.live.length > 0) {
         // if the live parameter is an object it means that is a list of css classes
         // these classes should be affected by the change of the text fields
-        const field_class = el.live.join()
+        const fieldClass = el.live.join()
 
         // if this field is allowed to modify text then we'll edit this live
         if ($.inArray(el.type, ['text', 'textarea', 'ace_editor']) > -1) {
@@ -84,7 +84,7 @@
               let sanitizer = document.createElement('div')
 
               sanitizer.innerHTML = text
-              $(field_class).html(text)
+              $(fieldClass).html(text)
             })
           })
         }
@@ -93,7 +93,7 @@
 
     /*** HELPERS **/
 
-    const get_CSS_values = function (ID, values) {
+    const getCSSValues = function (ID, values) {
 
       let store = {}
 
@@ -103,7 +103,7 @@
 
       if (typeof values.selected_variants !== 'undefined') {
 
-        let variants = null
+        let variants = ''
 
         if (typeof values.selected_variants !== 'undefined' && values.selected_variants !== null) {
           variants = values.selected_variants
@@ -112,7 +112,7 @@
         }
 
         // google fonts also have the italic string inside, split that
-        if (variants !== null && _.isString(variants) && variants.indexOf('italic') !== -1) {
+        if (_.isString(variants) && variants.indexOf('italic') !== -1) {
           store['font-style'] = 'italic'
           variants = variants.replace('italic', '')
         }
@@ -137,10 +137,10 @@
               store['font-size'] += values.font_size.unit
             }
           } else {
-            store['font-size'] += get_field_unit(ID, 'font-size')
+            store['font-size'] += getFieldUnit(ID, 'font-size')
           }
         } else {
-          store['font-size'] += get_field_unit(ID, 'font-size')
+          store['font-size'] += getFieldUnit(ID, 'font-size')
         }
       }
 
@@ -155,10 +155,10 @@
               store['letter-spacing'] += values.letter_spacing.unit
             }
           } else {
-            store['letter-spacing'] += get_field_unit(ID, 'letter-spacing')
+            store['letter-spacing'] += getFieldUnit(ID, 'letter-spacing')
           }
         } else {
-          store['letter-spacing'] += get_field_unit(ID, 'letter-spacing')
+          store['letter-spacing'] += getFieldUnit(ID, 'letter-spacing')
         }
       }
 
@@ -173,10 +173,10 @@
               store['line-height'] += values.line_height.unit
             }
           } else {
-            store['line-height'] += get_field_unit(ID, 'line-height')
+            store['line-height'] += getFieldUnit(ID, 'line-height')
           }
         } else {
-          store['line-height'] += get_field_unit(ID, 'line-height')
+          store['line-height'] += getFieldUnit(ID, 'line-height')
         }
       }
 
@@ -194,7 +194,7 @@
       return store
     }
 
-    const get_CSS_code = function (ID, values, prefix) {
+    const getCSSCode = function (ID, values, prefix) {
 
       const field = customify_settings.settings[ID]
       let output = ''
@@ -212,7 +212,7 @@
       return output
     }
 
-    const get_field_unit = function (ID, field) {
+    const getFieldUnit = function (ID, field) {
       let unit = ''
       if (typeof customify_settings.settings[ID] === 'undefined' || typeof customify_settings.settings[ID].fields[field] === 'undefined') {
         return unit
@@ -358,7 +358,7 @@
     }
   })
 
-  function maybe_load_webfontloader_script () {
+  function maybeLoadWebfontloaderScript () {
     if (typeof WebFont === 'undefined') {
       let tk = document.createElement('script')
       tk.src = '//ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js'

@@ -1,4 +1,6 @@
 let ColorPalettes = (function ($, exports, wp) {
+  const api = wp.customize
+  let apiSettings
 
   const defaultVariation = 'light'
   const masterSettingIds = [
@@ -40,7 +42,7 @@ let ColorPalettes = (function ($, exports, wp) {
 
     // Cache initial settings configuration to be able to update connected fields on variation change.
     if (typeof window.settingsClone === 'undefined') {
-      window.settingsClone = $.extend(true, {}, wp.customize.settings.settings)
+      window.settingsClone = $.extend(true, {}, apiSettings)
     }
 
     // Create a stack of callbacks bound to parent settings to be able to unbind them
@@ -63,7 +65,7 @@ let ColorPalettes = (function ($, exports, wp) {
   }
 
   function hsl2hex (color) {
-    var rgb = hsl2Rgb(color.hue, color.saturation, color.lightness)
+    const rgb = hsl2Rgb(color.hue, color.saturation, color.lightness)
     return rgb2hex(rgb)
   }
 
@@ -97,16 +99,16 @@ let ColorPalettes = (function ($, exports, wp) {
   }
 
   function rgbToHsl (r, g, b) {
-    r /= 255;
-    g /= 255;
-    b /= 255;
+    r /= 255
+    g /= 255
+    b /= 255
     const max = Math.max(r, g, b), min = Math.min(r, g, b)
     let h, s, l = (max + min) / 2
 
     if (max == min) {
       h = s = 0 // achromatic
     } else {
-      var d = max - min
+      const d = max - min
       s = l > 0.5 ? d / (2 - max - min) : d / (max + min)
       switch (max) {
         case r:
@@ -126,33 +128,33 @@ let ColorPalettes = (function ($, exports, wp) {
 
   const resetSettings = () => {
     _.each(masterSettingIds, function (setting_id) {
-      const setting = wp.customize(setting_id)
+      const setting = api(setting_id)
 
       if (typeof setting !== 'undefined') {
-        let parent_setting_data = wp.customize.settings.settings[setting_id];
+        let parent_setting_data = apiSettings[setting_id]
 
-        const final_value = getFilteredColor(setting_id);
+        const final_value = getFilteredColor(setting_id)
 
         _.each(parent_setting_data.connected_fields, function (connected_field_data) {
           if (_.isUndefined(connected_field_data) || _.isUndefined(connected_field_data.setting_id) || !_.isString(connected_field_data.setting_id)) {
             return
           }
-          const connected_setting = wp.customize(connected_field_data.setting_id)
+          const connected_setting = api(connected_field_data.setting_id)
           if (_.isUndefined(connected_setting)) {
             return
           }
 
-          connected_setting.set(final_value);
+          connected_setting.set(final_value)
         })
 
         // Also set the final setting value, for safe keeping.
-        const final_setting_id = setting_id + '_final';
-        const final_setting = wp.customize(final_setting_id);
+        const final_setting_id = setting_id + '_final'
+        const final_setting = api(final_setting_id)
         if (!_.isUndefined(final_setting)) {
-          if ( !_.isUndefined(parent_setting_data.connected_fields) && !_.isEmpty(parent_setting_data.connected_fields)) {
-            final_setting.set(final_value);
+          if (!_.isUndefined(parent_setting_data.connected_fields) && !_.isEmpty(parent_setting_data.connected_fields)) {
+            final_setting.set(final_value)
           } else {
-            final_setting.set('');
+            final_setting.set('')
           }
         }
       }
@@ -161,7 +163,7 @@ let ColorPalettes = (function ($, exports, wp) {
 
   const updateFilteredColors = () => {
     _.each(masterSettingIds, function (setting_id) {
-      const setting = wp.customize(setting_id)
+      const setting = api(setting_id)
 
       if (typeof setting !== 'undefined') {
         let value = setting()
@@ -176,29 +178,29 @@ let ColorPalettes = (function ($, exports, wp) {
 
   const getMasterFieldCallback = function (parent_setting_data, parent_setting_id) {
     return function (new_value, old_value) {
-      const final_value = getFilteredColor(parent_setting_id);
+      const final_value = getFilteredColor(parent_setting_id)
 
       _.each(parent_setting_data.connected_fields, function (connected_field_data) {
         if (_.isUndefined(connected_field_data) || _.isUndefined(connected_field_data.setting_id) || !_.isString(connected_field_data.setting_id)) {
           return
         }
-        const setting = wp.customize(connected_field_data.setting_id)
+        const setting = api(connected_field_data.setting_id)
         if (_.isUndefined(setting)) {
           return
         }
 
         setting.set(final_value)
       })
-      updateFilterPreviews();
+      updateFilterPreviews()
 
       // Also set the final setting value, for safe keeping.
-      const final_setting_id = parent_setting_id + '_final';
-      const final_setting = wp.customize(final_setting_id)
+      const final_setting_id = parent_setting_id + '_final'
+      const final_setting = api(final_setting_id)
       if (!_.isUndefined(final_setting)) {
-        if ( !_.isUndefined(parent_setting_data.connected_fields) && !_.isEmpty(parent_setting_data.connected_fields)) {
-          final_setting.set(final_value);
+        if (!_.isUndefined(parent_setting_data.connected_fields) && !_.isEmpty(parent_setting_data.connected_fields)) {
+          final_setting.set(final_value)
         } else {
-          final_setting.set('');
+          final_setting.set('')
         }
       }
     }
@@ -206,9 +208,9 @@ let ColorPalettes = (function ($, exports, wp) {
 
   const bindConnectedFields = function () {
     _.each(masterSettingIds, function (parent_setting_id) {
-      if (typeof wp.customize.settings.settings[parent_setting_id] !== 'undefined') {
-        let parent_setting_data = wp.customize.settings.settings[parent_setting_id]
-        let parent_setting = wp.customize(parent_setting_id)
+      if (typeof apiSettings[parent_setting_id] !== 'undefined') {
+        let parent_setting_data = apiSettings[parent_setting_id]
+        let parent_setting = api(parent_setting_id)
 
         if (!_.isUndefined(parent_setting_data.connected_fields)) {
           window.colorsConnectedFieldsCallbacks[parent_setting_id] = getMasterFieldCallback(parent_setting_data, parent_setting_id)
@@ -216,7 +218,7 @@ let ColorPalettes = (function ($, exports, wp) {
 
           _.each(parent_setting_data.connected_fields, function (connected_field_data) {
             let connected_setting_id = connected_field_data.setting_id
-            let connected_setting = wp.customize(connected_setting_id)
+            let connected_setting = api(connected_setting_id)
 
             if (typeof connected_setting !== 'undefined') {
               window.colorsConnectedFieldsCallbacks[connected_setting_id] = toggleAlteredClassOnMasterControls
@@ -230,7 +232,7 @@ let ColorPalettes = (function ($, exports, wp) {
 
   const unbindConnectedFields = function () {
     _.each(window.colorsConnectedFieldsCallbacks, function (callback, setting_id) {
-      let setting = wp.customize(setting_id)
+      let setting = api(setting_id)
       setting.unbind(callback)
     })
     window.colorsConnectedFieldsCallbacks = {}
@@ -238,7 +240,7 @@ let ColorPalettes = (function ($, exports, wp) {
 
   // alter connected fields of the master colors controls depending on the selected palette variation
   const getCurrentVariation = () => {
-    const setting = wp.customize('sm_color_palette_variation')
+    const setting = api('sm_color_palette_variation')
 
     if (_.isUndefined(setting)) {
       return defaultVariation
@@ -264,7 +266,7 @@ let ColorPalettes = (function ($, exports, wp) {
   const getCurrentPaletteColors = () => {
     const colors = []
     _.each(masterSettingIds, function (setting_id) {
-      const setting = wp.customize(setting_id)
+      const setting = api(setting_id)
       const color = setting()
       colors.push(color)
     })
@@ -454,24 +456,24 @@ let ColorPalettes = (function ($, exports, wp) {
   }
 
   const createCurrentPaletteControls = () => {
-    const $palette = $( '.c-color-palette' );
-    const $fields = $palette.find( '.c-color-palette__fields' ).find( 'input' );
+    const $palette = $('.c-color-palette')
+    const $fields = $palette.find('.c-color-palette__fields').find('input')
 
-    if ( !$palette.length ) {
+    if (!$palette.length) {
       return
     }
 
-    const $colors = $palette.find( '.sm-color-palette__color' );
+    const $colors = $palette.find('.sm-color-palette__color')
 
     $colors.each((i, obj) => {
       const $obj = $(obj)
       const setting_id = $obj.data('setting')
       const $input = $fields.filter('.' + setting_id)
-      const setting = wp.customize(setting_id)
+      const setting = api(setting_id)
 
       $obj.data('target', $input)
 
-		  if( $obj.hasClass('js-no-picker') ) { return }
+      if ($obj.hasClass('js-no-picker')) { return }
 
       $input.iris({
         change: (event, ui) => {
@@ -483,7 +485,7 @@ let ColorPalettes = (function ($, exports, wp) {
           setting.set(currentColor)
 
           if (event.originalEvent.type !== 'external') {
-            $palette.find( '.sm-color-palette__color.' + setting_id ).removeClass( 'altered' )
+            $palette.find('.sm-color-palette__color.' + setting_id).removeClass('altered')
           }
 
           setPalettesOnConnectedFields()
@@ -553,9 +555,9 @@ let ColorPalettes = (function ($, exports, wp) {
     $('body').on('click', function () {
       $colors.removeClass('active inactive')
       $colors.each(function (i, obj) {
-        const $input = $(obj).data('target');
+        const $input = $(obj).data('target')
 
-		    if( !$(obj).hasClass('js-no-picker') ) {
+        if (!$(obj).hasClass('js-no-picker')) {
           $input.iris('hide')
         }
         $input.hide()
@@ -565,15 +567,15 @@ let ColorPalettes = (function ($, exports, wp) {
 
   const showNewColors = function () {
     _.each(masterSettingIds, function (id) {
-      $( '.c-color-palette' ).find( '.sm-color-palette__color.' + id ).css( 'color', getFilteredColor( id ) );
+      $('.c-color-palette').find('.sm-color-palette__color.' + id).css('color', getFilteredColor(id))
     })
   }
 
   const showOldColors = function () {
     _.each(masterSettingIds, function (id) {
-      const setting = wp.customize(id)
+      const setting = api(id)
       const initialColor = setting()
-      $( '.c-color-palette' ).find( '.sm-color-palette__color.' + id ).css( 'color', initialColor );
+      $('.c-color-palette').find('.sm-color-palette__color.' + id).css('color', initialColor)
     })
   }
 
@@ -588,8 +590,8 @@ let ColorPalettes = (function ($, exports, wp) {
     let $targets = $()
     // loop through the master settings
     _.each(masterSettingIds, function (parent_setting_id) {
-      if (typeof wp.customize.settings.settings[parent_setting_id] !== 'undefined') {
-        let parent_setting_data = wp.customize.settings.settings[parent_setting_id]
+      if (typeof apiSettings[parent_setting_id] !== 'undefined') {
+        let parent_setting_data = apiSettings[parent_setting_id]
         if (!_.isUndefined(parent_setting_data.connected_fields)) {
           // loop through all the connected fields and search the element on which the iris plugin has been initialized
           _.each(parent_setting_data.connected_fields, function (connected_field_data) {
@@ -626,7 +628,7 @@ let ColorPalettes = (function ($, exports, wp) {
 
       $bucket.css('color', getFilteredColor(setting_id))
 
-      _.each(wp.customize.settings.settings[setting_id]['connected_fields'], function (connected_field) {
+      _.each(apiSettings[setting_id]['connected_fields'], function (connected_field) {
         const field_id = connected_field.setting_id
         const fieldClassName = field_id.replace('[', '_').replace(']', '')
         classes.push(fieldClassName)
@@ -651,8 +653,8 @@ let ColorPalettes = (function ($, exports, wp) {
     let alteredSettingsSelector
 
     _.each(masterSettingIds, function (masterSettingId) {
-      let connectedFields = wp.customize.settings.settings[masterSettingId]['connected_fields']
-      let masterSettingValue = wp.customize(masterSettingId)()
+      let connectedFields = apiSettings[masterSettingId]['connected_fields']
+      let masterSettingValue = api(masterSettingId)()
       let connectedFieldsWereAltered = false
 
       if (!_.isUndefined(connectedFields) && !Array.isArray(connectedFields)) {
@@ -664,7 +666,7 @@ let ColorPalettes = (function ($, exports, wp) {
       if (!_.isUndefined(connectedFields) && connectedFields.length) {
         _.each(connectedFields, function (connectedField) {
           let connectedSettingId = connectedField.setting_id
-          let connectedSetting = wp.customize(connectedSettingId)
+          let connectedSetting = api(connectedSettingId)
 
           if (typeof connectedSetting !== 'undefined') {
             let connectedFieldValue = connectedSetting()
@@ -696,17 +698,17 @@ let ColorPalettes = (function ($, exports, wp) {
     let optionsSelector
 
     _.each(masterSettingIds, function (masterSettingId) {
-      let connectedFields = wp.customize.settings.settings[masterSettingId]['connected_fields']
+      let connectedFields = apiSettings[masterSettingId]['connected_fields']
 
       if (!_.isUndefined(connectedFields) && !_.isEmpty(connectedFields)) {
         optionsToShow.push(masterSettingId)
       }
     })
 
-    if ( !_.isEmpty( optionsToShow ) ) {
+    if (!_.isEmpty(optionsToShow)) {
       optionsSelector = '.' + optionsToShow.join(', .')
     } else {
-      optionsSelector = '*';
+      optionsSelector = '*'
     }
 
     $('.sm-palette-filter .color').addClass('hidden').filter(optionsSelector).removeClass('hidden')
@@ -783,21 +785,21 @@ let ColorPalettes = (function ($, exports, wp) {
   }
 
   const reloadConnectedFields = () => {
-    var tempSettings = JSON.parse(JSON.stringify(window.settingsClone));
-    var diversityOptions = $('[name*="sm_color_diversity"]');
-    var colorationOptions = $('[name*="sm_coloration_level"]');
+    let tempSettings = JSON.parse(JSON.stringify(window.settingsClone))
+    const diversityOptions = $('[name*="sm_color_diversity"]')
+    const colorationOptions = $('[name*="sm_coloration_level"]')
 
-    var hasDiversityOption = !! diversityOptions.length;
-    var isDefaultDiversitySelected = typeof diversityOptions.filter( ':checked' ).data( 'default' ) !== 'undefined';
-    var isDefaultDiversity = hasDiversityOption ? isDefaultDiversitySelected : true;
+    const hasDiversityOption = !!diversityOptions.length
+    const isDefaultDiversitySelected = typeof diversityOptions.filter(':checked').data('default') !== 'undefined'
+    const isDefaultDiversity = hasDiversityOption ? isDefaultDiversitySelected : true
 
-    var hasColorationOptions = !! colorationOptions.length;
-    var isDefaultColorationSelected = typeof $('[name*="sm_coloration_level"]:checked').data('default') !== 'undefined';
-    var isDefaultColoration = hasColorationOptions ? isDefaultColorationSelected : true;
+    const hasColorationOptions = !!colorationOptions.length
+    const isDefaultColorationSelected = typeof $('[name*="sm_coloration_level"]:checked').data('default') !== 'undefined'
+    const isDefaultColoration = hasColorationOptions ? isDefaultColorationSelected : true
 
-    var selectedDiversity = hasDiversityOption ? $('[name*="sm_color_diversity"]:checked').val() : wp.customize( 'sm_color_diversity' )();
+    const selectedDiversity = hasDiversityOption ? $('[name*="sm_color_diversity"]:checked').val() : api('sm_color_diversity')()
 
-    if ( ! isDefaultDiversity || ! isDefaultColoration ) {
+    if (!isDefaultDiversity || !isDefaultColoration) {
       const primaryRatio = $(primary_color_selector).val() / 100
       const secondaryRatio = $(secondary_color_selector).val() / 100
       const tertiaryRatio = $(tertiary_color_selector).val() / 100
@@ -806,8 +808,8 @@ let ColorPalettes = (function ($, exports, wp) {
       tempSettings = moveConnectedFields(tempSettings, 'sm_dark_secondary', 'sm_color_secondary', secondaryRatio)
       tempSettings = moveConnectedFields(tempSettings, 'sm_dark_tertiary', 'sm_color_tertiary', tertiaryRatio)
 
-      var diversity_variation = getSwapMap('color_diversity_low');
-      tempSettings = swapConnectedFields(tempSettings, diversity_variation);
+      const diversity_variation = getSwapMap('color_diversity_low')
+      tempSettings = swapConnectedFields(tempSettings, diversity_variation)
 
       if (selectedDiversity === 'medium') {
         tempSettings = moveConnectedFields(tempSettings, 'sm_color_primary', 'sm_color_secondary', 0.5)
@@ -819,20 +821,20 @@ let ColorPalettes = (function ($, exports, wp) {
       }
     }
 
-    var shuffle = $('[name*="sm_shuffle_colors"]:checked').val()
+    const shuffle = $('[name*="sm_shuffle_colors"]:checked').val()
     if (shuffle !== 'default') {
-      var shuffle_variation = getSwapMap('shuffle_' + shuffle)
+      const shuffle_variation = getSwapMap('shuffle_' + shuffle)
       tempSettings = swapConnectedFields(tempSettings, shuffle_variation)
     }
 
-    var dark_mode = $('[name*="sm_dark_mode"]:checked').val()
+    const dark_mode = $('[name*="sm_dark_mode"]:checked').val()
     if (dark_mode === 'on') {
-      var dark_mmode_variation = getSwapMap('dark')
+      const dark_mmode_variation = getSwapMap('dark')
       tempSettings = swapConnectedFields(tempSettings, dark_mmode_variation)
     }
 
     _.each(masterSettingIds, function (masterSettingId) {
-      wp.customize.settings.settings[masterSettingId] = tempSettings[masterSettingId]
+      apiSettings[masterSettingId] = tempSettings[masterSettingId]
     })
   }
 
@@ -872,8 +874,6 @@ let ColorPalettes = (function ($, exports, wp) {
   }
 
   const applyColorationValueToFields = () => {
-    const setting_id = 'sm_coloration_level'
-    const setting = wp.customize(setting_id)
     const coloration = $('[name*="sm_coloration_level"]:checked').val()
 
     if (typeof $('[name*="sm_coloration_level"]:checked').data('default') !== 'undefined') {
@@ -881,7 +881,7 @@ let ColorPalettes = (function ($, exports, wp) {
       const sliders = ['sm_dark_color_primary_slider', 'sm_dark_color_secondary_slider', 'sm_dark_color_tertiary_slider']
       _.each(sliders, function (slider_id) {
         const slider_setting = customify_settings.settings[slider_id]
-        wp.customize(slider_id).set(slider_setting.default)
+        api(slider_id).set(slider_setting.default)
         $('#_customize-input-' + slider_id + '_control ').val(slider_setting.default)
       })
     } else {
@@ -950,10 +950,10 @@ let ColorPalettes = (function ($, exports, wp) {
     $(document).on('click', '.sm-tabs__item', function (e) {
       e.preventDefault()
 
-      var $section = $('#sub-accordion-section-sm_color_palettes_section')
-      var $tabs = $('.sm-tabs__item')
-      var $active = $(this)
-      var target = $active.data('target')
+      const $section = $('#sub-accordion-section-sm_color_palettes_section')
+      const $tabs = $('.sm-tabs__item')
+      const $active = $(this)
+      const target = $active.data('target')
 
       $tabs.removeClass('sm-tabs__item--active')
       $active.addClass('sm-tabs__item--active')
@@ -976,7 +976,7 @@ let ColorPalettes = (function ($, exports, wp) {
         $colors.each(function (j, color) {
           let $color = $(color)
           let setting_id = $color.data('setting')
-          let setting = wp.customize(setting_id)
+          let setting = api(setting_id)
           let originalColor = setting()
 
           $color.css('color', filterColor(originalColor, label))
@@ -985,7 +985,9 @@ let ColorPalettes = (function ($, exports, wp) {
     })
   }, 30)
 
-  wp.customize.bind('ready', function () {
+  api.bind('ready', function () {
+    apiSettings = api.settings.settings
+
     setupGlobals()
 
     createCurrentPaletteControls()

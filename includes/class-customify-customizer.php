@@ -163,7 +163,7 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 			wp_register_script( 'jquery-react', plugins_url( 'js/jquery-react.js', PixCustomifyPlugin()->get_file() ), array( 'jquery' ), PixCustomifyPlugin()->get_version() );
 
 			wp_register_script( 'customify-scale', plugins_url( 'js/customizer/scale-iframe.js', PixCustomifyPlugin()->get_file() ), array( 'jquery' ), PixCustomifyPlugin()->get_version() );
-			wp_register_script( 'customify-fontselectfields', plugins_url( 'js/customizer/font-select-fields.js', PixCustomifyPlugin()->get_file() ), array( 'jquery' ), PixCustomifyPlugin()->get_version() );
+			wp_register_script( 'customify-fontselectfields', plugins_url( 'js/customizer/font-select-fields.js', PixCustomifyPlugin()->get_file() ), array( 'jquery', 'underscore' ), PixCustomifyPlugin()->get_version() );
 
 			wp_register_script( PixCustomifyPlugin()->get_slug() . '-customizer-scripts', plugins_url( 'js/customizer.js', PixCustomifyPlugin()->get_file() ), array(
 				'jquery',

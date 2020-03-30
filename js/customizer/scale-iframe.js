@@ -37,9 +37,9 @@
         }
     };
 
-    wp.customize.bind( 'ready', function() {
+    api.bind( 'ready', function() {
 
-        wp.customize.previewer.bind( 'synced', function() {
+        api.previewer.bind( 'synced', function() {
             scaleIframe();
 
             api.previewedDevice.bind( scaleIframe );
