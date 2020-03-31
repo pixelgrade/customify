@@ -41,9 +41,12 @@
 
   -webkit-appearance: none;
 
-  &:hover,
-  .font-options__checkbox:checked ~ & {
+  &:hover {
     @include select-focus;
+  }
+
+  .font-options__checkbox:checked ~ & {
+    @include select-opened;
   }
 
   .font-options__checkbox:not(:checked) ~ &:not(:hover) {

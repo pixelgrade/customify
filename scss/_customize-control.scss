@@ -34,8 +34,10 @@
   }
 
   // Select
-  select {
+  select, &.customize-control-select select {
     @include field;
+
+    max-width: 100%;
 
     /* for Firefox */
     -moz-appearance: none;

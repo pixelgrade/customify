@@ -51,3 +51,10 @@
   background-image: url($select-svg-arrow-white);
   color: #FFFFFF;
 }
+
+@mixin select-opened {
+  border-color: $blue;
+  background-color: $blue-light;
+  background-image: url($select-svg-arrow-white-up);
+  color: #FFFFFF;
+}

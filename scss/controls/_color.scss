@@ -32,6 +32,10 @@ $picker-popup-width: 275px;
       border: 2px solid $blue-lightest;
       box-shadow: none;
 
+      &.wp-picker-open {
+        border-color: $blue;
+      }
+
       &:after,
       .wp-color-result-text {
         display: none;
@@ -40,15 +44,15 @@ $picker-popup-width: 275px;
 
     .iris-picker {
       position: absolute;
-      top: 40px;
+      top: 42px;
       right: 0;
       z-index: 1000;
       width: $picker-popup-width !important;
-      border-top: none;
-      border-color: $blue-whitish;
       border-radius: 0 0 3px 3px;
-      border: none;
+      border: 1px solid $blue-whitish;
+      border-top: none;
       background: #FFFFFF;
+      box-shadow: $iris-box-shadow;
 
       .iris-square {
         width: 215px !important;
@@ -81,10 +85,12 @@ $picker-popup-width: 275px;
       right: 0;
       z-index: 1000;
 
-      width: $picker-popup-width;
+      width: $picker-popup-width + 2;
       padding: 9px 12px;
-      border: none;
+      border: 1px solid $blue-whitish;
+      border-bottom: none;
       border-radius: 3px 3px 0 0;
+      box-shadow: $iris-box-shadow;
 
       background: #FFFFFF;
       @include top-arrow;
@@ -97,13 +103,14 @@ $picker-popup-width: 275px;
           font-size: 13px;
           text-align: left;
           margin: 0;
-          padding: 6px 12px;
+          padding: 0 12px;
           height: auto;
+          font-family: Courier, monospace;
         }
 
         &.button {
           float: right;
-          padding: 4px 12px;
+          padding: 2px 12px;
           height: 30px;
         }
       }

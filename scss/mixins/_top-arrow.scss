@@ -1,5 +1,6 @@
 @mixin top-arrow {
 
+  &:before,
   &:after {
     content: "";
     position: absolute;
@@ -10,8 +11,17 @@
     height: 0;
 
     border: 9px solid transparent;
-    border-top: 0;
+  }
+
+  &:before {
+    z-index: 100;
+    border-bottom-color: $blue-lightest;
+    border-width: 10px;
+  }
+
+  &:after {
+    z-index: 101;
     border-bottom-color: #FFFFFF;
-    border-collapse: separate;
+    margin-right: 1px;
   }
 }
