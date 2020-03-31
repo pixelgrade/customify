@@ -1,70 +1,59 @@
 (function ($) {
-	const toggleGroup = function (name, show) {
+  const toggleGroup = function (name, show) {
     const $group = $('#' + name)
 
     if (show) {
-			$group.show()
-		} else {
-			$group.hide()
-		}
-	}
+      $group.show()
+    } else {
+      $group.hide()
+    }
+  }
 
   'use strict'
-	$(function () {
+  $(function () {
 
-		/* Ensure groups visibility */
-		$('.switch input[type=checkbox], .select select').each(function () {
+    /* Ensure groups visibility */
+    $('.switch input[type=checkbox], .select select').each(function () {
 
-			if ($(this).data('show_group')) {
+      if ($(this).data('show_group')) {
 
         let show = false
         if ($(this).attr('checked')) {
-					show = true
-				} else if (typeof $(this).data('display_option') !== 'undefined' && $(this).data('display_option') === $(this).val()) {
-					show = true
-				}
+          show = true
+        } else if (typeof $(this).data('display_option') !== 'undefined' && $(this).data('display_option') === $(this).val()) {
+          show = true
+        }
 
-				toggleGroup($(this).data('show_group'), show)
-			}
-		})
+        toggleGroup($(this).data('show_group'), show)
+      }
+    })
 
-		$('.switch, .select ').on('change', 'input[type=checkbox], select', function () {
-			if ($(this).data('show_group')) {
+    $('.switch, .select ').on('change', 'input[type=checkbox], select', function () {
+      if ($(this).data('show_group')) {
         let show = false
         if ($(this).attr('checked')) {
-					show = true
-				} else if (typeof $(this).data('display_option') !== 'undefined' && $(this).data('display_option') === $(this).val()) {
-					show = true
-				}
-				toggleGroup($(this).data('show_group'), show)
-			}
-		})
-	})
+          show = true
+        } else if (typeof $(this).data('display_option') !== 'undefined' && $(this).data('display_option') === $(this).val()) {
+          show = true
+        }
+        toggleGroup($(this).data('show_group'), show)
+      }
+    })
+  })
 
-  /*
-   * Useful functions
-   */
-	function check_checkbox_checked (input) { // yes the name is an ironic
-		if ($(input).attr('checked') === 'checked') {
-			$(input).siblings('input:hidden').val('on')
-		} else {
-			$(input).siblings('input:hidden').val('off')
-		}
-	} /* End check_checkbox_checked() */
-
-	$.fn.check_for_extended_options = function () {
+  $.fn.check_for_extended_options = function () {
     const extended_options = $(this).siblings('fieldset.group')
     if ($(this).data('show-next')) {
-			if (extended_options.data('extended') === true) {
-				extended_options
-					.data('extended', false)
-					.css('height', '0')
-			} else if ((typeof extended_options.data('extended') === 'undefined' && $(this).attr('checked') === 'checked') || extended_options.data('extended') === false) {
-				extended_options
-					.data('extended', true)
-					.css('height', 'auto')
-			}
-		}
-	}
+      if (extended_options.data('extended') === true) {
+        extended_options
+          .data('extended', false)
+          .css('height', '0')
+      } else if ((typeof extended_options.data('extended') === 'undefined' && $(this).attr('checked') === 'checked') || extended_options.data('extended') === false) {
+        extended_options
+          .data('extended', true)
+          .css('height', 'auto')
+      }
+    }
+  }
 
 }(jQuery))

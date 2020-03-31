@@ -447,8 +447,6 @@
         }
 
         let value = 1, // by default we use 1 the most used value for checkboxes or inputs
-          compare = '==', // ... ye
-          action = 'show',
           between = [0, 1] // can only be `show` or `hide`
 
         const target_key = customify_settings.options_name + '[' + key + ']'
@@ -460,25 +458,6 @@
           value = field.value
         } else if (!_.isUndefined(field[1]) && !_.isString(field[1])) {
           value = field[1]
-        }
-
-        if (!_.isUndefined(field.compare)) {
-          compare = field.compare
-        } else if (!_.isUndefined(field[2])) {
-          compare = field[2]
-        }
-
-        if (!_.isUndefined(field.action)) {
-          action = field.action
-        } else if (!_.isUndefined(field[3])) {
-          action = field[3]
-        }
-
-        // a field can also overwrite the parent relation
-        if (!_.isUndefined(field.relation)) {
-          action = field.relation
-        } else if (!_.isUndefined(field[4])) {
-          action = field[4]
         }
 
         if (!_.isUndefined(field.between)) {
@@ -584,7 +563,6 @@
     // @todo Are we still using the typography field since we have the font field?
     // Yes we do, in older themes.
     const prepare_typography_field = function () {
-
       const $typos = $('.customify_typography_font_family')
 
       $typos.each(function () {

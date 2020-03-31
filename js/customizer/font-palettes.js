@@ -192,6 +192,7 @@ let FontPalettes = (function ($, exports, wp) {
   }
 
   const handlePalettes = () => {
+    // We need to do this here to be sure the data is available.
     apiSettings = api.settings.settings
 
     initializePalettes()

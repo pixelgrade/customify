@@ -11,8 +11,8 @@
   const fonts_cache = []
 
   $(document).ready(function () {
-    const api = parent.wp.customize,
-      apiSettings = api.settings.settings
+    const api = parent.wp.customize
+    const apiSettings = api.settings.settings
 
     $.each(customify_settings.settings, function (key, el) {
       const properties_prefix = typeof el.properties_prefix === 'undefined' ? '' : el.properties_prefix
@@ -79,7 +79,7 @@
 
         // if this field is allowed to modify text then we'll edit this live
         if ($.inArray(el.type, ['text', 'textarea', 'ace_editor']) > -1) {
-          wp.customize(key, function (value) {
+          api(key, function (value) {
             value.bind(function (text) {
               let sanitizer = document.createElement('div')
 
@@ -195,7 +195,6 @@
     }
 
     const getCSSCode = function (ID, values, prefix) {
-
       const field = customify_settings.settings[ID]
       let output = ''
 

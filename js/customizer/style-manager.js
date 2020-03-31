@@ -1,108 +1,107 @@
 (function ($, exports, wp) {
-    const api = wp.customize
+  const api = wp.customize
 
-    api.bind('ready', function () {
+  api.bind('ready', function () {
 
-      // Handle the Style Manager user feedback logic.
-      const $styleManagerUserFeedbackModal = $('#style-manager-user-feedback-modal')
-      if ($styleManagerUserFeedbackModal.length) {
-        let $styleManagerUserFeedbackForm = $styleManagerUserFeedbackModal.find('form'),
-          $styleManagerUserFeedbackCloseBtn = $styleManagerUserFeedbackModal.find('.close'),
-          $styleManagerUserFeedbackFirstStep = $styleManagerUserFeedbackModal.find('.first-step'),
-          $styleManagerUserFeedbackSecondStep = $styleManagerUserFeedbackModal.find('.second-step'),
-          $styleManagerUserFeedbackThanksStep = $styleManagerUserFeedbackModal.find('.thanks-step'),
-          $styleManagerUserFeedbackErrorStep = $styleManagerUserFeedbackModal.find('.error-step'),
-          styleManagerUserFeedbackModalShown = false,
-          styleManagerColorPaletteChanged = false
+    // Handle the Style Manager user feedback logic.
+    const $styleManagerUserFeedbackModal = $('#style-manager-user-feedback-modal')
+    if ($styleManagerUserFeedbackModal.length) {
+      let $styleManagerUserFeedbackForm = $styleManagerUserFeedbackModal.find('form'),
+        $styleManagerUserFeedbackCloseBtn = $styleManagerUserFeedbackModal.find('.close'),
+        $styleManagerUserFeedbackFirstStep = $styleManagerUserFeedbackModal.find('.first-step'),
+        $styleManagerUserFeedbackSecondStep = $styleManagerUserFeedbackModal.find('.second-step'),
+        $styleManagerUserFeedbackThanksStep = $styleManagerUserFeedbackModal.find('.thanks-step'),
+        $styleManagerUserFeedbackErrorStep = $styleManagerUserFeedbackModal.find('.error-step'),
+        styleManagerUserFeedbackModalShown = false,
+        styleManagerColorPaletteChanged = false
 
-        // Handle when to open the modal.
-        api.bind('saved', function () {
-          // We will only show the modal once per Customizer session.
-          if (!styleManagerUserFeedbackModalShown && styleManagerColorPaletteChanged) {
-            $('body').addClass('modal-open')
-            styleManagerUserFeedbackModalShown = true
-          }
-        })
-
-        // Handle the color palette changed info update.
-        const colorPaletteSetting = api('sm_color_palette')
-        if (!_.isUndefined(colorPaletteSetting)) {
-          colorPaletteSetting.bind(function (new_value, old_value) {
-            if (new_value != old_value) {
-              styleManagerColorPaletteChanged = true
-            }
-          })
+      // Handle when to open the modal.
+      api.bind('saved', function () {
+        // We will only show the modal once per Customizer session.
+        if (!styleManagerUserFeedbackModalShown && styleManagerColorPaletteChanged) {
+          $('body').addClass('modal-open')
+          styleManagerUserFeedbackModalShown = true
         }
-        const colorPaletteVariationSetting = api('sm_color_palette_variation')
-        if (!_.isUndefined(colorPaletteVariationSetting)) {
-          colorPaletteVariationSetting.bind(function (new_value, old_value) {
-            if (new_value != old_value) {
-              styleManagerColorPaletteChanged = true
-            }
-          })
-        }
+      })
 
-        // Handle the modal submit.
-        $styleManagerUserFeedbackForm.on('submit', function (event) {
-          event.preventDefault()
-
-          let $form = $(event.target)
-
-          let data = {
-            action: 'customify_style_manager_user_feedback',
-            nonce: customify_settings.style_manager_user_feedback_nonce,
-            type: $form.find('input[name=type]').val(),
-            rating: $form.find('input[name=rating]:checked').val(),
-            message: $form.find('textarea[name=message]').val()
+      // Handle the color palette changed info update.
+      const colorPaletteSetting = api('sm_color_palette')
+      if (!_.isUndefined(colorPaletteSetting)) {
+        colorPaletteSetting.bind(function (new_value, old_value) {
+          if (new_value != old_value) {
+            styleManagerColorPaletteChanged = true
           }
-
-          $.post(
-            customify_settings.ajax_url,
-            data,
-            function (response) {
-              if (true === response.success) {
-                $styleManagerUserFeedbackFirstStep.hide()
-                $styleManagerUserFeedbackSecondStep.hide()
-                $styleManagerUserFeedbackThanksStep.show()
-                $styleManagerUserFeedbackErrorStep.hide()
-              } else {
-                $styleManagerUserFeedbackFirstStep.hide()
-                $styleManagerUserFeedbackSecondStep.hide()
-                $styleManagerUserFeedbackThanksStep.hide()
-                $styleManagerUserFeedbackErrorStep.show()
-              }
-            }
-          )
-        })
-
-        $styleManagerUserFeedbackForm.find('input[name=rating]').on('change', function (event) {
-          // Leave everything in working order
-          setTimeout(function () {
-            $styleManagerUserFeedbackSecondStep.show()
-          }, 300)
-
-          let rating = $styleManagerUserFeedbackForm.find('input[name=rating]:checked').val()
-
-          $styleManagerUserFeedbackForm.find('.rating-placeholder').text(rating)
-        })
-
-        $styleManagerUserFeedbackCloseBtn.on('click', function (event) {
-          event.preventDefault()
-
-          $('body').removeClass('modal-open')
-
-          // Leave everything in working order
-          setTimeout(function () {
-            $styleManagerUserFeedbackFirstStep.show()
-            $styleManagerUserFeedbackSecondStep.hide()
-            $styleManagerUserFeedbackThanksStep.hide()
-            $styleManagerUserFeedbackErrorStep.hide()
-          }, 300)
         })
       }
-    })
-  }
-)(jQuery, window, wp)
+      const colorPaletteVariationSetting = api('sm_color_palette_variation')
+      if (!_.isUndefined(colorPaletteVariationSetting)) {
+        colorPaletteVariationSetting.bind(function (new_value, old_value) {
+          if (new_value != old_value) {
+            styleManagerColorPaletteChanged = true
+          }
+        })
+      }
+
+      // Handle the modal submit.
+      $styleManagerUserFeedbackForm.on('submit', function (event) {
+        event.preventDefault()
+
+        let $form = $(event.target)
+
+        let data = {
+          action: 'customify_style_manager_user_feedback',
+          nonce: customify_settings.style_manager_user_feedback_nonce,
+          type: $form.find('input[name=type]').val(),
+          rating: $form.find('input[name=rating]:checked').val(),
+          message: $form.find('textarea[name=message]').val()
+        }
+
+        $.post(
+          customify_settings.ajax_url,
+          data,
+          function (response) {
+            if (true === response.success) {
+              $styleManagerUserFeedbackFirstStep.hide()
+              $styleManagerUserFeedbackSecondStep.hide()
+              $styleManagerUserFeedbackThanksStep.show()
+              $styleManagerUserFeedbackErrorStep.hide()
+            } else {
+              $styleManagerUserFeedbackFirstStep.hide()
+              $styleManagerUserFeedbackSecondStep.hide()
+              $styleManagerUserFeedbackThanksStep.hide()
+              $styleManagerUserFeedbackErrorStep.show()
+            }
+          }
+        )
+      })
+
+      $styleManagerUserFeedbackForm.find('input[name=rating]').on('change', function (event) {
+        // Leave everything in working order
+        setTimeout(function () {
+          $styleManagerUserFeedbackSecondStep.show()
+        }, 300)
+
+        let rating = $styleManagerUserFeedbackForm.find('input[name=rating]:checked').val()
+
+        $styleManagerUserFeedbackForm.find('.rating-placeholder').text(rating)
+      })
+
+      $styleManagerUserFeedbackCloseBtn.on('click', function (event) {
+        event.preventDefault()
+
+        $('body').removeClass('modal-open')
+
+        // Leave everything in working order
+        setTimeout(function () {
+          $styleManagerUserFeedbackFirstStep.show()
+          $styleManagerUserFeedbackSecondStep.hide()
+          $styleManagerUserFeedbackThanksStep.hide()
+          $styleManagerUserFeedbackErrorStep.hide()
+        }, 300)
+      })
+    }
+  })
+})(jQuery, window, wp)
 
 // Reverses a hex color to either black or white
 function customifyInverseHexColorToBlackOrWhite (hex) {

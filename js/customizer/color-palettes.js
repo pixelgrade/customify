@@ -986,6 +986,7 @@ let ColorPalettes = (function ($, exports, wp) {
   }, 30)
 
   api.bind('ready', function () {
+    // We need to do this here to be sure the data is available.
     apiSettings = api.settings.settings
 
     setupGlobals()
