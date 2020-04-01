@@ -306,11 +306,6 @@ class Customify_Fonts_Global {
 		foreach ( $font_fields as $id => $font ) {
 			if ( isset ( $font['value'] ) ) {
 
-				$load_all_weights = false;
-				if ( isset( $font['load_all_weights'] ) && $font['load_all_weights'] == 'true' ) {
-					$load_all_weights = true;
-				}
-
 				$value = $this->maybe_decode_value( $font['value'] );
 
 				$value = $this->validate_font_values( $value );
@@ -381,7 +376,7 @@ class Customify_Fonts_Global {
 					if ( isset( $value['font_family'] ) && isset( $value['type'] ) && $value['type'] === 'google' ) {
 					$family = "'" . $value['font_family'];
 
-					if ( $load_all_weights && ! empty( $value['variants'] ) && is_array( $value['variants'] ) ) {
+					if ( ! empty( $value['variants'] ) && is_array( $value['variants'] ) ) {
 						$family .= ":" . implode( ',', $value['variants'] );
 					} elseif ( ! empty( $value['selected_variants'] ) ) {
 						if ( is_array( $value['selected_variants'] ) ) {
@@ -548,28 +543,28 @@ class Customify_Fonts_Global {
 			return $value;
 		}
 
-		$new_value = array();
-
 		// Let's determine some type of font
-		if ( ! isset( $value[2] ) || 'google' == $value[2] ) {
+		if ( ( ! isset( $value[2] ) || 'google' === $value[2] ) && isset( $value[0] ) ) {
 			$new_value = $this->get_font_defaults_value( $value[0] );
-		} else {
-			$new_value['type'] = $value[2];
 		}
 
-		if ( null == $new_value ) {
+		if ( empty( $new_value ) ) {
 			$new_value = array();
 		}
 
 		// The first entry is the font-family
-		if ( isset( $value[0] ) ) {
+		if ( empty( $new_value['font_family'] ) && isset( $value[0] ) ) {
 			$new_value['font_family'] = $value[0];
 		}
 
 		// In case we don't have an associative array
 		// The second entry is the variants
-		if ( isset( $value[1] ) ) {
+		if ( empty( $new_value['selected_variants'] ) && isset( $value[1] ) ) {
 			$new_value['selected_variants'] = $value[1];
+		}
+
+		if ( empty( $new_value['type'] ) && isset( $value[2] ) ) {
+			$new_value['type'] = $value[2];
 		}
 
 		return $new_value;
@@ -592,7 +587,9 @@ class Customify_Fonts_Global {
 
 		foreach ( $font_fields as $key => $font ) {
 			$font_output = $this->get_font_style( $font );
-			if ( empty( $font_output ) ) {
+			// Do not print anything, but only if we are not in the Customizer.
+			// There we need even the empty <style> since we target it by id.
+			if ( empty( $font_output ) && ! is_customize_preview() ) {
 				continue;
 			}
 
@@ -600,7 +597,7 @@ class Customify_Fonts_Global {
 
 			// If we are in a Customizer context we will output CSS rules grouped so we can target them.
 			// In the frontend we want a whole bulk.
-			if ( isset( $GLOBALS['wp_customize'] ) ) { ?>
+			if ( is_customize_preview() ) { ?>
 			<style id="customify_font_output_for_<?php echo sanitize_html_class( $key ); ?>">
 				<?php echo $font_output; ?>
 				</style><?php
@@ -608,7 +605,7 @@ class Customify_Fonts_Global {
 		}
 
 		// in customizer the CSS is printed per option, in front-end we need to print them in bulk
-		if ( ! isset( $GLOBALS['wp_customize'] ) ) { ?>
+		if ( ! empty( $output ) && ! is_customize_preview() ) { ?>
 			<style id="customify_fonts_output">
 			<?php echo $output; ?>
 			</style><?php
@@ -648,7 +645,7 @@ class Customify_Fonts_Global {
 			return '';
 		}
 
-		$font['selector'] = apply_filters( 'customify_font_css_selector', $font['selector'], $font );
+		$font['selector'] = apply_filters( 'customify_font_css_selector', $this->cleanup_whitespace_css( $font['selector'] ), $font );
 		if ( empty( $font['selector'] ) || empty( $font['value'] ) ) {
 			return '';
 		}
@@ -678,11 +675,7 @@ class Customify_Fonts_Global {
 		}
 
 		$value = $this->validate_font_values( $value );
-		// some sanitizing
-		$load_all_weights = false;
-		if ( isset( $font['load_all_weights'] ) && $font['load_all_weights'] == 'true' ) {
-			$load_all_weights = true;
-		}
+
 		$selected_variant = '';
 		if ( ! empty( $value['selected_variants'] ) ) {
 			if ( is_array( $value['selected_variants'] ) ) {
@@ -705,33 +698,31 @@ class Customify_Fonts_Global {
 				//the variant's font-family
 				$this->display_property( 'font-family', $selected_variant['font-family'], '', $properties_prefix );
 
-				if ( ! $load_all_weights ) {
-					// if this is a custom font (like from our plugin Fonto) with individual styles & weights - i.e. the font-family says it all
-					// we need to "force" the font-weight and font-style
-					if ( ! empty( $value['type'] ) && 'custom_individual' == $value['type'] ) {
-						$selected_variant['font-weight'] = '400 !important';
-						$selected_variant['font-style'] = 'normal !important';
-					}
+				// if this is a custom font (like from our plugin Fonto) with individual styles & weights - i.e. the font-family says it all
+				// we need to "force" the font-weight and font-style
+				if ( ! empty( $value['type'] ) && 'custom_individual' == $value['type'] ) {
+					$selected_variant['font-weight'] = '400 !important';
+					$selected_variant['font-style'] = 'normal !important';
+				}
 
-					$italic_font = false;
+				$italic_font = false;
 
-					// output the font weight, if available
-					if ( ! empty( $selected_variant['font-weight'] ) ) {
-						echo ": " . $selected_variant['font-weight'] . ";\n";
-						$italic_font = $this->display_weight_property( $selected_variant['font-weight'], $properties_prefix );
-					}
+				// output the font weight, if available
+				if ( ! empty( $selected_variant['font-weight'] ) ) {
+					echo ": " . $selected_variant['font-weight'] . ";\n";
+					$italic_font = $this->display_weight_property( $selected_variant['font-weight'], $properties_prefix );
+				}
 
-					// output the font style, if available and if it wasn't displayed already
-					if ( ! $italic_font && ! empty( $selected_variant['font-style'] ) ) {
-						$this->display_property( 'font-style', $selected_variant['font-style'], '', $properties_prefix );
-					}
+				// output the font style, if available and if it wasn't displayed already
+				if ( ! $italic_font && ! empty( $selected_variant['font-style'] ) ) {
+					$this->display_property( 'font-style', $selected_variant['font-style'], '', $properties_prefix );
 				}
 
 			} elseif ( isset( $value['font_family'] ) ) {
 				// the selected font family
 				$this->display_property( 'font-family', $value['font_family'], '', $properties_prefix );
 
-				if ( ! empty( $selected_variant ) && ! $load_all_weights ) {
+				if ( ! empty( $selected_variant ) ) {
 					$weight_and_style = strtolower( $selected_variant );
 					$italic_font = false;
 
@@ -845,6 +836,9 @@ class Customify_Fonts_Global {
 		if ( ! empty( $script ) ) {
 			wp_enqueue_script( PixCustomifyPlugin()->get_slug() . '-web-font-loader' );
 			wp_add_inline_script( PixCustomifyPlugin()->get_slug() . '-web-font-loader', $script );
+		} elseif ( is_customize_preview() ) {
+			// If we are in the Customizer preview, we still need the Web Font Loader.
+			wp_enqueue_script( PixCustomifyPlugin()->get_slug() . '-web-font-loader' );
 		}
 	}
 
@@ -936,21 +930,14 @@ if (typeof WebFont !== 'undefined') {
 		}
 
 		foreach ( $values as $key => $value ) {
-
 			if ( strpos( $key, '-' ) !== false ) {
 				$new_key = str_replace( '-', '_', $key );
-
 				$values[ $new_key ] = $value;
-
 				unset( $values[ $key ] );
 			}
 		}
 
 		return $values;
-	}
-
-	function display_selector( $selector ) {
-
 	}
 
 	function display_property( $property, $value, $unit = '', $prefix = '' ) {
@@ -993,80 +980,75 @@ if (typeof WebFont !== 'undefined') {
 
 	function script_to_add_customizer_settings_into_wp_editor() {
 
-		ob_start();
-
-		?>
-		<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js"></script>
-		<script type="text/javascript">
-		<?php echo $this->get_fonts_dynamic_script(); ?>
-		</script>
-		<?php
+		ob_start(); ?>
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js"></script>
+<script type="text/javascript">
+	<?php echo $this->get_fonts_dynamic_script(); ?>
+</script><?php
 		$this->output_fonts_dynamic_style();
 		?>
-		<script type="text/javascript">
-		<?php echo $this->get_typography_dynamic_script(); ?>
-		</script>
-		<?php
+<script type="text/javascript">
+	<?php echo $this->get_typography_dynamic_script(); ?>
+</script><?php
 		$this->output_typography_dynamic_style();
 
 		$custom_css = ob_get_clean();
 
 		ob_start(); ?>
-	(function ($) {
-		$(window).load(function () {
-			/**
-			 * @param iframe_id the id of the frame you want to append the style
-			 * @param style_element the style element you want to append
-			 */
-			var append_script_to_iframe = function (ifrm_id, scriptEl) {
-				var myIframe = document.getElementById(ifrm_id);
+(function ($) {
+	$(window).load(function () {
+		/**
+		 * @param iframe_id the id of the frame you want to append the style
+		 * @param style_element the style element you want to append
+		 */
+		var append_script_to_iframe = function (ifrm_id, scriptEl) {
+			var myIframe = document.getElementById(ifrm_id);
 
-				var script = myIframe.contentWindow.document.createElement("script");
-				script.type = "text/javascript";
-				script.src = scriptEl.getAttribute("src");
-				script.innerHTML = scriptEl.innerHTML;
+			var script = myIframe.contentWindow.document.createElement("script");
+			script.type = "text/javascript";
+			script.src = scriptEl.getAttribute("src");
+			script.innerHTML = scriptEl.innerHTML;
 
-				myIframe.contentWindow.document.head.appendChild(script);
-			};
+			myIframe.contentWindow.document.head.appendChild(script);
+		};
 
-			var append_style_to_iframe = function (ifrm_id, styleElment) {
-				var ifrm = window.frames[ifrm_id];
-				if ( typeof ifrm === "undefined" ) {
-				    return;
-				}
-				ifrm = ( ifrm.contentDocument || ifrm.document );
-				var head = ifrm.getElementsByTagName('head')[0];
-
-				if (typeof styleElment !== "undefined") {
-					head.appendChild(styleElment);
-				}
-			};
-
-			var xmlString = <?php echo json_encode( str_replace( "\n", "", $custom_css ) ); ?>,
-				parser = new DOMParser(),
-				doc = parser.parseFromString(xmlString, "text/html");
-
-			if (typeof window.frames['content_ifr'] !== 'undefined') {
-
-				$.each(doc.head.childNodes, function (key, el) {
-					if (typeof el !== "undefined" && typeof el.tagName !== "undefined") {
-
-						switch (el.tagName) {
-							case 'STYLE' :
-								append_style_to_iframe('content_ifr', el);
-								break;
-							case 'SCRIPT' :
-								append_script_to_iframe('content_ifr', el);
-								break;
-							default:
-								break;
-						}
-					}
-				});
+		var append_style_to_iframe = function (ifrm_id, styleElment) {
+			var ifrm = window.frames[ifrm_id];
+			if ( typeof ifrm === "undefined" ) {
+			    return;
 			}
-		});
-	})(jQuery);
-		<?php
+			ifrm = ( ifrm.contentDocument || ifrm.document );
+			var head = ifrm.getElementsByTagName('head')[0];
+
+			if (typeof styleElment !== "undefined") {
+				head.appendChild(styleElment);
+			}
+		};
+
+		var xmlString = <?php echo json_encode( str_replace( "\n", "", $custom_css ) ); ?>,
+			parser = new DOMParser(),
+			doc = parser.parseFromString(xmlString, "text/html");
+
+		if (typeof window.frames['content_ifr'] !== 'undefined') {
+
+			$.each(doc.head.childNodes, function (key, el) {
+				if (typeof el !== "undefined" && typeof el.tagName !== "undefined") {
+
+					switch (el.tagName) {
+						case 'STYLE' :
+							append_style_to_iframe('content_ifr', el);
+							break;
+						case 'SCRIPT' :
+							append_script_to_iframe('content_ifr', el);
+							break;
+						default:
+							break;
+					}
+				}
+			});
+		}
+	});
+})(jQuery);<?php
 		$script = ob_get_clean();
 		wp_add_inline_script( 'editor', $script );
 	}
@@ -1079,9 +1061,9 @@ if (typeof WebFont !== 'undefined') {
 		$style = $this->get_typography_dynamic_style();
 
 		if ( ! empty( $style ) ) { ?>
-			<style id="customify_typography_output_style">
-				<?php echo $style; ?>
-			</style>
+<style id="customify_typography_output_style">
+	<?php echo $style; ?>
+</style>
 		<?php }
 	}
 
@@ -1104,12 +1086,7 @@ if (typeof WebFont !== 'undefined') {
 
 		ob_start();
 		foreach ( $typography_fields as $font ) {
-			$selector = apply_filters( 'customify_typography_css_selector', $font['selector'], $font );
-
-			$load_all_weights = false;
-			if ( isset( $font['load_all_weights'] ) && $font['load_all_weights'] == 'true' ) {
-				$load_all_weights = true;
-			}
+			$selector = apply_filters( 'customify_typography_css_selector', $this->cleanup_whitespace_css( $font['selector'] ), $font );
 
 			if ( isset( $selector ) && isset( $font['value'] ) && ! empty( $font['value'] ) ) {
 				// Make sure that the value is in the proper format
@@ -1153,23 +1130,21 @@ if (typeof WebFont !== 'undefined') {
 					// The variant's font-family
 					echo $selector . " {\nfont-family: " . $selected_variant['font-family'] . ";\n";
 
-					if ( ! $load_all_weights ) {
-						// If this is a custom font (like from our plugin Fonto) with individual styles & weights - i.e. the font-family says it all
-						// we need to "force" the font-weight and font-style
-						if ( ! empty( $value['type'] ) && 'custom_individual' == $value['type'] ) {
-							$selected_variant['font-weight'] = '400 !important';
-							$selected_variant['font-style'] = 'normal !important';
-						}
+					// If this is a custom font (like from our plugin Fonto) with individual styles & weights - i.e. the font-family says it all
+					// we need to "force" the font-weight and font-style
+					if ( ! empty( $value['type'] ) && 'custom_individual' == $value['type'] ) {
+						$selected_variant['font-weight'] = '400 !important';
+						$selected_variant['font-style'] = 'normal !important';
+					}
 
-						// Output the font weight, if available
-						if ( ! empty( $selected_variant['font-weight'] ) ) {
-							echo "font-weight: " . $selected_variant['font-weight'] . ";\n";
-						}
+					// Output the font weight, if available
+					if ( ! empty( $selected_variant['font-weight'] ) ) {
+						echo "font-weight: " . $selected_variant['font-weight'] . ";\n";
+					}
 
-						// Output the font style, if available
-						if ( ! empty( $selected_variant['font-style'] ) ) {
-							echo "font-style: " . $selected_variant['font-style'] . ";\n";
-						}
+					// Output the font style, if available
+					if ( ! empty( $selected_variant['font-style'] ) ) {
+						echo "font-style: " . $selected_variant['font-style'] . ";\n";
 					}
 
 					echo "}\n";
@@ -1177,7 +1152,7 @@ if (typeof WebFont !== 'undefined') {
 					// The selected font family
 					echo $selector . " {\n font-family: " . $value['font_family'] . ";\n";
 
-					if ( ! empty( $selected_variant ) && ! $load_all_weights ) {
+					if ( ! empty( $selected_variant ) ) {
 						$weight_and_style = strtolower( $selected_variant );
 
 						$italic_font = false;
@@ -1220,6 +1195,9 @@ if (typeof WebFont !== 'undefined') {
 		if ( ! empty( $script ) ) {
 			wp_enqueue_script( PixCustomifyPlugin()->get_slug() . '-web-font-loader' );
 			wp_add_inline_script( PixCustomifyPlugin()->get_slug() . '-web-font-loader', $script );
+		} elseif ( is_customize_preview() ) {
+			// If we are in the Customizer preview, we still need the Web Font Loader.
+			wp_enqueue_script( PixCustomifyPlugin()->get_slug() . '-web-font-loader' );
 		}
 	}
 
@@ -1244,11 +1222,6 @@ if (typeof WebFont !== 'undefined') {
 
 		foreach ( $typography_fields as $id => $font ) {
 			if ( isset ( $font['value'] ) ) {
-
-				$load_all_weights = false;
-				if ( isset( $font['load_all_weights'] ) && $font['load_all_weights'] == 'true' ) {
-					$load_all_weights = true;
-				}
 
 				// shim the time when this was an array
 				// @todo Is this really needed? Or does it make sense?
@@ -1285,7 +1258,7 @@ if (typeof WebFont !== 'undefined') {
 				if ( isset( $value['font_family'] ) && isset( $value['type'] ) && $value['type'] == 'google' ) {
 					$families .= "'" . $value['font_family'];
 
-					if ( $load_all_weights && is_array( $value['variants'] ) ) {
+					if ( is_array( $value['variants'] ) ) {
 						$families .= ":" . implode( ',', $value['variants'] );
 					} elseif ( isset( $value['selected_variants'] ) && ! empty( $value['selected_variants'] ) ) {
 						if ( is_array( $value['selected_variants'] ) ) {
@@ -1324,13 +1297,13 @@ if (typeof WebFont !== 'undefined') {
 		     && PixCustomifyPlugin()->settings->get_plugin_setting( 'typography_google_fonts', 1 ) ) {
 			ob_start();
 			?>
-			if (typeof WebFont !== 'undefined') {<?php // if there is a WebFont object, use it ?>
-			WebFont.load({
-			google: {families: [<?php echo( rtrim( $families, ',' ) ); ?>]},
-			classes: false,
-			events: false
-			});
-			}<?php
+if (typeof WebFont !== 'undefined') {<?php // if there is a WebFont object, use it ?>
+	WebFont.load({
+		google: {families: [<?php echo( rtrim( $families, ',' ) ); ?>]},
+		classes: false,
+		events: false
+	});
+}<?php
 			$output = ob_get_clean();
 		}
 
@@ -1338,6 +1311,20 @@ if (typeof WebFont !== 'undefined') {
 	}
 
 	/** HELPERS */
+
+	/**
+	 * Cleanup stuff like tab characters.
+	 *
+	 * @param $string
+	 *
+	 * @return $string
+	 */
+	function cleanup_whitespace_css( $string ) {
+		$string = trim( $string );
+		$string = str_replace("\t", '', $string );
+
+		return $string;
+	}
 
 	/**
 	 * Attempt to JSON decode the provided value.

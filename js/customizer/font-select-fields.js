@@ -37,6 +37,7 @@ let CustomifyFontSelectFields = (function ($, exports, wp) {
       })
     }
 
+    // Initialize the select2 field for the font family
     $fontFamilyFields.select2({
       placeholder: selectPlaceholder
     }).on('change', function (e) {
@@ -53,20 +54,19 @@ let CustomifyFontSelectFields = (function ($, exports, wp) {
       selfUpdateValue(wrapper)
     })
 
-    // Initialize the select2 field for the font family
-    $fontFamilyFields.on('change', function (e) {
-      let new_option = $(e.target).find('option:selected'),
-        wrapper = $(e.target).closest(wrapperSelector)
-
-      // Update the weight subfield with the new options given by the selected font family.
-      updateWeightField(new_option, wrapper)
-
-      // Update the subset subfield with the new options given by the selected font family.
-      updateSubsetField(new_option, wrapper)
-
-      // Serialize subfield values and refresh the fonts in the preview window.
-      selfUpdateValue(wrapper)
-    })
+    // $fontFamilyFields.on('change', function (e) {
+    //   let new_option = $(e.target).find('option:selected'),
+    //     wrapper = $(e.target).closest(wrapperSelector)
+    //
+    //   // Update the weight subfield with the new options given by the selected font family.
+    //   updateWeightField(new_option, wrapper)
+    //
+    //   // Update the subset subfield with the new options given by the selected font family.
+    //   updateSubsetField(new_option, wrapper)
+    //
+    //   // Serialize subfield values and refresh the fonts in the preview window.
+    //   selfUpdateValue(wrapper)
+    // })
 
     // Initialize the select2 field for the font weight
     $(fontWeightSelector).each(function (i, el) {
@@ -98,6 +98,7 @@ let CustomifyFontSelectFields = (function ($, exports, wp) {
           }
 
           // @todo We actually do not support multiple selected variants. Maybe we should? Right now we don't use multiple selections.
+          // No we should not support multiple variants. Web Font Loader loads whatever weights are in use.
           if (selected_variants !== null && weight == selected_variants) {
             thisValue.selected = true
           }
@@ -190,17 +191,18 @@ let CustomifyFontSelectFields = (function ($, exports, wp) {
    */
   function updateWeightField (option, wrapper) {
     let variants = maybeJsonParse($(option).data('variants')),
-      font_weights = wrapper.find(fontWeightSelector),
-      selectedVariant = font_weights.val() ? font_weights.val() : font_weights.data('default'),
+      $font_weights = wrapper.find(fontWeightSelector),
+      selectedVariant = $font_weights.val() ? $font_weights.val() : $font_weights.data('default'),
       newVariants = [],
       id = wrapper.find(valueHolderSelector).data('customizeSettingLink')
 
-    if (customify_settings.settings[id].load_all_weights || typeof variants === 'undefined' || Object.keys(variants).length < 2 || !_.isUndefined(font_weights.data('disabled'))) {
-      font_weights.parent().hide()
+    // We need to clear the old select2 field and reinitialize it.
+    $($font_weights).select2().empty()
+
+    if ( typeof variants === 'undefined' || Object.keys(variants).length < 2 || !_.isUndefined($font_weights.data('disabled'))) {
+      $font_weights.parent().hide()
       return
     }
-
-    font_weights.parent().show()
 
     // we need to turn the data array into a specific form like [{id:"id", text:"Text"}]
     $.each(variants, function (index, variant) {
@@ -217,9 +219,7 @@ let CustomifyFontSelectFields = (function ($, exports, wp) {
       newVariants.push(newVariant)
     })
 
-    // We need to clear the old select2 field and reinitialize it.
-    $(font_weights).select2().empty()
-    $(font_weights).select2({
+    $($font_weights).select2({
       theme: 'classic',
       data: newVariants,
       minimumResultsForSearch: 10,
@@ -229,6 +229,8 @@ let CustomifyFontSelectFields = (function ($, exports, wp) {
       // Serialize subfield values and refresh the fonts in the preview window.
       selfUpdateValue(wrapper)
     })
+
+    $font_weights.parent().show()
   }
 
   /**

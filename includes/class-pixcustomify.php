@@ -353,7 +353,6 @@ class PixCustomifyPlugin {
 				'css',
 				'output',
 				'value',
-				'load_all_weights',
 				'selector',
 				'callback',
 				'active_callback',

@@ -1024,6 +1024,8 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 					break;
 
 				// Custom types
+				// This is a legacy control type
+				// @todo Consider removing this at some point or migrate to Font control type.
 				case 'typography' :
 					$use_typography = PixCustomifyPlugin()->settings->get_plugin_setting( 'typography', '1' );
 
@@ -1033,10 +1035,6 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 					}
 
 					$control_class_name = 'Pix_Customize_Typography_Control';
-
-					if ( isset( $field_config['backup'] ) ) {
-						$control_args['backup'] = $field_config['backup'];
-					}
 
 					if ( isset( $field_config['font_weight'] ) ) {
 						$control_args['font_weight'] = $field_config['font_weight'];
@@ -1048,10 +1046,6 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 
 					if ( isset( $field_config['recommended'] ) ) {
 						$control_args['recommended'] = array_flip( $field_config['recommended'] );
-					}
-
-					if ( isset( $field_config['load_all_weights'] ) ) {
-						$control_args['load_all_weights'] = $field_config['load_all_weights'];
 					}
 
 					if ( isset( $field_config['default'] ) ) {
@@ -1070,34 +1064,46 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 
 					$control_class_name = 'Pix_Customize_Font_Control';
 
-					if ( isset( $field_config['backup'] ) ) {
-						$control_args['backup'] = $field_config['backup'];
-					}
-
-					if ( isset( $field_config['font_weight'] ) ) {
-						$control_args['font_weight'] = $field_config['font_weight'];
-					}
-
-					if ( isset( $field_config['subsets'] ) ) {
-						$control_args['subsets'] = $field_config['subsets'];
-					}
-
 					if ( isset( $field_config['recommended'] ) ) {
 						$control_args['recommended'] = array_flip( $field_config['recommended'] );
-					}
-
-					if ( isset( $field_config['load_all_weights'] ) ) {
-						$control_args['load_all_weights'] = $field_config['load_all_weights'];
 					}
 
 					if ( isset( $field_config['default'] ) ) {
 						$control_args['default'] = $field_config['default'];
 					}
 
-					if ( isset( $field_config['fields'] ) ) {
-						$control_args['fields'] = $field_config['fields'];
+					if ( isset( $field_config['live'] ) ) {
+						$control_args['live'] = $field_config['live'];
 					}
-					$control_args['live'] = true;
+
+					$font_control_subfields = apply_filters( 'customify_default_font_control_subfields', array(
+						'font-weight'     => true,
+						'subsets'         => true,
+						'font-size'       => false,
+						'line-height'     => false,
+						'letter-spacing'  => false,
+						'text-align'      => false,
+						'text-transform'  => false,
+						'text-decoration' => false,
+					), $setting_id, $field_config );
+
+					/*
+					 * Legacy entries.
+					 * @todo Remove these at some point.
+					 */
+					if ( isset( $field_config['font_weight'] ) ) {
+						$font_control_fields['font-weight'] = $field_config['font_weight'];
+					}
+					if ( isset( $field_config['subsets'] ) ) {
+						$font_control_fields['subsets'] = $field_config['subsets'];
+					}
+
+					// If we have received a fields configuration, merge it with the default.
+					if ( isset( $field_config['fields'] ) ) {
+						$font_control_subfields = wp_parse_args( $field_config['fields'], $font_control_subfields );
+					}
+
+					$control_args['fields'] = $font_control_subfields;
 
 					break;
 

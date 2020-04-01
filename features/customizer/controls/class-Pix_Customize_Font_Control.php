@@ -6,16 +6,46 @@
  */
 class Pix_Customize_Font_Control extends Pix_Customize_Control {
 
+	/**
+	 * The field type.
+	 *
+	 * @var string
+	 */
 	public $type = 'font';
-	public $backup = null;
-	public $font_weight = true;
-	public $subsets = true;
-	public $load_all_weights = false;
+
+	/**
+	 * The list of recommended fonts to show at the top of the list.
+	 *
+	 * @var array
+	 */
 	public $recommended = array();
-	public $current_value;
-	public $default;
+
+	/**
+	 * The list of sub-fields.
+	 *
+	 * @var array
+	 */
 	public $fields;
 
+	/**
+	 * The default value for each sub-field.
+	 *
+	 * @var array
+	 */
+	public $default;
+
+	/**
+	 * The current field value.
+	 *
+	 * @var mixed
+	 */
+	public $current_value;
+
+	/**
+	 * The unique CSS ID value to be used throughout this control.
+	 *
+	 * @var string
+	 */
 	protected $CSSID;
 
 	/**
@@ -25,7 +55,6 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 	 *
 	 * If $args['settings'] is not defined, use the $id as the setting ID.
 	 *
-	 * @since 3.4.0
 	 *
 	 * @param WP_Customize_Manager $manager
 	 * @param string $id
@@ -71,8 +100,6 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 
 	/**
 	 * Render the control's content.
-	 *
-	 * @since 3.4.0
 	 */
 	public function render_content() {
 
@@ -86,12 +113,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 		}
 
 		// if this value was an array, make sure it is ok
-		if ( is_array( $current_value ) ) {
-			if ( isset( $current_value['font-family'] ) ) {
-				$current_value['font_family'] = $current_value['font-family'];
-				unset( $current_value['font-family'] );
-			}
-		} else {
+		if ( is_string( $current_value ) ) {
 			//if we've got a string then it is clear we need to decode it
 			$current_value = json_decode( $current_value, true );
 		}
@@ -106,16 +128,10 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 			$active_font_family = $current_value->font_family;
 		}
 
-		$select_data = 'data-active_font_family="' . esc_attr( $active_font_family ) . '"';
-		if ( isset( $current_value->load_all_weights ) ) {
-			$this->load_all_weights = $current_value->font_load_all_weights;
-
-			$select_data .= ' data-load_all_weights="true"';
-		} ?>
+		$select_data = 'data-active_font_family="' . esc_attr( $active_font_family ) . '"'; ?>
 		<div class="font-options__wrapper">
 
-			<input type="checkbox" class="font-options__checkbox js-font-option-toggle"
-			       id="tooltip_toogle_<?php echo esc_attr( $this->CSSID ); ?>">
+			<input type="checkbox" class="font-options__checkbox js-font-option-toggle" id="tooltip_toogle_<?php echo esc_attr( $this->CSSID ); ?>">
 
 			<?php
 			$this->display_value_holder( $current_value );
@@ -139,7 +155,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 				<?php
 				$this->display_font_weight_field( $current_value );
 
-				$this->display_font_subset_field( $current_value );
+				$this->display_font_subsets_field( $current_value );
 
 				$this->display_font_size_field( $current_value );
 
@@ -216,12 +232,21 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 	}
 
 	function display_font_weight_field( $current_value ) {
-		$display = 'none';
-		if ( ! $this->load_all_weights && $this->font_weight ) {
-			$display = 'inline-block';
+		// If the `font-weight` field entry is falsy, this means we don't want to show the font-weight field.
+		// @todo Consider if we could simply not output anything.
+
+		// These two are go hand in hand. @todo Maybe simply here.
+		$display       = 'none';
+		$data_disabled = 'data-disabled';
+		if ( ! empty( $this->fields['font-weight'] ) ) {
+			$display       = 'inline-block';
+			$data_disabled = '';
 		}
 
-		$selected = array();
+		// @todo This is very weird! We are only using a single font weight and use that to generate CSS,
+		// not just to load font weights/variants via Web Font Loader. This key should actually be font_weight!!!
+		// The variants are automatically loaded by Web Font Loader. There is no need to select them.
+		$selected = false;
 		if ( isset( $current_value->selected_variants ) ) {
 			$selected = $current_value->selected_variants;
 
@@ -230,13 +255,14 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 			}
 		}
 		?>
-		<li class="customify_weights_wrapper customize-control font-options__option" style="display: <?php echo $display; ?>;">
+		<li class="customify_weights_wrapper customize-control font-options__option"
+		    style="display: <?php echo $display; ?>;">
 			<label><?php esc_html_e( 'Font Weight', 'customify' ); ?></label>
 			<?php
 			$data_default = ! empty( $selected ) ? 'data-default="' . $selected . '"' : '';
-			$data_disabled = isset( $this->fields['font-weight'] ) && false === $this->fields['font-weight'] ? 'data-disabled' : '';
 			?>
-			<select class="customify_font_weight" data-field="selected_variants" <?php echo $data_default . ' ' . $data_disabled  ?>>
+			<select class="customify_font_weight"
+			        data-field="selected_variants" <?php echo $data_default . ' ' . $data_disabled ?>>
 				<?php
 				if ( ! empty( $current_value->variants ) ) {
 					if ( is_string( $current_value->variants ) ) {
@@ -245,7 +271,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 
 					foreach ( $current_value->variants as $weight ) {
 						$attrs = '';
-						if ( in_array( $weight, (array) $selected ) ) {
+						if ( $weight == $selected ) {
 							$attrs = ' selected="selected"';
 						}
 
@@ -257,32 +283,39 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 		<?php
 	}
 
-	function display_font_subset_field( $current_value ) {
-		$display = 'none';
-		if ( $this->subsets && ! empty( $current_value->subsets ) ) {
-			$display = 'inline-block';
+	function display_font_subsets_field( $current_value ) {
+		// If the `subsets` field entry is falsy, this means we don't want to show the subsets field.
+		// @todo Consider if we could simply not output anything.
+
+		// These two are go hand in hand. @todo Maybe simply here.
+		$display       = 'none';
+		$data_disabled = 'data-disabled';
+		if ( ! empty( $this->fields['subsets'] ) && ! empty( $current_value->subsets ) ) {
+			$display       = 'inline-block';
+			$data_disabled = '';
 		} ?>
-		<li class="customify_subsets_wrapper customize-control font-options__option" style="display: <?php echo $display; ?>;">
+		<li class="customify_subsets_wrapper customize-control font-options__option"
+		    style="display: <?php echo $display; ?>;">
 			<label><?php esc_html_e( 'Languages', 'customify' ); ?></label>
-			<select multiple class="customify_font_subsets" data-field="selected_subsets" <?php echo ( isset( $this->fields['subsets'] ) && false === $this->fields['subsets'] ) ? 'data-disabled' : ''; ?>>
+			<select multiple class="customify_font_subsets" data-field="selected_subsets" <?php echo $data_disabled ?>>
 				<?php
 				$selected = array();
 				if ( isset( $current_value->selected_subsets ) ) {
-					$selected = $current_value->selected_subsets;
+					$selected = (array) $current_value->selected_subsets;
 				}
 
 				foreach ( $current_value->subsets as $key => $subset ) {
-
+					// The latin subset is always loaded so there is no need to have it as an option.
 					if ( $subset === 'latin' ) {
 						continue;
 					}
 
 					$attrs = '';
-					if ( in_array( $subset, (array) $selected ) ) {
+					if ( in_array( $subset, $selected ) ) {
 						$attrs .= ' selected="selected"';
 					}
 
-					echo '<option value="' . esc_attr( $subset ) . '"' . $attrs . '> ' . $subset . '</option>';
+					echo '<option value="' . esc_attr( $subset ) . '" ' . $attrs . '> ' . $subset . '</option>';
 				} ?>
 			</select>
 		</li>
@@ -291,166 +324,182 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 	}
 
 	function display_font_size_field( $current_value ) {
-		if ( ! empty( $this->fields['font-size'] ) ) {
-			$fs_val = empty( $current_value->font_size ) ? 0 : $current_value->font_size;
-			// If the current val also contains the unit, we need to take that into account.
-			if ( ! is_numeric( $fs_val ) ) {
-				if ( is_string( $fs_val ) ) {
-					// We will get everything in front that is a valid part of a number (float including).
-					preg_match( "/^([\d.\-+]+)/i", $fs_val, $match );
+		if ( empty( $this->fields['font-size'] ) ) {
+			return;
+		}
 
-					if ( ! empty( $match ) && isset( $match[0] ) ) {
-						if ( ! PixCustomifyPlugin()->is_assoc( $this->fields['font-size'] ) ) {
-							$this->fields['font-size'][3] = substr( $fs_val, strlen( $match[0] ) );
-						} else {
-							$this->fields['font-size']['unit'] = substr( $fs_val, strlen( $match[0] ) );
-						}
-						$fs_val = $match[0];
-					}
-				} elseif ( is_array( $fs_val ) ) {
-					if ( isset( $fs_val['unit']) ) {
-						if ( ! PixCustomifyPlugin()->is_assoc( $this->fields['font-size'] ) ) {
-							$this->fields['font-size'][3] = $fs_val['unit'];
-						} else {
-							$this->fields['font-size']['unit'] = $fs_val['unit'];
-						}
-					}
+		$fs_val = empty( $current_value->font_size ) ? 0 : $current_value->font_size;
+		// If the current val also contains the unit, we need to take that into account.
+		if ( ! is_numeric( $fs_val ) ) {
+			if ( is_string( $fs_val ) ) {
+				// We will get everything in front that is a valid part of a number (float including).
+				preg_match( "/^([\d.\-+]+)/i", $fs_val, $match );
 
-					$fs_val = $fs_val['value'];
+				if ( ! empty( $match ) && isset( $match[0] ) ) {
+					if ( ! PixCustomifyPlugin()->is_assoc( $this->fields['font-size'] ) ) {
+						$this->fields['font-size'][3] = substr( $fs_val, strlen( $match[0] ) );
+					} else {
+						$this->fields['font-size']['unit'] = substr( $fs_val, strlen( $match[0] ) );
+					}
+					$fs_val = $match[0];
 				}
+			} elseif ( is_array( $fs_val ) ) {
+				if ( isset( $fs_val['unit'] ) ) {
+					if ( ! PixCustomifyPlugin()->is_assoc( $this->fields['font-size'] ) ) {
+						$this->fields['font-size'][3] = $fs_val['unit'];
+					} else {
+						$this->fields['font-size']['unit'] = $fs_val['unit'];
+					}
+				}
+
+				$fs_val = $fs_val['value'];
 			}
-			?>
-			<li class="customify_font_size_wrapper customize-control customize-control-range font-options__option">
-				<label><?php esc_html_e( 'Font Size', 'customify' ); ?></label>
-				<input type="range"
-				       data-field="font_size" <?php $this->input_field_atts( $this->fields['font-size'] ) ?>
-				       value="<?php echo $fs_val; ?>">
-			</li>
-		<?php }
+		}
+		?>
+		<li class="customify_font_size_wrapper customize-control customize-control-range font-options__option">
+			<label><?php esc_html_e( 'Font Size', 'customify' ); ?></label>
+			<input type="range"
+			       data-field="font_size" <?php $this->input_field_atts( $this->fields['font-size'] ) ?>
+			       value="<?php echo $fs_val; ?>">
+		</li>
+		<?php
 	}
 
 	function display_line_height_field( $current_value ) {
-		if ( ! empty( $this->fields['line-height'] ) ) {
-			$lh_val = isset( $current_value->line_height ) ? $current_value->line_height : 0 ;
-			// If the current val also contains the unit, we need to take that into account.
-			if ( ! is_numeric( $lh_val ) ) {
-				if ( is_string( $lh_val ) ) {
-					// We will get everything in front that is a valid part of a number (float including).
-					preg_match( "/^([\d.\-+]+)/i", $lh_val, $match );
+		if ( empty( $this->fields['line-height'] ) ) {
+			return;
+		}
 
-					if ( ! empty( $match ) && isset( $match[0] ) ) {
-						if ( ! PixCustomifyPlugin()->is_assoc( $this->fields['line-height'] ) ) {
-							$this->fields['line-height'][3] = substr( $lh_val, strlen( $match[0] ) );
-						} else {
-							$this->fields['line-height']['unit'] = substr( $lh_val, strlen( $match[0] ) );
-						}
-						$lh_val = $match[0];
-					}
-				} elseif ( is_array( $lh_val ) ) {
-					if ( isset( $lh_val['unit']) ) {
-						if ( ! PixCustomifyPlugin()->is_assoc( $this->fields['line-height'] ) ) {
-							$this->fields['line-height'][3] = $lh_val['unit'];
-						} else {
-							$this->fields['line-height']['unit'] = $lh_val['unit'];
-						}
-					}
+		$lh_val = isset( $current_value->line_height ) ? $current_value->line_height : 0;
+		// If the current val also contains the unit, we need to take that into account.
+		if ( ! is_numeric( $lh_val ) ) {
+			if ( is_string( $lh_val ) ) {
+				// We will get everything in front that is a valid part of a number (float including).
+				preg_match( "/^([\d.\-+]+)/i", $lh_val, $match );
 
-					$lh_val = $lh_val['value'];
+				if ( ! empty( $match ) && isset( $match[0] ) ) {
+					if ( ! PixCustomifyPlugin()->is_assoc( $this->fields['line-height'] ) ) {
+						$this->fields['line-height'][3] = substr( $lh_val, strlen( $match[0] ) );
+					} else {
+						$this->fields['line-height']['unit'] = substr( $lh_val, strlen( $match[0] ) );
+					}
+					$lh_val = $match[0];
 				}
+			} elseif ( is_array( $lh_val ) ) {
+				if ( isset( $lh_val['unit'] ) ) {
+					if ( ! PixCustomifyPlugin()->is_assoc( $this->fields['line-height'] ) ) {
+						$this->fields['line-height'][3] = $lh_val['unit'];
+					} else {
+						$this->fields['line-height']['unit'] = $lh_val['unit'];
+					}
+				}
+
+				$lh_val = $lh_val['value'];
 			}
-			?>
-			<li class="customify_line_height_wrapper customize-control customize-control-range font-options__option">
-				<label><?php esc_html_e( 'Line height', 'customify' ); ?></label>
-				<input type="range"
-				       data-field="line_height" <?php $this->input_field_atts( $this->fields['line-height'] ); ?>
-				       value="<?php echo esc_attr( $lh_val ); ?>">
-			</li>
-		<?php }
+		}
+		?>
+		<li class="customify_line_height_wrapper customize-control customize-control-range font-options__option">
+			<label><?php esc_html_e( 'Line height', 'customify' ); ?></label>
+			<input type="range"
+			       data-field="line_height" <?php $this->input_field_atts( $this->fields['line-height'] ); ?>
+			       value="<?php echo esc_attr( $lh_val ); ?>">
+		</li>
+		<?php
 	}
 
 	function display_letter_spacing_field( $current_value ) {
+		if ( empty( $this->fields['letter-spacing'] ) ) {
+			return;
+		}
+		$ls_val = isset( $current_value->letter_spacing ) ? $current_value->letter_spacing : 0;
+		// If the current val also contains the unit, we need to take that into account.
+		if ( ! is_numeric( $ls_val ) ) {
+			if ( is_string( $ls_val ) ) {
+				// We will get everything in front that is a valid part of a number (float including).
+				preg_match( "/^([\d.\-+]+)/i", $ls_val, $match );
 
-		if ( ! empty( $this->fields['letter-spacing'] ) ) {
-			$ls_val = isset( $current_value->letter_spacing ) ? $current_value->letter_spacing : 0;
-			// If the current val also contains the unit, we need to take that into account.
-			if ( ! is_numeric( $ls_val ) ) {
-				if ( is_string( $ls_val ) ) {
-					// We will get everything in front that is a valid part of a number (float including).
-					preg_match( "/^([\d.\-+]+)/i", $ls_val, $match );
-
-					if ( ! empty( $match ) && isset( $match[0] ) ) {
-						if ( ! PixCustomifyPlugin()->is_assoc( $this->fields['letter-spacing'] ) ) {
-							$this->fields['letter-spacing'][3] = substr( $ls_val, strlen( $match[0] ) );
-						} else {
-							$this->fields['letter-spacing']['unit'] = substr( $ls_val, strlen( $match[0] ) );
-						}
-						$ls_val = $match[0];
+				if ( ! empty( $match ) && isset( $match[0] ) ) {
+					if ( ! PixCustomifyPlugin()->is_assoc( $this->fields['letter-spacing'] ) ) {
+						$this->fields['letter-spacing'][3] = substr( $ls_val, strlen( $match[0] ) );
+					} else {
+						$this->fields['letter-spacing']['unit'] = substr( $ls_val, strlen( $match[0] ) );
 					}
-				} elseif ( is_array( $ls_val ) ) {
-					if ( isset( $ls_val['unit']) ) {
-						if ( ! PixCustomifyPlugin()->is_assoc( $this->fields['letter-spacing'] ) ) {
-							$this->fields['letter-spacing'][3] = $ls_val['unit'];
-						} else {
-							$this->fields['letter-spacing']['unit'] = $ls_val['unit'];
-						}
-					}
-
-					$ls_val = $ls_val['value'];
+					$ls_val = $match[0];
 				}
+			} elseif ( is_array( $ls_val ) ) {
+				if ( isset( $ls_val['unit'] ) ) {
+					if ( ! PixCustomifyPlugin()->is_assoc( $this->fields['letter-spacing'] ) ) {
+						$this->fields['letter-spacing'][3] = $ls_val['unit'];
+					} else {
+						$this->fields['letter-spacing']['unit'] = $ls_val['unit'];
+					}
+				}
+
+				$ls_val = $ls_val['value'];
 			}
-			?>
-			<li class="customify_letter_spacing_wrapper customize-control customize-control-range font-options__option">
-				<label><?php esc_html_e( 'Letter Spacing', 'customify' ); ?></label>
-				<input type="range"
-				       data-field="letter_spacing" <?php $this->input_field_atts( $this->fields['letter-spacing'] ) ?>
-				       value="<?php echo esc_attr( $ls_val ); ?>">
-			</li>
-		<?php }
+		}
+		?>
+		<li class="customify_letter_spacing_wrapper customize-control customize-control-range font-options__option">
+			<label><?php esc_html_e( 'Letter Spacing', 'customify' ); ?></label>
+			<input type="range"
+			       data-field="letter_spacing" <?php $this->input_field_atts( $this->fields['letter-spacing'] ) ?>
+			       value="<?php echo esc_attr( $ls_val ); ?>">
+		</li>
+		<?php
 	}
 
 	function display_text_align_field( $current_value ) {
-		if ( ! empty( $this->fields['text-align'] ) ) {
-			$ta_val = isset( $current_value->text_align ) ? $current_value->text_align : 'initial'; ?>
-			<li class="customify_text_align_wrapper customize-control font-options__option">
-				<label><?php esc_html_e( 'Text Align', 'customify' ); ?></label>
-				<select data-field="text_align">
-					<option <?php $this->display_option_value( 'initial', $ta_val ); ?>><?php esc_html_e( 'Initial', 'customify' ); ?></option>
-					<option  <?php $this->display_option_value( 'center', $ta_val ); ?>><?php esc_html_e( 'Center', 'customify' ); ?></option>
-					<option <?php $this->display_option_value( 'left', $ta_val ); ?>><?php esc_html_e( 'Left', 'customify' ); ?></option>
-					<option <?php $this->display_option_value( 'right', $ta_val ); ?>><?php esc_html_e( 'Right', 'customify' ); ?></option>
-				</select>
-			</li>
-		<?php }
+		if ( empty( $this->fields['text-align'] ) ) {
+			return;
+		}
+
+		$ta_val = isset( $current_value->text_align ) ? $current_value->text_align : 'initial'; ?>
+		<li class="customify_text_align_wrapper customize-control font-options__option">
+			<label><?php esc_html_e( 'Text Align', 'customify' ); ?></label>
+			<select data-field="text_align">
+				<option <?php $this->display_option_value( 'initial', $ta_val ); ?>><?php esc_html_e( 'Initial', 'customify' ); ?></option>
+				<option <?php $this->display_option_value( 'center', $ta_val ); ?>><?php esc_html_e( 'Center', 'customify' ); ?></option>
+				<option <?php $this->display_option_value( 'left', $ta_val ); ?>><?php esc_html_e( 'Left', 'customify' ); ?></option>
+				<option <?php $this->display_option_value( 'right', $ta_val ); ?>><?php esc_html_e( 'Right', 'customify' ); ?></option>
+			</select>
+		</li>
+		<?php
 	}
 
 	function display_text_transform_field( $current_value ) {
-		if ( ! empty( $this->fields['text-transform'] ) ) {
-			$tt_val = isset( $current_value->text_transform ) ? $current_value->text_transform : 'none'; ?>
-			<li class="customify_text_transform_wrapper customize-control font-options__option">
-				<label><?php esc_html_e( 'Text Transform', 'customify' ); ?></label>
-				<select data-field="text_transform">
-					<option <?php $this->display_option_value( 'none', $tt_val ); ?>><?php esc_html_e( 'None', 'customify' ); ?></option>
-					<option <?php $this->display_option_value( 'capitalize', $tt_val ); ?>><?php esc_html_e( 'Capitalize', 'customify' ); ?></option>
-					<option <?php $this->display_option_value( 'uppercase', $tt_val ); ?>><?php esc_html_e( 'Uppercase', 'customify' ); ?></option>
-					<option <?php $this->display_option_value( 'lowercase', $tt_val ); ?>><?php esc_html_e( 'Lowercase', 'customify' ); ?></option>
-				</select>
-			</li>
-		<?php }
+		if ( empty( $this->fields['text-transform'] ) ) {
+			return;
+		}
+
+		$tt_val = isset( $current_value->text_transform ) ? $current_value->text_transform : 'none'; ?>
+		<li class="customify_text_transform_wrapper customize-control font-options__option">
+			<label><?php esc_html_e( 'Text Transform', 'customify' ); ?></label>
+			<select data-field="text_transform">
+				<option <?php $this->display_option_value( 'none', $tt_val ); ?>><?php esc_html_e( 'None', 'customify' ); ?></option>
+				<option <?php $this->display_option_value( 'capitalize', $tt_val ); ?>><?php esc_html_e( 'Capitalize', 'customify' ); ?></option>
+				<option <?php $this->display_option_value( 'uppercase', $tt_val ); ?>><?php esc_html_e( 'Uppercase', 'customify' ); ?></option>
+				<option <?php $this->display_option_value( 'lowercase', $tt_val ); ?>><?php esc_html_e( 'Lowercase', 'customify' ); ?></option>
+			</select>
+		</li>
+		<?php
 	}
 
 	function display_text_decoration_field( $current_value ) {
-		if ( ! empty( $this->fields['text-decoration'] ) ) {
-			$td_val = isset( $current_value->text_decoration ) ? $current_value->text_decoration : 'none'; ?>
-			<li class="customify_text_decoration_wrapper customize-control font-options__option">
-				<label><?php esc_html_e( 'Text Decoration', 'customify' ); ?></label>
-				<select data-field="text_decoration">
-					<option <?php $this->display_option_value( 'none', $td_val ); ?>><?php esc_html_e( 'None', 'customify' ); ?></option>
-					<option <?php $this->display_option_value( 'underline', $td_val ); ?>><?php esc_html_e( 'Underline', 'customify' ); ?></option>
-					<option <?php $this->display_option_value( 'overline', $td_val ); ?>><?php esc_html_e( 'Overline', 'customify' ); ?></option>
-					<option <?php $this->display_option_value( 'line-through', $td_val ); ?>><?php esc_html_e( 'Line Through', 'customify' ); ?></option>
-				</select>
-			</li>
-		<?php }
+		if ( empty( $this->fields['text-decoration'] ) ) {
+			return;
+		}
+
+		$td_val = isset( $current_value->text_decoration ) ? $current_value->text_decoration : 'none'; ?>
+		<li class="customify_text_decoration_wrapper customize-control font-options__option">
+			<label><?php esc_html_e( 'Text Decoration', 'customify' ); ?></label>
+			<select data-field="text_decoration">
+				<option <?php $this->display_option_value( 'none', $td_val ); ?>><?php esc_html_e( 'None', 'customify' ); ?></option>
+				<option <?php $this->display_option_value( 'underline', $td_val ); ?>><?php esc_html_e( 'Underline', 'customify' ); ?></option>
+				<option <?php $this->display_option_value( 'overline', $td_val ); ?>><?php esc_html_e( 'Overline', 'customify' ); ?></option>
+				<option <?php $this->display_option_value( 'line-through', $td_val ); ?>><?php esc_html_e( 'Line Through', 'customify' ); ?></option>
+			</select>
+		</li>
+		<?php
 	}
 
 	function display_option_value( $value, $current_value ) {
@@ -590,11 +639,16 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 			} else {
 
 				if ( isset( $this->default['font_family'] ) ) {
-					$to_return['font-family'] = $this->default['font_family'];
+					$to_return['font_family'] = $this->default['font_family'];
+				} elseif ( isset( $this->default['font-family'] ) ) {
+					// Handle the case with dash instead of underscore.
+					$to_return['font_family'] = $this->default['font-family'];
 				}
 
-				if ( isset( $this->default['font-family'] ) ) {
-					$to_return['font-family'] = $this->default['font-family'];
+				if ( isset( $this->default['selected_variants'] ) ) {
+					$to_return['selected_variants'] = $this->default['selected_variants'];
+				} elseif ( isset( $this->default['font-weight'] ) ) {
+					$to_return['selected_variants'] = $this->default['font-weight'];
 				}
 
 				if ( isset( $this->default['font-size'] ) ) {
@@ -637,7 +691,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 
 	function validate_font_values( $values ) {
 
-		if ( empty( $values ) ) {
+		if ( empty( $values ) || ! is_array( $values ) ) {
 			return array();
 		}
 
@@ -646,6 +700,9 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 			if ( strpos( $key, '-' ) !== false ) {
 				$new_key = str_replace( '-', '_', $key );
 
+				// @todo This is very weird! We are only using a single font weight and use that to generate CSS,
+				// not just to load font weights/variants via Web Font Loader. This key should actually be font_weight!!!
+				// The variants are automatically loaded by Web Font Loader. There is no need to select them.
 				if ( $new_key === 'font_weight' ) {
 					$values[ 'selected_variants' ] = $value;
 					unset( $values[ 'font_weight' ] );

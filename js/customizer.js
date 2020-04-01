@@ -793,14 +793,14 @@
           if (!_.isUndefined($font_weight)) {
             $font_weight.html(variantsOptionsMarkup)
             // if there is no weight or just 1 we hide the weight select ... cuz is useless
-            if ($font_select.data('load_all_weights') === true || variantsCount <= 1) {
-              $font_weight.parent().css('display', 'none')
+            if ( variantsCount < 2 || !_.isUndefined($font_select.data('disabled'))) {
+              $font_weight.parent().hide()
             } else {
-              $font_weight.parent().css('display', 'inline-block')
+              $font_weight.parent().show()
             }
           }
         } else if (!_.isUndefined($font_weight)) {
-          $font_weight.parent().css('display', 'none')
+          $font_weight.parent().hide()
         }
 
         // make the subsets selector
@@ -826,13 +826,13 @@
 
             // if there is no subset or just 1 we hide the subsets select ... cuz is useless
             if (subsetsCount <= 1) {
-              $font_subsets.parent().css('display', 'none')
+              $font_subsets.parent().hide()
             } else {
-              $font_subsets.parent().css('display', 'inline-block')
+              $font_subsets.parent().show()
             }
           }
         } else if (!_.isUndefined($font_subsets)) {
-          $font_subsets.parent().css('display', 'none')
+          $font_subsets.parent().hide()
         }
 
         $input.val(encodeURIComponent(JSON.stringify(newValue)))

@@ -26,9 +26,12 @@
                 maybeLoadFontFamily($values)
               }
 
-              const vls = getCSSValues(this.id, $values),
-                CSS = getCSSCode(this.id, vls, properties_prefix),
-                fieldStyle = $('#customify_font_output_for_' + el.html_safe_option_id)
+              const vls = getCSSValues(this.id, $values)
+              if (_.isEmpty(vls)) {
+                return
+              }
+              const CSS = getCSSCode(this.id, vls, properties_prefix)
+              const fieldStyle = $('#customify_font_output_for_' + el.html_safe_option_id)
 
               fieldStyle.html(CSS)
             }

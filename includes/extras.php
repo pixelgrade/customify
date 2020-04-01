@@ -202,7 +202,7 @@ if ( ! function_exists('add_customify_base_options') ) {
 				'title'    => esc_html__( 'Fonts', 'customify' ),
 				'options' => array(
 					'headings_font' => array(
-						'type'     => 'typography',
+						'type'     => 'font',
 						'label'    => esc_html__( 'Headings', 'customify' ),
 						'default'  => 'Playfair Display',
 						'selector' => '.site-title a, h1, h2, h3, h4, h5, h6,
@@ -233,11 +233,10 @@ if ( ! function_exists('add_customify_base_options') ) {
 						)
 					),
 					'body_font'     => array(
-						'type'    => 'typography',
+						'type'    => 'font',
 						'label'   => esc_html__( 'Body Text', 'customify' ),
 						'default' => 'Lato',
 						'selector' => 'html body',
-						'load_all_weights' => true,
 						'recommended' => array(
 							'Lato',
 							'Open Sans',
