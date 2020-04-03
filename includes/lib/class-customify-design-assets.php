@@ -130,11 +130,9 @@ class Customify_Design_Assets {
 
 			$data = $fetched_data;
 
-			if ( true !== $skip_cache ) {
-				// Cache the data in an option for 6 hours
-				update_option( self::get_cache_key(), $data, true );
-				update_option( self::get_cache_key() . '_timestamp', time() + 6 * HOUR_IN_SECONDS, true );
-			}
+			// Cache the data in an option for 6 hours
+			update_option( self::get_cache_key(), $data, true );
+			update_option( self::get_cache_key() . '_timestamp', time() + 6 * HOUR_IN_SECONDS, true );
 		}
 
 		return apply_filters( 'customify_style_manager_maybe_fetch_design_assets', $data );

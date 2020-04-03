@@ -235,19 +235,17 @@
         return
       }
 
-      // If the font type is not defined, we assume it's a Google font.
-      if (typeof font.type === 'undefined') {
-        font.type = 'google'
-      }
+      const fontType = determineFontType(font.font_family)
+      let family = font.font_family
 
       // Handle theme defined fonts and cloud fonts together since they are very similar.
-      if (font.type === 'theme_font' || font.type === 'cloud_font') {
-        let family = font.font_family
+      if (fontType === 'theme_font' || fontType === 'cloud_font') {
+
 
         if (typeof font.src === 'undefined') {
           let fontsArray
 
-          if (font.type === 'theme_font') {
+          if (fontType === 'theme_font') {
             fontsArray = Object.keys(customify_settings.theme_fonts).map(key => customify_settings.theme_fonts[key])
           } else {
             fontsArray = Object.keys(customify_settings.cloud_fonts).map(key => customify_settings.cloud_fonts[key])
@@ -280,17 +278,31 @@
           }).join(',')
         }
 
-        WebFont.load({
-          custom: {
-            families: [family],
-            urls: [font.src]
-          }
-        })
+        if (fonts_cache.indexOf(family) === -1) {
+          setTimeout(function () {
+            WebFont.load({
+              custom: {
+                families: [family],
+                urls: [font.src]
+              },
+              classes: false,
+              events: false,
+              error: function (e) {
+                console.log(e)
+              },
+              active: function () {
+                sessionStorage.fonts = true
+              }
+            })
+          }, 10)
+
+          // Remember we've loaded this family (with it's variants) so we don't load it again.
+          fonts_cache.push(family)
+        }
       }
       // Handle Google fonts since Web Font Loader has a special module for them.
-      else if (font.type === 'google') {
-        let family = font.font_family,
-          variants = null,
+      else if (fontType === 'google') {
+        let variants = null,
           subsets = null
 
         if (typeof font.variants !== 'undefined') {
@@ -332,12 +344,29 @@
             })
           }, 10)
 
+          // Remember we've loaded this family (with it's variants and subsets) so we don't load it again.
           fonts_cache.push(family)
         }
 
       } else {
         // Maybe Typekit, Fonts.com or Fontdeck fonts
       }
+    }
+
+    const determineFontType = function(fontFamily) {
+      // The default is Google.
+      let fontType = 'google'
+
+      // We will follow a stack in the following order: theme fonts, cloud fonts, standard fonts, Google fonts.
+      if (typeof customify_settings.theme_fonts[fontFamily] !== 'undefined') {
+        fontType = 'theme_font'
+      } else if (typeof customify_settings.cloud_fonts[fontFamily] !== 'undefined') {
+        fontType = 'cloud_font'
+      } else if (typeof customify_settings.std_fonts[fontFamily] !== 'undefined') {
+        fontType = 'std_font'
+      }
+
+      return fontType
     }
 
     const maybeJsonParse = function (value) {

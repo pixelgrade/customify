@@ -176,17 +176,13 @@ class Customify_Font_Palettes {
 				continue;
 			}
 
-			if ( empty( $font_logic['type'] ) ) {
-				// Default to 'google'
-				$fonts_logic_config[ $font_setting_id ]['type'] = 'google';
-			}
-
 			// Process the font_styles_intervals and make sure that they are in the right order and not overlapping.
 			if ( ! empty( $font_logic['font_styles_intervals'] ) && is_array( $font_logic['font_styles_intervals'] ) ) {
-				$font_styles = array( array_shift( $font_logic['font_styles_intervals'] ) );
-				// Make sure that the interval has a start
-				if ( ! isset( $font_styles[0]['start'] ) ) {
-					$font_styles[0]['start'] = 0;
+				// Initialize the list with the first one found.
+				$font_styles_intervals = array( array_shift( $font_logic['font_styles_intervals'] ) );
+				// Make sure that this interval has a start
+				if ( ! isset( $font_styles_intervals[0]['start'] ) ) {
+					$font_styles_intervals[0]['start'] = 0;
 				}
 
 				foreach ( $font_logic['font_styles_intervals'] as $font_styles_interval ) {
@@ -195,30 +191,30 @@ class Customify_Font_Palettes {
 						$font_styles_interval['start'] = 0;
 					}
 					// Go through the current font_styles and determine the place where this interval should fit in.
-					for ( $i = 0; $i < count( $font_styles ); $i++ ) {
+					for ( $i = 0; $i < count( $font_styles_intervals ); $i++ ) {
 						// Determine if the new interval overlaps with this existing one.
-						if ( ! isset( $font_styles[$i]['end'] ) ) {
+						if ( ! isset( $font_styles_intervals[$i]['end'] ) ) {
 							// Since this interval is without end, there is nothing after it.
 							// We need to adjust the old interval end.
-							if ( $font_styles[ $i ]['start'] < $font_styles_interval['start'] ) {
-								$font_styles[ $i ]['end'] = $font_styles_interval['start'];
+							if ( $font_styles_intervals[ $i ]['start'] < $font_styles_interval['start'] ) {
+								$font_styles_intervals[ $i ]['end'] = $font_styles_interval['start'];
 							} else {
 								if ( ! isset( $font_styles_interval['end'] ) ) {
 									// We need to delete the old interval altogether.
-									unset($font_styles[ $i ]);
+									unset($font_styles_intervals[ $i ]);
 									$i--;
 									continue;
 								} else {
 									// Adjust the old interval and insert in front of it.
-									$font_styles[ $i ]['end'] = $font_styles_interval['end'];
-									$font_styles = array_slice( $font_styles, 0, $i ) + array( $font_styles_interval );
+									$font_styles_intervals[ $i ]['end'] = $font_styles_interval['end'];
+									$font_styles_intervals = array_slice( $font_styles_intervals, 0, $i ) + array( $font_styles_interval );
 									break;
 								}
 							}
 						} else {
-							if ( $font_styles[ $i ]['end'] > $font_styles_interval['start'] ) {
+							if ( $font_styles_intervals[ $i ]['end'] > $font_styles_interval['start'] ) {
 								// We need to shrink this interval and make room for the new interval.
-								$font_styles[ $i ]['end'] = $font_styles_interval['start'];
+								$font_styles_intervals[ $i ]['end'] = $font_styles_interval['start'];
 							} else {
 								// There is not overlap. Move to the next one.
 								continue;
@@ -226,25 +222,25 @@ class Customify_Font_Palettes {
 
 							if ( ! isset( $font_styles_interval['end'] ) ) {
 								// Everything after the existing interval is gone and the new one takes precedence.
-								array_splice( $font_styles, $i + 1, count( $font_styles ), array( $font_styles_interval ) );
+								array_splice( $font_styles_intervals, $i + 1, count( $font_styles_intervals ), array( $font_styles_interval ) );
 								break;
 							} else {
 								// Now go forward and see where the end of the new interval fits in.
-								for ( $j = $i + 1; $j < count( $font_styles ); $j ++ ) {
-									if ( $font_styles[ $j ]['start'] < $font_styles_interval['end'] ) {
+								for ( $j = $i + 1; $j < count( $font_styles_intervals ); $j ++ ) {
+									if ( $font_styles_intervals[ $j ]['start'] < $font_styles_interval['end'] ) {
 										// We have an overlapping after-interval.
-										if ( ! isset( $font_styles[ $j ]['end'] ) ) {
+										if ( ! isset( $font_styles_intervals[ $j ]['end'] ) ) {
 											// Since this interval is without end, there is nothing after it.
-											$font_styles[ $j ]['start'] = $font_styles_interval['end'];
+											$font_styles_intervals[ $j ]['start'] = $font_styles_interval['end'];
 											break;
-										} elseif ( $font_styles[ $j ]['end'] <= $font_styles_interval['end'] ) {
+										} elseif ( $font_styles_intervals[ $j ]['end'] <= $font_styles_interval['end'] ) {
 											// We need to delete this interval since it is completely overwritten by the new one.
-											unset( $font_styles[ $j ] );
+											unset( $font_styles_intervals[ $j ] );
 											$j --;
 											continue;
 										} else {
 											// The new interval partially overlaps with the old one. Adjust.
-											$font_styles[ $j ]['end'] = $font_styles_interval['end'];
+											$font_styles_intervals[ $j ]['end'] = $font_styles_interval['end'];
 											break;
 										}
 									} else {
@@ -254,40 +250,45 @@ class Customify_Font_Palettes {
 								}
 
 								// Insert the new interval.
-								array_splice( $font_styles, $j, 0, array( $font_styles_interval ) );
+								array_splice( $font_styles_intervals, $j, 0, array( $font_styles_interval ) );
 								break;
 							}
 						}
 					}
 
 					// If we have reached the end of the list, we will insert it at the end.
-					if (  $i === count( $font_styles ) ) {
-						array_push( $font_styles, $font_styles_interval );
+					if (  $i === count( $font_styles_intervals ) ) {
+						array_push( $font_styles_intervals, $font_styles_interval );
 					}
 				}
 
 				// We need to do a last pass and ensure no breaks in the intervals. We need them to be continuous.
 				// We will extend intervals to their next (right-hand) neighbour to achieve continuity.
-				if ( count( $font_styles ) > 1 ) {
+				if ( count( $font_styles_intervals ) > 1 ) {
 					// The first interval should start at zero, just in case.
-					$font_styles[0]['start'] = 0;
-					for( $i = 1; $i < count( $font_styles ); $i++ ) {
+					$font_styles_intervals[0]['start'] = 0;
+					for( $i = 1; $i < count( $font_styles_intervals ); $i++ ) {
 						// Extend the previous interval, just in case.
-						$font_styles[ $i-1 ]['end'] = $font_styles[ $i ]['start'];
+						$font_styles_intervals[ $i-1 ]['end'] = $font_styles_intervals[ $i ]['start'];
 					}
 				}
 
 				// The last interval should not have an end.
-				unset( $font_styles[ count( $font_styles )-1 ]['end'] );
+				unset( $font_styles_intervals[ count( $font_styles_intervals )-1 ]['end'] );
 
 				// Finally, go through each font style and standardize it.
-				foreach( $font_styles as $key => $value ) {
+				foreach( $font_styles_intervals as $key => $value ) {
 					if ( isset( $value['letter_spacing'] ) ) {
-						$font_styles[ $key ]['letter_spacing'] = $this->maybe_standardize_value( $value['letter_spacing'] );
+						$font_styles_intervals[ $key ]['letter_spacing'] = $this->maybe_standardize_value( $value['letter_spacing'] );
+
+						// We have some special values for letter-spacing that need to taken care of.
+						if ( 'normal' === $font_styles_intervals[ $key ]['letter_spacing'] ) {
+							$font_styles_intervals[ $key ]['letter_spacing'] = 0;
+						}
 					}
 				}
 
-				$fonts_logic_config[ $font_setting_id ]['font_styles'] = $font_styles;
+				$fonts_logic_config[ $font_setting_id ]['font_styles_intervals'] = $font_styles_intervals;
 			}
 		}
 
@@ -681,6 +682,9 @@ class Customify_Font_Palettes {
 						'value' => (float) $match[0],
 						'unit' => substr( $value, strlen( $match[0] ) ),
 					);
+				} else {
+					// If we could not extract anything useful we will trust the developer and leave it liek that.
+					return $value;
 				}
 			}
 		}
@@ -766,8 +770,6 @@ class Customify_Font_Palettes {
 				'fonts_logic' => array(
 					// Primary is used for main headings [Display, H1, H2, H3]
 					'sm_font_primary' => array(
-						// Define the font type ('google' or 'theme_font'). By default it's 'google'.
-						'type' => 'google',
 						// Font loaded when a palette is selected
 						'font_family'      => 'Montserrat',
 						// Load all these fonts weights.
@@ -868,8 +870,6 @@ class Customify_Font_Palettes {
 				'fonts_logic' => array(
 					// Primary is used for main headings [Display, H1, H2, H3]
 					'sm_font_primary' => array(
-						// Define the font type ('google' or 'theme_font'). By default it's 'google'.
-						'type' => 'google',
 						// Font loaded when a palette is selected
 						'font_family'      => 'Lora',
 						// Load all these fonts weights.
@@ -977,8 +977,6 @@ class Customify_Font_Palettes {
 				'fonts_logic' => array(
 					// Primary is used for main headings [Display, H1, H2, H3]
 					'sm_font_primary' => array(
-						// Define the font type ('google' or 'theme_font'). By default it's 'google'.
-						'type' => 'google',
 						// Font loaded when a palette is selected
 						'font_family'      => 'Oswald',
 						// Load all these fonts weights.
@@ -1106,8 +1104,6 @@ class Customify_Font_Palettes {
 				'fonts_logic' => array(
 					// Primary is used for main headings [Display, H1, H2, H3]
 					'sm_font_primary' => array(
-						// Define the font type ('google' or 'theme_font'). By default it's 'google'.
-						'type' => 'google',
 						// Font loaded when a palette is selected
 						'font_family'      => 'Playfair Display',
 						// Load all these fonts weights.

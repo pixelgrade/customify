@@ -420,10 +420,7 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 				$unit = 'px';
 			}
 
-			// lose the tons of tabs
-			$css_property['selector'] = trim( preg_replace( '/\t+/', '', $css_property['selector'] ) );
-
-			$css_property['selector'] = apply_filters( 'customify_css_selector', $css_property['selector'], $css_property );
+			$css_property['selector'] = apply_filters( 'customify_css_selector', $this->cleanup_whitespace_css( $css_property['selector'] ), $css_property );
 
 			if ( empty( $css_property['selector'] ) ) {
 				return '';
@@ -557,7 +554,7 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 
 			var script = myIframe.contentWindow.document.createElement("script");
 			script.type = "text/javascript";
-			script.src = scriptEl.getAttribute("src");
+			if (scriptEl.getAttribute("src")) { script.src = scriptEl.getAttribute("src"); }
 			script.innerHTML = scriptEl.innerHTML;
 
 			myIframe.contentWindow.document.head.appendChild(script);
@@ -802,7 +799,11 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 
 				// Add the option config to the localized array so we can pass the info to JS.
 				// @todo Maybe we should ensure that the connected_fields configs passed here follow the same format and logic as the ones in ::customize_pane_settings_additional_data() thus maybe having the data in the same place.
-				$this->localized['settings'][ $setting_id ] = $option_config;
+
+				// Filter some settings that have purely visual purpose.
+				if ( ! empty( $option_config['type'] ) && ! in_array( $option_config['type'], array( 'html', 'button' ) ) ) {
+					$this->localized['settings'][ $setting_id ] = $option_config;
+				}
 
 				// Generate a safe option ID (not the final setting ID) to us in HTML attributes like ID or class
 				$this->localized['settings'][ $setting_id ]['html_safe_option_id'] = sanitize_html_class( $option_id );
@@ -1025,7 +1026,7 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 
 				// Custom types
 				// This is a legacy control type
-				// @todo Consider removing this at some point or migrate to Font control type.
+				// @todo Consider removing this at some point or automatically migrate data to Font control type.
 				case 'typography' :
 					$use_typography = PixCustomifyPlugin()->settings->get_plugin_setting( 'typography', '1' );
 
@@ -1086,17 +1087,6 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 						'text-transform'  => false,
 						'text-decoration' => false,
 					), $setting_id, $field_config );
-
-					/*
-					 * Legacy entries.
-					 * @todo Remove these at some point.
-					 */
-					if ( isset( $field_config['font_weight'] ) ) {
-						$font_control_fields['font-weight'] = $field_config['font_weight'];
-					}
-					if ( isset( $field_config['subsets'] ) ) {
-						$font_control_fields['subsets'] = $field_config['subsets'];
-					}
 
 					// If we have received a fields configuration, merge it with the default.
 					if ( isset( $field_config['fields'] ) ) {
@@ -1520,6 +1510,19 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 		}
 
 		/* HELPERS */
+
+		/**
+		 * Cleanup stuff like tab characters.
+		 *
+		 * @param string $string
+		 *
+		 * @return string
+		 */
+		function cleanup_whitespace_css( $string ) {
+			$string = normalize_whitespace( $string );
+
+			return $string;
+		}
 
 		public function get_fields_by_key( $fields_config, $key, $value, &$results, $input_key = 0 ) {
 			if ( ! is_array( $fields_config ) ) {

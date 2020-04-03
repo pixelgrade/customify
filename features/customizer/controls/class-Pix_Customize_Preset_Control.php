@@ -259,17 +259,12 @@ class Pix_Customize_Preset_Control extends Pix_Customize_Control {
 						}
 						$fonts = $this->convertChoiceOptionsIdsToSettingIds( $choice_config['fonts_logic'] );
 						$data .= ' data-fonts_logic=\'' . json_encode( $fonts ) . '\'';
-
-						$customizer_config = PixCustomifyPlugin()->get_customizer_config();
-
 						?>
 
 						<span class="customize-inside-control-row <?php echo ( (string) $this->value() === (string) $choice_value ? 'current-font-palette' : '' );?>" style="background-image: url( <?php echo esc_url( $choice_config['preview']['background_image_url'] ); ?> );">
-                            <input <?php $this->link(); echo 'name="' . $this->setting->id . '" id="' . esc_attr( $choice_value ) . '-font-palette" type="radio" value="' . esc_attr( $choice_value ) . '" ' . selected( $this->value(), $choice_value, false ) . $data .' />'; ?>
+                            <input <?php $this->link(); echo 'name="' . esc_attr( $this->setting->id ) . '" id="' . esc_attr( $choice_value ) . '-font-palette" type="radio" value="' . esc_attr( $choice_value ) . '" ' . selected( $this->value(), $choice_value, false ) . $data .' />'; ?>
 							<label for="<?php echo esc_attr( $choice_value ) . '-font-palette'; ?>">
-								<span class="screen-reader-text">
-									<?php echo esc_html( $label ); ?>
-								</span>
+								<span class="screen-reader-text"><?php echo esc_html( $label ); ?></span>
 							</label>
                         </span>
 					<?php } ?>

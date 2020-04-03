@@ -118,7 +118,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 			$current_value = json_decode( $current_value, true );
 		}
 
-		$current_value = $this->validate_font_values( $current_value );
+		$current_value = Customify_Fonts_Global::standardize_font_values( $current_value );
 
 		//make sure it is an object from here going forward
 		$current_value = (object) $current_value;
@@ -188,14 +188,14 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 	/**
 	 * This input will hold the values of this font field
 	 */
-	function display_value_holder( $current_value ) { ?>
+	protected function display_value_holder( $current_value ) { ?>
 		<input class="customify_font_values" id="<?php echo esc_attr( $this->CSSID ); ?>"
 		       type="hidden" <?php $this->link(); ?>
 		       value="<?php echo esc_attr( PixCustomifyPlugin::encodeURIComponent( json_encode( $current_value ) ) ); ?>"
 		       data-default="<?php echo esc_attr( PixCustomifyPlugin::encodeURIComponent( json_encode( $current_value ) ) ); ?>"/>
 	<?php }
 
-	function display_field_title( $font_family, $font_name_id ) { ?>
+	protected function display_field_title( $font_family, $font_name_id ) { ?>
 		<label class="font-options__head  select" for="tooltip_toogle_<?php echo esc_attr( $this->CSSID ); ?>">
 			<?php if ( ! empty( $this->label ) ) : ?>
 				<span class="font-options__option-title"><?php echo esc_html( $this->label ); ?></span>
@@ -222,7 +222,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 					$font = $key;
 				}
 
-				self::output_font_option( $font, $font_family, $font_type );
+				self::output_font_family_option( $font, $font_family, $font_type );
 			}
 			echo "</optgroup>";
 		}
@@ -231,7 +231,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 		do_action( 'customify_font_family_after_recommended_fonts_options', $font_family, $current_value );
 	}
 
-	function display_font_weight_field( $current_value ) {
+	protected function display_font_weight_field( $current_value ) {
 		// If the `font-weight` field entry is falsy, this means we don't want to show the font-weight field.
 		// @todo Consider if we could simply not output anything.
 
@@ -283,7 +283,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 		<?php
 	}
 
-	function display_font_subsets_field( $current_value ) {
+	protected function display_font_subsets_field( $current_value ) {
 		// If the `subsets` field entry is falsy, this means we don't want to show the subsets field.
 		// @todo Consider if we could simply not output anything.
 
@@ -304,26 +304,28 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 					$selected = (array) $current_value->selected_subsets;
 				}
 
-				foreach ( $current_value->subsets as $key => $subset ) {
-					// The latin subset is always loaded so there is no need to have it as an option.
-					if ( $subset === 'latin' ) {
-						continue;
-					}
+				if ( ! empty( $current_value->subsets ) ) {
+					foreach ( $current_value->subsets as $key => $subset ) {
+						// The latin subset is always loaded so there is no need to have it as an option.
+						if ( $subset === 'latin' ) {
+							continue;
+						}
 
-					$attrs = '';
-					if ( in_array( $subset, $selected ) ) {
-						$attrs .= ' selected="selected"';
-					}
+						$attrs = '';
+						if ( in_array( $subset, $selected ) ) {
+							$attrs .= ' selected="selected"';
+						}
 
-					echo '<option value="' . esc_attr( $subset ) . '" ' . $attrs . '> ' . $subset . '</option>';
-				} ?>
+						echo '<option value="' . esc_attr( $subset ) . '" ' . $attrs . '> ' . $subset . '</option>';
+					}
+				}?>
 			</select>
 		</li>
 
 		<?php
 	}
 
-	function display_font_size_field( $current_value ) {
+	protected function display_font_size_field( $current_value ) {
 		if ( empty( $this->fields['font-size'] ) ) {
 			return;
 		}
@@ -365,7 +367,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 		<?php
 	}
 
-	function display_line_height_field( $current_value ) {
+	protected function display_line_height_field( $current_value ) {
 		if ( empty( $this->fields['line-height'] ) ) {
 			return;
 		}
@@ -407,11 +409,18 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 		<?php
 	}
 
-	function display_letter_spacing_field( $current_value ) {
+	protected function display_letter_spacing_field( $current_value ) {
 		if ( empty( $this->fields['letter-spacing'] ) ) {
 			return;
 		}
+
 		$ls_val = isset( $current_value->letter_spacing ) ? $current_value->letter_spacing : 0;
+
+		// We have some special cases that are valid CSS values but we need to make them compatible with the range control.
+		if ( 'normal' === $ls_val ) {
+			$ls_val = 0;
+		}
+
 		// If the current val also contains the unit, we need to take that into account.
 		if ( ! is_numeric( $ls_val ) ) {
 			if ( is_string( $ls_val ) ) {
@@ -448,61 +457,64 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 		<?php
 	}
 
-	function display_text_align_field( $current_value ) {
+	protected function display_text_align_field( $current_font_value ) {
 		if ( empty( $this->fields['text-align'] ) ) {
 			return;
 		}
 
-		$ta_val = isset( $current_value->text_align ) ? $current_value->text_align : 'initial'; ?>
+		$valid_values = Customify_Fonts_Global::instance()->get_valid_subfield_values( 'text_align', false );
+		$value = isset( $current_font_value->text_align ) && ( empty( $valid_values ) || in_array( $current_font_value->text_align, $valid_values ) ) ? $current_font_value->text_align : 'initial'; ?>
 		<li class="customify_text_align_wrapper customize-control font-options__option">
 			<label><?php esc_html_e( 'Text Align', 'customify' ); ?></label>
 			<select data-field="text_align">
-				<option <?php $this->display_option_value( 'initial', $ta_val ); ?>><?php esc_html_e( 'Initial', 'customify' ); ?></option>
-				<option <?php $this->display_option_value( 'center', $ta_val ); ?>><?php esc_html_e( 'Center', 'customify' ); ?></option>
-				<option <?php $this->display_option_value( 'left', $ta_val ); ?>><?php esc_html_e( 'Left', 'customify' ); ?></option>
-				<option <?php $this->display_option_value( 'right', $ta_val ); ?>><?php esc_html_e( 'Right', 'customify' ); ?></option>
+				<?php
+				foreach ( Customify_Fonts_Global::instance()->get_valid_subfield_values( 'text_align', true ) as $option_value => $option_label ) { ?>
+					<option <?php $this->display_option_value( $option_value, $value ); ?>><?php echo $option_label; ?></option>
+				<?php } ?>
 			</select>
 		</li>
 		<?php
 	}
 
-	function display_text_transform_field( $current_value ) {
+	protected function display_text_transform_field( $current_font_value ) {
 		if ( empty( $this->fields['text-transform'] ) ) {
 			return;
 		}
 
-		$tt_val = isset( $current_value->text_transform ) ? $current_value->text_transform : 'none'; ?>
+		$valid_values = Customify_Fonts_Global::instance()->get_valid_subfield_values( 'text_transform', false );
+		$value = isset( $current_font_value->text_transform ) && ( empty( $valid_values ) || in_array( $current_font_value->text_transform, $valid_values ) ) ? $current_font_value->text_transform : 'none'; ?>
 		<li class="customify_text_transform_wrapper customize-control font-options__option">
 			<label><?php esc_html_e( 'Text Transform', 'customify' ); ?></label>
 			<select data-field="text_transform">
-				<option <?php $this->display_option_value( 'none', $tt_val ); ?>><?php esc_html_e( 'None', 'customify' ); ?></option>
-				<option <?php $this->display_option_value( 'capitalize', $tt_val ); ?>><?php esc_html_e( 'Capitalize', 'customify' ); ?></option>
-				<option <?php $this->display_option_value( 'uppercase', $tt_val ); ?>><?php esc_html_e( 'Uppercase', 'customify' ); ?></option>
-				<option <?php $this->display_option_value( 'lowercase', $tt_val ); ?>><?php esc_html_e( 'Lowercase', 'customify' ); ?></option>
+				<?php
+				foreach ( Customify_Fonts_Global::instance()->get_valid_subfield_values( 'text_transform', true ) as $option_value => $option_label ) { ?>
+					<option <?php $this->display_option_value( $option_value, $value ); ?>><?php echo $option_label; ?></option>
+				<?php } ?>
 			</select>
 		</li>
 		<?php
 	}
 
-	function display_text_decoration_field( $current_value ) {
+	protected function display_text_decoration_field( $current_font_value ) {
 		if ( empty( $this->fields['text-decoration'] ) ) {
 			return;
 		}
 
-		$td_val = isset( $current_value->text_decoration ) ? $current_value->text_decoration : 'none'; ?>
+		$valid_values = Customify_Fonts_Global::instance()->get_valid_subfield_values( 'text_decoration', false );
+		$value = isset( $current_font_value->text_decoration ) && ( empty( $valid_values ) || in_array( $current_font_value->text_decoration, $valid_values ) ) ? $current_font_value->text_decoration : 'none'; ?>
 		<li class="customify_text_decoration_wrapper customize-control font-options__option">
 			<label><?php esc_html_e( 'Text Decoration', 'customify' ); ?></label>
 			<select data-field="text_decoration">
-				<option <?php $this->display_option_value( 'none', $td_val ); ?>><?php esc_html_e( 'None', 'customify' ); ?></option>
-				<option <?php $this->display_option_value( 'underline', $td_val ); ?>><?php esc_html_e( 'Underline', 'customify' ); ?></option>
-				<option <?php $this->display_option_value( 'overline', $td_val ); ?>><?php esc_html_e( 'Overline', 'customify' ); ?></option>
-				<option <?php $this->display_option_value( 'line-through', $td_val ); ?>><?php esc_html_e( 'Line Through', 'customify' ); ?></option>
+				<?php
+				foreach ( Customify_Fonts_Global::instance()->get_valid_subfield_values( 'text_decoration', true ) as $option_value => $option_label ) { ?>
+					<option <?php $this->display_option_value( $option_value, $value ); ?>><?php echo $option_label; ?></option>
+				<?php } ?>
 			</select>
 		</li>
 		<?php
 	}
 
-	function display_option_value( $value, $current_value ) {
+	protected function display_option_value( $value, $current_value ) {
 
 		$return = 'value="' . esc_attr( $value ) . '"';
 
@@ -521,8 +533,8 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 	 *                                         False to not mark any opt as selected.
 	 * @param string $type Optional.
 	 */
-	public static function output_font_option( $font, $active_font_family = false, $type = 'google' ) {
-		echo self::get_font_option_markup( $font, $active_font_family, $type );
+	public static function output_font_family_option( $font, $active_font_family = false, $type = 'google' ) {
+		echo self::get_font_family_option_markup( $font, $active_font_family, $type );
 	}
 
 	/**
@@ -534,7 +546,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 	 * @param string $type Optional.
 	 * @return string
 	 */
-	public static function get_font_option_markup( $font, $active_font_family = false, $type = 'google' ) {
+	public static function get_font_family_option_markup( $font, $active_font_family = false, $type = 'google' ) {
 
 		$html = '';
 		$font_family = false;
@@ -689,33 +701,6 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 		return $to_return;
 	}
 
-	function validate_font_values( $values ) {
-
-		if ( empty( $values ) || ! is_array( $values ) ) {
-			return array();
-		}
-
-		foreach ( $values as $key => $value ) {
-
-			if ( strpos( $key, '-' ) !== false ) {
-				$new_key = str_replace( '-', '_', $key );
-
-				// @todo This is very weird! We are only using a single font weight and use that to generate CSS,
-				// not just to load font weights/variants via Web Font Loader. This key should actually be font_weight!!!
-				// The variants are automatically loaded by Web Font Loader. There is no need to select them.
-				if ( $new_key === 'font_weight' ) {
-					$values[ 'selected_variants' ] = $value;
-					unset( $values[ 'font_weight' ] );
-				} else {
-					$values[ $new_key ] = $value;
-					unset( $values[ $key ] );
-				}
-			}
-		}
-
-		return $values;
-	}
-
 	protected function get_CSS_ID() {
 		$id = $this->id;
 
@@ -747,5 +732,22 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 		foreach ( $atts as $attr => $value ) {
 			echo $attr . '="' . esc_attr( $value ) . '" ';
 		}
+	}
+
+	/** ==== LEGACY ==== */
+
+	/**
+	 * Legacy: This method displays an <option> tag from the given params
+	 *
+	 * @deprecated Use Pix_Customize_Font_Control::output_font_option() instead.
+	 *
+	 * @param string|array $font
+	 * @param string|false $active_font_family Optional. The active font family to add the selected attribute to the appropriate opt.
+	 *                                         False to not mark any opt as selected.
+	 * @param array $font_settings
+	 * @param string $type Optional.
+	 */
+	public static function output_font_option( $font, $active_font_family = false, $font_settings = array(), $type = 'google' ) {
+		echo self::get_font_family_option_markup( $font, $active_font_family, $type );
 	}
 }
