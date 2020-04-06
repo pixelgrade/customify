@@ -792,9 +792,6 @@ class Customify_Fonts_Global {
 			$properties_prefix = $font['properties_prefix'];
 		}
 
-		/** @var PixCustomifyPlugin $local_plugin */
-		$local_plugin = PixCustomifyPlugin();
-
 		$value = $this->maybe_decode_value( $font['value'] );
 
 		if ( $value === null ) {
@@ -886,68 +883,33 @@ class Customify_Fonts_Global {
 			}
 
 			if ( ! empty( $value['font_size'] ) && false !== $value['font_size'] ) {
-				// If the value already contains a unit, go with that.
-				// We also handle receiving the value in a standardized format ( array with 'value' and 'unit').
-				$font_size = $value['font_size'];
-				$unit = '';
-				if ( is_numeric( $value['font_size'] ) ) {
-					$unit = $this->get_field_unit( $font, 'font-size' );
-				} elseif ( is_array( $value['font_size'] ) ) {
-					if ( isset( $value['font_size']['unit'] ) ) {
-						$unit = $value['font_size']['unit'];
+
+				$font_size = self::standardize_numerical_value( $value['font_size'], 'font-size', $font );
+				if ( false !== $font_size['value'] ) {
+
+					// If we use ems or rems, and the value is larger than 9, then something must be wrong; we will use pixels.
+					if ( $font_size['value'] >= 9 && in_array( $font_size['unit'], array( 'em', 'rem' ) ) ) {
+						$font_size['unit'] = 'px';
 					}
 
-					if ( isset( $value['font_size']['value'] ) ) {
-						$font_size = $value['font_size']['value'];
-
-						// If we use ems and the value is bigger than 9, then something must be wrong; we will use pixels.
-						if ( $font_size >= 9 && $unit == 'em' ) {
-							$unit = 'px';
-						}
-					}
+					$this->display_property( 'font-size', $font_size['value'], $font_size['unit'], $properties_prefix );
 				}
-
-				$this->display_property( 'font-size', $font_size, $unit, $properties_prefix );
 			}
 
 			if ( isset( $value['line_height'] ) && false !== $value['line_height'] ) {
-				// If the value already contains a unit, go with that.
-				// We also handle receiving the value in a standardized format ( array with 'value' and 'unit').
-				$line_height = $value['line_height'];
-				$unit = '';
-				if ( is_numeric( $value['line_height'] ) ) {
-					$unit = $this->get_field_unit( $font, 'line-height' );
-				} elseif ( is_array( $value['line_height'] ) ) {
-					if ( isset( $value['line_height']['unit'] ) ) {
-						$unit = $value['line_height']['unit'];
-					}
 
-					if ( isset( $value['line_height']['value'] ) ) {
-						$line_height = $value['line_height']['value'];
-					}
+				$line_height = self::standardize_numerical_value( $value['line_height'], 'line-height', $font );
+				if ( false !== $line_height['value'] ) {
+					$this->display_property( 'line-height', $line_height['value'], $line_height['unit'], $properties_prefix );
 				}
-
-				$this->display_property( 'line-height', $line_height, $unit, $properties_prefix );
 			}
 
 			if ( isset( $value['letter_spacing'] ) && false !== $value['letter_spacing'] ) {
-				// If the value already contains a unit, go with that.
-				// We also handle receiving the value in a standardized format ( array with 'value' and 'unit').
-				$letter_spacing = $value['letter_spacing'];
-				$unit = '';
-				if ( is_numeric( $value['letter_spacing'] ) ) {
-					$unit = $this->get_field_unit( $font, 'letter-spacing' );
-				} elseif ( is_array( $value['letter_spacing'] ) ) {
-					if ( isset( $value['letter_spacing']['unit'] ) ) {
-						$unit = $value['letter_spacing']['unit'];
-					}
 
-					if ( isset( $value['letter_spacing']['value'] ) ) {
-						$letter_spacing = $value['letter_spacing']['value'];
-					}
+				$letter_spacing = self::standardize_numerical_value( $value['letter_spacing'], 'letter-spacing', $font );
+				if ( false !== $letter_spacing['value'] ) {
+					$this->display_property( 'letter-spacing', $letter_spacing['value'], $letter_spacing['unit'], $properties_prefix );
 				}
-
-				$this->display_property( 'letter-spacing', $letter_spacing, $unit, $properties_prefix );
 			}
 
 			if ( ! empty( $value['text_align'] ) ) {
@@ -967,6 +929,73 @@ class Customify_Fonts_Global {
 		$CSS = ob_get_clean();
 
 		return $CSS;
+	}
+
+	/**
+	 * Given a value we will standardize it to an array with 'value' and 'unit'.
+	 *
+	 * @param $value
+	 * @param $field
+	 * @param $font
+	 *
+	 * @return array
+	 */
+	public static function standardize_numerical_value( $value, $field, $font ) {
+		$standard_value = array(
+			'value' => false,
+			'unit' => '',
+		);
+
+		if ( is_numeric( $value ) ) {
+			$standard_value['value'] = $value;
+			// Deduce the unit.
+			$standard_value['unit'] = self::get_field_unit( $field, $font );
+		} elseif ( is_array( $value ) ) {
+			// The value may be an associative array or a numerical keyed one.
+			if ( isset( $value['value'] ) ) {
+				$standard_value['value'] = $value['value'];
+			} elseif ( isset( $value[0] ) ) {
+				$standard_value['value'] = $value[0];
+			}
+
+			if ( isset( $value['unit'] ) ) {
+				$standard_value['unit'] = $value['unit'];
+			} elseif ( isset( $value[1] ) ) {
+				$standard_value['unit'] = $value[1];
+			}
+		} elseif ( is_string( $value ) ) {
+			// We will get everything in front that is a valid part of a number (float including).
+			preg_match( "/^([\d.\-+]+)/i", $value, $match );
+
+			if ( ! empty( $match ) && isset( $match[0] ) ) {
+				$standard_value['value'] = $match[0];
+				$standard_value['unit'] = substr( $value, strlen( $match[0] ) );
+			}
+		}
+
+		return $standard_value;
+	}
+
+	public static function get_field_unit( $field, $font ) {
+
+		if ( empty( $font['fields'][ $field ] ) ) {
+
+			if ( 'line-height' === $field ){
+				return '';
+			}
+
+			return 'px';
+		}
+
+		if ( isset( $font['fields'][ $field ]['unit'] ) ) {
+			return $font['fields'][ $field ]['unit'];
+		}
+
+		if ( isset( $font['fields'][ $field ][3] ) ) {
+			return $font['fields'][ $field ][3];
+		}
+
+		return 'px';
 	}
 
 	public function enqueue_frontend_scripts() {
@@ -1090,28 +1119,6 @@ if (typeof WebFont !== 'undefined') {
 		}
 
 		return $matches[1];
-	}
-
-	function get_field_unit( $font, $field ) {
-
-		if ( empty( $font ) || empty( $font['fields'] ) || empty( $font['fields'][ $field ] ) ) {
-
-			if ( 'line-height' == $field ){
-				return '';
-			}
-
-			return 'px';
-		}
-
-		if ( isset( $font['fields'][ $field ]['unit'] ) ) {
-			return $font['fields'][ $field ]['unit'];
-		}
-
-		if ( isset( $font['fields'][ $field ][3] ) ) {
-			return $font['fields'][ $field ][3];
-		}
-
-		return 'px';
 	}
 
 	function validate_font_values( $values ) {
