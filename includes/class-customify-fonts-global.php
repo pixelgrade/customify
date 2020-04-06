@@ -102,8 +102,10 @@ class Customify_Fonts_Global {
 		 * Output the frontend fonts specific scripts and styles.
 		 */
 		$load_location = PixCustomifyPlugin()->settings->get_plugin_setting( 'style_resources_location', 'wp_head' );
+		// Add a preconnect links as early as possible for faster external fonts loading.
+		add_action('wp_head', array( $this, 'add_preconnect_links' ), 0);
 		wp_register_script( PixCustomifyPlugin()->get_slug() . '-web-font-loader',
-			'//ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js', array(), null, ( 'wp_head' === $load_location ) ? false : true );
+			plugins_url( 'js/vendor/webfontloader-1-6-28.js', PixCustomifyPlugin()->get_file() ), array(), null, ( 'wp_head' === $load_location ) ? false : true );
 		add_action('wp_enqueue_scripts', array( $this, 'enqueue_frontend_scripts' ) );
 		add_action( $load_location, array( $this, 'output_fonts_dynamic_style' ), 100 );
 
@@ -1032,6 +1034,64 @@ if (typeof WebFont !== 'undefined') {
 		return apply_filters( 'customify_fonts_webfont_script', $output );
 	}
 
+	/**
+	 * Output preconnect links to speed up fonts download and avoid FOUT as much as possible.
+	 */
+	public function add_preconnect_links() {
+		$args = $this->get_font_families_details_for_webfontloader();
+		// If we are not using external fonts, bail.
+		if ( ( empty ( $args['custom_families'] ) && empty ( $args['google_families'] ) )
+		     || ! PixCustomifyPlugin()->settings->get_plugin_setting( 'typography', '1' )
+		     || ! PixCustomifyPlugin()->settings->get_plugin_setting( 'typography_google_fonts', 1 ) ) {
+			return;
+		}
+
+		// If we are using Google fonts, add the known origins.
+		// Google uses two different origins, one for the CSS and another for the actual fonts.
+		if ( ! empty ( $args['google_families'] ) ) {
+			echo '<link href="https://fonts.googleapis.com" rel="preconnect" crossorigin>';
+			echo '<link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>';
+		}
+
+		// Now deal with custom external fonts.
+		if ( ! empty( $args['custom_srcs'] ) ) {
+			// Get the site's origin (without the protocol) so we can exclude it.
+			$own_origin = $this->extract_origin_from_url( get_bloginfo( 'url' ) );
+			// Remove the protocol
+			$own_origin = preg_replace( '#((http|https|ftp|ftps)?\:?)#i', '', $own_origin );
+
+			$external_origins = array();
+			foreach ( $args['custom_srcs'] as $src ) {
+				$origin = $this->extract_origin_from_url( $src );
+				if ( ! empty( $origin ) && false === strpos( $origin, $own_origin ) ) {
+					$external_origins[] = $origin;
+				}
+			}
+
+			$external_origins = array_unique( $external_origins );
+			if ( ! empty( $external_origins ) ) {
+				foreach ( $external_origins as $external_origin ) {
+					echo '<link href="' . esc_url( $external_origin ) . '" rel="preconnect" crossorigin>';
+				}
+			}
+		}
+	}
+
+	protected function extract_origin_from_url( $url ) {
+		if ( empty( $url ) ) {
+			return false;
+		}
+
+		$regex = '#((?:http|https|ftp|ftps)?\:?\/\/[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,})(\/\S*)?#i';
+		preg_match( $regex, $url, $matches );
+
+		if ( empty( $matches[1] ) ) {
+			return false;
+		}
+
+		return $matches[1];
+	}
+
 	function get_field_unit( $font, $field ) {
 
 		if ( empty( $font ) || empty( $font['fields'] ) || empty( $font['fields'][ $field ] ) ) {
@@ -1113,7 +1173,7 @@ if (typeof WebFont !== 'undefined') {
 	function script_to_add_customizer_output_into_wp_editor() {
 
 		ob_start(); ?>
-<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js"></script>
+<script type="text/javascript" src="<?php echo plugins_url( 'js/vendor/webfontloader-1-6-28.js', PixCustomifyPlugin()->get_file() ); ?>"></script>
 <?php
 	$fonts_dynamic_script = $this->get_fonts_dynamic_script();
 	if ( ! empty( $fonts_dynamic_script ) ) {

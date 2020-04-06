@@ -86,6 +86,7 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 			$this->localized  = array(
 				'options_name' => PixCustomifyPlugin()->get_options_key(),
 				'ajax_url' => admin_url( 'admin-ajax.php' ),
+				'webfontloader_url' => plugins_url( 'js/vendor/webfontloader-1-6-28.js', PixCustomifyPlugin()->get_file() ),
 			);
 
 			// Hook up.

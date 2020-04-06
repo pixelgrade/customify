@@ -224,7 +224,7 @@ if ( ! class_exists( 'Customify_Gutenberg' ) ) {
 				), 10, 2 );
 
 				wp_register_script( PixCustomifyPlugin()->get_slug() . '-web-font-loader',
-					'//ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js', array('wp-editor'), null );
+					plugins_url( 'js/vendor/webfontloader-1-6-28.js', PixCustomifyPlugin()->get_file() ), array('wp-editor'), null );
 
 				Customify_Fonts_Global::instance()->enqueue_typography_frontend_scripts();
 				wp_add_inline_style( $enqueue_parent_handle, Customify_Fonts_Global::instance()->get_typography_dynamic_style() );

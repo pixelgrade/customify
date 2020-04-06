@@ -392,7 +392,7 @@
   function maybeLoadWebfontloaderScript () {
     if (typeof WebFont === 'undefined') {
       let tk = document.createElement('script')
-      tk.src = '//ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js'
+      tk.src = customify_settings.webfontloader_url
       tk.type = 'text/javascript'
       let s = document.getElementsByTagName('script')[0]
       s.parentNode.insertBefore(tk, s)
