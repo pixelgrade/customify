@@ -76,7 +76,7 @@ class Customify_Fonts_Global {
 			"'MS Sans Serif', Geneva, sans-serif"                  => "'MS Sans Serif', Geneva, sans-serif",
 			"'MS Serif', 'New York', sans-serif"                   => "'MS Serif', 'New York', sans-serif",
 			"'Palatino Linotype', 'Book Antiqua', Palatino, serif" => "'Palatino Linotype', 'Book Antiqua', Palatino, serif",
-			"Tahoma,Geneva, sans-serif"                            => "Tahoma, Geneva, sans-serif",
+			"Tahoma, Geneva, sans-serif"                            => "Tahoma, Geneva, sans-serif",
 			"'Times New Roman', Times,serif"                       => "'Times New Roman', Times, serif",
 			"'Trebuchet MS', Helvetica, sans-serif"                => "'Trebuchet MS', Helvetica, sans-serif",
 			"Verdana, Geneva, sans-serif"                          => "Verdana, Geneva, sans-serif",
@@ -123,7 +123,7 @@ class Customify_Fonts_Global {
 			add_action( 'admin_enqueue_scripts', array( $this, 'script_to_add_customizer_output_into_wp_editor' ), 10, 1 );
 		}
 
-		// Add data to the global `customify_settings` JS variable.
+		// Add data to be passed to JS.
 		add_filter( 'customify_localized_js_settings', array( $this, 'add_to_localized_data' ), 10, 1 );
 	}
 
@@ -174,7 +174,7 @@ class Customify_Fonts_Global {
 				$item['fields']['subsets'] = $item['subsets'];
 			}
 
-			// We have no reason to recurse when we have come across a `font` field configuration.
+			// We have no reason to go recursively further when we have come across a `font` field configuration.
 			return;
 		}
 
@@ -208,13 +208,25 @@ class Customify_Fonts_Global {
 				unset( $values[ $key ] );
 			}
 
+			if ( 'font_family' === $new_key ) {
+				// The font family may be a comma separated list like "Roboto, sans"
+				// We will keep only the first item.
+				if ( false !== strpos( $value, ',' ) ) {
+					$value = trim( substr( $value, 0, strpos( $value, ',' ) ) );
+				}
+
+				// Make sure that the font family is free from " or '
+				$value = trim( $value, "\"\'" );
+
+				$values[ $new_key ] = $value;
+			}
+
 			// @todo This is very weird! We are only using a single font weight and use that to generate CSS,
 			// not just to load font weights/variants via Web Font Loader. This key should actually be font_weight!!!
 			// The variants are automatically loaded by Web Font Loader. There is no need to select them.
 			if ( 'font_weight' === $new_key ) {
 				$values[ 'selected_variants' ] = $values[ $new_key ];
 				unset( $values[ $new_key ] );
-				$new_key = 'selected_variants';
 			}
 		}
 
@@ -495,27 +507,33 @@ class Customify_Fonts_Global {
 
 			// For each font family we will follow a stack: theme fonts, cloud fonts, google fonts.
 			if ( ! empty( $this->theme_fonts[ $value['font_family'] ] ) ) {
+				$font_details = $this->theme_fonts[ $value['font_family'] ];
 				$font_family = $value['font_family'];
-				if ( ! empty( $this->theme_fonts[ $value['font_family'] ]['variants'] ) ) {
-					$font_family .= ':' . join( ',', $this->convert_font_variants_to_fvds( $this->theme_fonts[ $value['font_family'] ]['variants'] ) );
+				if ( ! empty( $font_details['variants'] ) ) {
+					$font_family .= ':' . join( ',', $this->convert_font_variants_to_fvds( $font_details['variants'] ) );
 				}
 				$args['custom_families'][] = "'" . $font_family . "'";
-				$args['custom_srcs'][] = "'" . $this->theme_fonts[ $value['font_family'] ]['src'] . "'";
+				if ( ! empty( $font_details['src'] ) ) {
+					$args['custom_srcs'][] = "'" . $font_details['src'] . "'";
+				}
 				continue;
 			}
 
 			if ( ! empty( $this->cloud_fonts[ $value['font_family'] ] ) ) {
+				$font_details = $this->cloud_fonts[ $value['font_family'] ];
 				$font_family = $value['font_family'];
-				if ( ! empty( $this->cloud_fonts[ $value['font_family'] ]['variants'] ) ) {
-					$font_family .= join( ',', $this->convert_font_variants_to_fvds( $this->cloud_fonts[ $value['font_family'] ]['variants'] ) );
+				if ( ! empty( $font_details['variants'] ) ) {
+					$font_family .= join( ',', $this->convert_font_variants_to_fvds( $font_details['variants'] ) );
 				}
 				$args['custom_families'][] = "'" . $font_family . "'";
-				$args['custom_srcs'][] = "'" . $this->cloud_fonts[ $value['font_family'] ]['src'] . "'";
+				if ( ! empty( $font_details['src'] ) ) {
+					$args['custom_srcs'][] = "'" . $font_details['src'] . "'";
+				}
 				continue;
 			}
 
 			// Treat this as a Google font, if we have reached this far.
-			$font_family = "'" . $value['font_family'];
+			$font_family = $value['font_family'];
 
 			if ( ! empty( $value['variants'] ) && is_array( $value['variants'] ) ) {
 				$font_family .= ":" . implode( ',', $value['variants'] );
@@ -547,7 +565,8 @@ class Customify_Fonts_Global {
 				}
 			}
 
-			$font_family .= "'";
+			// Wrap it.
+			$font_family = "'" . $font_family . "'";
 
 			$args['google_families'][] = $font_family;
 		}

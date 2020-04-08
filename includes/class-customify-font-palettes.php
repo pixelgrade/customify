@@ -76,6 +76,9 @@ class Customify_Font_Palettes {
 		 * Add font palettes usage to site data.
 		 */
 		add_filter( 'customify_style_manager_get_site_data', array( $this, 'add_palettes_to_site_data' ), 10, 1 );
+
+		// Add data to be passed to JS.
+		add_filter( 'customify_localized_js_settings', array( $this, 'add_to_localized_data' ), 10, 1 );
 	}
 
 	/**
@@ -1297,6 +1300,25 @@ class Customify_Font_Palettes {
 		) );
 
 		return $site_data;
+	}
+
+	/**
+	 * Add data to be available to JS.
+	 *
+	 * @since 2.7.0
+	 *
+	 * @param array $localized
+	 *
+	 * @return array
+	 */
+	public function add_to_localized_data( $localized ) {
+		$localized['colorPalettesVariations'] = [
+			'light'    => [],
+			'regular' => [],
+			'big'   => [],
+		];
+
+		return $localized;
 	}
 
 	/**

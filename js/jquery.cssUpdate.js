@@ -1,7 +1,11 @@
 /*
  *  cssUpdate - v1.0.0
  */
-;(function ( $, window, document, undefined ) {
+
+/** @namespace customify */
+window.customify = window.customify || parent.customify || {};
+
+;(function ( $, window, customify ) {
 	var pluginName = "cssUpdate",
 		defaults = {
 		properties: ["color"],
@@ -88,7 +92,7 @@
 				unit = this.settings.unit;
 			}
 
-			if (  unit === '' && customify_settings.px_dependent_css_props.indexOf(property_name) != -1 ) {
+			if (  unit === '' && customify.config.px_dependent_css_props.indexOf(property_name) != -1 ) {
 				unit = 'px';
 			}
 
@@ -118,4 +122,4 @@
 		return this;
 	};
 
-})( jQuery, window, document );
+})( jQuery, window, customify );

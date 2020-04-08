@@ -1,6 +1,6 @@
-;(function ($, window, document, undefined) {
+;(function ($, window, document) {
 
-  /* global customify_settings */
+  /* global customify.config */
   /* global WebFont */
 
   $(window).load(function () {
@@ -12,9 +12,10 @@
 
   $(document).ready(function () {
     const api = parent.wp.customize
+    const customify = parent.customify
     const apiSettings = api.settings.settings
 
-    $.each(customify_settings.settings, function (key, el) {
+    $.each(customify.config.settings, function (key, el) {
       const properties_prefix = typeof el.properties_prefix === 'undefined' ? '' : el.properties_prefix
       if (el.type === 'font') {
         api(key, function (setting) {
@@ -198,7 +199,7 @@
     }
 
     const getCSSCode = function (ID, values, prefix) {
-      const field = customify_settings.settings[ID]
+      const field = customify.config.settings[ID]
       let output = ''
 
       if (typeof window !== 'undefined' && typeof field.callback !== 'undefined' && typeof window[field.callback] === 'function') {
@@ -216,15 +217,15 @@
 
     const getFieldUnit = function (ID, field) {
       let unit = ''
-      if (typeof customify_settings.settings[ID] === 'undefined' || typeof customify_settings.settings[ID].fields[field] === 'undefined') {
+      if (typeof customify.config.settings[ID] === 'undefined' || typeof customify.config.settings[ID].fields[field] === 'undefined') {
         return unit
       }
 
-      if (typeof customify_settings.settings[ID].fields[field].unit !== 'undefined') {
-        return customify_settings.settings[ID].fields[field].unit
-      } else if (typeof customify_settings.settings[ID].fields[field][3] !== 'undefined') {
+      if (typeof customify.config.settings[ID].fields[field].unit !== 'undefined') {
+        return customify.config.settings[ID].fields[field].unit
+      } else if (typeof customify.config.settings[ID].fields[field][3] !== 'undefined') {
         // in case of an associative array
-        return customify_settings.settings[ID].fields[field][3]
+        return customify.config.settings[ID].fields[field][3]
       }
 
       return unit
@@ -235,8 +236,10 @@
         return
       }
 
-      const fontType = determineFontType(font.font_family)
       let family = font.font_family
+      // The font family may be a comma separated list like "Roboto, sans"
+
+      const fontType = determineFontType(family)
 
       // Handle theme defined fonts and cloud fonts together since they are very similar.
       if (fontType === 'theme_font' || fontType === 'cloud_font') {
@@ -246,9 +249,9 @@
           let fontsArray
 
           if (fontType === 'theme_font') {
-            fontsArray = Object.keys(customify_settings.theme_fonts).map(key => customify_settings.theme_fonts[key])
+            fontsArray = Object.keys(customify.config.theme_fonts).map(key => customify.config.theme_fonts[key])
           } else {
-            fontsArray = Object.keys(customify_settings.cloud_fonts).map(key => customify_settings.cloud_fonts[key])
+            fontsArray = Object.keys(customify.config.cloud_fonts).map(key => customify.config.cloud_fonts[key])
           }
 
           const index = fontsArray.findIndex(fontObj => fontObj.family === family)
@@ -358,11 +361,11 @@
       let fontType = 'google'
 
       // We will follow a stack in the following order: theme fonts, cloud fonts, standard fonts, Google fonts.
-      if (typeof customify_settings.theme_fonts[fontFamily] !== 'undefined') {
+      if (typeof customify.config.theme_fonts[fontFamily] !== 'undefined') {
         fontType = 'theme_font'
-      } else if (typeof customify_settings.cloud_fonts[fontFamily] !== 'undefined') {
+      } else if (typeof customify.config.cloud_fonts[fontFamily] !== 'undefined') {
         fontType = 'cloud_font'
-      } else if (typeof customify_settings.std_fonts[fontFamily] !== 'undefined') {
+      } else if (typeof customify.config.std_fonts[fontFamily] !== 'undefined') {
         fontType = 'std_font'
       }
 
@@ -392,7 +395,7 @@
   function maybeLoadWebfontloaderScript () {
     if (typeof WebFont === 'undefined') {
       let tk = document.createElement('script')
-      tk.src = customify_settings.webfontloader_url
+      tk.src = parent.customify.config.webfontloader_url
       tk.type = 'text/javascript'
       let s = document.getElementsByTagName('script')[0]
       s.parentNode.insertBefore(tk, s)

@@ -191,7 +191,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 	protected function display_value_holder( $current_value ) { ?>
 		<input class="customify_font_values" id="<?php echo esc_attr( $this->CSSID ); ?>"
 		       type="hidden" <?php $this->link(); ?>
-		       value="<?php echo esc_attr( PixCustomifyPlugin::encodeURIComponent( json_encode( $current_value ) ) ); ?>"
+		       value="<?php // The value will be set by the Customizer core logic from the _wpCustomizeSettings.settings data. ?>"
 		       data-default="<?php echo esc_attr( PixCustomifyPlugin::encodeURIComponent( json_encode( $current_value ) ) ); ?>"/>
 	<?php }
 
@@ -614,16 +614,16 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 			if ( ! $this->isAssocArray( $this->default ) ) {
 
 				// Let's determine some type of font.
-				if ( ! isset( $this->default[2] ) || ( isset( $this->default[2] ) && 'google' == $this->default[2] ) ) {
-					$google_fonts = Customify_Fonts_Global::instance()->get_google_fonts();
-					if ( isset( $google_fonts[ $this->default[0] ] ) ) {
-						$to_return                = $google_fonts[ $this->default[0] ];
-						$to_return['font_family'] = $this->default[0];
-						$to_return['type']        = 'google';
-					}
-				} else {
-					$to_return['type'] = $this->default[2];
-				}
+//				if ( ! isset( $this->default[2] ) || ( isset( $this->default[2] ) && 'google' == $this->default[2] ) ) {
+//					$google_fonts = Customify_Fonts_Global::instance()->get_google_fonts();
+//					if ( isset( $google_fonts[ $this->default[0] ] ) ) {
+//						$to_return                = $google_fonts[ $this->default[0] ];
+//						$to_return['font_family'] = $this->default[0];
+//						$to_return['type']        = 'google';
+//					}
+//				} else {
+//					$to_return['type'] = $this->default[2];
+//				}
 
 				// The first entry is the font-family.
 				if ( isset( $this->default[0] ) ) {
@@ -679,9 +679,8 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 		// Rare case when there is a standard font we need to get the custom variants if there are some.
 		$std_fonts = Customify_Fonts_Global::instance()->get_std_fonts();
 		if ( ! isset( $to_return['variants'] )
-		     && isset( $to_return['font_family'] )
-		     && isset( $std_fonts[ $to_return['font_family'] ] )
 		     && isset( $std_fonts[ $to_return['font_family'] ]['variants'] ) ) {
+
 			$to_return['variants'] = $std_fonts[ $to_return['font_family'] ]['variants'];
 		}
 
@@ -689,12 +688,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 	}
 
 	protected function get_CSS_ID() {
-		$id = $this->id;
-
-		$id = str_replace( '[', '_', $id );
-		$id = str_replace( ']', '_', $id );
-
-		return $id;
+		return str_replace( array( '[', ']' ), '_', $this->id );
 	}
 
 	protected function isAssocArray( $array ) {

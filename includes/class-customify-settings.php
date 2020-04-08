@@ -124,14 +124,20 @@ class Customify_Settings {
 		$screen = get_current_screen();
 		if ( $screen->id == $this->plugin_screen_hook_suffix ) {
 			wp_enqueue_script( $this->slug . '-admin-script', plugins_url( 'js/admin.js', $this->file ), array( 'jquery' ), $this->version );
-			wp_localize_script( $this->slug . '-admin-script', 'customify_settings', array(
-				'ajax_url' => admin_url( 'admin-ajax.php' ),
-				'wp_rest' => array(
-					'root'  => esc_url_raw( rest_url() ),
-					'nonce' => wp_create_nonce( 'wp_rest' ),
-					'customify_settings_nonce' => wp_create_nonce( 'customify_settings_nonce' )
-				),
-			) );
+
+			wp_add_inline_script( $this->slug . '-admin-script',
+				PixCustomify_Customizer::getlocalizeToWindowScript( 'customify',
+					array(
+						'config' => array(
+							'ajax_url' => admin_url( 'admin-ajax.php' ),
+							'wp_rest' => array(
+								'root'  => esc_url_raw( rest_url() ),
+								'nonce' => wp_create_nonce( 'wp_rest' ),
+								'customify_settings_nonce' => wp_create_nonce( 'customify_settings_nonce' )
+							),
+						)
+					)
+				) );
 		}
 
 		wp_localize_script( $this->slug . '-customizer-scripts', 'WP_API_Settings', array(
