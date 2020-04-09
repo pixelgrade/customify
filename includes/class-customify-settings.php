@@ -25,8 +25,6 @@ class Customify_Settings {
 	 */
 	protected $plugin_screen_hook_suffix = null;
 
-	public $display_admin_menu = false;
-
 	public $plugin_settings;
 
 	/**
@@ -123,9 +121,9 @@ class Customify_Settings {
 
 		$screen = get_current_screen();
 		if ( $screen->id == $this->plugin_screen_hook_suffix ) {
-			wp_enqueue_script( $this->slug . '-admin-script', plugins_url( 'js/admin.js', $this->file ), array( 'jquery' ), $this->version );
+			wp_enqueue_script( $this->slug . '-settings-page-script', plugins_url( 'js/settings-page.js', $this->file ), array( 'jquery' ), $this->version );
 
-			wp_add_inline_script( $this->slug . '-admin-script',
+			wp_add_inline_script( $this->slug . '-settings-page-script',
 				PixCustomify_Customizer::getlocalizeToWindowScript( 'customify',
 					array(
 						'config' => array(
@@ -302,15 +300,15 @@ class Customify_Settings {
 							'options' => array(
 								'typography_standard_fonts'     => array(
 									'name'    => 'typography_standard_fonts',
-									'label'   => esc_html__( 'Use Standard fonts:', 'customify' ),
-									'desc'    => esc_html__( 'Would you like them?', 'customify' ),
+									'label'   => esc_html__( 'Use Standard fonts', 'customify' ),
+									'desc'    => esc_html__( 'Would you like to use system fonts?', 'customify' ),
 									'default' => true,
 									'type'    => 'switch',
 								),
 								'typography_google_fonts'       => array(
 									'name'           => 'typography_google_fonts',
 									'label'          => esc_html__( 'Use Google fonts:', 'customify' ),
-									'desc'           => esc_html__( 'Would you like them?', 'customify' ),
+									'desc'           => esc_html__( 'Would you to use Google fonts?', 'customify' ),
 									'default'        => true,
 									'type'           => 'switch',
 									'show_group'     => 'typography_google_fonts_group',

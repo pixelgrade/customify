@@ -89,7 +89,7 @@ class Customify_Font_Palettes {
 		wp_register_script( PixCustomifyPlugin()->get_slug() . '-font-palettes', plugins_url( 'js/customizer/font-palettes.js', PixCustomifyPlugin()->get_file() ), array(
 			PixCustomifyPlugin()->get_slug() . '-regression',
 			'jquery',
-			PixCustomifyPlugin()->get_slug() . '-fontselectfields',
+			PixCustomifyPlugin()->get_slug() . '-fontfields',
 		), PixCustomifyPlugin()->get_version() );
 	}
 

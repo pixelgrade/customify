@@ -387,17 +387,6 @@ class Pix_Customize_Typography_Control extends Pix_Customize_Control {
 			//Handle special logic for when the $value array is not an associative array
 			if ( ! PixCustomifyPlugin()->is_assoc( $this->default ) ) {
 
-				//Let's determine some type of font
-				if ( ! isset( $this->default[2] ) || ( isset( $this->default[2] ) && 'google' == $this->default[2] ) ) {
-					if ( isset( self::$google_fonts[ $this->default[0] ] ) ) {
-						$to_return                = self::$google_fonts[ $this->default[0] ];
-						$to_return['font_family'] = $this->default[0];
-						$to_return['type']        = 'google';
-					}
-				} else {
-					$to_return['type'] = $this->default[2];
-				}
-
 				//The first entry is the font-family
 				if ( isset( $this->default[0] ) ) {
 					$to_return['font_family'] = $this->default[0];

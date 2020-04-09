@@ -30,7 +30,7 @@ $attrs = array(
 		} ?>
 		<fieldset class="multicheckbox_option">
 			<input <?php echo $field->htmlattributes( $attrs ) ?>>
-			<label id="<?php echo $value ?>"><?php echo $label ?></label>
+			<label id="<?php echo esc_attr( $value ) ?>"><?php echo $label ?></label>
 		</fieldset>
 	<?php } ?>
 </div>

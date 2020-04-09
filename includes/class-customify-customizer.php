@@ -161,20 +161,20 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 		 */
 		function register_admin_customizer_scripts() {
 
-			wp_register_script( 'customify_select2', plugins_url( 'js/vendor/select2.min.js', PixCustomifyPlugin()->get_file() ), array( 'jquery' ), PixCustomifyPlugin()->get_version() );
+			wp_register_script( PixCustomifyPlugin()->get_slug() . '-select2', plugins_url( 'js/vendor/select2.min.js', PixCustomifyPlugin()->get_file() ), array( 'jquery' ), PixCustomifyPlugin()->get_version() );
 			wp_register_script( 'jquery-react', plugins_url( 'js/vendor/jquery-react.js', PixCustomifyPlugin()->get_file() ), array( 'jquery' ), PixCustomifyPlugin()->get_version() );
 
-			wp_register_script( 'customify-scale', plugins_url( 'js/customizer/scale-iframe.js', PixCustomifyPlugin()->get_file() ), array( 'jquery' ), PixCustomifyPlugin()->get_version() );
-			wp_register_script( 'customify-fontfields', plugins_url( 'js/customizer/font-fields.js', PixCustomifyPlugin()->get_file() ), array( 'jquery', 'underscore' ), PixCustomifyPlugin()->get_version() );
+			wp_register_script( PixCustomifyPlugin()->get_slug() . '-scale', plugins_url( 'js/customizer/scale-iframe.js', PixCustomifyPlugin()->get_file() ), array( 'jquery' ), PixCustomifyPlugin()->get_version() );
+			wp_register_script( PixCustomifyPlugin()->get_slug() . '-fontfields', plugins_url( 'js/customizer/font-fields.js', PixCustomifyPlugin()->get_file() ), array( 'jquery', 'underscore' ), PixCustomifyPlugin()->get_version() );
 
 			wp_register_script( PixCustomifyPlugin()->get_slug() . '-customizer-scripts', plugins_url( 'js/customizer.js', PixCustomifyPlugin()->get_file() ), array(
 				'jquery',
-				'customify_select2',
+				PixCustomifyPlugin()->get_slug() . '-select2',
 				'underscore',
 				'customize-controls',
-				'customify-fontfields',
+				PixCustomifyPlugin()->get_slug() . '-fontfields',
 
-				'customify-scale',
+				PixCustomifyPlugin()->get_slug() . '-scale',
 			), PixCustomifyPlugin()->get_version() );
 		}
 
@@ -542,7 +542,7 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 
 			ob_start(); ?>
 (function ($) {
-	$(window).load(function () {
+	$(window).on('load',function () {
 		/**
 		* @param iframe_id the id of the frame you want to append the style
 		* @param style_element the style element you want to append - boooom
@@ -1033,9 +1033,8 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 				// This is a legacy control type
 				// @todo Consider removing this at some point or automatically migrate data to Font control type.
 				case 'typography' :
-					$use_typography = PixCustomifyPlugin()->settings->get_plugin_setting( 'typography', '1' );
 
-					if ( $use_typography === false ) {
+					if ( ! PixCustomifyPlugin()->settings->get_plugin_setting( 'typography', '1' ) ) {
 						$add_control = false;
 						break;
 					}
@@ -1054,16 +1053,11 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 						$control_args['recommended'] = array_flip( $field_config['recommended'] );
 					}
 
-//					if ( isset( $field_config['default'] ) ) {
-//						$control_args['default'] = $field_config['default'];
-//					}
-
 					break;
 
 				case 'font' :
-					$use_typography = PixCustomifyPlugin()->settings->get_plugin_setting( 'typography', '1' );
 
-					if ( $use_typography === false ) {
+					if ( ! PixCustomifyPlugin()->settings->get_plugin_setting( 'typography', '1' ) ) {
 						$add_control = false;
 						break;
 					}
@@ -1073,10 +1067,6 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 					if ( isset( $field_config['recommended'] ) ) {
 						$control_args['recommended'] = array_flip( $field_config['recommended'] );
 					}
-
-//					if ( isset( $field_config['default'] ) ) {
-//						$control_args['default'] = $field_config['default'];
-//					}
 
 					if ( isset( $field_config['live'] ) ) {
 						$control_args['live'] = $field_config['live'];

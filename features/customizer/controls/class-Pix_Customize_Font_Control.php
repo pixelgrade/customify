@@ -172,8 +172,8 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 		</div>
 		<script>
 			// Update the font name in the font field label
-			jQuery( '#select_font_font_family_<?php echo esc_attr( $this->CSSID ); ?>' ).change( function(){
-				var newValue = jQuery( '#select_font_font_family_<?php echo esc_attr( $this->CSSID ); ?>' ).val();
+			jQuery( '#select_font_font_family_<?php echo esc_attr( $this->CSSID ); ?>' ).on('change', function(){
+				const newValue = jQuery( '#select_font_font_family_<?php echo esc_attr( $this->CSSID ); ?>' ).val();
 				jQuery( '#font_name_<?php echo esc_attr( $this->CSSID ); ?>' ).html( newValue );
 			});
 		</script>
@@ -606,85 +606,37 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 
 	function get_default_values() {
 
-		$to_return = array();
+		$defaults = array();
 
 		if ( isset( $this->default ) && is_array( $this->default ) ) {
 
 			// Handle special logic for when the $value array is not an associative array.
 			if ( ! $this->isAssocArray( $this->default ) ) {
 
-				// Let's determine some type of font.
-//				if ( ! isset( $this->default[2] ) || ( isset( $this->default[2] ) && 'google' == $this->default[2] ) ) {
-//					$google_fonts = Customify_Fonts_Global::instance()->get_google_fonts();
-//					if ( isset( $google_fonts[ $this->default[0] ] ) ) {
-//						$to_return                = $google_fonts[ $this->default[0] ];
-//						$to_return['font_family'] = $this->default[0];
-//						$to_return['type']        = 'google';
-//					}
-//				} else {
-//					$to_return['type'] = $this->default[2];
-//				}
-
 				// The first entry is the font-family.
 				if ( isset( $this->default[0] ) ) {
-					$to_return['font_family'] = $this->default[0];
+					$defaults['font_family'] = $this->default[0];
 				}
 
-				// In case we don't have an associative array.
 				// The second entry is the variants.
 				if ( isset( $this->default[1] ) ) {
-					$to_return['selected_variants'] = $this->default[1];
+					$defaults['selected_variants'] = $this->default[1];
 				}
 			} else {
-
-				if ( isset( $this->default['font_family'] ) ) {
-					$to_return['font_family'] = $this->default['font_family'];
-				} elseif ( isset( $this->default['font-family'] ) ) {
-					// Handle the case with dash instead of underscore.
-					$to_return['font_family'] = $this->default['font-family'];
-				}
-
-				if ( isset( $this->default['selected_variants'] ) ) {
-					$to_return['selected_variants'] = $this->default['selected_variants'];
-				} elseif ( isset( $this->default['font-weight'] ) ) {
-					$to_return['selected_variants'] = $this->default['font-weight'];
-				}
-
-				if ( isset( $this->default['font-size'] ) ) {
-					$to_return['font-size'] = $this->default['font-size'];
-				}
-
-				if ( isset( $this->default['line-height'] ) ) {
-					$to_return['line-height'] = $this->default['line-height'];
-				}
-
-				if ( isset( $this->default['letter-spacing'] ) ) {
-					$to_return['letter-spacing'] = $this->default['letter-spacing'];
-				}
-
-				if ( isset( $this->default['text-transform'] ) ) {
-					$to_return['text-transform'] = $this->default['text-transform'];
-				}
-
-				if ( isset( $this->default['text-align'] ) ) {
-					$to_return['text-align'] = $this->default['text-align'];
-				}
-
-				if ( isset( $this->default['text-decoration'] ) ) {
-					$to_return['text_decoration'] = $this->default['text-decoration'];
-				}
+				$defaults = Customify_Fonts_Global::standardize_font_values( $this->default );
 			}
 		}
 
-		// Rare case when there is a standard font we need to get the custom variants if there are some.
+		// Rare case when this is a standard font and we need to get the custom variants if there are some.
+		$font_type =
 		$std_fonts = Customify_Fonts_Global::instance()->get_std_fonts();
-		if ( ! isset( $to_return['variants'] )
-		     && isset( $std_fonts[ $to_return['font_family'] ]['variants'] ) ) {
+		if ( ! isset( $defaults['variants'] )
+		     && isset( $std_fonts[ $defaults['font_family'] ]['variants'] ) ) {
 
-			$to_return['variants'] = $std_fonts[ $to_return['font_family'] ]['variants'];
+			$defaults['variants'] = $std_fonts[ $defaults['font_family'] ]['variants'];
 		}
 
-		return $to_return;
+		return $defaults;
 	}
 
 	protected function get_CSS_ID() {

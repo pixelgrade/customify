@@ -83,7 +83,7 @@ window.customify = window.customify || {};
           }
 
           // The font type is determined on the fly, ignoring anything that may be set in the parent font logic configuration.
-          newFontData['type'] = determineFontType(newFontData['font_family'])
+          newFontData['type'] = customify.fontFields.determineFontType(newFontData['font_family'])
 
           // The selected variants also come straight from the font logic right now.
           if (typeof fonts_logic.font_weights !== 'undefined') {
@@ -130,22 +130,6 @@ window.customify = window.customify || {};
           setting.set(serializedNewFontData)
         })
       }
-    }
-
-    const determineFontType = function (fontFamily) {
-      // The default is Google.
-      let fontType = 'google'
-
-      // We will follow a stack in the following order: theme fonts, cloud fonts, standard fonts, Google fonts.
-      if (typeof customify.config.theme_fonts[fontFamily] !== 'undefined') {
-        fontType = 'theme_font'
-      } else if (typeof customify.config.cloud_fonts[fontFamily] !== 'undefined') {
-        fontType = 'cloud_font'
-      } else if (typeof customify.config.std_fonts[fontFamily] !== 'undefined') {
-        fontType = 'std_font'
-      }
-
-      return fontType
     }
 
     const bindConnectedFields = function () {

@@ -691,7 +691,7 @@ if ( ! class_exists( 'Customify_Style_Manager' ) ) {
 		}
 
 		/**
-		 * Add the JS needed data to the global `customify_settings` variable.
+		 *  Add data to be available in JS.
 		 *
 		 * @since 2.7.0
 		 *

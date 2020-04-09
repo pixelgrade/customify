@@ -6,14 +6,14 @@
 window.customify = window.customify || parent.customify || {};
 
 ;(function ( $, window, customify ) {
-	var pluginName = "cssUpdate",
-		defaults = {
-		properties: ["color"],
-		propertyValue: "pink",
-		classes: "Null"
-	};
+  const pluginName = 'cssUpdate',
+    defaults = {
+      properties: ['color'],
+      propertyValue: 'pink',
+      classes: 'Null'
+    }
 
-	// Plugin constructor
+  // Plugin constructor
 	function cssLiveUpdater ( element, options ) {
 		this.element = element;
 		this.settings = $.extend( {}, defaults, options );
@@ -41,17 +41,17 @@ window.customify = window.customify || parent.customify || {};
 
 		changeProperties: function () {
 
-			var self = this,
-				css = this._cssproperties.cssRules;
+      const self = this,
+        css = this._cssproperties.cssRules
 
-			if ( typeof css[0] !== "undefined" && css[0].hasOwnProperty('media') ) {
+      if ( typeof css[0] !== "undefined" && css[0].hasOwnProperty('media') ) {
 				// in this case we run a media query object
 				$.each(css, function( key, media_query ){
 					// simple object with css properties
 					// change them with new ones
 					$.each(media_query.cssRules, function(i, property){
-						var property_name = property.style[0];
-						css[key].cssRules[i].style[property_name] = self.updateCssRule(property_name, self.settings, css[key].cssRules[i].selectorText);
+            const property_name = property.style[0]
+            css[key].cssRules[i].style[property_name] = self.updateCssRule(property_name, self.settings, css[key].cssRules[i].selectorText);
 					});
 				});
 
@@ -61,8 +61,8 @@ window.customify = window.customify || parent.customify || {};
 				// change them with new ones
 				$.each(css, function(i, property){
 					if ( property.hasOwnProperty( 'style' ) ) {
-						var property_name = property.style[0];
-						css[i].style[property_name] = self.updateCssRule(property_name, self.settings, css[i].selectorText);
+            const property_name = property.style[0]
+            css[i].style[property_name] = self.updateCssRule(property_name, self.settings, css[i].selectorText);
 					}
 				});
 			}
@@ -80,15 +80,15 @@ window.customify = window.customify || parent.customify || {};
 		 */
 		updateCssRule: function(property_name, settings, selectorText){
 
-			var self = this,
-				properties = settings.properties,
-				new_value = settings.propertyValue,
-				// if there is a negative property ... keep it negative
-				sign = settings['negative_value'] ? '-' : '';
+      const self = this,
+        properties = settings.properties,
+        new_value = settings.propertyValue,
+        // if there is a negative property ... keep it negative
+        sign = settings['negative_value'] ? '-' : ''
 
-			var unit = '';
+      let unit = ''
 
-			if ( typeof this.settings.unit !== 'undefined' ) {
+      if ( typeof this.settings.unit !== 'undefined' ) {
 				unit = this.settings.unit;
 			}
 
@@ -109,9 +109,9 @@ window.customify = window.customify || parent.customify || {};
 	$.fn[ pluginName ] = function ( options ) {
 		this.each(function() {
 
-			var old_plugin = $(this).data( 'plugin_cssUpdate' );
+      const old_plugin = $(this).data('plugin_cssUpdate')
 
-			if ( typeof old_plugin !== 'undefined' ) {
+      if ( typeof old_plugin !== 'undefined' ) {
 				old_plugin.update_plugin( options );
 			} else {
 				$.data( this, "plugin_" + pluginName, new cssLiveUpdater( this, options ) );
