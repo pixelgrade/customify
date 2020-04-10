@@ -105,7 +105,8 @@ window.customify = window.customify || {};
             selected_variants = $(el).data('default') || null
 
           if (typeof variants === 'undefined') {
-            $(this).hide()
+            $(this).hide();
+            $(this).prev('label').hide();
             return
           }
 
@@ -231,7 +232,8 @@ window.customify = window.customify || {};
       $($font_weights).data('touched', false)
 
       if (typeof variants === 'undefined' || Object.keys(variants).length < 2 || !_.isUndefined($font_weights.data('disabled'))) {
-        $font_weights.parent().hide()
+        $font_weights.parent().hide();
+        $font_weights.parent().prev('label').hide();
         return
       }
 
@@ -287,11 +289,13 @@ window.customify = window.customify || {};
       $(font_subsets).data('touched', false)
 
       if (typeof subsets === 'undefined' || Object.keys(subsets).length < 2 || !_.isUndefined(font_subsets.data('disabled'))) {
-        font_subsets.parent().hide()
+        font_subsets.parent().hide();
+        font_subsets.parent().prev('label').hide();
         return
       }
 
-      font_subsets.parent().show()
+      font_subsets.parent().show();
+      font_subsets.parent().prev('label').show();
 
       // Attempt to keep (some of) the previously selected subsets, depending on what the new font supports.
       let currentFontValue = maybeJsonParse(wrapper.children(valueHolderSelector).val())
