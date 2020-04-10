@@ -12,6 +12,8 @@ const plugin = 'customify',
 
 require('es6-promise').polyfill();
 
+const scriptsSrc = ['./js/customizer/*.js','./js/*.js','!./js/**/*.min.js'];
+
 // -----------------------------------------------------------------------------
 // This is a helper function used to update the Google fonts list and recreate the php file holding it (includes/resources/google.fonts.php).
 // -----------------------------------------------------------------------------
@@ -107,7 +109,7 @@ gulp.task( 'styles', stylesSequence );
 
 // Create minified versions of scripts.
 function minifyScripts() {
-  return gulp.src(['./js/customizer/*.js','./js/*.js','!./js/**/*.min.js'],{base: './js/'})
+  return gulp.src(scriptsSrc,{base: './js/'})
     .pipe( plugins.terser({
       warnings: true,
       compress: true, mangle: true,
@@ -121,7 +123,7 @@ function minifyScripts() {
 gulp.task( 'minify-scripts', minifyScripts );
 
 function scriptsCompileSequence(cb) {
-  gulp.series( 'minify-scripts', )(cb);
+  gulp.series( 'minify-scripts' )(cb);
 }
 gulp.task( 'scripts', scriptsCompileSequence );
 
@@ -129,8 +131,12 @@ gulp.task('styles-watch', function () {
 	return gulp.watch('scss/**/*.scss', stylesDev);
 });
 
-gulp.task('watch', function () {
-	gulp.watch('scss/**/*.scss', stylesDev);
+gulp.task('scripts-watch', function () {
+  return gulp.watch( scriptsSrc, scriptsCompileSequence );
+});
+
+gulp.task('watch', function(cb) {
+	return gulp.parallel('styles-watch', 'scripts-watch')(cb);
 });
 
 // usually there is a default task for lazy people who just wanna type gulp
