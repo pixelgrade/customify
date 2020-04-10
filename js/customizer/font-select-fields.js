@@ -87,7 +87,8 @@ let CustomifyFontSelectFields = (function ($, exports, wp) {
           selected_variants = $(el).data('default') || null
 
         if (typeof variants === 'undefined') {
-          $(this).hide()
+          $( this ).hide();
+          $( this ).prev( 'label' ).hide();
           return
         }
 
@@ -200,7 +201,8 @@ let CustomifyFontSelectFields = (function ($, exports, wp) {
     $($font_weights).select2().empty()
 
     if ( typeof variants === 'undefined' || Object.keys(variants).length < 2 || !_.isUndefined($font_weights.data('disabled'))) {
-      $font_weights.parent().hide()
+      $font_weights.parent().hide();
+      $font_weights.parent().prev( 'label' ).hide();
       return
     }
 
@@ -246,6 +248,7 @@ let CustomifyFontSelectFields = (function ($, exports, wp) {
 
     if (type !== 'google' || typeof subsets === 'undefined' || Object.keys(subsets).length < 2 || !_.isUndefined(font_subsets.data('disabled'))) {
       font_subsets.parent().hide()
+      font_subsets.parent().prev( 'label' ).hide();
       return
     }
 
