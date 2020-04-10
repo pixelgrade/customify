@@ -1,6 +1,9 @@
-(
-  function ($, exports, wp) {
+/** @namespace customify */
+window.customify = window.customify || parent.customify || {};
+
+(function ($, customify, wp) {
     const api = wp.customize
+    const $window = $(window)
     const $document = $(document)
 
     // when the customizer is ready prepare our fields events
@@ -9,8 +12,8 @@
 
       // Create a stack of callbacks bound to parent settings to be able to unbind them
       // when altering the connected_fields attribute.
-      if (typeof window.connectedFieldsCallbacks === 'undefined') {
-        window.connectedFieldsCallbacks = {}
+      if (typeof customify.connectedFieldsCallbacks === 'undefined') {
+        customify.connectedFieldsCallbacks = {}
       }
 
       // add ace editors
@@ -46,7 +49,7 @@
       $('.customify_select2').select2()
 
       setTimeout(function () {
-        CustomifyFontSelectFields.init()
+        customify.fontFields.init()
       }, 333)
 
       prepare_typography_field()
@@ -65,7 +68,7 @@
       })
 
       // for each range input add a value preview output
-      $('.accordion-section-content[id*="' + customify_settings.options_name + '"], #sub-accordion-section-style_manager_section').each(function () {
+      $('.accordion-section-content[id*="' + customify.config.options_name + '"], #sub-accordion-section-style_manager_section').each(function () {
 
         // Initialize range fields logic
         customifyHandleRangeFields(this)
@@ -143,6 +146,8 @@
       // Bind any connected fields, except those in the Style Manager.
       // Those are handled by the appropriate Style Manager component (Color Palettes, Font Palettes, etc ).
       bindConnectedFields()
+
+      handlePreviewIframe()
     })
 
     function handleResetButtons () {
@@ -193,7 +198,7 @@
         const $this = $(this)
         const sectionID = $this.attr('id')
 
-        if (_.isUndefined(sectionID) || sectionID.indexOf(customify_settings.options_name) === -1) {
+        if (_.isUndefined(sectionID) || sectionID.indexOf(customify.config.options_name) === -1) {
           return
         }
 
@@ -219,7 +224,7 @@
 
       $.each(api.settings.controls, function (key, ctrl) {
         const settingID = key.replace('_control', '')
-        const setting = customify_settings.settings[settingID]
+        const setting = customify.config.settings[settingID]
 
         if (!_.isUndefined(setting) && !_.isUndefined(setting.default)) {
           api_set_setting_value(settingID, setting.default)
@@ -247,7 +252,7 @@
           if (controls.length > 0) {
             $.each(controls, function (key, ctrl) {
               const setting_id = ctrl.id.replace('_control', ''),
-                setting = customify_settings.settings[setting_id]
+                setting = customify.config.settings[setting_id]
 
               if (!_.isUndefined(setting) && !_.isUndefined(setting.default)) {
                 api_set_setting_value(setting_id, setting.default)
@@ -274,7 +279,7 @@
       if (controls.length > 0) {
         $.each(controls, function (key, ctrl) {
           const setting_id = ctrl.id.replace('_control', ''),
-            setting = customify_settings.settings[setting_id]
+            setting = customify.config.settings[setting_id]
 
           if (!_.isUndefined(setting) && !_.isUndefined(setting.default)) {
             api_set_setting_value(setting_id, setting.default)
@@ -333,21 +338,21 @@
     const bindConnectedFields = function () {
       _.each(api.settings.settings, function (parent_setting_data, parent_setting_id) {
         // We don't want to handle the binding of the Style Manager settings
-        if (typeof ColorPalettes !== 'undefined'
-          && typeof ColorPalettes.masterSettingIds !== 'undefined'
-          && _.contains(ColorPalettes.masterSettingIds, parent_setting_id)) {
+        if (typeof customify.colorPalettes !== 'undefined'
+          && typeof customify.colorPalettes.masterSettingIds !== 'undefined'
+          && _.contains(customify.colorPalettes.masterSettingIds, parent_setting_id)) {
           return
         }
-        if (typeof FontPalettes !== 'undefined'
-          && typeof FontPalettes.masterSettingIds !== 'undefined'
-          && _.contains(FontPalettes.masterSettingIds, parent_setting_id)) {
+        if (typeof customify.fontPalettes !== 'undefined'
+          && typeof customify.fontPalettes.masterSettingIds !== 'undefined'
+          && _.contains(customify.fontPalettes.masterSettingIds, parent_setting_id)) {
           return
         }
 
         let parent_setting = api(parent_setting_id)
         if (typeof parent_setting_data.connected_fields !== 'undefined') {
-          connectedFieldsCallbacks[parent_setting_id] = getConnectedFieldsCallback(parent_setting_data, parent_setting_id)
-          parent_setting.bind(connectedFieldsCallbacks[parent_setting_id])
+          customify.connectedFieldsCallbacks[parent_setting_id] = getConnectedFieldsCallback(parent_setting_data, parent_setting_id)
+          parent_setting.bind(customify.connectedFieldsCallbacks[parent_setting_id])
         }
       })
     }
@@ -367,8 +372,8 @@
             .attr('class', 'range-value')
             .removeAttr('data-field')
 
-          if ( $range.first().attr('id') ) {
-            $number.attr('id', $range.first().attr('id')+'_number')
+          if ($range.first().attr('id')) {
+            $number.attr('id', $range.first().attr('id') + '_number')
           }
           $number.insertAfter($range)
         }
@@ -385,16 +390,22 @@
           return !(typeof max !== 'undefined' && parseFloat(max) < parseFloat(value))
         }
 
+        // Put the value into the number field.
         $range.on('input', function () {
           $number.val($range.val())
         })
 
-        $number.on('blur', function () {
+        // When clicking outside the number field or on Enter.
+        $number.on('blur keyup', function (event) {
+          if ('keyup' === event.type && event.keyCode !== 13) {
+            return
+          }
+
           if (!hasValidValue($number)) {
             $number.val($range.val())
             shake($number)
           } else {
-            $range.val($number.val())
+            $range.val($number.val()).trigger('input').trigger('change')
           }
         })
 
@@ -414,7 +425,7 @@
      */
     const customifyFoldingFields = function () {
 
-      if (_.isUndefined(customify_settings) || _.isUndefined(customify_settings.settings)) {
+      if (_.isUndefined(customify.config) || _.isUndefined(customify.config.settings)) {
         return // bail
       }
 
@@ -449,8 +460,8 @@
         let value = 1, // by default we use 1 the most used value for checkboxes or inputs
           between = [0, 1] // can only be `show` or `hide`
 
-        const target_key = customify_settings.options_name + '[' + key + ']'
-        const target_type = customify_settings.settings[target_key].type
+        const target_key = customify.config.options_name + '[' + key + ']'
+        const target_type = customify.config.settings[target_key].type
 
         // we support the usual syntax like a config array like `array( 'id' => $id, 'value' => $value, 'compare' => $compare )`
         // but we also support a non-associative array like `array( $id, $value, $compare )`
@@ -467,7 +478,7 @@
         /**
          * Now for each target we have, we will bind a change event to hide or show the dependent fields
          */
-        const target_selector = '[data-customize-setting-link="' + customify_settings.options_name + '[' + key + ']"]'
+        const target_selector = '[data-customize-setting-link="' + customify.config.options_name + '[' + key + ']"]'
 
         switch (target_type) {
           case 'checkbox':
@@ -524,7 +535,7 @@
         $('.reactor').trigger('change.reactor') // triggers all events on load
       }
 
-      $.each(customify_settings.settings, function (id, field) {
+      $.each(customify.config.settings, function (id, field) {
         /**
          * Here we have the id of the fields. but we know for sure that we just need his parent selector
          * So we just create it
@@ -619,7 +630,9 @@
           let option = field.parent().find('option[value="' + value + '"]')
 
           option.attr('selected', 'selected')
-          // option.parents('select').trigger('change');
+          // We mark the parent select as touched because we need the full font field value regenerated.
+          // We've arrived here most probably from a Preset, not from Style Manager.
+          $(option).parents('select').data('touched', true).trigger('change')
         } else if (_.isObject(value)) {
           // Find the options list wrapper
           let optionsList = field.parent().children('.font-options__options-list')
@@ -650,8 +663,7 @@
               }
               let subField = optionsList.find('[data-field="' + mappedKey + '"]')
               if (subField.length) {
-                subField.val(val)
-                subField.trigger('change')
+                subField.val(val).trigger('change')
               }
             })
           }
@@ -668,6 +680,7 @@
         $input = $font_select.siblings('.customify_typography_values'),
         currentValue = $input.attr('value')
 
+      // @todo We should not end up in this situation.
       if (currentValue === '[object Object]') {
         currentValue = $input.data('default')
       } else if (_.isString(currentValue) && !isJsonString(currentValue)) {
@@ -793,7 +806,7 @@
           if (!_.isUndefined($font_weight)) {
             $font_weight.html(variantsOptionsMarkup)
             // if there is no weight or just 1 we hide the weight select ... cuz is useless
-            if ( variantsCount < 2 || !_.isUndefined($font_select.data('disabled'))) {
+            if (variantsCount < 2 || !_.isUndefined($font_select.data('disabled'))) {
               $font_weight.parent().hide()
             } else {
               $font_weight.parent().show()
@@ -836,6 +849,54 @@
         }
 
         $input.val(encodeURIComponent(JSON.stringify(newValue)))
+      }
+    }
+
+    const handlePreviewIframe = function() {
+      api.previewer.bind('synced', function () {
+        scaleIframe()
+
+        api.previewedDevice.bind(scaleIframe)
+        $window.on('resize', scaleIframe)
+      })
+
+      $('.collapse-sidebar').on('click', function () {
+        setTimeout(scaleIframe, 300)
+      })
+    }
+
+    const scaleIframe = function () {
+      const $previewIframe = $('.wp-full-overlay')
+
+      // remove CSS properties that may have been previously added
+      $previewIframe.find('iframe').css({
+        width: '',
+        height: '',
+        transformOrigin: '',
+        transform: ''
+      })
+
+      // scaling of the site preview should be done only in desktop preview mode
+      if (api.previewedDevice.get() !== 'desktop') {
+        return
+      }
+
+      const iframeWidth = $previewIframe.width()
+      const windowWidth = $window.width()
+      const windowHeight = $window.height()
+
+      // get the ratio between the site preview and actual browser width
+      const scale = windowWidth / iframeWidth
+
+      // for an accurate preview at resolutions where media queries may intervene
+      // increase the width of the iframe and use CSS transforms to scale it back down
+      if (iframeWidth > 720 && iframeWidth < 1100) {
+        $previewIframe.find('iframe').css({
+          width: iframeWidth * scale,
+          height: windowHeight * scale,
+          transformOrigin: 'left top',
+          transform: 'scale(' + 1 / scale + ')'
+        })
       }
     }
 
@@ -1082,4 +1143,4 @@
       return true
     }
   }
-)(jQuery, window, wp)
+)(jQuery, customify, wp)

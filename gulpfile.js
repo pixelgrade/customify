@@ -1,14 +1,14 @@
-var plugin = 'customify',
-	source_SCSS = 'scss/*.scss',
-	dest_CSS = './css/',
+const plugin = 'customify',
+  source_SCSS = 'scss/*.scss',
+  dest_CSS = './css/',
 
-	gulp = require('gulp'),
-	fs = require('fs'),
-	plugins = require('gulp-load-plugins')(),
-	del = require('del'),
-	cp = require('child_process'),
+  gulp = require('gulp'),
+  fs = require('fs'),
+  plugins = require('gulp-load-plugins')(),
+  del = require('del'),
+  cp = require('child_process'),
   cleanCSS = require('gulp-clean-css'),
-  commandExistsSync = require('command-exists').sync;
+  commandExistsSync = require('command-exists').sync
 
 require('es6-promise').polyfill();
 
@@ -104,6 +104,26 @@ function stylesSequence(cb) {
 }
 stylesSequence.description = 'Compile styles';
 gulp.task( 'styles', stylesSequence );
+
+// Create minified versions of scripts.
+function minifyScripts() {
+  return gulp.src(['./js/customizer/*.js','./js/*.js','!./js/**/*.min.js'],{base: './js/'})
+    .pipe( plugins.terser({
+      warnings: true,
+      compress: true, mangle: true,
+      output: { comments: 'some' }
+    }))
+    .pipe(plugins.rename({
+      suffix: ".min"
+    }))
+    .pipe(gulp.dest('./js'));
+}
+gulp.task( 'minify-scripts', minifyScripts );
+
+function scriptsCompileSequence(cb) {
+  gulp.series( 'minify-scripts', )(cb);
+}
+gulp.task( 'scripts', scriptsCompileSequence );
 
 gulp.task('styles-watch', function () {
 	return gulp.watch('scss/**/*.scss', stylesDev);
@@ -231,7 +251,7 @@ maybeFixIncorrectLineEndings.description = 'Make sure that all line endings in t
 gulp.task( 'fix-line-endings', maybeFixIncorrectLineEndings );
 
 function buildSequence(cb) {
-	return gulp.series( 'copy-folder', 'remove-unneeded-files', 'fix-build-dir-permissions', 'fix-build-file-permissions', 'fix-line-endings' )(cb);
+	return gulp.series( 'styles', 'scripts', 'copy-folder', 'remove-unneeded-files', 'fix-build-dir-permissions', 'fix-build-file-permissions', 'fix-line-endings' )(cb);
 }
 buildSequence.description = 'Sets up the build folder';
 gulp.task( 'build', buildSequence );

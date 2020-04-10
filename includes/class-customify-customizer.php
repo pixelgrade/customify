@@ -87,6 +87,7 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 				'options_name' => PixCustomifyPlugin()->get_options_key(),
 				'ajax_url' => admin_url( 'admin-ajax.php' ),
 				'webfontloader_url' => plugins_url( 'js/vendor/webfontloader-1-6-28.js', PixCustomifyPlugin()->get_file() ),
+				'px_dependent_css_props' => self::$pixel_dependent_css_properties,
 			);
 
 			// Hook up.
@@ -159,22 +160,28 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 		 * Register Customizer admin scripts
 		 */
 		function register_admin_customizer_scripts() {
+			$suffix = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min';
 
-			wp_register_script( 'customify_select2', plugins_url( 'js/select2.min.js', PixCustomifyPlugin()->get_file() ), array( 'jquery' ), PixCustomifyPlugin()->get_version() );
-			wp_register_script( 'jquery-react', plugins_url( 'js/jquery-react.js', PixCustomifyPlugin()->get_file() ), array( 'jquery' ), PixCustomifyPlugin()->get_version() );
+			wp_register_script( PixCustomifyPlugin()->get_slug() . '-select2',
+				plugins_url( 'js/vendor/select2' . $suffix . '.js', PixCustomifyPlugin()->get_file() ),
+				array( 'jquery' ), PixCustomifyPlugin()->get_version() );
+			wp_register_script( 'jquery-react',
+				plugins_url( 'js/vendor/jquery-react' . $suffix . '.js', PixCustomifyPlugin()->get_file() ),
+				array( 'jquery' ), PixCustomifyPlugin()->get_version() );
+			wp_register_script( PixCustomifyPlugin()->get_slug() . '-fontfields',
+				plugins_url( 'js/customizer/font-fields' . $suffix . '.js', PixCustomifyPlugin()->get_file() ),
+				array( 'jquery', 'underscore' ), PixCustomifyPlugin()->get_version() );
 
-			wp_register_script( 'customify-scale', plugins_url( 'js/customizer/scale-iframe.js', PixCustomifyPlugin()->get_file() ), array( 'jquery' ), PixCustomifyPlugin()->get_version() );
-			wp_register_script( 'customify-fontselectfields', plugins_url( 'js/customizer/font-select-fields.js', PixCustomifyPlugin()->get_file() ), array( 'jquery', 'underscore' ), PixCustomifyPlugin()->get_version() );
-
-			wp_register_script( PixCustomifyPlugin()->get_slug() . '-customizer-scripts', plugins_url( 'js/customizer.js', PixCustomifyPlugin()->get_file() ), array(
-				'jquery',
-				'customify_select2',
-				'underscore',
-				'customize-controls',
-				'customify-fontselectfields',
-
-				'customify-scale',
-			), PixCustomifyPlugin()->get_version() );
+			wp_register_script( PixCustomifyPlugin()->get_slug() . '-customizer-scripts',
+				plugins_url( 'js/customizer' . $suffix . '.js', PixCustomifyPlugin()->get_file() ),
+				array(
+					'jquery',
+					PixCustomifyPlugin()->get_slug() . '-select2',
+					'underscore',
+					'customize-controls',
+					PixCustomifyPlugin()->get_slug() . '-fontfields',
+				),
+				PixCustomifyPlugin()->get_version() );
 		}
 
 		/**
@@ -184,25 +191,30 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 			wp_enqueue_script( 'jquery-react' );
 			wp_enqueue_script( PixCustomifyPlugin()->get_slug() . '-customizer-scripts' );
 
-			wp_localize_script( PixCustomifyPlugin()->get_slug() . '-customizer-scripts',
-				'customify_settings',
-				apply_filters( 'customify_localized_js_settings', $this->localized ) );
+			wp_add_inline_script( PixCustomifyPlugin()->get_slug() . '-customizer-scripts',
+				self::getlocalizeToWindowScript( 'customify',
+					array(
+						'config' => apply_filters( 'customify_localized_js_settings', $this->localized )
+					)
+				) );
 		}
 
 		/** Register Customizer scripts loaded only on previewer page */
 		function customizer_live_preview_register_scripts() {
+			$suffix = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min';
+
 			wp_register_script( PixCustomifyPlugin()->get_slug() . '-CSSOM',
-				plugins_url( 'js/CSSOM.js', PixCustomifyPlugin()->get_file() ),
-				array( 'jquery' ),
+				plugins_url( 'js/vendor/CSSOM' . $suffix . '.js', PixCustomifyPlugin()->get_file() ),
+				array(),
 				PixCustomifyPlugin()->get_version(), true );
 
 			wp_register_script( PixCustomifyPlugin()->get_slug() . '-cssUpdate',
-				plugins_url( 'js/jquery.cssUpdate.js', PixCustomifyPlugin()->get_file() ),
+				plugins_url( 'js/jquery.cssUpdate' . $suffix . '.js', PixCustomifyPlugin()->get_file() ),
 				array( 'jquery' ),
 				PixCustomifyPlugin()->get_version(), true );
 
 			wp_register_script( PixCustomifyPlugin()->get_slug() . '-previewer-scripts',
-				plugins_url( 'js/customizer_preview.js', PixCustomifyPlugin()->get_file() ),
+				plugins_url( 'js/customizer_preview' . $suffix . '.js', PixCustomifyPlugin()->get_file() ),
 				array(
 					'jquery',
 					'customize-preview',
@@ -215,13 +227,6 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 		/** Enqueue Customizer scripts loaded only on previewer page */
 		function customizer_live_preview_enqueue_scripts() {
 			wp_enqueue_script( PixCustomifyPlugin()->get_slug() . '-previewer-scripts' );
-
-			// when a live preview field is in action we need to know which props need 'px' as defaults
-			$this->localized['px_dependent_css_props'] = self::$pixel_dependent_css_properties;
-
-			wp_localize_script( PixCustomifyPlugin()->get_slug() . '-previewer-scripts',
-				'customify_settings',
-				apply_filters( 'customify_localized_js_settings', $this->localized ) );
 		}
 
 		/**
@@ -545,7 +550,7 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 
 			ob_start(); ?>
 (function ($) {
-	$(window).load(function () {
+	$(window).on('load',function () {
 		/**
 		* @param iframe_id the id of the frame you want to append the style
 		* @param style_element the style element you want to append - boooom
@@ -851,6 +856,13 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 
 			if ( isset( $field_config['default'] ) ) {
 				$setting_args['default'] = $field_config['default'];
+				if ( is_array( $setting_args['default'] ) ) {
+					$setting_args['default'] = (object) $setting_args['default'];
+				}
+
+				if ( is_object( $setting_args['default'] ) ) {
+					$setting_args['default'] = PixCustomifyPlugin::encodeURIComponent( json_encode( $setting_args['default'] ) );
+				}
 			}
 
 			if ( ! empty( $field_config['capability'] ) ) {
@@ -1029,9 +1041,8 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 				// This is a legacy control type
 				// @todo Consider removing this at some point or automatically migrate data to Font control type.
 				case 'typography' :
-					$use_typography = PixCustomifyPlugin()->settings->get_plugin_setting( 'typography', '1' );
 
-					if ( $use_typography === false ) {
+					if ( ! PixCustomifyPlugin()->settings->get_plugin_setting( 'typography', '1' ) ) {
 						$add_control = false;
 						break;
 					}
@@ -1050,16 +1061,11 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 						$control_args['recommended'] = array_flip( $field_config['recommended'] );
 					}
 
-					if ( isset( $field_config['default'] ) ) {
-						$control_args['default'] = $field_config['default'];
-					}
-
 					break;
 
 				case 'font' :
-					$use_typography = PixCustomifyPlugin()->settings->get_plugin_setting( 'typography', '1' );
 
-					if ( $use_typography === false ) {
+					if ( ! PixCustomifyPlugin()->settings->get_plugin_setting( 'typography', '1' ) ) {
 						$add_control = false;
 						break;
 					}
@@ -1068,10 +1074,6 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 
 					if ( isset( $field_config['recommended'] ) ) {
 						$control_args['recommended'] = array_flip( $field_config['recommended'] );
-					}
-
-					if ( isset( $field_config['default'] ) ) {
-						$control_args['default'] = $field_config['default'];
 					}
 
 					if ( isset( $field_config['live'] ) ) {
@@ -1545,6 +1547,34 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 			foreach ( $fields_config as $i => $subarray ) {
 				$this->get_fields_by_key( $subarray, $key, $value, $results, $i );
 			}
+		}
+
+		/**
+		 * Return a script for flexibly localizing data to a window property.
+		 *
+		 * Unlike wp_localize_script() that simply creates a variable and assigns it the value,
+		 * thus overwriting anything that may have been in that variable, we will output a script that
+		 * will test if the variable exists and only overwrite the first level nodes, not everything.
+		 *
+		 * @since 2.7.0
+		 *
+		 * @param string $object_name Name of the variable that will contain the data.
+		 * @param array  $l10n        Array of data to localize.
+		 *
+		 * @return bool True on success, false on failure.
+		 */
+		public static function getlocalizeToWindowScript( $object_name, $l10n ) {
+			$script = "window.$object_name = window.$object_name || parent.$object_name || {};\n";
+
+			foreach ( (array) $l10n as $key => $value ) {
+				if ( is_scalar( $value ) ) {
+					$value = html_entity_decode( (string) $value, ENT_QUOTES, 'UTF-8' );
+				}
+
+				$script .= "$object_name.$key = " . wp_json_encode( $value ) . ";\n";
+			}
+
+			return $script;
 		}
 
 		/* SANITIZATION HELPERS */

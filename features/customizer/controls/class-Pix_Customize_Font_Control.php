@@ -172,8 +172,8 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 		</div>
 		<script>
 			// Update the font name in the font field label
-			jQuery( '#select_font_font_family_<?php echo esc_attr( $this->CSSID ); ?>' ).change( function(){
-				var newValue = jQuery( '#select_font_font_family_<?php echo esc_attr( $this->CSSID ); ?>' ).val();
+			jQuery( '#select_font_font_family_<?php echo esc_attr( $this->CSSID ); ?>' ).on('change', function(){
+				const newValue = jQuery( '#select_font_font_family_<?php echo esc_attr( $this->CSSID ); ?>' ).val();
 				jQuery( '#font_name_<?php echo esc_attr( $this->CSSID ); ?>' ).html( newValue );
 			});
 		</script>
@@ -191,7 +191,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 	protected function display_value_holder( $current_value ) { ?>
 		<input class="customify_font_values" id="<?php echo esc_attr( $this->CSSID ); ?>"
 		       type="hidden" <?php $this->link(); ?>
-		       value="<?php echo esc_attr( PixCustomifyPlugin::encodeURIComponent( json_encode( $current_value ) ) ); ?>"
+		       value="<?php // The value will be set by the Customizer core logic from the _wpCustomizeSettings.settings data. ?>"
 		       data-default="<?php echo esc_attr( PixCustomifyPlugin::encodeURIComponent( json_encode( $current_value ) ) ); ?>"/>
 	<?php }
 
@@ -330,39 +330,23 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 			return;
 		}
 
-		$fs_val = empty( $current_value->font_size ) ? 0 : $current_value->font_size;
-		// If the current val also contains the unit, we need to take that into account.
-		if ( ! is_numeric( $fs_val ) ) {
-			if ( is_string( $fs_val ) ) {
-				// We will get everything in front that is a valid part of a number (float including).
-				preg_match( "/^([\d.\-+]+)/i", $fs_val, $match );
+		$attributes = $this->standardize_range_attributes( $this->fields['font-size'] );
 
-				if ( ! empty( $match ) && isset( $match[0] ) ) {
-					if ( ! PixCustomifyPlugin()->is_assoc( $this->fields['font-size'] ) ) {
-						$this->fields['font-size'][3] = substr( $fs_val, strlen( $match[0] ) );
-					} else {
-						$this->fields['font-size']['unit'] = substr( $fs_val, strlen( $match[0] ) );
-					}
-					$fs_val = $match[0];
-				}
-			} elseif ( is_array( $fs_val ) ) {
-				if ( isset( $fs_val['unit'] ) ) {
-					if ( ! PixCustomifyPlugin()->is_assoc( $this->fields['font-size'] ) ) {
-						$this->fields['font-size'][3] = $fs_val['unit'];
-					} else {
-						$this->fields['font-size']['unit'] = $fs_val['unit'];
-					}
-				}
+		$value = empty( $current_value->font_size ) ? 0 : $current_value->font_size;
+		// Standardize the value.
+		$value = Customify_Fonts_Global::standardize_numerical_value( $value, 'font-size', array( 'fields' => $this->fields ) );
 
-				$fs_val = $fs_val['value'];
-			}
-		}
+		// We will remember the unit of the value, in case some other system pushed down a value (with an unit)
+		// that is different from the field config unit. This way we can retain the unit of the value until
+		// the user interacts with the control.
 		?>
 		<li class="customify_font_size_wrapper customize-control customize-control-range font-options__option">
 			<label><?php esc_html_e( 'Font Size', 'customify' ); ?></label>
 			<input type="range"
-			       data-field="font_size" <?php $this->input_field_atts( $this->fields['font-size'] ) ?>
-			       value="<?php echo $fs_val; ?>">
+				data-field="font_size"
+				<?php $this->range_field_attributes( $attributes ) ?>
+				value="<?php echo esc_attr( $value['value'] ); ?>"
+				data-value_unit="<?php echo esc_attr( $value['unit'] ); ?>">
 		</li>
 		<?php
 	}
@@ -372,39 +356,23 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 			return;
 		}
 
-		$lh_val = isset( $current_value->line_height ) ? $current_value->line_height : 0;
-		// If the current val also contains the unit, we need to take that into account.
-		if ( ! is_numeric( $lh_val ) ) {
-			if ( is_string( $lh_val ) ) {
-				// We will get everything in front that is a valid part of a number (float including).
-				preg_match( "/^([\d.\-+]+)/i", $lh_val, $match );
+		$attributes = $this->standardize_range_attributes( $this->fields['line-height'] );
 
-				if ( ! empty( $match ) && isset( $match[0] ) ) {
-					if ( ! PixCustomifyPlugin()->is_assoc( $this->fields['line-height'] ) ) {
-						$this->fields['line-height'][3] = substr( $lh_val, strlen( $match[0] ) );
-					} else {
-						$this->fields['line-height']['unit'] = substr( $lh_val, strlen( $match[0] ) );
-					}
-					$lh_val = $match[0];
-				}
-			} elseif ( is_array( $lh_val ) ) {
-				if ( isset( $lh_val['unit'] ) ) {
-					if ( ! PixCustomifyPlugin()->is_assoc( $this->fields['line-height'] ) ) {
-						$this->fields['line-height'][3] = $lh_val['unit'];
-					} else {
-						$this->fields['line-height']['unit'] = $lh_val['unit'];
-					}
-				}
+		$value = empty( $current_value->line_height ) ? 0 : $current_value->line_height;
+		// Standardize the value.
+		$value = Customify_Fonts_Global::standardize_numerical_value( $value, 'line-height', array( 'fields' => $this->fields ) );
 
-				$lh_val = $lh_val['value'];
-			}
-		}
+		// We will remember the unit of the value, in case some other system pushed down a value (with an unit)
+		// that is different from the field config unit. This way we can retain the unit of the value until
+		// the user interacts with the control.
 		?>
 		<li class="customify_line_height_wrapper customize-control customize-control-range font-options__option">
 			<label><?php esc_html_e( 'Line height', 'customify' ); ?></label>
 			<input type="range"
-			       data-field="line_height" <?php $this->input_field_atts( $this->fields['line-height'] ); ?>
-			       value="<?php echo esc_attr( $lh_val ); ?>">
+				data-field="line_height"
+				<?php $this->range_field_attributes( $attributes ) ?>
+				value="<?php echo esc_attr( $value['value'] ); ?>"
+				data-value_unit="<?php echo esc_attr( $value['unit'] ); ?>">
 		</li>
 		<?php
 	}
@@ -414,47 +382,66 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 			return;
 		}
 
-		$ls_val = isset( $current_value->letter_spacing ) ? $current_value->letter_spacing : 0;
+		$attributes = $this->standardize_range_attributes( $this->fields['letter-spacing'] );
 
+		$value = empty( $current_value->letter_spacing ) ? 0 : $current_value->letter_spacing;
 		// We have some special cases that are valid CSS values but we need to make them compatible with the range control.
-		if ( 'normal' === $ls_val ) {
-			$ls_val = 0;
+		if ( 'normal' === $value ) {
+			$value = 0;
 		}
+		// Standardize the value.
+		$value = Customify_Fonts_Global::standardize_numerical_value( $value, 'letter-spacing', array( 'fields' => $this->fields ) );
 
-		// If the current val also contains the unit, we need to take that into account.
-		if ( ! is_numeric( $ls_val ) ) {
-			if ( is_string( $ls_val ) ) {
-				// We will get everything in front that is a valid part of a number (float including).
-				preg_match( "/^([\d.\-+]+)/i", $ls_val, $match );
-
-				if ( ! empty( $match ) && isset( $match[0] ) ) {
-					if ( ! PixCustomifyPlugin()->is_assoc( $this->fields['letter-spacing'] ) ) {
-						$this->fields['letter-spacing'][3] = substr( $ls_val, strlen( $match[0] ) );
-					} else {
-						$this->fields['letter-spacing']['unit'] = substr( $ls_val, strlen( $match[0] ) );
-					}
-					$ls_val = $match[0];
-				}
-			} elseif ( is_array( $ls_val ) ) {
-				if ( isset( $ls_val['unit'] ) ) {
-					if ( ! PixCustomifyPlugin()->is_assoc( $this->fields['letter-spacing'] ) ) {
-						$this->fields['letter-spacing'][3] = $ls_val['unit'];
-					} else {
-						$this->fields['letter-spacing']['unit'] = $ls_val['unit'];
-					}
-				}
-
-				$ls_val = $ls_val['value'];
-			}
-		}
+		// We will remember the unit of the value, in case some other system pushed down a value (with an unit)
+		// that is different from the field config unit. This way we can retain the unit of the value until
+		// the user interacts with the control.
 		?>
 		<li class="customify_letter_spacing_wrapper customize-control customize-control-range font-options__option">
 			<label><?php esc_html_e( 'Letter Spacing', 'customify' ); ?></label>
 			<input type="range"
-			       data-field="letter_spacing" <?php $this->input_field_atts( $this->fields['letter-spacing'] ) ?>
-			       value="<?php echo esc_attr( $ls_val ); ?>">
+				data-field="letter_spacing"
+				<?php $this->range_field_attributes( $attributes ) ?>
+				value="<?php echo esc_attr( $value['value'] ); ?>"
+				data-value_unit="<?php echo esc_attr( $value['unit'] ); ?>">
 		</li>
 		<?php
+	}
+
+	/**
+	 * Output the custom attributes for a range sub-field.
+	 *
+	 * @param array $attributes
+	 */
+	protected function range_field_attributes( $attributes ) {
+
+		foreach ( $attributes as $attr => $value ) {
+			echo $attr . '="' . esc_attr( $value ) . '" ';
+		}
+	}
+
+	protected function standardize_range_attributes( $attributes ) {
+		if ( ! is_array( $attributes ) ) {
+			return array(
+				'min' => '',
+				'max' => '',
+				'step' => '',
+				'unit' => '',
+			);
+		}
+
+		// Make sure that if we have a numerical indexed array, we will convert it to an associative one.
+		if ( ! $this->isAssocArray( $attributes ) ) {
+			$defaults = array(
+				'min',
+				'max',
+				'step',
+				'unit',
+			);
+
+			$attributes = array_combine( $defaults, array_values( $attributes ) );
+		}
+
+		return $attributes;
 	}
 
 	protected function display_text_align_field( $current_font_value ) {
@@ -619,119 +606,45 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 
 	function get_default_values() {
 
-		$to_return = array();
+		$defaults = array();
 
 		if ( isset( $this->default ) && is_array( $this->default ) ) {
 
 			// Handle special logic for when the $value array is not an associative array.
-			if ( ! PixCustomifyPlugin()->is_assoc( $this->default ) ) {
-
-				// Let's determine some type of font.
-				if ( ! isset( $this->default[2] ) || ( isset( $this->default[2] ) && 'google' == $this->default[2] ) ) {
-					$google_fonts = Customify_Fonts_Global::instance()->get_google_fonts();
-					if ( isset( $google_fonts[ $this->default[0] ] ) ) {
-						$to_return                = $google_fonts[ $this->default[0] ];
-						$to_return['font_family'] = $this->default[0];
-						$to_return['type']        = 'google';
-					}
-				} else {
-					$to_return['type'] = $this->default[2];
-				}
+			if ( ! $this->isAssocArray( $this->default ) ) {
 
 				// The first entry is the font-family.
 				if ( isset( $this->default[0] ) ) {
-					$to_return['font_family'] = $this->default[0];
+					$defaults['font_family'] = $this->default[0];
 				}
 
-				// In case we don't have an associative array.
 				// The second entry is the variants.
 				if ( isset( $this->default[1] ) ) {
-					$to_return['selected_variants'] = $this->default[1];
+					$defaults['selected_variants'] = $this->default[1];
 				}
 			} else {
-
-				if ( isset( $this->default['font_family'] ) ) {
-					$to_return['font_family'] = $this->default['font_family'];
-				} elseif ( isset( $this->default['font-family'] ) ) {
-					// Handle the case with dash instead of underscore.
-					$to_return['font_family'] = $this->default['font-family'];
-				}
-
-				if ( isset( $this->default['selected_variants'] ) ) {
-					$to_return['selected_variants'] = $this->default['selected_variants'];
-				} elseif ( isset( $this->default['font-weight'] ) ) {
-					$to_return['selected_variants'] = $this->default['font-weight'];
-				}
-
-				if ( isset( $this->default['font-size'] ) ) {
-					$to_return['font-size'] = $this->default['font-size'];
-				}
-
-				if ( isset( $this->default['line-height'] ) ) {
-					$to_return['line-height'] = $this->default['line-height'];
-				}
-
-				if ( isset( $this->default['letter-spacing'] ) ) {
-					$to_return['letter-spacing'] = $this->default['letter-spacing'];
-				}
-
-				if ( isset( $this->default['text-transform'] ) ) {
-					$to_return['text-transform'] = $this->default['text-transform'];
-				}
-
-				if ( isset( $this->default['text-align'] ) ) {
-					$to_return['text-align'] = $this->default['text-align'];
-				}
-
-				if ( isset( $this->default['text-decoration'] ) ) {
-					$to_return['text_decoration'] = $this->default['text-decoration'];
-				}
+				$defaults = Customify_Fonts_Global::standardize_font_values( $this->default );
 			}
 		}
 
-		// Rare case when there is a standard font we need to get the custom variants if there are some.
+		// Rare case when this is a standard font and we need to get the custom variants if there are some.
+		$font_type =
 		$std_fonts = Customify_Fonts_Global::instance()->get_std_fonts();
-		if ( ! isset( $to_return['variants'] )
-		     && isset( $to_return['font_family'] )
-		     && isset( $std_fonts[ $to_return['font_family'] ] )
-		     && isset( $std_fonts[ $to_return['font_family'] ]['variants'] ) ) {
-			$to_return['variants'] = $std_fonts[ $to_return['font_family'] ]['variants'];
+		if ( ! isset( $defaults['variants'] )
+		     && isset( $std_fonts[ $defaults['font_family'] ]['variants'] ) ) {
+
+			$defaults['variants'] = $std_fonts[ $defaults['font_family'] ]['variants'];
 		}
 
-		return $to_return;
+		return $defaults;
 	}
 
 	protected function get_CSS_ID() {
-		$id = $this->id;
-
-		$id = str_replace( '[', '_', $id );
-		$id = str_replace( ']', '_', $id );
-
-		return $id;
+		return str_replace( array( '[', ']' ), '_', $this->id );
 	}
 
-	/**
-	 * Render the custom attributes for the control's input element.
-	 *
-	 * @since 4.0.0
-	 * @access public
-	 */
-	public function input_field_atts( $atts ) {
-
-		if ( ! PixCustomifyPlugin()->is_assoc( $atts ) ) {
-			$defaults = array(
-				'min',
-				'max',
-				'step',
-				'unit',
-			);
-
-			$atts = array_combine( $defaults, array_values( $atts ) );
-		}
-
-		foreach ( $atts as $attr => $value ) {
-			echo $attr . '="' . esc_attr( $value ) . '" ';
-		}
+	protected function isAssocArray( $array ) {
+		return ( $array !== array_values( $array ) );
 	}
 
 	/** ==== LEGACY ==== */

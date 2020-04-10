@@ -1,9 +1,9 @@
-;(function ($, window, document, undefined) {
+;(function ($, window, document) {
 
-  /* global customify_settings */
+  /* global customify.config */
   /* global WebFont */
 
-  $(window).load(function () {
+  $(window).on('load',function () {
     // We need to do this on window.load because on document.ready might be too early.
     maybeLoadWebfontloaderScript()
   })
@@ -12,25 +12,26 @@
 
   $(document).ready(function () {
     const api = parent.wp.customize
+    const customify = parent.customify
     const apiSettings = api.settings.settings
 
-    $.each(customify_settings.settings, function (key, el) {
+    $.each(customify.config.settings, function (key, el) {
       const properties_prefix = typeof el.properties_prefix === 'undefined' ? '' : el.properties_prefix
       if (el.type === 'font') {
         api(key, function (setting) {
           setting.bind(function (to) {
-            const $values = maybeJsonParse(to)
+            const rawValues = maybeJsonParse(to)
 
-            if (typeof $values !== 'undefined') {
-              if (typeof $values.font_family !== 'undefined') {
-                maybeLoadFontFamily($values)
+            if (typeof rawValues !== 'undefined') {
+              if (typeof rawValues.font_family !== 'undefined') {
+                maybeLoadFontFamily(rawValues)
               }
 
-              const vls = getCSSValues(this.id, $values)
-              if (_.isEmpty(vls)) {
+              const cssValues = getFontFieldCSSValues(this.id, rawValues)
+              if (_.isEmpty(cssValues)) {
                 return
               }
-              const CSS = getCSSCode(this.id, vls, properties_prefix)
+              const CSS = getFontFieldCSSCode(this.id, cssValues, properties_prefix)
               const fieldStyle = $('#customify_font_output_for_' + el.html_safe_option_id)
 
               fieldStyle.html(CSS)
@@ -96,15 +97,15 @@
 
     /*** HELPERS **/
 
-    const getCSSValues = function (ID, values) {
+    const getFontFieldCSSValues = function (ID, values) {
 
       let store = {}
 
-      if (typeof values.font_family !== 'undefined') {
+      if (typeof values.font_family !== 'undefined' && '' !== values.font_family) {
         store['font-family'] = values.font_family
       }
 
-      if (typeof values.selected_variants !== 'undefined') {
+      if (typeof values.selected_variants !== 'undefined' && '' !== values.selected_variants) {
 
         let variants = ''
 
@@ -129,7 +130,7 @@
         }
       }
 
-      if (typeof values.font_size !== 'undefined') {
+      if (typeof values.font_size !== 'undefined' && '' !== values.font_size) {
         store['font-size'] = values.font_size
         // If the value already contains a unit (is not numeric), go with that.
         if (isNaN(values.font_size)) {
@@ -147,7 +148,7 @@
         }
       }
 
-      if (typeof values.letter_spacing !== 'undefined') {
+      if (typeof values.letter_spacing !== 'undefined' && '' !== values.letter_spacing) {
         store['letter-spacing'] = values.letter_spacing
         // If the value already contains a unit (is not numeric), go with that.
         if (isNaN(values.letter_spacing)) {
@@ -165,7 +166,7 @@
         }
       }
 
-      if (typeof values.line_height !== 'undefined') {
+      if (typeof values.line_height !== 'undefined' && '' !== values.line_height) {
         store['line-height'] = values.line_height
         // If the value already contains a unit (is not numeric), go with that.
         if (isNaN(values.line_height)) {
@@ -183,48 +184,124 @@
         }
       }
 
-      if (typeof values.text_align !== 'undefined') {
+      if (typeof values.text_align !== 'undefined' && '' !== values.text_align) {
         store['text-align'] = values.text_align
       }
 
-      if (typeof values.text_transform !== 'undefined') {
+      if (typeof values.text_transform !== 'undefined' && '' !== values.text_transform) {
         store['text-transform'] = values.text_transform
       }
-      if (typeof values.text_decoration !== 'undefined') {
+      if (typeof values.text_decoration !== 'undefined' && '' !== values.text_decoration) {
         store['text-decoration'] = values.text_decoration
       }
 
       return store
     }
 
-    const getCSSCode = function (ID, values, prefix) {
-      const field = customify_settings.settings[ID]
+    const getFontFieldCSSCode = function (ID, values, prefix) {
+
+      // This whole logic is a replica of the server side logic found in Customify_Fonts_Global::get_font_style()
+
+      const field = customify.config.settings[ID]
       let output = ''
 
       if (typeof window !== 'undefined' && typeof field.callback !== 'undefined' && typeof window[field.callback] === 'function') {
         output = window[field.callback](values, field)
       } else {
-        output = field.selector + '{\n'
-        $.each(values, function (k, v) {
-          output += prefix + k + ': ' + v + ';\n'
+        if (typeof field.selector === 'undefined' || _.isEmpty(field.selector)) {
+          return output
+        }
+
+        // The selector is standardized to a list of simple string selectors, or a list of complex selectors with details.
+        // In either case, the actual selector is in the key, and the value is an array (possibly empty).
+
+        // Since we might have simple CSS selectors and complex ones (with special details),
+        // for cleanliness we will group the simple ones under a single CSS rule,
+        // and output individual CSS rules for complex ones.
+        // Right now, for complex CSS selectors we are only interested in the `properties` sub-entry.
+        const simpleCSSSelectors = [];
+        const complexCSSSelectors = {};
+
+        _.each(field.selector, function (details, selector) {
+          if (_.isEmpty(details.properties)) {
+            // This is a simple selector.
+            simpleCSSSelectors.push(selector)
+          } else {
+            complexCSSSelectors[selector] = details
+          }
         })
-        output += '}\n'
+
+        if ( !_.isEmpty(simpleCSSSelectors)) {
+          output += '\n' + simpleCSSSelectors.join(', ') + ' {\n'
+          output += getFontFieldCSSProperties(values, [], prefix)
+          output += '}\n'
+        }
+
+        if ( !_.isEmpty(complexCSSSelectors)) {
+          _.each(complexCSSSelectors, function (details, selector) {
+            output += '\n' + selector + ' {\n'
+            output += getFontFieldCSSProperties(values, details.properties, prefix)
+            output += '}\n'
+          })
+        }
       }
 
       return output
     }
 
+    const getFontFieldCSSProperties = function (values, allowedProperties = false, prefix = '') {
+      let output = ''
+
+      $.each(values, function (property, value) {
+        // We don't want to output empty CSS rules.
+        if (value === '') {
+          return
+        }
+
+        // If the property is not allowed, skip it.
+        if (!isCSSPropertyAllowed(property, allowedProperties)) {
+          return
+        }
+
+        output += prefix + property + ': ' + value + ';\n'
+      })
+
+      return output
+    }
+
+    const isCSSPropertyAllowed = function (property, allowedProperties = false) {
+      // Empty properties are not allowed.
+      if (_.isEmpty(property)) {
+        return false
+      }
+
+      // Everything is allowed if nothing is specified.
+      if (_.isEmpty(allowedProperties)) {
+        return true;
+      }
+
+      if (_.contains(allowedProperties, property)) {
+        return true
+      }
+
+      if (_.has(allowedProperties, property) && allowedProperties[property]) {
+        return true
+      }
+
+      return false
+    }
+
     const getFieldUnit = function (ID, field) {
       let unit = ''
-      if (typeof customify_settings.settings[ID] === 'undefined' || typeof customify_settings.settings[ID].fields[field] === 'undefined') {
+      if (typeof customify.config.settings[ID] === 'undefined' || typeof customify.config.settings[ID].fields[field] === 'undefined') {
         return unit
       }
 
-      if (typeof customify_settings.settings[ID].fields[field].unit !== 'undefined') {
-        return customify_settings.settings[ID].fields[field].unit
-      } else if (typeof customify_settings.settings[ID].fields[field][3] !== 'undefined') {
+      if (typeof customify.config.settings[ID].fields[field].unit !== 'undefined') {
+        return customify.config.settings[ID].fields[field].unit
+      } else if (typeof customify.config.settings[ID].fields[field][3] !== 'undefined') {
         // in case of an associative array
-        return customify_settings.settings[ID].fields[field][3]
+        return customify.config.settings[ID].fields[field][3]
       }
 
       return unit
@@ -235,8 +312,10 @@
         return
       }
 
-      const fontType = determineFontType(font.font_family)
       let family = font.font_family
+      // The font family may be a comma separated list like "Roboto, sans"
+
+      const fontType = customify.fontFields.determineFontType(family)
 
       // Handle theme defined fonts and cloud fonts together since they are very similar.
       if (fontType === 'theme_font' || fontType === 'cloud_font') {
@@ -246,9 +325,9 @@
           let fontsArray
 
           if (fontType === 'theme_font') {
-            fontsArray = Object.keys(customify_settings.theme_fonts).map(key => customify_settings.theme_fonts[key])
+            fontsArray = Object.keys(customify.config.theme_fonts).map(key => customify.config.theme_fonts[key])
           } else {
-            fontsArray = Object.keys(customify_settings.cloud_fonts).map(key => customify_settings.cloud_fonts[key])
+            fontsArray = Object.keys(customify.config.cloud_fonts).map(key => customify.config.cloud_fonts[key])
           }
 
           const index = fontsArray.findIndex(fontObj => fontObj.family === family)
@@ -274,7 +353,7 @@
           }
 
           family = family + ':' + variants.map(function (variant) {
-            return convertFontVariantToFVD(variant)
+            return customify.fontFields.convertFontVariantToFVD(variant)
           }).join(',')
         }
 
@@ -353,22 +432,6 @@
       }
     }
 
-    const determineFontType = function(fontFamily) {
-      // The default is Google.
-      let fontType = 'google'
-
-      // We will follow a stack in the following order: theme fonts, cloud fonts, standard fonts, Google fonts.
-      if (typeof customify_settings.theme_fonts[fontFamily] !== 'undefined') {
-        fontType = 'theme_font'
-      } else if (typeof customify_settings.cloud_fonts[fontFamily] !== 'undefined') {
-        fontType = 'cloud_font'
-      } else if (typeof customify_settings.std_fonts[fontFamily] !== 'undefined') {
-        fontType = 'std_font'
-      }
-
-      return fontType
-    }
-
     const maybeJsonParse = function (value) {
       let parsed
 
@@ -392,74 +455,10 @@
   function maybeLoadWebfontloaderScript () {
     if (typeof WebFont === 'undefined') {
       let tk = document.createElement('script')
-      tk.src = customify_settings.webfontloader_url
+      tk.src = parent.customify.config.webfontloader_url
       tk.type = 'text/javascript'
       let s = document.getElementsByTagName('script')[0]
       s.parentNode.insertBefore(tk, s)
     }
-  }
-
-  /**
-   * Will convert an array of CSS like variants into their FVD equivalents. Web Font Loader expects this format.
-   * @link https://github.com/typekit/fvd
-   */
-  function convertFontVariantToFVD (variant) {
-    variant = String(variant)
-
-    let fontStyle = 'n' // normal
-    if (-1 !== variant.indexOf('italic')) {
-      fontStyle = 'i'
-      variant = variant.replace('italic', '')
-    } else if (-1 !== variant.indexOf('oblique')) {
-      fontStyle = 'o'
-      variant = variant.replace('oblique', '')
-    }
-
-    let fontWeight
-
-//  The equivalence:
-//
-//			1: 100
-//			2: 200
-//			3: 300
-//			4: 400 (default, also recognized as 'normal')
-//			5: 500
-//			6: 600
-//			7: 700 (also recognized as 'bold')
-//			8: 800
-//			9: 900
-
-    switch (variant) {
-      case '100':
-        fontWeight = '1'
-        break
-      case '200':
-        fontWeight = '2'
-        break
-      case '300':
-        fontWeight = '3'
-        break
-      case '500':
-        fontWeight = '5'
-        break
-      case '600':
-        fontWeight = '6'
-        break
-      case '700':
-      case 'bold':
-        fontWeight = '7'
-        break
-      case '800':
-        fontWeight = '8'
-        break
-      case '900':
-        fontWeight = '9'
-        break
-      default:
-        fontWeight = '4'
-        break
-    }
-
-    return fontStyle + fontWeight
   }
 })(jQuery, window, document)

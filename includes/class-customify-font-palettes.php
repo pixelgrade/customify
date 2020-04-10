@@ -76,18 +76,28 @@ class Customify_Font_Palettes {
 		 * Add font palettes usage to site data.
 		 */
 		add_filter( 'customify_style_manager_get_site_data', array( $this, 'add_palettes_to_site_data' ), 10, 1 );
+
+		// Add data to be passed to JS.
+		add_filter( 'customify_localized_js_settings', array( $this, 'add_to_localized_data' ), 10, 1 );
 	}
 
 	/**
 	 * Register Customizer admin scripts
 	 */
 	public function register_admin_customizer_scripts() {
-		wp_register_script( PixCustomifyPlugin()->get_slug() . '-regression', plugins_url( 'js/vendor/regression.js', PixCustomifyPlugin()->get_file() ), array(), PixCustomifyPlugin()->get_version() );
-		wp_register_script( PixCustomifyPlugin()->get_slug() . '-font-palettes', plugins_url( 'js/customizer/font-palettes.js', PixCustomifyPlugin()->get_file() ), array(
-			PixCustomifyPlugin()->get_slug() . '-regression',
-			'jquery',
-			PixCustomifyPlugin()->get_slug() . '-fontselectfields',
-		), PixCustomifyPlugin()->get_version() );
+		$suffix = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min';
+
+		wp_register_script( PixCustomifyPlugin()->get_slug() . '-regression',
+			plugins_url( 'js/vendor/regression' . $suffix . '.js', PixCustomifyPlugin()->get_file() ),
+			array(), PixCustomifyPlugin()->get_version() );
+		wp_register_script( PixCustomifyPlugin()->get_slug() . '-font-palettes',
+			plugins_url( 'js/customizer/font-palettes' . $suffix . '.js', PixCustomifyPlugin()->get_file() ),
+			array(
+				PixCustomifyPlugin()->get_slug() . '-regression',
+				'jquery',
+				PixCustomifyPlugin()->get_slug() . '-fontfields',
+			),
+			PixCustomifyPlugin()->get_version() );
 	}
 
 	/**
@@ -1297,6 +1307,25 @@ class Customify_Font_Palettes {
 		) );
 
 		return $site_data;
+	}
+
+	/**
+	 * Add data to be available to JS.
+	 *
+	 * @since 2.7.0
+	 *
+	 * @param array $localized
+	 *
+	 * @return array
+	 */
+	public function add_to_localized_data( $localized ) {
+		$localized['colorPalettesVariations'] = [
+			'light'    => [],
+			'regular' => [],
+			'big'   => [],
+		];
+
+		return $localized;
 	}
 
 	/**

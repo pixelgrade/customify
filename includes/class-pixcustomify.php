@@ -886,12 +886,16 @@ class PixCustomifyPlugin {
 	/**
 	 * Does the same thing the JS decodeURIComponent() does
 	 *
-	 * @param string $str
+	 * @param mixed $str
 	 *
-	 * @return string
+	 * @return mixed
 	 */
 	public static function decodeURIComponent( $str ) {
-		// If we get an array we just let it be
+		// Nothing to do if we receive an array.
+		if ( is_array( $str ) ) {
+			return $str;
+		}
+
 		if ( is_string( $str ) ) {
 			$revert = array( '!' => '%21', '*' => '%2A', "'" => '%27', '(' => '%28', ')' => '%29' );
 			$str    = rawurldecode( strtr( $str, $revert ) );

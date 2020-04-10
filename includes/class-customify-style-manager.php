@@ -182,7 +182,11 @@ if ( ! class_exists( 'Customify_Style_Manager' ) ) {
 		 * Register Customizer admin scripts.
 		 */
 		function register_admin_customizer_scripts() {
-			wp_register_script( PixCustomifyPlugin()->get_slug() . '-style-manager', plugins_url( 'js/customizer/style-manager.js', PixCustomifyPlugin()->get_file() ), array( 'jquery' ), PixCustomifyPlugin()->get_version() );
+			$suffix = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min';
+
+			wp_register_script( PixCustomifyPlugin()->get_slug() . '-style-manager',
+				plugins_url( 'js/customizer/style-manager' . $suffix . '.js', PixCustomifyPlugin()->get_file() ),
+				array( 'jquery' ), PixCustomifyPlugin()->get_version() );
 		}
 
 		/**
@@ -691,7 +695,7 @@ if ( ! class_exists( 'Customify_Style_Manager' ) ) {
 		}
 
 		/**
-		 * Add the JS needed data to the global `customify_settings` variable.
+		 *  Add data to be available in JS.
 		 *
 		 * @since 2.7.0
 		 *

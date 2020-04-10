@@ -26,6 +26,6 @@ class Pix_Customize_Ace_Editor_Control extends Pix_Customize_Control {
 	}
 
 	public function enqueue() {
-		wp_enqueue_script( 'customify-ace-editor', plugins_url( '/js/ace/ace.js', PixCustomifyPlugin()->get_file() ), array( 'jquery' ), false, true );
+		wp_enqueue_script( PixCustomifyPlugin()->get_slug() . '-ace-editor', plugins_url( '/js/vendor/ace/ace.js', PixCustomifyPlugin()->get_file() ), array( 'jquery' ), false, true );
 	}
 }
