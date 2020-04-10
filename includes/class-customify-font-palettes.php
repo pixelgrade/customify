@@ -85,12 +85,19 @@ class Customify_Font_Palettes {
 	 * Register Customizer admin scripts
 	 */
 	public function register_admin_customizer_scripts() {
-		wp_register_script( PixCustomifyPlugin()->get_slug() . '-regression', plugins_url( 'js/vendor/regression.js', PixCustomifyPlugin()->get_file() ), array(), PixCustomifyPlugin()->get_version() );
-		wp_register_script( PixCustomifyPlugin()->get_slug() . '-font-palettes', plugins_url( 'js/customizer/font-palettes.js', PixCustomifyPlugin()->get_file() ), array(
-			PixCustomifyPlugin()->get_slug() . '-regression',
-			'jquery',
-			PixCustomifyPlugin()->get_slug() . '-fontfields',
-		), PixCustomifyPlugin()->get_version() );
+		$suffix = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min';
+
+		wp_register_script( PixCustomifyPlugin()->get_slug() . '-regression',
+			plugins_url( 'js/vendor/regression' . $suffix . '.js', PixCustomifyPlugin()->get_file() ),
+			array(), PixCustomifyPlugin()->get_version() );
+		wp_register_script( PixCustomifyPlugin()->get_slug() . '-font-palettes',
+			plugins_url( 'js/customizer/font-palettes' . $suffix . '.js', PixCustomifyPlugin()->get_file() ),
+			array(
+				PixCustomifyPlugin()->get_slug() . '-regression',
+				'jquery',
+				PixCustomifyPlugin()->get_slug() . '-fontfields',
+			),
+			PixCustomifyPlugin()->get_version() );
 	}
 
 	/**

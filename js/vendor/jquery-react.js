@@ -1,10 +1,10 @@
-/*
+/**
  * React JQuery plugin
- *
  * https://github.com/natedavisolds/jquery-react
  *
  * Copyright 2011, Nathan Davis Olds
- * Distributed under the MIT license.
+ * @license MIT
+ * https://github.com/natedavisolds/jquery-react/blob/master/license
  */
 
 (function ($) {

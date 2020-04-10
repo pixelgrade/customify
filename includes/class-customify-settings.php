@@ -121,7 +121,11 @@ class Customify_Settings {
 
 		$screen = get_current_screen();
 		if ( $screen->id == $this->plugin_screen_hook_suffix ) {
-			wp_enqueue_script( $this->slug . '-settings-page-script', plugins_url( 'js/settings-page.js', $this->file ), array( 'jquery' ), $this->version );
+			$suffix = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min';
+
+			wp_enqueue_script( $this->slug . '-settings-page-script',
+				plugins_url( 'js/settings-page' . $suffix . '.js', $this->file ),
+				array( 'jquery' ), $this->version );
 
 			wp_add_inline_script( $this->slug . '-settings-page-script',
 				PixCustomify_Customizer::getlocalizeToWindowScript( 'customify',

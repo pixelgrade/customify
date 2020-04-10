@@ -160,22 +160,28 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 		 * Register Customizer admin scripts
 		 */
 		function register_admin_customizer_scripts() {
+			$suffix = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min';
 
-			wp_register_script( PixCustomifyPlugin()->get_slug() . '-select2', plugins_url( 'js/vendor/select2.min.js', PixCustomifyPlugin()->get_file() ), array( 'jquery' ), PixCustomifyPlugin()->get_version() );
-			wp_register_script( 'jquery-react', plugins_url( 'js/vendor/jquery-react.js', PixCustomifyPlugin()->get_file() ), array( 'jquery' ), PixCustomifyPlugin()->get_version() );
+			wp_register_script( PixCustomifyPlugin()->get_slug() . '-select2',
+				plugins_url( 'js/vendor/select2' . $suffix . '.js', PixCustomifyPlugin()->get_file() ),
+				array( 'jquery' ), PixCustomifyPlugin()->get_version() );
+			wp_register_script( 'jquery-react',
+				plugins_url( 'js/vendor/jquery-react' . $suffix . '.js', PixCustomifyPlugin()->get_file() ),
+				array( 'jquery' ), PixCustomifyPlugin()->get_version() );
+			wp_register_script( PixCustomifyPlugin()->get_slug() . '-fontfields',
+				plugins_url( 'js/customizer/font-fields' . $suffix . '.js', PixCustomifyPlugin()->get_file() ),
+				array( 'jquery', 'underscore' ), PixCustomifyPlugin()->get_version() );
 
-			wp_register_script( PixCustomifyPlugin()->get_slug() . '-scale', plugins_url( 'js/customizer/scale-iframe.js', PixCustomifyPlugin()->get_file() ), array( 'jquery' ), PixCustomifyPlugin()->get_version() );
-			wp_register_script( PixCustomifyPlugin()->get_slug() . '-fontfields', plugins_url( 'js/customizer/font-fields.js', PixCustomifyPlugin()->get_file() ), array( 'jquery', 'underscore' ), PixCustomifyPlugin()->get_version() );
-
-			wp_register_script( PixCustomifyPlugin()->get_slug() . '-customizer-scripts', plugins_url( 'js/customizer.js', PixCustomifyPlugin()->get_file() ), array(
-				'jquery',
-				PixCustomifyPlugin()->get_slug() . '-select2',
-				'underscore',
-				'customize-controls',
-				PixCustomifyPlugin()->get_slug() . '-fontfields',
-
-				PixCustomifyPlugin()->get_slug() . '-scale',
-			), PixCustomifyPlugin()->get_version() );
+			wp_register_script( PixCustomifyPlugin()->get_slug() . '-customizer-scripts',
+				plugins_url( 'js/customizer' . $suffix . '.js', PixCustomifyPlugin()->get_file() ),
+				array(
+					'jquery',
+					PixCustomifyPlugin()->get_slug() . '-select2',
+					'underscore',
+					'customize-controls',
+					PixCustomifyPlugin()->get_slug() . '-fontfields',
+				),
+				PixCustomifyPlugin()->get_version() );
 		}
 
 		/**
@@ -195,18 +201,20 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 
 		/** Register Customizer scripts loaded only on previewer page */
 		function customizer_live_preview_register_scripts() {
+			$suffix = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min';
+
 			wp_register_script( PixCustomifyPlugin()->get_slug() . '-CSSOM',
-				plugins_url( 'js/vendor/CSSOM.js', PixCustomifyPlugin()->get_file() ),
-				array( 'jquery' ),
+				plugins_url( 'js/vendor/CSSOM' . $suffix . '.js', PixCustomifyPlugin()->get_file() ),
+				array(),
 				PixCustomifyPlugin()->get_version(), true );
 
 			wp_register_script( PixCustomifyPlugin()->get_slug() . '-cssUpdate',
-				plugins_url( 'js/jquery.cssUpdate.js', PixCustomifyPlugin()->get_file() ),
+				plugins_url( 'js/jquery.cssUpdate' . $suffix . '.js', PixCustomifyPlugin()->get_file() ),
 				array( 'jquery' ),
 				PixCustomifyPlugin()->get_version(), true );
 
 			wp_register_script( PixCustomifyPlugin()->get_slug() . '-previewer-scripts',
-				plugins_url( 'js/customizer_preview.js', PixCustomifyPlugin()->get_file() ),
+				plugins_url( 'js/customizer_preview' . $suffix . '.js', PixCustomifyPlugin()->get_file() ),
 				array(
 					'jquery',
 					'customize-preview',

@@ -1,5 +1,10 @@
-// https://github.com/Tom-Alexander/regression-js
-
+/**
+ * regression-js v2.0.1
+ * https://github.com/Tom-Alexander/regression-js
+ *
+ * @license MIT
+ * https://github.com/Tom-Alexander/regression-js/blob/master/LICENSE
+ */
 (function (global, factory) {
 	if (typeof define === "function" && define.amd) {
 		define(['module'], factory);
