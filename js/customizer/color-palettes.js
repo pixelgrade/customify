@@ -722,7 +722,7 @@ window.customify = window.customify || {};
       }
 
       $('.sm-palette-filter .color').addClass('hidden').filter(optionsSelector).removeClass('hidden')
-      $('.c-color-palette .color').addClass('hidden').filter(optionsSelector).removeClass('hidden')
+      $('.sm-color-palette__color').addClass('hidden').filter(optionsSelector).removeClass('hidden')
       $('.js-color-palette .palette__item').addClass('hidden').filter(optionsSelector).removeClass('hidden')
     }, 30)
 
