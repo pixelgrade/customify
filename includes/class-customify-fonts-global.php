@@ -110,13 +110,6 @@ class Customify_Fonts_Global {
 		add_action( $load_location, array( $this, 'output_fonts_dynamic_style' ), 100 );
 
 		/*
-		 * These are only useful for older Typography fields, not the new Font fields.
-		 * @deprecated
-		 */
-		add_action('wp_enqueue_scripts', array( $this, 'enqueue_typography_frontend_scripts' ) );
-		add_action( $load_location, array( $this, 'output_typography_dynamic_style' ), 10 );
-
-		/*
 		 * Add integration with the Classic editor.
 		 */
 		if ( PixCustomifyPlugin()->settings->get_plugin_setting( 'enable_editor_style', true ) ) {
@@ -151,7 +144,7 @@ class Customify_Fonts_Global {
 		if ( isset( $item['type'] ) && 'font' === $item['type'] ) {
 			// We want to standardize the default value, if present.
 			if ( ! empty( $item['default'] ) ) {
-				$item['default'] = self::standardize_font_values( $item['default'] );
+				$item['default'] = self::standardizeFontValues( $item['default'] );
 			}
 
 			// We want to standardize the selector(s), if present.
@@ -180,6 +173,17 @@ class Customify_Fonts_Global {
 			}
 
 			// We have no reason to go recursively further when we have come across a `font` field configuration.
+			return;
+		}
+
+		// If we have a `typography` field configuration, we have work to do.
+		if ( isset( $item['type'] ) && 'typography' === $item['type'] ) {
+			// We want to standardize the default value, if present.
+			if ( ! empty( $item['default'] ) ) {
+				$item['default'] = self::standardizeFontValues( $item['default'] );
+			}
+
+			// We have no reason to go recursively further when we have come across a `typography` field configuration.
 			return;
 		}
 
@@ -255,6 +259,35 @@ class Customify_Fonts_Global {
 		return $this->cloud_fonts;
 	}
 
+	public function getFontDetails( $font_family, $font_type = false ) {
+		if ( empty( $font_type ) ) {
+			// We will determine the font type based on font family.
+			$font_type = $this->determineFontType( $font_family );
+		}
+
+		switch ( $font_type ) {
+			case 'theme_font':
+				return $this->theme_fonts[ $font_family ];
+				break;
+			case 'cloud_font':
+				return $this->cloud_fonts[ $font_family ];
+				break;
+			case 'google_font':
+				return $this->google_fonts[ $font_family ];
+				break;
+			case 'std_font':
+				if ( isset( $this->std_fonts[ $font_family ] ) ) {
+					return $this->std_fonts[ $font_family ];
+				}
+				break;
+			default:
+				return false;
+				break;
+		}
+
+		return false;
+	}
+
 	function output_cloud_fonts_select_options_group( $active_font_family, $current_value ) {
 		// Allow others to add options here
 		do_action( 'customify_font_family_before_cloud_fonts_options', $active_font_family, $current_value );
@@ -262,9 +295,9 @@ class Customify_Fonts_Global {
 		if ( ! empty( $this->cloud_fonts ) ) {
 			echo '<optgroup label="' . esc_html__( 'Cloud Fonts', 'customify' ) . '">';
 			foreach ( $this->get_cloud_fonts() as $font ) {
-				if ( ! empty( $font ) ) {
+				if ( ! empty( $font['family'] ) ) {
 					// Display the select option's HTML.
-					Pix_Customize_Font_Control::output_font_family_option( $font, $active_font_family, 'cloud_font' );
+					Pix_Customize_Font_Control::output_font_family_option( $font['family'], $active_font_family );
 				}
 			}
 			echo "</optgroup>";
@@ -281,9 +314,9 @@ class Customify_Fonts_Global {
 		if ( ! empty( $this->theme_fonts ) ) {
 			echo '<optgroup label="' . esc_html__( 'Theme Fonts', 'customify' ) . '">';
 			foreach ( $this->get_theme_fonts() as $font ) {
-				if ( ! empty( $font ) ) {
+				if ( ! empty( $font['family'] ) ) {
 					// Display the select option's HTML.
-					Pix_Customize_Font_Control::output_font_family_option( $font, $active_font_family, 'theme_font' );
+					Pix_Customize_Font_Control::output_font_family_option( $font['family'], $active_font_family );
 				}
 			}
 			echo "</optgroup>";
@@ -300,8 +333,8 @@ class Customify_Fonts_Global {
 		if ( ! empty( $this->std_fonts ) && PixCustomifyPlugin()->settings->get_plugin_setting( 'typography_standard_fonts' ) ) {
 
 			echo '<optgroup label="' . esc_attr__( 'Standard fonts', 'customify' ) . '">';
-			foreach ( $this->get_std_fonts() as $key => $font ) {
-				Pix_Customize_Font_Control::output_font_family_option( $font, $active_font_family, 'std' );
+			foreach ( $this->get_std_fonts() as $font_family ) {
+				Pix_Customize_Font_Control::output_font_family_option( $font_family, $active_font_family );
 			}
 			echo "</optgroup>";
 		}
@@ -358,24 +391,27 @@ class Customify_Fonts_Global {
 		if ( PixCustomifyPlugin()->settings->get_plugin_setting( 'typography_group_google_fonts' ) ) {
 
 			$grouped_google_fonts = array();
-			foreach ( $this->get_google_fonts() as $key => $font ) {
-				if ( isset( $font['category'] ) ) {
-					$grouped_google_fonts[ $font['category'] ][] = $font;
+			foreach ( $this->get_google_fonts() as $font_details ) {
+				if ( isset( $font_details['category'] ) ) {
+					$grouped_google_fonts[ $font_details['category'] ][] = $font_details;
+				} else {
+					$grouped_google_fonts['uncategorized'][] = $font_details;
 				}
 			}
 
-			foreach ( $grouped_google_fonts as $group_name => $group ) {
-				echo '<optgroup label="' . esc_attr__( 'Google fonts', 'customify' ) . ' ' . $group_name . '">';
-				foreach ( $group as $key => $font ) {
-					Pix_Customize_Font_Control::output_font_family_option( $font );
+			foreach ( $grouped_google_fonts as $group_name => $group_fonts ) {
+				/* translators: %s: The font category name */
+				echo '<optgroup label="' . sprintf( esc_attr__( 'Google fonts %s', 'customify' ), $group_name ) . '">';
+				foreach ( $group_fonts as $font_details ) {
+					Pix_Customize_Font_Control::output_font_family_option( $font_details['family'] );
 				}
 				echo "</optgroup>";
 			}
 
 		} else {
 			echo '<optgroup label="' . esc_attr__( 'Google fonts', 'customify' ) . '">';
-			foreach ( $this->get_google_fonts() as $key => $font ) {
-				Pix_Customize_Font_Control::output_font_family_option( $font );
+			foreach ( $this->get_google_fonts() as $font_details ) {
+				Pix_Customize_Font_Control::output_font_family_option( $font_details['family'] );
 			}
 			echo "</optgroup>";
 		}
@@ -400,6 +436,11 @@ class Customify_Fonts_Global {
 		$local_plugin = PixCustomifyPlugin();
 
 		$font_fields = array();
+
+		// We will gather typography fields also since in this situation they are treated the same.
+		// @todo Remove this when we migrate away from typography fields.
+		$local_plugin->customizer->get_fields_by_key( $local_plugin->get_options_details( true ), 'type', 'typography', $font_fields );
+
 		$local_plugin->customizer->get_fields_by_key( $local_plugin->get_options_details(), 'type', 'font', $font_fields );
 
 		if ( empty( $font_fields ) ) {
@@ -429,7 +470,7 @@ class Customify_Fonts_Global {
 				continue;
 			}
 
-			$value = $this->standardize_font_values( $this->maybe_decode_value( $font['value'] ) );
+			$value = $this->standardizeFontValues( self::maybeDecodeValue( $font['value'] ) );
 
 			// In case the value is empty, try a default value if the $font['value'] is actually the font family.
 			if ( empty( $value ) && is_string( $font['value'] ) ) {
@@ -445,82 +486,45 @@ class Customify_Fonts_Global {
 			if ( empty( $value['font_family'] ) ) {
 				continue;
 			}
-
-			// If this matches a standard font, we have nothing to do.
-			if ( ! empty( $this->std_fonts[ $value['font_family'] ] ) ) {
-				continue;
-			}
-
-			// For each font family we will follow a stack: theme fonts, cloud fonts, google fonts.
-			if ( ! empty( $this->theme_fonts[ $value['font_family'] ] ) ) {
-				$font_details = $this->theme_fonts[ $value['font_family'] ];
-				$font_family = $value['font_family'];
-				if ( ! empty( $font_details['variants'] ) ) {
-					$font_family .= ':' . join( ',', self::convert_font_variants_to_fvds( $font_details['variants'] ) );
-				}
-				$args['custom_families'][] = "'" . $font_family . "'";
-				if ( ! empty( $font_details['src'] ) ) {
-					$args['custom_srcs'][] = "'" . $font_details['src'] . "'";
-				}
-				continue;
-			}
-
-			if ( ! empty( $this->cloud_fonts[ $value['font_family'] ] ) ) {
-				$font_details = $this->cloud_fonts[ $value['font_family'] ];
-				$font_family = $value['font_family'];
-				if ( ! empty( $font_details['variants'] ) ) {
-					$font_family .= join( ',', self::convert_font_variants_to_fvds( $font_details['variants'] ) );
-				}
-				$args['custom_families'][] = "'" . $font_family . "'";
-				if ( ! empty( $font_details['src'] ) ) {
-					$args['custom_srcs'][] = "'" . $font_details['src'] . "'";
-				}
-				continue;
-			}
-
-			// Treat this as a Google font, if we have reached this far.
 			$font_family = $value['font_family'];
 
-			if ( ! empty( $value['variants'] ) && is_array( $value['variants'] ) ) {
-				$font_family .= ":" . implode( ',', $value['variants'] );
-			} elseif ( ! empty( $value['selected_variants'] ) ) {
-				if ( is_array( $value['selected_variants'] ) ) {
-					$font_family .= ":" . implode( ',', $value['selected_variants'] );
-				} elseif ( is_string( $value['selected_variants'] ) || is_numeric( $value['selected_variants'] ) ) {
-					$font_family .= ":" . $value['selected_variants'];
+			$font_type = $this->determineFontType( $value['font_family'] );
+			// If this is a standard font, we have nothing to do.
+			if ( 'std_font' === $font_type ) {
+				continue;
+			}
+
+			$font_details = $this->getFontDetails( $value['font_family'], $font_type );
+
+			if ( 'google_font' !== $font_type ) {
+				if ( ! empty( $font_details['variants'] ) ) {
+					$font_family .= ':' . join( ',', self::convertFontVariantsToFvds( $font_details['variants'] ) );
 				}
-			} elseif ( ! empty( $value['variants'] ) ) {
-				if ( is_array( $value['variants'] ) ) {
-					$font_family .= ":" . implode( ',', $value['variants'] );
-				} else {
-					$font_family .= ":" . $value['variants'];
+				$args['custom_families'][] = "'" . $font_family . "'";
+				if ( ! empty( $font_details['src'] ) ) {
+					$args['custom_srcs'][] = "'" . $font_details['src'] . "'";
 				}
+				continue;
+			}
+
+			// This is a Google font.
+			if ( ! empty( $font_details['variants'] ) ) {
+				$font_family .= ":" . self::maybeImplodeList( $font_details['variants'] );
 			}
 
 			if ( ! empty( $value['selected_subsets'] ) ) {
-				if ( is_array( $value['selected_subsets'] ) ) {
-					$font_family .= ":" . implode( ',', $value['selected_subsets'] );
-				} else {
-					$font_family .= ":" . $value['selected_subsets'];
-				}
-			} elseif ( ! empty( $value['subsets'] ) ) {
-				if ( is_array( $value['subsets'] ) ) {
-					$font_family .= ":" . implode( ',', $value['subsets'] );
-				} else {
-					$font_family .= ":" . $value['subsets'];
-				}
+				$font_family .= ":" . self::maybeImplodeList( $value['selected_subsets'] );
+			} elseif ( ! empty( $font_details['subsets'] ) ) {
+				$font_family .= ":" . self::maybeImplodeList( $font_details['subsets'] );
 			}
 
-			// Wrap it.
-			$font_family = "'" . $font_family . "'";
-
-			$args['google_families'][] = $font_family;
+			$args['google_families'][] = "'" . $font_family . "'";
 		}
 
 		$args = array(
 			'google_families' => array_unique( $args['google_families'] ),
-			'custom_families'  => array_unique( $args['custom_families'] ),
-			'custom_srcs'      => array_unique( $args['custom_srcs'] ),
+			'custom_families' => array_unique( $args['custom_families'] ),
+			'custom_srcs'     => array_unique( $args['custom_srcs'] ),
 		);
 
 		return $args;
@@ -537,26 +541,10 @@ class Customify_Fonts_Global {
 			return array();
 		}
 
-		// This is a safe default.
-		$value = array( 'font_family' => $font_family );
-
-		if ( isset( $this->google_fonts[ $font_family ] ) ) {
-			$value                = $this->google_fonts[ $font_family ];
-			$value['font_family'] = $font_family;
-			$value['type']        = 'google';
-		} elseif ( isset( $this->theme_fonts[ $font_family ] ) ) {
-			$value['type']        = 'theme_font';
-			$value['src']         = $this->theme_fonts[ $font_family ]['src'];
-			$value['variants']    = $this->theme_fonts[ $font_family ]['variants'];
-			$value['font_family'] = $this->theme_fonts[ $font_family ]['family'];
-		} elseif ( isset( $this->cloud_fonts[ $font_family ] ) ) {
-			$value['type']        = 'cloud_font';
-			$value['src']         = $this->cloud_fonts[ $font_family ]['src'];
-			$value['variants']    = $this->cloud_fonts[ $font_family ]['variants'];
-			$value['font_family'] = $this->cloud_fonts[ $font_family ]['family'];
-		}
-
-		return $value;
+		return array(
+			'type' => $this->determineFontType( $font_family ),
+			'font_family' => $font_family
+		);
 	}
 
 	function output_fonts_dynamic_style() {
@@ -565,6 +553,11 @@ class Customify_Fonts_Global {
 		$local_plugin = PixCustomifyPlugin();
 
 		$font_fields = array();
+
+		// We will gather typography fields also since in this situation they are treated the same.
+		// @todo Remove this when we migrate away from typography fields.
+		$local_plugin->customizer->get_fields_by_key( $local_plugin->get_options_details(), 'type', 'typography', $font_fields );
+
 		$local_plugin->customizer->get_fields_by_key( $local_plugin->get_options_details(), 'type', 'font', $font_fields );
 
 		if ( empty( $font_fields ) ) {
@@ -575,8 +568,8 @@ class Customify_Fonts_Global {
 
 		foreach ( $font_fields as $key => $font ) {
 			$font_output = $this->get_font_style( $font );
-			// Do not print anything, but only if we are not in the Customizer.
-			// There we need even the empty <style> since we target it by id.
+			// If no output do not print anything, except if we are in the Customizer preview.
+			// In the Customizer preview we need the empty <style> since we target it by id.
 			if ( empty( $font_output ) && ! is_customize_preview() ) {
 				continue;
 			}
@@ -609,6 +602,11 @@ class Customify_Fonts_Global {
 		$local_plugin = PixCustomifyPlugin();
 
 		$font_fields = array();
+
+		// We will gather typography fields also since in this situation they are treated the same.
+		// @todo Remove this when we migrate away from typography fields.
+		$local_plugin->customizer->get_fields_by_key( $local_plugin->get_options_details(), 'type', 'typography', $font_fields );
+
 		$local_plugin->customizer->get_fields_by_key( $local_plugin->get_options_details(), 'type', 'font', $font_fields );
 
 		if ( empty( $font_fields ) ) {
@@ -641,7 +639,7 @@ class Customify_Fonts_Global {
 			return '';
 		}
 
-		$value = $this->standardize_font_values( $this->maybe_decode_value( $font['value'] ) );
+		$value = $this->standardizeFontValues( self::maybeDecodeValue( $font['value'] ) );
 
 		// In case the value is empty, try a default value if the $font['value'] is actually the font family.
 		if ( empty( $value ) && is_string( $font['value'] ) ) {
@@ -665,15 +663,6 @@ class Customify_Fonts_Global {
 			$properties_prefix = $font['properties_prefix'];
 		}
 
-		$selected_variant = '';
-		if ( ! empty( $value['selected_variants'] ) ) {
-			if ( is_array( $value['selected_variants'] ) ) {
-				$selected_variant = $value['selected_variants'][0];
-			} else {
-				$selected_variant = $value['selected_variants'];
-			}
-		}
-
 		// Since we might have simple CSS selectors and complex ones (with special details),
 		// for cleanliness we will group the simple ones under a single CSS rule,
 		// and output individual CSS rules for complex ones.
@@ -695,7 +684,7 @@ class Customify_Fonts_Global {
 			ob_start();
 
 			echo "\n" . join(', ', $simple_css_selectors ) . " {" . "\n";
-			$this->output_font_style_properties( $font, $value, false, $properties_prefix, $selected_variant );
+			$this->output_font_style_properties( $font, $value, false, $properties_prefix );
 			echo "}\n";
 
 			$output .= ob_get_clean();
@@ -706,7 +695,7 @@ class Customify_Fonts_Global {
 				ob_start();
 
 				echo "\n" . $selector . " {" . "\n";
-				$this->output_font_style_properties( $font, $value, $details['properties'], $properties_prefix, $selected_variant );
+				$this->output_font_style_properties( $font, $value, $details['properties'], $properties_prefix );
 				echo "}\n";
 
 				$output .= ob_get_clean();
@@ -716,66 +705,63 @@ class Customify_Fonts_Global {
 		return $output;
 	}
 
-	protected function output_font_style_properties( $font, $value, $properties = false, $properties_prefix = '', $selected_variant = '') {
-		// First handle the case where we have the font-family in the selected variant (usually this means a custom font from our Fonto plugin)
-		if ( is_array( $selected_variant ) && ! empty( $selected_variant['font-family'] ) ) {
-			// The variant's font-family.
-			if ( $this->isCSSPropertyAllowed( 'font-family', $properties ) ) {
-				$this->display_property( 'font-family', $selected_variant['font-family'], '', $properties_prefix );
+	protected function output_font_style_properties( $font, $value, $properties = false, $properties_prefix = '') {
+		// If this is a custom font (like from our plugin Fonto) with individual styles & weights - i.e. the font-family says it all
+		// We need to "force" the font-weight and font-style
+		if ( ! empty( $value['type'] ) && 'custom_individual' == $value['type'] ) {
+			$value['font_weight'] = '400 !important';
+			$value['font_style']  = 'normal !important';
+		}
+
+		// Handle the case where we have the font_family in the font_variant (usually this means a custom font from our Fonto plugin)
+		if ( ! empty( $value['font_variant'] ) && is_array( $value['font_variant'] ) ) {
+			// Standardize as value
+			$complexVariant = self::standardizeFontValues( $value['font_variant'] );
+			// Merge with the received value.
+			$value = array_merge( $value, $complexVariant );
+			// empty the font_variant going forward.
+			unset( $value['font_variant'] );
+		}
+
+		// Split the font_variant into font_weight and font_style, it that is the case.
+		if ( ! empty( $value['font_variant'] ) ) {
+			$font_variant = strtolower( $value['font_variant'] );
+			// A little bit of sanity check.
+			if ( $font_variant === 'regular' ) {
+				$font_variant = 'normal';
 			}
 
-			// If this is a custom font (like from our plugin Fonto) with individual styles & weights - i.e. the font-family says it all
-			// We need to "force" the font-weight and font-style
-			if ( ! empty( $value['type'] ) && 'custom_individual' == $value['type'] ) {
-				$selected_variant['font-weight'] = '400 !important';
-				$selected_variant['font-style']  = 'normal !important';
+			if ( strpos( $font_variant, 'italic' ) !== false ) {
+				$font_variant = str_replace( 'italic', '', $font_variant );
+				$value['font_style'] = 'italic';
+			} elseif ( strpos( $font_variant, 'oblique' ) !== false ) {
+				$font_variant = str_replace( 'oblique', '', $font_variant );
+				$value['font_style'] = 'oblique';
 			}
 
-			$italic_style = false;
-
-			// Output the font weight, if available
-			if ( ! empty( $selected_variant['font-weight'] ) && $this->isCSSPropertyAllowed( 'font-weight', $properties ) ) {
-				$italic_style = $this->display_weight_property( $selected_variant['font-weight'], $properties_prefix );
-			}
-
-			// Output the font style, if available and if it wasn't displayed already
-			if ( ! $italic_style && ! empty( $selected_variant['font-style'] ) && $this->isCSSPropertyAllowed( 'font-style', $properties ) ) {
-				$this->display_property( 'font-style', $selected_variant['font-style'], '', $properties_prefix );
-			}
-
-		} elseif ( isset( $value['font_family'] ) ) {
-			if ( $this->isCSSPropertyAllowed( 'font-family', $properties ) ) {
-				$this->display_property( 'font-family', $value['font_family'], '', $properties_prefix );
-			}
-
-			if ( ! empty( $selected_variant ) ) {
-				$weight_and_style = strtolower( $selected_variant );
-
-				// Determine if this is an italic font (the $weight_and_style is usually like '400' or '400italic' )
-				$italic_style      = false;
-
-				// A little bit of sanity check - in case it's not a number
-				if ( $weight_and_style === 'regular' ) {
-					$weight_and_style = 'normal';
-				}
-				if ( $this->isCSSPropertyAllowed( 'font-weight', $properties ) ) {
-					$italic_style = $this->display_weight_property( $weight_and_style, $properties_prefix );
-				}
-
-				// Output the font style, if available
-				if ( ! $italic_style && ! empty( $selected_variant['font-style'] ) && $this->isCSSPropertyAllowed( 'font-style', $properties ) ) {
-					$this->display_property( 'font-style', $selected_variant['font-style'], '', $properties_prefix );
-				}
+			// If we have a remainder like '400', use it as font weight.
+			if ( ! empty( $font_variant ) ) {
+				$value['font_weight'] = $font_variant;
 			}
 		}
 
+		// Now we are done with the standardization and can get going.
+
+		if ( ! empty( $value['font_family'] ) && $this->isCSSPropertyAllowed( 'font-family', $properties ) ) {
+			$this->display_property( 'font-family', $value['font_family'], '', $properties_prefix );
+		}
+
 		if ( ! empty( $value['font_weight'] ) && $this->isCSSPropertyAllowed( 'font-weight', $properties ) ) {
-			$this->display_weight_property( $value['font_weight'], $properties_prefix );
+			$this->display_property( 'font-weight', $value['font_weight'], $properties_prefix );
+		}
+
+		if ( ! empty( $value['font_style'] ) && $this->isCSSPropertyAllowed( 'font-style', $properties ) ) {
+			$this->display_property( 'font-style', $value['font_style'], $properties_prefix );
 		}
 
 		if ( ! empty( $value['font_size'] ) && $this->isCSSPropertyAllowed( 'font-size', $properties ) ) {
 
-			$font_size = self::standardize_numerical_value( $value['font_size'], 'font-size', $font );
+			$font_size = self::standardizeNumericalValue( $value['font_size'], 'font-size', $font );
 			if ( false !== $font_size['value'] ) {
 
 				// If we use ems or rems, and the value is larger than 9, then something must be wrong; we will use pixels.
@@ -789,7 +775,7 @@ class Customify_Fonts_Global {
 
 		if ( ! empty( $value['line_height'] ) && $this->isCSSPropertyAllowed( 'line-height', $properties ) ) {
 
-			$line_height = self::standardize_numerical_value( $value['line_height'], 'line-height', $font );
+			$line_height = self::standardizeNumericalValue( $value['line_height'], 'line-height', $font );
 			if ( false !== $line_height['value'] ) {
 				$this->display_property( 'line-height', $line_height['value'], $line_height['unit'], $properties_prefix );
 			}
@@ -797,7 +783,7 @@ class Customify_Fonts_Global {
 
 		if ( isset( $value['letter_spacing'] ) && false !== $value['letter_spacing'] && $this->isCSSPropertyAllowed( 'letter-spacing', $properties ) ) {
 
-			$letter_spacing = self::standardize_numerical_value( $value['letter_spacing'], 'letter-spacing', $font );
+			$letter_spacing = self::standardizeNumericalValue( $value['letter_spacing'], 'letter-spacing', $font );
 			if ( false !== $letter_spacing['value'] ) {
 				$this->display_property( 'letter-spacing', $letter_spacing['value'], $letter_spacing['unit'], $properties_prefix );
 			}
@@ -822,24 +808,6 @@ class Customify_Fonts_Global {
 			return;
 		}
 		echo $prefix . $property . ": " . $value . $unit . ";\n";
-	}
-
-	// well weight sometimes comes from google as 600italic which in CSS syntax should come in two separate properties
-	protected function display_weight_property( $value, $prefix = '' ) {
-		$has_style = false;
-
-		if ( strpos( $value, 'italic' ) !== false ) {
-
-			$value = str_replace( 'italic', '', $value );
-			echo $prefix . 'font-weight' . ": " . $value . ";\n";
-			echo $prefix . 'font-style' . ": italic;\n";
-			$has_style = true;
-		} else {
-			echo $prefix . 'font-weight' . ": " . $value . ";\n";
-		}
-
-
-		return $has_style;
 	}
 
 	public function enqueue_frontend_scripts() {
@@ -937,13 +905,13 @@ if (typeof WebFont !== 'undefined') {
 		// Now deal with custom external fonts.
 		if ( ! empty( $args['custom_srcs'] ) ) {
 			// Get the site's origin (without the protocol) so we can exclude it.
-			$own_origin = self::extract_origin_from_url( get_bloginfo( 'url' ) );
+			$own_origin = self::extractOriginFromUrl( get_bloginfo( 'url' ) );
 			// Remove the protocol
 			$own_origin = preg_replace( '#((http|https|ftp|ftps)?\:?)#i', '', $own_origin );
 
 			$external_origins = array();
 			foreach ( $args['custom_srcs'] as $src ) {
-				$origin = self::extract_origin_from_url( $src );
+				$origin = self::extractOriginFromUrl( $src );
 				if ( ! empty( $origin ) && false === strpos( $origin, $own_origin ) ) {
 					$external_origins[] = $origin;
 				}
@@ -970,6 +938,7 @@ if (typeof WebFont !== 'undefined') {
 	public function add_to_localized_data( $localized ) {
 		$localized['theme_fonts'] = $this->get_theme_fonts();
 		$localized['cloud_fonts'] = $this->get_cloud_fonts();
+		$localized['google_fonts'] = $this->get_google_fonts();
 		$localized['std_fonts'] = $this->get_std_fonts();
 
 		return $localized;
@@ -988,15 +957,6 @@ if (typeof WebFont !== 'undefined') {
 	}
 
 	$this->output_fonts_dynamic_style();
-
-	$typography_dynamic_script = $this->get_typography_dynamic_script();
-	if ( ! empty( $typography_dynamic_script ) ) {
-		?>
-<script type="text/javascript"><?php echo $typography_dynamic_script ?></script>
-		<?php
-	}
-
-	$this->output_typography_dynamic_style();
 
 	$custom_output = ob_get_clean();
 
@@ -1060,243 +1020,6 @@ if (typeof WebFont !== 'undefined') {
 	}
 
 	/**
-	 * This is only useful for older Typography fields, not the new Font fields.
-	 * @deprecated
-	 */
-	function output_typography_dynamic_style() {
-		$style = $this->get_typography_dynamic_style();
-
-		if ( ! empty( $style ) ) { ?>
-<style id="customify_typography_output_style">
-	<?php echo $style; ?>
-</style>
-		<?php }
-	}
-
-	/**
-	 * This is only useful for older Typography fields, not the new Font fields.
-	 * @deprecated
-	 */
-	function get_typography_dynamic_style() {
-		$output = '';
-
-		/** @var PixCustomifyPlugin $local_plugin */
-		$local_plugin = PixCustomifyPlugin();
-
-		$typography_fields = array();
-		$local_plugin->customizer->get_fields_by_key( $local_plugin->get_options_details( true ), 'type', 'typography', $typography_fields );
-
-		if ( empty( $typography_fields ) ) {
-			return $output;
-		}
-
-		ob_start();
-		foreach ( $typography_fields as $font ) {
-			$selector = apply_filters( 'customify_typography_css_selector', $this->cleanup_whitespace( $font['selector'] ), $font );
-
-			if ( isset( $selector ) && ! empty( $font['value'] ) ) {
-
-				$value = $this->standardize_font_values( $this->maybe_decode_value( $font['value'] ) );
-
-				// In case the value is empty, try a default value if the $font['value'] is actually the font family.
-				if ( empty( $value ) && is_string( $font['value'] ) ) {
-					$value = $this->get_font_defaults_value( str_replace( '"', '', $font['value'] ) );
-				}
-
-				// Bail if empty or we don't have an array
-				if ( empty( $value ) || ! is_array( $value ) ) {
-					continue;
-				}
-
-				$selected_variant = '';
-				if ( ! empty( $value['selected_variants'] ) ) {
-					if ( is_array( $value['selected_variants'] ) ) {
-						$selected_variant = $value['selected_variants'][0];
-					} else {
-						$selected_variant = $value['selected_variants'];
-					}
-				}
-
-				// First handle the case where we have the font-family in the selected variant (usually this means a custom font from our Fonto plugin)
-				if ( ! empty( $selected_variant ) && is_array( $selected_variant ) && ! empty( $selected_variant['font-family'] ) ) {
-					// The variant's font-family
-					echo $selector . " {\nfont-family: " . $selected_variant['font-family'] . ";\n";
-
-					// If this is a custom font (like from our plugin Fonto) with individual styles & weights - i.e. the font-family says it all
-					// we need to "force" the font-weight and font-style
-					if ( ! empty( $value['type'] ) && 'custom_individual' == $value['type'] ) {
-						$selected_variant['font-weight'] = '400 !important';
-						$selected_variant['font-style'] = 'normal !important';
-					}
-
-					// Output the font weight, if available
-					if ( ! empty( $selected_variant['font-weight'] ) ) {
-						echo "font-weight: " . $selected_variant['font-weight'] . ";\n";
-					}
-
-					// Output the font style, if available
-					if ( ! empty( $selected_variant['font-style'] ) ) {
-						echo "font-style: " . $selected_variant['font-style'] . ";\n";
-					}
-
-					echo "}\n";
-				} elseif ( isset( $value['font_family'] ) ) {
-					// The selected font family
-					echo $selector . " {\n font-family: " . $value['font_family'] . ";\n";
-
-					if ( ! empty( $selected_variant ) ) {
-						$weight_and_style = strtolower( $selected_variant );
-
-						$italic_font = false;
-
-						//determine if this is an italic font (the $weight_and_style is usually like '400' or '400italic' )
-						if ( strpos( $weight_and_style, 'italic' ) !== false ) {
-							$weight_and_style = str_replace( 'italic', '', $weight_and_style);
-							$italic_font = true;
-						}
-
-						if ( ! empty( $weight_and_style ) ) {
-							//a little bit of sanity check - in case it's not a number
-							if( $weight_and_style === 'regular' ) {
-								$weight_and_style = 'normal';
-							}
-							echo "font-weight: " . $weight_and_style . ";\n";
-						}
-
-						if ( $italic_font ) {
-							echo "font-style: italic;\n";
-						}
-					}
-
-					echo "}\n";
-				}
-			}
-		}
-
-		$output = ob_get_clean();
-
-		return $output;
-	}
-
-	/**
-	 * This is only useful for older Typography fields, not the new Font fields.
-	 * @deprecated
-	 */
-	public function enqueue_typography_frontend_scripts() {
-		$script = $this->get_typography_dynamic_script();
-		if ( ! empty( $script ) ) {
-			wp_enqueue_script( PixCustomifyPlugin()->get_slug() . '-web-font-loader' );
-			wp_add_inline_script( PixCustomifyPlugin()->get_slug() . '-web-font-loader', $script );
-		} elseif ( is_customize_preview() ) {
-			// If we are in the Customizer preview, we still need the Web Font Loader.
-			wp_enqueue_script( PixCustomifyPlugin()->get_slug() . '-web-font-loader' );
-		}
-	}
-
-	/**
-	 * This is only useful for older Typography fields, not the new Font fields.
-	 * @deprecated
-	 */
-	function get_typography_dynamic_script() {
-
-		// If typography has been deactivated from the settings, bail.
-		if ( ! PixCustomifyPlugin()->settings->get_plugin_setting( 'typography', '1' )
-		     || ! PixCustomifyPlugin()->settings->get_plugin_setting( 'typography_google_fonts', 1 ) ) {
-			return '';
-		}
-
-		/** @var PixCustomifyPlugin $local_plugin */
-		$local_plugin = PixCustomifyPlugin();
-
-		$typography_fields = array();
-		$local_plugin->customizer->get_fields_by_key( $local_plugin->get_options_details( true ), 'type', 'typography', $typography_fields );
-
-		if ( empty( $typography_fields ) ) {
-			return '';
-		}
-
-		$output = '';
-		$families = array();
-
-		foreach ( $typography_fields as $id => $font ) {
-			// Bail without a value.
-			if ( empty( $font['value'] ) ) {
-				continue;
-			}
-
-			$value = $this->standardize_font_values( $this->maybe_decode_value( $font['value'] ) );
-
-			// In case the value is empty, try a default value if the $font['value'] is actually the font family.
-			if ( empty( $value ) && is_string( $font['value'] ) ) {
-				$value = $this->get_font_defaults_value( str_replace( '"', '', $font['value'] ) );
-			}
-
-			// Bail if we don't have a value or the value isn't an array
-			if ( empty( $value ) || ! is_array( $value ) ) {
-				continue;
-			}
-
-			// We can't do anything without a font family.
-			if ( empty( $value['font_family'] ) ) {
-				continue;
-			}
-
-			$font_type = self::determineFontType( $value['font_family'] );
-
-			if ( $font_type == 'google' ) {
-				$family =  $value['font_family'];
-
-				if ( is_array( $value['variants'] ) ) {
-					$family .= ":" . implode( ',', $value['variants'] );
-				} elseif ( isset( $value['selected_variants'] ) && ! empty( $value['selected_variants'] ) ) {
-					if ( is_array( $value['selected_variants'] ) ) {
-						$family .= ":" . implode( ',', $value['selected_variants'] );
-					} elseif ( is_string( $value['selected_variants'] ) || is_numeric( $value['selected_variants'] ) ) {
-						$family .= ":" . $value['selected_variants'];
-					}
-				} elseif ( isset( $value['variants'] ) && ! empty( $value['variants'] ) ) {
-					if ( is_array( $value['variants'] ) ) {
-						$family .= ":" . implode( ',', $value['variants'] );
-					} else {
-						$family .= ":" . $value['variants'];
-					}
-				}
-
-				if ( isset( $value['selected_subsets'] ) && ! empty( $value['selected_subsets'] ) ) {
-					if ( is_array( $value['selected_subsets'] ) ) {
-						$family .= ":" . implode( ',', $value['selected_subsets'] );
-					} else {
-						$family .= ":" . $value['selected_subsets'];
-					}
-				} elseif ( isset( $value['subsets'] ) && ! empty( $value['subsets'] ) ) {
-					if ( is_array( $value['subsets'] ) ) {
-						$family .= ":" . implode( ',', $value['subsets'] );
-					} else {
-						$family .= ":" . $value['subsets'];
-					}
-				}
-
-				$families[] = "'" . $family . "'";
-			}
-		}
-
-		if ( ! empty( $families ) ) {
-			ob_start();
-			?>
-if (typeof WebFont !== 'undefined') {<?php // if there is a WebFont object, use it ?>
-	WebFont.load({
-		google: {families: [<?php echo join( ',', $families ); ?>]},
-		classes: false,
-		events: false
-	});
-}<?php
-			$output = ob_get_clean();
-		}
-
-		return $output;
-	}
-
-	/**
 	 * Load the google fonts list from the local file, if not already loaded.
 	 *
 	 * @return array
@@ -1327,7 +1050,7 @@ if (typeof WebFont !== 'undefined') {<?php // if there is a WebFont object, use 
 	 *
 	 * @return string
 	 */
-	public static function cleanup_whitespace( $string ) {
+	public static function cleanupWhitespace( $string ) {
 
 		return normalize_whitespace( $string );
 	}
@@ -1340,6 +1063,10 @@ if (typeof WebFont !== 'undefined') {<?php // if there is a WebFont object, use 
 	 * @return bool
 	 */
 	public static function isAssocArray( $array ) {
+		if ( ! is_array( $array ) ) {
+			return false;
+		}
+
 		return ( $array !== array_values( $array ) );
 	}
 
@@ -1350,7 +1077,7 @@ if (typeof WebFont !== 'undefined') {<?php // if there is a WebFont object, use 
 	 *
 	 * @return false|string False if the given string is not a proper URL, the origin otherwise.
 	 */
-	public static function extract_origin_from_url( $url ) {
+	public static function extractOriginFromUrl( $url ) {
 		if ( empty( $url ) ) {
 			return false;
 		}
@@ -1402,6 +1129,28 @@ if (typeof WebFont !== 'undefined') {<?php // if there is a WebFont object, use 
 	}
 
 	/**
+	 * Given a value, attempt to implode it.
+	 *
+	 * @param mixed $value
+	 * @param string $delimiter Optional. The delimiter to user.
+	 *
+	 * @return string
+	 */
+	public static function maybeImplodeList( $value, $delimiter = ',' ) {
+		// If by any chance we are given a string, just return it
+		if ( is_string( $value ) ) {
+			return $value;
+		}
+
+		if ( is_array( $value ) ) {
+			return implode( $delimiter, $value );
+		}
+
+		// For anything else (like objects) we return an empty string.
+		return '';
+	}
+
+	/**
 	 * Given a selector standardize it to a list.
 	 *
 	 * @param mixed $selector
@@ -1416,15 +1165,15 @@ if (typeof WebFont !== 'undefined') {<?php // if there is a WebFont object, use 
 
 		// Make sure that we have an associative array with the key being the individual selector
 		foreach ( $list as $key => $value ) {
-			// This means a simple string selector.
 			if ( is_numeric( $key ) && is_string( $value ) ) {
-				$value = self::cleanup_whitespace( $value );
+				// This means a simple string selector.
+				$value = self::cleanupWhitespace( $value );
 				$selector_list[ $value ] = [];
 				continue;
 			}
 
 			// Treat the rest a having the selector in the key and a set of details in the value.
-			$key = self::cleanup_whitespace( (string) $key );
+			$key = self::cleanupWhitespace( (string) $key );
 			$selector_list[ $key ] = $value;
 		}
 
@@ -1440,7 +1189,7 @@ if (typeof WebFont !== 'undefined') {<?php // if there is a WebFont object, use 
 	 *
 	 * @return array
 	 */
-	public static function standardize_font_values( $values ) {
+	public static function standardizeFontValues( $values ) {
 
 		if ( empty( $values ) || ! is_array( $values ) ) {
 			return array();
@@ -1448,7 +1197,7 @@ if (typeof WebFont !== 'undefined') {<?php // if there is a WebFont object, use 
 
 		// Handle special logic for when the $values array is not an associative array.
 		if ( ! self::isAssocArray( $values ) ) {
-			$values = self::standardize_non_associative_font_default( $values );
+			$values = self::standardizeNonAssociativeFontValues( $values );
 		}
 
 		foreach ( $values as $key => $value ) {
@@ -1472,14 +1221,17 @@ if (typeof WebFont !== 'undefined') {<?php // if there is a WebFont object, use 
 
 				$values[ $new_key ] = $value;
 			}
+		}
 
-			// @todo This is very weird! We are only using a single font weight and use that to generate CSS,
-			// not just to load font weights/variants via Web Font Loader. This key should actually be font_weight!!!
-			// The variants are automatically loaded by Web Font Loader. There is no need to select them.
-			if ( 'font_weight' === $new_key ) {
-				$values[ 'selected_variants' ] = $values[ $new_key ];
-				unset( $values[ $new_key ] );
-			}
+		// We no longer use the `selected_variants` key, but the proper one: `font_variant`.
+		if ( isset( $values['selected_variants'] ) && ! isset( $values['font_variant'] ) ) {
+			$values['font_variant'] = $values['selected_variants'];
+			unset( $values['selected_variants'] );
+		}
+
+		// Make sure that we have a single value in font_variant.
+		if ( ! empty( $values['font_variant'] ) && is_array( $values['font_variant'] ) && ! self::isAssocArray( $values['font_variant'] ) ) {
+			$values['font_variant'] = reset( $values['font_variant'] );
 		}
 
 		return $values;
@@ -1491,23 +1243,22 @@ if (typeof WebFont !== 'undefined') {<?php // if there is a WebFont object, use 
 	 * @param mixed $value
 	 * @return array Return a new associative array with proper keys
 	 */
-	public static function standardize_non_associative_font_default( $value ) {
-		// If the value provided is not array, simply return it
-		if ( ! is_array( $value ) ) {
+	public static function standardizeNonAssociativeFontValues( $value ) {
+		// If the value provided is not array or is already an associative array, simply return it
+		if ( ! is_array( $value ) || self::isAssocArray( $value ) ) {
 			return $value;
 		}
 
 		$new_value = array();
 
 		// The first entry is the font-family
-		if ( empty( $new_value['font_family'] ) && isset( $value[0] ) ) {
+		if ( isset( $value[0] ) ) {
 			$new_value['font_family'] = $value[0];
 		}
 
-		// In case we don't have an associative array
-		// The second entry is the variants
-		if ( empty( $new_value['selected_variants'] ) && isset( $value[1] ) ) {
-			$new_value['selected_variants'] = $value[1];
+		// The second entry is the variant.
+		if ( isset( $value[1] ) ) {
+			$new_value['font_variant'] = $value[1];
 		}
 
 		return $new_value;
@@ -1522,7 +1273,7 @@ if (typeof WebFont !== 'undefined') {<?php // if there is a WebFont object, use 
 	 *
 	 * @return array
 	 */
-	public static function standardize_numerical_value( $value, $field, $font ) {
+	public static function standardizeNumericalValue( $value, $field, $font ) {
 		$standard_value = array(
 			'value' => false,
 			'unit' => '',
@@ -1531,7 +1282,7 @@ if (typeof WebFont !== 'undefined') {<?php // if there is a WebFont object, use 
 		if ( is_numeric( $value ) ) {
 			$standard_value['value'] = $value;
 			// Deduce the unit.
-			$standard_value['unit'] = self::get_field_unit( $field, $font );
+			$standard_value['unit'] = self::getSubFieldUnit( $field, $font );
 		} elseif ( is_array( $value ) ) {
 			// The value may be an associative array or a numerical keyed one.
 			if ( isset( $value['value'] ) ) {
@@ -1599,7 +1350,7 @@ if (typeof WebFont !== 'undefined') {<?php // if there is a WebFont object, use 
 		return ! empty( $stdAllowedProperties[ $property ] );
 	}
 
-	public static function get_field_unit( $field, $font ) {
+	public static function getSubFieldUnit( $field, $font ) {
 
 		if ( empty( $font['fields'][ $field ] ) ) {
 
@@ -1624,22 +1375,22 @@ if (typeof WebFont !== 'undefined') {<?php // if there is a WebFont object, use 
 	/**
 	 * Determine a font type based on its font family.
 	 *
-	 * We will follow a stack in the following order: theme fonts, cloud fonts, standard fonts, Google fonts.
+	 * We will follow a stack in the following order: theme fonts, cloud fonts, Google fonts, standard fonts.
 	 *
 	 * @param string $fontFamily
 	 *
 	 * @return string The font type: google, theme_font, cloud_font, or std_font.
 	 */
 	public function determineFontType( $fontFamily ) {
-		// The default is Google since it's the most forgiving.
-		$fontType = 'google';
+		// The default is a standard font (aka no special loading or processing).
+		$fontType = 'std_font';
 
 		if ( ! empty( $this->theme_fonts[ $fontFamily ] ) ) {
 			$fontType = 'theme_font';
 		} elseif ( ! empty( $this->cloud_fonts[ $fontFamily ] ) ) {
 			$fontType = 'cloud_font';
-		} else if ( ! empty( $this->std_fonts[ $fontFamily ] ) ) {
-			$fontType = 'std_font';
+		} else if ( ! empty( $this->google_fonts[ $fontFamily ] ) ) {
+			$fontType = 'google_font';
 		}
 
 		return $fontType;
@@ -1652,7 +1403,7 @@ if (typeof WebFont !== 'undefined') {<?php // if there is a WebFont object, use 
 	 * @param array $variants
 	 * @return array
 	 */
-	public static function convert_font_variants_to_fvds( $variants ) {
+	public static function convertFontVariantsToFvds( $variants ) {
 		$fvds = array();
 		if ( ! is_array( $variants ) || empty( $variants ) ) {
 			return $fvds;
@@ -1728,7 +1479,7 @@ if (typeof WebFont !== 'undefined') {<?php // if there is a WebFont object, use 
 	 *
 	 * @return mixed|string
 	 */
-	protected function maybe_decode_value( $value ) {
+	public static function maybeDecodeValue( $value ) {
 		// If the value is already an array, nothing to do.
 		if ( is_array( $value ) ) {
 			return $value;

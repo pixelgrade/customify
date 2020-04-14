@@ -14,10 +14,10 @@ window.customify = window.customify || {};
       wrapperSelector = '.font-options__wrapper',
       valueHolderSelector = '.customify_font_values',
       fontFamilySelector = '.customify_font_family',
-      fontWeightSelector = '.customify_font_weight',
+      fontVariantSelector = '.customify_font_weight',
       fontSubsetsSelector = '.customify_font_subsets',
       selectPlaceholder = 'Select a font family',
-      weightPlaceholder = 'Select a font weight',
+      variantPlaceholder = 'Select a font variant',
       subsetPlaceholder = 'Extra Subsets'
 
     const api = wp.customize
@@ -54,14 +54,17 @@ window.customify = window.customify || {};
 
       // We only need to bing to the original select since select2 triggers the event for this one when changed.
       $fontFamilyFields.on('change', function (e) {
-        let new_option = $(e.target).find('option:selected'),
+        const newFontFamily = e.target.value,
           wrapper = $(e.target).closest(wrapperSelector)
 
+        // Get the new font details
+        const newFontDetails = getFontDetails(newFontFamily)
+
         // Update the weight subfield with the new options given by the selected font family.
-        updateWeightField(new_option, wrapper)
+        updateWeightField(newFontDetails, wrapper)
 
         // Update the subset subfield with the new options given by the selected font family.
-        updateSubsetField(new_option, wrapper)
+        updateSubsetField(newFontDetails, wrapper)
 
         // Serialize subfield values and refresh the fonts in the preview window.
         selfUpdateValue(wrapper)
@@ -86,12 +89,12 @@ window.customify = window.customify || {};
         })
       })
 
-      // Initialize the select2 field for the font weight
-      $(fontWeightSelector).each(function (i, el) {
+      // Initialize the select2 field for the font variant
+      $(fontVariantSelector).each(function (i, el) {
 
         let select2_args = {
           theme: 'classic',
-          placeholder: weightPlaceholder,
+          placeholder: variantPlaceholder,
           minimumResultsForSearch: 10,
         }
 
@@ -102,23 +105,21 @@ window.customify = window.customify || {};
             option = font[0].options[font[0].selectedIndex],
             variants = maybeJsonParse($(option).data('variants')),
             data = [],
-            selected_variants = $(el).data('default') || null
+            selected_variant = $(el).data('default') || null
 
           if (typeof variants === 'undefined') {
-            $(this).hide();
-            $(this).prev('label').hide();
+            $(this).hide()
+            $(this).prev('label').hide()
             return
           }
 
-          $.each(variants, function (index, weight) {
+          $.each(variants, function (index, variant) {
             let thisValue = {
-              id: weight,
-              text: weight
+              id: variant,
+              text: variant
             }
 
-            // @todo We actually do not support multiple selected variants. Maybe we should? Right now we don't use multiple selections.
-            // No we should not support multiple variants. Web Font Loader loads whatever weights are in use.
-            if (selected_variants !== null && weight == selected_variants) {
+            if (variant === selected_variant) {
               thisValue.selected = true
             }
 
@@ -215,25 +216,24 @@ window.customify = window.customify || {};
     /**
      * This function updates the data in font weight selector from the given <option> element
      *
-     * @param option
+     * @param newFontDetails
      * @param wrapper
      */
-    function updateWeightField (option, wrapper) {
-      let variants = maybeJsonParse($(option).data('variants')),
-        $font_weights = wrapper.find(fontWeightSelector),
-        selectedVariant = $font_weights.val() ? $font_weights.val() : $font_weights.data('default'),
-        newVariants = [],
-        id = wrapper.find(valueHolderSelector).data('customizeSettingLink')
+    function updateWeightField (newFontDetails, wrapper) {
+      let variants = typeof newFontDetails.variants !== 'undefined' ? newFontDetails.variants : [],
+        font_weights = wrapper.find(fontVariantSelector),
+        selectedVariant = font_weights.val() ? font_weights.val() : font_weights.data('default'),
+        newVariants = []
 
       // We need to clear the old select2 field and reinitialize it.
-      $($font_weights).select2().empty()
+      $(font_weights).select2().empty()
 
       // Mark this input as not touched by the user.
-      $($font_weights).data('touched', false)
+      $(font_weights).data('touched', false)
 
-      if (typeof variants === 'undefined' || Object.keys(variants).length < 2 || !_.isUndefined($font_weights.data('disabled'))) {
-        $font_weights.parent().hide();
-        $font_weights.parent().prev('label').hide();
+      if (typeof variants === 'undefined' || Object.keys(variants).length < 2 || !_.isUndefined(font_weights.data('disabled'))) {
+        font_weights.parent().hide()
+        font_weights.parent().prev('label').hide()
         return
       }
 
@@ -253,13 +253,13 @@ window.customify = window.customify || {};
       })
 
       // Reinitialize select2 with new variants.
-      $($font_weights).select2({
+      $(font_weights).select2({
         theme: 'classic',
         data: newVariants,
         minimumResultsForSearch: 10,
       })
 
-      $($font_weights).on('change', function (e) {
+      $(font_weights).on('change', function (e) {
         let wrapper = $(e.target).closest(wrapperSelector)
 
         // Mark this input as touched by the user.
@@ -269,16 +269,16 @@ window.customify = window.customify || {};
         selfUpdateValue(wrapper)
       })
 
-      $font_weights.parent().show()
+      font_weights.parent().show()
     }
 
     /**
      *  This function updates the data in font subset selector from the given <option> element
-     * @param option
+     * @param newFontDetails
      * @param wrapper
      */
-    function updateSubsetField (option, wrapper) {
-      let subsets = maybeJsonParse($(option).data('subsets')),
+    function updateSubsetField (newFontDetails, wrapper) {
+      let subsets = typeof newFontDetails.subsets !== 'undefined' ? newFontDetails.subsets : [],
         font_subsets = wrapper.find(fontSubsetsSelector),
         newSubsets = []
 
@@ -289,13 +289,13 @@ window.customify = window.customify || {};
       $(font_subsets).data('touched', false)
 
       if (typeof subsets === 'undefined' || Object.keys(subsets).length < 2 || !_.isUndefined(font_subsets.data('disabled'))) {
-        font_subsets.parent().hide();
-        font_subsets.parent().prev('label').hide();
+        font_subsets.parent().hide()
+        font_subsets.parent().prev('label').hide()
         return
       }
 
-      font_subsets.parent().show();
-      font_subsets.parent().prev('label').show();
+      font_subsets.parent().show()
+      font_subsets.parent().prev('label').show()
 
       // Attempt to keep (some of) the previously selected subsets, depending on what the new font supports.
       let currentFontValue = maybeJsonParse(wrapper.children(valueHolderSelector).val())
@@ -378,25 +378,26 @@ window.customify = window.customify || {};
     const selfUpdateValue = function (wrapper) {
       let options_list = $(wrapper).find('.font-options__options-list'),
         inputs = options_list.find('[data-field]'),
-        value_holder = wrapper.children(valueHolderSelector),
-        oldValue = maybeJsonParse(value_holder.val()),
-        setting_id = $(value_holder).data('customize-setting-link'),
-        setting = api(setting_id),
+        valueHolder = wrapper.children(valueHolderSelector),
+        oldValue = maybeJsonParse(valueHolder.val()),
+        settingID = $(valueHolder).data('customize-setting-link'),
+        setting = api(settingID),
         newFontData = _.isEmpty(oldValue) ? {} : oldValue
 
       // If we are already self-updating this and we haven't finished, we need to stop here to prevent infinite loops
       // This call might have come from a subfield detecting the change the triggering a further update_font_value()
-      if (true === updatingValue[setting_id]) {
+      if (true === updatingValue[settingID]) {
         return
       }
 
-      // If we are loading this setting value and haven't finished, there is no point in updating it as this would cause infinite loops.
-      if (true === loadingValue[setting_id]) {
+      // If we are loading this setting value and haven't finished,
+      // there is no point in updating it as this would cause infinite loops.
+      if (true === loadingValue[settingID]) {
         return
       }
 
       // Mark the fact that we are self-updating the field value
-      updatingValue[setting_id] = true
+      updatingValue[settingID] = true
 
       inputs.each(function (key, el) {
         const $el = $(el)
@@ -411,8 +412,6 @@ window.customify = window.customify || {};
 
         if ('font_family' === field) {
           const selected_opt = $(el.options[el.selectedIndex]),
-            subsets = selected_opt.data('subsets'),
-            variants = selected_opt.data('variants'),
             src = selected_opt.data('src')
 
           if (src) {
@@ -421,17 +420,10 @@ window.customify = window.customify || {};
             delete newFontData['src']
           }
 
-          if (!_.isUndefined(variants)) {
-            newFontData['variants'] = maybeJsonParse(variants)
-          } else {
-            delete newFontData['variants']
-          }
-
-          if (!_.isUndefined(subsets)) {
-            newFontData['subsets'] = maybeJsonParse(subsets)
-          } else {
-            delete newFontData['subsets']
-          }
+          // We don't need to store font variants or subsets in the value
+          // since we will get those from the global font details.
+          delete newFontData['variants']
+          delete newFontData['subsets']
         }
 
         if (!_.isUndefined(value) && !_.isNull(value) && value !== '') {
@@ -447,12 +439,12 @@ window.customify = window.customify || {};
       // Serialize the newly gathered font data
       let serializedNewFontData = encodeValues(newFontData)
       // Set the serialized value in the hidden field.
-      value_holder.val(serializedNewFontData)
+      valueHolder.val(serializedNewFontData)
       // Update also the Customizer setting value.
       setting.set(serializedNewFontData)
 
       // Finished with the field value self-updating.
-      updatingValue[setting_id] = false
+      updatingValue[settingID] = false
 
       return newFontData
     }
@@ -463,17 +455,17 @@ window.customify = window.customify || {};
     function loadFontValue (wrapper) {
       let options_list = $(wrapper).find('.font-options__options-list'),
         inputs = options_list.find('[data-field]'),
-        value_holder = wrapper.children(valueHolderSelector),
-        value = maybeJsonParse(value_holder.val()),
-        setting_id = $(value_holder).data('customize-setting-link')
+        valueHolder = wrapper.children(valueHolderSelector),
+        value = maybeJsonParse(valueHolder.val()),
+        settingID = $(valueHolder).data('customize-setting-link')
 
       // If we are already loading this setting value and haven't finished, there is no point in starting again.
-      if (true === loadingValue[setting_id]) {
+      if (true === loadingValue[settingID]) {
         return
       }
 
       // Mark the fact that we are loading the field value
-      loadingValue[setting_id] = true
+      loadingValue[settingID] = true
 
       inputs.each(function (key, el) {
         const $el = $(el)
@@ -533,7 +525,7 @@ window.customify = window.customify || {};
       })
 
       // Finished with the field value loading.
-      loadingValue[setting_id] = false
+      loadingValue[settingID] = false
     }
 
     const maybeJsonParse = function (value) {
@@ -617,20 +609,47 @@ window.customify = window.customify || {};
       return standardValue
     }
 
-    const determineFontType = function(fontFamily) {
-      // The default is Google.
-      let fontType = 'google'
+    const determineFontType = function (fontFamily) {
+      // The default is a standard font (aka no special loading or processing).
+      let fontType = 'std_font'
 
       // We will follow a stack in the following order: theme fonts, cloud fonts, standard fonts, Google fonts.
       if (typeof customify.config.theme_fonts[fontFamily] !== 'undefined') {
         fontType = 'theme_font'
       } else if (typeof customify.config.cloud_fonts[fontFamily] !== 'undefined') {
         fontType = 'cloud_font'
-      } else if (typeof customify.config.std_fonts[fontFamily] !== 'undefined') {
-        fontType = 'std_font'
+      } else if (typeof customify.config.google_fonts[fontFamily] !== 'undefined') {
+        fontType = 'google_font'
       }
 
       return fontType
+    }
+
+    const getFontDetails = function (fontFamily, fontType = false) {
+      if (false === fontType) {
+        // We will determine the font type based on font family.
+        fontType = determineFontType(fontFamily)
+      }
+
+      switch (fontType) {
+        case 'theme_font':
+          return customify.config.theme_fonts[fontFamily]
+          break
+        case 'cloud_font':
+          return customify.config.cloud_fonts[fontFamily]
+          break
+        case 'google_font':
+          return customify.config.google_fonts[fontFamily]
+          break
+        case 'std_font':
+          if (typeof customify.config.std_fonts[fontFamily] !== 'undefined') {
+            return customify.config.std_fonts[fontFamily]
+          }
+          break
+        default:
+      }
+
+      return false
     }
 
     /**
@@ -705,6 +724,7 @@ window.customify = window.customify || {};
       encodeValues: encodeValues,
       standardizeNumericalValue: standardizeNumericalValue,
       determineFontType: determineFontType,
+      getFontDetails: getFontDetails,
       convertFontVariantToFVD: convertFontVariantToFVD,
       renderFonts: renderFonts,
     }

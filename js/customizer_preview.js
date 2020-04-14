@@ -105,28 +105,29 @@
         store['font-family'] = values.font_family
       }
 
-      if (typeof values.selected_variants !== 'undefined' && '' !== values.selected_variants) {
+      if (typeof values.font_variant !== 'undefined' && '' !== values.font_variant) {
 
-        let variants = ''
+        let variant = values.font_variant
 
-        if (typeof values.selected_variants !== 'undefined' && values.selected_variants !== null) {
-          variants = values.selected_variants
-        } else if (typeof values.variants !== 'undefined' && typeof values.variants[0] !== 'undefined') {
-          variants = values.variants[0]
-        }
+        if (_.isString(variant)) {
 
-        // google fonts also have the italic string inside, split that
-        if (_.isString(variants) && variants.indexOf('italic') !== -1) {
-          store['font-style'] = 'italic'
-          variants = variants.replace('italic', '')
-        }
-
-        if (variants !== '') {
-          if (variants === 'regular') {
-            variants = 'normal'
+          // We may have a style in the variant. Attempt to split.
+          if (variant.indexOf('italic') !== -1) {
+            store['font-style'] = 'italic'
+            variant = variant.replace('italic', '')
+          } else if (variant.indexOf('oblique') !== -1) {
+            store['font-style'] = 'oblique'
+            variant = variant.replace('oblique', '')
           }
 
-          store['font-weight'] = variants
+          // If anything remained, then we have a font weight also.
+          if (variant !== '') {
+            if (variant === 'regular') {
+              variant = 'normal'
+            }
+
+            store['font-weight'] = variant
+          }
         }
       }
 
@@ -254,7 +255,7 @@
 
       $.each(values, function (property, value) {
         // We don't want to output empty CSS rules.
-        if (value === '') {
+        if ( '' === value || false === value ) {
           return
         }
 
@@ -380,7 +381,7 @@
         }
       }
       // Handle Google fonts since Web Font Loader has a special module for them.
-      else if (fontType === 'google') {
+      else if (fontType === 'google_font') {
         let variants = null,
           subsets = null
 

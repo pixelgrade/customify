@@ -19,8 +19,6 @@ window.customify = window.customify || {};
       'sm_font_accent',
     ]
 
-    const defaultFontType = 'google'
-
     const initializePalettes = () => {
       // Cache initial settings configuration to be able to update connected fields on variation change.
       if (typeof customify.settingsClone === 'undefined') {
@@ -64,7 +62,7 @@ window.customify = window.customify || {};
               newFontData['line_height'] = defaultValue['line_height']
               newFontData['letter_spacing'] = defaultValue['letter_spacing']
               newFontData['text_transform'] = defaultValue['text_transform']
-              newFontData['selected_variants'] = defaultValue['selected_variants']
+              newFontData['font_variant'] = defaultValue['font_variant']
             }
           }
 
@@ -93,7 +91,7 @@ window.customify = window.customify || {};
           if (typeof connected_field_data.font_size !== 'undefined' && false !== connected_field_data.font_size) {
             newFontData['font_size'] = connected_field_data.font_size
 
-            // The font weight (selected_variants), letter spacing and text transform all come together from the font styles (intervals).
+            // The font variant, letter spacing and text transform all come together from the font styles (intervals).
             // We just need to find the one that best matches the connected field given font size (if given).
             // Please bear in mind that we expect the font logic styles to be preprocessed, without any overlapping and using numerical keys.
             if (typeof fonts_logic.font_styles_intervals !== 'undefined' && _.isArray(fonts_logic.font_styles_intervals) && fonts_logic.font_styles_intervals.length > 0) {
@@ -107,7 +105,7 @@ window.customify = window.customify || {};
 
               // We will apply what we've got.
               if (!_.isEmpty(fonts_logic.font_styles_intervals[idx].font_weight)) {
-                newFontData['selected_variants'] = fonts_logic.font_styles_intervals[idx].font_weight
+                newFontData['font_variant'] = fonts_logic.font_styles_intervals[idx].font_weight
               }
               if (!_.isEmpty(fonts_logic.font_styles_intervals[idx].letter_spacing)) {
                 newFontData['letter_spacing'] = fonts_logic.font_styles_intervals[idx].letter_spacing

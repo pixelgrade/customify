@@ -95,11 +95,9 @@ window.customify = window.customify || parent.customify || {};
         let currentValue = $input.val()
 
         currentValue = maybeJsonParse(currentValue)
-        // @todo currently the font weight selector works for one value only
-        // maybe make this a multiselect
 
-        //maybe the selected option holds a JSON in its value
-        currentValue.selected_variants = {0: maybeJsonParse($(this).val())}
+        // Maybe the selected option holds a JSON in its value
+        currentValue.font_variant = maybeJsonParse($(this).val())
 
         $input.val(encodeURIComponent(JSON.stringify(currentValue)))
         $input.trigger('change')
@@ -610,14 +608,14 @@ window.customify = window.customify || parent.customify || {};
           update_siblings_selects(this_family_option)
 
           setTimeout(function () {
-            let weight_select = field.parent().siblings('.options').find('.customify_typography_font_weight'),
-              this_weight_option = weight_select.find('option[value="' + value['selected_variants'] + '"]')
+            let variantSelect = field.parent().siblings('.options').find('.customify_typography_font_weight'),
+              thisVariantOption = variantSelect.find('option[value="' + value['font_variant'] + '"]')
 
-            $(this_weight_option[0]).attr('selected', 'selected')
+            $(thisVariantOption[0]).attr('selected', 'selected')
 
             update_siblings_selects(this_family_option)
 
-            weight_select.trigger('change')
+            variantSelect.trigger('change')
           }, 300)
         }
 
@@ -650,7 +648,7 @@ window.customify = window.customify || parent.customify || {};
                   mappedKey = 'font_size'
                   break
                 case 'font-weight':
-                  mappedKey = 'selected_variants'
+                  mappedKey = 'font_variant'
                   break
                 case 'letter-spacing':
                   mappedKey = 'letter_spacing'
@@ -676,26 +674,33 @@ window.customify = window.customify || parent.customify || {};
 
     const update_siblings_selects = function (font_select) {
       const $font_select = $(font_select)
-      let selectedFont = $font_select.val(),
+      let selectedFontFamily = $font_select.val(),
         $input = $font_select.siblings('.customify_typography_values'),
         currentValue = $input.attr('value')
+
+      // Get the selected font details
+      const selectedFontType = customify.fontFields.determineFontType(selectedFontFamily)
+      const selectedFontDetails = customify.fontFields.getFontDetails(selectedFontFamily,selectedFontType)
 
       // @todo We should not end up in this situation.
       if (currentValue === '[object Object]') {
         currentValue = $input.data('default')
-      } else if (_.isString(currentValue) && !isJsonString(currentValue)) {
-        // a rare case when the value isn't a json but is a representative string like [family,weight]
-        currentValue = currentValue.split(',')
-        let tempValue = {}
-        if (!_.isUndefined(currentValue[0])) {
-          tempValue['font_family'] = currentValue[0]
-        }
+      } else if (_.isString(currentValue)) {
+        currentValue = decodeURIComponent(currentValue);
+        if ( !isJsonString(currentValue) ) {
+          // a rare case when the value isn't a json but is a representative string like [family,weight]
+          currentValue = currentValue.split(',')
+          let tempValue = {}
+          if (!_.isUndefined(currentValue[0])) {
+            tempValue['font_family'] = currentValue[0]
+          }
 
-        if (!_.isUndefined(currentValue[1])) {
-          tempValue['selected_variants'] = currentValue[1]
-        }
+          if (!_.isUndefined(currentValue[1])) {
+            tempValue['font_variant'] = currentValue[1]
+          }
 
-        currentValue = JSON.stringify(tempValue)
+          currentValue = JSON.stringify(tempValue)
+        }
       }
 
       let $font_weight = $font_select.parent().siblings('ul.options').find('.customify_typography_font_weight'),
@@ -710,27 +715,26 @@ window.customify = window.customify || parent.customify || {};
 
           $font_select.data('bound_once', true)
 
-          $font_select.change()
-          $font_weight.change()
-          $font_subsets.change()
+          $font_select.trigger('change')
+          $font_weight.trigger('change')
+          $font_subsets.trigger('change')
         }
       }
 
       // first try to get the font from sure sources, not from the recommended list.
-      let selectedOptionData = $font_select.find(':not(optgroup[label=Recommended]) option[value="' + selectedFont + '"]')
+      let selectedOptionData = $font_select.find(':not(optgroup[label=Recommended]) option[value="' + selectedFontFamily + '"]')
       // however, if there isn't an option found, get what you can
       if (selectedOptionData.length < 1) {
-        selectedOptionData = $font_select.find('option[value="' + selectedFont + '"]')
+        selectedOptionData = $font_select.find('option[value="' + selectedFontFamily + '"]')
       }
 
       if (selectedOptionData.length > 0) {
 
-        let selectedFontType = selectedOptionData.data('type'),
-          newValue = {'type': selectedFontType, 'font_family': selectedFont},
+        let newValue = {'type': selectedFontType, 'font_family': selectedFontFamily},
           variants = null,
           subsets = null
 
-        if (selectedFontType == 'std') {
+        if (selectedFontType == 'std_font') {
           variants = {
             0: '100',
             1: '200',
@@ -742,59 +746,50 @@ window.customify = window.customify || parent.customify || {};
             8: '800',
             9: '900'
           }
-          if (!_.isUndefined($(selectedOptionData[0]).data('variants'))) {
-            //maybe the variants are a JSON
-            variants = maybeJsonParse($(selectedOptionData[0]).data('variants'))
+          if (!_.isUndefined(selectedFontDetails.variants)) {
+            variants = selectedFontDetails.variants
           }
         } else {
-          //maybe the variants are a JSON
-          variants = maybeJsonParse($(selectedOptionData[0]).data('variants'))
-
-          //maybe the subsets are a JSON
-          subsets = maybeJsonParse($(selectedOptionData[0]).data('subsets'))
+          variants = typeof selectedFontDetails.variants !== 'undefined' ? selectedFontDetails.variants : []
+          subsets = typeof selectedFontDetails.subsets !== 'undefined' ? selectedFontDetails.subsets : []
         }
 
         // make the variants selector
-        if (!_.isUndefined(variants) && !_.isNull(variants) && !_.isEmpty(variants)) {
-
-          newValue['variants'] = variants
-          // when a font is selected force the first weight to load
-          newValue['selected_variants'] = {0: variants[0]}
+        if (!_.isNull(variants) && !_.isEmpty(variants)) {
 
           let variantsOptionsMarkup = '',
             variantsCount = 0
 
           if (Array.isArray(variants) || _.isObject(variants)) {
             // Take each variant and produce the option markup
-            $.each(variants, function (key, el) {
+            $.each(variants, function (key, variant) {
               let isVariantSelected = ''
-              if (_.isObject(currentValue.selected_variants) && inObject(el, currentValue.selected_variants)) {
+              if (variant === currentValue.font_variant) {
                 isVariantSelected = ' selected="selected"'
-              } else if (_.isString(currentValue.selected_variants) && el === currentValue.selected_variants) {
-                isVariantSelected = ' selected="selected"'
+                newValue['font_variant'] = variant
               }
 
               // initialize
-              let variantOptionValue = el,
-                variantOptionName = el
+              let variantOptionValue = variant,
+                variantOptionName = variant
 
               // If we are dealing with a object variant then it means things get tricky (probably it's our fault but bear with us)
               // This probably comes from our Fonto plugin - a font with individually named variants - hence each has its own font-family
-              if (_.isObject(el)) {
+              if (_.isObject(variant)) {
                 //put the entire object in the variation value - we will need it when outputting the custom CSS
-                variantOptionValue = encodeURIComponent(JSON.stringify(el))
+                variantOptionValue = encodeURIComponent(JSON.stringify(variant))
                 variantOptionName = ''
 
                 //if we have weight and style then "compose" them into something standard
-                if (!_.isUndefined(el['font-weight'])) {
-                  variantOptionName += el['font-weight']
+                if (!_.isUndefined(variant['font-weight'])) {
+                  variantOptionName += variant['font-weight']
                 }
 
-                if (_.isString(el['font-style']) && $.inArray(el['font-style'].toLowerCase(), [
+                if (_.isString(variant['font-style']) && $.inArray(variant['font-style'].toLowerCase(), [
                   'normal',
                   'regular'
                 ]) < 0) { //this comparison means it hasn't been found
-                  variantOptionName += el['font-style']
+                  variantOptionName += variant['font-style']
                 }
               }
 
@@ -817,20 +812,37 @@ window.customify = window.customify || parent.customify || {};
         }
 
         // make the subsets selector
-        if (!_.isUndefined(subsets) && !_.isNull(subsets) && !_.isEmpty(subsets)) {
+        if (!_.isNull(subsets) && !_.isEmpty(subsets)) {
 
-          newValue['subsets'] = subsets
-          // when a font is selected force the first subset to load
-          newValue['selected_subsets'] = {0: subsets[0]}
+          newValue['selected_subsets'] = []
+          let selectedSubsets = []
+          if (!_.isUndefined(currentValue.selected_subsets) && !_.isEmpty(currentValue.selected_subsets)) {
+            selectedSubsets = currentValue.selected_subsets
+            // Make sure it is an array
+            if (!Array.isArray(selectedSubsets)) {
+              selectedSubsets = Object.keys(selectedSubsets).map(function (key) {
+                return selectedSubsets[key]
+              })
+            }
+          }
+
           let subsetsOptionsMarkup = '',
             subsetsCount = 0
-          $.each(subsets, function (key, el) {
-            let is_selected = ''
-            if (_.isObject(currentValue.selected_subsets) && inObject(el, currentValue.selected_subsets)) {
-              is_selected = ' selected="selected"'
+          $.each(subsets, function (key, subset) {
+            // We want to skip the 'latin' subset since that is loaded by default.
+            if ('latin' === subset) {
+              return
             }
 
-            subsetsOptionsMarkup += '<option value="' + el + '"' + is_selected + '>' + el + '</option>'
+            let is_selected = ''
+            if (selectedSubsets.indexOf(subset) !== -1) {
+              is_selected = ' selected="selected"'
+
+              // Attempt to keep (some of) the previously selected subsets, depending on what the new font supports.
+              newValue['selected_subsets'].push(subset)
+            }
+
+            subsetsOptionsMarkup += '<option value="' + subset + '"' + is_selected + '>' + subset + '</option>'
             subsetsCount++
           })
 

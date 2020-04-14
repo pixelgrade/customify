@@ -98,44 +98,57 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 		$this->display_recommended_options_group( $active_font_family, $current_value );
 	}
 
+	protected function display_recommended_options_group( $active_font_family, $current_value ) {
+		// Allow others to add options here
+		do_action( 'customify_font_family_before_recommended_fonts_options', $active_font_family, $current_value );
+
+		if ( ! empty( $this->recommended ) ) {
+
+			echo '<optgroup label="' . esc_attr__( 'Recommended', 'customify' ) . '">';
+
+			foreach ( $this->recommended as $font_family ) {
+				self::output_font_family_option( $font_family, $active_font_family );
+			}
+			echo "</optgroup>";
+		}
+
+		// Allow others to add options here
+		do_action( 'customify_font_family_after_recommended_fonts_options', $active_font_family, $current_value );
+	}
+
 	/**
 	 * Render the control's content.
 	 */
 	public function render_content() {
-
-		$current_value = $this->current_value;
-
-		//maybe we need to decode it
-		$current_value = PixCustomifyPlugin::decodeURIComponent( $current_value );
+		// The self::value() will consider the defined default value and return that if that is the case.
+		$current_value = Customify_Fonts_Global::maybeDecodeValue( $this->current_value );
+		$current_value = Customify_Fonts_Global::standardizeFontValues( $current_value );
 
 		if ( empty( $current_value ) ) {
 			$current_value = $this->get_default_values();
 		}
 
-		// if this value was an array, make sure it is ok
-		if ( is_string( $current_value ) ) {
-			//if we've got a string then it is clear we need to decode it
-			$current_value = json_decode( $current_value, true );
-		}
-
-		$current_value = Customify_Fonts_Global::standardize_font_values( $current_value );
-
-		//make sure it is an object from here going forward
+		// Make sure it is an object from here going forward.
 		$current_value = (object) $current_value;
 
-		$active_font_family = '';
+		$current_font_family = '';
 		if ( isset( $current_value->font_family ) ) {
-			$active_font_family = $current_value->font_family;
+			$current_font_family = $current_value->font_family;
 		}
 
-		$select_data = 'data-active_font_family="' . esc_attr( $active_font_family ) . '"'; ?>
+		$current_font_details = array();
+		if ( ! empty( $current_font_family ) ) {
+			$current_font_details = Customify_Fonts_Global::instance()->getFontDetails( $current_font_family );
+		}
+
+		$select_data = 'data-active_font_family="' . esc_attr( $current_font_family ) . '"'; ?>
 		<div class="font-options__wrapper">
 
 			<input type="checkbox" class="font-options__checkbox js-font-option-toggle" id="tooltip_toogle_<?php echo esc_attr( $this->CSSID ); ?>">
 
 			<?php
 			$this->display_value_holder( $current_value );
-			$this->display_field_title( $active_font_family, esc_attr( $this->CSSID ) ); ?>
+			$this->display_field_title( $current_font_family, $current_font_details ); ?>
 
 			<ul class="font-options__options-list">
 				<li class="font-options__option customize-control">
@@ -143,19 +156,19 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 
 						<?php
 						// Allow others to add options here. This is mostly for backwards compatibility purposes.
-						do_action( 'customify_font_family_before_options', $active_font_family, $current_value, $this->id );
+						do_action( 'customify_font_family_before_options', $current_font_family, $current_value, $this->id );
 
-						do_action( 'customify_font_family_select_options', $active_font_family, $current_value, $this->id );
+						do_action( 'customify_font_family_select_options', $current_font_family, $current_value, $this->id );
 
 						// Allow others to add options here. This is mostly for backwards compatibility purposes.
-						do_action( 'customify_font_family_after_options', $active_font_family, $current_value, $this->id ); ?>
+						do_action( 'customify_font_family_after_options', $current_font_family, $current_value, $this->id ); ?>
 
 					</select>
 				</li>
 				<?php
-				$this->display_font_weight_field( $current_value );
+				$this->display_font_variant_field( $current_value, $current_font_details );
 
-				$this->display_font_subsets_field( $current_value );
+				$this->display_font_subsets_field( $current_value, $current_font_details );
 
 				$this->display_font_size_field( $current_value );
 
@@ -187,6 +200,8 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 
 	/**
 	 * This input will hold the values of this font field
+	 *
+	 * @param $current_value
 	 */
 	protected function display_value_holder( $current_value ) { ?>
 		<input class="customify_font_values" id="<?php echo esc_attr( $this->CSSID ); ?>"
@@ -195,43 +210,22 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 		       data-default="<?php echo esc_attr( PixCustomifyPlugin::encodeURIComponent( json_encode( $current_value ) ) ); ?>"/>
 	<?php }
 
-	protected function display_field_title( $font_family, $font_name_id ) { ?>
+	protected function display_field_title( $font_family, $current_font_details ) {
+		// Determine if we have a "pretty" display for this font family
+		$font_family_display = $font_family;
+		if ( ! empty( $current_font_details['font_family_display'] ) ) {
+			$font_family_display = $current_font_details['font_family_display'];
+		}
+		?>
 		<label class="font-options__head  select" for="tooltip_toogle_<?php echo esc_attr( $this->CSSID ); ?>">
 			<?php if ( ! empty( $this->label ) ) : ?>
 				<span class="font-options__option-title"><?php echo esc_html( $this->label ); ?></span>
 			<?php endif; ?>
-			<span class="font-options__font-title" id="font_name_<?php echo $font_name_id; ?>"><?php echo $font_family; ?></span>
+			<span class="font-options__font-title" id="font_name_<?php echo esc_attr( $this->CSSID ); ?>"><?php echo $font_family_display; ?></span>
 		</label>
 	<?php }
 
-	function display_recommended_options_group( $font_family, $current_value ) {
-		// Allow others to add options here
-		do_action( 'customify_font_family_before_recommended_fonts_options', $font_family, $current_value );
-
-		if ( ! empty( $this->recommended ) ) {
-
-			echo '<optgroup label="' . esc_attr__( 'Recommended', 'customify' ) . '">';
-
-			$google_fonts = Customify_Fonts_Global::instance()->get_google_fonts();
-			foreach ( $this->recommended as $key => $font ) {
-				$font_type = 'std';
-				if ( isset( $google_fonts[ $key ] ) ) {
-					$font      = $google_fonts[ $key ];
-					$font_type = 'google';
-				} else {
-					$font = $key;
-				}
-
-				self::output_font_family_option( $font, $font_family, $font_type );
-			}
-			echo "</optgroup>";
-		}
-
-		// Allow others to add options here
-		do_action( 'customify_font_family_after_recommended_fonts_options', $font_family, $current_value );
-	}
-
-	protected function display_font_weight_field( $current_value ) {
+	protected function display_font_variant_field( $current_value, $current_font_details ) {
 		// If the `font-weight` field entry is falsy, this means we don't want to show the font-weight field.
 		// @todo Consider if we could simply not output anything.
 
@@ -243,39 +237,32 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 			$data_disabled = '';
 		}
 
-		// @todo This is very weird! We are only using a single font weight and use that to generate CSS,
-		// not just to load font weights/variants via Web Font Loader. This key should actually be font_weight!!!
-		// The variants are automatically loaded by Web Font Loader. There is no need to select them.
 		$selected = false;
-		if ( isset( $current_value->selected_variants ) ) {
-			$selected = $current_value->selected_variants;
-
-			if ( is_array( $selected ) ) {
-				$selected = reset( $selected );
-			}
+		if ( isset( $current_value->font_variant ) ) {
+			$selected = $current_value->font_variant;
 		}
 		?>
 		<li class="customify_weights_wrapper customize-control font-options__option"
 		    style="display: <?php echo $display; ?>;">
-			<label><?php esc_html_e( 'Font Weight', 'customify' ); ?></label>
+			<label><?php esc_html_e( 'Font Variant', 'customify' ); ?></label>
 			<?php
 			$data_default = ! empty( $selected ) ? 'data-default="' . $selected . '"' : '';
 			?>
 			<select class="customify_font_weight"
-			        data-field="selected_variants" <?php echo $data_default . ' ' . $data_disabled ?>>
+			        data-field="font_variant" <?php echo $data_default . ' ' . $data_disabled ?>>
 				<?php
-				if ( ! empty( $current_value->variants ) ) {
-					if ( is_string( $current_value->variants ) ) {
-						$current_value->variants = array( $current_value->variants );
+				if ( ! empty( $current_font_details['variants'] ) ) {
+					if ( is_string( $current_font_details['variants'] ) ) {
+						$current_font_details['variants'] = array( $current_font_details['variants'] );
 					}
 
-					foreach ( $current_value->variants as $weight ) {
+					foreach ( $current_font_details['variants'] as $variant ) {
 						$attrs = '';
-						if ( $weight == $selected ) {
+						if ( $variant == $selected ) {
 							$attrs = ' selected="selected"';
 						}
 
-						echo '<option value="' . esc_attr( $weight ) . '" ' . $attrs . '> ' . $weight . '</option>';
+						echo '<option value="' . esc_attr( $variant ) . '" ' . $attrs . '> ' . $variant . '</option>';
 					}
 				} ?>
 			</select>
@@ -283,14 +270,14 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 		<?php
 	}
 
-	protected function display_font_subsets_field( $current_value ) {
+	protected function display_font_subsets_field( $current_value, $current_font_details ) {
 		// If the `subsets` field entry is falsy, this means we don't want to show the subsets field.
 		// @todo Consider if we could simply not output anything.
 
-		// These two are go hand in hand. @todo Maybe simply here.
+		// These two go hand in hand. @todo Maybe simply here.
 		$display       = 'none';
 		$data_disabled = 'data-disabled';
-		if ( ! empty( $this->fields['subsets'] ) && ! empty( $current_value->subsets ) ) {
+		if ( ! empty( $this->fields['subsets'] ) && ! empty( $current_font_details['subsets'] ) ) {
 			$display       = 'inline-block';
 			$data_disabled = '';
 		} ?>
@@ -304,8 +291,8 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 					$selected = (array) $current_value->selected_subsets;
 				}
 
-				if ( ! empty( $current_value->subsets ) ) {
-					foreach ( $current_value->subsets as $key => $subset ) {
+				if ( ! empty( $current_font_details['subsets'] ) ) {
+					foreach ( $current_font_details['subsets'] as $key => $subset ) {
 						// The latin subset is always loaded so there is no need to have it as an option.
 						if ( $subset === 'latin' ) {
 							continue;
@@ -334,7 +321,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 
 		$value = empty( $current_value->font_size ) ? 0 : $current_value->font_size;
 		// Standardize the value.
-		$value = Customify_Fonts_Global::standardize_numerical_value( $value, 'font-size', array( 'fields' => $this->fields ) );
+		$value = Customify_Fonts_Global::standardizeNumericalValue( $value, 'font-size', array( 'fields' => $this->fields ) );
 
 		// We will remember the unit of the value, in case some other system pushed down a value (with an unit)
 		// that is different from the field config unit. This way we can retain the unit of the value until
@@ -360,7 +347,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 
 		$value = empty( $current_value->line_height ) ? 0 : $current_value->line_height;
 		// Standardize the value.
-		$value = Customify_Fonts_Global::standardize_numerical_value( $value, 'line-height', array( 'fields' => $this->fields ) );
+		$value = Customify_Fonts_Global::standardizeNumericalValue( $value, 'line-height', array( 'fields' => $this->fields ) );
 
 		// We will remember the unit of the value, in case some other system pushed down a value (with an unit)
 		// that is different from the field config unit. This way we can retain the unit of the value until
@@ -390,7 +377,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 			$value = 0;
 		}
 		// Standardize the value.
-		$value = Customify_Fonts_Global::standardize_numerical_value( $value, 'letter-spacing', array( 'fields' => $this->fields ) );
+		$value = Customify_Fonts_Global::standardizeNumericalValue( $value, 'letter-spacing', array( 'fields' => $this->fields ) );
 
 		// We will remember the unit of the value, in case some other system pushed down a value (with an unit)
 		// that is different from the field config unit. This way we can retain the unit of the value until
@@ -515,96 +502,53 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 	/**
 	 * This method displays an <option> tag from the given params
 	 *
-	 * @param string|array $font
+	 * @param string|array $font_family
 	 * @param string|false $active_font_family Optional. The active font family to add the selected attribute to the appropriate opt.
 	 *                                         False to not mark any opt as selected.
-	 * @param string $type Optional.
 	 */
-	public static function output_font_family_option( $font, $active_font_family = false, $type = 'google' ) {
-		echo self::get_font_family_option_markup( $font, $active_font_family, $type );
+	public static function output_font_family_option( $font_family, $active_font_family = false ) {
+		echo self::get_font_family_option_markup( $font_family, $active_font_family );
 	}
 
 	/**
 	 * This method returns an <option> tag from the given params
 	 *
-	 * @param string|array $font
+	 * @param string|array $font_family
 	 * @param string|false $active_font_family Optional. The active font family to add the selected attribute to the appropriate opt.
 	 *                                         False to not mark any opt as selected.
-	 * @param string $type Optional.
 	 * @return string
 	 */
-	public static function get_font_family_option_markup( $font, $active_font_family = false, $type = 'google' ) {
-
+	public static function get_font_family_option_markup( $font_family, $active_font_family = false ) {
 		$html = '';
-		$font_family = false;
-
-		if ( empty( $type ) ) {
-			$type = 'std';
-		}
-		$data_attrs = ' data-type="' . esc_attr( $type ) . '"';
-
-		// We will handle Google Fonts separately
-		if ( $type === 'google' ) {
-			$font_family = $font['family'];
-
-			// Handle the font variants markup, if available
-			if ( isset( $font['variants'] ) && ! empty( $font['variants'] ) ) {
-				$data_attrs .= ' data-variants="' . esc_attr( PixCustomifyPlugin::encodeURIComponent( json_encode( (object) $font['variants'] ) ) ) . '"';
-			}
-
-			if ( isset( $font['subsets'] ) && ! empty( $font['subsets'] ) ) {
-				$data_attrs .= ' data-subsets="' . esc_attr( PixCustomifyPlugin::encodeURIComponent( json_encode( (object) $font['subsets'] ) ) ) . '"';
-			}
-
-
-		} elseif ( $type === 'theme_font' || $type === 'cloud_font' ) {
-			$font_family = $font['family'];
-
-			// Handle the font variants markup, if available
-			if ( isset( $font['variants'] ) && ! empty( $font['variants'] ) ) {
-				$data_attrs .= ' data-variants="' . esc_attr( PixCustomifyPlugin::encodeURIComponent( json_encode( (object) $font['variants'] ) ) ) . '"';
-			}
-
-			$data_attrs .= ' data-src="' . esc_attr( $font['src'] ) . '"';
-		} else {
-			// Handle the font variants markup, if available
-			if ( is_array( $font ) && ! empty( $font['variants'] ) ) {
-				$data_attrs .= ' data-variants="' . esc_attr( PixCustomifyPlugin::encodeURIComponent( json_encode( (object) $font['variants'] ) ) ) . '"';
-			}
-
-			// By default, we assume we only get a font family string
-			$font_family = $font;
-			// when we get an array we expect to get a font_family entry
-			if ( is_array( $font ) && isset( $font['font_family'] ) ) {
-				$font_family = $font['font_family'];
-			}
-		}
-
-		// Now determine if we have a "pretty" display for this font family
-		$font_family_display = $font_family;
-		if ( is_array( $font ) && isset( $font['font_family_display'] ) ) {
-			$font_family_display = $font['font_family_display'];
-		}
 
 		// Bail if we don't have a font family value.
 		if ( empty( $font_family ) ) {
-			return apply_filters( 'customify_filter_font_option_markup_no_family', $html, $font, $active_font_family, $type );
+			return apply_filters( 'customify_filter_font_option_markup_no_family', $html, $active_font_family );
 		}
 
-		// Determine if the font is selected
+		$font_type = Customify_Fonts_Global::instance()->determineFontType( $font_family );
+		$font_details = Customify_Fonts_Global::instance()->getFontDetails( $font_family, $font_type );
+
+		// Now determine if we have a "pretty" display for this font family.
+		$font_family_display = $font_family;
+		if ( is_array( $font_details ) && ! empty( $font_details['font_family_display'] ) ) {
+			$font_family_display = $font_details['font_family_display'];
+		}
+
+		// Determine if the font is selected.
 		$selected = ( false !== $active_font_family && $active_font_family === $font_family ) ? ' selected="selected" ' : '';
 
-		// Determine the option class
-		$option_class = ( false !== strpos( $type, '_font' ) ) ? $type : $type . '_font';
+		// Determine the option class.
+		$option_class = ( false !== strpos( $font_type, '_font' ) ) ? $font_type : $font_type . '_font';
 
-		$html .= '<option class="' . esc_attr( $option_class ) . '" value="' . esc_attr( $font_family ) . '" ' . $selected . $data_attrs . '>' . $font_family_display . '</option>';
+		$html .= '<option class="' . esc_attr( $option_class ) . '" value="' . esc_attr( $font_family ) . '" ' . $selected . '>' . $font_family_display . '</option>';
 
-		return apply_filters( 'customify_filter_font_option_markup', $html, $font, $active_font_family, $type );
+		return apply_filters( 'customify_filter_font_option_markup', $html, $font_family, $active_font_family, $font_type );
 	}
 
 	/** ==== Helpers ==== */
 
-	function get_default_values() {
+	protected function get_default_values() {
 
 		$defaults = array();
 
@@ -618,25 +562,16 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 					$defaults['font_family'] = $this->default[0];
 				}
 
-				// The second entry is the variants.
+				// The second entry is the variant.
 				if ( isset( $this->default[1] ) ) {
-					$defaults['selected_variants'] = $this->default[1];
+					$defaults['font_variant'] = $this->default[1];
 				}
 			} else {
-				$defaults = Customify_Fonts_Global::standardize_font_values( $this->default );
+				$defaults = $this->default;
 			}
 		}
 
-		// Rare case when this is a standard font and we need to get the custom variants if there are some.
-		$font_type =
-		$std_fonts = Customify_Fonts_Global::instance()->get_std_fonts();
-		if ( ! isset( $defaults['variants'] )
-		     && isset( $std_fonts[ $defaults['font_family'] ]['variants'] ) ) {
-
-			$defaults['variants'] = $std_fonts[ $defaults['font_family'] ]['variants'];
-		}
-
-		return $defaults;
+		return Customify_Fonts_Global::standardizeFontValues( $defaults );
 	}
 
 	protected function get_CSS_ID() {
@@ -652,7 +587,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 	/**
 	 * Legacy: This method displays an <option> tag from the given params
 	 *
-	 * @deprecated Use Pix_Customize_Font_Control::output_font_option() instead.
+	 * @deprecated Use Pix_Customize_Font_Control::output_font_family_option() instead.
 	 *
 	 * @param string|array $font
 	 * @param string|false $active_font_family Optional. The active font family to add the selected attribute to the appropriate opt.
@@ -660,7 +595,15 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 	 * @param array $font_settings
 	 * @param string $type Optional.
 	 */
-	public static function output_font_option( $font, $active_font_family = false, $font_settings = array(), $type = 'google' ) {
-		echo self::get_font_family_option_markup( $font, $active_font_family, $type );
+	public static function output_font_option( $font, $active_font_family = false, $font_settings = array(), $type = 'google_font' ) {
+		$font_family = $font;
+		if ( is_array( $font_family ) ) {
+			if ( ! empty( $font_family['family'] ) ) {
+				$font_family = $font_family['family'];
+			} else {
+				return;
+			}
+		}
+		echo self::get_font_family_option_markup( $font_family, $active_font_family );
 	}
 }

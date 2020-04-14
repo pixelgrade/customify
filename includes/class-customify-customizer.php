@@ -859,7 +859,6 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 				if ( is_array( $setting_args['default'] ) ) {
 					$setting_args['default'] = (object) $setting_args['default'];
 				}
-
 				if ( is_object( $setting_args['default'] ) ) {
 					$setting_args['default'] = PixCustomifyPlugin::encodeURIComponent( json_encode( $setting_args['default'] ) );
 				}
@@ -876,20 +875,10 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 				$setting_args['type'] = 'option';
 			}
 
-			// if we arrive here this means we have a custom field control
-			switch ( $field_config['type'] ) {
-
-				case 'checkbox':
-
-					$setting_args['sanitize_callback'] = array( $this, 'setting_sanitize_checkbox' );
-					break;
-
-				default:
-					break;
-			}
-
 			if ( ! empty( $field_config['sanitize_callback'] ) && is_callable( $field_config['sanitize_callback'] ) ) {
 				$setting_args['sanitize_callback'] = $field_config['sanitize_callback'];
+			} elseif ( 'checkbox' === $field_config['type'] ) {
+				$setting_args['sanitize_callback'] = array( $this, 'setting_sanitize_checkbox' );
 			}
 
 			// Add the setting
@@ -1058,7 +1047,14 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 					}
 
 					if ( isset( $field_config['recommended'] ) ) {
-						$control_args['recommended'] = array_flip( $field_config['recommended'] );
+						$control_args['recommended'] = $field_config['recommended'];
+					}
+
+					// This is used only as an extreme failsafe.
+					// Normally, when there is no value, the WP Settings system will fallback on the default given for the setting.
+					// See above when registering the setting corresponding to this control.
+					if ( isset( $field_config['default'] ) ) {
+						$control_args['default'] = $field_config['default'];
 					}
 
 					break;
@@ -1073,11 +1069,18 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 					$control_class_name = 'Pix_Customize_Font_Control';
 
 					if ( isset( $field_config['recommended'] ) ) {
-						$control_args['recommended'] = array_flip( $field_config['recommended'] );
+						$control_args['recommended'] = $field_config['recommended'];
 					}
 
 					if ( isset( $field_config['live'] ) ) {
 						$control_args['live'] = $field_config['live'];
+					}
+
+					// This is used only as an extreme failsafe.
+					// Normally, when there is no value, the WP Settings system will fallback on the default given for the setting.
+					// See above when registering the setting corresponding to this control.
+					if ( isset( $field_config['default'] ) ) {
+						$control_args['default'] = $field_config['default'];
 					}
 
 					$font_control_subfields = apply_filters( 'customify_default_font_control_subfields', array(
