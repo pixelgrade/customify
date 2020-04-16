@@ -2,7 +2,7 @@
 Contributors: pixelgrade, vlad.olaru, babbardel, razvanonofrei, gorby31
 Tags: customizer, css, editor, gutenberg, live, preview, customizer
 Requires at least: 4.9.9
-Tested up to: 5.3.2
+Tested up to: 5.4.0
 Stable tag: 2.6.0
 Requires PHP: 5.3.0
 License: GPLv2 or later
@@ -19,8 +19,6 @@ With [Customify](https://github.com/pixelgrade/customify), developers can easily
 * **Color.** A color picker used to control any text or background color of an element.
 
 * **Font.** A real font selector which includes a flexible library of fonts(Fonto, google fonts or added via fliter) and allows you to customize, with live preview, properties like font-weight, size, letter spacing, text align, text decoration etc.
-
-* **Typography.** (Deprecated) A series of typographic options that allow you to access the massive **Google Fonts library** and make them available inside your theme customizer.
 
 * **CSS Editor.** A powerful **Live CSS Editor** directly into your customizer! Useful for better control over the appearance of your theme without the need to create a child theme or worry about theme updates overwriting your customizations.
 

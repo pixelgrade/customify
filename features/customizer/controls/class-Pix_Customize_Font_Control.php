@@ -2,7 +2,8 @@
 
 /**
  * Class Pix_Customize_Font_Control
- * A complex Typography Control
+ *
+ * A complex typography control.
  */
 class Pix_Customize_Font_Control extends Pix_Customize_Control {
 
@@ -256,6 +257,9 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 						$current_font_details['variants'] = array( $current_font_details['variants'] );
 					}
 
+					// Output an option with an empty value. Selecting this will NOT force a certain variant in the output.
+					echo '<option value="">Auto</option>';
+
 					foreach ( $current_font_details['variants'] as $variant ) {
 						$attrs = '';
 						if ( $variant == $selected ) {
@@ -277,7 +281,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 		// These two go hand in hand. @todo Maybe simply here.
 		$display       = 'none';
 		$data_disabled = 'data-disabled';
-		if ( ! empty( $this->fields['subsets'] ) && ! empty( $current_font_details['subsets'] ) ) {
+		if ( ! empty( $this->fields['subsets'] ) ) {
 			$display       = 'inline-block';
 			$data_disabled = '';
 		} ?>

@@ -134,10 +134,31 @@ class Customify_Fonts_Global {
 		return $config;
 	}
 
-	public function standardize_font_fields_config( &$item ) {
+	public function standardize_font_fields_config( &$item, $key = false ) {
 		// We are after fields configs, so not interested in entries that are not arrays.
 		if ( ! is_array( $item ) ) {
 			return;
+		}
+
+		// If we have a `typography` field configuration, we have work to do!!!
+		// We will transform it into a equivalent font field (in behavior). Ha!
+		// We will not duplicate the logic applied for font fields below.
+		if ( isset( $item['type'] ) && 'typography' === $item['type'] ) {
+			// Change the field type.
+			// Now there is no going back :)
+			$item['type'] = 'font';
+
+			// If $item['load_all_weights'] is truthy then that means we don't need a font-weight subfield.
+			if ( ! empty( $item['load_all_weights'] ) ) {
+				$item['fields']['font-weight'] = false;
+				unset( $item['load_all_weights'] );
+			}
+
+			// The `variants` entry (consisting of a list of variants) really has no place at a field level.
+			// This is information related to each (selected) font.
+			if ( isset( $item['variants'] ) ) {
+				unset( $item['variants'] );
+			}
 		}
 
 		// If we have a `font` field configuration, we have work to do.
@@ -152,44 +173,54 @@ class Customify_Fonts_Global {
 				$item['selector'] = self::standardizeFontSelector( $item['selector'] );
 			}
 
-			// We do a little bit of fields cleanup.
-			if ( ! empty( $item['fields'] ) ) {
-				// All entries should use dashes not underscores in their keys.
-				foreach ( $item['fields'] as $field_type => $value ) {
-					if ( strpos( $field_type, '_' ) !== false ) {
-						$new_field_type = str_replace( '_', '-', $field_type );
-						$item['fields'][ $new_field_type ] = $value;
-						unset( $item['fields'][ $field_type ] );
-					}
-				}
+			// Standardize the subfields config.
+			if ( empty( $item['fields'] ) ) {
+				$item['fields'] = array();
 			}
 
 			// Some legacy configs specify a couple of fields outside the `fields` entry. We must cleanup.
-			if ( isset( $item['font_weight'] ) && ! isset( $item['fields']['font-weight'] ) ) {
+			if ( isset( $item['font_weight'] ) ) {
 				$item['fields']['font-weight'] = $item['font_weight'];
+				unset( $item['font_weight'] );
 			}
-			if ( isset( $item['subsets'] ) && ! isset( $item['fields']['subsets'] ) ) {
+			if ( isset( $item['subsets'] ) ) {
 				$item['fields']['subsets'] = $item['subsets'];
+				unset( $item['subsets'] );
 			}
+
+			// All subfields entries should use dashes not underscores in their keys.
+			foreach ( $item['fields'] as $field_type => $value ) {
+				if ( strpos( $field_type, '_' ) !== false ) {
+					$new_field_type                    = str_replace( '_', '-', $field_type );
+					$item['fields'][ $new_field_type ] = $value;
+					unset( $item['fields'][ $field_type ] );
+				}
+			}
+
+			$subfieldsConfig = apply_filters( 'customify_default_font_subfields_config', array(
+				'font-family'     => true,
+				'font-weight'     => true, // This is actually the font-variant (weight and maybe style)
+				'subsets'         => true,
+				'font-size'       => false,
+				'line-height'     => false,
+				'letter-spacing'  => false,
+				'text-align'      => false,
+				'text-transform'  => false,
+				'text-decoration' => false,
+			), $item, $key );
+
+			// If we have received a fields configuration, merge it with the default.
+			$subfieldsConfig = wp_parse_args( $item['fields'], $subfieldsConfig );
+
+			$item['fields'] = $subfieldsConfig;
 
 			// We have no reason to go recursively further when we have come across a `font` field configuration.
 			return;
 		}
 
-		// If we have a `typography` field configuration, we have work to do.
-		if ( isset( $item['type'] ) && 'typography' === $item['type'] ) {
-			// We want to standardize the default value, if present.
-			if ( ! empty( $item['default'] ) ) {
-				$item['default'] = self::standardizeFontValues( $item['default'] );
-			}
-
-			// We have no reason to go recursively further when we have come across a `typography` field configuration.
-			return;
-		}
-
 		foreach ( $item as $key => $subitem ) {
 			// We can't use $subitem since that is a copy, and we need to reference the original.
-			$this->standardize_font_fields_config( $item[ $key ] );
+			$this->standardize_font_fields_config( $item[ $key ], $key );
 		}
 	}
 
@@ -497,7 +528,9 @@ class Customify_Fonts_Global {
 			$font_details = $this->getFontDetails( $value['font_family'], $font_type );
 
 			if ( 'google_font' !== $font_type ) {
-				if ( ! empty( $font_details['variants'] ) ) {
+				if ( ! empty( $value['font_variant'] ) ) {
+					$font_family .= ":" . join( ',', self::convertFontVariantsToFvds( $value['font_variant'] ) );
+				} elseif ( ! empty( $font_details['variants'] ) ) {
 					$font_family .= ':' . join( ',', self::convertFontVariantsToFvds( $font_details['variants'] ) );
 				}
 				$args['custom_families'][] = "'" . $font_family . "'";
@@ -508,14 +541,16 @@ class Customify_Fonts_Global {
 			}
 
 			// This is a Google font.
-			if ( ! empty( $font_details['variants'] ) ) {
+			// We load just the selected variants, if available, or all variants.
+			if ( ! empty( $value['font_variant'] ) ) {
+				$font_family .= ":" . self::maybeImplodeList( $value['font_variant'] );
+			} elseif ( ! empty( $font_details['variants'] ) ) {
 				$font_family .= ":" . self::maybeImplodeList( $font_details['variants'] );
 			}
 
+			// We only load selected subsets. The latin subset is automatically loaded.
 			if ( ! empty( $value['selected_subsets'] ) ) {
 				$font_family .= ":" . self::maybeImplodeList( $value['selected_subsets'] );
-			} elseif ( ! empty( $font_details['subsets'] ) ) {
-				$font_family .= ":" . self::maybeImplodeList( $font_details['subsets'] );
 			}
 
 			$args['google_families'][] = "'" . $font_family . "'";
@@ -553,11 +588,6 @@ class Customify_Fonts_Global {
 		$local_plugin = PixCustomifyPlugin();
 
 		$font_fields = array();
-
-		// We will gather typography fields also since in this situation they are treated the same.
-		// @todo Remove this when we migrate away from typography fields.
-		$local_plugin->customizer->get_fields_by_key( $local_plugin->get_options_details(), 'type', 'typography', $font_fields );
-
 		$local_plugin->customizer->get_fields_by_key( $local_plugin->get_options_details(), 'type', 'font', $font_fields );
 
 		if ( empty( $font_fields ) ) {
@@ -602,11 +632,6 @@ class Customify_Fonts_Global {
 		$local_plugin = PixCustomifyPlugin();
 
 		$font_fields = array();
-
-		// We will gather typography fields also since in this situation they are treated the same.
-		// @todo Remove this when we migrate away from typography fields.
-		$local_plugin->customizer->get_fields_by_key( $local_plugin->get_options_details(), 'type', 'typography', $font_fields );
-
 		$local_plugin->customizer->get_fields_by_key( $local_plugin->get_options_details(), 'type', 'font', $font_fields );
 
 		if ( empty( $font_fields ) ) {
@@ -663,6 +688,9 @@ class Customify_Fonts_Global {
 			$properties_prefix = $font['properties_prefix'];
 		}
 
+		// The general CSS allowed properties.
+		$subFieldsCSSAllowedProperties = $this->extractAllowedCSSPropertiesFromFontFields( $font['fields'] );
+
 		// Since we might have simple CSS selectors and complex ones (with special details),
 		// for cleanliness we will group the simple ones under a single CSS rule,
 		// and output individual CSS rules for complex ones.
@@ -684,7 +712,7 @@ class Customify_Fonts_Global {
 			ob_start();
 
 			echo "\n" . join(', ', $simple_css_selectors ) . " {" . "\n";
-			$this->output_font_style_properties( $font, $value, false, $properties_prefix );
+			$this->output_font_style_properties( $font, $value, $subFieldsCSSAllowedProperties, $properties_prefix );
 			echo "}\n";
 
 			$output .= ob_get_clean();
@@ -1190,8 +1218,17 @@ if (typeof WebFont !== 'undefined') {
 	 * @return array
 	 */
 	public static function standardizeFontValues( $values ) {
+		if ( empty( $values ) ) {
+			return array();
+		}
 
-		if ( empty( $values ) || ! is_array( $values ) ) {
+		// If we are given a string, we will consider it a font-family definition
+		if ( is_string( $values ) ) {
+			$values = array( $values );
+		}
+
+		// If by this time we don't have an array, return an empty value.
+		if ( ! is_array( $values ) ) {
 			return array();
 		}
 
@@ -1348,6 +1385,60 @@ if (typeof WebFont !== 'undefined') {
 		}
 
 		return ! empty( $stdAllowedProperties[ $property ] );
+	}
+
+	/**
+	 * Given a font subfields configuration determine a list of allowed properties.
+	 *
+	 * The returned list is in the format: `css-property-name`: true|false.
+	 *
+	 * @param array $subfields
+	 *
+	 * @return array
+	 */
+	public static function extractAllowedCSSPropertiesFromFontFields( $subfields ) {
+		// Nothing is allowed by default.
+		$allowedProperties = array(
+			'font-family'     => false,
+			'font-weight'     => false,
+			'font-style'      => false,
+			'font-size'       => false,
+			'line-height'     => false,
+			'letter-spacing'  => false,
+			'text-align'      => false,
+			'text-transform'  => false,
+			'text-decoration' => false,
+		);
+
+		if ( empty( $subfields ) || ! is_array( $subfields ) ) {
+			return $allowedProperties;
+		}
+
+		// Convert all subfield keys to use dashes not underscores.
+		foreach ( $subfields as $key => $value ) {
+			if ( strpos( $key, '_' ) !== false ) {
+				$new_key               = str_replace( '_', '-', $key );
+				$subfields[ $new_key ] = $value;
+				unset( $subfields[ $key ] );
+			}
+		}
+
+		// We will match the subfield keys with the CSS properties, but only those that properties that are above.
+		// Maybe at some point some more complex matching would be needed here.
+		foreach ( $subfields as $key => $value ) {
+			if ( isset( $allowedProperties[ $key ] ) ) {
+				// Convert values to boolean.
+				$allowedProperties[ $key ] = ! empty( $value );
+
+				// For font-weight we want font-style to go the same way,
+				// since these two are generated from the same subfield: font-weight (actually holding the font variant value).
+				if ( 'font-weight' === $key ) {
+					$allowedProperties[ 'font-style' ] = $allowedProperties[ $key ];
+				}
+			}
+		}
+
+		return $allowedProperties;
 	}
 
 	public static function getSubFieldUnit( $field, $font ) {

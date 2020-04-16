@@ -4,6 +4,8 @@ $border-radius: $fields_border-radius;
 $focus-border-color: $blue;
 $container-focus-border-color: $blue;
 
+$container-placeholder-color: #999;
+
 $results-choice-bg-hover-color: $blue;
 $results-choice-fg-hover-color: #FFFFFF;
 
@@ -20,6 +22,34 @@ $results-choice-fg-hover-color: #FFFFFF;
       height: 40px;
       padding: 10px 8px;
     }
+  }
+
+  input::-webkit-input-placeholder {
+    font-size: 14px;
+    color: $container-placeholder-color;
+    opacity: 1;
+    line-height: 1.5;
+  }
+
+  input:-moz-placeholder { /* Firefox 18- */
+    font-size: 14px;
+    color: $container-placeholder-color;
+    opacity: 1;
+    line-height: 1.5;
+  }
+
+  input::-moz-placeholder { /* Firefox 19+ */
+    font-size: 14px;
+    color: $container-placeholder-color;
+    opacity: 1;
+    line-height: 1.5;
+  }
+
+  input:-ms-input-placeholder {
+    font-size: 14px;
+    color: $container-placeholder-color;
+    opacity: 1;
+    line-height: 1.5;
   }
 }
 

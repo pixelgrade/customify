@@ -83,7 +83,6 @@ Ace Editor | Yes [with classes](#live_preview_with_classes) | An ace editor that
 Color | Yes | A simple color picker
 Range | Yes | The default html5 range input
 Font | Custom Live Preview | A complete font selector with Live Preview, google fonts, filtrable theme fonts and custom callbacks 
-Typography | No | This is a font selector but it will be soon depricated, use Font instead
 Select | No | The standard HTML select
 Radio | No |
 Checkbox | No | 

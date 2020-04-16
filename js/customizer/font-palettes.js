@@ -32,14 +32,14 @@ window.customify = window.customify || {};
       }
     }
 
-    const getConnectedFieldsCallback = function (parent_setting_data, parent_setting_id) {
-      return function (new_value, old_value) {
-        _.each(parent_setting_data.connected_fields, function (connected_field_data) {
-          if (_.isUndefined(connected_field_data) || _.isUndefined(connected_field_data.setting_id) || !_.isString(connected_field_data.setting_id) || _.isUndefined(parent_setting_data.fonts_logic)) {
+    const getConnectedFieldsCallback = function (parentSettingData, parentSettingID) {
+      return function (newValue, oldValue) {
+        _.each(parentSettingData.connected_fields, function (connectedFieldData) {
+          if (_.isUndefined(connectedFieldData) || _.isUndefined(connectedFieldData.setting_id) || !_.isString(connectedFieldData.setting_id) || _.isUndefined(parentSettingData.fonts_logic)) {
             return
           }
 
-          let setting = api(connected_field_data.setting_id)
+          const setting = api(connectedFieldData.setting_id)
           if (_.isUndefined(setting)) {
             return
           }
@@ -47,14 +47,13 @@ window.customify = window.customify || {};
           /* ======================
            * Process the font logic for the master (parent) font control to get the value that should be applied to the connected (font) fields.
            */
-          let newFontData = {}
-          let fonts_logic = parent_setting_data.fonts_logic
-          let serializedNewFontData
+          const newFontData = {}
+          const fontsLogic = parentSettingData.fonts_logic
 
           // @todo Is this still in use? Can't find the logic that triggers it.
-          if (typeof fonts_logic.reset !== 'undefined') {
-            let setting_id = connected_field_data.setting_id
-            let defaultValue = customify.config.settings[setting_id].default
+          if (typeof fontsLogic.reset !== 'undefined') {
+            const settingID = connectedFieldData.setting_id
+            const defaultValue = customify.config.settings[settingID].default
 
             if (!_.isUndefined(setting) && !_.isEmpty(defaultValue)) {
               newFontData['font_family'] = defaultValue['font_family']
@@ -71,8 +70,8 @@ window.customify = window.customify || {};
            */
 
           // The font family is straight forward as it comes directly from the parent field font logic configuration.
-          if (typeof fonts_logic.font_family !== 'undefined') {
-            newFontData['font_family'] = fonts_logic.font_family
+          if (typeof fontsLogic.font_family !== 'undefined') {
+            newFontData['font_family'] = fontsLogic.font_family
           }
 
           if (_.isEmpty(newFontData['font_family'])) {
@@ -84,76 +83,76 @@ window.customify = window.customify || {};
           newFontData['type'] = customify.fontFields.determineFontType(newFontData['font_family'])
 
           // The selected variants also come straight from the font logic right now.
-          if (typeof fonts_logic.font_weights !== 'undefined') {
-            newFontData['variants'] = fonts_logic.font_weights
+          if (typeof fontsLogic.font_weights !== 'undefined') {
+            newFontData['variants'] = fontsLogic.font_weights
           }
 
-          if (typeof connected_field_data.font_size !== 'undefined' && false !== connected_field_data.font_size) {
-            newFontData['font_size'] = connected_field_data.font_size
+          if (typeof connectedFieldData.font_size !== 'undefined' && false !== connectedFieldData.font_size) {
+            newFontData['font_size'] = connectedFieldData.font_size
 
             // The font variant, letter spacing and text transform all come together from the font styles (intervals).
             // We just need to find the one that best matches the connected field given font size (if given).
             // Please bear in mind that we expect the font logic styles to be preprocessed, without any overlapping and using numerical keys.
-            if (typeof fonts_logic.font_styles_intervals !== 'undefined' && _.isArray(fonts_logic.font_styles_intervals) && fonts_logic.font_styles_intervals.length > 0) {
+            if (typeof fontsLogic.font_styles_intervals !== 'undefined' && _.isArray(fontsLogic.font_styles_intervals) && fontsLogic.font_styles_intervals.length > 0) {
               let idx = 0
-              while (idx < fonts_logic.font_styles_intervals.length - 1 &&
-              typeof fonts_logic.font_styles_intervals[idx].end !== 'undefined' &&
-              fonts_logic.font_styles_intervals[idx].end <= connected_field_data.font_size.value) {
+              while (idx < fontsLogic.font_styles_intervals.length - 1 &&
+                typeof fontsLogic.font_styles_intervals[idx].end !== 'undefined' &&
+                fontsLogic.font_styles_intervals[idx].end <= connectedFieldData.font_size.value) {
 
                 idx++
               }
 
               // We will apply what we've got.
-              if (!_.isEmpty(fonts_logic.font_styles_intervals[idx].font_weight)) {
-                newFontData['font_variant'] = fonts_logic.font_styles_intervals[idx].font_weight
+              if (!_.isEmpty(fontsLogic.font_styles_intervals[idx].font_weight)) {
+                newFontData['font_variant'] = fontsLogic.font_styles_intervals[idx].font_weight
               }
-              if (!_.isEmpty(fonts_logic.font_styles_intervals[idx].letter_spacing)) {
-                newFontData['letter_spacing'] = fonts_logic.font_styles_intervals[idx].letter_spacing
+              if (!_.isEmpty(fontsLogic.font_styles_intervals[idx].letter_spacing)) {
+                newFontData['letter_spacing'] = fontsLogic.font_styles_intervals[idx].letter_spacing
               }
-              if (!_.isEmpty(fonts_logic.font_styles_intervals[idx].text_transform)) {
-                newFontData['text_transform'] = fonts_logic.font_styles_intervals[idx].text_transform
+              if (!_.isEmpty(fontsLogic.font_styles_intervals[idx].text_transform)) {
+                newFontData['text_transform'] = fontsLogic.font_styles_intervals[idx].text_transform
               }
             }
 
             // The line height is determined by getting the value of the polynomial function determined by points.
-            if (typeof fonts_logic.font_size_to_line_height_points !== 'undefined' && _.isArray(fonts_logic.font_size_to_line_height_points)) {
-              let result = regression.logarithmic(fonts_logic.font_size_to_line_height_points, {precision: 2})
-              let fontsize = connected_field_data.font_size.value
-              let lineHeight = result.predict(fontsize)[1]
+            if (typeof fontsLogic.font_size_to_line_height_points !== 'undefined' && _.isArray(fontsLogic.font_size_to_line_height_points)) {
+              const result = regression.logarithmic(fontsLogic.font_size_to_line_height_points, {precision: 2})
+              const fontsize = connectedFieldData.font_size.value
+              const lineHeight = result.predict(fontsize)[1]
               newFontData['line_height'] = {value: lineHeight}
             }
           }
 
-          serializedNewFontData = customify.fontFields.encodeValues(newFontData)
+          const serializedNewFontData = customify.fontFields.encodeValues(newFontData)
           setting.set(serializedNewFontData)
         })
       }
     }
 
     const bindConnectedFields = function () {
-      _.each(masterSettingIds, function (parent_setting_id) {
-        if (typeof apiSettings[parent_setting_id] !== 'undefined') {
-          let parent_setting_data = apiSettings[parent_setting_id]
-          let parent_setting = api(parent_setting_id)
+      _.each(masterSettingIds, function (parentSettingID) {
+        if (typeof apiSettings[parentSettingID] !== 'undefined') {
+          const parentSettingData = apiSettings[parentSettingID]
+          const parentSetting = api(parentSettingID)
 
-          if (typeof parent_setting_data.connected_fields !== 'undefined') {
-            customify.fontsConnectedFieldsCallbacks[parent_setting_id] = getConnectedFieldsCallback(parent_setting_data, parent_setting_id)
-            parent_setting.bind(customify.fontsConnectedFieldsCallbacks[parent_setting_id])
+          if (typeof parentSettingData.connected_fields !== 'undefined') {
+            customify.fontsConnectedFieldsCallbacks[parentSettingID] = getConnectedFieldsCallback(parentSettingData, parentSettingID)
+            parentSetting.bind(customify.fontsConnectedFieldsCallbacks[parentSettingID])
           }
         }
       })
     }
 
     const unbindConnectedFields = function () {
-      _.each(masterSettingIds, function (parent_setting_id) {
-        if (typeof apiSettings[parent_setting_id] !== 'undefined') {
-          let parent_setting_data = apiSettings[parent_setting_id]
-          let parent_setting = api(parent_setting_id)
+      _.each(masterSettingIds, function (parentSettingID) {
+        if (typeof apiSettings[parentSettingID] !== 'undefined') {
+          const parentSettingData = apiSettings[parentSettingID]
+          const parentSetting = api(parentSettingID)
 
-          if (typeof parent_setting_data.connected_fields !== 'undefined' && typeof customify.fontsConnectedFieldsCallbacks[parent_setting_id] !== 'undefined') {
-            parent_setting.unbind(customify.fontsConnectedFieldsCallbacks[parent_setting_id])
+          if (typeof parentSettingData.connected_fields !== 'undefined' && typeof customify.fontsConnectedFieldsCallbacks[parentSettingID] !== 'undefined') {
+            parentSetting.unbind(customify.fontsConnectedFieldsCallbacks[parentSettingID])
           }
-          delete customify.fontsConnectedFieldsCallbacks[parent_setting_id]
+          delete customify.fontsConnectedFieldsCallbacks[parentSettingID]
         }
       })
     }
@@ -166,11 +165,11 @@ window.customify = window.customify || {};
 
     const onPaletteChange = function () {
       // Take the fonts config for each setting and distribute it to each (master) setting.
-      let data = $(this).data('fonts_logic')
+      const data = $(this).data('fonts_logic')
 
       if (!_.isUndefined(data)) {
-        $.each(data, function (setting_id, config) {
-          set_field_fonts_logic_config(setting_id, config)
+        $.each(data, function (settingID, config) {
+          setFieldFontsLogicConfig(settingID, config)
         })
       }
 
@@ -178,11 +177,11 @@ window.customify = window.customify || {};
       $(this).trigger('customify:preset-change')
     }
 
-    const set_field_fonts_logic_config = function (setting_id, config) {
-      apiSettings[setting_id].fonts_logic = config
+    const setFieldFontsLogicConfig = function (settingID, config) {
+      apiSettings[settingID].fonts_logic = config
 
       // We also need to trigger a fake setting value change since the master font controls don't usually hold a (usable) value.
-      let setting = api(setting_id)
+      const setting = api(settingID)
       if (_.isUndefined(setting)) {
         return
       }
@@ -191,7 +190,7 @@ window.customify = window.customify || {};
       // when new info arrives, the setting callbacks will be fired (.set() doesn't do anything if the new value is the same as the old).
       // Also some entries will be used to set the master font subfields (mainly font family).
       // This value is not used in any other way!
-      let serializedNewFontData = customify.fontFields.encodeValues(config)
+      const serializedNewFontData = customify.fontFields.encodeValues(config)
       setting.set(serializedNewFontData)
     }
 

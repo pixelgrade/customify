@@ -1026,41 +1026,9 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 					$control_class_name = 'WP_Customize_Cropped_Image_Control';
 					break;
 
-				// Custom types
-				// This is a legacy control type
-				// @todo Consider removing this at some point or automatically migrate data to Font control type.
-				case 'typography' :
-
-					if ( ! PixCustomifyPlugin()->settings->get_plugin_setting( 'typography', '1' ) ) {
-						$add_control = false;
-						break;
-					}
-
-					$control_class_name = 'Pix_Customize_Typography_Control';
-
-					if ( isset( $field_config['font_weight'] ) ) {
-						$control_args['font_weight'] = $field_config['font_weight'];
-					}
-
-					if ( isset( $field_config['subsets'] ) ) {
-						$control_args['subsets'] = $field_config['subsets'];
-					}
-
-					if ( isset( $field_config['recommended'] ) ) {
-						$control_args['recommended'] = $field_config['recommended'];
-					}
-
-					// This is used only as an extreme failsafe.
-					// Normally, when there is no value, the WP Settings system will fallback on the default given for the setting.
-					// See above when registering the setting corresponding to this control.
-					if ( isset( $field_config['default'] ) ) {
-						$control_args['default'] = $field_config['default'];
-					}
-
-					break;
-
 				case 'font' :
 
+					// Only add the control if typography is turned on in the plugin settings.
 					if ( ! PixCustomifyPlugin()->settings->get_plugin_setting( 'typography', '1' ) ) {
 						$add_control = false;
 						break;
@@ -1083,23 +1051,12 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 						$control_args['default'] = $field_config['default'];
 					}
 
-					$font_control_subfields = apply_filters( 'customify_default_font_control_subfields', array(
-						'font-weight'     => true,
-						'subsets'         => true,
-						'font-size'       => false,
-						'line-height'     => false,
-						'letter-spacing'  => false,
-						'text-align'      => false,
-						'text-transform'  => false,
-						'text-decoration' => false,
-					), $setting_id, $field_config );
-
-					// If we have received a fields configuration, merge it with the default.
+					// We should always receive a subfields configuration.
 					if ( isset( $field_config['fields'] ) ) {
-						$font_control_subfields = wp_parse_args( $field_config['fields'], $font_control_subfields );
+						$control_args['fields'] = $field_config['fields'];
+					} else {
+						$control_args['fields'] = array();
 					}
-
-					$control_args['fields'] = $font_control_subfields;
 
 					break;
 

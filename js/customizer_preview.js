@@ -110,8 +110,7 @@
         let variant = values.font_variant
 
         if (_.isString(variant)) {
-
-          // We may have a style in the variant. Attempt to split.
+          // We may have a style in the variant; attempt to split.
           if (variant.indexOf('italic') !== -1) {
             store['font-style'] = 'italic'
             variant = variant.replace('italic', '')
@@ -128,6 +127,8 @@
 
             store['font-weight'] = variant
           }
+        } else if (_.isNumeric(variant)) {
+          store['font-weight'] = variant
         }
       }
 
@@ -199,10 +200,8 @@
       return store
     }
 
+    // Mirror logic of server-side Customify_Fonts_Global::get_font_style()
     const getFontFieldCSSCode = function (ID, values, prefix) {
-
-      // This whole logic is a replica of the server side logic found in Customify_Fonts_Global::get_font_style()
-
       const field = customify.config.settings[ID]
       let output = ''
 
@@ -212,6 +211,9 @@
         if (typeof field.selector === 'undefined' || _.isEmpty(field.selector)) {
           return output
         }
+
+        // The general CSS allowed properties.
+        const subFieldsCSSAllowedProperties = extractAllowedCSSPropertiesFromFontFields(field['fields'])
 
         // The selector is standardized to a list of simple string selectors, or a list of complex selectors with details.
         // In either case, the actual selector is in the key, and the value is an array (possibly empty).
@@ -234,7 +236,7 @@
 
         if ( !_.isEmpty(simpleCSSSelectors)) {
           output += '\n' + simpleCSSSelectors.join(', ') + ' {\n'
-          output += getFontFieldCSSProperties(values, [], prefix)
+          output += getFontFieldCSSProperties(values, subFieldsCSSAllowedProperties, prefix)
           output += '}\n'
         }
 
@@ -270,6 +272,7 @@
       return output
     }
 
+    // Mirror logic of server-side Customify_Fonts_Global::isCSSPropertyAllowed()
     const isCSSPropertyAllowed = function (property, allowedProperties = false) {
       // Empty properties are not allowed.
       if (_.isEmpty(property)) {
@@ -281,15 +284,64 @@
         return true;
       }
 
+      // For arrays
       if (_.contains(allowedProperties, property)) {
         return true
       }
 
+      // For objects
       if (_.has(allowedProperties, property) && allowedProperties[property]) {
         return true
       }
 
       return false
+    }
+
+    const extractAllowedCSSPropertiesFromFontFields = function(subfields) {
+      // Nothing is allowed by default.
+      const allowedProperties = {
+        'font-family': false,
+        'font-weight': false,
+        'font-style': false,
+        'font-size': false,
+        'line-height': false,
+        'letter-spacing': false,
+        'text-align': false,
+        'text-transform': false,
+        'text-decoration': false,
+      }
+
+      if ( _.isEmpty( subfields ) ) {
+        return allowedProperties;
+      }
+
+      const regexForMultipleReplace = new RegExp('_', 'g')
+
+      // Convert all subfield keys to use dashes not underscores.
+      _.each(subfields, function (value, key) {
+        const newKey = key.replace(regexForMultipleReplace, '-')
+        if (newKey !== key ) {
+          subfields[newKey] = value
+          delete subfields[key]
+        }
+      })
+
+      // We will match the subfield keys with the CSS properties, but only those that properties that are above.
+      // Maybe at some point some more complex matching would be needed here.
+      _.each(subfields, function (value, key) {
+        if (typeof allowedProperties[key] !== 'undefined') {
+          // Convert values to boolean.
+          allowedProperties[key] = !!value
+
+          // For font-weight we want font-style to go the same way,
+          // since these two are generated from the same subfield: font-weight (actually holding the font variant value).
+          if ( 'font-weight' === key ) {
+            allowedProperties['font-style'] = allowedProperties[key]
+          }
+        }
+      })
+
+      return allowedProperties;
     }
 
     const getFieldUnit = function (ID, field) {
@@ -317,42 +369,27 @@
       // The font family may be a comma separated list like "Roboto, sans"
 
       const fontType = customify.fontFields.determineFontType(family)
+      if ('std_font' === fontType) {
+        // Nothing to do for standard fonts
+        return
+      }
+
+      const fontDetails = customify.fontFields.getFontDetails(family, fontType)
 
       // Handle theme defined fonts and cloud fonts together since they are very similar.
       if (fontType === 'theme_font' || fontType === 'cloud_font') {
 
-
-        if (typeof font.src === 'undefined') {
-          let fontsArray
-
-          if (fontType === 'theme_font') {
-            fontsArray = Object.keys(customify.config.theme_fonts).map(key => customify.config.theme_fonts[key])
-          } else {
-            fontsArray = Object.keys(customify.config.cloud_fonts).map(key => customify.config.cloud_fonts[key])
-          }
-
-          const index = fontsArray.findIndex(fontObj => fontObj.family === family)
-          if (index > -1) {
-            font.src = fontsArray[index].src
-          }
-        }
-
         // Bail if we have no src.
-        if (typeof font.src === 'undefined') {
+        if (typeof fontDetails.src === undefined) {
           return
         }
 
         // Handle the font variants
-        if (typeof font.variants !== 'undefined') {
-          let variants = maybeJsonParse(font.variants)
+        // First if there is a selected font variant, otherwise all the available variants.
+        let variants = typeof font.font_variant !== 'undefined' ? font.font_variant : typeof fontDetails.variants !== 'undefined' ? fontDetails.variants : []
+        variants = standardizeToArray( maybeJsonParse(variants) )
 
-          // Standardize the variants to an array.
-          if (typeof variants === 'string' || typeof variants === 'number') {
-            variants = [variants]
-          } else if (typeof variants === 'object') {
-            variants = Object.values(variants);
-          }
-
+        if (!_.isEmpty(variants)) {
           family = family + ':' + variants.map(function (variant) {
             return customify.fontFields.convertFontVariantToFVD(variant)
           }).join(',')
@@ -363,7 +400,7 @@
             WebFont.load({
               custom: {
                 families: [family],
-                urls: [font.src]
+                urls: [fontDetails.src]
               },
               classes: false,
               events: false,
@@ -382,30 +419,20 @@
       }
       // Handle Google fonts since Web Font Loader has a special module for them.
       else if (fontType === 'google_font') {
-        let variants = null,
-          subsets = null
 
-        if (typeof font.variants !== 'undefined') {
-          variants = maybeJsonParse(font.variants)
+        // Handle the font variants
+        // First if there is a selected font variant, otherwise all the available variants.
+        let variants = typeof font.font_variant !== 'undefined' ? font.font_variant : typeof fontDetails.variants !== 'undefined' ? fontDetails.variants : []
+        variants = standardizeToArray( maybeJsonParse(variants) )
 
-          if (typeof variants === 'string' || typeof variants === 'number') {
-            variants = [variants]
-          } else if (typeof variants === 'object') {
-            variants = Object.values(variants);
-          }
-
+        if (!_.isEmpty(variants)) {
           family = family + ':' + variants.join(',')
         }
 
-        if (typeof font.selected_subsets !== 'undefined') {
-          subsets = maybeJsonParse(font.selected_subsets)
+        let subsets = typeof font.selected_subsets !== 'undefined' ? font.selected_subsets : []
+        subsets = standardizeToArray(maybeJsonParse(subsets))
 
-          if (typeof subsets === 'string' || typeof subsets === 'number') {
-            subsets = [subsets]
-          } else if (typeof subsets === 'object') {
-            subsets = Object.values(subsets);
-          }
-
+        if (!_.isEmpty(subsets)) {
           family = family + ':' + subsets.join(',')
         }
 
@@ -431,6 +458,16 @@
       } else {
         // Maybe Typekit, Fonts.com or Fontdeck fonts
       }
+    }
+
+    const standardizeToArray = function (value) {
+      if (typeof value === 'string' || typeof value === 'number') {
+        value = [value]
+      } else if (typeof value === 'object') {
+        value = Object.values(value);
+      }
+
+      return value
     }
 
     const maybeJsonParse = function (value) {

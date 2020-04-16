@@ -52,8 +52,6 @@ window.customify = window.customify || parent.customify || {};
         customify.fontFields.init()
       }, 333)
 
-      prepare_typography_field()
-
       /**
        * Make the customizer save on CMD/CTRL+S action
        * This is awesome!!!
@@ -74,41 +72,12 @@ window.customify = window.customify || parent.customify || {};
         customifyHandleRangeFields(this)
       })
 
-      $document.on('change', '.customify_typography_font_subsets', function (ev) {
-
-        const $input = $(this).parents('.options').siblings('.customify_typography').children('.customify_typography_values')
-        let currentValue = $input.val()
-
-        currentValue = JSON.parse(decodeURIComponent(currentValue))
-
-        //maybe the selected option holds a JSON in its value
-        currentValue.selected_subsets = maybeJsonParse($(this).val())
-
-        $input.val(encodeURIComponent(JSON.stringify(currentValue)))
-
-        $input.trigger('change')
-      })
-
-      $document.on('change', '.customify_typography_font_weight', function (ev) {
-
-        const $input = $(this).parents('.options').siblings('.customify_typography').children('.customify_typography_values')
-        let currentValue = $input.val()
-
-        currentValue = maybeJsonParse(currentValue)
-
-        // Maybe the selected option holds a JSON in its value
-        currentValue.font_variant = maybeJsonParse($(this).val())
-
-        $input.val(encodeURIComponent(JSON.stringify(currentValue)))
-        $input.trigger('change')
-      })
-
       $('body').on('customify:preset-change', function (e) {
         const data = $(e.target).data('options')
 
         if (!_.isUndefined(data)) {
-          $.each(data, function (setting_id, value) {
-            api_set_setting_value(setting_id, value)
+          $.each(data, function (settingID, value) {
+            apiSetSettingValue(settingID, value)
           })
         }
       })
@@ -125,11 +94,6 @@ window.customify = window.customify || parent.customify || {};
 
       customifyBackgroundJsControl.init()
 
-      // sometimes a php save may be needed
-      if (getUrlVars('save_customizer_once')) {
-        api.previewer.save()
-      }
-
       setTimeout(function () {
         customifyFoldingFields()
       }, 1000)
@@ -139,13 +103,17 @@ window.customify = window.customify || parent.customify || {};
 
       // Handle the section tabs (ex: Layout | Fonts | Colors)
       handleSectionTabs()
-      handleFontPopupToggle()
 
       // Bind any connected fields, except those in the Style Manager.
       // Those are handled by the appropriate Style Manager component (Color Palettes, Font Palettes, etc ).
       bindConnectedFields()
 
       handlePreviewIframe()
+
+      // sometimes a php save may be needed
+      if (getUrlVar('save_customizer_once')) {
+        api.previewer.save()
+      }
     })
 
     function handleResetButtons () {
@@ -159,17 +127,6 @@ window.customify = window.customify || parent.customify || {};
         $document.on('click', '.js-reset-section', onResetSection)
         $document.on('click', '#customize-control-reset_customify button', onReset)
       }
-    }
-
-    function handleFontPopupToggle () {
-      const $allCheckboxes = $('.js-font-option-toggle')
-      // Close a font field when clicking on another field
-      $allCheckboxes.on('click', function () {
-        const $checkbox = $(this)
-        if ($checkbox.prop('checked') === true) {
-          $allCheckboxes.not($checkbox).prop('checked', false)
-        }
-      })
     }
 
     function createResetPanelButtons () {
@@ -225,7 +182,7 @@ window.customify = window.customify || parent.customify || {};
         const setting = customify.config.settings[settingID]
 
         if (!_.isUndefined(setting) && !_.isUndefined(setting.default)) {
-          api_set_setting_value(settingID, setting.default)
+          apiSetSettingValue(settingID, setting.default)
         }
       })
 
@@ -249,11 +206,11 @@ window.customify = window.customify || parent.customify || {};
 
           if (controls.length > 0) {
             $.each(controls, function (key, ctrl) {
-              const setting_id = ctrl.id.replace('_control', ''),
-                setting = customify.config.settings[setting_id]
+              const settingID = ctrl.id.replace('_control', ''),
+                setting = customify.config.settings[settingID]
 
               if (!_.isUndefined(setting) && !_.isUndefined(setting.default)) {
-                api_set_setting_value(setting_id, setting.default)
+                apiSetSettingValue(settingID, setting.default)
               }
             })
           }
@@ -280,7 +237,7 @@ window.customify = window.customify || parent.customify || {};
             setting = customify.config.settings[setting_id]
 
           if (!_.isUndefined(setting) && !_.isUndefined(setting.default)) {
-            api_set_setting_value(setting_id, setting.default)
+            apiSetSettingValue(setting_id, setting.default)
           }
         })
       }
@@ -307,7 +264,7 @@ window.customify = window.customify || parent.customify || {};
         const $parent = $this.parents('.accordion-section-content')
         const href = $this.attr('href')
 
-        if (href != '#') {
+        if (href !== '#') {
           const actionsHeight = $('#customize-header-actions').outerHeight()
           const titleHeight = $parent.find('.customize-section-title').outerHeight()
           const $target = $(href)
@@ -318,39 +275,39 @@ window.customify = window.customify || parent.customify || {};
       })
     }
 
-    const getConnectedFieldsCallback = function (parent_setting_data, parent_setting_id) {
-      return function (new_value, old_value) {
-        _.each(parent_setting_data.connected_fields, function (connected_field_data) {
-          if (_.isUndefined(connected_field_data) || _.isUndefined(connected_field_data.setting_id) || !_.isString(connected_field_data.setting_id)) {
+    const getConnectedFieldsCallback = function (parentSettingData, parentSettingID) {
+      return function (newValue, oldValue) {
+        _.each(parentSettingData.connected_fields, function (connectedFieldData) {
+          if (_.isUndefined(connectedFieldData) || _.isUndefined(connectedFieldData.setting_id) || !_.isString(connectedFieldData.setting_id)) {
             return
           }
-          const setting = api(connected_field_data.setting_id)
+          const setting = api(connectedFieldData.setting_id)
           if (_.isUndefined(setting)) {
             return
           }
-          setting.set(new_value)
+          setting.set(newValue)
         })
       }
     }
 
     const bindConnectedFields = function () {
-      _.each(api.settings.settings, function (parent_setting_data, parent_setting_id) {
+      _.each(api.settings.settings, function (parentSettingData, parentSettingID) {
         // We don't want to handle the binding of the Style Manager settings
         if (typeof customify.colorPalettes !== 'undefined'
           && typeof customify.colorPalettes.masterSettingIds !== 'undefined'
-          && _.contains(customify.colorPalettes.masterSettingIds, parent_setting_id)) {
+          && _.contains(customify.colorPalettes.masterSettingIds, parentSettingID)) {
           return
         }
         if (typeof customify.fontPalettes !== 'undefined'
           && typeof customify.fontPalettes.masterSettingIds !== 'undefined'
-          && _.contains(customify.fontPalettes.masterSettingIds, parent_setting_id)) {
+          && _.contains(customify.fontPalettes.masterSettingIds, parentSettingID)) {
           return
         }
 
-        let parent_setting = api(parent_setting_id)
-        if (typeof parent_setting_data.connected_fields !== 'undefined') {
-          customify.connectedFieldsCallbacks[parent_setting_id] = getConnectedFieldsCallback(parent_setting_data, parent_setting_id)
-          parent_setting.bind(customify.connectedFieldsCallbacks[parent_setting_id])
+        const parent_setting = api(parentSettingID)
+        if (typeof parentSettingData.connected_fields !== 'undefined') {
+          customify.connectedFieldsCallbacks[parentSettingID] = getConnectedFieldsCallback(parentSettingData, parentSettingID)
+          parent_setting.bind(customify.connectedFieldsCallbacks[parentSettingID])
         }
       })
     }
@@ -359,8 +316,8 @@ window.customify = window.customify || parent.customify || {};
 
       // For each range input add a number field (for preview mainly - but it can also be used for input)
       $(el).find('input[type="range"]').each(function () {
-        let $range = $(this),
-          $number = $range.siblings('.range-value')
+        const $range = $(this)
+        let $number = $range.siblings('.range-value')
 
         if (!$number.length) {
           $number = $range.clone()
@@ -441,7 +398,7 @@ window.customify = window.customify || parent.customify || {};
 
       let IS = $.extend({}, $.fn.reactor.helpers)
 
-      let bind_folding_events = function (parent_id, field, relation) {
+      const bindFoldingEvents = function (parentID, field, relation) {
 
         let key = null
 
@@ -480,7 +437,7 @@ window.customify = window.customify || parent.customify || {};
 
         switch (target_type) {
           case 'checkbox':
-            $(parent_id).reactIf(target_selector, function () {
+            $(parentID).reactIf(target_selector, function () {
               return $(this).is(':checked') == value
             })
             break
@@ -494,13 +451,13 @@ window.customify = window.customify || parent.customify || {};
             // in case of an array of values we use the ( val in array) condition
             if (_.isObject(value)) {
               value = _.toArray(value)
-              $(parent_id).reactIf(target_selector, function () {
+              $(parentID).reactIf(target_selector, function () {
                 return (
                   value.indexOf($(target_selector + ':checked').val()) !== -1
                 )
               })
             } else { // in any other case we use a simple == comparison
-              $(parent_id).reactIf(target_selector, function () {
+              $(parentID).reactIf(target_selector, function () {
                 return $(target_selector + ':checked').val() == value
               })
             }
@@ -509,20 +466,20 @@ window.customify = window.customify || parent.customify || {};
           case 'range':
             const x = IS.Between(between[0], between[1])
 
-            $(parent_id).reactIf(target_selector, x)
+            $(parentID).reactIf(target_selector, x)
             break
 
           default:
             // in case of an array of values we use the ( val in array) condition
             if (_.isObject(value)) {
               value = _.toArray(value)
-              $(parent_id).reactIf(target_selector, function () {
+              $(parentID).reactIf(target_selector, function () {
                 return (
                   value.indexOf($(target_selector).val()) !== -1
                 )
               })
             } else { // in any other case we use a simple == comparison
-              $(parent_id).reactIf(target_selector, function () {
+              $(parentID).reactIf(target_selector, function () {
                 return $(target_selector).val() == value
               })
             }
@@ -538,9 +495,9 @@ window.customify = window.customify || parent.customify || {};
          * Here we have the id of the fields. but we know for sure that we just need his parent selector
          * So we just create it
          */
-        let parent_id = id.replace('[', '-')
-        parent_id = parent_id.replace(']', '')
-        parent_id = '#customize-control-' + parent_id + '_control'
+        let parentID = id.replace('[', '-')
+        parentID = parentID.replace(']', '')
+        parentID = '#customize-control-' + parentID + '_control'
 
         // get only the fields that have a 'show_if' property
         if (field.hasOwnProperty('show_if')) {
@@ -558,74 +515,26 @@ window.customify = window.customify || parent.customify || {};
            */
 
           if (!_.isUndefined(field.show_if.id)) {
-            bind_folding_events(parent_id, field.show_if, relation)
+            bindFoldingEvents(parentID, field.show_if, relation)
           } else if (_.isObject(field.show_if)) {
             $.each(field.show_if, function (i, j) {
-              bind_folding_events(parent_id, j, relation)
+              bindFoldingEvents(parentID, j, relation)
             })
           }
         }
       })
     }
 
-    // get each typography field and bind events
-    // @todo Are we still using the typography field since we have the font field?
-    // Yes we do, in older themes.
-    const prepare_typography_field = function () {
-      const $typos = $('.customify_typography_font_family')
+    const apiSetSettingValue = function (settingID, value) {
+      const setting = api(settingID),
+        field = $('[data-customize-setting-link="' + settingID + '"]'),
+        fieldClass = $(field).parent().attr('class')
 
-      $typos.each(function () {
-        const font_family_select = this,
-          $input = $(font_family_select).siblings('.customify_typography_values')
-        // on change
-        $(font_family_select).on('change', function () {
-          update_siblings_selects(font_family_select)
-          $input.trigger('change')
-        })
-        update_siblings_selects(font_family_select)
-      })
-    }
-
-    const api_set_setting_value = function (setting_id, value) {
-      let setting = api(setting_id),
-        field = $('[data-customize-setting-link="' + setting_id + '"]'),
-        field_class = $(field).parent().attr('class')
-
-      // Legacy field type
-      if (!_.isUndefined(field_class) && field_class === 'customify_typography') {
-
-        let family_select = field.siblings('select')
-
-        if (_.isString(value)) {
-          let this_option = family_select.find('option[value="' + value + '"]')
-          $(this_option[0]).attr('selected', 'selected')
-          update_siblings_selects(family_select)
-        } else if (_.isObject(value)) {
-          let this_family_option = family_select.find('option[value="' + value['font_family'] + '"]')
-
-          $(this_family_option[0]).attr('selected', 'selected')
-
-          update_siblings_selects(this_family_option)
-
-          setTimeout(function () {
-            let variantSelect = field.parent().siblings('.options').find('.customify_typography_font_weight'),
-              thisVariantOption = variantSelect.find('option[value="' + value['font_variant'] + '"]')
-
-            $(thisVariantOption[0]).attr('selected', 'selected')
-
-            update_siblings_selects(this_family_option)
-
-            variantSelect.trigger('change')
-          }, 300)
-        }
-
-        family_select.trigger('change')
-
-      } else if (!_.isUndefined(field_class) && field_class === 'font-options__wrapper') {
+      if (!_.isUndefined(fieldClass) && fieldClass === 'font-options__wrapper') {
 
         // if the value is a simple string it must be the font family
         if (_.isString(value)) {
-          let option = field.parent().find('option[value="' + value + '"]')
+          const option = field.parent().find('option[value="' + value + '"]')
 
           option.attr('selected', 'selected')
           // We mark the parent select as touched because we need the full font field value regenerated.
@@ -633,7 +542,7 @@ window.customify = window.customify || parent.customify || {};
           $(option).parents('select').data('touched', true).trigger('change')
         } else if (_.isObject(value)) {
           // Find the options list wrapper
-          let optionsList = field.parent().children('.font-options__options-list')
+          const optionsList = field.parent().children('.font-options__options-list')
 
           if (optionsList.length) {
             // We will process each font property and update it
@@ -659,208 +568,16 @@ window.customify = window.customify || parent.customify || {};
                 default:
                   break
               }
-              let subField = optionsList.find('[data-field="' + mappedKey + '"]')
+
+              const subField = optionsList.find('[data-field="' + mappedKey + '"]')
               if (subField.length) {
                 subField.val(val).trigger('change')
               }
             })
           }
         }
-
       } else {
         setting.set(value)
-      }
-    }
-
-    const update_siblings_selects = function (font_select) {
-      const $font_select = $(font_select)
-      let selectedFontFamily = $font_select.val(),
-        $input = $font_select.siblings('.customify_typography_values'),
-        currentValue = $input.attr('value')
-
-      // Get the selected font details
-      const selectedFontType = customify.fontFields.determineFontType(selectedFontFamily)
-      const selectedFontDetails = customify.fontFields.getFontDetails(selectedFontFamily,selectedFontType)
-
-      // @todo We should not end up in this situation.
-      if (currentValue === '[object Object]') {
-        currentValue = $input.data('default')
-      } else if (_.isString(currentValue)) {
-        currentValue = decodeURIComponent(currentValue);
-        if ( !isJsonString(currentValue) ) {
-          // a rare case when the value isn't a json but is a representative string like [family,weight]
-          currentValue = currentValue.split(',')
-          let tempValue = {}
-          if (!_.isUndefined(currentValue[0])) {
-            tempValue['font_family'] = currentValue[0]
-          }
-
-          if (!_.isUndefined(currentValue[1])) {
-            tempValue['font_variant'] = currentValue[1]
-          }
-
-          currentValue = JSON.stringify(tempValue)
-        }
-      }
-
-      let $font_weight = $font_select.parent().siblings('ul.options').find('.customify_typography_font_weight'),
-        $font_subsets = $font_select.parent().siblings('ul.options').find('.customify_typography_font_subsets')
-
-      try {
-        currentValue = JSON.parse(decodeURIComponent(currentValue))
-      } catch (e) {
-
-        // in case of an error, force the rebuild of the json
-        if (_.isUndefined($font_select.data('bound_once'))) {
-
-          $font_select.data('bound_once', true)
-
-          $font_select.trigger('change')
-          $font_weight.trigger('change')
-          $font_subsets.trigger('change')
-        }
-      }
-
-      // first try to get the font from sure sources, not from the recommended list.
-      let selectedOptionData = $font_select.find(':not(optgroup[label=Recommended]) option[value="' + selectedFontFamily + '"]')
-      // however, if there isn't an option found, get what you can
-      if (selectedOptionData.length < 1) {
-        selectedOptionData = $font_select.find('option[value="' + selectedFontFamily + '"]')
-      }
-
-      if (selectedOptionData.length > 0) {
-
-        let newValue = {'type': selectedFontType, 'font_family': selectedFontFamily},
-          variants = null,
-          subsets = null
-
-        if (selectedFontType == 'std_font') {
-          variants = {
-            0: '100',
-            1: '200',
-            3: '300',
-            4: '400',
-            5: '500',
-            6: '600',
-            7: '700',
-            8: '800',
-            9: '900'
-          }
-          if (!_.isUndefined(selectedFontDetails.variants)) {
-            variants = selectedFontDetails.variants
-          }
-        } else {
-          variants = typeof selectedFontDetails.variants !== 'undefined' ? selectedFontDetails.variants : []
-          subsets = typeof selectedFontDetails.subsets !== 'undefined' ? selectedFontDetails.subsets : []
-        }
-
-        // make the variants selector
-        if (!_.isNull(variants) && !_.isEmpty(variants)) {
-
-          let variantsOptionsMarkup = '',
-            variantsCount = 0
-
-          if (Array.isArray(variants) || _.isObject(variants)) {
-            // Take each variant and produce the option markup
-            $.each(variants, function (key, variant) {
-              let isVariantSelected = ''
-              if (variant === currentValue.font_variant) {
-                isVariantSelected = ' selected="selected"'
-                newValue['font_variant'] = variant
-              }
-
-              // initialize
-              let variantOptionValue = variant,
-                variantOptionName = variant
-
-              // If we are dealing with a object variant then it means things get tricky (probably it's our fault but bear with us)
-              // This probably comes from our Fonto plugin - a font with individually named variants - hence each has its own font-family
-              if (_.isObject(variant)) {
-                //put the entire object in the variation value - we will need it when outputting the custom CSS
-                variantOptionValue = encodeURIComponent(JSON.stringify(variant))
-                variantOptionName = ''
-
-                //if we have weight and style then "compose" them into something standard
-                if (!_.isUndefined(variant['font-weight'])) {
-                  variantOptionName += variant['font-weight']
-                }
-
-                if (_.isString(variant['font-style']) && $.inArray(variant['font-style'].toLowerCase(), [
-                  'normal',
-                  'regular'
-                ]) < 0) { //this comparison means it hasn't been found
-                  variantOptionName += variant['font-style']
-                }
-              }
-
-              variantsOptionsMarkup += '<option value="' + variantOptionValue + '"' + isVariantSelected + '>' + variantOptionName + '</option>'
-              variantsCount++
-            })
-          }
-
-          if (!_.isUndefined($font_weight)) {
-            $font_weight.html(variantsOptionsMarkup)
-            // if there is no weight or just 1 we hide the weight select ... cuz is useless
-            if (variantsCount < 2 || !_.isUndefined($font_select.data('disabled'))) {
-              $font_weight.parent().hide()
-            } else {
-              $font_weight.parent().show()
-            }
-          }
-        } else if (!_.isUndefined($font_weight)) {
-          $font_weight.parent().hide()
-        }
-
-        // make the subsets selector
-        if (!_.isNull(subsets) && !_.isEmpty(subsets)) {
-
-          newValue['selected_subsets'] = []
-          let selectedSubsets = []
-          if (!_.isUndefined(currentValue.selected_subsets) && !_.isEmpty(currentValue.selected_subsets)) {
-            selectedSubsets = currentValue.selected_subsets
-            // Make sure it is an array
-            if (!Array.isArray(selectedSubsets)) {
-              selectedSubsets = Object.keys(selectedSubsets).map(function (key) {
-                return selectedSubsets[key]
-              })
-            }
-          }
-
-          let subsetsOptionsMarkup = '',
-            subsetsCount = 0
-          $.each(subsets, function (key, subset) {
-            // We want to skip the 'latin' subset since that is loaded by default.
-            if ('latin' === subset) {
-              return
-            }
-
-            let is_selected = ''
-            if (selectedSubsets.indexOf(subset) !== -1) {
-              is_selected = ' selected="selected"'
-
-              // Attempt to keep (some of) the previously selected subsets, depending on what the new font supports.
-              newValue['selected_subsets'].push(subset)
-            }
-
-            subsetsOptionsMarkup += '<option value="' + subset + '"' + is_selected + '>' + subset + '</option>'
-            subsetsCount++
-          })
-
-          if (!_.isUndefined($font_subsets)) {
-            $font_subsets.html(subsetsOptionsMarkup)
-
-            // if there is no subset or just 1 we hide the subsets select ... cuz is useless
-            if (subsetsCount <= 1) {
-              $font_subsets.parent().hide()
-            } else {
-              $font_subsets.parent().show()
-            }
-          }
-        } else if (!_.isUndefined($font_subsets)) {
-          $font_subsets.parent().hide()
-        }
-
-        $input.val(encodeURIComponent(JSON.stringify(newValue)))
       }
     }
 
@@ -1039,13 +756,13 @@ window.customify = window.customify || parent.customify || {};
           const settingID = $parent.find('.button.background_upload_button').data('setting_id'),
             setting = api.instance(settingID)
 
-          let background_data = {}
+          const background_data = {}
 
           $parent.find('.customify_background_select, .customify_background_input').each(function () {
             let data = $(this).serializeArray()
 
             data = data[0]
-            if (data && data.name.indexOf('[background-') != -1) {
+            if (data && data.name.indexOf('[background-') !== -1) {
 
               background_data[$(this).data('select_name')] = data.value
             }
@@ -1074,19 +791,19 @@ window.customify = window.customify || parent.customify || {};
           selector.find('.upload-width').val('')
           parent.find('.customify_background_input.background-image').val('')
 
-          let settingID = selector.find('.background_upload_button').data('setting_id'),
+          const settingID = selector.find('.background_upload_button').data('setting_id'),
             control = api.control(settingID + '_control'),
             currentValues = control.setting(),
             screenshot = parent.find('.preview_screenshot'),
-            to_array = $.map(currentValues, function (value, index) {
+            toArray = $.map(currentValues, function (value, index) {
               return [value]
             })
 
           // Hide the screenshot
           screenshot.slideUp()
           selector.find('.remove-file').unbind()
-          to_array['background-image'] = ''
-          control.setting(to_array)
+          toArray['background-image'] = ''
+          control.setting(toArray)
         }
 
         return {
@@ -1097,42 +814,11 @@ window.customify = window.customify || parent.customify || {};
 
     /** HELPERS **/
 
-    /**
-     * Function to check if a value exists in an object
-     * @param value
-     * @param obj
-     * @returns {boolean}
-     */
-    const inObject = function (value, obj) {
-      for (let k in obj) {
-        if (!obj.hasOwnProperty(k)) {
-          continue
-        }
-        if (_.isEqual(obj[k], value)) {
-          return true
-        }
-      }
-      return false
-    }
-
-    const maybeJsonParse = function (value) {
-      let parsed
-
-      //try and parse it, with decodeURIComponent
-      try {
-        parsed = JSON.parse(decodeURIComponent(value))
-      } catch (e) {
-
-        // in case of an error, treat is as a string
-        parsed = value
-      }
-
-      return parsed
-    }
-
-    const getUrlVars = function (name) {
-      let vars = [], hash
+    const getUrlVar = function (name) {
+      const vars = []
+      let hash
       const hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&')
+
       for (let i = 0; i < hashes.length; i++) {
         hash = hashes[i].split('=')
 
@@ -1144,15 +830,6 @@ window.customify = window.customify || parent.customify || {};
         return vars[name]
       }
       return false
-    }
-
-    const isJsonString = function (str) {
-      try {
-        JSON.parse(str)
-      } catch (e) {
-        return false
-      }
-      return true
     }
   }
 )(jQuery, customify, wp)
