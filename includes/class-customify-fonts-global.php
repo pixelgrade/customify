@@ -14,28 +14,28 @@ class Customify_Fonts_Global {
 	 * @since    2.7.0
 	 * @var      array
 	 */
-	protected $std_fonts = null;
+	protected $std_fonts = array();
 
 	/**
 	 * The Google fonts list.
 	 * @since    2.7.0
 	 * @var      array
 	 */
-	protected $google_fonts = null;
+	protected $google_fonts = array();
 
 	/**
 	 * The theme defined fonts list.
 	 * @since    2.7.0
 	 * @var      array
 	 */
-	protected $theme_fonts = null;
+	protected $theme_fonts = array();
 
 	/**
 	 * The cloud fonts list.
 	 * @since    2.7.0
 	 * @var      array
 	 */
-	protected $cloud_fonts = null;
+	protected $cloud_fonts = array();
 
 	/**
 	 * Constructor.
@@ -62,41 +62,51 @@ class Customify_Fonts_Global {
 		/*
 		 * Gather all fonts, by type.
 		 */
-		$this->std_fonts = apply_filters( 'customify_standard_fonts_list', array(
-			"Arial, Helvetica, sans-serif"                         => "Arial, Helvetica, sans-serif",
-			"'Arial Black', Gadget, sans-serif"                    => "'Arial Black', Gadget, sans-serif",
-			"'Bookman Old Style', serif"                           => "'Bookman Old Style', serif",
-			"'Comic Sans MS', cursive"                             => "'Comic Sans MS', cursive",
-			"Courier, monospace"                                   => "Courier, monospace",
-			"Garamond, serif"                                      => "Garamond, serif",
-			"Georgia, serif"                                       => "Georgia, serif",
-			"Impact, Charcoal, sans-serif"                         => "Impact, Charcoal, sans-serif",
-			"'Lucida Console', Monaco, monospace"                  => "'Lucida Console', Monaco, monospace",
-			"'Lucida Sans Unicode', 'Lucida Grande', sans-serif"   => "'Lucida Sans Unicode', 'Lucida Grande', sans-serif",
-			"'MS Sans Serif', Geneva, sans-serif"                  => "'MS Sans Serif', Geneva, sans-serif",
-			"'MS Serif', 'New York', sans-serif"                   => "'MS Serif', 'New York', sans-serif",
-			"'Palatino Linotype', 'Book Antiqua', Palatino, serif" => "'Palatino Linotype', 'Book Antiqua', Palatino, serif",
-			"Tahoma, Geneva, sans-serif"                            => "Tahoma, Geneva, sans-serif",
-			"'Times New Roman', Times,serif"                       => "'Times New Roman', Times, serif",
-			"'Trebuchet MS', Helvetica, sans-serif"                => "'Trebuchet MS', Helvetica, sans-serif",
-			"Verdana, Geneva, sans-serif"                          => "Verdana, Geneva, sans-serif",
-		) );
 
-		$this->maybe_load_google_fonts();
+		if ( PixCustomifyPlugin()->settings->get_plugin_setting( 'typography_cloud_fonts', 1 ) ) {
+			$this->cloud_fonts = apply_filters( 'customify_cloud_fonts', array() );
+			// Add the fonts to selects of the Customizer controls.
+			add_action( 'customify_font_family_select_options', array( $this, 'output_cloud_fonts_select_options_group' ), 20, 2 );
+		}
 
 		$this->theme_fonts = apply_filters( 'customify_theme_fonts', array() );
-		$this->cloud_fonts = apply_filters( 'customify_cloud_fonts', array() );
-
-		/*
-		 * Add the fonts to selects of the Customizer controls.
-		 */
-		add_action( 'customify_font_family_select_options', array( $this, 'output_cloud_fonts_select_options_group' ), 20, 2 );
+		// Add the fonts to selects of the Customizer controls.
 		add_action( 'customify_font_family_select_options', array( $this, 'output_theme_fonts_select_options_group' ), 30, 2 );
-		add_action( 'customify_font_family_select_options', array( $this, 'output_standard_fonts_select_options_group' ), 40, 2 );
-		// For Google fonts we will first output just an empty option group, and the rest of the options in a JS variable.
-		// This way we don't hammer the DOM too much.
-		add_action( 'customify_font_family_select_options', array( $this, 'output_google_fonts_select_options_group' ), 50, 2 );
-		add_action( 'customize_controls_print_footer_scripts', array( $this, 'customize_pane_settings_google_fonts_options' ), 10000 );
+
+		if ( PixCustomifyPlugin()->settings->get_plugin_setting( 'typography_standard_fonts', 1 ) ) {
+			$this->std_fonts = apply_filters( 'customify_standard_fonts_list', array(
+				"Arial, Helvetica, sans-serif"                         => "Arial, Helvetica, sans-serif",
+				"'Arial Black', Gadget, sans-serif"                    => "'Arial Black', Gadget, sans-serif",
+				"'Bookman Old Style', serif"                           => "'Bookman Old Style', serif",
+				"'Comic Sans MS', cursive"                             => "'Comic Sans MS', cursive",
+				"Courier, monospace"                                   => "Courier, monospace",
+				"Garamond, serif"                                      => "Garamond, serif",
+				"Georgia, serif"                                       => "Georgia, serif",
+				"Impact, Charcoal, sans-serif"                         => "Impact, Charcoal, sans-serif",
+				"'Lucida Console', Monaco, monospace"                  => "'Lucida Console', Monaco, monospace",
+				"'Lucida Sans Unicode', 'Lucida Grande', sans-serif"   => "'Lucida Sans Unicode', 'Lucida Grande', sans-serif",
+				"'MS Sans Serif', Geneva, sans-serif"                  => "'MS Sans Serif', Geneva, sans-serif",
+				"'MS Serif', 'New York', sans-serif"                   => "'MS Serif', 'New York', sans-serif",
+				"'Palatino Linotype', 'Book Antiqua', Palatino, serif" => "'Palatino Linotype', 'Book Antiqua', Palatino, serif",
+				"Tahoma, Geneva, sans-serif"                           => "Tahoma, Geneva, sans-serif",
+				"'Times New Roman', Times,serif"                       => "'Times New Roman', Times, serif",
+				"'Trebuchet MS', Helvetica, sans-serif"                => "'Trebuchet MS', Helvetica, sans-serif",
+				"Verdana, Geneva, sans-serif"                          => "Verdana, Geneva, sans-serif",
+			) );
+
+			// Add the fonts to selects of the Customizer controls.
+			add_action( 'customify_font_family_select_options', array( $this, 'output_standard_fonts_select_options_group' ), 40, 2 );
+		}
+
+		if ( PixCustomifyPlugin()->settings->get_plugin_setting( 'typography_google_fonts', 1 ) ) {
+			$this->maybe_load_google_fonts();
+
+			// Add the fonts to selects of the Customizer controls.
+			// For Google fonts we will first output just an empty option group, and the rest of the options in a JS variable.
+			// This way we don't hammer the DOM too much.
+			add_action( 'customify_font_family_select_options', array( $this, 'output_google_fonts_select_options_group' ), 50, 2 );
+			add_action( 'customize_controls_print_footer_scripts', array( $this, 'customize_pane_settings_google_fonts_options' ), 10000 );
+		}
 
 		/*
 		 * Output the frontend fonts specific scripts and styles.
@@ -361,7 +371,7 @@ class Customify_Fonts_Global {
 		// Allow others to add options here
 		do_action( 'customify_font_family_before_standard_fonts_options', $active_font_family, $current_value );
 
-		if ( ! empty( $this->std_fonts ) && PixCustomifyPlugin()->settings->get_plugin_setting( 'typography_standard_fonts' ) ) {
+		if ( ! empty( $this->std_fonts ) ) {
 
 			echo '<optgroup label="' . esc_attr__( 'Standard fonts', 'customify' ) . '">';
 			foreach ( $this->get_std_fonts() as $font_family ) {
@@ -378,7 +388,7 @@ class Customify_Fonts_Global {
 		// Allow others to add options here
 		do_action( 'customify_font_family_before_google_fonts_options', $active_font_family, $current_value );
 
-		if ( ! empty( $this->google_fonts ) && PixCustomifyPlugin()->settings->get_plugin_setting( 'typography_google_fonts' ) ) {
+		if ( ! empty( $this->google_fonts ) ) {
 			// The actual options in this optiongroup will be injected via JS from the output of
 			// see@ Customify_Fonts_Global::customize_pane_settings_google_fonts_options()
 			echo '<optgroup class="google-fonts-opts-placeholder" label="' . esc_attr__( 'Google fonts', 'customify' ) . '"></optgroup>';
@@ -389,7 +399,7 @@ class Customify_Fonts_Global {
 	}
 
 	public function customize_pane_settings_google_fonts_options() {
-		if ( ! PixCustomifyPlugin()->settings->get_plugin_setting( 'typography_google_fonts' ) || empty( $this->google_fonts ) ) {
+		if ( empty( $this->google_fonts ) ) {
 			return;
 		}
 
@@ -467,11 +477,6 @@ class Customify_Fonts_Global {
 		$local_plugin = PixCustomifyPlugin();
 
 		$font_fields = array();
-
-		// We will gather typography fields also since in this situation they are treated the same.
-		// @todo Remove this when we migrate away from typography fields.
-		$local_plugin->customizer->get_fields_by_key( $local_plugin->get_options_details( true ), 'type', 'typography', $font_fields );
-
 		$local_plugin->customizer->get_fields_by_key( $local_plugin->get_options_details(), 'type', 'font', $font_fields );
 
 		if ( empty( $font_fields ) ) {
@@ -851,8 +856,7 @@ class Customify_Fonts_Global {
 
 	function get_fonts_dynamic_script() {
 		// If typography has been deactivated from the settings, bail.
-		if ( ! PixCustomifyPlugin()->settings->get_plugin_setting( 'typography', '1' )
-		     || ! PixCustomifyPlugin()->settings->get_plugin_setting( 'typography_google_fonts', 1 ) ) {
+		if ( ! PixCustomifyPlugin()->settings->get_plugin_setting( 'typography', '1' ) ) {
 			return '';
 		}
 
@@ -974,19 +978,16 @@ if (typeof WebFont !== 'undefined') {
 
 	function script_to_add_customizer_output_into_wp_editor() {
 
-		ob_start(); ?>
+		ob_start();
+		$fonts_dynamic_script = $this->get_fonts_dynamic_script();
+		if ( ! empty( $fonts_dynamic_script ) ) { ?>
 <script type="text/javascript" src="<?php echo plugins_url( 'js/vendor/webfontloader-1-6-28.js', PixCustomifyPlugin()->get_file() ); ?>"></script>
-<?php
-	$fonts_dynamic_script = $this->get_fonts_dynamic_script();
-	if ( ! empty( $fonts_dynamic_script ) ) {
-		?>
 <script type="text/javascript"><?php echo $fonts_dynamic_script ?></script>
-		<?php
-	}
+		<?php }
 
-	$this->output_fonts_dynamic_style();
+		$this->output_fonts_dynamic_style();
 
-	$custom_output = ob_get_clean();
+		$custom_output = ob_get_clean();
 
 		ob_start(); ?>
 (function ($) {

@@ -176,6 +176,8 @@ class Customify_Settings {
 
 		remove_theme_mod( $key );
 
+		PixCustomifyPlugin()->invalidate_all_caches();
+
 		wp_send_json_success('Deleted ' . $key . ' theme mod!');
 	}
 
@@ -312,7 +314,7 @@ class Customify_Settings {
 								'typography_google_fonts'       => array(
 									'name'           => 'typography_google_fonts',
 									'label'          => esc_html__( 'Use Google fonts:', 'customify' ),
-									'desc'           => esc_html__( 'Would you to use Google fonts?', 'customify' ),
+									'desc'           => esc_html__( 'Would you like to use Google fonts?', 'customify' ),
 									'default'        => true,
 									'type'           => 'switch',
 									'show_group'     => 'typography_google_fonts_group',
@@ -330,6 +332,14 @@ class Customify_Settings {
 										),
 									),
 								),
+								'typography_cloud_fonts'       => array(
+									'name'           => 'typography_cloud_fonts',
+									'label'          => esc_html__( 'Use Cloud fonts', 'customify' ),
+									'desc'           => esc_html__( 'Would you to use Cloud fonts?', 'customify' ),
+									'default'        => true,
+									'type'           => 'switch',
+									'display_option' => true,
+								),
 							),
 						),
 					),
@@ -346,11 +356,17 @@ class Customify_Settings {
 					),
 				),
 			),
+			'callbacks' => array(
+				'invalidate_caches' => 'pixcustomify_cache_invalidate_cache',
+			),
 			'processor'      => array(
 				// callback signature: (array $input, customifyProcessor $processor)
 				'preupdate' => array(
 					// callbacks to run before update process
 					// cleanup and validation has been performed on data
+				),
+				'postupdate' => array(
+					'invalidate_caches'
 				),
 			),
 			'cleanup'        => array(
