@@ -636,20 +636,14 @@ window.customify = window.customify || parent.customify || {};
         'use strict'
 
         function init () {
-          // Remove the image button
-          $('.customize-control-custom_background .remove-image, .customize-control-custom_background .remove-file').unbind('click').on('click', function (e) {
-            removeImage($(this).parents('.customize-control-custom_background:first'))
-            preview($(this))
-            return false
-          })
-
           // Upload media button
           $('.customize-control-custom_background .background_upload_button').unbind().on('click', function (event) {
             addImage(event, $(this).parents('.customize-control-custom_background:first'))
           })
 
-          $('.customify_background_select').on('change', function () {
-            preview($(this))
+          // Remove the image button
+          $('.customize-control-custom_background .remove-image, .customize-control-custom_background .remove-file').unbind('click').on('click', function (e) {
+            removeImage($(this).parents('.customize-control-custom_background:first'))
           })
         }
 
@@ -695,6 +689,8 @@ window.customify = window.customify || parent.customify || {};
               return
             }
 
+            selector.find('.customify_background_input.background-image').val(attachment.attributes.url)
+
             selector.find('.upload').attr('value', attachment.attributes.url)
             selector.find('.upload-id').attr('value', attachment.attributes.id)
             selector.find('.upload-height').attr('value', attachment.attributes.height)
@@ -716,24 +712,21 @@ window.customify = window.customify || parent.customify || {};
               thumbSrc = attachment.attributes.icon
             }
 
-            selector.find('.customify_background_input.background-image').val(attachment.attributes.url)
-
             if (!selector.find('.upload').hasClass('noPreview')) {
               selector.find('.preview_screenshot').empty().hide().append('<img class="preview_image" src="' + thumbSrc + '">').slideDown('fast')
             }
-            //selector.find('.media_upload_button').unbind();
-            selector.find('.remove-image').removeClass('hide')//show "Remove" button
-            selector.find('.customify_background_select').removeClass('hide')//show "Remove" button
+            selector.find('.remove-image').removeClass('hide') // Show "Remove" button
+            selector.find('.customify_background_select').removeClass('hide') // Show background selects
 
-            preview(selector)
+            updateData(selector)
           })
 
           // Finally, open the modal.
           frame.open()
         }
 
-        // Update the background preview
-        function preview (selector) {
+        // Update the background data
+        function updateData (selector) {
 
           let $parent = selector.parents('.customize-control-custom_background:first')
 
@@ -747,31 +740,25 @@ window.customify = window.customify || parent.customify || {};
             return
           }
 
-          const image_holder = $parent.find('.background-preview')
-
-          if (!image_holder) { // No preview present
-            return
-          }
-
           const settingID = $parent.find('.button.background_upload_button').data('setting_id'),
             setting = api.instance(settingID)
 
           const background_data = {}
 
           $parent.find('.customify_background_select, .customify_background_input').each(function () {
-            let data = $(this).serializeArray()
-
-            data = data[0]
+            let data = $(this).serializeArray()[0]
             if (data && data.name.indexOf('[background-') !== -1) {
-
               background_data[$(this).data('select_name')] = data.value
             }
           })
 
+          background_data.media = {}
+          background_data.media.id = $parent.find('.upload-id').val()
+          background_data.media.height = $parent.find('.upload-height').val()
+          background_data.media.width = $parent.find('.upload-width').val()
+          background_data.media.thumbnail = $parent.find('.upload-thumbnail').val()
+
           setting.set(background_data)
-          //// Notify the customizer api about this change
-          api.trigger('change')
-          api.previewer.refresh()
         }
 
         // Update the background preview
@@ -782,28 +769,20 @@ window.customify = window.customify || parent.customify || {};
             return
           }
 
-          selector.find('.remove-image').addClass('hide')//hide "Remove" button
+          // Hide "Remove" button.
+          selector.find('.remove-image').addClass('hide')
           parent.find('.customify_background_select').addClass('hide')
 
-          selector.find('.upload').val('')
-          selector.find('.upload-id').val('')
-          selector.find('.upload-height').val('')
-          selector.find('.upload-width').val('')
-          parent.find('.customify_background_input.background-image').val('')
-
-          const settingID = selector.find('.background_upload_button').data('setting_id'),
-            control = api.control(settingID + '_control'),
-            currentValues = control.setting(),
-            screenshot = parent.find('.preview_screenshot'),
-            toArray = $.map(currentValues, function (value, index) {
-              return [value]
-            })
+          parent.find('.upload').val(null)
+          parent.find('.upload-id').val(null)
+          parent.find('.upload-height').val(null)
+          parent.find('.upload-width').val(null)
+          parent.find('.customify_background_input.background-image').val(null)
 
           // Hide the screenshot
-          screenshot.slideUp()
-          selector.find('.remove-file').unbind()
-          toArray['background-image'] = ''
-          control.setting(toArray)
+          parent.find('.preview_screenshot').slideUp()
+
+          updateData(parent)
         }
 
         return {

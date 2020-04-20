@@ -942,7 +942,7 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 				$wp_customize->add_control( $setting_id . '_control', $control_args );
 			}
 
-			// If we arrive here this means we have a custom field control.
+			// If we arrive here this means we have a custom field control (with a corresponding class in features/customizer/controls).
 			switch ( $field_config['type'] ) {
 
 				case 'text':

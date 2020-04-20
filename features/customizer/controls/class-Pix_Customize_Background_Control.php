@@ -42,32 +42,6 @@ class Pix_Customize_Background_Control extends Pix_Customize_Control {
 
 		if ( $this->field['background-image'] === true ) {
 
-			// NO defaults for now
-//			if ( empty( $this->value ) && ! empty( $this->field['default'] ) ) { // If there are standard values and value is empty
-//				if ( is_array( $this->field['default'] ) ) {
-//					if ( ! empty( $this->field['default']['media']['id'] ) ) {
-//						$this->value['media']['id'] = $this->field['default']['media']['id'];
-//					} else if ( ! empty( $this->field['default']['id'] ) ) {
-//						$this->value['media']['id'] = $this->field['default']['id'];
-//					}
-//
-//					if ( ! empty( $this->field['default']['url'] ) ) {
-//						$this->value['background-image'] = $this->field['default']['url'];
-//					} else if ( ! empty( $this->field['default']['media']['url'] ) ) {
-//						$this->value['background-image'] = $this->field['default']['media']['url'];
-//					} else if ( ! empty( $this->field['default']['background-image'] ) ) {
-//						$this->value['background-image'] = $this->field['default']['background-image'];
-//					}
-//
-//				} else {
-//					if ( is_numeric( $this->field['default'] ) ) { // Check if it's an attachment ID
-//						$this->value['media']['id'] = $this->field['default'];
-//					} else { // Must be a URL
-//						$this->value['background-image'] = $this->field['default'];
-//					}
-//				}
-//			}
-
 			if ( empty( $this->value['background-image'] ) && ! empty( $this->value['media']['id'] ) ) {
 				$img                             = wp_get_attachment_image_src( $this->value['media']['id'], 'full' );
 				$this->value['background-image'] = $img[0];
@@ -86,6 +60,10 @@ class Pix_Customize_Background_Control extends Pix_Customize_Control {
 				$this->value['media'] = $media_array;
 			}
 
+			if ( ! isset( $this->value['background-image'] ) ) {
+				$this->value['background-image'] = '';
+			}
+
 			$hide = 'hide ';
 
 			if ( ( isset( $this->field['preview_media'] ) && $this->field['preview_media'] === false ) ) {
@@ -98,18 +76,36 @@ class Pix_Customize_Background_Control extends Pix_Customize_Control {
 
 			$placeholder = isset( $this->field['placeholder'] ) ? $this->field['placeholder'] : __( 'No media selected', 'customify' );
 
+			echo '<input type="text" 
+				class="customify_background_input background-image ' . $hide . 'upload ' . $this->field['class'] . '" 
+				name="' . esc_attr( $this->setting->id ) . '[background-image]" 
+				id="_customize-input-' . esc_attr( $this->setting->id ) . '[background-image]" 
+				value="' . $this->value['background-image'] . '"  
+				data-select_name="background-image" 
+				data-customize-setting-link="' . esc_attr( $this->setting->id ) . '[background-image]" 
+				placeholder="' . esc_attr( $placeholder ) . '"/>';
+			echo '<input type="hidden" 
+				class="upload-id background-media" 
+				name="' . esc_attr( $this->setting->id ) . '[media][id]" 
+				id="_customize-input-' . esc_attr( $this->setting->id ) . '[media][id]" 
+				value="' . esc_attr( $this->value['media']['id'] ) . '" />';
+			echo '<input type="hidden" 
+				class="upload-height background-media" 
+				name="' . esc_attr( $this->setting->id ) . '[media][height]" 
+				id="_customize-input-' . esc_attr( $this->setting->id ) . '[media][height]" 
+				value="' . esc_attr( $this->value['media']['height'] ) . '" />';
+			echo '<input type="hidden" 
+				class="upload-width background-media" 
+				name="' . esc_attr( $this->setting->id ) . '[media][width]" 
+				id="_customize-input-' . esc_attr( $this->setting->id ) . '[media][width]" 
+				value="' . esc_attr( $this->value['media']['width'] ) . '" />';
+			echo '<input type="hidden" 
+				class="upload-thumbnail background-media" 
+				name="' . esc_attr( $this->setting->id ) . '[media][thumbnail]" 
+				id="_customize-input-' . esc_attr( $this->setting->id ) . '[media][thumbnail]" 
+				value="' . esc_attr( $this->value['media']['thumbnail'] ) . '" />';
 
-			if ( ! isset( $this->value['background-image'] ) ) {
-				$this->value['background-image'] = '';
-			}
-
-			echo '<input placeholder="' . esc_attr( $placeholder ) . '" type="text" class="customify_background_input background-image ' . $hide . 'upload ' . $this->field['class'] . '" name="' . $this->label . '[background-image]" id="' . $this->manager->options_key . '[' . $this->id . '][background-image]" value="' . $this->value['background-image'] . '"  data-select_name="background-image" data-customize-setting-link="' . esc_attr( $this->setting->id ) . '[background-image]"/>';
-			echo '<input type="hidden" class="upload-id ' . esc_attr( $this->field['class'] ) . '" name="' . esc_attr( $this->manager->options_key ) . '[media][id]" id="' . $this->manager->options_key . '[' . $this->id . '][media][id]" value="' . esc_attr( $this->value['media']['id'] ) . '" />';
-			echo '<input type="hidden" class="upload-height" name="' . esc_attr( $this->manager->options_key ) . '[media][height]" id="' . esc_attr( $this->manager->options_key ) . '[' . $this->id . '][media][height]" value="' . esc_attr( $this->value['media']['height'] ) . '" />';
-			echo '<input type="hidden" class="upload-width" name="' . esc_attr( $this->manager->options_key ) . '[media][width]" id="' . esc_attr( $this->manager->options_key ) . '[' . $this->id . '][media][width]" value="' . esc_attr( $this->value['media']['width'] ) . '" />';
-			echo '<input type="hidden" class="upload-thumbnail" name="' . esc_attr( $this->manager->options_key ) . '[media][thumbnail]" id="' . esc_attr( $this->manager->options_key ) . '[media][thumbnail]" value="' . esc_attr( $this->value['media']['thumbnail'] ) . '" />';
-
-			//Preview
+			// Preview
 			$hide = '';
 
 			if ( ( isset( $this->field['preview_media'] ) && $this->field['preview_media'] === false ) || empty( $this->value['background-image'] ) ) {
@@ -118,7 +114,7 @@ class Pix_Customize_Background_Control extends Pix_Customize_Control {
 
 			if ( empty( $this->value['media']['thumbnail'] ) && ! empty( $this->value['background-image'] ) ) { // Just in case
 				if ( ! empty( $this->value['media']['id'] ) ) {
-					$image                             = wp_get_attachment_image_src( $this->value['media']['id'], array( 150 ) );
+					$image                             = wp_get_attachment_image_src( $this->value['media']['id'] );
 					$this->value['media']['thumbnail'] = $image[0];
 				} else {
 					$this->value['media']['thumbnail'] = $this->value['background-image'];
@@ -160,8 +156,12 @@ class Pix_Customize_Background_Control extends Pix_Customize_Control {
 				$this->value['background-repeat'] = '';
 			}
 
-			echo '<select id="' . $this->id . '-repeat-select" name="' . $this->setting->id . '[background-repeat]" class="customify_background_select ' . $this->field['class'] . ' ' . $hide . '" data-select_name="background-repeat" data-customize-setting-link="' . esc_attr( $this->setting->id ) . '[background-repeat]">';
-			echo '<option></option>';
+			echo '<select id="' . $this->id . '-repeat-select" 
+				name="_customize-input-' . esc_attr( $this->setting->id ) . '[background-repeat]" 
+				class="customify_background_select ' . $this->field['class'] . ' ' . $hide . '" 
+				data-select_name="background-repeat" 
+				data-customize-setting-link="' . esc_attr( $this->setting->id ) . '[background-repeat]">';
+			echo '<option disabled ' . selected( $this->value['background-repeat'], '', false ) . '>' . esc_html__( 'Background repeat..', 'customify' ) . '</option>';
 			foreach ( $array as $k => $v ) {
 				echo '<option value="' . $k . '"' . selected( $this->value['background-repeat'], $k, false ) . '>' . $v . '</option>';
 			}
@@ -180,9 +180,12 @@ class Pix_Customize_Background_Control extends Pix_Customize_Control {
 				$this->value['background-clip'] = '';
 			}
 
-			echo '<select id="' . $this->id . '-repeat-select" name="' . $this->setting->id . '[background-clip]" class="customify_background_select ' . $this->field['class'] . ' ' . $hide . '" data-select_name="background-clip" data-customize-setting-link="' . esc_attr( $this->setting->id ) . '[background-clip]">';
-			echo '<option></option>';
-
+			echo '<select id="' . $this->id . '-clip-select" 
+				name="_customize-input-' . esc_attr( $this->setting->id ) . '[background-clip]" 
+				class="customify_background_select ' . $this->field['class'] . ' ' . $hide . '" 
+				data-select_name="background-clip" 
+				data-customize-setting-link="' . esc_attr( $this->setting->id ) . '[background-clip]">';
+			echo '<option disabled ' . selected( $this->value['background-clip'], '', false ) . '>' . esc_html__( 'Background clip..', 'customify' ) . '</option>';
 			foreach ( $array as $k => $v ) {
 				echo '<option value="' . $k . '"' . selected( $this->value['background-clip'], $k, false ) . '>' . $v . '</option>';
 			}
@@ -201,9 +204,12 @@ class Pix_Customize_Background_Control extends Pix_Customize_Control {
 				$this->value['background-origin'] = '';
 			}
 
-			echo '<select id="' . $this->id . '-repeat-select" name="' . $this->setting->id . '[background-origin]" class="customify_background_select ' . $this->field['class'] . ' ' . $hide . '" data-select_name="background-origin" data-customize-setting-link="' . esc_attr( $this->setting->id ) . '[background-origin]">';
-			echo '<option></option>';
-
+			echo '<select id="' . $this->id . '-origin-select" 
+				name="_customize-input-' . esc_attr( $this->setting->id ) . '[background-origin]" 
+				class="customify_background_select ' . $this->field['class'] . ' ' . $hide . '" 
+				data-select_name="background-origin" 
+				data-customize-setting-link="' . esc_attr( $this->setting->id ) . '[background-origin]">';
+			echo '<option disabled ' . selected( $this->value['background-origin'], '', false ) . '>' . esc_html__( 'Background origin..', 'customify' ) . '</option>';
 			foreach ( $array as $k => $v ) {
 				echo '<option value="' . $k . '"' . selected( $this->value['background-origin'], $k, false ) . '>' . $v . '</option>';
 			}
@@ -221,9 +227,12 @@ class Pix_Customize_Background_Control extends Pix_Customize_Control {
 				$this->value['background-size'] = '';
 			}
 
-			echo '<select id="' . $this->id . '-repeat-select" name="' . esc_attr( $this->label ) . '[background-size]" class="customify_background_select ' . $this->field['class'] . ' ' . $hide . '" data-select_name="background-size" data-customize-setting-link="' . esc_attr( $this->setting->id ) . '[background-size]">';
-			echo '<option></option>';
-
+			echo '<select id="' . $this->id . '-size-select" 
+				name="_customize-input-' . esc_attr( $this->setting->id ) . '[background-size]" 
+				class="customify_background_select ' . $this->field['class'] . ' ' . $hide . '" 
+				data-select_name="background-size" 
+				data-customize-setting-link="' . esc_attr( $this->setting->id ) . '[background-size]">';
+			echo '<option disabled ' . selected( $this->value['background-size'], '', false ) . '>' . esc_html__( 'Background size..', 'customify' ) . '</option>';
 			foreach ( $array as $k => $v ) {
 				echo '<option value="' . $k . '"' . selected( $this->value['background-size'], $k, false ) . '>' . $v . '</option>';
 			}
@@ -241,8 +250,8 @@ class Pix_Customize_Background_Control extends Pix_Customize_Control {
 				$this->value['background-attachment'] = '';
 			}
 
-			echo '<select id="' . $this->id . '-attachment-select" name="' . $this->setting->id . '[background-attachment]" class="customify_background_select ' . $this->field['class'] . ' ' . $hide . '" data-select_name="background-attachment" data-customize-setting-link="' . esc_attr( $this->setting->id ) . '[background-attachment]">';
-			echo '<option></option>';
+			echo '<select id="' . $this->id . '-attachment-select" name="_customize-input-' . esc_attr( $this->setting->id ) . '[background-attachment]" class="customify_background_select ' . $this->field['class'] . ' ' . $hide . '" data-select_name="background-attachment" data-customize-setting-link="' . esc_attr( $this->setting->id ) . '[background-attachment]">';
+			echo '<option disabled ' . selected( $this->value['background-attachment'], '', false ) . '>' . esc_html__( 'Background attachment..', 'customify' ) . '</option>';
 			foreach ( $array as $k => $v ) {
 				echo '<option value="' . $k . '"' . selected( $this->value['background-attachment'], $k, false ) . '>' . $v . '</option>';
 			}
@@ -266,17 +275,17 @@ class Pix_Customize_Background_Control extends Pix_Customize_Control {
 				$this->value['background-position'] = '';
 			}
 
-			echo '<select id="' . $this->id . '-position-select" name="' . $this->setting->id . '[background-position]" class="customify_background_select ' . $this->field['class'] . ' ' . $hide . '" data-select_name="background-position" data-customize-setting-link="' . esc_attr( $this->setting->id ) . '[background-position]">';
-			echo '<option></option>';
-
+			echo '<select id="' . $this->id . '-position-select" 
+				name="_customize-input-' . esc_attr( $this->setting->id ) . '[background-position]" 
+				class="customify_background_select ' . $this->field['class'] . ' ' . $hide . '" 
+				placeholder="Background position?"
+				data-select_name="background-position" 
+				data-customize-setting-link="' . esc_attr( $this->setting->id ) . '[background-position]">';
+			echo '<option disabled ' . selected( $this->value['background-position'], '', false ) . '>' . esc_html__( 'Background position..', 'customify' ) . '</option>';
 			foreach ( $array as $k => $v ) {
 				echo '<option value="' . $k . '"' . selected( $this->value['background-position'], $k, false ) . '>' . $v . '</option>';
 			}
 			echo '</select>';
 		}
-	}
-
-	static function css_output() {
-
 	}
 }
