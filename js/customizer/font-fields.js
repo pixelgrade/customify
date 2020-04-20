@@ -366,6 +366,28 @@ window.customify = window.customify || {};
       delete newFontData['variants']
       delete newFontData['subsets']
 
+      // We need to make sure that we don't "use" any variants or subsets not supported by the new font (values passed over from the old value).
+      // Get the new font details
+      const newFontDetails = getFontDetails(newFontData['font_family'])
+      // Check the font variant
+      if (typeof newFontData['font_variant'] !== 'undefined' && typeof newFontDetails.variants !== 'undefined' && Object.keys(newFontDetails.variants).length > 0) {
+        if (!_.includes(newFontDetails.variants, newFontData['font_variant'])) {
+          // The new font doesn't have this variant. Nor should the value.
+          delete newFontData['font_variant']
+        }
+      } else {
+        // The new font has no variants. Nor should the value.
+        delete newFontData['font_variant']
+      }
+      // Check the subsets
+      if (typeof newFontData['selected_subsets'] !== 'undefined' && typeof newFontDetails.subsets !== 'undefined' && Object.keys(newFontDetails.subsets).length > 0) {
+        // We will use the intersection between the font's subsets and the selected subsets.
+        newFontData['selected_subsets'] = _.intersection(newFontData['selected_subsets'],newFontDetails.subsets)
+      } else {
+        // The new font has no subsets. Nor should the value.
+        delete newFontData['selected_subsets']
+      }
+
       // Serialize the newly gathered font data
       let serializedNewFontData = encodeValues(newFontData)
       // Set the serialized value in the hidden field.
