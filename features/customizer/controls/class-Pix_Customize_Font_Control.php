@@ -234,7 +234,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 
 		// Display is for the initial state. Depending on the selected fonts, the JS logic will show or hide it.
 		$display       = 'none';
-		if ( ! empty( $current_font_details['variants'] ) ) {
+		if ( ! empty( $current_font_details['variants'] ) && $current_font_details['variants'] !== ['regular'] ) {
 			$display = 'inline-block';
 		}
 
@@ -281,7 +281,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 
 		// Display is for the initial state. Depending on the selected fonts, the JS logic will show or hide it.
 		$display       = 'none';
-		if ( ! empty( $current_font_details['subsets'] ) ) {
+		if ( ! empty( $current_font_details['subsets'] ) && $current_font_details['subsets'] !== ['latin'] ) {
 			$display = 'inline-block';
 		} ?>
 		<li class="customify_subsets_wrapper customize-control font-options__option" style="display: <?php echo $display; ?>;">
