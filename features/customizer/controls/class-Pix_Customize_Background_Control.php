@@ -2,7 +2,6 @@
 
 /**
  * Class Pix_Customize_Background_Control
- * A simple Color Control
  */
 class Pix_Customize_Background_Control extends Pix_Customize_Control {
 	public $type = 'custom_background';
@@ -31,8 +30,6 @@ class Pix_Customize_Background_Control extends Pix_Customize_Control {
 
 	/**
 	 * Render the control's content.
-	 *
-	 * @since 3.4.0
 	 */
 	public function render_content() {
 

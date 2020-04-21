@@ -11,13 +11,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-if ( ! class_exists( 'Customify_Gutenberg' ) ) {
+if ( ! class_exists( 'Customify_Block_Editor' ) ) {
 
-	class Customify_Gutenberg {
+	class Customify_Block_Editor {
 
 		/**
 		 * Holds the only instance of this class.
-		 * @var     null|Customify_Gutenberg
+		 * @var     null|Customify_Block_Editor
 		 * @access  protected
 		 * @since   2.2.0
 		 */
@@ -119,7 +119,7 @@ if ( ! class_exists( 'Customify_Gutenberg' ) ) {
 		 */
 		public function add_hooks() {
 
-			add_action( 'enqueue_block_editor_assets', array( $this, 'dynamic_styles' ), 999 );
+			add_action( 'enqueue_block_editor_assets', array( $this, 'dynamic_styles_scripts' ), 999 );
 
 			// Styles on the front end.
 			add_action( 'wp_enqueue_scripts', array( $this, 'frontend_styles' ), 999 );
@@ -208,31 +208,33 @@ if ( ! class_exists( 'Customify_Gutenberg' ) ) {
 		}
 
 		/**
-		 * Output Customify's dynamic styles in the Gutenberg context.
+		 * Output Customify's dynamic styles and scripts in the Gutenberg context.
 		 *
 		 * @since 2.2.0
 		 */
-		public function dynamic_styles() {
+		public function dynamic_styles_scripts() {
+			if ( ! PixCustomifyPlugin()->settings->get_plugin_setting( 'enable_editor_style', true ) ) {
+				return;
+			}
+
+			require_once( PixCustomifyPlugin()->get_base_path() . 'includes/class-customify-fonts-global.php' );
+
 			$enqueue_parent_handle = $this->get_editor_style_handle();
 
-			if ( PixCustomifyPlugin()->settings->get_plugin_setting( 'enable_editor_style', true ) ) {
-				require_once( PixCustomifyPlugin()->get_base_path() . 'includes/class-customify-fonts-global.php' );
+			wp_register_script( PixCustomifyPlugin()->get_slug() . '-web-font-loader',
+				plugins_url( 'js/vendor/webfontloader-1-6-28.js', PixCustomifyPlugin()->get_file() ), array('wp-editor'), null );
 
-				wp_register_script( PixCustomifyPlugin()->get_slug() . '-web-font-loader',
-					plugins_url( 'js/vendor/webfontloader-1-6-28.js', PixCustomifyPlugin()->get_file() ), array('wp-editor'), null );
+			add_filter( 'customify_font_css_selector', array( $this, 'gutenbergify_font_css_selectors' ), 10, 2 );
+			Customify_Fonts_Global::instance()->enqueue_frontend_scripts();
+			wp_add_inline_style( $enqueue_parent_handle, Customify_Fonts_Global::instance()->get_fonts_dynamic_style() );
+			remove_filter( 'customify_font_css_selector', array( $this, 'gutenbergify_font_css_selectors' ), 10 );
 
-				add_filter( 'customify_font_css_selector', array( $this, 'gutenbergify_font_css_selectors' ), 10, 2 );
-				Customify_Fonts_Global::instance()->enqueue_frontend_scripts();
-				wp_add_inline_style( $enqueue_parent_handle, Customify_Fonts_Global::instance()->get_fonts_dynamic_style() );
-				remove_filter( 'customify_font_css_selector', array( $this, 'gutenbergify_font_css_selectors' ), 10 );
+			add_filter( 'customify_css_selector', array( $this, 'gutenbergify_css_selectors' ), 10, 2 );
+			wp_add_inline_style( $enqueue_parent_handle, PixCustomifyPlugin()->customizer->get_dynamic_style() );
+			remove_filter( 'customify_css_selector', array( $this, 'gutenbergify_css_selectors' ), 10 );
 
-				add_filter( 'customify_css_selector', array( $this, 'gutenbergify_css_selectors' ), 10, 2 );
-				wp_add_inline_style( $enqueue_parent_handle, PixCustomifyPlugin()->customizer->get_dynamic_style() );
-				remove_filter( 'customify_css_selector', array( $this, 'gutenbergify_css_selectors' ), 10 );
-
-				// Add color palettes classes.
-				wp_add_inline_style( $enqueue_parent_handle, $this->editor_color_palettes_css_classes() );
-			}
+			// Add color palettes classes.
+			wp_add_inline_style( $enqueue_parent_handle, $this->editor_color_palettes_css_classes() );
 		}
 
 		public function frontend_styles() {
@@ -485,11 +487,11 @@ if ( ! class_exists( 'Customify_Gutenberg' ) ) {
 		}
 
 		/**
-		 * Main Customify_Gutenberg Instance
+		 * Main Customify_Block_Editor Instance
 		 *
-		 * Ensures only one instance of Customify_Gutenberg is loaded or can be loaded.
+		 * Ensures only one instance of Customify_Block_Editor is loaded or can be loaded.
 		 *
-		 * @return Customify_Gutenberg Main Customify_Gutenberg instance
+		 * @return Customify_Block_Editor Main Customify_Block_Editor instance
 		 * @since  2.2.0
 		 * @static
 		 *
@@ -501,7 +503,7 @@ if ( ! class_exists( 'Customify_Gutenberg' ) ) {
 			}
 
 			return self::$_instance;
-		} // End instance ()
+		}
 
 		/**
 		 * Cloning is forbidden.
@@ -523,5 +525,4 @@ if ( ! class_exists( 'Customify_Gutenberg' ) ) {
 			_doing_it_wrong( __FUNCTION__, esc_html__( 'You should not do that!', 'customify' ), null );
 		}
 	}
-
 }

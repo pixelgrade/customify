@@ -1,5 +1,5 @@
 /** @namespace customify */
-window.customify = window.customify || {};
+window.customify = window.customify || parent.customify || {};
 
 (function ($, customify, wp, document) {
 
@@ -8,16 +8,12 @@ window.customify = window.customify || {};
    *
    * @namespace customify.fontPalettes
    */
-  customify.fontPalettes = function () {
+  if ( typeof customify.fontPalettes === 'undefined' ) {
+    customify.fontPalettes = {}
+  }
+  _.extend( customify.fontPalettes, function () {
     const api = wp.customize
     let apiSettings
-
-    const masterSettingIds = [
-      'sm_font_primary',
-      'sm_font_secondary',
-      'sm_font_body',
-      'sm_font_accent',
-    ]
 
     const initializePalettes = () => {
       // Cache initial settings configuration to be able to update connected fields on variation change.
@@ -27,8 +23,8 @@ window.customify = window.customify || {};
 
       // Create a stack of callbacks bound to parent settings to be able to unbind them
       // when altering the connected_fields attribute.
-      if (typeof customify.fontsConnectedFieldsCallbacks === 'undefined') {
-        customify.fontsConnectedFieldsCallbacks = {}
+      if (typeof customify.fontPalettes.connectedFieldsCallbacks === 'undefined') {
+        customify.fontPalettes.connectedFieldsCallbacks = {}
       }
     }
 
@@ -130,29 +126,29 @@ window.customify = window.customify || {};
     }
 
     const bindConnectedFields = function () {
-      _.each(masterSettingIds, function (parentSettingID) {
+      _.each(customify.fontPalettes.masterSettingIds, function (parentSettingID) {
         if (typeof apiSettings[parentSettingID] !== 'undefined') {
           const parentSettingData = apiSettings[parentSettingID]
           const parentSetting = api(parentSettingID)
 
           if (typeof parentSettingData.connected_fields !== 'undefined') {
-            customify.fontsConnectedFieldsCallbacks[parentSettingID] = getConnectedFieldsCallback(parentSettingData, parentSettingID)
-            parentSetting.bind(customify.fontsConnectedFieldsCallbacks[parentSettingID])
+            customify.fontPalettes.connectedFieldsCallbacks[parentSettingID] = getConnectedFieldsCallback(parentSettingData, parentSettingID)
+            parentSetting.bind(customify.fontPalettes.connectedFieldsCallbacks[parentSettingID])
           }
         }
       })
     }
 
     const unbindConnectedFields = function () {
-      _.each(masterSettingIds, function (parentSettingID) {
+      _.each(customify.fontPalettes.masterSettingIds, function (parentSettingID) {
         if (typeof apiSettings[parentSettingID] !== 'undefined') {
           const parentSettingData = apiSettings[parentSettingID]
           const parentSetting = api(parentSettingID)
 
-          if (typeof parentSettingData.connected_fields !== 'undefined' && typeof customify.fontsConnectedFieldsCallbacks[parentSettingID] !== 'undefined') {
-            parentSetting.unbind(customify.fontsConnectedFieldsCallbacks[parentSettingID])
+          if (typeof parentSettingData.connected_fields !== 'undefined' && typeof customify.fontPalettes.connectedFieldsCallbacks[parentSettingID] !== 'undefined') {
+            parentSetting.unbind(customify.fontPalettes.connectedFieldsCallbacks[parentSettingID])
           }
-          delete customify.fontsConnectedFieldsCallbacks[parentSettingID]
+          delete customify.fontPalettes.connectedFieldsCallbacks[parentSettingID]
         }
       })
     }
@@ -206,9 +202,7 @@ window.customify = window.customify || {};
 
     api.bind('ready', handlePalettes)
 
-    return {
-      masterSettingIds: masterSettingIds
-    }
-  }()
+    return {}
+  }() )
 
 })(jQuery, customify, wp, document)

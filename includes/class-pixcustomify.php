@@ -5,7 +5,7 @@
  * @author    Pixelgrade <contact@pixelgrade.com>
  * @license   GPL-2.0+
  * @link      https://pixelgrade.com
- * @copyright 2014-2018 Pixelgrade
+ * @copyright 2014-2020 Pixelgrade
  */
 
 /**
@@ -78,12 +78,20 @@ class PixCustomifyPlugin {
 	public $style_manager = null;
 
 	/**
-	 * Gutenberg class object.
-	 * @var Customify_Gutenberg
+	 * Block Editor class object.
+	 * @var Customify_Block_Editor
 	 * @access  public
-	 * @since   2.2.0
+	 * @since   2.7.0
 	 */
-	public $gutenberg = null;
+	public $block_editor = null;
+
+	/**
+	 * Classic Editor class object.
+	 * @var Customify_Classic_Editor
+	 * @access  public
+	 * @since   2.7.0
+	 */
+	public $classic_editor = null;
 
 	protected $options_minimal_details = array();
 	protected $options_details = array();
@@ -148,10 +156,16 @@ class PixCustomifyPlugin {
 			$this->style_manager = Customify_Style_Manager::instance();
 		}
 
-		/* Initialize the Gutenberg logic. */
-		require_once( $this->get_base_path() . 'includes/class-customify-gutenberg.php' );
-		if ( is_null( $this->gutenberg ) ) {
-			$this->gutenberg = Customify_Gutenberg::instance();
+		/* Initialize the Block Editor integration logic. */
+		require_once( $this->get_base_path() . 'includes/class-customify-block-editor.php' );
+		if ( is_null( $this->block_editor ) ) {
+			$this->block_editor = Customify_Block_Editor::instance();
+		}
+
+		/* Initialize the Classic Editor integration logic. */
+		require_once( $this->get_base_path() . 'includes/class-customify-classic-editor.php' );
+		if ( is_null( $this->classic_editor ) ) {
+			$this->classic_editor = Customify_Classic_Editor::instance();
 		}
 
 		// Register all the needed hooks

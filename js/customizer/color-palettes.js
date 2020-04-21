@@ -1,5 +1,5 @@
 /** @namespace customify */
-window.customify = window.customify || {};
+window.customify = window.customify || parent.customify || {};
 
 (function ($, customify, wp) {
 
@@ -8,34 +8,16 @@ window.customify = window.customify || {};
    *
    * @namespace customify.colorPalettes
    */
-  customify.colorPalettes = function () {
+  if ( typeof customify.colorPalettes === 'undefined' ) {
+    customify.colorPalettes = {}
+  }
+  _.extend( customify.colorPalettes, function () {
     const api = wp.customize
     let apiSettings
 
     const defaultVariation = 'light'
-    const masterSettingIds = [
-      'sm_color_primary',
-      'sm_color_secondary',
-      'sm_color_tertiary',
-      'sm_dark_primary',
-      'sm_dark_secondary',
-      'sm_dark_tertiary',
-      'sm_light_primary',
-      'sm_light_secondary',
-      'sm_light_tertiary'
-    ]
 
-    const filteredColors = {
-      sm_color_primary: '',
-      sm_color_secondary: '',
-      sm_color_tertiary: '',
-      sm_dark_primary: '',
-      sm_dark_secondary: '',
-      sm_dark_tertiary: '',
-      sm_light_primary: '',
-      sm_light_secondary: '',
-      sm_light_tertiary: ''
-    }
+    const filteredColors = {}
 
     const primaryColorSelector = '#_customize-input-sm_dark_color_primary_slider_control'
     const secondaryColorSelector = '#_customize-input-sm_dark_color_secondary_slider_control'
@@ -50,6 +32,11 @@ window.customify = window.customify || {};
         return
       }
 
+      // Initialize filtered colors global.
+      _.each(customify.colorPalettes.masterSettingIds, function (settingID) {
+        filteredColors[settingID] = ''
+      })
+
       // Cache initial settings configuration to be able to update connected fields on variation change.
       if (typeof customify.settingsClone === 'undefined') {
         customify.settingsClone = $.extend(true, {}, apiSettings)
@@ -57,8 +44,8 @@ window.customify = window.customify || {};
 
       // Create a stack of callbacks bound to parent settings to be able to unbind them
       // when altering the connected_fields attribute.
-      if (typeof customify.colorsConnectedFieldsCallbacks === 'undefined') {
-        customify.colorsConnectedFieldsCallbacks = {}
+      if (typeof customify.colorPalettes.connectedFieldsCallbacks === 'undefined') {
+        customify.colorPalettes.connectedFieldsCallbacks = {}
       }
 
       setupGlobalsDone = true
@@ -137,7 +124,7 @@ window.customify = window.customify || {};
     }
 
     const resetSettings = () => {
-      _.each(masterSettingIds, function (settingID) {
+      _.each(customify.colorPalettes.masterSettingIds, function (settingID) {
         const setting = api(settingID)
 
         if (typeof setting !== 'undefined') {
@@ -172,7 +159,7 @@ window.customify = window.customify || {};
     }
 
     const updateFilteredColors = () => {
-      _.each(masterSettingIds, function (settingID) {
+      _.each(customify.colorPalettes.masterSettingIds, function (settingID) {
         const setting = api(settingID)
 
         if (typeof setting !== 'undefined') {
@@ -217,22 +204,22 @@ window.customify = window.customify || {};
     }
 
     const bindConnectedFields = function () {
-      _.each(masterSettingIds, function (parentSettingID) {
+      _.each(customify.colorPalettes.masterSettingIds, function (parentSettingID) {
         if (typeof apiSettings[parentSettingID] !== 'undefined') {
           const parentSettingData = apiSettings[parentSettingID]
           const parentSetting = api(parentSettingID)
 
           if (!_.isUndefined(parentSettingData.connected_fields)) {
-            customify.colorsConnectedFieldsCallbacks[parentSettingID] = getMasterFieldCallback(parentSettingData, parentSettingID)
-            parentSetting.bind(customify.colorsConnectedFieldsCallbacks[parentSettingID])
+            customify.colorPalettes.connectedFieldsCallbacks[parentSettingID] = getMasterFieldCallback(parentSettingData, parentSettingID)
+            parentSetting.bind(customify.colorPalettes.connectedFieldsCallbacks[parentSettingID])
 
             _.each(parentSettingData.connected_fields, function (connectedFieldData) {
               const connectedSettingID = connectedFieldData.setting_id
               const connectedSetting = api(connectedSettingID)
 
               if (typeof connectedSetting !== 'undefined') {
-                customify.colorsConnectedFieldsCallbacks[connectedSettingID] = toggleAlteredClassOnMasterControls
-                connectedSetting.bind(customify.colorsConnectedFieldsCallbacks[connectedSettingID])
+                customify.colorPalettes.connectedFieldsCallbacks[connectedSettingID] = toggleAlteredClassOnMasterControls
+                connectedSetting.bind(customify.colorPalettes.connectedFieldsCallbacks[connectedSettingID])
               }
             })
           }
@@ -241,11 +228,11 @@ window.customify = window.customify || {};
     }
 
     const unbindConnectedFields = function () {
-      _.each(customify.colorsConnectedFieldsCallbacks, function (callback, settingID) {
+      _.each(customify.colorPalettes.connectedFieldsCallbacks, function (callback, settingID) {
         const setting = api(settingID)
         setting.unbind(callback)
       })
-      customify.colorsConnectedFieldsCallbacks = {}
+      customify.colorPalettes.connectedFieldsCallbacks = {}
     }
 
     // alter connected fields of the master colors controls depending on the selected palette variation
@@ -258,7 +245,7 @@ window.customify = window.customify || {};
 
       const variation = setting()
 
-      if (!customify.colorPalettesVariations.hasOwnProperty(variation)) {
+      if (!customify.colorPalettes.variations.hasOwnProperty(variation)) {
         return defaultVariation
       }
 
@@ -266,16 +253,17 @@ window.customify = window.customify || {};
     }
 
     const getSwapMap = (variation) => {
-      if (!customify.colorPalettesVariations.hasOwnProperty(variation)) {
+      if (!customify.colorPalettes.variations.hasOwnProperty(variation)) {
         return defaultVariation
       }
-      return customify.colorPalettesVariations[variation]
+
+      return customify.colorPalettes.variations[variation]
     }
 
     // return an array with the hex values of the current palette
     const getCurrentPaletteColors = () => {
       const colors = []
-      _.each(masterSettingIds, function (settingID) {
+      _.each(customify.colorPalettes.masterSettingIds, function (settingID) {
         const setting = api(settingID)
         const color = setting()
         colors.push(color)
@@ -575,13 +563,13 @@ window.customify = window.customify || {};
     }
 
     const showNewColors = function () {
-      _.each(masterSettingIds, function (id) {
+      _.each(customify.colorPalettes.masterSettingIds, function (id) {
         $('.c-color-palette').find('.sm-color-palette__color.' + id).css('color', getFilteredColor(id))
       })
     }
 
     const showOldColors = function () {
-      _.each(masterSettingIds, function (id) {
+      _.each(customify.colorPalettes.masterSettingIds, function (id) {
         const setting = api(id)
         const initialColor = setting()
         $('.c-color-palette').find('.sm-color-palette__color.' + id).css('color', initialColor)
@@ -598,7 +586,7 @@ window.customify = window.customify || {};
     const setPalettesOnConnectedFields = _.debounce(() => {
       let $targets = $()
       // loop through the master settings
-      _.each(masterSettingIds, function (parentSettingID) {
+      _.each(customify.colorPalettes.masterSettingIds, function (parentSettingID) {
         if (typeof apiSettings[parentSettingID] !== 'undefined') {
           const parentSettingData = apiSettings[parentSettingID]
 
@@ -627,7 +615,7 @@ window.customify = window.customify || {};
       const alteredSettings = []
       let alteredSettingsSelector
 
-      _.each(masterSettingIds, function (masterSettingId) {
+      _.each(customify.colorPalettes.masterSettingIds, function (masterSettingId) {
         let connectedFields = apiSettings[masterSettingId]['connected_fields']
         const masterSettingValue = api(masterSettingId)()
         let connectedFieldsWereAltered = false
@@ -672,7 +660,7 @@ window.customify = window.customify || {};
       const optionsToShow = []
       let optionsSelector
 
-      _.each(masterSettingIds, function (masterSettingId) {
+      _.each(customify.colorPalettes.masterSettingIds, function (masterSettingId) {
         const connectedFields = apiSettings[masterSettingId]['connected_fields']
 
         if (!_.isUndefined(connectedFields) && !_.isEmpty(connectedFields)) {
@@ -808,7 +796,7 @@ window.customify = window.customify || {};
         tempSettings = swapConnectedFields(tempSettings, dark_mmode_variation)
       }
 
-      _.each(masterSettingIds, function (masterSettingId) {
+      _.each(customify.colorPalettes.masterSettingIds, function (masterSettingId) {
         apiSettings[masterSettingId] = tempSettings[masterSettingId]
       })
     }
@@ -1016,8 +1004,6 @@ window.customify = window.customify || {};
       bindEvents()
     })
 
-    return {
-      masterSettingIds: masterSettingIds
-    }
-  }()
+    return {}
+  }() )
 })(jQuery, customify, wp)

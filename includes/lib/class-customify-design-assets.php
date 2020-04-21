@@ -223,7 +223,7 @@ class Customify_Design_Assets {
 		}
 
 		return self::$_instance;
-	} // End instance ()
+	}
 
 	/**
 	 * Cloning is forbidden.

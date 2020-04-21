@@ -101,124 +101,6 @@ class Customify_Color_Palettes {
 		}
 
 		wp_enqueue_script( PixCustomifyPlugin()->get_slug() . '-color-palettes' );
-
-		wp_add_inline_script( PixCustomifyPlugin()->get_slug() . '-color-palettes',
-			PixCustomify_Customizer::getlocalizeToWindowScript( 'customify',
-				array(
-					'colorPalettesVariations' => [
-						'color_diversity_low'    => [
-							'sm_color_primary'   => [ 'sm_color_primary', 'sm_color_secondary', 'sm_color_tertiary' ],
-							'sm_color_secondary' => [],
-							'sm_color_tertiary'  => [],
-						],
-						'color_diversity_medium' => [
-							'sm_color_primary'   => [ 'sm_color_primary', 'sm_color_secondary' ],
-							'sm_color_secondary' => [ 'sm_color_tertiary' ],
-							'sm_color_tertiary'  => [],
-						],
-						'color_diversity_high'   => [
-							'sm_color_primary'   => [ 'sm_color_primary' ],
-							'sm_color_secondary' => [ 'sm_color_secondary' ],
-							'sm_color_tertiary'  => [ 'sm_color_tertiary' ],
-						],
-						'shuffle_remix'          => [
-							'sm_color_primary'   => [ 'sm_color_secondary' ],
-							'sm_color_secondary' => [ 'sm_color_tertiary' ],
-							'sm_color_tertiary'  => [ 'sm_color_primary' ],
-						],
-						'shuffle_mixed'          => [
-							'sm_color_primary'   => [ 'sm_color_tertiary' ],
-							'sm_color_secondary' => [ 'sm_color_primary' ],
-							'sm_color_tertiary'  => [ 'sm_color_secondary' ],
-						],
-						'light'                  => [
-							'sm_color_primary'   => [ 'sm_color_primary' ],
-							'sm_color_secondary' => [ 'sm_color_secondary' ],
-							'sm_color_tertiary'  => [ 'sm_color_tertiary' ],
-							'sm_dark_primary'    => [ 'sm_dark_primary' ],
-							'sm_dark_secondary'  => [ 'sm_dark_secondary' ],
-							'sm_dark_tertiary'   => [ 'sm_dark_tertiary' ],
-							'sm_light_primary'   => [ 'sm_light_primary' ],
-							'sm_light_secondary' => [ 'sm_light_secondary' ],
-							'sm_light_tertiary'  => [ 'sm_light_tertiary' ],
-						],
-						'dark'                   => [
-							'sm_dark_primary'    => [ 'sm_light_primary' ],
-							'sm_dark_secondary'  => [ 'sm_light_secondary' ],
-							'sm_dark_tertiary'   => [ 'sm_light_tertiary' ],
-							'sm_light_primary'   => [ 'sm_dark_primary' ],
-							'sm_light_secondary' => [ 'sm_dark_secondary' ],
-							'sm_light_tertiary'  => [ 'sm_dark_tertiary' ],
-						],
-						'colorful2'              => [
-							'sm_color_primary'   => [ 'sm_light_primary' ],
-							'sm_color_secondary' => [ 'sm_light_secondary' ],
-							'sm_color_tertiary'  => [ 'sm_light_tertiary' ],
-							'sm_dark_primary'    => [],
-							'sm_dark_secondary'  => [],
-							'sm_dark_tertiary'   => [],
-							'sm_light_primary'   => [ 'sm_color_primary', 'sm_dark_primary' ],
-							'sm_light_secondary' => [ 'sm_color_secondary', 'sm_dark_secondary' ],
-							'sm_light_tertiary'  => [ 'sm_color_tertiary', 'sm_dark_tertiary' ],
-						],
-						'colorful3'              => [
-							'sm_color_primary'   => [ 'sm_light_primary' ],
-							'sm_color_secondary' => [ 'sm_light_secondary' ],
-							'sm_color_tertiary'  => [ 'sm_light_tertiary' ],
-							'sm_dark_primary'    => [ 'sm_color_primary', 'sm_color_secondary', 'sm_color_tertiary' ],
-							'sm_dark_secondary'  => [],
-							'sm_dark_tertiary'   => [],
-							'sm_light_primary'   => [ 'sm_dark_primary', 'sm_dark_secondary', 'sm_dark_tertiary' ],
-							'sm_light_secondary' => [],
-							'sm_light_tertiary'  => [],
-						],
-						'colorful'               => [
-							'sm_color_primary'   => [ 'sm_color_secondary' ],
-							'sm_color_secondary' => [ 'sm_color_tertiary' ],
-							'sm_color_tertiary'  => [ 'sm_color_primary' ],
-							'sm_dark_primary'    => [ 'sm_dark_primary' ],
-							'sm_dark_secondary'  => [ 'sm_dark_secondary' ],
-							'sm_dark_tertiary'   => [ 'sm_dark_tertiary' ],
-							'sm_light_primary'   => [ 'sm_light_primary' ],
-							'sm_light_secondary' => [ 'sm_light_secondary' ],
-							'sm_light_tertiary'  => [ 'sm_light_tertiary' ],
-						],
-						'dark_alt'               => [
-							'sm_color_primary'   => [ 'sm_light_primary' ],
-							'sm_color_secondary' => [ 'sm_light_secondary' ],
-							'sm_color_tertiary'  => [ 'sm_light_tertiary' ],
-							'sm_dark_primary'    => [ 'sm_color_primary' ],
-							'sm_dark_secondary'  => [ 'sm_color_secondary' ],
-							'sm_dark_tertiary'   => [ 'sm_color_tertiary' ],
-							'sm_light_primary'   => [ 'sm_dark_primary' ],
-							'sm_light_secondary' => [ 'sm_dark_secondary' ],
-							'sm_light_tertiary'  => [ 'sm_dark_tertiary' ],
-						],
-						'colorful_alt'           => [
-							'sm_color_primary'   => [ 'sm_dark_primary' ],
-							'sm_color_secondary' => [ 'sm_dark_secondary' ],
-							'sm_color_tertiary'  => [ 'sm_dark_tertiary' ],
-							'sm_dark_primary'    => [ 'sm_light_primary' ],
-							'sm_dark_secondary'  => [ 'sm_light_secondary' ],
-							'sm_dark_tertiary'   => [ 'sm_light_tertiary' ],
-							'sm_light_primary'   => [ 'sm_color_primary' ],
-							'sm_light_secondary' => [ 'sm_color_secondary' ],
-							'sm_light_tertiary'  => [ 'sm_color_tertiary' ],
-						],
-						'light_alt'              => [
-							'sm_color_primary'   => [ 'sm_dark_primary' ],
-							'sm_color_secondary' => [ 'sm_dark_secondary' ],
-							'sm_color_tertiary'  => [ 'sm_dark_tertiary' ],
-							'sm_dark_primary'    => [ 'sm_color_primary' ],
-							'sm_dark_secondary'  => [ 'sm_color_secondary' ],
-							'sm_dark_tertiary'   => [ 'sm_color_tertiary' ],
-							'sm_light_primary'   => [ 'sm_light_primary' ],
-							'sm_light_secondary' => [ 'sm_light_secondary' ],
-							'sm_light_tertiary'  => [ 'sm_light_tertiary' ],
-						],
-					]
-				)
-			) );
 	}
 
 	/**
@@ -1123,11 +1005,11 @@ class Customify_Color_Palettes {
 	/**
 	 * Get all the defined Style Manager master color field ids.
 	 *
-	 * @param array $options_details
+	 * @param array $options_details Optional.
 	 *
 	 * @return array
-	 *@since 1.7.4
 	 *
+	 * @since 1.7.4
 	 */
 	public function get_all_master_color_controls_ids( $options_details = null ) {
 		$control_ids = array();
@@ -1142,36 +1024,6 @@ class Customify_Color_Palettes {
 
 		foreach ( $options_details as $option_id => $option_details ) {
 			if ( ! empty( $option_details['type'] ) && 'color' === $option_details['type'] && 0 === strpos( $option_id, 'sm_' ) ) {
-				$control_ids[] = $option_id;
-			}
-		}
-
-		return $control_ids;
-	}
-
-	/**
-	 * Get all the defined Style Manager final (master) color field ids.
-	 *
-	 * @param array $options_details
-	 *
-	 * @return array
-	 */
-	public function get_all_final_master_color_controls_ids( $options_details = null ) {
-		$control_ids = array();
-
-		if ( empty( $options_details ) ) {
-			$options_details = PixCustomifyPlugin()->get_options_configs(true);
-		}
-
-		if ( empty( $options_details ) ) {
-			return $control_ids;
-		}
-
-		foreach ( $options_details as $option_id => $option_details ) {
-			if ( ! empty( $option_details['type'] )
-			     && 'hidden' === $option_details['type']
-			     && 0 === strpos( $option_id, 'sm_' )
-			     && '_final' === substr( $option_id, - strlen( '_final' ) ) ) {
 				$control_ids[] = $option_id;
 			}
 		}
@@ -1213,6 +1065,124 @@ class Customify_Color_Palettes {
 	 * @return array
 	 */
 	public function add_to_localized_data( $localized ) {
+		if ( empty( $localized['colorPalettes'] ) ) {
+			$localized['colorPalettes'] = array();
+		}
+
+		$localized['colorPalettes']['masterSettingIds'] = $this->get_all_master_color_controls_ids();
+
+		$localized['colorPalettes']['variations'] = [
+			'color_diversity_low'    => [
+				'sm_color_primary'   => [ 'sm_color_primary', 'sm_color_secondary', 'sm_color_tertiary' ],
+				'sm_color_secondary' => [],
+				'sm_color_tertiary'  => [],
+			],
+			'color_diversity_medium' => [
+				'sm_color_primary'   => [ 'sm_color_primary', 'sm_color_secondary' ],
+				'sm_color_secondary' => [ 'sm_color_tertiary' ],
+				'sm_color_tertiary'  => [],
+			],
+			'color_diversity_high'   => [
+				'sm_color_primary'   => [ 'sm_color_primary' ],
+				'sm_color_secondary' => [ 'sm_color_secondary' ],
+				'sm_color_tertiary'  => [ 'sm_color_tertiary' ],
+			],
+			'shuffle_remix'          => [
+				'sm_color_primary'   => [ 'sm_color_secondary' ],
+				'sm_color_secondary' => [ 'sm_color_tertiary' ],
+				'sm_color_tertiary'  => [ 'sm_color_primary' ],
+			],
+			'shuffle_mixed'          => [
+				'sm_color_primary'   => [ 'sm_color_tertiary' ],
+				'sm_color_secondary' => [ 'sm_color_primary' ],
+				'sm_color_tertiary'  => [ 'sm_color_secondary' ],
+			],
+			'light'                  => [
+				'sm_color_primary'   => [ 'sm_color_primary' ],
+				'sm_color_secondary' => [ 'sm_color_secondary' ],
+				'sm_color_tertiary'  => [ 'sm_color_tertiary' ],
+				'sm_dark_primary'    => [ 'sm_dark_primary' ],
+				'sm_dark_secondary'  => [ 'sm_dark_secondary' ],
+				'sm_dark_tertiary'   => [ 'sm_dark_tertiary' ],
+				'sm_light_primary'   => [ 'sm_light_primary' ],
+				'sm_light_secondary' => [ 'sm_light_secondary' ],
+				'sm_light_tertiary'  => [ 'sm_light_tertiary' ],
+			],
+			'dark'                   => [
+				'sm_dark_primary'    => [ 'sm_light_primary' ],
+				'sm_dark_secondary'  => [ 'sm_light_secondary' ],
+				'sm_dark_tertiary'   => [ 'sm_light_tertiary' ],
+				'sm_light_primary'   => [ 'sm_dark_primary' ],
+				'sm_light_secondary' => [ 'sm_dark_secondary' ],
+				'sm_light_tertiary'  => [ 'sm_dark_tertiary' ],
+			],
+			'colorful2'              => [
+				'sm_color_primary'   => [ 'sm_light_primary' ],
+				'sm_color_secondary' => [ 'sm_light_secondary' ],
+				'sm_color_tertiary'  => [ 'sm_light_tertiary' ],
+				'sm_dark_primary'    => [],
+				'sm_dark_secondary'  => [],
+				'sm_dark_tertiary'   => [],
+				'sm_light_primary'   => [ 'sm_color_primary', 'sm_dark_primary' ],
+				'sm_light_secondary' => [ 'sm_color_secondary', 'sm_dark_secondary' ],
+				'sm_light_tertiary'  => [ 'sm_color_tertiary', 'sm_dark_tertiary' ],
+			],
+			'colorful3'              => [
+				'sm_color_primary'   => [ 'sm_light_primary' ],
+				'sm_color_secondary' => [ 'sm_light_secondary' ],
+				'sm_color_tertiary'  => [ 'sm_light_tertiary' ],
+				'sm_dark_primary'    => [ 'sm_color_primary', 'sm_color_secondary', 'sm_color_tertiary' ],
+				'sm_dark_secondary'  => [],
+				'sm_dark_tertiary'   => [],
+				'sm_light_primary'   => [ 'sm_dark_primary', 'sm_dark_secondary', 'sm_dark_tertiary' ],
+				'sm_light_secondary' => [],
+				'sm_light_tertiary'  => [],
+			],
+			'colorful'               => [
+				'sm_color_primary'   => [ 'sm_color_secondary' ],
+				'sm_color_secondary' => [ 'sm_color_tertiary' ],
+				'sm_color_tertiary'  => [ 'sm_color_primary' ],
+				'sm_dark_primary'    => [ 'sm_dark_primary' ],
+				'sm_dark_secondary'  => [ 'sm_dark_secondary' ],
+				'sm_dark_tertiary'   => [ 'sm_dark_tertiary' ],
+				'sm_light_primary'   => [ 'sm_light_primary' ],
+				'sm_light_secondary' => [ 'sm_light_secondary' ],
+				'sm_light_tertiary'  => [ 'sm_light_tertiary' ],
+			],
+			'dark_alt'               => [
+				'sm_color_primary'   => [ 'sm_light_primary' ],
+				'sm_color_secondary' => [ 'sm_light_secondary' ],
+				'sm_color_tertiary'  => [ 'sm_light_tertiary' ],
+				'sm_dark_primary'    => [ 'sm_color_primary' ],
+				'sm_dark_secondary'  => [ 'sm_color_secondary' ],
+				'sm_dark_tertiary'   => [ 'sm_color_tertiary' ],
+				'sm_light_primary'   => [ 'sm_dark_primary' ],
+				'sm_light_secondary' => [ 'sm_dark_secondary' ],
+				'sm_light_tertiary'  => [ 'sm_dark_tertiary' ],
+			],
+			'colorful_alt'           => [
+				'sm_color_primary'   => [ 'sm_dark_primary' ],
+				'sm_color_secondary' => [ 'sm_dark_secondary' ],
+				'sm_color_tertiary'  => [ 'sm_dark_tertiary' ],
+				'sm_dark_primary'    => [ 'sm_light_primary' ],
+				'sm_dark_secondary'  => [ 'sm_light_secondary' ],
+				'sm_dark_tertiary'   => [ 'sm_light_tertiary' ],
+				'sm_light_primary'   => [ 'sm_color_primary' ],
+				'sm_light_secondary' => [ 'sm_color_secondary' ],
+				'sm_light_tertiary'  => [ 'sm_color_tertiary' ],
+			],
+			'light_alt'              => [
+				'sm_color_primary'   => [ 'sm_dark_primary' ],
+				'sm_color_secondary' => [ 'sm_dark_secondary' ],
+				'sm_color_tertiary'  => [ 'sm_dark_tertiary' ],
+				'sm_dark_primary'    => [ 'sm_color_primary' ],
+				'sm_dark_secondary'  => [ 'sm_color_secondary' ],
+				'sm_dark_tertiary'   => [ 'sm_color_tertiary' ],
+				'sm_light_primary'   => [ 'sm_light_primary' ],
+				'sm_light_secondary' => [ 'sm_light_secondary' ],
+				'sm_light_tertiary'  => [ 'sm_light_tertiary' ],
+			],
+		];
 
 		return $localized;
 	}

@@ -192,7 +192,7 @@ class Customify_Cloud_Fonts {
 			self::$_instance = new self();
 		}
 		return self::$_instance;
-	} // End instance ()
+	}
 
 	/**
 	 * Cloning is forbidden.

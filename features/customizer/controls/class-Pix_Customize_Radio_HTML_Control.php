@@ -9,8 +9,6 @@ class Pix_Customize_Radio_HTML_Control extends Pix_Customize_Control {
 
 	/**
 	 * Render the control's content.
-	 *
-	 * @since 3.4.0
 	 */
 	public function render_content() { ?>
 

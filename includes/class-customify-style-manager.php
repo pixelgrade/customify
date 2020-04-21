@@ -169,7 +169,8 @@ if ( ! class_exists( 'Customify_Style_Manager' ) ) {
 			 */
 			add_action( 'customize_controls_print_footer_scripts', array( $this, 'output_user_feedback_modal' ) );
 			add_action( 'wp_ajax_customify_style_manager_user_feedback', array( $this, 'user_feedback_callback' ) );
-			add_filter( 'customify_localized_js_settings', array( $this, 'add_user_feedback_localized_data' ), 10, 1 );
+
+			add_filter( 'customify_localized_js_settings', array( $this, 'add_to_localized_data' ), 10, 1 );
 
 			/*
 			 * Scripts enqueued in the Customizer.
@@ -703,9 +704,15 @@ if ( ! class_exists( 'Customify_Style_Manager' ) ) {
 		 *
 		 * @return mixed
 		 */
-		public function add_user_feedback_localized_data( $localized ) {
-			$localized['style_manager_user_feedback_nonce'] = wp_create_nonce( 'customify_style_manager_user_feedback' );
-			$localized['style_manager_user_feedback_provided'] = get_option( 'style_manager_user_feedback_provided', false );
+		public function add_to_localized_data( $localized ) {
+			if ( empty( $localized['styleManager'] ) ) {
+				$localized['styleManager'] = array();
+			}
+
+			$localized['styleManager']['userFeedback'] = array(
+				'nonce'    => wp_create_nonce( 'customify_style_manager_user_feedback' ),
+				'provided' => get_option( 'style_manager_user_feedback_provided', false ),
+			);
 
 			return $localized;
 		}
@@ -940,5 +947,4 @@ if ( ! class_exists( 'Customify_Style_Manager' ) ) {
 			_doing_it_wrong( __FUNCTION__, esc_html__( 'You should not do that!', 'customify' ), null );
 		}
 	}
-
 }

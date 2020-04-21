@@ -1265,24 +1265,28 @@ class Customify_Font_Palettes {
 	 *
 	 * @since 1.7.4
 	 *
-	 * @param array $options
+	 * @param array $options_details Optional.
 	 *
 	 * @return array
 	 */
-	public function get_all_master_font_controls_ids( $options ) {
-		$master_font_controls = array();
+	public function get_all_master_font_controls_ids( $options_details = null ) {
+		$control_ids = array();
 
-		if ( empty( $options ) ) {
-			return $master_font_controls;
+		if ( empty( $options_details ) ) {
+			$options_details = PixCustomifyPlugin()->get_options_configs(true);
 		}
 
-		foreach ( $options as $option_id => $option_settings ) {
-			if ( ! empty( $option_settings['type'] ) && 'font' === $option_settings['type'] ) {
-				$master_font_controls[] = $option_id;
+		if ( empty( $options ) ) {
+			return $control_ids;
+		}
+
+		foreach ( $options_details as $option_id => $option_details ) {
+			if ( ! empty( $option_details['type'] ) && 'font' === $option_details['type'] && 0 === strpos( $option_id, 'sm_' ) ) {
+				$control_ids[] = $option_id;
 			}
 		}
 
-		return $master_font_controls;
+		return $control_ids;
 	}
 
 	/**
@@ -1319,7 +1323,13 @@ class Customify_Font_Palettes {
 	 * @return array
 	 */
 	public function add_to_localized_data( $localized ) {
-		$localized['colorPalettesVariations'] = [
+		if ( empty( $localized['fontPalettes'] ) ) {
+			$localized['fontPalettes'] = array();
+		}
+
+		$localized['fontPalettes']['masterSettingIds'] = $this->get_all_master_font_controls_ids();
+
+		$localized['fontPalettes']['variations'] = [
 			'light'    => [],
 			'regular' => [],
 			'big'   => [],

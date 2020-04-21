@@ -119,13 +119,6 @@ class Customify_Fonts_Global {
 		add_action('wp_enqueue_scripts', array( $this, 'enqueue_frontend_scripts' ) );
 		add_action( $load_location, array( $this, 'output_fonts_dynamic_style' ), 100 );
 
-		/*
-		 * Add integration with the Classic editor.
-		 */
-		if ( PixCustomifyPlugin()->settings->get_plugin_setting( 'enable_editor_style', true ) ) {
-			add_action( 'admin_enqueue_scripts', array( $this, 'script_to_add_customizer_output_into_wp_editor' ), 10, 1 );
-		}
-
 		// Add data to be passed to JS.
 		add_filter( 'customify_localized_js_settings', array( $this, 'add_to_localized_data' ), 10, 1 );
 	}
@@ -465,7 +458,7 @@ class Customify_Fonts_Global {
 	 *
 	 * @return array
 	 */
-	protected function get_font_families_details_for_webfontloader() {
+	public function get_font_families_details_for_webfontloader() {
 
 		$args = array(
 			'google_families' => array(),
@@ -867,8 +860,8 @@ class Customify_Fonts_Global {
 		}
 
 		ob_start(); ?>
-function customify_font_loader() {
-    var webfontargs = {
+const customifyFontLoader = function() {
+    const webfontargs = {
         classes: true,
         events: true,
 		loading: function() {
@@ -879,7 +872,7 @@ function customify_font_loader() {
 		},
 		inactive: function() {
 			jQuery( window ).trigger( 'wf-inactive' );
-		},
+		}
     };
         <?php if ( ! empty( $args['google_families'] ) ) { ?>
     webfontargs.google = {
@@ -902,9 +895,8 @@ function customify_font_loader() {
         <?php } ?>
     WebFont.load(webfontargs);
 };
-
 if (typeof WebFont !== 'undefined') {
-    customify_font_loader();
+	customifyFontLoader();
 }<?php
 		$output = ob_get_clean();
 
@@ -968,84 +960,25 @@ if (typeof WebFont !== 'undefined') {
 	 * @return mixed
 	 */
 	public function add_to_localized_data( $localized ) {
-		$localized['theme_fonts'] = $this->get_theme_fonts();
-		$localized['cloud_fonts'] = $this->get_cloud_fonts();
-		$localized['google_fonts'] = $this->get_google_fonts();
-		$localized['std_fonts'] = $this->get_std_fonts();
+		if ( empty( $localized['fonts'] ) ) {
+			$localized['fonts'] = array();
+		}
+
+		$localized['fonts']['theme_fonts'] = $this->get_theme_fonts();
+		$localized['fonts']['cloud_fonts'] = $this->get_cloud_fonts();
+		$localized['fonts']['google_fonts'] = $this->get_google_fonts();
+		$localized['fonts']['std_fonts'] = $this->get_std_fonts();
+
+		if ( empty( $localized['l10n'] ) ) {
+			$localized['l10n'] = array();
+		}
+		$localized['l10n']['fonts'] = array(
+			'familyPlaceholderText' => esc_html__( 'Select a font family', 'customify' ),
+			'variantAutoText' => esc_html__( 'Auto', 'customify' ),
+			'subsetPlaceholderText' => esc_html__( 'More subsets', 'customify' ),
+		);
 
 		return $localized;
-	}
-
-	function script_to_add_customizer_output_into_wp_editor() {
-
-		ob_start();
-		$fonts_dynamic_script = $this->get_fonts_dynamic_script();
-		if ( ! empty( $fonts_dynamic_script ) ) { ?>
-<script type="text/javascript" src="<?php echo plugins_url( 'js/vendor/webfontloader-1-6-28.js', PixCustomifyPlugin()->get_file() ); ?>"></script>
-<script type="text/javascript"><?php echo $fonts_dynamic_script ?></script>
-		<?php }
-
-		$this->output_fonts_dynamic_style();
-
-		$custom_output = ob_get_clean();
-
-		ob_start(); ?>
-(function ($) {
-	$(window).on('load', function () {
-		/**
-		 * @param iframe_id the id of the frame you want to append the style
-		 * @param style_element the style element you want to append
-		 */
-		var append_script_to_iframe = function (ifrm_id, scriptEl) {
-			var myIframe = document.getElementById(ifrm_id);
-
-			var script = myIframe.contentWindow.document.createElement("script");
-			script.type = "text/javascript";
-			if (scriptEl.getAttribute("src")) { script.src = scriptEl.getAttribute("src"); }
-			script.innerHTML = scriptEl.innerHTML;
-
-			myIframe.contentWindow.document.head.appendChild(script);
-		};
-
-		var append_style_to_iframe = function (ifrm_id, styleElment) {
-			var ifrm = window.frames[ifrm_id];
-			if ( typeof ifrm === "undefined" ) {
-			    return;
-			}
-			ifrm = ( ifrm.contentDocument || ifrm.document );
-			var head = ifrm.getElementsByTagName('head')[0];
-
-			if (typeof styleElment !== "undefined") {
-				head.appendChild(styleElment);
-			}
-		};
-
-		var xmlString = <?php echo json_encode( str_replace( "\n", "", $custom_output ) ); ?>,
-			parser = new DOMParser(),
-			doc = parser.parseFromString(xmlString, "text/html");
-
-		if (typeof window.frames['content_ifr'] !== 'undefined') {
-
-			$.each(doc.head.childNodes, function (key, el) {
-				if (typeof el !== "undefined" && typeof el.tagName !== "undefined") {
-
-					switch (el.tagName) {
-						case 'STYLE' :
-							append_style_to_iframe('content_ifr', el);
-							break;
-						case 'SCRIPT' :
-							append_script_to_iframe('content_ifr', el);
-							break;
-						default:
-							break;
-					}
-				}
-			});
-		}
-	});
-})(jQuery);<?php
-		$script = ob_get_clean();
-		wp_add_inline_script( 'editor', $script );
 	}
 
 	/**

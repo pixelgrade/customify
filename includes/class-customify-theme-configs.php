@@ -355,7 +355,7 @@ if ( ! class_exists( 'Customify_Theme_Configs' ) ) {
 			}
 
 			return self::$_instance;
-		} // End instance ()
+		}
 
 		/**
 		 * Cloning is forbidden.

@@ -29,11 +29,7 @@ window.customify = window.customify || parent.customify || {}
     },
 
     update_plugin: function (options) {
-      //this.element = element;
       this.settings = $.extend({}, defaults, options)
-      //this._defaults = defaults;
-      //this._name = pluginName;
-      //this._cssproperties = CSSOM.parse($(this.element).html());
       this.changeProperties()
     },
 

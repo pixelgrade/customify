@@ -84,10 +84,20 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 			// Others will be able to add data here via the 'customify_localized_js_settings' filter.
 			// This is a just-in-time filter, triggered as late as possible.
 			$this->localized  = array(
-				'options_name' => PixCustomifyPlugin()->get_options_key(),
-				'ajax_url' => admin_url( 'admin-ajax.php' ),
-				'webfontloader_url' => plugins_url( 'js/vendor/webfontloader-1-6-28.js', PixCustomifyPlugin()->get_file() ),
-				'px_dependent_css_props' => self::$pixel_dependent_css_properties,
+				'config' => array(
+					'options_name' => PixCustomifyPlugin()->get_options_key(),
+					'ajax_url' => admin_url( 'admin-ajax.php' ),
+					'webfontloader_url' => plugins_url( 'js/vendor/webfontloader-1-6-28.js', PixCustomifyPlugin()->get_file() ),
+					'px_dependent_css_props' => self::$pixel_dependent_css_properties,
+				),
+				// For localizing strings.
+				'l10n' => array(
+					'panelResetButton' => esc_html__( 'Panel\'s defaults', 'customify' ),
+					'sectionResetButton' => esc_html__( 'Reset All Options for This Section', 'customify' ),
+					'resetGlobalConfirmMessage' => wp_kses_post( __( 'Do you really want to reset to defaults all the fields? Watch out, this will reset all your Customify options and will save them!', 'customify' ) ),
+					'resetPanelConfirmMessage' => wp_kses_post( __( 'Do you really want to reset the settings in this panel?', 'customify' ) ),
+					'resetSectionConfirmMessage' => wp_kses_post( __( 'Do you really want to reset the settings in this section?', 'customify' ) ),
+				)
 			);
 
 			// Hook up.
@@ -124,10 +134,6 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 			add_action( 'customize_register', array( $this, 'process_customizer_config' ), 12 );
 			// Maybe the theme has instructed us to do things like removing sections or controls.
 			add_action( 'customize_register', array( $this, 'maybe_process_config_extras' ), 13 );
-
-			if ( PixCustomifyPlugin()->settings->get_plugin_setting( 'enable_editor_style', true ) ) {
-				add_action( 'admin_enqueue_scripts', array( $this, 'script_to_add_customizer_settings_into_wp_editor' ), 10, 1 );
-			}
 
 			/*
 			 * Development related
@@ -193,10 +199,8 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 
 			wp_add_inline_script( PixCustomifyPlugin()->get_slug() . '-customizer-scripts',
 				self::getlocalizeToWindowScript( 'customify',
-					array(
-						'config' => apply_filters( 'customify_localized_js_settings', $this->localized )
-					)
-				) );
+					apply_filters( 'customify_localized_js_settings', $this->localized )
+				), 'before' );
 		}
 
 		/** Register Customizer scripts loaded only on previewer page */
@@ -537,78 +541,6 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 			return $output;
 		}
 
-		/**
-		 * Add our customizer styling edits into the wp_editor
-		 */
-		function script_to_add_customizer_settings_into_wp_editor() {
-
-			ob_start();
-
-			$this->output_dynamic_style();
-
-			$custom_css = ob_get_clean();
-
-			ob_start(); ?>
-(function ($) {
-	$(window).on('load',function () {
-		/**
-		* @param iframe_id the id of the frame you want to append the style
-		* @param style_element the style element you want to append - boooom
-		*/
-		var append_script_to_iframe = function (ifrm_id, scriptEl) {
-			var myIframe = document.getElementById(ifrm_id);
-
-			var script = myIframe.contentWindow.document.createElement("script");
-			script.type = "text/javascript";
-			if (scriptEl.getAttribute("src")) { script.src = scriptEl.getAttribute("src"); }
-			script.innerHTML = scriptEl.innerHTML;
-
-			myIframe.contentWindow.document.head.appendChild(script);
-		};
-
-		var append_style_to_iframe = function (ifrm_id, styleElement) {
-			var ifrm = window.frames[ifrm_id];
-			if ( typeof ifrm === "undefined" ) {
-				return;
-			}
-			ifrm = ( ifrm.contentDocument || ifrm.contentDocument || ifrm.document );
-			var head = ifrm.getElementsByTagName('head')[0];
-
-			if (typeof styleElement !== "undefined") {
-				head.appendChild(styleElement);
-			}
-		};
-
-		var xmlString = <?php echo json_encode( str_replace( "\n", "", $custom_css ) ); ?>,
-		parser = new DOMParser(),
-		doc = parser.parseFromString(xmlString, "text/html");
-
-		if (typeof window.frames['content_ifr'] !== 'undefined') {
-
-			$.each(doc.head.childNodes, function (key, el) {
-				if (typeof el !== "undefined" && typeof el.tagName !== "undefined") {
-
-					switch (el.tagName) {
-						case 'STYLE' :
-							append_style_to_iframe('content_ifr', el);
-							break;
-						case 'SCRIPT' :
-							append_script_to_iframe('content_ifr', el);
-							break;
-						default:
-							break;
-					}
-				}
-			});
-		}
-	});
-})(jQuery);
-<?php
-			$script = ob_get_clean();
-			wp_add_inline_script( 'editor', $script );
-
-		}
-
 		protected function load_customizer_controls() {
 
 			// First require the base customizer extend class.
@@ -808,11 +740,11 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 
 				// Filter some settings that have purely visual purpose.
 				if ( ! empty( $option_config['type'] ) && ! in_array( $option_config['type'], array( 'html', 'button' ) ) ) {
-					$this->localized['settings'][ $setting_id ] = $option_config;
+					$this->localized['config']['settings'][ $setting_id ] = $option_config;
 				}
 
 				// Generate a safe option ID (not the final setting ID) to us in HTML attributes like ID or class
-				$this->localized['settings'][ $setting_id ]['html_safe_option_id'] = sanitize_html_class( $option_id );
+				$this->localized['config']['settings'][ $setting_id ]['html_safe_option_id'] = sanitize_html_class( $option_id );
 
 				$this->register_field( $section_id, $setting_id, $option_config, $wp_customize );
 			}

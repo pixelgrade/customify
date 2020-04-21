@@ -1,5 +1,5 @@
 /** @namespace customify */
-window.customify = window.customify || {};
+window.customify = window.customify || parent.customify || {};
 
 // This is for the Customizer Font control
 (function ($, customify, wp) {
@@ -9,17 +9,19 @@ window.customify = window.customify || {};
    *
    * @namespace customify.fontFields
    */
-  customify.fontFields = function () {
-    const
-      wrapperSelector = '.font-options__wrapper',
+  if ( typeof customify.fontFields === 'undefined' ) {
+    customify.fontFields = {}
+  }
+  _.extend( customify.fontFields, function () {
+    const wrapperSelector = '.font-options__wrapper',
       valueHolderSelector = '.customify_font_values',
       fontFamilySelector = '.customify_font_family',
       fontVariantSelector = '.customify_font_weight',
-      fontSubsetsSelector = '.customify_font_subsets',
+      fontSubsetsSelector = '.customify_font_subsets'
 
-      familyPlaceholderText = "Select a font family",
-      variantAutoText = "Auto", // This is for the empty value.
-      subsetPlaceholderText = "More subsets"
+    let familyPlaceholderText ,
+      variantAutoText, // This is for the empty value.
+      subsetPlaceholderText
 
     const api = wp.customize
 
@@ -29,18 +31,22 @@ window.customify = window.customify || {};
       loadingValue = {}
 
     const init = function () {
+      familyPlaceholderText = customify.l10n.fonts.familyPlaceholderText
+      variantAutoText = customify.l10n.fonts.variantAutoText
+      subsetPlaceholderText = customify.l10n.fonts.subsetPlaceholderText
+
       const $fontFamilyFields = $(fontFamilySelector)
 
       // Add the Google Fonts opts to each control.
       if (typeof api.settings['google_fonts_opts'] !== 'undefined') {
         $fontFamilyFields.each(function (i, el) {
-          let googleOptionsPlaceholder = $(el).find('.google-fonts-opts-placeholder').first()
+          const googleOptionsPlaceholder = $(el).find('.google-fonts-opts-placeholder').first()
           if (googleOptionsPlaceholder) {
             // Replace the placeholder with the HTML for the Google fonts select options.
             googleOptionsPlaceholder.replaceWith(api.settings['google_fonts_opts'])
 
             // The active font family might be a Google font so we need to set the current value after we've added the options.
-            let activeFontFamily = $(el).data('active_font_family')
+            const activeFontFamily = $(el).data('active_font_family')
             if (typeof activeFontFamily !== 'undefined') {
               $(el).val(activeFontFamily)
             }
@@ -53,7 +59,7 @@ window.customify = window.customify || {};
         placeholder: familyPlaceholderText
       })
 
-      // We only need to bing to the original select since select2 triggers the event for this one when changed.
+      // We only need to bind to the original select since select2 triggers the event for this one when changed.
       $fontFamilyFields.on('change', function (e) {
         const newFontFamily = e.target.value,
           wrapper = $(e.target).closest(wrapperSelector)
@@ -76,7 +82,7 @@ window.customify = window.customify || {};
 
       // Handle the reverse value direction, when the customize setting is updated and the subfields need to update their values.
       $fontFamilyFields.each(function (i, el) {
-        let wrapper = $(el).closest(wrapperSelector),
+        const wrapper = $(el).closest(wrapperSelector),
           valueHolder = wrapper.children(valueHolderSelector),
           settingID = $(valueHolder).data('customize-setting-link'),
           setting = api(settingID)
@@ -91,28 +97,18 @@ window.customify = window.customify || {};
       })
 
       // Initialize the select2 field for the font variant
-      const fontVariantFields = $(fontVariantSelector)
-      initSubfield(fontVariantFields, true)
+      initSubfield($(fontVariantSelector), true)
 
       // Initialize the select2 field for the font subsets
-      const fontSubsetsFields = $(fontSubsetsSelector)
-      initSubfield(fontSubsetsFields, true, subsetPlaceholderText)
+      initSubfield($(fontSubsetsSelector), true, subsetPlaceholderText)
 
       // Initialize the all the regular selects in the font subfields
-      const selects = $fontFamilyFields.parents(wrapperSelector).find('select').not('select[class*=\' select2\'],select[class^=\'select2\']')
-      initSubfield(selects, false);
+      initSubfield($fontFamilyFields.parents(wrapperSelector).find('select').not('select[class*=\' select2\'],select[class^=\'select2\']'), false);
 
       // Initialize the all the range fields in the font subfields
-      const rangers = $fontFamilyFields.parents(wrapperSelector).find('input[type=range]')
-      initSubfield(rangers, false);
+      initSubfield($fontFamilyFields.parents(wrapperSelector).find('input[type=range]'), false);
 
       handleFontPopupToggle()
-
-      // When the previewer window is ready, render the fonts
-      const self = this
-      api.previewer.bind('ready', function () {
-        self.renderFonts()
-      })
     }
 
     function initSubfield(subfieldList, select2 = false, select2Placeholder = '') {
@@ -123,7 +119,7 @@ window.customify = window.customify || {};
       $(subfieldList).data('touched', false)
 
       $(subfieldList).on('change', function (e) {
-        let wrapper = $(e.target).closest(wrapperSelector)
+        const wrapper = $(e.target).closest(wrapperSelector)
 
         // Serialize subfield values and refresh the fonts in the preview window.
         selfUpdateValue(wrapper)
@@ -151,7 +147,7 @@ window.customify = window.customify || {};
      * @param wrapper
      */
     function updateVariantField (newFontDetails, wrapper) {
-      let variants = typeof newFontDetails.variants !== 'undefined' ? newFontDetails.variants : [],
+      const variants = typeof newFontDetails.variants !== 'undefined' ? newFontDetails.variants : [],
         fontVariantInput = wrapper.find(fontVariantSelector),
         selectedVariant = fontVariantInput.val() ? fontVariantInput.val() : '',
         newVariants = []
@@ -208,7 +204,7 @@ window.customify = window.customify || {};
      * @param wrapper
      */
     function updateSubsetField (newFontDetails, wrapper) {
-      let subsets = typeof newFontDetails.subsets !== 'undefined' ? newFontDetails.subsets : [],
+      const subsets = typeof newFontDetails.subsets !== 'undefined' ? newFontDetails.subsets : [],
         fontSubsetsInput = wrapper.find(fontSubsetsSelector),
         newSubsets = []
 
@@ -228,7 +224,7 @@ window.customify = window.customify || {};
       }
 
       // Attempt to keep (some of) the previously selected subsets, depending on what the new font supports.
-      let currentFontValue = maybeJsonParse(wrapper.children(valueHolderSelector).val())
+      const currentFontValue = maybeJsonParse(wrapper.children(valueHolderSelector).val())
       let selectedSubsets = []
       if (!_.isUndefined(currentFontValue.selected_subsets) && !_.isEmpty(currentFontValue.selected_subsets)) {
         selectedSubsets = currentFontValue.selected_subsets
@@ -247,7 +243,7 @@ window.customify = window.customify || {};
           return
         }
 
-        let newSubset = {
+        const newSubset = {
           'id': subset,
           'text': subset
         }
@@ -271,7 +267,7 @@ window.customify = window.customify || {};
     }
 
     const getValue = function (wrapper) {
-      let valueHolder = wrapper.children(valueHolderSelector)
+      const valueHolder = wrapper.children(valueHolderSelector)
 
       if (valueHolder.length) {
         return maybeJsonParse(valueHolder.val())
@@ -281,7 +277,7 @@ window.customify = window.customify || {};
     }
 
     const updateValue = function (wrapper, value) {
-      let valueHolder = wrapper.children(valueHolderSelector),
+      const valueHolder = wrapper.children(valueHolderSelector),
         settingID = $(valueHolder).data('customize-setting-link'),
         setting = api(settingID)
 
@@ -304,7 +300,7 @@ window.customify = window.customify || {};
      * It collects values and saves them (encoded) into the `.customify_font_values` input's value
      */
     const selfUpdateValue = function (wrapper) {
-      let optionsList = $(wrapper).find('.font-options__options-list'),
+      const optionsList = $(wrapper).find('.font-options__options-list'),
         inputs = optionsList.find('[data-field]'),
         valueHolder = wrapper.children(valueHolderSelector),
         oldValue = maybeJsonParse(valueHolder.val()),
@@ -389,7 +385,7 @@ window.customify = window.customify || {};
       }
 
       // Serialize the newly gathered font data
-      let serializedNewFontData = encodeValues(newFontData)
+      const serializedNewFontData = encodeValues(newFontData)
       // Set the serialized value in the hidden field.
       valueHolder.val(serializedNewFontData)
       // Update also the Customizer setting value.
@@ -405,7 +401,7 @@ window.customify = window.customify || {};
      * This function is a reverse of update_font_value(), initializing the entire font field controls based on the value stored in the hidden input.
      */
     function loadFontValue (wrapper) {
-      let optionsList = $(wrapper).find('.font-options__options-list'),
+      const optionsList = $(wrapper).find('.font-options__options-list'),
         inputs = optionsList.find('[data-field]'),
         valueHolder = wrapper.children(valueHolderSelector),
         value = maybeJsonParse(valueHolder.val()),
@@ -430,7 +426,7 @@ window.customify = window.customify || {};
 
         // We will do this only for numerical sub-fields.
         if (_.includes(['letter_spacing', 'line_height', 'font_size'], field)) {
-          let subfieldValue = standardizeNumericalValue(value[field], el)
+          const subfieldValue = standardizeNumericalValue(value[field], el)
 
           // Make sure that the unit and value_unit attributes are in place.
           if (subfieldValue.unit !== '') {
@@ -510,13 +506,6 @@ window.customify = window.customify || {};
       return encodeURIComponent(JSON.stringify(obj))
     }
 
-    const renderFonts = function () {
-      $('.customify_font_family').select2({
-        theme: 'classic',
-        minimumResultsForSearch: 10,
-      }).trigger('change')
-    }
-
     /**
      * Given a value we will standardize it to an array with 'value' and 'unit'.
      *
@@ -577,11 +566,11 @@ window.customify = window.customify || {};
       let fontType = 'std_font'
 
       // We will follow a stack in the following order: theme fonts, cloud fonts, standard fonts, Google fonts.
-      if (typeof customify.config.theme_fonts[fontFamily] !== 'undefined') {
+      if (typeof customify.fonts.theme_fonts[fontFamily] !== 'undefined') {
         fontType = 'theme_font'
-      } else if (typeof customify.config.cloud_fonts[fontFamily] !== 'undefined') {
+      } else if (typeof customify.fonts.cloud_fonts[fontFamily] !== 'undefined') {
         fontType = 'cloud_font'
-      } else if (typeof customify.config.google_fonts[fontFamily] !== 'undefined') {
+      } else if (typeof customify.fonts.google_fonts[fontFamily] !== 'undefined') {
         fontType = 'google_font'
       }
 
@@ -596,17 +585,17 @@ window.customify = window.customify || {};
 
       switch (fontType) {
         case 'theme_font':
-          return customify.config.theme_fonts[fontFamily]
+          return customify.fonts.theme_fonts[fontFamily]
           break
         case 'cloud_font':
-          return customify.config.cloud_fonts[fontFamily]
+          return customify.fonts.cloud_fonts[fontFamily]
           break
         case 'google_font':
-          return customify.config.google_fonts[fontFamily]
+          return customify.fonts.google_fonts[fontFamily]
           break
         case 'std_font':
-          if (typeof customify.config.std_fonts[fontFamily] !== 'undefined') {
-            return customify.config.std_fonts[fontFamily]
+          if (typeof customify.fonts.std_fonts[fontFamily] !== 'undefined') {
+            return customify.fonts.std_fonts[fontFamily]
           }
           break
         default:
@@ -689,7 +678,6 @@ window.customify = window.customify || {};
       determineFontType: determineFontType,
       getFontDetails: getFontDetails,
       convertFontVariantToFVD: convertFontVariantToFVD,
-      renderFonts: renderFonts,
     }
-  }()
+  }() )
 })(jQuery, customify, wp)

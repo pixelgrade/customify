@@ -7,8 +7,6 @@ class Pix_Customize_SM_radio_Control extends Pix_Customize_Control {
 
 	/**
 	 * Render the control's content.
-	 *
-	 * @since 3.4.0
 	 */
 	public function render_content() {
 		$input_id = '_customize-input-' . $this->id;
@@ -34,7 +32,7 @@ class Pix_Customize_SM_radio_Control extends Pix_Customize_Control {
 		    <?php } ?>
         </div>
 
-	<?php
+		<?php
 		do_action( 'customify_after_sm_radio_control', $this );
 	}
 }

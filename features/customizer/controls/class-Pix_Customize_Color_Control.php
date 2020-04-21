@@ -2,15 +2,12 @@
 
 /**
  * Class Pix_Customize_Color_Control
- * A simple Color Control
  */
 class Pix_Customize_Color_Control extends Pix_Customize_Control {
 	public $type    = 'color';
 
 	/**
 	 * Render the control's content.
-	 *
-	 * @since 3.4.0
 	 */
 	public function render_content() { ?>
 		<label>

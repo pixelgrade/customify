@@ -227,15 +227,15 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 	<?php }
 
 	protected function display_font_variant_field( $current_value, $current_font_details ) {
-		// If the `font-weight` field entry is falsy, this means we don't want to show the font-weight field.
-		// @todo Consider if we could simply not output anything.
+		// If the `font-weight` field entry is falsy, this means we don't want to use the field.
+		if ( empty( $this->fields['font-weight'] ) ) {
+			return;
+		}
 
-		// These two are go hand in hand. @todo Maybe simply here.
+		// Display is for the initial state. Depending on the selected fonts, the JS logic will show or hide it.
 		$display       = 'none';
-		$data_disabled = 'data-disabled';
-		if ( ! empty( $this->fields['font-weight'] ) ) {
-			$display       = 'inline-block';
-			$data_disabled = '';
+		if ( ! empty( $current_font_details['variants'] ) ) {
+			$display = 'inline-block';
 		}
 
 		$selected = false;
@@ -243,14 +243,13 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 			$selected = $current_value->font_variant;
 		}
 		?>
-		<li class="customify_weights_wrapper customize-control font-options__option"
-		    style="display: <?php echo $display; ?>;">
+		<li class="customify_weights_wrapper customize-control font-options__option" style="display: <?php echo $display; ?>;">
 			<label><?php esc_html_e( 'Font Variant', 'customify' ); ?></label>
 			<?php
 			$data_default = ! empty( $selected ) ? 'data-default="' . $selected . '"' : '';
 			?>
 			<select class="customify_font_weight"
-			        data-field="font_variant" <?php echo $data_default . ' ' . $data_disabled ?>>
+			        data-field="font_variant" <?php echo $data_default ?>>
 				<?php
 				if ( ! empty( $current_font_details['variants'] ) ) {
 					if ( is_string( $current_font_details['variants'] ) ) {
@@ -275,20 +274,19 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 	}
 
 	protected function display_font_subsets_field( $current_value, $current_font_details ) {
-		// If the `subsets` field entry is falsy, this means we don't want to show the subsets field.
-		// @todo Consider if we could simply not output anything.
+		// If the `subsets` field entry is falsy, this means we don't want to use the field.
+		if ( empty( $this->fields['subsets'] ) ) {
+			return;
+		}
 
-		// These two go hand in hand. @todo Maybe simply here.
+		// Display is for the initial state. Depending on the selected fonts, the JS logic will show or hide it.
 		$display       = 'none';
-		$data_disabled = 'data-disabled';
-		if ( ! empty( $this->fields['subsets'] ) ) {
-			$display       = 'inline-block';
-			$data_disabled = '';
+		if ( ! empty( $current_font_details['subsets'] ) ) {
+			$display = 'inline-block';
 		} ?>
-		<li class="customify_subsets_wrapper customize-control font-options__option"
-		    style="display: <?php echo $display; ?>;">
+		<li class="customify_subsets_wrapper customize-control font-options__option" style="display: <?php echo $display; ?>;">
 			<label><?php esc_html_e( 'Languages', 'customify' ); ?></label>
-			<select multiple class="customify_font_subsets" data-field="selected_subsets" <?php echo $data_disabled ?>>
+			<select multiple class="customify_font_subsets" data-field="selected_subsets">
 				<?php
 				$selected = array();
 				if ( isset( $current_value->selected_subsets ) ) {
@@ -317,6 +315,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 	}
 
 	protected function display_font_size_field( $current_value ) {
+		// If the `font-size` field entry is falsy, this means we don't want to use the field.
 		if ( empty( $this->fields['font-size'] ) ) {
 			return;
 		}
@@ -343,6 +342,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 	}
 
 	protected function display_line_height_field( $current_value ) {
+		// If the `line-height` field entry is falsy, this means we don't want to use the field.
 		if ( empty( $this->fields['line-height'] ) ) {
 			return;
 		}
@@ -369,6 +369,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 	}
 
 	protected function display_letter_spacing_field( $current_value ) {
+		// If the `letter-spacing` field entry is falsy, this means we don't want to use the field.
 		if ( empty( $this->fields['letter-spacing'] ) ) {
 			return;
 		}
@@ -436,6 +437,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 	}
 
 	protected function display_text_align_field( $current_font_value ) {
+		// If the `text-align` field entry is falsy, this means we don't want to use the field.
 		if ( empty( $this->fields['text-align'] ) ) {
 			return;
 		}
@@ -455,6 +457,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 	}
 
 	protected function display_text_transform_field( $current_font_value ) {
+		// If the `text-transform` field entry is falsy, this means we don't want to use the field.
 		if ( empty( $this->fields['text-transform'] ) ) {
 			return;
 		}
@@ -474,6 +477,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 	}
 
 	protected function display_text_decoration_field( $current_font_value ) {
+		// If the `text-decoration` field entry is falsy, this means we don't want to use the field.
 		if ( empty( $this->fields['text-decoration'] ) ) {
 			return;
 		}

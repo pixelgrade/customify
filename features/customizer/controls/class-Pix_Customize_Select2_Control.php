@@ -2,15 +2,12 @@
 
 /**
  * Class Pix_Customize_Select2_Control
- * A simple Select2 Control
  */
 class Pix_Customize_Select2_Control extends Pix_Customize_Control {
 	public $type    = 'select2';
 
 	/**
 	 * Render the control's content.
-	 *
-	 * @since 3.4.0
 	 */
 	public function render_content() {
 		?>
@@ -25,7 +22,7 @@ class Pix_Customize_Select2_Control extends Pix_Customize_Control {
 					echo '<option value="' . esc_attr( $value ) . '"' . selected( $this->value(), $value, false ) . '>' . $label . '</option>';
 				?>
 			</select>
-			
+
 			<?php if ( ! empty( $this->description ) ) : ?>
 				<span class="description customize-control-description"><?php echo $this->description; ?></span>
 			<?php endif; ?>

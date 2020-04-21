@@ -10,7 +10,8 @@
 
   const fonts_cache = []
 
-  $(document).ready(function () {
+  // Do everything at document.ready
+  $(function () {
     const api = parent.wp.customize
     const customify = parent.customify
     const apiSettings = api.settings.settings

@@ -332,5 +332,4 @@ if ( ! class_exists( 'Customify_Array' ) ) {
 			return array_pop( $args );
 		}
 	}
-
 }
