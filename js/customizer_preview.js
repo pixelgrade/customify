@@ -16,9 +16,9 @@
     const customify = parent.customify
     const apiSettings = api.settings.settings
 
-    $.each(customify.config.settings, function (key, el) {
-      const properties_prefix = typeof el.properties_prefix === 'undefined' ? '' : el.properties_prefix
-      if (el.type === 'font') {
+    $.each(customify.config.settings, function (key, settingConfig) {
+      const properties_prefix = typeof settingConfig.properties_prefix === 'undefined' ? '' : settingConfig.properties_prefix
+      if (settingConfig.type === 'font') {
         api(key, function (setting) {
           setting.bind(function (to) {
             const rawValues = maybeJsonParse(to)
@@ -32,36 +32,34 @@
               if (_.isEmpty(cssValues)) {
                 return
               }
-              const CSS = getFontFieldCSSCode(this.id, cssValues, properties_prefix)
-              const fieldStyle = $('#customify_font_output_for_' + el.html_safe_option_id)
 
-              fieldStyle.html(CSS)
+              const CSS = getFontFieldCSSCode(this.id, cssValues, properties_prefix)
+              $('#customify_font_output_for_' + settingConfig.html_safe_option_id).html(CSS)
             }
           })
         })
 
       } else if (typeof apiSettings !== 'undefined'
         && typeof apiSettings[key] !== 'undefined'
-        && typeof el.css !== 'undefined'
-        && typeof el.live !== 'undefined'
-        && el.live === true) {
+        && typeof settingConfig.css !== 'undefined'
+        && typeof settingConfig.live !== 'undefined'
+        && settingConfig.live === true) {
 
         api(key, function (setting) {
-
           setting.bind(function (to) {
 
-            $.each(el.css, function (counter, property_config) {
+            $.each(settingConfig.css, function (idx, propertyConfig) {
               let properties = []
 
-              properties[property_config.property] = property_config.selector
-              if (typeof property_config.callback_filter !== 'undefined') {
-                properties['callback'] = property_config.callback_filter
+              properties[propertyConfig.property] = propertyConfig.selector
+              if (typeof propertyConfig.callback_filter !== 'undefined') {
+                properties['callback'] = propertyConfig.callback_filter
               }
 
               let cssUpdateArgs = {
                 properties: properties,
                 propertyValue: to,
-                negative_value: property_config.hasOwnProperty('negative_value') ? property_config['negative_value'] : false
+                negative_value: propertyConfig.hasOwnProperty('negative_value') ? propertyConfig['negative_value'] : false
               }
 
               if (typeof this.unit !== 'undefined') {
@@ -69,21 +67,21 @@
               }
 
               // Replace all dashes with underscores thus making the CSS property safe to us in a HTML ID.
-              const regexForMultipleReplace = new RegExp('-', 'g'),
-                cssStyleSelector = '.dynamic_setting_' + el.html_safe_option_id + '_property_' + property_config.property.replace(regexForMultipleReplace, '_') + '_' + counter
+              const regexForMultipleReplace = new RegExp('-', 'g')
+              const cssStyleSelector = '.dynamic_setting_' + settingConfig.html_safe_option_id + '_property_' + propertyConfig.property.replace(regexForMultipleReplace, '_') + '_' + idx
 
               $(cssStyleSelector).cssUpdate(cssUpdateArgs)
             })
 
           })
         })
-      } else if (typeof el.live === 'object' && el.live.length > 0) {
+      } else if (typeof settingConfig.live === 'object' && settingConfig.live.length > 0) {
         // if the live parameter is an object it means that is a list of css classes
         // these classes should be affected by the change of the text fields
-        const fieldClass = el.live.join()
+        const fieldClass = settingConfig.live.join()
 
         // if this field is allowed to modify text then we'll edit this live
-        if ($.inArray(el.type, ['text', 'textarea', 'ace_editor']) > -1) {
+        if ($.inArray(settingConfig.type, ['text', 'textarea', 'ace_editor']) > -1) {
           api(key, function (value) {
             value.bind(function (text) {
               let sanitizer = document.createElement('div')
@@ -134,6 +132,8 @@
       }
 
       if (typeof values.font_size !== 'undefined' && '' !== values.font_size) {
+        let fontSizeUnit = ''
+
         store['font-size'] = values.font_size
         // If the value already contains a unit (is not numeric), go with that.
         if (isNaN(values.font_size)) {
@@ -141,14 +141,21 @@
           if (typeof values.font_size.value !== 'undefined') {
             store['font-size'] = values.font_size.value
             if (typeof values.font_size.unit !== 'undefined') {
-              store['font-size'] += values.font_size.unit
+              fontSizeUnit = values.font_size.unit
             }
           } else {
-            store['font-size'] += getFieldUnit(ID, 'font-size')
+            fontSizeUnit = getFieldUnit(ID, 'font-size')
           }
         } else {
-          store['font-size'] += getFieldUnit(ID, 'font-size')
+          fontSizeUnit = getFieldUnit(ID, 'font-size')
         }
+
+        // If we use ems or rems, and the value is larger than 9, then something must be wrong; we will use pixels.
+        if (store['font-size'] >= 9 && _.includes(['em', 'rem', ''], fontSizeUnit)) {
+          fontSizeUnit = 'px'
+        }
+
+        store['font-size'] += fontSizeUnit
       }
 
       if (typeof values.letter_spacing !== 'undefined' && '' !== values.letter_spacing) {

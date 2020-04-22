@@ -778,20 +778,19 @@ class Customify_Fonts_Global {
 		}
 
 		if ( ! empty( $value['font_weight'] ) && $this->isCSSPropertyAllowed( 'font-weight', $properties ) ) {
-			$this->display_property( 'font-weight', $value['font_weight'], $properties_prefix );
+			$this->display_property( 'font-weight', $value['font_weight'], '', $properties_prefix );
 		}
 
 		if ( ! empty( $value['font_style'] ) && $this->isCSSPropertyAllowed( 'font-style', $properties ) ) {
-			$this->display_property( 'font-style', $value['font_style'], $properties_prefix );
+			$this->display_property( 'font-style', $value['font_style'], '', $properties_prefix );
 		}
 
 		if ( ! empty( $value['font_size'] ) && $this->isCSSPropertyAllowed( 'font-size', $properties ) ) {
-
 			$font_size = self::standardizeNumericalValue( $value['font_size'], 'font-size', $font );
 			if ( false !== $font_size['value'] ) {
 
 				// If we use ems or rems, and the value is larger than 9, then something must be wrong; we will use pixels.
-				if ( $font_size['value'] >= 9 && in_array( $font_size['unit'], array( 'em', 'rem' ) ) ) {
+				if ( $font_size['value'] >= 9 && in_array( $font_size['unit'], array( 'em', 'rem', '' ) ) ) {
 					$font_size['unit'] = 'px';
 				}
 
