@@ -790,7 +790,7 @@ class Customify_Fonts_Global {
 			if ( false !== $font_size['value'] ) {
 
 				// If we use ems or rems, and the value is larger than 9, then something must be wrong; we will use pixels.
-				if ( $font_size['value'] >= 9 && in_array( $font_size['unit'], array( 'em', 'rem', '' ) ) ) {
+				if ( $font_size['value'] >= 9 && in_array( $font_size['unit'], array( 'em', 'rem' ) ) ) {
 					$font_size['unit'] = 'px';
 				}
 

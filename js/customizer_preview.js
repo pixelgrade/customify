@@ -150,12 +150,9 @@
           fontSizeUnit = getFieldUnit(ID, 'font-size')
         }
 
-        // If we use ems or rems, and the value is larger than 9, then something must be wrong; we will use pixels.
-        if (store['font-size'] >= 9 && _.includes(['em', 'rem', ''], fontSizeUnit)) {
-          fontSizeUnit = 'px'
+        if (!_.isEmpty(fontSizeUnit)) {
+          store['font-size'] += fontSizeUnit
         }
-
-        store['font-size'] += fontSizeUnit
       }
 
       if (typeof values.letter_spacing !== 'undefined' && '' !== values.letter_spacing) {
