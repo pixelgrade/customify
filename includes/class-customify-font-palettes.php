@@ -289,12 +289,12 @@ class Customify_Font_Palettes {
 				// Finally, go through each font style and standardize it.
 				foreach( $font_styles_intervals as $key => $value ) {
 					if ( isset( $value['letter_spacing'] ) ) {
-						$font_styles_intervals[ $key ]['letter_spacing'] = $this->maybe_standardize_value( $value['letter_spacing'] );
-
 						// We have some special values for letter-spacing that need to taken care of.
-						if ( 'normal' === $font_styles_intervals[ $key ]['letter_spacing'] ) {
-							$font_styles_intervals[ $key ]['letter_spacing'] = 0;
+						if ( 'normal' === $value['letter_spacing'] ) {
+							$value['letter_spacing'] = 0;
 						}
+
+						$font_styles_intervals[ $key ]['letter_spacing'] = Customify_Fonts_Global::standardizeNumericalValue( $value['letter_spacing'] );
 					}
 				}
 
@@ -625,28 +625,13 @@ class Customify_Font_Palettes {
 					// If we didn't get a font_size we will try and grab the default value for the connected field.
 					if ( ! isset( $value['font_size'] ) ) {
 						if ( isset( $option_config['default']['font-size'] ) ) {
-							$value['font_size'] = array( 'value' => $option_config['default']['font-size'] );
+							$value['font_size'] = $option_config['default']['font-size'];
 						} else {
 							$value['font_size'] = false;
 						}
 					}
-
-					// Handle the case when the received font_size value is a number with a unit - split them.
-					$value['font_size'] = $this->maybe_standardize_value( $value['font_size'] );
-
-					// If we don't have an unit, maybe we can make an educated guess.
-					// If the value is bellow 9, then probably we are talking about ems, else pxs.
-					if ( ! empty( $value['font_size']['value'] ) && ! isset( $value['font_size']['unit'] ) ) {
-						if ( isset( $option_config['fields']['font-size']['unit'] ) ) {
-							$value['font_size']['unit'] = $option_config['fields']['font-size']['unit'];
-						} else {
-							if ( $value['font_size']['value'] < 9 ) {
-								$value['font_size']['unit'] = 'em';
-							} else {
-								$value['font_size']['unit'] = 'px';
-							}
-						}
-					}
+					// Finally, standardize it.
+					$value['font_size'] = Customify_Fonts_Global::standardizeNumericalValue( $value['font_size'], 'font-size', $option_config );
 
 					$connected_fields_config[ $key ] = $value;
 				}
@@ -656,54 +641,6 @@ class Customify_Font_Palettes {
 		}
 
 		return $config;
-	}
-
-	/**
-	 * Standardize a numerical value for a font CSS property.
-	 *
-	 * The standard format is an associative array with the following entries:
-	 *  - 'value': holds the actual numerical value (int or float)
-	 *  - 'unit : optional; it holds the unit that should be used for the value
-	 *
-	 * @param mixed $value
-	 *
-	 * @return array|bool
-	 */
-	private function maybe_standardize_value( $value ) {
-		$new_value = false;
-
-		if ( false === $value ) {
-			return $new_value;
-		}
-
-		if ( is_array( $value ) ) {
-			$new_value = $value;
-		}
-
-		if ( is_string( $value ) ) {
-			if ( is_numeric( $value ) ) {
-				$new_value = array( 'value' => (float) $value );
-			} else {
-				// We will get everything in front that is a valid part of a number (float including).
-				preg_match("/^([\d.\-+]+)/i", $value, $match);
-
-				if ( ! empty( $match ) && isset( $match[0] ) ) {
-					$new_value = array(
-						'value' => (float) $match[0],
-						'unit' => substr( $value, strlen( $match[0] ) ),
-					);
-				} else {
-					// If we could not extract anything useful we will trust the developer and leave it liek that.
-					return $value;
-				}
-			}
-		}
-
-		if ( is_numeric( $value ) ) {
-			$new_value = array( 'value' => $value );
-		}
-
-		return $new_value;
 	}
 
 	/**

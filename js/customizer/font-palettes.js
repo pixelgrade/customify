@@ -79,6 +79,7 @@ window.customify = window.customify || parent.customify || {};
           newFontData['type'] = customify.fontFields.determineFontType(newFontData['font_family'])
 
           // The selected variants also come straight from the font logic right now.
+          // @todo We no longer store variants in the value. We take the available variants from the font config. Consider removing this.
           if (typeof fontsLogic.font_weights !== 'undefined') {
             newFontData['variants'] = fontsLogic.font_weights
           }

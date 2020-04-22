@@ -345,7 +345,7 @@ window.customify = window.customify || parent.customify || {};
       }
 
       // Put the value into the number field.
-      $range.on('input', function () {
+      $range.on('input change', function () {
         $number.val($range.val())
       })
 

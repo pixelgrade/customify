@@ -1242,17 +1242,21 @@ if (typeof WebFont !== 'undefined') {
 	/**
 	 * Given a value we will standardize it to an array with 'value' and 'unit'.
 	 *
-	 * @param $value
-	 * @param $field
-	 * @param $font
+	 * @param mixed $value
+	 * @param string|false $field Optional. The subfield name (e.g. `font-size`).
+	 * @param array|false $font Optional. The entire font field config.
 	 *
 	 * @return array
 	 */
-	public static function standardizeNumericalValue( $value, $field, $font ) {
+	public static function standardizeNumericalValue( $value, $field = false, $font = false ) {
 		$standard_value = array(
 			'value' => false,
 			'unit' => false,
 		);
+
+		if ( in_array( $value, ['', 'false', false], true ) ) {
+			return $standard_value;
+		}
 
 		if ( is_numeric( $value ) ) {
 			$standard_value['value'] = $value;
@@ -1278,6 +1282,9 @@ if (typeof WebFont !== 'undefined') {
 			if ( ! empty( $match ) && isset( $match[0] ) ) {
 				$standard_value['value'] = $match[0];
 				$standard_value['unit'] = substr( $value, strlen( $match[0] ) );
+			} else {
+				// If we could not extract anything useful we will trust the developer and leave it like that.
+				$standard_value['value'] = $value;
 			}
 		}
 
@@ -1391,6 +1398,10 @@ if (typeof WebFont !== 'undefined') {
 	 * @return bool|string
 	 */
 	public static function getSubFieldUnit( $field, $font ) {
+		if ( false === $field || false === $font ) {
+			return false;
+		}
+
 		// If the field has no definition.
 		if ( empty( $font['fields'][ $field ] ) ) {
 			// These fields don't have an unit, by default.
