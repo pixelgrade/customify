@@ -293,12 +293,12 @@ window.customify = window.customify || parent.customify || {};
       // We don't want to handle the binding of the Style Manager settings
       if (typeof customify.colorPalettes !== 'undefined'
         && typeof customify.colorPalettes.masterSettingIds !== 'undefined'
-        && _.contains(customify.colorPalettes.masterSettingIds, parentSettingID)) {
+        && _.includes(customify.colorPalettes.masterSettingIds, parentSettingID)) {
         return
       }
       if (typeof customify.fontPalettes !== 'undefined'
         && typeof customify.fontPalettes.masterSettingIds !== 'undefined'
-        && _.contains(customify.fontPalettes.masterSettingIds, parentSettingID)) {
+        && _.includes(customify.fontPalettes.masterSettingIds, parentSettingID)) {
         return
       }
 

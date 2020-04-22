@@ -119,10 +119,11 @@ if ( ! class_exists( 'Customify_Block_Editor' ) ) {
 		 */
 		public function add_hooks() {
 
+			// Styles and scripts when editing.
 			add_action( 'enqueue_block_editor_assets', array( $this, 'dynamic_styles_scripts' ), 999 );
 
 			// Styles on the front end.
-			add_action( 'wp_enqueue_scripts', array( $this, 'frontend_styles' ), 999 );
+			add_action( 'enqueue_block_assets', array( $this, 'frontend_styles' ), 999 );
 
 			add_action( 'admin_init', array( $this, 'editor_color_palettes' ), 20 );
 		}
@@ -136,8 +137,15 @@ if ( ! class_exists( 'Customify_Block_Editor' ) ) {
 		 */
 		public function is_supported() {
 			$gutenberg = false;
-			if ( has_filter( 'replace_editor', 'gutenberg_init' ) ) {
+
+			// Determine if the block editor is active for the frontend.
+			if ( has_action( 'enqueue_block_assets' ) ) {
 				// Gutenberg is installed and activated.
+				$gutenberg = true;
+			}
+
+			// Determine if the block editor is being used in the WP admin.
+			if ( is_admin() && get_current_screen()->is_block_editor() ) {
 				$gutenberg = true;
 			}
 
@@ -186,7 +194,7 @@ if ( ! class_exists( 'Customify_Block_Editor' ) ) {
 			$style_css_uri = get_stylesheet_uri();
 			$theme_slug    = get_stylesheet();
 
-			$handle   = 'wp-edit-post'; // this is better than nothing as it is the main editor style.
+			$handle   = 'wp-block-library'; // this is better than nothing as it is the main editor frontend style.
 			$reversed = array_reverse( $wp_styles->registered );
 			/** @var _WP_Dependency $style */
 			foreach ( $reversed as $style ) {
@@ -220,6 +228,9 @@ if ( ! class_exists( 'Customify_Block_Editor' ) ) {
 			require_once( PixCustomifyPlugin()->get_base_path() . 'includes/class-customify-fonts-global.php' );
 
 			$enqueue_parent_handle = $this->get_editor_style_handle();
+			if ( empty( $enqueue_parent_handle ) ) {
+				return;
+			}
 
 			wp_register_script( PixCustomifyPlugin()->get_slug() . '-web-font-loader',
 				plugins_url( 'js/vendor/webfontloader-1-6-28.js', PixCustomifyPlugin()->get_file() ), array('wp-editor'), null );
@@ -238,7 +249,10 @@ if ( ! class_exists( 'Customify_Block_Editor' ) ) {
 		}
 
 		public function frontend_styles() {
-			$enqueue_parent_handle = $this->get_editor_style_handle();
+			$enqueue_parent_handle = $this->get_frontend_style_handle();
+			if ( empty( $enqueue_parent_handle ) ) {
+				return;
+			}
 
 			// Add color palettes classes.
 			wp_add_inline_style( $enqueue_parent_handle, $this->editor_color_palettes_css_classes() );

@@ -20,20 +20,22 @@ window.customify = window.customify || parent.customify || {};
       // Handle the Style Manager user feedback logic.
       const $userFeedbackModal = $('#style-manager-user-feedback-modal')
       if ($userFeedbackModal.length) {
-        let $userFeedbackForm = $userFeedbackModal.find('form'),
+        const $userFeedbackForm = $userFeedbackModal.find('form'),
           $userFeedbackCloseBtn = $userFeedbackModal.find('.close'),
           $userFeedbackFirstStep = $userFeedbackModal.find('.first-step'),
           $userFeedbackSecondStep = $userFeedbackModal.find('.second-step'),
           $userFeedbackThanksStep = $userFeedbackModal.find('.thanks-step'),
-          $userFeedbackErrorStep = $userFeedbackModal.find('.error-step'),
-          userFeedbackModalShown = false,
-          colorPaletteChanged = false
+          $userFeedbackErrorStep = $userFeedbackModal.find('.error-step')
+
+        let userFeedbackModalShown = false,
+          colorPaletteChanged = false,
+          fontPaletteChanged = false
 
         // Handle when to open the modal.
         api.bind('saved', function () {
           // We will only show the modal once per Customizer session.
-          if (!userFeedbackModalShown && colorPaletteChanged) {
-            $('body').addClass('modal-open')
+          if (!userFeedbackModalShown && (colorPaletteChanged || fontPaletteChanged)) {
+            $('body').addClass('feedback-modal-open modal-open')
             userFeedbackModalShown = true
           }
         })
@@ -54,6 +56,17 @@ window.customify = window.customify || parent.customify || {};
             // Intentional loose comparison.
             if (new_value != old_value) {
               colorPaletteChanged = true
+            }
+          })
+        }
+
+        // Handle the font palette changed info update.
+        const fontPaletteSetting = api('sm_font_palette')
+        if (!_.isUndefined(fontPaletteSetting)) {
+          fontPaletteSetting.bind(function (new_value, old_value) {
+            // Intentional loose comparison.
+            if (new_value != old_value) {
+              fontPaletteChanged = true
             }
           })
         }
@@ -105,7 +118,7 @@ window.customify = window.customify || parent.customify || {};
         $userFeedbackCloseBtn.on('click', function (event) {
           event.preventDefault()
 
-          $('body').removeClass('modal-open')
+          $('body').removeClass('feedback-modal-open modal-open')
 
           // Leave everything in working order
           setTimeout(function () {

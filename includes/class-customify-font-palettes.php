@@ -1276,7 +1276,7 @@ class Customify_Font_Palettes {
 			$options_details = PixCustomifyPlugin()->get_options_configs(true);
 		}
 
-		if ( empty( $options ) ) {
+		if ( empty( $options_details ) ) {
 			return $control_ids;
 		}
 

@@ -222,6 +222,7 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 				array(
 					'jquery',
 					'customize-preview',
+					'underscore',
 					PixCustomifyPlugin()->get_slug() . '-CSSOM',
 					PixCustomifyPlugin()->get_slug() . '-cssUpdate'
 				),
