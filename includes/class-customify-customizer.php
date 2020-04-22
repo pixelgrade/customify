@@ -420,22 +420,17 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 		}
 
 		protected function process_css_property( $css_property, $value ) {
-			$unit = '';
-
-			if ( isset( $css_property['unit'] ) ) {
-				$unit = $css_property['unit'];
-			}
-
-			// if the unit isn't specified but the property should have a unit force 'px' as it
-			if ( empty( $unit ) && in_array( $css_property['property'], self::$pixel_dependent_css_properties ) ) {
+			$unit = isset( $css_property['unit'] ) ? $css_property['unit'] : '';
+			// If the unit is empty (string, not boolean false) but the property should have a unit force 'px' as it
+			if ( '' === $unit && in_array( $css_property['property'], self::$pixel_dependent_css_properties ) ) {
 				$unit = 'px';
 			}
 
 			$css_property['selector'] = apply_filters( 'customify_css_selector', $this->cleanup_whitespace_css( $css_property['selector'] ), $css_property );
-
 			if ( empty( $css_property['selector'] ) ) {
 				return '';
 			}
+
 			$property_output = $css_property['selector'] . ' { ' . $css_property['property'] . ': ' . $value . $unit . "; }" . "\n";
 
 			// Handle the value filter callback.

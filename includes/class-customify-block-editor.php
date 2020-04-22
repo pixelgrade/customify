@@ -160,8 +160,8 @@ if ( ! class_exists( 'Customify_Block_Editor' ) ) {
 
 			// We need to look into the registered theme stylesheets and get the one most likely to be used for Gutenberg.
 			// Thus we can attach inline styles to it.
-			$theme_dir_uri = get_stylesheet_directory_uri();
-			$theme_slug    = get_stylesheet();
+			$theme_dir_uri = get_template_directory_uri();
+			$theme_slug    = get_template();
 
 			$handle   = 'wp-edit-post'; // this is better than nothing as it is the main editor style.
 			$reversed = array_reverse( $wp_styles->registered );
@@ -191,8 +191,8 @@ if ( ! class_exists( 'Customify_Block_Editor' ) ) {
 
 			// We need to look into the registered theme stylesheets and get the one most likely to be used for Gutenberg.
 			// Thus we can attach inline styles to it.
-			$style_css_uri = get_stylesheet_uri();
-			$theme_slug    = get_stylesheet();
+			$style_css_uri = get_template_directory_uri() . '/style.css';
+			$theme_slug    = get_template();
 
 			$handle   = 'wp-block-library'; // this is better than nothing as it is the main editor frontend style.
 			$reversed = array_reverse( $wp_styles->registered );

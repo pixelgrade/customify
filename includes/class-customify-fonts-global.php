@@ -827,11 +827,16 @@ class Customify_Fonts_Global {
 		}
 	}
 
-	protected function display_property( $property, $value, $unit = '', $prefix = '' ) {
+	protected function display_property( $property, $value, $unit = false, $prefix = '' ) {
 		// We don't want to output empty CSS rules.
 		if ( '' === $value ) {
 			return;
 		}
+
+		if ( false === $unit ) {
+			$unit = '';
+		}
+
 		echo $prefix . $property . ": " . $value . $unit . ";\n";
 	}
 
@@ -1246,7 +1251,7 @@ if (typeof WebFont !== 'undefined') {
 	public static function standardizeNumericalValue( $value, $field, $font ) {
 		$standard_value = array(
 			'value' => false,
-			'unit' => '',
+			'unit' => false,
 		);
 
 		if ( is_numeric( $value ) ) {
@@ -1274,6 +1279,11 @@ if (typeof WebFont !== 'undefined') {
 				$standard_value['value'] = $match[0];
 				$standard_value['unit'] = substr( $value, strlen( $match[0] ) );
 			}
+		}
+
+		// Make sure that we convert all falsy unit values to the boolean false.
+		if ( in_array( $standard_value['unit'], ['', 'false'], true ) ) {
+			$standard_value['unit'] = false;
 		}
 
 		return $standard_value;
@@ -1374,23 +1384,32 @@ if (typeof WebFont !== 'undefined') {
 		return $allowedProperties;
 	}
 
+	/**
+	 * @param string $field
+	 * @param array $font
+	 *
+	 * @return bool|string
+	 */
 	public static function getSubFieldUnit( $field, $font ) {
-
+		// If the field has no definition.
 		if ( empty( $font['fields'][ $field ] ) ) {
-
-			if ( 'line-height' === $field ){
-				return '';
+			// These fields don't have an unit, by default.
+			if ( in_array( $field, ['font-family', 'font-weight', 'font-style', 'line-height', 'text-align', 'text-transform', 'text-decoration'] ) ){
+				return false;
 			}
 
+			// The rest of the subfields have pixels as default units.
 			return 'px';
 		}
 
 		if ( isset( $font['fields'][ $field ]['unit'] ) ) {
-			return $font['fields'][ $field ]['unit'];
+			// Make sure that we convert all falsy unit values to the boolean false.
+			return in_array( $font['fields'][ $field ]['unit'], ['', 'false'], true ) ? false : $font['fields'][ $field ]['unit'];
 		}
 
 		if ( isset( $font['fields'][ $field ][3] ) ) {
-			return $font['fields'][ $field ][3];
+			// Make sure that we convert all falsy unit values to the boolean false.
+			return in_array( $font['fields'][ $field ][3], ['', 'false'], true ) ? false : $font['fields'][ $field ][3];
 		}
 
 		return 'px';

@@ -74,19 +74,13 @@ window.customify = window.customify || parent.customify || {}
      */
     updateCssRule: function (property_name, settings, selectorText) {
 
-      const self = this,
-        properties = settings.properties,
-        new_value = settings.propertyValue,
-        // if there is a negative property ... keep it negative
-        sign = settings['negative_value'] ? '-' : ''
+      const new_value = settings.propertyValue
+      // if there is a negative property ... keep it negative
+      const sign = settings['negative_value'] ? '-' : ''
 
-      let unit = ''
-
-      if (typeof this.settings.unit !== 'undefined') {
-        unit = this.settings.unit
-      }
-
-      if (unit === '' && customify.config.px_dependent_css_props.indexOf(property_name) != -1) {
+      let unit = (typeof this.settings.unit !== 'undefined') ? this.settings.unit : ''
+      // If the unit is empty (string, not boolean false) but the property should have a unit force 'px' as it
+      if (unit === '' && customify.config.px_dependent_css_props.indexOf(property_name) !== -1) {
         unit = 'px'
       }
 

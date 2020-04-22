@@ -3,7 +3,7 @@
   /* global customify.config */
   /* global WebFont */
 
-  $(window).on('load',function () {
+  $(window).on('load', function () {
     // We need to do this on window.load because on document.ready might be too early.
     maybeLoadWebfontloaderScript()
   })
@@ -132,7 +132,7 @@
       }
 
       if (typeof values.font_size !== 'undefined' && '' !== values.font_size) {
-        let fontSizeUnit = ''
+        let fontSizeUnit = false
 
         store['font-size'] = values.font_size
         // If the value already contains a unit (is not numeric), go with that.
@@ -150,12 +150,14 @@
           fontSizeUnit = getFieldUnit(ID, 'font-size')
         }
 
-        if (!_.isEmpty(fontSizeUnit)) {
+        if (false !== fontSizeUnit) {
           store['font-size'] += fontSizeUnit
         }
       }
 
       if (typeof values.letter_spacing !== 'undefined' && '' !== values.letter_spacing) {
+        let letterSpacingUnit = false
+
         store['letter-spacing'] = values.letter_spacing
         // If the value already contains a unit (is not numeric), go with that.
         if (isNaN(values.letter_spacing)) {
@@ -163,17 +165,23 @@
           if (typeof values.letter_spacing.value !== 'undefined') {
             store['letter-spacing'] = values.letter_spacing.value
             if (typeof values.letter_spacing.unit !== 'undefined') {
-              store['letter-spacing'] += values.letter_spacing.unit
+              letterSpacingUnit = values.letter_spacing.unit
             }
           } else {
-            store['letter-spacing'] += getFieldUnit(ID, 'letter-spacing')
+            letterSpacingUnit = getFieldUnit(ID, 'letter-spacing')
           }
         } else {
-          store['letter-spacing'] += getFieldUnit(ID, 'letter-spacing')
+          letterSpacingUnit = getFieldUnit(ID, 'letter-spacing')
+        }
+
+        if (false !== letterSpacingUnit) {
+          store['letter-spacing'] += letterSpacingUnit
         }
       }
 
       if (typeof values.line_height !== 'undefined' && '' !== values.line_height) {
+        let lineHeightUnit = false
+
         store['line-height'] = values.line_height
         // If the value already contains a unit (is not numeric), go with that.
         if (isNaN(values.line_height)) {
@@ -181,13 +189,17 @@
           if (typeof values.line_height.value !== 'undefined') {
             store['line-height'] = values.line_height.value
             if (typeof values.line_height.unit !== 'undefined') {
-              store['line-height'] += values.line_height.unit
+              lineHeightUnit = values.line_height.unit
             }
           } else {
-            store['line-height'] += getFieldUnit(ID, 'line-height')
+            lineHeightUnit = getFieldUnit(ID, 'line-height')
           }
         } else {
-          store['line-height'] += getFieldUnit(ID, 'line-height')
+          lineHeightUnit = getFieldUnit(ID, 'line-height')
+        }
+
+        if (false !== lineHeightUnit) {
+          store['line-height'] += lineHeightUnit
         }
       }
 
@@ -227,8 +239,8 @@
         // for cleanliness we will group the simple ones under a single CSS rule,
         // and output individual CSS rules for complex ones.
         // Right now, for complex CSS selectors we are only interested in the `properties` sub-entry.
-        const simpleCSSSelectors = [];
-        const complexCSSSelectors = {};
+        const simpleCSSSelectors = []
+        const complexCSSSelectors = {}
 
         _.each(field.selector, function (details, selector) {
           if (_.isEmpty(details.properties)) {
@@ -239,13 +251,13 @@
           }
         })
 
-        if ( !_.isEmpty(simpleCSSSelectors)) {
+        if (!_.isEmpty(simpleCSSSelectors)) {
           output += '\n' + simpleCSSSelectors.join(', ') + ' {\n'
           output += getFontFieldCSSProperties(values, subFieldsCSSAllowedProperties, prefix)
           output += '}\n'
         }
 
-        if ( !_.isEmpty(complexCSSSelectors)) {
+        if (!_.isEmpty(complexCSSSelectors)) {
           _.each(complexCSSSelectors, function (details, selector) {
             output += '\n' + selector + ' {\n'
             output += getFontFieldCSSProperties(values, details.properties, prefix)
@@ -262,7 +274,7 @@
 
       $.each(values, function (property, value) {
         // We don't want to output empty CSS rules.
-        if ( '' === value || false === value ) {
+        if ('' === value || false === value) {
           return
         }
 
@@ -286,7 +298,7 @@
 
       // Everything is allowed if nothing is specified.
       if (_.isEmpty(allowedProperties)) {
-        return true;
+        return true
       }
 
       // For arrays
@@ -302,7 +314,7 @@
       return false
     }
 
-    const extractAllowedCSSPropertiesFromFontFields = function(subfields) {
+    const extractAllowedCSSPropertiesFromFontFields = function (subfields) {
       // Nothing is allowed by default.
       const allowedProperties = {
         'font-family': false,
@@ -316,8 +328,8 @@
         'text-decoration': false,
       }
 
-      if ( _.isEmpty( subfields ) ) {
-        return allowedProperties;
+      if (_.isEmpty(subfields)) {
+        return allowedProperties
       }
 
       const regexForMultipleReplace = new RegExp('_', 'g')
@@ -325,7 +337,7 @@
       // Convert all subfield keys to use dashes not underscores.
       _.each(subfields, function (value, key) {
         const newKey = key.replace(regexForMultipleReplace, '-')
-        if (newKey !== key ) {
+        if (newKey !== key) {
           subfields[newKey] = value
           delete subfields[key]
         }
@@ -340,29 +352,38 @@
 
           // For font-weight we want font-style to go the same way,
           // since these two are generated from the same subfield: font-weight (actually holding the font variant value).
-          if ( 'font-weight' === key ) {
+          if ('font-weight' === key) {
             allowedProperties['font-style'] = allowedProperties[key]
           }
         }
       })
 
-      return allowedProperties;
+      return allowedProperties
     }
 
+    // This is a mirror logic of the server-side Customify_Fonts_Global::getSubFieldUnit()
     const getFieldUnit = function (ID, field) {
-      let unit = ''
       if (typeof customify.config.settings[ID] === 'undefined' || typeof customify.config.settings[ID].fields[field] === 'undefined') {
-        return unit
+        // These fields don't have an unit, by default.
+        if (_.includes(['font-family', 'font-weight', 'font-style', 'line-height', 'text-align', 'text-transform', 'text-decoration'], field)) {
+          return false
+        }
+
+        // The rest of the subfields have pixels as default units.
+        return 'px'
       }
 
       if (typeof customify.config.settings[ID].fields[field].unit !== 'undefined') {
-        return customify.config.settings[ID].fields[field].unit
-      } else if (typeof customify.config.settings[ID].fields[field][3] !== 'undefined') {
-        // in case of an associative array
-        return customify.config.settings[ID].fields[field][3]
+        // Make sure that we convert all falsy unit values to the boolean false.
+        return _.includes(['', 'false'], customify.config.settings[ID].fields[field].unit) ? false : customify.config.settings[ID].fields[field].unit
       }
 
-      return unit
+      if (typeof customify.config.settings[ID].fields[field][3] !== 'undefined') {
+        // Make sure that we convert all falsy unit values to the boolean false.
+        return _.includes(['', 'false'], customify.config.settings[ID].fields[field][3]) ? false : customify.config.settings[ID].fields[field][3]
+      }
+
+      return 'px'
     }
 
     const maybeLoadFontFamily = function (font) {
@@ -392,7 +413,7 @@
         // Handle the font variants
         // First if there is a selected font variant, otherwise all the available variants.
         let variants = typeof font.font_variant !== 'undefined' ? font.font_variant : typeof fontDetails.variants !== 'undefined' ? fontDetails.variants : []
-        variants = standardizeToArray( maybeJsonParse(variants) )
+        variants = standardizeToArray(maybeJsonParse(variants))
 
         if (!_.isEmpty(variants)) {
           family = family + ':' + variants.map(function (variant) {
@@ -428,7 +449,7 @@
         // Handle the font variants
         // First if there is a selected font variant, otherwise all the available variants.
         let variants = typeof font.font_variant !== 'undefined' ? font.font_variant : typeof fontDetails.variants !== 'undefined' ? fontDetails.variants : []
-        variants = standardizeToArray( maybeJsonParse(variants) )
+        variants = standardizeToArray(maybeJsonParse(variants))
 
         if (!_.isEmpty(variants)) {
           family = family + ':' + variants.join(',')
@@ -469,7 +490,7 @@
       if (typeof value === 'string' || typeof value === 'number') {
         value = [value]
       } else if (typeof value === 'object') {
-        value = Object.values(value);
+        value = Object.values(value)
       }
 
       return value
