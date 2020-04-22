@@ -748,8 +748,7 @@ if ( ! class_exists( 'Customify_Style_Manager' ) ) {
 									<div class="modal-body full">
 										<div class="box box--large">
 											<div class="first-step">
-												<h2 class="modal-title">How would you rate your experience in finding
-													the right colors for your site?</h2>
+												<h2 class="modal-title">How would you rate your experience in finding the right colors for your site?</h2>
 												<div class="scorecard">
 													<span>Poor</span>
 													<label>

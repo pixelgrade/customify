@@ -258,6 +258,12 @@ if ( ! class_exists( 'Customify_Block_Editor' ) ) {
 			wp_add_inline_style( $enqueue_parent_handle, $this->editor_color_palettes_css_classes() );
 		}
 
+		/**
+		 * @param string $selectors
+		 * @param array $css_property
+		 *
+		 * @return string
+		 */
 		public function gutenbergify_css_selectors( $selectors, $css_property ) {
 
 			// Treat the selector(s) as an array.
@@ -314,16 +320,15 @@ if ( ! class_exists( 'Customify_Block_Editor' ) ) {
 			return implode( ', ', $new_selectors );
 		}
 
+		/**
+		 * @param array $selectors An array of standardized, cleaned selectors where the key is the selector and the value is possible details array.
+		 *
+		 * @return array
+		 */
 		public function gutenbergify_font_css_selectors( $selectors ) {
 
-			// Treat the selector(s) as an array.
-			$selectors = $this->maybeExplodeSelectors( $selectors );
-
 			$new_selectors = array();
-			foreach ( $selectors as $selector ) {
-				// Clean up
-				$selector = trim( $selector );
-
+			foreach ( $selectors as $selector => $selector_details ) {
 				// If the selector matches the excluded, skip it.
 				if ( $this->preg_match_any( self::$excluded_selectors_regex, $selector ) ) {
 					continue;
@@ -331,33 +336,37 @@ if ( ! class_exists( 'Customify_Block_Editor' ) ) {
 
 				// If the selector is already Gutenbergy, we will not do anything to it
 				if ( preg_match( self::$gutenbergy_selector_regex, $selector ) ) {
-					$new_selectors[] = $selector;
+					$new_selectors[ $selector ] = $selector_details;
 					continue;
 				}
 
 				// We will let :root selectors be
 				if ( ':root' === $selector ) {
-					$new_selectors[] = $selector;
+					$new_selectors[ $selector ] = $selector_details;
 					continue;
 				}
 
 				// For root html elements, we will not prefix them, but replace them with the block and title namespace.
 				if ( preg_match( self::$root_regex, $selector ) ) {
-					$new_selectors[] = preg_replace( '/^(html body|body|html|)/', self::$block_namespace_selector, $selector );
-					$new_selectors[] = preg_replace( '/^(html body|body|html)/', self::$title_namespace_selector, $selector );
+					$new_selector = preg_replace( '/^(html body|body|html|)/', self::$block_namespace_selector, $selector );
+					$new_selectors[ $new_selector ] = $selector_details;
+					$new_selector = preg_replace( '/^(html body|body|html)/', self::$title_namespace_selector, $selector );
+					$new_selectors[ $new_selector ] = $selector_details;
 					continue;
 				}
 
 				// If we encounter selectors that seem that they could target the post title,
 				// we will add selectors for the Gutenberg title also.
 				if ( preg_match( self::$title_regex, $selector ) ) {
-					$new_selectors[] = preg_replace( self::$title_regex, self::$title_input_namespace_selector, $selector );
+					$new_selector = preg_replace( self::$title_regex, self::$title_input_namespace_selector, $selector );
+					$new_selectors[ $new_selector ] = $selector_details;
 				}
 
-				$new_selectors[] = self::$block_namespace_selector . ' ' . $selector;
+				$selector = self::$block_namespace_selector . ' ' . $selector;
+				$new_selectors[ $selector ] = $selector_details;
 			}
 
-			return implode( ', ', $new_selectors );
+			return $new_selectors;
 		}
 
 		/**

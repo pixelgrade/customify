@@ -93,9 +93,10 @@ window.customify = window.customify || parent.customify || {};
     // Those are handled by the appropriate Style Manager component (Color Palettes, Font Palettes, etc ).
     bindConnectedFields()
 
+    // Handle the preview iframe.
     handlePreviewIframe()
 
-    // sometimes a php save may be needed
+    // Sometimes a php save may be needed. Trigger it if the appropiate URL var is present.
     if (getUrlVar('save_customizer_once')) {
       api.previewer.save()
     }

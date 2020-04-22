@@ -58,23 +58,22 @@ if ( ! class_exists( 'Customify_Classic_Editor' ) ) {
 		 * Add our customizer styling edits into the wp_editor
 		 */
 		function script_to_add_customizer_settings_into_wp_editor() {
-			// Bail if setting unchecked or if using the block editor.
+			// Bail if setting unchecked, if using the block editor,
+			// or we are not on an admin page that might have editors (something related to posts, at the moment).
 			if ( ! PixCustomifyPlugin()->settings->get_plugin_setting( 'enable_editor_style', true )
-			     || get_current_screen()->is_block_editor() ) {
+				|| get_current_screen()->is_block_editor()
+				|| ! in_array( get_current_screen()->base, ['post'] ) ) {
 				return;
 			}
 
-			// Try to load the scripts only on the appropriate admin pages.
-			if ( in_array( get_current_screen()->base, ['post'] ) ) {
-				$script = $this->get_fonts_editor_dynamic_script();
-				if ( ! empty( $script ) ) {
-					// Make sure the the script is enqueued in the footer. We want all the DOM to be loaded and need jQuery.
-					wp_deregister_script( PixCustomifyPlugin()->get_slug() . '-web-font-loader' );
-					wp_register_script( PixCustomifyPlugin()->get_slug() . '-web-font-loader',
-						plugins_url( 'js/vendor/webfontloader-1-6-28.js', PixCustomifyPlugin()->get_file() ), array('jquery'), null, true );
-					wp_enqueue_script( PixCustomifyPlugin()->get_slug() . '-web-font-loader' );
-					wp_add_inline_script( PixCustomifyPlugin()->get_slug() . '-web-font-loader', $script );
-				}
+			$script = $this->get_fonts_editor_dynamic_script();
+			if ( ! empty( $script ) ) {
+				// Make sure the the script is enqueued in the footer. We want all the DOM to be loaded and need jQuery.
+				wp_deregister_script( PixCustomifyPlugin()->get_slug() . '-web-font-loader' );
+				wp_register_script( PixCustomifyPlugin()->get_slug() . '-web-font-loader',
+					plugins_url( 'js/vendor/webfontloader-1-6-28.js', PixCustomifyPlugin()->get_file() ), array('jquery'), null, true );
+				wp_enqueue_script( PixCustomifyPlugin()->get_slug() . '-web-font-loader' );
+				wp_add_inline_script( PixCustomifyPlugin()->get_slug() . '-web-font-loader', $script );
 			}
 
 			ob_start();

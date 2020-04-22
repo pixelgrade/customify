@@ -9,7 +9,7 @@
  */
 
 /**
- * Plugin class.
+ * Main plugin class.
  * @package   PixCustomify
  * @author    Pixelgrade <contact@pixelgrade.com>
  */
@@ -106,12 +106,12 @@ class PixCustomifyPlugin {
 	 * @access  private
 	 * @since   1.5.0
 	 */
-	private $minimalRequiredPhpVersion = '5.3';
+	private $minimalRequiredPhpVersion = '5.4';
 
 	protected function __construct( $file, $version = '1.0.0' ) {
-		//the main plugin file (the one that loads all this)
+		// The main plugin file (the one that loads all this).
 		$this->file = $file;
-		//the current plugin version
+		// The current plugin version.
 		$this->_version = $version;
 
 		if ( $this->php_version_check() ) {
