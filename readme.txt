@@ -3,34 +3,18 @@ Contributors: pixelgrade, vlad.olaru, babbardel, razvanonofrei, gorby31
 Tags: customizer, css, editor, gutenberg, live, preview, customizer
 Requires at least: 4.9.9
 Tested up to: 5.4.0
-Stable tag: 2.6.0
+Stable tag: 2.7.0
 Requires PHP: 5.4.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Customify is a Theme Customizer Booster to easily customize Fonts, Colors, and other options for your site.
+Customify is a theme Customizer booster to easily customize Fonts, Colors, and other options for a certain WordPress theme.
 
 == Description ==
 
 With [Customify](https://github.com/pixelgrade/customify), developers can easily create **advanced theme-specific options** inside the WordPress Customizer. Using those options, a user can make presentational changes without having to know or edit the theme code.
 
-**[Types of Fields](https://github.com/pixelgrade/customify#list_of_fields)**
-
-* **Color.** A color picker used to control any text or background color of an element.
-
-* **Font.** A real font selector which includes a flexible library of fonts(Fonto, google fonts or added via fliter) and allows you to customize, with live preview, properties like font-weight, size, letter spacing, text align, text decoration etc.
-
-* **CSS Editor.** A powerful **Live CSS Editor** directly into your customizer! Useful for better control over the appearance of your theme without the need to create a child theme or worry about theme updates overwriting your customizations.
-
-* **Text Field.** A simple text field that allows you to customize elements like Site Title or Footer Credits.
-
-* **Select Dropdown.** A drop-down menu selector to be used when you have to choose from multiple options.
-
-* **Range.** The html5 range element can be used to select number values.
-
-* **[Preset](https://github.com/pixelgrade/customify/blob/master/README.md#presets_title).** A field which allows you to change a group of Customify fields.
-
-* **And more others [this is the full list](https://github.com/pixelgrade/customify#list_of_fields)
+This plugin is **primarily intended** to be used together with [Pixelgrade themes](https://wordpress.org/themes/author/pixelgrade/). So the best way to get acquainted with it's capabilities is to study the way [one of Pixelgrade's themes](https://github.com/pixelgrade/rosa2-lite/tree/master/inc/integrations/customify) integrates with it.
 
 **Made with love by Pixelgrade**
 
@@ -43,6 +27,22 @@ With [Customify](https://github.com/pixelgrade/customify), developers can easily
 * Default [image](https://unsplash.com/photos/OgM4RKdr2kY) for Style Manager Color Palette control - License: (Unsplash)[https://unsplash.com/license]
 
 == Changelog ==
+
+= 2.7.0 =
+* Overall performance improvements, especially on the client-side (JavaScript).
+* Overall logic cleanup with a focus on consistency both on the server-side and client-side.
+* Standardized data throughout the server-side and client-side.
+* More consistent behavior in the Customizer, but also when editing posts or in the frontend.
+* Fixed inconsistencies in block editor and classic editor integration.
+* Styling fixes for the Customizer controls.
+* Behavior fixes and improvements for Customizer controls, with a focus on font controls.
+* Improved web font handling.
+* Updated the Google Fonts list.
+* Enhanced configuration capabilities for font field type CSS selectors (ability to specify allowed CSS properties per selector).
+* Removed 'typography' field type with automatic conversion to the new 'font' field type.
+* Minor fixes for the Style Manager behavior.
+* Tested with the latest WordPress version (v5.4).
+* Increased minimum required PHP version to 5.4.
 
 = 2.6.0 =
 * Fixes related to cache invalidation.
