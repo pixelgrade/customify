@@ -286,7 +286,7 @@
       }
 
       // For arrays
-      if (_.contains(allowedProperties, property)) {
+      if (_.includes(allowedProperties, property)) {
         return true
       }
 
