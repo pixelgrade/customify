@@ -180,8 +180,7 @@ window.customify = window.customify || parent.customify || {};
       // when new info arrives, the setting callbacks will be fired (.set() doesn't do anything if the new value is the same as the old).
       // Also some entries will be used to set the master font subfields (mainly font family).
       // This value is not used in any other way!
-      const serializedNewFontData = customify.fontFields.encodeValues(config)
-      setting.set(serializedNewFontData)
+      setting.set(customify.fontFields.encodeValues(config))
     }
 
     const handlePalettes = () => {
@@ -191,7 +190,39 @@ window.customify = window.customify || parent.customify || {};
       initializePalettes()
       reloadConnectedFields()
 
-      $(document).on('click', '.js-font-palette input', onPaletteChange)
+      // Handle the palette change logic.
+      $('.js-font-palette input[name="sm_font_palette"]').on('change', onPaletteChange)
+      // Handle the case where one clicks on the already selected palette - force a reset.
+      $('.js-font-palette .customize-inside-control-row').on('click', function(event) {
+        // Find the input
+        let input = $(event.target).siblings('input')
+        if (!input.length) {
+          input = $(event.target).children('input')
+        }
+
+        if (input.length && input.prop('checked')) {
+          // Take the fonts config for each setting and distribute it to each (master) setting.
+          const data = input.data('fonts_logic')
+
+          if (!_.isUndefined(data)) {
+            $.each(data, function (settingID, config) {
+              const setting = api(settingID)
+              if (_.isUndefined(setting)) {
+                return
+              }
+
+              // First set the setting to an empty value.
+              setting.set(customify.fontFields.encodeValues({}))
+
+              // Now set it's proper value.
+              setFieldFontsLogicConfig(settingID, config)
+            })
+          }
+
+          // In case this palette has values (options) attached to it, let it happen.
+          input.trigger('customify:preset-change')
+        }
+      })
     }
 
     api.bind('ready', handlePalettes)

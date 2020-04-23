@@ -135,9 +135,8 @@ window.customify = window.customify || parent.customify || {};
           // Mark this input as touched by the user.
           $(event.target).data('touched', true)
 
-          const wrapper = $(event.target).closest(wrapperSelector)
           // Serialize subfield values and refresh the fonts in the preview window.
-          selfUpdateValue(wrapper)
+          selfUpdateValue($(event.target).closest(wrapperSelector))
         }
       })
 

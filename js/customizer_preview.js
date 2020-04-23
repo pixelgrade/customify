@@ -20,7 +20,7 @@
       const properties_prefix = typeof settingConfig.properties_prefix === 'undefined' ? '' : settingConfig.properties_prefix
       if (settingConfig.type === 'font') {
         api(key, function (setting) {
-          setting.bind(function (to, from) {
+          setting.bind(function (to) {
             const rawValues = maybeJsonParse(to)
 
             if (typeof rawValues !== 'undefined') {
@@ -499,13 +499,13 @@
     }
 
     const maybeJsonParse = function (value) {
-      let parsed
-
       if (typeof value !== 'string') {
         return value
       }
 
-      //try and parse it, with decodeURIComponent
+      let parsed
+
+      // Try and parse it, with decodeURIComponent.
       try {
         parsed = JSON.parse(decodeURIComponent(value))
       } catch (e) {
