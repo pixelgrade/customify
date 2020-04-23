@@ -153,6 +153,17 @@ window.customify = window.customify || parent.customify || {};
       }
     }
 
+    const handleFontPopupToggle = function () {
+      const $allFontCheckboxes = $('.js-font-option-toggle')
+      // Close a font field popup when opening on another font field.
+      $allFontCheckboxes.on('click', function () {
+        const $checkbox = $(this)
+        if ($checkbox.prop('checked') === true) {
+          $allFontCheckboxes.not($checkbox).prop('checked', false)
+        }
+      })
+    }
+
     /**
      * Update the title of the font field (the field head) with the new font family name.
      *
@@ -183,17 +194,19 @@ window.customify = window.customify || parent.customify || {};
         newVariants = []
 
       // We clear everything about this subfield.
-      $(fontVariantInput).val(null).empty()
-      if ($(fontVariantInput).hasClass("select2-hidden-accessible")) {
-        $(fontVariantInput).select2('destroy')
+      fontVariantInput.val(null).empty()
+      if (fontVariantInput.hasClass("select2-hidden-accessible")) {
+        fontVariantInput.select2('destroy')
       }
 
       // Mark this input as not touched by the user.
-      $(fontVariantInput).data('touched', false)
+      fontVariantInput.data('touched', false)
 
       if (typeof variants === 'undefined' || Object.keys(variants).length < 2) {
         fontVariantInput.parent().hide()
         fontVariantInput.parent().prev('label').hide()
+        // Mark this input as disabled.
+        fontVariantInput.data('disabled', true)
         return
       }
 
@@ -220,12 +233,14 @@ window.customify = window.customify || parent.customify || {};
 
       // Only reinitialize the select2.
       // No need to rebind on change or on input since those are still bound to the original HTML element.
-      $(fontVariantInput).select2({
+      fontVariantInput.select2({
         data: newVariants
       })
 
       fontVariantInput.parent().show()
       fontVariantInput.parent().prev('label').show()
+      // Mark this input as enabled.
+      fontVariantInput.data('disabled', false)
     }
 
     /**
@@ -239,17 +254,19 @@ window.customify = window.customify || parent.customify || {};
         newSubsets = []
 
       // We clear everything about this subfield.
-      $(fontSubsetsInput).val(null).empty()
-      if ($(fontSubsetsInput).hasClass("select2-hidden-accessible")) {
-        $(fontSubsetsInput).select2('destroy')
+      fontSubsetsInput.val(null).empty()
+      if (fontSubsetsInput.hasClass("select2-hidden-accessible")) {
+        fontSubsetsInput.select2('destroy')
       }
 
       // Mark this input as not touched by the user.
-      $(fontSubsetsInput).data('touched', false)
+      fontSubsetsInput.data('touched', false)
 
       if (typeof subsets === 'undefined' || Object.keys(subsets).length < 2) {
         fontSubsetsInput.parent().hide()
         fontSubsetsInput.parent().prev('label').hide()
+        // Mark this input as disabled.
+        fontSubsetsInput.data('disabled', true)
         return
       }
 
@@ -287,42 +304,15 @@ window.customify = window.customify || parent.customify || {};
 
       // Only reinitialize the select2.
       // No need to rebind on change or on input since those are still bound to the original HTML element.
-      $(fontSubsetsInput).select2({
+      fontSubsetsInput.select2({
         data: newSubsets,
         placeholder: subsetPlaceholderText
       })
 
       fontSubsetsInput.parent().show()
       fontSubsetsInput.parent().prev('label').show()
-    }
-
-    const getValue = function (wrapper) {
-      const valueHolder = wrapper.children(valueHolderSelector)
-
-      if (valueHolder.length) {
-        return maybeJsonParse(valueHolder.val())
-      }
-
-      return []
-    }
-
-    const updateValue = function (wrapper, value) {
-      const valueHolder = wrapper.children(valueHolderSelector),
-        settingID = $(valueHolder).data('customize-setting-link'),
-        setting = api(settingID)
-
-      if (!valueHolder.length) {
-        return
-      }
-
-      if (_.isArrayLikeObject(value)) {
-        value = encodeValues(value)
-      }
-
-      // Set the serialized value in the hidden field.
-      valueHolder.val(value)
-      // Update also the Customizer setting value.
-      setting.set(value)
+      // Mark this input as enabled.
+      fontSubsetsInput.data('disabled', false)
     }
 
     /**
@@ -330,13 +320,8 @@ window.customify = window.customify || parent.customify || {};
      * It collects values and saves them (encoded) into the `.customify_font_values` input's value
      */
     const selfUpdateValue = function (wrapper) {
-      const optionsList = $(wrapper).find('.font-options__options-list'),
-        inputs = optionsList.find('[data-field]'),
-        valueHolder = wrapper.children(valueHolderSelector),
-        oldValue = maybeJsonParse(valueHolder.val()),
-        settingID = $(valueHolder).data('customize-setting-link'),
-        setting = api(settingID),
-        newFontData = _.isEmpty(oldValue) ? {} : oldValue
+      const valueHolder = wrapper.find(valueHolderSelector).first(),
+        settingID = valueHolder.data('customize-setting-link')
 
       // If we are already self-updating this and we haven't finished, we need to stop here to prevent infinite loops
       // This call might have come from a subfield detecting the change thus triggering a further selfUpdateValue()
@@ -353,43 +338,49 @@ window.customify = window.customify || parent.customify || {};
       // Mark the fact that we are self-updating the field value
       updatingValue[settingID] = true
 
-      inputs.each(function (key, el) {
-        const $el = $(el)
-        const field = $el.data('field')
-        let value = $el.val()
+      const optionsList = wrapper.find('.font-options__options-list'),
+        inputs = optionsList.find('[data-field]'),
+        oldValue = maybeJsonParse(valueHolder.val()),
+        setting = api(settingID),
+        newFontData = _.isEmpty(oldValue) ? {} : oldValue
 
-        // We only pick up subfields values that have been touched by the user or values that are missing in the oldValue.
-        if (_.isUndefined(field) || (!$el.data('touched') && !_.isUndefined(newFontData[field]))) {
+      inputs.each(function (key, input) {
+        const $input = $(input)
+        const field = $input.data('field')
+        let value = $input.val()
+
+        // We only pick up subfields values that have been touched by the user, that are enabled (visible) or values that are missing in the oldValue.
+        if (_.isUndefined(field) || $input.data('disabled') || (!$input.data('touched') && !_.isUndefined(newFontData[field]))) {
           return
         }
 
         if ('font_family' === field) {
-          const selectedOption = $(el.options[el.selectedIndex]),
-            src = selectedOption.data('src')
+          // Get the src of the selected option.
+          const src = $(input.options[input.selectedIndex]).data('src')
 
           if (src) {
             newFontData['src'] = src
           } else {
-            delete newFontData['src']
+            newFontData['src'] = undefined
           }
         }
 
         if (!_.isUndefined(value) && !_.isNull(value) && value !== '') {
           if (_.includes(['letter_spacing', 'line_height', 'font_size'], field)) {
             // Standardize the value.
-            value = standardizeNumericalValue(value, el, false)
+            value = standardizeNumericalValue(value, input, false)
           }
 
           newFontData[field] = value
         } else {
-          delete newFontData[field]
+          newFontData[field] = undefined
         }
       })
 
       // We don't need to store font variants or subsets list in the value
       // since we will get those from the global font details.
-      delete newFontData['variants']
-      delete newFontData['subsets']
+      newFontData['variants'] = undefined
+      newFontData['subsets'] = undefined
 
       // We need to make sure that we don't "use" any variants or subsets not supported by the new font (values passed over from the old value).
       // Get the new font details
@@ -398,11 +389,11 @@ window.customify = window.customify || parent.customify || {};
       if (typeof newFontData['font_variant'] !== 'undefined' && typeof newFontDetails.variants !== 'undefined' && Object.keys(newFontDetails.variants).length > 0) {
         if (!_.includes(newFontDetails.variants, newFontData['font_variant'])) {
           // The new font doesn't have this variant. Nor should the value.
-          delete newFontData['font_variant']
+         newFontData['font_variant'] = undefined
         }
       } else {
         // The new font has no variants. Nor should the value.
-        delete newFontData['font_variant']
+        newFontData['font_variant'] = undefined
       }
       // Check the subsets
       if (typeof newFontData['selected_subsets'] !== 'undefined' && typeof newFontDetails.subsets !== 'undefined' && Object.keys(newFontDetails.subsets).length > 0) {
@@ -410,20 +401,21 @@ window.customify = window.customify || parent.customify || {};
         newFontData['selected_subsets'] = _.intersection(newFontData['selected_subsets'],newFontDetails.subsets)
       } else {
         // The new font has no subsets. Nor should the value.
-        delete newFontData['selected_subsets']
+        newFontData['selected_subsets'] = undefined
       }
 
       // Serialize the newly gathered font data
       const serializedNewFontData = encodeValues(newFontData)
-      // Set the serialized value in the hidden field.
-      valueHolder.val(serializedNewFontData)
-      // Update also the Customizer setting value.
-      setting.set(serializedNewFontData)
+      // Only update if we have something different.
+      if (serializedNewFontData !== valueHolder.val()) {
+        // Set the serialized value in the hidden field.
+        valueHolder.val(serializedNewFontData)
+        // Update also the Customizer setting value.
+        setting.set(serializedNewFontData)
+      }
 
       // Finished with the field value self-updating.
       updatingValue[settingID] = false
-
-      return newFontData
     }
 
     /**
@@ -431,11 +423,8 @@ window.customify = window.customify || parent.customify || {};
      * based on the value stored in the hidden input.
      */
     function loadFontValue (wrapper) {
-      const optionsList = $(wrapper).find('.font-options__options-list'),
-        inputs = optionsList.find('[data-field]'),
-        valueHolder = wrapper.children(valueHolderSelector),
-        value = maybeJsonParse(valueHolder.val()),
-        settingID = $(valueHolder).data('customize-setting-link')
+      const valueHolder = wrapper.find(valueHolderSelector).first(),
+        settingID = valueHolder.data('customize-setting-link')
 
       // If we are already loading this setting value and haven't finished, there is no point in starting again.
       if (true === loadingValue[settingID]) {
@@ -445,9 +434,13 @@ window.customify = window.customify || parent.customify || {};
       // Mark the fact that we are loading the field value
       loadingValue[settingID] = true
 
-      inputs.each(function (key, el) {
-        const $el = $(el)
-        const field = $el.data('field')
+      const optionsList = $(wrapper).find('.font-options__options-list'),
+        inputs = optionsList.find('[data-field]'),
+        value = maybeJsonParse(valueHolder.val())
+
+      inputs.each(function (key, input) {
+        const $input = $(input)
+        const field = $input.data('field')
 
         // In the case of select2, only the original selects have the data field, thus excluding select2 created select DOM elements
         if (typeof field === 'undefined' || field === '' || typeof value[field] === 'undefined') {
@@ -456,13 +449,13 @@ window.customify = window.customify || parent.customify || {};
 
         // We will do this only for numerical sub-fields.
         if (_.includes(['letter_spacing', 'line_height', 'font_size'], field)) {
-          const subfieldValue = standardizeNumericalValue(value[field], el)
+          const subfieldValue = standardizeNumericalValue(value[field], input)
 
           // Make sure that the unit and value_unit attributes are in place.
           if (subfieldValue.unit !== '') {
-            $el.data('value_unit', subfieldValue.unit)
-            if (_.isEmpty($el.attr('unit'))) {
-              $el.attr('unit', subfieldValue.unit)
+            $input.data('value_unit', subfieldValue.unit)
+            if (_.isEmpty($input.attr('unit'))) {
+              $input.attr('unit', subfieldValue.unit)
             }
           }
 
@@ -470,8 +463,8 @@ window.customify = window.customify || parent.customify || {};
           // We will convert the received value to the appropriate unit declared by the input.
           // We will use a guessed base size of 16px. Not an exact conversion, but it will have to do.
           const baseSize = 16
-          const subfieldUnit = $el.attr('unit').trim().toLowerCase()
-          const subfieldValueUnit = $el.data('value_unit').trim().toLowerCase()
+          const subfieldUnit = $input.attr('unit').trim().toLowerCase()
+          const subfieldValueUnit = $input.data('value_unit').trim().toLowerCase()
           // The comparison is intentionally loose.
           if (subfieldUnit != subfieldValueUnit) {
             if (_.includes(['em', 'rem'], subfieldValueUnit) && 'px' === subfieldUnit) {
@@ -484,37 +477,26 @@ window.customify = window.customify || parent.customify || {};
           }
 
           // If this field has a min/max attribute we need to make sure that those attributes allow for the value we are trying to impose.
-          if ($el.attr('min') && $el.attr('min') > subfieldValue.value) {
-            $el.attr('min', subfieldValue.value)
+          if ($input.attr('min') && $input.attr('min') > subfieldValue.value) {
+            $input.attr('min', subfieldValue.value)
           }
-          if ($el.attr('max') && $el.attr('max') < subfieldValue.value) {
-            $el.attr('max', subfieldValue.value)
+          if ($input.attr('max') && $input.attr('max') < subfieldValue.value) {
+            $input.attr('max', subfieldValue.value)
           }
 
-          $el.val(subfieldValue.value)
+          $input.val(subfieldValue.value)
         } else {
-          $el.val(value[field])
+          $input.val(value[field])
         }
 
         // Mark this input as not touched by the user.
-        $el.data('touched', false)
+        $input.data('touched', false)
 
-        $el.trigger('change', ['customify'])
+        $input.trigger('change', ['customify'])
       })
 
       // Finished with the field value loading.
       loadingValue[settingID] = false
-    }
-
-    const handleFontPopupToggle = function () {
-      const $allCheckboxes = $('.js-font-option-toggle')
-      // Close a font field popup when opening on another font field.
-      $allCheckboxes.on('click', function () {
-        const $checkbox = $(this)
-        if ($checkbox.prop('checked') === true) {
-          $allCheckboxes.not($checkbox).prop('checked', false)
-        }
-      })
     }
 
     const maybeJsonParse = function (value) {
@@ -581,18 +563,19 @@ window.customify = window.customify || parent.customify || {};
       if (false !== input && (false === standardValue.unit || _.isEmpty(standardValue.unit))) {
         // If we are given an input, we will attempt to extract the unit from its attributes.
         let fallbackInputUnit = ''
+        const $input = $(input)
 
         if (valueFirst) {
-          if (!_.isEmpty($(input).data('value_unit'))) {
-            fallbackInputUnit = $(input).data('value_unit')
-          } else if (!_.isEmpty($(input).data('unit'))) {
-            fallbackInputUnit = $(input).data('unit')
+          if (!_.isEmpty($input.data('value_unit'))) {
+            fallbackInputUnit = $input.data('value_unit')
+          } else if (!_.isEmpty($input.data('unit'))) {
+            fallbackInputUnit = $input.data('unit')
           }
         } else {
-          if (!_.isEmpty($(input).data('unit'))) {
-            fallbackInputUnit = $(input).data('unit')
-          } else if (!_.isEmpty($(input).data('value_unit'))) {
-            fallbackInputUnit = $(input).data('value_unit')
+          if (!_.isEmpty($input.data('unit'))) {
+            fallbackInputUnit = $input.data('unit')
+          } else if (!_.isEmpty($input.data('value_unit'))) {
+            fallbackInputUnit = $input.data('value_unit')
           }
         }
         standardValue.unit = fallbackInputUnit
@@ -710,8 +693,6 @@ window.customify = window.customify || parent.customify || {};
 
     return {
       init: init,
-      getValue: getValue,
-      updateValue: updateValue,
       selfUpdateValue: selfUpdateValue,
       encodeValues: encodeValues,
       standardizeNumericalValue: standardizeNumericalValue,

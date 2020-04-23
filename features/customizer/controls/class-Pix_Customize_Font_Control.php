@@ -242,7 +242,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 			$data_default = ! empty( $selected ) ? 'data-default="' . $selected . '"' : '';
 			?>
 			<select class="customify_font_weight"
-			        data-field="font_variant" <?php echo $data_default ?>>
+			        data-field="font_variant" <?php echo $data_default ?> <?php echo ( 'none' === $display ) ?  'data-disabled="true"' : ''?>>
 				<?php
 				if ( ! empty( $current_font_details['variants'] ) ) {
 					if ( is_string( $current_font_details['variants'] ) ) {
@@ -279,7 +279,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 		} ?>
 		<li class="customify_subsets_wrapper customize-control font-options__option" style="display: <?php echo $display; ?>;">
 			<label><?php esc_html_e( 'Languages', 'customify' ); ?></label>
-			<select multiple class="customify_font_subsets" data-field="selected_subsets">
+			<select multiple class="customify_font_subsets" data-field="selected_subsets" <?php echo ( 'none' === $display ) ?  'data-disabled="true"' : ''?>>
 				<?php
 				$selected = array();
 				if ( isset( $current_value->selected_subsets ) ) {

@@ -5,10 +5,10 @@ window.customify = window.customify || parent.customify || {};
   const api = wp.customize
   const $window = $(window)
   const $document = $(document)
+  let timeout = null
 
   // when the customizer is ready prepare our fields events
   api.bind('ready', function () {
-    let timeout = null
 
     // Create a stack of callbacks bound to parent settings to be able to unbind them
     // when altering the connected_fields attribute.
@@ -17,6 +17,53 @@ window.customify = window.customify || parent.customify || {};
     }
 
     // Initialize ACE editors.
+    handleAceEditors()
+
+    // Initialize simple select2 fields.
+    $('.customify_select2').select2()
+
+    // Initialize font fields.
+    customify.fontFields.init()
+
+    // For each range input add a value preview output.
+    $('.accordion-section-content[id*="' + customify.config.options_name + '"], #sub-accordion-section-style_manager_section').each(function () {
+      // Initialize range fields logic
+      handleRangeFields(this)
+    })
+
+    // Handle presets (legacy).
+    handlePresets()
+
+    // Initialize custom background fields.
+    customifyBackgroundJsControl.init()
+
+    setTimeout(function () {
+      customifyFoldingFields()
+    }, 1000)
+
+    // Handle reset buttons
+    handleResetButtons()
+
+    // Handle the section tabs (ex: Layout | Fonts | Colors)
+    handleSectionTabs()
+
+    // Bind any connected fields, except those in the Style Manager.
+    // Those are handled by the appropriate Style Manager component (Color Palettes, Font Palettes, etc ).
+    bindConnectedFields()
+
+    // Handle the preview iframe.
+    handlePreviewIframe()
+
+    // Sometimes a php save may be needed. Trigger it if the appropiate URL var is present.
+    if (getUrlVar('save_customizer_once')) {
+      api.previewer.save()
+    }
+  })
+
+  /**
+   * Handle the ACE editor fields.
+   */
+  function handleAceEditors () {
     $('.customify_ace_editor').each(function (key, el) {
       const id = $(this).attr('id'),
         cssEditorInstance = ace.edit(id)
@@ -44,22 +91,14 @@ window.customify = window.customify || parent.customify || {};
         }
       })
     })
+  }
 
-    // Initialize simple select2 fields.
-    $('.customify_select2').select2()
-
-    // Initialize font fields.
-    customify.fontFields.init()
-
-    // for each range input add a value preview output
-    $('.accordion-section-content[id*="' + customify.config.options_name + '"], #sub-accordion-section-style_manager_section').each(function () {
-      // Initialize range fields logic
-      customifyHandleRangeFields(this)
-    })
-
-    // Handle presets (legacy).
-    $('body').on('customify:preset-change', function (e) {
-      const data = $(e.target).data('options')
+  /**
+   * Handle the presets (legacy).
+   */
+  function handlePresets () {
+    $('body').on('customify:preset-change', function (event) {
+      const data = $(event.target).data('options')
 
       if (!_.isUndefined(data)) {
         $.each(data, function (settingID, value) {
@@ -75,46 +114,83 @@ window.customify = window.customify || parent.customify || {};
     $document.on('click', '.js-customify-preset input', function () {
       $(this).trigger('customify:preset-change')
     })
+  }
 
-    // Initialize custom background fields.
-    customifyBackgroundJsControl.init()
+  const handleRangeFields = function (el) {
 
-    setTimeout(function () {
-      customifyFoldingFields()
-    }, 1000)
+    // For each range input add a number field (for preview mainly - but it can also be used for input)
+    $(el).find('input[type="range"]').each(function () {
+      const $range = $(this)
+      let $number = $range.siblings('.range-value')
 
-    // Handle reset buttons
-    handleResetButtons()
+      if (!$number.length) {
+        $number = $range.clone()
 
-    // Handle the section tabs (ex: Layout | Fonts | Colors)
-    handleSectionTabs()
+        $number
+          .attr('type', 'number')
+          .attr('class', 'range-value')
+          .removeAttr('data-field')
 
-    // Bind any connected fields, except those in the Style Manager.
-    // Those are handled by the appropriate Style Manager component (Color Palettes, Font Palettes, etc ).
-    bindConnectedFields()
-
-    // Handle the preview iframe.
-    handlePreviewIframe()
-
-    // Sometimes a php save may be needed. Trigger it if the appropiate URL var is present.
-    if (getUrlVar('save_customizer_once')) {
-      api.previewer.save()
-    }
-
-    /**
-     * Make the customizer save on CMD/CTRL+S action
-     * This is awesome!!!
-     */
-    $(window).bind('keydown', function (event) {
-      if (event.ctrlKey || event.metaKey) {
-        if (String.fromCharCode(event.which).toLowerCase() === 's') {
-          event.preventDefault()
-          api.previewer.save()
+        if ($range.first().attr('id')) {
+          $number.attr('id', $range.first().attr('id') + '_number')
         }
+        $number.insertAfter($range)
+      }
+
+      function hasValidValue ($input) {
+        const min = $input.attr('min')
+        const max = $input.attr('max')
+        const value = $input.val()
+
+        if (typeof min !== 'undefined' && parseFloat(min) > parseFloat(value)) {
+          return false
+        }
+
+        return !(typeof max !== 'undefined' && parseFloat(max) < parseFloat(value))
+      }
+
+      // Put the value into the number field.
+      $range.on('input change', function (event) {
+        if (event.target.value === $number.val()) {
+          // Nothing to do if the values are identical.
+          return;
+        }
+
+        $number.val($range.val())
+      })
+
+      // When clicking outside the number field or on Enter.
+      $number.on('blur keyup', function (event) {
+        if ('keyup' === event.type && event.keyCode !== 13) {
+          return
+        }
+
+        if (event.target.value === $range.val()) {
+          // Nothing to do if the values are identical.
+          return;
+        }
+
+        if (!hasValidValue($number)) {
+          $number.val($range.val())
+          shake($number)
+        } else {
+          // Do not mark this trigger as being programmatically triggered by Customify since it is a result of a user input.
+          $range.val($number.val()).trigger('change')
+        }
+      })
+
+      function shake ($field) {
+        $field.addClass('input-shake input-error')
+        $field.one('animationend', function () {
+          $field.removeClass('input-shake input-error')
+        })
       }
     })
-  })
+  }
 
+  /**
+   * Handle reset buttons in the Customizer.
+   */
   function handleResetButtons () {
     const showResetButtons = $('button[data-action="reset_customify"]').length > 0
 
@@ -311,68 +387,6 @@ window.customify = window.customify || parent.customify || {};
     })
   }
 
-  const customifyHandleRangeFields = function (el) {
-
-    // For each range input add a number field (for preview mainly - but it can also be used for input)
-    $(el).find('input[type="range"]').each(function () {
-      const $range = $(this)
-      let $number = $range.siblings('.range-value')
-
-      if (!$number.length) {
-        $number = $range.clone()
-
-        $number
-          .attr('type', 'number')
-          .attr('class', 'range-value')
-          .removeAttr('data-field')
-
-        if ($range.first().attr('id')) {
-          $number.attr('id', $range.first().attr('id') + '_number')
-        }
-        $number.insertAfter($range)
-      }
-
-      function hasValidValue ($input) {
-        const min = $input.attr('min')
-        const max = $input.attr('max')
-        const value = $input.val()
-
-        if (typeof min !== 'undefined' && parseFloat(min) > parseFloat(value)) {
-          return false
-        }
-
-        return !(typeof max !== 'undefined' && parseFloat(max) < parseFloat(value))
-      }
-
-      // Put the value into the number field.
-      $range.on('input change', function () {
-        $number.val($range.val())
-      })
-
-      // When clicking outside the number field or on Enter.
-      $number.on('blur keyup', function (event) {
-        if ('keyup' === event.type && event.keyCode !== 13) {
-          return
-        }
-
-        if (!hasValidValue($number)) {
-          $number.val($range.val())
-          shake($number)
-        } else {
-          // Do not mark this trigger as being programmatically triggered by Customify since it is a result of a user input.
-          $range.val($number.val()).trigger('change')
-        }
-      })
-
-      function shake ($field) {
-        $field.addClass('input-shake input-error')
-        $field.one('animationend', function () {
-          $field.removeClass('input-shake input-error')
-        })
-      }
-    })
-  }
-
   /**
    * This function will search for all the interdependend fields and make a bound between them.
    * So whenever a target is changed, it will take actions to the dependent fields.
@@ -386,13 +400,11 @@ window.customify = window.customify || parent.customify || {};
 
     $.fn.reactor.defaults.compliant = function () {
       $(this).slideDown()
-      // $(this).animate({opacity: 1});
       $(this).find(':disabled').attr({disabled: false})
     }
 
     $.fn.reactor.defaults.uncompliant = function () {
       $(this).slideUp()
-      // $(this).animate({opacity: 0.25});
       $(this).find(':enabled').attr({disabled: true})
     }
 
@@ -525,6 +537,14 @@ window.customify = window.customify || parent.customify || {};
     })
   }
 
+  /**
+   * Set a setting value.
+   *
+   * Mostly used for resetting settings (via the reset buttons) but also for the preset (legacy) field.
+   *
+   * @param settingID
+   * @param value
+   */
   const apiSetSettingValue = function (settingID, value) {
     const setting = api(settingID),
       field = $('[data-customize-setting-link="' + settingID + '"]'),

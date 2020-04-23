@@ -20,7 +20,7 @@
       const properties_prefix = typeof settingConfig.properties_prefix === 'undefined' ? '' : settingConfig.properties_prefix
       if (settingConfig.type === 'font') {
         api(key, function (setting) {
-          setting.bind(function (to) {
+          setting.bind(function (to, from) {
             const rawValues = maybeJsonParse(to)
 
             if (typeof rawValues !== 'undefined') {
@@ -76,8 +76,8 @@
           })
         })
       } else if (typeof settingConfig.live === 'object' && settingConfig.live.length > 0) {
-        // if the live parameter is an object it means that is a list of css classes
-        // these classes should be affected by the change of the text fields
+        // If the live parameter is an object it means that this is a list of css classes.
+        // These classes should be affected by the change of the text fields.
         const fieldClass = settingConfig.live.join()
 
         // if this field is allowed to modify text then we'll edit this live
@@ -413,31 +413,31 @@
         // Handle the font variants
         // First if there is a selected font variant, otherwise all the available variants.
         let variants = typeof font.font_variant !== 'undefined' ? font.font_variant : typeof fontDetails.variants !== 'undefined' ? fontDetails.variants : []
-        variants = standardizeToArray(maybeJsonParse(variants))
-
         if (!_.isEmpty(variants)) {
-          family = family + ':' + variants.map(function (variant) {
-            return customify.fontFields.convertFontVariantToFVD(variant)
-          }).join(',')
+          variants = standardizeToArray(maybeJsonParse(variants))
+
+          if (!_.isEmpty(variants)) {
+            family = family + ':' + variants.map(function (variant) {
+              return customify.fontFields.convertFontVariantToFVD(variant)
+            }).join(',')
+          }
         }
 
         if (fonts_cache.indexOf(family) === -1) {
-          setTimeout(function () {
-            WebFont.load({
-              custom: {
-                families: [family],
-                urls: [fontDetails.src]
-              },
-              classes: false,
-              events: false,
-              error: function (e) {
-                console.log(e)
-              },
-              active: function () {
-                sessionStorage.fonts = true
-              }
-            })
-          }, 10)
+          WebFont.load({
+            custom: {
+              families: [family],
+              urls: [fontDetails.src]
+            },
+            classes: false,
+            events: false,
+            error: function (e) {
+              console.log(e)
+            },
+            active: function () {
+              sessionStorage.fonts = true
+            }
+          })
 
           // Remember we've loaded this family (with it's variants) so we don't load it again.
           fonts_cache.push(family)
@@ -449,33 +449,35 @@
         // Handle the font variants
         // First if there is a selected font variant, otherwise all the available variants.
         let variants = typeof font.font_variant !== 'undefined' ? font.font_variant : typeof fontDetails.variants !== 'undefined' ? fontDetails.variants : []
-        variants = standardizeToArray(maybeJsonParse(variants))
-
         if (!_.isEmpty(variants)) {
-          family = family + ':' + variants.join(',')
+          variants = standardizeToArray(maybeJsonParse(variants))
+
+          if (!_.isEmpty(variants)) {
+            family = family + ':' + variants.join(',')
+          }
         }
 
         let subsets = typeof font.selected_subsets !== 'undefined' ? font.selected_subsets : []
-        subsets = standardizeToArray(maybeJsonParse(subsets))
-
         if (!_.isEmpty(subsets)) {
-          family = family + ':' + subsets.join(',')
+          subsets = standardizeToArray(maybeJsonParse(subsets))
+
+          if (!_.isEmpty(subsets)) {
+            family = family + ':' + subsets.join(',')
+          }
         }
 
         if (fonts_cache.indexOf(family) === -1) {
-          setTimeout(function () {
-            WebFont.load({
-              google: {families: [family]},
-              classes: false,
-              events: false,
-              error: function (e) {
-                console.log(e)
-              },
-              active: function () {
-                sessionStorage.fonts = true
-              }
-            })
-          }, 10)
+          WebFont.load({
+            google: {families: [family]},
+            classes: false,
+            events: false,
+            error: function (e) {
+              console.log(e)
+            },
+            active: function () {
+              sessionStorage.fonts = true
+            }
+          })
 
           // Remember we've loaded this family (with it's variants and subsets) so we don't load it again.
           fonts_cache.push(family)
