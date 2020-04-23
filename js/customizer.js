@@ -32,14 +32,14 @@ window.customify = window.customify || parent.customify || {};
 
       // each time a change is triggered start a timeout of 1,5s and when is finished refresh the previewer
       // if the user types faster than this delay then reset it
-      cssEditorInstance.getSession().on('change', function (e) {
+      cssEditorInstance.getSession().on('change', function (event) {
         if (timeout !== null) {
           clearTimeout(timeout)
           timeout = null
         } else {
           timeout = setTimeout(function () {
             textarea.val(cssEditorInstance.getSession().getValue())
-            textarea.trigger('change')
+            textarea.trigger('change', ['customify'])
           }, 1500)
         }
       })
@@ -359,7 +359,8 @@ window.customify = window.customify || parent.customify || {};
           $number.val($range.val())
           shake($number)
         } else {
-          $range.val($number.val()).trigger('input').trigger('change')
+          // Do not mark this trigger as being programmatically triggered by Customify since it is a result of a user input.
+          $range.val($number.val()).trigger('change')
         }
       })
 
@@ -485,7 +486,7 @@ window.customify = window.customify || parent.customify || {};
           break
       }
 
-      $(target_selector).trigger('change')
+      $(target_selector).trigger('change', ['customify'])
       $('.reactor').trigger('change.reactor') // triggers all events on load
     }
 
@@ -538,7 +539,7 @@ window.customify = window.customify || parent.customify || {};
         option.attr('selected', 'selected')
         // We mark the parent select as touched because we need the full font field value regenerated.
         // We've arrived here most probably from a Preset, not from Style Manager.
-        $(option).parents('select').data('touched', true).trigger('change')
+        $(option).parents('select').data('touched', true).trigger('change', ['customify'])
       } else if (_.isObject(value)) {
         // Find the options list wrapper
         const optionsList = field.parent().children('.font-options__options-list')
@@ -570,7 +571,7 @@ window.customify = window.customify || parent.customify || {};
 
             const subField = optionsList.find('[data-field="' + mappedKey + '"]')
             if (subField.length) {
-              subField.val(val).trigger('change')
+              subField.val(val).trigger('change', ['customify'])
             }
           })
         }

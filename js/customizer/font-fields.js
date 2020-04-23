@@ -17,7 +17,8 @@ window.customify = window.customify || parent.customify || {};
       valueHolderSelector = '.customify_font_values',
       fontFamilySelector = '.customify_font_family',
       fontVariantSelector = '.customify_font_weight',
-      fontSubsetsSelector = '.customify_font_subsets'
+      fontSubsetsSelector = '.customify_font_subsets',
+      fontHeadTitleSelector = '.font-options__head .font-options__font-title'
 
     let familyPlaceholderText ,
       variantAutoText, // This is for the empty value.
@@ -60,12 +61,15 @@ window.customify = window.customify || parent.customify || {};
       })
 
       // We only need to bind to the original select since select2 triggers the event for this one when changed.
-      $fontFamilyFields.on('change', function (e) {
-        const newFontFamily = e.target.value,
-          wrapper = $(e.target).closest(wrapperSelector)
+      $fontFamilyFields.on('change', function (event, who) {
+        const newFontFamily = event.target.value,
+          wrapper = $(event.target).closest(wrapperSelector)
 
         // Get the new font details
         const newFontDetails = getFontDetails(newFontFamily)
+
+        // Update the font field head title (with the new font family name).
+        updateFontHeadTitle(newFontDetails, wrapper)
 
         // Update the variant subfield with the new options given by the selected font family.
         updateVariantField(newFontDetails, wrapper)
@@ -73,11 +77,16 @@ window.customify = window.customify || parent.customify || {};
         // Update the subset subfield with the new options given by the selected font family.
         updateSubsetField(newFontDetails, wrapper)
 
-        // Serialize subfield values and refresh the fonts in the preview window.
-        selfUpdateValue(wrapper)
-      }).on('input', function (e) {
-        // Mark this input as touched by the user.
-        $(e.target).data('touched', true)
+        if (typeof who !== 'undefined' && who === 'customify') {
+          // The change was triggered programmatically by Customify.
+          // No need to self-update the value.
+        } else {
+          // Mark this input as touched by the user.
+          $(event.target).data('touched', true)
+
+          // Serialize subfield values and refresh the fonts in the preview window.
+          selfUpdateValue(wrapper)
+        }
       })
 
       // Handle the reverse value direction, when the customize setting is updated and the subfields need to update their values.
@@ -102,7 +111,7 @@ window.customify = window.customify || parent.customify || {};
       // Initialize the select2 field for the font subsets
       initSubfield($(fontSubsetsSelector), true, subsetPlaceholderText)
 
-      // Initialize the all the regular selects in the font subfields
+      // Initialize all the regular selects in the font subfields
       initSubfield($fontFamilyFields.parents(wrapperSelector).find('select').not('select[class*=\' select2\'],select[class^=\'select2\']'), false);
 
       // Initialize the all the range fields in the font subfields
@@ -118,14 +127,18 @@ window.customify = window.customify || parent.customify || {};
       // Mark these as not touched by the user.
       $(subfieldList).data('touched', false)
 
-      $(subfieldList).on('change', function (e) {
-        const wrapper = $(e.target).closest(wrapperSelector)
+      $(subfieldList).on('input change', function (event, who) {
+        if (typeof who !== 'undefined' && who === 'customify') {
+          // The change was triggered programmatically by Customify.
+          // No need to self-update the value.
+        } else {
+          // Mark this input as touched by the user.
+          $(event.target).data('touched', true)
 
-        // Serialize subfield values and refresh the fonts in the preview window.
-        selfUpdateValue(wrapper)
-      }).on('input', function (e) {
-        // Mark this input as touched by the user.
-        $(e.target).data('touched', true)
+          const wrapper = $(event.target).closest(wrapperSelector)
+          // Serialize subfield values and refresh the fonts in the preview window.
+          selfUpdateValue(wrapper)
+        }
       })
 
       // If we've been instructed, initialize a select2.
@@ -138,6 +151,23 @@ window.customify = window.customify || parent.customify || {};
 
         $(subfieldList).select2(select2Args)
       }
+    }
+
+    /**
+     * Update the title of the font field (the field head) with the new font family name.
+     *
+     * @param newFontDetails
+     * @param wrapper
+     */
+    function updateFontHeadTitle (newFontDetails, wrapper) {
+      const fontTitleElement = wrapper.find(fontHeadTitleSelector)
+
+      let fontFamilyDisplay = newFontDetails.family
+      if (typeof newFontDetails.family_display !== 'undefined') {
+        fontFamilyDisplay = newFontDetails.family_display
+      }
+
+      $(fontTitleElement).html(fontFamilyDisplay)
     }
 
     /**
@@ -161,7 +191,7 @@ window.customify = window.customify || parent.customify || {};
       // Mark this input as not touched by the user.
       $(fontVariantInput).data('touched', false)
 
-      if (typeof variants === 'undefined' || Object.keys(variants).length < 2 || !_.isUndefined(fontVariantInput.data('disabled'))) {
+      if (typeof variants === 'undefined' || Object.keys(variants).length < 2) {
         fontVariantInput.parent().hide()
         fontVariantInput.parent().prev('label').hide()
         return
@@ -217,7 +247,7 @@ window.customify = window.customify || parent.customify || {};
       // Mark this input as not touched by the user.
       $(fontSubsetsInput).data('touched', false)
 
-      if (typeof subsets === 'undefined' || Object.keys(subsets).length < 2 || !_.isUndefined(fontSubsetsInput.data('disabled'))) {
+      if (typeof subsets === 'undefined' || Object.keys(subsets).length < 2) {
         fontSubsetsInput.parent().hide()
         fontSubsetsInput.parent().prev('label').hide()
         return
@@ -309,7 +339,7 @@ window.customify = window.customify || parent.customify || {};
         newFontData = _.isEmpty(oldValue) ? {} : oldValue
 
       // If we are already self-updating this and we haven't finished, we need to stop here to prevent infinite loops
-      // This call might have come from a subfield detecting the change the triggering a further update_font_value()
+      // This call might have come from a subfield detecting the change thus triggering a further selfUpdateValue()
       if (true === updatingValue[settingID]) {
         return
       }
@@ -328,9 +358,8 @@ window.customify = window.customify || parent.customify || {};
         const field = $el.data('field')
         let value = $el.val()
 
-        // We skip disabled subfields.
         // We only pick up subfields values that have been touched by the user or values that are missing in the oldValue.
-        if (_.isUndefined(field) || $el.data('disabled') || (!$el.data('touched') && !_.isUndefined(newFontData[field]))) {
+        if (_.isUndefined(field) || (!$el.data('touched') && !_.isUndefined(newFontData[field]))) {
           return
         }
 
@@ -398,7 +427,8 @@ window.customify = window.customify || parent.customify || {};
     }
 
     /**
-     * This function is a reverse of update_font_value(), initializing the entire font field controls based on the value stored in the hidden input.
+     * This function is a reverse of selfUpdateValue(), initializing the entire font field controls
+     * based on the value stored in the hidden input.
      */
     function loadFontValue (wrapper) {
       const optionsList = $(wrapper).find('.font-options__options-list'),
@@ -469,7 +499,7 @@ window.customify = window.customify || parent.customify || {};
         // Mark this input as not touched by the user.
         $el.data('touched', false)
 
-        $el.trigger('change')
+        $el.trigger('change', ['customify'])
       })
 
       // Finished with the field value loading.
@@ -515,7 +545,7 @@ window.customify = window.customify || parent.customify || {};
      * @param input Optional. The input this value was extracted from
      * @param valueFirst Optional. Whether to give higher priority to value related data, or to input related one.
      */
-    const standardizeNumericalValue = function (value, input, valueFirst = true) {
+    const standardizeNumericalValue = function (value, input = false, valueFirst = true) {
       const standardValue = {value: false, unit: false}
 
       if (_.includes(['','false',false], value)) {
@@ -548,7 +578,7 @@ window.customify = window.customify || parent.customify || {};
         }
       }
 
-      if (false === standardValue.unit || _.isEmpty(standardValue.unit)) {
+      if (false !== input && (false === standardValue.unit || _.isEmpty(standardValue.unit))) {
         // If we are given an input, we will attempt to extract the unit from its attributes.
         let fallbackInputUnit = ''
 

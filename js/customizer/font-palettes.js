@@ -31,6 +31,10 @@ window.customify = window.customify || parent.customify || {};
     const getConnectedFieldsCallback = function (parentSettingData, parentSettingID) {
       return function (newValue, oldValue) {
         _.each(parentSettingData.connected_fields, function (connectedFieldData) {
+          /*
+           * Create the value of the font field and set in the setting.
+           */
+
           if (_.isUndefined(connectedFieldData) || _.isUndefined(connectedFieldData.setting_id) || !_.isString(connectedFieldData.setting_id) || _.isUndefined(parentSettingData.fonts_logic)) {
             return
           }
@@ -75,17 +79,8 @@ window.customify = window.customify || parent.customify || {};
             return
           }
 
-          // The font type is determined on the fly, ignoring anything that may be set in the parent font logic configuration.
-          newFontData['type'] = customify.fontFields.determineFontType(newFontData['font_family'])
-
-          // The selected variants also come straight from the font logic right now.
-          // @todo We no longer store variants in the value. We take the available variants from the font config. Consider removing this.
-          if (typeof fontsLogic.font_weights !== 'undefined') {
-            newFontData['variants'] = fontsLogic.font_weights
-          }
-
           if (typeof connectedFieldData.font_size !== 'undefined' && false !== connectedFieldData.font_size) {
-            newFontData['font_size'] = connectedFieldData.font_size
+            newFontData['font_size'] = customify.fontFields.standardizeNumericalValue(connectedFieldData.font_size)
 
             // The font variant, letter spacing and text transform all come together from the font styles (intervals).
             // We just need to find the one that best matches the connected field given font size (if given).
@@ -93,8 +88,8 @@ window.customify = window.customify || parent.customify || {};
             if (typeof fontsLogic.font_styles_intervals !== 'undefined' && _.isArray(fontsLogic.font_styles_intervals) && fontsLogic.font_styles_intervals.length > 0) {
               let idx = 0
               while (idx < fontsLogic.font_styles_intervals.length - 1 &&
-                typeof fontsLogic.font_styles_intervals[idx].end !== 'undefined' &&
-                fontsLogic.font_styles_intervals[idx].end <= connectedFieldData.font_size.value) {
+                  typeof fontsLogic.font_styles_intervals[idx].end !== 'undefined' &&
+                  fontsLogic.font_styles_intervals[idx].end <= connectedFieldData.font_size.value) {
 
                 idx++
               }
@@ -104,7 +99,7 @@ window.customify = window.customify || parent.customify || {};
                 newFontData['font_variant'] = fontsLogic.font_styles_intervals[idx].font_weight
               }
               if (!_.isEmpty(fontsLogic.font_styles_intervals[idx].letter_spacing)) {
-                newFontData['letter_spacing'] = fontsLogic.font_styles_intervals[idx].letter_spacing
+                newFontData['letter_spacing'] = customify.fontFields.standardizeNumericalValue(fontsLogic.font_styles_intervals[idx].letter_spacing)
               }
               if (!_.isEmpty(fontsLogic.font_styles_intervals[idx].text_transform)) {
                 newFontData['text_transform'] = fontsLogic.font_styles_intervals[idx].text_transform
@@ -114,14 +109,12 @@ window.customify = window.customify || parent.customify || {};
             // The line height is determined by getting the value of the polynomial function determined by points.
             if (typeof fontsLogic.font_size_to_line_height_points !== 'undefined' && _.isArray(fontsLogic.font_size_to_line_height_points)) {
               const result = regression.logarithmic(fontsLogic.font_size_to_line_height_points, {precision: 2})
-              const fontsize = connectedFieldData.font_size.value
-              const lineHeight = result.predict(fontsize)[1]
-              newFontData['line_height'] = {value: lineHeight}
+              const lineHeight = result.predict(newFontData['font_size'].value)[1]
+              newFontData['line_height'] = customify.fontFields.standardizeNumericalValue(lineHeight)
             }
           }
 
-          const serializedNewFontData = customify.fontFields.encodeValues(newFontData)
-          setting.set(serializedNewFontData)
+          setting.set(customify.fontFields.encodeValues(newFontData))
         })
       }
     }
