@@ -87,7 +87,7 @@ window.customify = window.customify || parent.customify || {};
           $(event.target).data('touched', true)
 
           // Serialize subfield values and refresh the fonts in the preview window.
-          selfUpdateValue(wrapper)
+          selfUpdateValue(wrapper, settingID)
         }
       })
 
