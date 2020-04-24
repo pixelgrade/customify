@@ -1223,6 +1223,14 @@ if (typeof WebFont !== 'undefined') {
 			$values['font_variant'] = reset( $values['font_variant'] );
 		}
 
+		// We no longer hold variants and subsets in the value.
+		if ( isset( $values['variants'] ) ) {
+			unset( $values['variants'] );
+		}
+		if ( isset( $values['subsets'] ) ) {
+			unset( $values['subsets'] );
+		}
+
 		return $values;
 	}
 
@@ -1474,17 +1482,17 @@ if (typeof WebFont !== 'undefined') {
 		}
 
 		foreach ( $variants as $variant ) {
-			if ( ! is_string( $variant ) ) {
-				continue;
-			}
+			// Make sure that we are working with strings.
+			$variant = (string) $variant;
 
+			// This is the default font style.
 			$font_style = 'n'; // normal
-			if ( false !== strrpos( 'italic', $variant ) ) {
+			if ( false !== strrpos( $variant, 'italic'  ) ) {
 				$font_style = 'i';
-				$variant = str_replace( 'italic', '', $variant );
-			} elseif ( false !== strrpos( 'oblique', $variant ) ) {
+				$variant    = str_replace( 'italic', '', $variant );
+			} elseif ( false !== strrpos( $variant, 'oblique' ) ) {
 				$font_style = 'o';
-				$variant = str_replace( 'oblique', '', $variant );
+				$variant    = str_replace( 'oblique', '', $variant );
 			}
 
 //          The equivalence:
@@ -1500,29 +1508,29 @@ if (typeof WebFont !== 'undefined') {
 //			9: 900
 
 			switch ( $variant ) {
-				case 100:
+				case '100':
 					$font_weight = 1;
 					break;
-				case 200:
+				case '200':
 					$font_weight = 2;
 					break;
-				case 300:
+				case '300':
 					$font_weight = 3;
 					break;
-				case 500:
+				case '500':
 					$font_weight = 5;
 					break;
-				case 600:
+				case '600':
 					$font_weight = 6;
 					break;
-				case 700:
+				case '700':
 				case 'bold':
 					$font_weight = 7;
 					break;
-				case 800:
+				case '800':
 					$font_weight = 8;
 					break;
-				case 900:
+				case '900':
 					$font_weight = 9;
 					break;
 				default:

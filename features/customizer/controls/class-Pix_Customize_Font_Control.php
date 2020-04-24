@@ -76,12 +76,12 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 			$changeset_data = $wp_customize->changeset_data();
 
 			if ( isset( $changeset_data[$this->setting->id] ) ) {
-				$this->current_value = $changeset_data[$this->setting->id]['value'];
+				$this->current_value = $this->standardizeSettingValue( $changeset_data[$this->setting->id]['value'] );
 				return;
 			}
 		}
 
-		$this->current_value = $this->value();
+		$this->current_value = $this->standardizeSettingValue( $this->value() );
 	}
 
 	protected function add_hooks() {
@@ -140,7 +140,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 	 */
 	public function render_content() {
 		// The self::value() will consider the defined default value and return that if that is the case.
-		$current_value = Customify_Fonts_Global::maybeDecodeValue( $this->current_value );
+		$current_value = $this->current_value;
 		if ( empty( $current_value ) ) {
 			$current_value = $this->get_default_values();
 		}
@@ -209,7 +209,9 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 	<?php }
 
 	/**
-	 * This input will hold the values of this font field
+	 * This input will hold the value of this font field
+	 *
+	 * @todo Right now we are only using this field for getting the setting ID (via it's link). No value holder :)
 	 *
 	 * @param $current_value
 	 */
@@ -266,7 +268,8 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 
 					foreach ( $current_font_details['variants'] as $variant ) {
 						$attrs = '';
-						if ( $variant == $selected ) {
+						// We must make sure that they are converted to strings to avoid dubious conversions like 300italic == 300.
+						if ( (string) $variant === (string) $selected ) {
 							$attrs = ' selected="selected"';
 						}
 
