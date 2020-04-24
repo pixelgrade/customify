@@ -787,9 +787,6 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 				if ( is_array( $setting_args['default'] ) ) {
 					$setting_args['default'] = (object) $setting_args['default'];
 				}
-				if ( is_object( $setting_args['default'] ) ) {
-					$setting_args['default'] = PixCustomifyPlugin::encodeURIComponent( json_encode( $setting_args['default'] ) );
-				}
 			}
 
 			if ( ! empty( $field_config['capability'] ) ) {
@@ -1424,9 +1421,8 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 				$results[ $input_key ] = $fields_config;
 
 				$default = null;
-
-				if ( isset( $fields_config['default'] ) && is_array( $fields_config['default'] ) ) {
-					$default = json_encode( $fields_config['default'] );
+				if ( isset( $fields_config['default'] ) ) {
+					$default = $fields_config['default'];
 				}
 
 				$results[ $input_key ]['value'] = PixCustomifyPlugin()->get_option( $input_key, $default );

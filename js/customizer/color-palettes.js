@@ -687,6 +687,7 @@ window.customify = window.customify || parent.customify || {};
     }
 
     const swapConnectedFields = (settings, swapMap) => {
+      // @todo This is weird. We should be able to have the settings in the proper form.
       const newSettings = JSON.parse(JSON.stringify(settings))
       const oldSettings = JSON.parse(JSON.stringify(settings))
 

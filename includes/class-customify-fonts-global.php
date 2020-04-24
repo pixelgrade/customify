@@ -38,6 +38,13 @@ class Customify_Fonts_Global {
 	protected $cloud_fonts = array();
 
 	/**
+	 * The precision to use when dealing with float values.
+	 * @since    2.7.0
+	 * @var      int
+	 */
+	public static $floatPrecision = 2;
+
+	/**
 	 * Constructor.
 	 *
 	 * @since 2.7.0
@@ -968,6 +975,8 @@ if (typeof WebFont !== 'undefined') {
 			$localized['fonts'] = array();
 		}
 
+		$localized['fonts']['floatPrecision'] =self::$floatPrecision;
+
 		$localized['fonts']['theme_fonts'] = $this->get_theme_fonts();
 		$localized['fonts']['cloud_fonts'] = $this->get_cloud_fonts();
 		$localized['fonts']['google_fonts'] = $this->get_google_fonts();
@@ -1196,6 +1205,11 @@ if (typeof WebFont !== 'undefined') {
 
 				$values[ $new_key ] = $value;
 			}
+
+			// Standardize numerical fields.
+			if ( in_array( $new_key, ['font_size', 'line_height', 'letter_spacing'] ) ) {
+				$values[ $new_key ] = self::standardizeNumericalValue( $value );
+			}
 		}
 
 		// We no longer use the `selected_variants` key, but the proper one: `font_variant`.
@@ -1288,6 +1302,11 @@ if (typeof WebFont !== 'undefined') {
 			}
 		}
 
+		// Make sure that the value number is rounded to 2 decimals.
+		if ( is_numeric( $standard_value['value'] ) ) {
+			$standard_value['value'] = round( $standard_value['value'], self::$floatPrecision );
+		}
+
 		// Make sure that we convert all falsy unit values to the boolean false.
 		if ( in_array( $standard_value['unit'], ['', 'false'], true ) ) {
 			$standard_value['unit'] = false;
@@ -1362,15 +1381,6 @@ if (typeof WebFont !== 'undefined') {
 
 		if ( empty( $subfields ) || ! is_array( $subfields ) ) {
 			return $allowedProperties;
-		}
-
-		// Convert all subfield keys to use dashes not underscores.
-		foreach ( $subfields as $key => $value ) {
-			if ( strpos( $key, '_' ) !== false ) {
-				$new_key               = str_replace( '_', '-', $key );
-				$subfields[ $new_key ] = $value;
-				unset( $subfields[ $key ] );
-			}
 		}
 
 		// We will match the subfield keys with the CSS properties, but only those that properties that are above.

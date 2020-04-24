@@ -8,7 +8,17 @@
     maybeLoadWebfontloaderScript()
   })
 
-  const fonts_cache = []
+  const maybeLoadWebfontloaderScript = function () {
+    if (typeof WebFont === 'undefined') {
+      let tk = document.createElement('script')
+      tk.src = parent.customify.config.webfontloader_url
+      tk.type = 'text/javascript'
+      let s = document.getElementsByTagName('script')[0]
+      s.parentNode.insertBefore(tk, s)
+    }
+  }
+
+  const fontsCache = []
 
   // Do everything at document.ready
   $(function () {
@@ -22,14 +32,12 @@
       if (settingConfig.type === 'font') {
         api(key, function (setting) {
           setting.bind(function (newValue) {
-            const rawValues = maybeJsonParse(newValue)
-
-            if (typeof rawValues === 'undefined') {
+            if (typeof newValue === 'undefined') {
               return
             }
 
-            if (typeof rawValues.font_family !== 'undefined') {
-              maybeLoadFontFamily(rawValues)
+            if (typeof newValue.font_family !== 'undefined') {
+              maybeLoadFontFamily(newValue)
             }
 
             const $styleElement = $('#customify_font_output_for_' + settingConfig.html_safe_option_id)
@@ -37,7 +45,7 @@
               return
             }
 
-            const cssValues = getFontFieldCSSValues(this.id, rawValues)
+            const cssValues = getFontFieldCSSValues(this.id, newValue)
             if (_.isEmpty(cssValues)) {
               // Empty the style element.
               $styleElement.html('')
@@ -348,18 +356,7 @@
         return allowedProperties
       }
 
-      const regexForMultipleReplace = new RegExp('_', 'g')
-
-      // Convert all subfield keys to use dashes not underscores.
-      _.each(subfields, function (value, key) {
-        const newKey = key.replace(regexForMultipleReplace, '-')
-        if (newKey !== key) {
-          subfields[newKey] = value
-          delete subfields[key]
-        }
-      })
-
-      // We will match the subfield keys with the CSS properties, but only those that properties that are above.
+      // We will match the subfield keys with the CSS properties, but only those that properties that are allowed.
       // Maybe at some point some more complex matching would be needed here.
       _.each(subfields, function (value, key) {
         if (typeof allowedProperties[key] !== 'undefined') {
@@ -391,12 +388,12 @@
 
       if (typeof customify.config.settings[ID].fields[field].unit !== 'undefined') {
         // Make sure that we convert all falsy unit values to the boolean false.
-        return _.includes(['', 'false'], customify.config.settings[ID].fields[field].unit) ? false : customify.config.settings[ID].fields[field].unit
+        return _.includes(['', 'false', false], customify.config.settings[ID].fields[field].unit) ? false : customify.config.settings[ID].fields[field].unit
       }
 
       if (typeof customify.config.settings[ID].fields[field][3] !== 'undefined') {
         // Make sure that we convert all falsy unit values to the boolean false.
-        return _.includes(['', 'false'], customify.config.settings[ID].fields[field][3]) ? false : customify.config.settings[ID].fields[field][3]
+        return _.includes(['', 'false', false], customify.config.settings[ID].fields[field][3]) ? false : customify.config.settings[ID].fields[field][3]
       }
 
       return 'px'
@@ -430,7 +427,7 @@
         // First if there is a selected font variant, otherwise all the available variants.
         let variants = typeof font.font_variant !== 'undefined' ? font.font_variant : typeof fontDetails.variants !== 'undefined' ? fontDetails.variants : []
         if (!_.isEmpty(variants)) {
-          variants = standardizeToArray(maybeJsonParse(variants))
+          variants = standardizeToArray(variants)
 
           if (!_.isEmpty(variants)) {
             family = family + ':' + variants.map(function (variant) {
@@ -439,7 +436,7 @@
           }
         }
 
-        if (fonts_cache.indexOf(family) === -1) {
+        if (fontsCache.indexOf(family) === -1) {
           WebFont.load({
             custom: {
               families: [family],
@@ -447,16 +444,10 @@
             },
             classes: false,
             events: false,
-            error: function (e) {
-              console.log(e)
-            },
-            active: function () {
-              sessionStorage.fonts = true
-            }
           })
 
           // Remember we've loaded this family (with it's variants) so we don't load it again.
-          fonts_cache.push(family)
+          fontsCache.push(family)
         }
       }
       // Handle Google fonts since Web Font Loader has a special module for them.
@@ -466,7 +457,7 @@
         // First if there is a selected font variant, otherwise all the available variants.
         let variants = typeof font.font_variant !== 'undefined' ? font.font_variant : typeof fontDetails.variants !== 'undefined' ? fontDetails.variants : []
         if (!_.isEmpty(variants)) {
-          variants = standardizeToArray(maybeJsonParse(variants))
+          variants = standardizeToArray(variants)
 
           if (!_.isEmpty(variants)) {
             family = family + ':' + variants.join(',')
@@ -475,28 +466,22 @@
 
         let subsets = typeof font.selected_subsets !== 'undefined' ? font.selected_subsets : []
         if (!_.isEmpty(subsets)) {
-          subsets = standardizeToArray(maybeJsonParse(subsets))
+          subsets = standardizeToArray(subsets)
 
           if (!_.isEmpty(subsets)) {
             family = family + ':' + subsets.join(',')
           }
         }
 
-        if (fonts_cache.indexOf(family) === -1) {
+        if (fontsCache.indexOf(family) === -1) {
           WebFont.load({
             google: {families: [family]},
             classes: false,
             events: false,
-            error: function (e) {
-              console.log(e)
-            },
-            active: function () {
-              sessionStorage.fonts = true
-            }
           })
 
           // Remember we've loaded this family (with it's variants and subsets) so we don't load it again.
-          fonts_cache.push(family)
+          fontsCache.push(family)
         }
 
       } else {
@@ -513,34 +498,5 @@
 
       return value
     }
-
-    const maybeJsonParse = function (value) {
-      if (typeof value !== 'string') {
-        return value
-      }
-
-      let parsed
-
-      // Try and parse it, with decodeURIComponent.
-      try {
-        parsed = JSON.parse(decodeURIComponent(value))
-      } catch (e) {
-
-        // in case of an error, treat is as a string
-        parsed = value
-      }
-
-      return parsed
-    }
   })
-
-  function maybeLoadWebfontloaderScript () {
-    if (typeof WebFont === 'undefined') {
-      let tk = document.createElement('script')
-      tk.src = parent.customify.config.webfontloader_url
-      tk.type = 'text/javascript'
-      let s = document.getElementsByTagName('script')[0]
-      s.parentNode.insertBefore(tk, s)
-    }
-  }
 })(jQuery, window, document)

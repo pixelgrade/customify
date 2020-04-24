@@ -94,7 +94,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 	}
 
 	/**
-	 * Given a font value, decode, standardize and encode it.
+	 * Given a font value, standardize it (unencoded).
 	 *
 	 * @param mixed $value
 	 * @param WP_Customize_Setting $setting
@@ -104,7 +104,6 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 	public function standardizeSettingValue( $value ) {
 		$value = Customify_Fonts_Global::maybeDecodeValue( $value );
 		$value = Customify_Fonts_Global::standardizeFontValues( $value );
-		$value = Customify_Fonts_Global::maybeEncodeValue( $value );
 
 		return $value;
 	}
@@ -142,7 +141,6 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 	public function render_content() {
 		// The self::value() will consider the defined default value and return that if that is the case.
 		$current_value = Customify_Fonts_Global::maybeDecodeValue( $this->current_value );
-
 		if ( empty( $current_value ) ) {
 			$current_value = $this->get_default_values();
 		}
@@ -219,7 +217,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 		<input class="customify_font_values" id="<?php echo esc_attr( $this->CSSID ); ?>"
 		       type="hidden" <?php $this->link(); ?>
 		       value="<?php // The value will be set by the Customizer core logic from the _wpCustomizeSettings.settings data. ?>"
-		       data-default="<?php echo esc_attr( PixCustomifyPlugin::encodeURIComponent( json_encode( $current_value ) ) ); ?>"/>
+		/>
 	<?php }
 
 	protected function display_field_title( $font_family, $current_font_details ) {
@@ -256,11 +254,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 		?>
 		<li class="customify_weights_wrapper customize-control font-options__option" style="display: <?php echo $display; ?>;">
 			<label><?php esc_html_e( 'Font Variant', 'customify' ); ?></label>
-			<?php
-			$data_default = ! empty( $selected ) ? 'data-default="' . $selected . '"' : '';
-			?>
-			<select class="customify_font_weight"
-			        data-field="font_variant" <?php echo $data_default ?> <?php echo ( 'none' === $display ) ?  'data-disabled="true"' : ''?>>
+			<select class="customify_font_weight" data-field="font_variant" <?php echo ( 'none' === $display ) ?  'data-disabled="true"' : ''?>>
 				<?php
 				if ( ! empty( $current_font_details['variants'] ) ) {
 					if ( is_string( $current_font_details['variants'] ) ) {

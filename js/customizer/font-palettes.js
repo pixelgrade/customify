@@ -108,13 +108,13 @@ window.customify = window.customify || parent.customify || {};
 
             // The line height is determined by getting the value of the polynomial function determined by points.
             if (typeof fontsLogic.font_size_to_line_height_points !== 'undefined' && _.isArray(fontsLogic.font_size_to_line_height_points)) {
-              const result = regression.logarithmic(fontsLogic.font_size_to_line_height_points, {precision: 2})
+              const result = regression.logarithmic(fontsLogic.font_size_to_line_height_points, {precision: customify.fonts.floatPrecision})
               const lineHeight = result.predict(newFontData['font_size'].value)[1]
               newFontData['line_height'] = customify.fontFields.standardizeNumericalValue(lineHeight)
             }
           }
 
-          setting.set(customify.fontFields.encodeValues(newFontData))
+          setting.set(newFontData)
         })
       }
     }
@@ -180,7 +180,7 @@ window.customify = window.customify || parent.customify || {};
       // when new info arrives, the setting callbacks will be fired (.set() doesn't do anything if the new value is the same as the old).
       // Also some entries will be used to set the master font subfields (mainly font family).
       // This value is not used in any other way!
-      setting.set(customify.fontFields.encodeValues(config))
+      setting.set(config)
     }
 
     const handlePalettes = () => {
@@ -214,7 +214,7 @@ window.customify = window.customify || parent.customify || {};
 
               // First set the setting to an empty value.
               // This is needed because the setting will not trigger a change if it is the same value.
-              setting.set(customify.fontFields.encodeValues({}))
+              setting.set({})
 
               // Now set it's proper value.
               setFieldFontsLogicConfig(settingID, config)
