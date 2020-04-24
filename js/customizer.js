@@ -554,47 +554,37 @@ window.customify = window.customify || parent.customify || {};
 
       // if the value is a simple string it must be the font family
       if (_.isString(value)) {
-        const option = field.parent().find('option[value="' + value + '"]')
-
-        option.attr('selected', 'selected')
-        // We mark the parent select as touched because we need the full font field value regenerated.
-        // We've arrived here most probably from a Preset, not from Style Manager.
-        $(option).parents('select').data('touched', true).trigger('change', ['customify'])
+        setting.set({'font_family': value})
       } else if (_.isObject(value)) {
-        // Find the options list wrapper
-        const optionsList = field.parent().children('.font-options__options-list')
+        const standardValue = {}
+        // We will process each font property and update it
+        _.each(value, function (val, key) {
+          // We need to map the keys to the data attributes we are using - I know :(
+          let mappedKey = key
+          switch (key) {
+            case 'font-family':
+              mappedKey = 'font_family'
+              break
+            case 'font-size':
+              mappedKey = 'font_size'
+              break
+            case 'font-weight':
+              mappedKey = 'font_variant'
+              break
+            case 'letter-spacing':
+              mappedKey = 'letter_spacing'
+              break
+            case 'text-transform':
+              mappedKey = 'text_transform'
+              break
+            default:
+              break
+          }
 
-        if (optionsList.length) {
-          // We will process each font property and update it
-          _.each(value, function (val, key) {
-            // We need to map the keys to the data attributes we are using - I know :(
-            let mappedKey = key
-            switch (key) {
-              case 'font-family':
-                mappedKey = 'font_family'
-                break
-              case 'font-size':
-                mappedKey = 'font_size'
-                break
-              case 'font-weight':
-                mappedKey = 'font_variant'
-                break
-              case 'letter-spacing':
-                mappedKey = 'letter_spacing'
-                break
-              case 'text-transform':
-                mappedKey = 'text_transform'
-                break
-              default:
-                break
-            }
+          standardValue[mappedKey] = val
+        })
 
-            const subField = optionsList.find('[data-field="' + mappedKey + '"]')
-            if (subField.length) {
-              subField.val(val).trigger('change', ['customify'])
-            }
-          })
-        }
+        setting.set(standardValue)
       }
     } else {
       setting.set(value)
