@@ -1,5 +1,5 @@
 /*
- *  cssUpdate - v1.0.0
+ *  cssUpdate - v1.1.0
  */
 
 /** @namespace customify */
@@ -25,11 +25,6 @@ window.customify = window.customify || parent.customify || {}
 
   cssLiveUpdater.prototype = {
     init: function () {
-      this.changeProperties()
-    },
-
-    update_plugin: function (options) {
-      this.settings = $.extend({}, defaults, options)
       this.changeProperties()
     },
 
@@ -96,14 +91,7 @@ window.customify = window.customify || parent.customify || {}
   // Plugin wrapper
   $.fn[pluginName] = function (options) {
     this.each(function () {
-
-      const old_plugin = $(this).data('plugin_cssUpdate')
-
-      if (typeof old_plugin !== 'undefined') {
-        old_plugin.update_plugin(options)
-      } else {
-        $.data(this, 'plugin_' + pluginName, new cssLiveUpdater(this, options))
-      }
+      $.data(this, 'plugin_' + pluginName, new cssLiveUpdater(this, options))
     })
 
     // chain jQuery functions

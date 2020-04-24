@@ -200,6 +200,7 @@ window.customify = window.customify || parent.customify || {};
           input = $(event.target).children('input')
         }
 
+        // Only do the reset if the input is already checked (it's a radio group).
         if (input.length && input.prop('checked')) {
           // Take the fonts config for each setting and distribute it to each (master) setting.
           const data = input.data('fonts_logic')
@@ -212,6 +213,7 @@ window.customify = window.customify || parent.customify || {};
               }
 
               // First set the setting to an empty value.
+              // This is needed because the setting will not trigger a change if it is the same value.
               setting.set(customify.fontFields.encodeValues({}))
 
               // Now set it's proper value.

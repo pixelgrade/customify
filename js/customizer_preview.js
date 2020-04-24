@@ -15,27 +15,36 @@
     const api = parent.wp.customize
     const customify = parent.customify
     const apiSettings = api.settings.settings
+    const regexForMultipleReplace = new RegExp('-', 'g')
 
     $.each(customify.config.settings, function (key, settingConfig) {
-      const properties_prefix = typeof settingConfig.properties_prefix === 'undefined' ? '' : settingConfig.properties_prefix
+      const propertiesPrefix = typeof settingConfig.properties_prefix === 'undefined' ? '' : settingConfig.properties_prefix
       if (settingConfig.type === 'font') {
         api(key, function (setting) {
-          setting.bind(function (to) {
-            const rawValues = maybeJsonParse(to)
+          setting.bind(function (newValue) {
+            const rawValues = maybeJsonParse(newValue)
 
-            if (typeof rawValues !== 'undefined') {
-              if (typeof rawValues.font_family !== 'undefined') {
-                maybeLoadFontFamily(rawValues)
-              }
-
-              const cssValues = getFontFieldCSSValues(this.id, rawValues)
-              if (_.isEmpty(cssValues)) {
-                return
-              }
-
-              const CSS = getFontFieldCSSCode(this.id, cssValues, properties_prefix)
-              $('#customify_font_output_for_' + settingConfig.html_safe_option_id).html(CSS)
+            if (typeof rawValues === 'undefined') {
+              return
             }
+
+            if (typeof rawValues.font_family !== 'undefined') {
+              maybeLoadFontFamily(rawValues)
+            }
+
+            const $styleElement = $('#customify_font_output_for_' + settingConfig.html_safe_option_id)
+            if (!$styleElement.length) {
+              return
+            }
+
+            const cssValues = getFontFieldCSSValues(this.id, rawValues)
+            if (_.isEmpty(cssValues)) {
+              // Empty the style element.
+              $styleElement.html('')
+              return
+            }
+
+            $styleElement.html(getFontFieldCSSCode(this.id, cssValues, propertiesPrefix))
           })
         })
 
@@ -46,19 +55,29 @@
         && settingConfig.live === true) {
 
         api(key, function (setting) {
-          setting.bind(function (to) {
+          setting.bind(function (newValue) {
 
             $.each(settingConfig.css, function (idx, propertyConfig) {
-              let properties = []
+              // Replace all dashes with underscores thus making the CSS property safe to us in a HTML ID.
+              const $styleElement = $('.dynamic_setting_' + settingConfig.html_safe_option_id + '_property_' + propertyConfig.property.replace(regexForMultipleReplace, '_') + '_' + idx)
+              if (!$styleElement.length) {
+                return
+              }
 
-              properties[propertyConfig.property] = propertyConfig.selector
+              const properties = {}
+              if (typeof propertyConfig.property !== 'undefined' && typeof propertyConfig.selector !== 'undefined') {
+                properties[propertyConfig.property] = propertyConfig.selector
+              }
               if (typeof propertyConfig.callback_filter !== 'undefined') {
                 properties['callback'] = propertyConfig.callback_filter
               }
+              if (_.isEmpty(properties)) {
+                return
+              }
 
-              let cssUpdateArgs = {
+              const cssUpdateArgs = {
                 properties: properties,
-                propertyValue: to,
+                propertyValue: newValue,
                 negative_value: propertyConfig.hasOwnProperty('negative_value') ? propertyConfig['negative_value'] : false
               }
 
@@ -66,11 +85,7 @@
                 cssUpdateArgs.unit = this.unit
               }
 
-              // Replace all dashes with underscores thus making the CSS property safe to us in a HTML ID.
-              const regexForMultipleReplace = new RegExp('-', 'g')
-              const cssStyleSelector = '.dynamic_setting_' + settingConfig.html_safe_option_id + '_property_' + propertyConfig.property.replace(regexForMultipleReplace, '_') + '_' + idx
-
-              $(cssStyleSelector).cssUpdate(cssUpdateArgs)
+              $styleElement.cssUpdate(cssUpdateArgs)
             })
 
           })
@@ -94,18 +109,19 @@
       }
     })
 
-    /*** HELPERS **/
+    /**
+     * HELPERS
+     **/
 
     const getFontFieldCSSValues = function (ID, values) {
 
-      let store = {}
+      const store = {}
 
-      if (typeof values.font_family !== 'undefined' && '' !== values.font_family) {
+      if (typeof values.font_family !== 'undefined' && !_.includes(['','false',false], values.font_family)) {
         store['font-family'] = values.font_family
       }
 
-      if (typeof values.font_variant !== 'undefined' && '' !== values.font_variant) {
-
+      if (typeof values.font_variant !== 'undefined' && !_.includes(['','false',false], values.font_variant)) {
         let variant = values.font_variant
 
         if (_.isString(variant)) {
@@ -131,7 +147,7 @@
         }
       }
 
-      if (typeof values.font_size !== 'undefined' && '' !== values.font_size) {
+      if (typeof values.font_size !== 'undefined' && !_.includes(['','false',false], values.font_size)) {
         let fontSizeUnit = false
 
         store['font-size'] = values.font_size
@@ -155,7 +171,7 @@
         }
       }
 
-      if (typeof values.letter_spacing !== 'undefined' && '' !== values.letter_spacing) {
+      if (typeof values.letter_spacing !== 'undefined' && !_.includes(['','false',false], values.letter_spacing)) {
         let letterSpacingUnit = false
 
         store['letter-spacing'] = values.letter_spacing
@@ -179,7 +195,7 @@
         }
       }
 
-      if (typeof values.line_height !== 'undefined' && '' !== values.line_height) {
+      if (typeof values.line_height !== 'undefined' && !_.includes(['','false',false], values.line_height)) {
         let lineHeightUnit = false
 
         store['line-height'] = values.line_height
@@ -203,14 +219,14 @@
         }
       }
 
-      if (typeof values.text_align !== 'undefined' && '' !== values.text_align) {
+      if (typeof values.text_align !== 'undefined' && !_.includes(['','false',false], values.text_align)) {
         store['text-align'] = values.text_align
       }
 
-      if (typeof values.text_transform !== 'undefined' && '' !== values.text_transform) {
+      if (typeof values.text_transform !== 'undefined' && !_.includes(['','false',false], values.text_transform)) {
         store['text-transform'] = values.text_transform
       }
-      if (typeof values.text_decoration !== 'undefined' && '' !== values.text_decoration) {
+      if (typeof values.text_decoration !== 'undefined' && !_.includes(['','false',false], values.text_decoration)) {
         store['text-decoration'] = values.text_decoration
       }
 
@@ -223,47 +239,47 @@
       let output = ''
 
       if (typeof window !== 'undefined' && typeof field.callback !== 'undefined' && typeof window[field.callback] === 'function') {
-        output = window[field.callback](values, field)
-      } else {
-        if (typeof field.selector === 'undefined' || _.isEmpty(field.selector)) {
-          return output
+        return window[field.callback](values, field)
+      }
+
+      if (typeof field.selector === 'undefined' || _.isEmpty(field.selector) || _.isEmpty(values)) {
+        return output
+      }
+
+      // The general CSS allowed properties.
+      const subFieldsCSSAllowedProperties = extractAllowedCSSPropertiesFromFontFields(field['fields'])
+
+      // The selector is standardized to a list of simple string selectors, or a list of complex selectors with details.
+      // In either case, the actual selector is in the key, and the value is an array (possibly empty).
+
+      // Since we might have simple CSS selectors and complex ones (with special details),
+      // for cleanliness we will group the simple ones under a single CSS rule,
+      // and output individual CSS rules for complex ones.
+      // Right now, for complex CSS selectors we are only interested in the `properties` sub-entry.
+      const simpleCSSSelectors = []
+      const complexCSSSelectors = {}
+
+      _.each(field.selector, function (details, selector) {
+        if (_.isEmpty(details.properties)) {
+          // This is a simple selector.
+          simpleCSSSelectors.push(selector)
+        } else {
+          complexCSSSelectors[selector] = details
         }
+      })
 
-        // The general CSS allowed properties.
-        const subFieldsCSSAllowedProperties = extractAllowedCSSPropertiesFromFontFields(field['fields'])
+      if (!_.isEmpty(simpleCSSSelectors)) {
+        output += '\n' + simpleCSSSelectors.join(', ') + ' {\n'
+        output += getFontFieldCSSProperties(values, subFieldsCSSAllowedProperties, prefix)
+        output += '}\n'
+      }
 
-        // The selector is standardized to a list of simple string selectors, or a list of complex selectors with details.
-        // In either case, the actual selector is in the key, and the value is an array (possibly empty).
-
-        // Since we might have simple CSS selectors and complex ones (with special details),
-        // for cleanliness we will group the simple ones under a single CSS rule,
-        // and output individual CSS rules for complex ones.
-        // Right now, for complex CSS selectors we are only interested in the `properties` sub-entry.
-        const simpleCSSSelectors = []
-        const complexCSSSelectors = {}
-
-        _.each(field.selector, function (details, selector) {
-          if (_.isEmpty(details.properties)) {
-            // This is a simple selector.
-            simpleCSSSelectors.push(selector)
-          } else {
-            complexCSSSelectors[selector] = details
-          }
-        })
-
-        if (!_.isEmpty(simpleCSSSelectors)) {
-          output += '\n' + simpleCSSSelectors.join(', ') + ' {\n'
-          output += getFontFieldCSSProperties(values, subFieldsCSSAllowedProperties, prefix)
+      if (!_.isEmpty(complexCSSSelectors)) {
+        _.each(complexCSSSelectors, function (details, selector) {
+          output += '\n' + selector + ' {\n'
+          output += getFontFieldCSSProperties(values, details.properties, prefix)
           output += '}\n'
-        }
-
-        if (!_.isEmpty(complexCSSSelectors)) {
-          _.each(complexCSSSelectors, function (details, selector) {
-            output += '\n' + selector + ' {\n'
-            output += getFontFieldCSSProperties(values, details.properties, prefix)
-            output += '}\n'
-          })
-        }
+        })
       }
 
       return output
