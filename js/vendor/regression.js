@@ -152,7 +152,7 @@
 	}
 
 	/**
-	 * Round a number to a precision, specificed in number of decimal places
+	 * Round a number to a precision, specified in number of decimal places
 	 *
 	 * @param {number} number - The number to round
 	 * @param {number} precision - The number of decimal places to round to:

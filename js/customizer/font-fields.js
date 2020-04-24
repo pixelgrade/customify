@@ -475,10 +475,10 @@ window.customify = window.customify || parent.customify || {};
           if (subfieldUnit != subfieldValueUnit) {
             if (_.includes(['em', 'rem'], subfieldValueUnit) && 'px' === subfieldUnit) {
               // We will have to multiply the value.
-              subfieldValue.value = subfieldValue.value * baseSize
+              subfieldValue.value = round(subfieldValue.value * baseSize, 2)
             } else if (_.includes(['em', 'rem'], subfieldUnit) && 'px' === subfieldValueUnit) {
               // We will have to divide the value.
-              subfieldValue.value = subfieldValue.value / baseSize
+              subfieldValue.value = round(subfieldValue.value / baseSize, 2)
             }
           }
 
@@ -697,6 +697,21 @@ window.customify = window.customify || parent.customify || {};
       return fontStyle + fontWeight
     }
 
+    /**
+     * Round a number to a precision, specified in number of decimal places
+     *
+     * @param {number} number - The number to round
+     * @param {number} precision - The number of decimal places to round to:
+     *                             > 0 means decimals, < 0 means powers of 10
+     *
+     *
+     * @return {number} - The number, rounded
+     */
+    function round(number, precision) {
+      const factor = Math.pow(10, precision)
+      return Math.round(number * factor) / factor;
+    }
+
     return {
       init: init,
       selfUpdateValue: selfUpdateValue,
@@ -705,6 +720,7 @@ window.customify = window.customify || parent.customify || {};
       determineFontType: determineFontType,
       getFontDetails: getFontDetails,
       convertFontVariantToFVD: convertFontVariantToFVD,
+      round: round,
     }
   }() )
 })(jQuery, customify, wp)

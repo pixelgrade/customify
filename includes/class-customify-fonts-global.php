@@ -1549,6 +1549,26 @@ if (typeof WebFont !== 'undefined') {
 	}
 
 	/**
+	 * Attempt to JSON encode the provided value.
+	 *
+	 * @param mixed $value
+	 *
+	 * @return mixed|string
+	 */
+	public static function maybeEncodeValue( $value ) {
+		// If the value is already a string, nothing to do.
+		if ( is_string( $value ) ) {
+			return $value;
+		}
+
+		if ( is_array( $value ) || is_object( $value ) ) {
+			$value = PixCustomifyPlugin::encodeURIComponent( json_encode( $value ) );
+		}
+
+		return $value;
+	}
+
+	/**
 	 * Main Customify_Fonts_Global Instance
 	 *
 	 * Ensures only one instance of Customify_Fonts_Global is loaded or can be loaded.

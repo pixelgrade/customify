@@ -88,6 +88,25 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 		if ( ! empty( $this->recommended ) ) {
 			add_action( 'customify_font_family_select_options', array( $this, 'output_recommended_options_group' ), 10, 3 );
 		}
+
+		// Standardize the setting value at a low level so it is consistent everywhere (including in JS).
+		add_filter( "customize_sanitize_js_{$this->setting->id}", array( $this, 'standardizeSettingValue'), 100, 1 );
+	}
+
+	/**
+	 * Given a font value, decode, standardize and encode it.
+	 *
+	 * @param mixed $value
+	 * @param WP_Customize_Setting $setting
+	 *
+	 * @return string
+	 */
+	public function standardizeSettingValue( $value ) {
+		$value = Customify_Fonts_Global::maybeDecodeValue( $value );
+		$value = Customify_Fonts_Global::standardizeFontValues( $value );
+		$value = Customify_Fonts_Global::maybeEncodeValue( $value );
+
+		return $value;
 	}
 
 	public function output_recommended_options_group( $active_font_family, $current_value, $field_id ) {
@@ -123,7 +142,6 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 	public function render_content() {
 		// The self::value() will consider the defined default value and return that if that is the case.
 		$current_value = Customify_Fonts_Global::maybeDecodeValue( $this->current_value );
-		$current_value = Customify_Fonts_Global::standardizeFontValues( $current_value );
 
 		if ( empty( $current_value ) ) {
 			$current_value = $this->get_default_values();
