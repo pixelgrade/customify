@@ -103,7 +103,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 	 */
 	public function standardizeSettingValue( $value ) {
 		$value = Customify_Fonts_Global::maybeDecodeValue( $value );
-		$value = Customify_Fonts_Global::standardizeFontValues( $value );
+		$value = Customify_Fonts_Global::standardizeFontValue( $value );
 
 		return $value;
 	}
@@ -169,7 +169,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 
 			<ul class="font-options__options-list">
 				<li class="font-options__option customize-control">
-					<select id="select_font_font_family_<?php echo esc_attr( $this->CSSID ); ?>" class="customify_font_family"<?php echo $select_data; ?> data-field="font_family">
+					<select id="select_font_font_family_<?php echo esc_attr( $this->CSSID ); ?>" class="customify_font_family"<?php echo $select_data; ?> data-value_entry="font_family">
 
 						<?php
 						// Allow others to add options here. This is mostly for backwards compatibility purposes.
@@ -187,17 +187,14 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 
 				$this->display_font_subsets_field( $current_value, $current_font_details );
 
-				$this->display_font_size_field( $current_value );
+				$this->display_range_field( 'font-size', $current_value, 'font_size', esc_html__( 'Font Size', 'customify' ) );
+				$this->display_range_field( 'line-height', $current_value, 'line_height', esc_html__( 'Line height', 'customify' ) );
+				$this->display_range_field( 'letter-spacing', $current_value, 'letter_spacing', esc_html__( 'Letter Spacing', 'customify' ) );
 
-				$this->display_line_height_field( $current_value );
-
-				$this->display_letter_spacing_field( $current_value );
-
-				$this->display_text_align_field( $current_value );
-
-				$this->display_text_transform_field( $current_value );
-
-				$this->display_text_decoration_field( $current_value ); ?>
+				$this->display_select_field( 'text-align', $current_value, 'text_align', esc_html__( 'Text Align', 'customify' ) );
+				$this->display_select_field( 'text-transform', $current_value, 'text_transform', esc_html__( 'Text Transform', 'customify' ) );
+				$this->display_select_field( 'text-decoration', $current_value, 'text_decoration', esc_html__( 'Text Decoration', 'customify' ) );
+				?>
 			</ul>
 		</div>
 
@@ -256,7 +253,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 		?>
 		<li class="customify_weights_wrapper customize-control font-options__option" style="display: <?php echo $display; ?>;">
 			<label><?php esc_html_e( 'Font Variant', 'customify' ); ?></label>
-			<select class="customify_font_weight" data-field="font_variant" <?php echo ( 'none' === $display ) ?  'data-disabled="true"' : ''?>>
+			<select class="customify_font_weight" data-value_entry="font_variant" <?php echo ( 'none' === $display ) ?  'data-disabled="true"' : ''?>>
 				<?php
 				if ( ! empty( $current_font_details['variants'] ) ) {
 					if ( is_string( $current_font_details['variants'] ) ) {
@@ -294,7 +291,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 		} ?>
 		<li class="customify_subsets_wrapper customize-control font-options__option" style="display: <?php echo $display; ?>;">
 			<label><?php esc_html_e( 'Languages', 'customify' ); ?></label>
-			<select multiple class="customify_font_subsets" data-field="selected_subsets" <?php echo ( 'none' === $display ) ?  'data-disabled="true"' : ''?>>
+			<select multiple class="customify_font_subsets" data-value_entry="selected_subsets" <?php echo ( 'none' === $display ) ?  'data-disabled="true"' : ''?>>
 				<?php
 				$selected = array();
 				if ( isset( $current_value->selected_subsets ) ) {
@@ -322,87 +319,27 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 		<?php
 	}
 
-	protected function display_font_size_field( $current_value ) {
-		// If the `font-size` field entry is falsy, this means we don't want to use the field.
-		if ( empty( $this->fields['font-size'] ) ) {
+	protected function display_range_field( $field, $currentFontValue, $valueEntry, $label ) {
+		// If the field entry is falsy, this means we don't want to use the field.
+		if ( empty( $this->fields[ $field ] ) ) {
 			return;
 		}
 
-		$attributes = $this->standardize_range_attributes( $this->fields['font-size'] );
-
-		$value = empty( $current_value->font_size ) ? 0 : $current_value->font_size;
+		$value = empty( $currentFontValue->$valueEntry ) ? 0 : $currentFontValue->$valueEntry;
 		// Standardize the value.
-		$value = Customify_Fonts_Global::standardizeNumericalValue( $value, 'font-size', array( 'fields' => $this->fields ) );
+		$value = Customify_Fonts_Global::standardizeNumericalValue( $value, $field, array( 'fields' => $this->fields ) );
 
 		// We will remember the unit of the value, in case some other system pushed down a value (with an unit)
 		// that is different from the field config unit. This way we can retain the unit of the value until
 		// the user interacts with the control.
 		?>
-		<li class="customify_font_size_wrapper customize-control customize-control-range font-options__option">
-			<label><?php esc_html_e( 'Font Size', 'customify' ); ?></label>
+		<li class="customify_<?php echo $valueEntry ?>_wrapper customize-control customize-control-range font-options__option">
+			<label><?php echo $label ?></label>
 			<input type="range"
-				data-field="font_size"
-				<?php $this->range_field_attributes( $attributes ) ?>
-				value="<?php echo esc_attr( $value['value'] ); ?>"
-				data-value_unit="<?php echo esc_attr( $value['unit'] ); ?>">
-		</li>
-		<?php
-	}
-
-	protected function display_line_height_field( $current_value ) {
-		// If the `line-height` field entry is falsy, this means we don't want to use the field.
-		if ( empty( $this->fields['line-height'] ) ) {
-			return;
-		}
-
-		$attributes = $this->standardize_range_attributes( $this->fields['line-height'] );
-
-		$value = empty( $current_value->line_height ) ? 0 : $current_value->line_height;
-		// Standardize the value.
-		$value = Customify_Fonts_Global::standardizeNumericalValue( $value, 'line-height', array( 'fields' => $this->fields ) );
-
-		// We will remember the unit of the value, in case some other system pushed down a value (with an unit)
-		// that is different from the field config unit. This way we can retain the unit of the value until
-		// the user interacts with the control.
-		?>
-		<li class="customify_line_height_wrapper customize-control customize-control-range font-options__option">
-			<label><?php esc_html_e( 'Line height', 'customify' ); ?></label>
-			<input type="range"
-				data-field="line_height"
-				<?php $this->range_field_attributes( $attributes ) ?>
-				value="<?php echo esc_attr( $value['value'] ); ?>"
-				data-value_unit="<?php echo esc_attr( $value['unit'] ); ?>">
-		</li>
-		<?php
-	}
-
-	protected function display_letter_spacing_field( $current_value ) {
-		// If the `letter-spacing` field entry is falsy, this means we don't want to use the field.
-		if ( empty( $this->fields['letter-spacing'] ) ) {
-			return;
-		}
-
-		$attributes = $this->standardize_range_attributes( $this->fields['letter-spacing'] );
-
-		$value = empty( $current_value->letter_spacing ) ? 0 : $current_value->letter_spacing;
-		// We have some special cases that are valid CSS values but we need to make them compatible with the range control.
-		if ( 'normal' === $value ) {
-			$value = 0;
-		}
-		// Standardize the value.
-		$value = Customify_Fonts_Global::standardizeNumericalValue( $value, 'letter-spacing', array( 'fields' => $this->fields ) );
-
-		// We will remember the unit of the value, in case some other system pushed down a value (with an unit)
-		// that is different from the field config unit. This way we can retain the unit of the value until
-		// the user interacts with the control.
-		?>
-		<li class="customify_letter_spacing_wrapper customize-control customize-control-range font-options__option">
-			<label><?php esc_html_e( 'Letter Spacing', 'customify' ); ?></label>
-			<input type="range"
-				data-field="letter_spacing"
-				<?php $this->range_field_attributes( $attributes ) ?>
-				value="<?php echo esc_attr( $value['value'] ); ?>"
-				data-value_unit="<?php echo esc_attr( $value['unit'] ); ?>">
+			        data-value_entry="<?php echo esc_attr( $valueEntry ) ?>"
+					<?php $this->range_field_attributes( $this->fields[ $field ] ) ?>
+				    value="<?php echo esc_attr( $value['value'] ); ?>"
+				    data-value_unit="<?php echo esc_attr( $value['unit'] ); ?>">
 		</li>
 		<?php
 	}
@@ -413,90 +350,26 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 	 * @param array $attributes
 	 */
 	protected function range_field_attributes( $attributes ) {
+		$attributes = Customify_Fonts_Global::standardizeRangeFieldAttributes( $attributes );
 
 		foreach ( $attributes as $attr => $value ) {
 			echo $attr . '="' . esc_attr( $value ) . '" ';
 		}
 	}
 
-	protected function standardize_range_attributes( $attributes ) {
-		if ( ! is_array( $attributes ) ) {
-			return array(
-				'min' => '',
-				'max' => '',
-				'step' => '',
-				'unit' => '',
-			);
-		}
-
-		// Make sure that if we have a numerical indexed array, we will convert it to an associative one.
-		if ( ! $this->isAssocArray( $attributes ) ) {
-			$defaults = array(
-				'min',
-				'max',
-				'step',
-				'unit',
-			);
-
-			$attributes = array_combine( $defaults, array_values( $attributes ) );
-		}
-
-		return $attributes;
-	}
-
-	protected function display_text_align_field( $current_font_value ) {
-		// If the `text-align` field entry is falsy, this means we don't want to use the field.
-		if ( empty( $this->fields['text-align'] ) ) {
+	protected function display_select_field( $field, $currentFontValue, $valueEntry, $label ) {
+		// If the field entry is falsy, this means we don't want to use the field.
+		if ( empty( $this->fields[ $field ] ) ) {
 			return;
 		}
 
-		$valid_values = Customify_Fonts_Global::instance()->get_valid_subfield_values( 'text_align', false );
-		$value = isset( $current_font_value->text_align ) && ( empty( $valid_values ) || in_array( $current_font_value->text_align, $valid_values ) ) ? $current_font_value->text_align : 'initial'; ?>
-		<li class="customify_text_align_wrapper customize-control font-options__option">
-			<label><?php esc_html_e( 'Text Align', 'customify' ); ?></label>
-			<select data-field="text_align">
+		$valid_values = Customify_Fonts_Global::instance()->get_valid_subfield_values( $valueEntry, false );
+		$value = isset( $currentFontValue->$valueEntry ) && ( empty( $valid_values ) || in_array( $currentFontValue->$valueEntry, $valid_values ) ) ? $currentFontValue->$valueEntry : reset( $valid_values ); ?>
+		<li class="customify_<?php echo $valueEntry ?>_wrapper customize-control font-options__option">
+			<label><?php echo $label ?></label>
+			<select data-value_entry="<?php echo esc_attr( $valueEntry ) ?>">
 				<?php
-				foreach ( Customify_Fonts_Global::instance()->get_valid_subfield_values( 'text_align', true ) as $option_value => $option_label ) { ?>
-					<option <?php $this->display_option_value( $option_value, $value ); ?>><?php echo $option_label; ?></option>
-				<?php } ?>
-			</select>
-		</li>
-		<?php
-	}
-
-	protected function display_text_transform_field( $current_font_value ) {
-		// If the `text-transform` field entry is falsy, this means we don't want to use the field.
-		if ( empty( $this->fields['text-transform'] ) ) {
-			return;
-		}
-
-		$valid_values = Customify_Fonts_Global::instance()->get_valid_subfield_values( 'text_transform', false );
-		$value = isset( $current_font_value->text_transform ) && ( empty( $valid_values ) || in_array( $current_font_value->text_transform, $valid_values ) ) ? $current_font_value->text_transform : 'none'; ?>
-		<li class="customify_text_transform_wrapper customize-control font-options__option">
-			<label><?php esc_html_e( 'Text Transform', 'customify' ); ?></label>
-			<select data-field="text_transform">
-				<?php
-				foreach ( Customify_Fonts_Global::instance()->get_valid_subfield_values( 'text_transform', true ) as $option_value => $option_label ) { ?>
-					<option <?php $this->display_option_value( $option_value, $value ); ?>><?php echo $option_label; ?></option>
-				<?php } ?>
-			</select>
-		</li>
-		<?php
-	}
-
-	protected function display_text_decoration_field( $current_font_value ) {
-		// If the `text-decoration` field entry is falsy, this means we don't want to use the field.
-		if ( empty( $this->fields['text-decoration'] ) ) {
-			return;
-		}
-
-		$valid_values = Customify_Fonts_Global::instance()->get_valid_subfield_values( 'text_decoration', false );
-		$value = isset( $current_font_value->text_decoration ) && ( empty( $valid_values ) || in_array( $current_font_value->text_decoration, $valid_values ) ) ? $current_font_value->text_decoration : 'none'; ?>
-		<li class="customify_text_decoration_wrapper customize-control font-options__option">
-			<label><?php esc_html_e( 'Text Decoration', 'customify' ); ?></label>
-			<select data-field="text_decoration">
-				<?php
-				foreach ( Customify_Fonts_Global::instance()->get_valid_subfield_values( 'text_decoration', true ) as $option_value => $option_label ) { ?>
+				foreach ( Customify_Fonts_Global::instance()->get_valid_subfield_values( $valueEntry, true ) as $option_value => $option_label ) { ?>
 					<option <?php $this->display_option_value( $option_value, $value ); ?>><?php echo $option_label; ?></option>
 				<?php } ?>
 			</select>
@@ -587,7 +460,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 			}
 		}
 
-		return Customify_Fonts_Global::standardizeFontValues( $defaults );
+		return Customify_Fonts_Global::standardizeFontValue( $defaults );
 	}
 
 	protected function get_CSS_ID() {

@@ -129,7 +129,7 @@ window.customify = window.customify || parent.customify || {};
         $number
           .attr('type', 'number')
           .attr('class', 'range-value')
-          .removeAttr('data-field')
+          .removeAttr('data-value_entry')
 
         if ($range.first().attr('id')) {
           $number.attr('id', $range.first().attr('id') + '_number')

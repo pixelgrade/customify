@@ -344,22 +344,22 @@ window.customify = window.customify || parent.customify || {};
       updatingValue[settingID] = true
 
       const optionsList = wrapper.find('.font-options__options-list'),
-        inputs = optionsList.find('[data-field]'),
+        inputs = optionsList.find('[data-value_entry]'),
         setting = api(settingID),
         oldValue = setting(),
         newFontData = _.isEmpty(oldValue) ? {} : $.extend(true, {}, oldValue)
 
       inputs.each(function (key, input) {
         const $input = $(input)
-        const field = $input.data('field')
+        const valueEntry = $input.data('value_entry')
         let value = $input.val()
 
         // We only pick up subfields values that have been touched by the user, that are enabled (visible) or values that are missing in the oldValue.
-        if (_.isUndefined(field) || $input.data('disabled') || (!$input.data('touched') && !_.isUndefined(newFontData[field]))) {
+        if (_.isUndefined(valueEntry) || $input.data('disabled') || (!$input.data('touched') && !_.isUndefined(newFontData[valueEntry]))) {
           return
         }
 
-        if ('font_family' === field) {
+        if ('font_family' === valueEntry) {
           // Get the src of the selected option.
           const src = $(input.options[input.selectedIndex]).data('src')
 
@@ -371,14 +371,14 @@ window.customify = window.customify || parent.customify || {};
         }
 
         if (!_.isUndefined(value) && !_.isNull(value) && value !== '') {
-          if (_.includes(['letter_spacing', 'line_height', 'font_size'], field)) {
+          if (_.includes(['letter_spacing', 'line_height', 'font_size'], valueEntry)) {
             // Standardize the value.
             value = standardizeNumericalValue(value, input, false)
           }
 
-          newFontData[field] = value
+          newFontData[valueEntry] = value
         } else {
-          delete newFontData[field]
+          delete newFontData[valueEntry]
         }
       })
 
@@ -430,20 +430,20 @@ window.customify = window.customify || parent.customify || {};
       loadingValue[settingID] = true
 
       const optionsList = $(wrapper).find('.font-options__options-list'),
-        inputs = optionsList.find('[data-field]')
+        inputs = optionsList.find('[data-value_entry]')
 
       inputs.each(function (key, input) {
         const $input = $(input)
-        const field = $input.data('field')
+        const valueEntry = $input.data('value_entry')
 
         // In the case of select2, only the original selects have the data field, thus excluding select2 created select DOM elements
-        if (typeof field === 'undefined' || field === '' || typeof value[field] === 'undefined') {
+        if (typeof valueEntry === 'undefined' || valueEntry === '' || typeof value[valueEntry] === 'undefined') {
           return
         }
 
         // We will do this only for numerical sub-fields.
-        if (_.includes(['letter_spacing', 'line_height', 'font_size'], field)) {
-          const subfieldValue = standardizeNumericalValue(value[field], input)
+        if (_.includes(['letter_spacing', 'line_height', 'font_size'], valueEntry)) {
+          const subfieldValue = standardizeNumericalValue(value[valueEntry], input)
 
           // Make sure that the unit and value_unit attributes are in place.
           if (subfieldValue.unit !== '') {
@@ -480,7 +480,7 @@ window.customify = window.customify || parent.customify || {};
 
           $input.val(subfieldValue.value)
         } else {
-          $input.val(value[field])
+          $input.val(value[valueEntry])
         }
 
         // Mark this input as not touched by the user.

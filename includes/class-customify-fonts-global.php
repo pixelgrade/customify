@@ -45,6 +45,17 @@ class Customify_Fonts_Global {
 	public static $floatPrecision = 2;
 
 	/**
+	 * The font subfields that behave as ranges.
+	 * @since    2.7.0
+	 * @var      array
+	 */
+	public static $rangeFields = [
+		'font-size',
+		'line-height',
+		'letter-spacing',
+	];
+
+	/**
 	 * Constructor.
 	 *
 	 * @since 2.7.0
@@ -175,7 +186,7 @@ class Customify_Fonts_Global {
 		if ( isset( $item['type'] ) && 'font' === $item['type'] ) {
 			// We want to standardize the default value, if present.
 			if ( ! empty( $item['default'] ) ) {
-				$item['default'] = self::standardizeFontValues( $item['default'] );
+				$item['default'] = self::standardizeFontValue( $item['default'] );
 			}
 
 			// We want to standardize the selector(s), if present.
@@ -221,6 +232,13 @@ class Customify_Fonts_Global {
 
 			// If we have received a fields configuration, merge it with the default.
 			$subfieldsConfig = wp_parse_args( $item['fields'], $subfieldsConfig );
+
+			// Standardize the fields that are ranges.
+			foreach ( self::$rangeFields as $rangeField ) {
+				if ( isset( $subfieldsConfig[ $rangeField ] ) ) {
+					$subfieldsConfig[ $rangeField ] = self::standardizeRangeFieldAttributes( $subfieldsConfig[ $rangeField ] );
+				}
+			}
 
 			$item['fields'] = $subfieldsConfig;
 
@@ -506,7 +524,7 @@ class Customify_Fonts_Global {
 				continue;
 			}
 
-			$value = $this->standardizeFontValues( self::maybeDecodeValue( $font['value'] ) );
+			$value = $this->standardizeFontValue( self::maybeDecodeValue( $font['value'] ) );
 
 			// In case the value is empty, try a default value if the $font['value'] is actually the font family.
 			if ( empty( $value ) && is_string( $font['value'] ) ) {
@@ -659,42 +677,81 @@ class Customify_Fonts_Global {
 	/**
 	 * Get the CSS rules for a given font (with `selector` and `value` sub-entries at least).
 	 *
-	 * @param array $font
+	 * @param array $fontConfig
 	 *
 	 * @return string The CSS rules.
 	 */
-	protected function get_font_style( $font ) {
+	protected function get_font_style( $fontConfig ) {
 
-		if ( ! isset( $font['selector'] ) || ! isset( $font['value'] ) ) {
+		if ( ! isset( $fontConfig['selector'] ) || ! isset( $fontConfig['value'] ) ) {
 			return '';
 		}
 
-		$value = $this->standardizeFontValues( self::maybeDecodeValue( $font['value'] ) );
+		$value = $this->standardizeFontValue( self::maybeDecodeValue( $fontConfig['value'] ) );
 
 		// In case the value is empty, try a default value if the $font['value'] is actually the font family.
-		if ( empty( $value ) && is_string( $font['value'] ) ) {
-			$value = $this->get_font_defaults_value( str_replace( '"', '', $font['value'] ) );
+		if ( empty( $value ) && is_string( $fontConfig['value'] ) ) {
+			$value = $this->get_font_defaults_value( str_replace( '"', '', $fontConfig['value'] ) );
 		}
 
-		// In case we receive a callback, its output will be the final result.
-		if ( isset( $font['callback'] ) && is_callable( $font['callback'] ) ) {
-			return call_user_func( $font['callback'], $value, $font );
-		}
-
+		$cssValue = $this->getCSSValue( $value, $fontConfig );
 		// Make sure we are dealing with a selector as a list of individual selector,
 		// maybe some of them having special details like supported properties.
-		$css_selectors = apply_filters( 'customify_font_css_selector', self::standardizeFontSelector( $font['selector'] ), $font );
-		if ( empty( $css_selectors ) ) {
+		$cssSelectors = apply_filters( 'customify_font_css_selector', self::standardizeFontSelector( $fontConfig['selector'] ), $fontConfig );
+
+		// In case we receive a callback, its output will be the final result.
+		if ( isset( $fontConfig['callback'] ) && is_callable( $fontConfig['callback'] ) ) {
+			// The callbacks expect a string selector right now, not a standardized list.
+			// @todo Maybe migrate all callbacks to the new standardized data and remove all this.
+			$plainSelectors = [];
+			foreach ( $cssSelectors as $selector => $details ) {
+				$plainSelectors[] = $selector;
+			}
+			$fontConfig['selector'] = join( ', ', $plainSelectors );
+
+			// Also, "kill" all fields unit since we pass final CSS values.
+			// Except font-size that can be used in Typeline calculations,
+			// and letter-spacing that always enforces em if given an empty unit (we will leave it's unit in the field config).
+			if ( ! empty( $cssValue['font-size'] ) ) {
+				$font_size = self::standardizeNumericalValue( $value['font_size'], 'font-size', $fontConfig );
+				$cssValue['font-size'] = $font_size['value'];
+			}
+			if ( ! empty( $cssValue['letter-spacing'] ) ) {
+				$letter_spacing = self::standardizeNumericalValue( $value['letter_spacing'], 'letter-spacing', $fontConfig );
+				$cssValue['letter-spacing'] = $letter_spacing['value'];
+			}
+			foreach ( $fontConfig['fields'] as $fieldKey => $fieldValue ) {
+				if ( isset( $fieldValue['unit'] ) && $fieldKey !== 'font-size' && $fieldKey !== 'letter-spacing' ) {
+					$fontConfig['fields'][ $fieldKey ]['unit'] = false;
+				}
+			}
+
+			// font-variant
+
+			// Callbacks want the value keys with underscores, not dashes.
+			// We will provide them in both versions for a smoother transition.
+			foreach ( $cssValue as $property => $propertyValue ) {
+				$new_key = $property;
+				if ( strpos( $new_key, '-' ) !== false ) {
+					$new_key = str_replace( '-', '_', $new_key );
+					$cssValue[ $new_key ] = $propertyValue;
+				}
+			}
+
+			return call_user_func( $fontConfig['callback'], $cssValue, $fontConfig );
+		}
+
+		if ( empty( $cssSelectors ) ) {
 			return '';
 		}
 
-		$properties_prefix = '';
-		if ( ! empty ( $font['properties_prefix'] ) ) {
-			$properties_prefix = $font['properties_prefix'];
+		$propertiesPrefix = '';
+		if ( ! empty ( $fontConfig['properties_prefix'] ) ) {
+			$propertiesPrefix = $fontConfig['properties_prefix'];
 		}
 
 		// The general CSS allowed properties.
-		$subFieldsCSSAllowedProperties = $this->extractAllowedCSSPropertiesFromFontFields( $font['fields'] );
+		$subFieldsCSSAllowedProperties = $this->extractAllowedCSSPropertiesFromFontFields( $fontConfig['fields'] );
 
 		// Since we might have simple CSS selectors and complex ones (with special details),
 		// for cleanliness we will group the simple ones under a single CSS rule,
@@ -702,7 +759,7 @@ class Customify_Fonts_Global {
 		// Right now, for complex CSS selectors we are only interested in the `properties` sub-entry.
 		$simple_css_selectors = [];
 		$complex_css_selectors = [];
-		foreach ( $css_selectors as $selector => $details ) {
+		foreach ( $cssSelectors as $selector => $details ) {
 			if ( empty( $details['properties'] ) ) {
 				// This is a simple selector.
 				$simple_css_selectors[] = $selector;
@@ -714,42 +771,40 @@ class Customify_Fonts_Global {
 		$output = '';
 
 		if ( ! empty( $simple_css_selectors ) ) {
-			ob_start();
-
-			echo "\n" . join(', ', $simple_css_selectors ) . " {" . "\n";
-			$this->output_font_style_properties( $font, $value, $subFieldsCSSAllowedProperties, $properties_prefix );
-			echo "}\n";
-
-			$output .= ob_get_clean();
+			$output .= "\n" . join(', ', $simple_css_selectors ) . " {" . "\n";
+			$output .= $this->getCSSProperties( $cssValue, $subFieldsCSSAllowedProperties, $propertiesPrefix );
+			$output .= "}\n";
 		}
 
 		if ( ! empty( $complex_css_selectors ) ) {
 			foreach ( $complex_css_selectors as $selector => $details ) {
-				ob_start();
-
-				echo "\n" . $selector . " {" . "\n";
-				$this->output_font_style_properties( $font, $value, $details['properties'], $properties_prefix );
-				echo "}\n";
-
-				$output .= ob_get_clean();
+				$output .= "\n" . $selector . " {" . "\n";
+				$output .= $this->getCSSProperties( $cssValue, $details['properties'], $propertiesPrefix );
+				$output .= "}\n";
 			}
 		}
 
 		return $output;
 	}
 
-	protected function output_font_style_properties( $font, $value, $properties = false, $properties_prefix = '') {
+	protected function getCSSValue( $value, $font ) {
+		$cssValue = [];
+
+		if ( ! empty( $value['font_family'] ) && ! self::isFalsy( $value['font_family'] ) ) {
+			$cssValue['font-family'] = $value['font_family'];
+		}
+
 		// If this is a custom font (like from our plugin Fonto) with individual styles & weights - i.e. the font-family says it all
 		// We need to "force" the font-weight and font-style
 		if ( ! empty( $value['type'] ) && 'custom_individual' == $value['type'] ) {
-			$value['font_weight'] = '400 !important';
-			$value['font_style']  = 'normal !important';
+			$cssValue['font_weight'] = '400 !important';
+			$cssValue['font_style']  = 'normal !important';
 		}
 
 		// Handle the case where we have the font_family in the font_variant (usually this means a custom font from our Fonto plugin)
 		if ( ! empty( $value['font_variant'] ) && is_array( $value['font_variant'] ) ) {
 			// Standardize as value
-			$complexVariant = self::standardizeFontValues( $value['font_variant'] );
+			$complexVariant = self::standardizeFontValue( $value['font_variant'] );
 			// Merge with the received value.
 			$value = array_merge( $value, $complexVariant );
 			// empty the font_variant going forward.
@@ -757,7 +812,7 @@ class Customify_Fonts_Global {
 		}
 
 		// Split the font_variant into font_weight and font_style, it that is the case.
-		if ( ! empty( $value['font_variant'] ) ) {
+		if ( ! empty( $value['font_variant'] ) && ! self::isFalsy( $value['font_variant'] ) ) {
 			$font_variant = strtolower( $value['font_variant'] );
 			// A little bit of sanity check.
 			if ( $font_variant === 'regular' ) {
@@ -765,86 +820,90 @@ class Customify_Fonts_Global {
 			}
 
 			if ( strpos( $font_variant, 'italic' ) !== false ) {
-				$font_variant = str_replace( 'italic', '', $font_variant );
-				$value['font_style'] = 'italic';
+				$font_variant        = str_replace( 'italic', '', $font_variant );
+				$cssValue['font_style'] = 'italic';
 			} elseif ( strpos( $font_variant, 'oblique' ) !== false ) {
-				$font_variant = str_replace( 'oblique', '', $font_variant );
-				$value['font_style'] = 'oblique';
+				$font_variant        = str_replace( 'oblique', '', $font_variant );
+				$cssValue['font_style'] = 'oblique';
 			}
 
 			// If we have a remainder like '400', use it as font weight.
 			if ( ! empty( $font_variant ) ) {
-				$value['font_weight'] = $font_variant;
+				$cssValue['font_weight'] = $font_variant;
 			}
 		}
 
-		// Now we are done with the standardization and can get going.
-
-		if ( ! empty( $value['font_family'] ) && $this->isCSSPropertyAllowed( 'font-family', $properties ) ) {
-			$this->display_property( 'font-family', $value['font_family'], '', $properties_prefix );
-		}
-
-		if ( ! empty( $value['font_weight'] ) && $this->isCSSPropertyAllowed( 'font-weight', $properties ) ) {
-			$this->display_property( 'font-weight', $value['font_weight'], '', $properties_prefix );
-		}
-
-		if ( ! empty( $value['font_style'] ) && $this->isCSSPropertyAllowed( 'font-style', $properties ) ) {
-			$this->display_property( 'font-style', $value['font_style'], '', $properties_prefix );
-		}
-
-		if ( ! empty( $value['font_size'] ) && $this->isCSSPropertyAllowed( 'font-size', $properties ) ) {
+		if ( ! empty( $value['font_size'] ) && ! self::isFalsy( $value['font_size'] ) ) {
 			$font_size = self::standardizeNumericalValue( $value['font_size'], 'font-size', $font );
 			if ( false !== $font_size['value'] ) {
+				$cssValue['font-size'] = $font_size['value'];
 
 				// If we use ems or rems, and the value is larger than 9, then something must be wrong; we will use pixels.
 				if ( $font_size['value'] >= 9 && in_array( $font_size['unit'], array( 'em', 'rem' ) ) ) {
 					$font_size['unit'] = 'px';
 				}
 
-				$this->display_property( 'font-size', $font_size['value'], $font_size['unit'], $properties_prefix );
+				$cssValue['font-size'] .= $font_size['unit'];
 			}
 		}
 
-		if ( ! empty( $value['line_height'] ) && $this->isCSSPropertyAllowed( 'line-height', $properties ) ) {
-
-			$line_height = self::standardizeNumericalValue( $value['line_height'], 'line-height', $font );
-			if ( false !== $line_height['value'] ) {
-				$this->display_property( 'line-height', $line_height['value'], $line_height['unit'], $properties_prefix );
-			}
-		}
-
-		if ( isset( $value['letter_spacing'] ) && false !== $value['letter_spacing'] && $this->isCSSPropertyAllowed( 'letter-spacing', $properties ) ) {
-
+		if ( ! empty( $value['letter_spacing'] ) && ! self::isFalsy( $value['letter_spacing'] ) ) {
 			$letter_spacing = self::standardizeNumericalValue( $value['letter_spacing'], 'letter-spacing', $font );
+
 			if ( false !== $letter_spacing['value'] ) {
-				$this->display_property( 'letter-spacing', $letter_spacing['value'], $letter_spacing['unit'], $properties_prefix );
+				$cssValue['letter-spacing'] = $letter_spacing['value'] . $letter_spacing['unit'];
 			}
 		}
 
-		if ( ! empty( $value['text_align'] ) && $this->isCSSPropertyAllowed( 'text-align', $properties ) ) {
-			$this->display_property( 'text-align', $value['text_align'], '', $properties_prefix );
+		if ( ! empty( $value['line_height'] ) && ! self::isFalsy( $value['line_height'] ) ) {
+			$line_height = self::standardizeNumericalValue( $value['line_height'], 'line-height', $font );
+
+			if ( false !== $line_height['value'] ) {
+				$cssValue['line-height'] = $line_height['value'] . $line_height['unit'];
+			}
 		}
 
-		if ( ! empty( $value['text_transform'] ) && $this->isCSSPropertyAllowed( 'text-transform', $properties ) ) {
-			$this->display_property( 'text-transform', $value['text_transform'], '', $properties_prefix );
+		if ( ! empty( $value['text_align'] ) && ! self::isFalsy( $value['text_align'] ) ) {
+			$cssValue['text-align'] = $value['text_align'];
 		}
 
-		if ( ! empty( $value['text_decoration'] ) && $this->isCSSPropertyAllowed( 'text-decoration', $properties ) ) {
-			$this->display_property( 'text-decoration', $value['text_decoration'], '', $properties_prefix );
+		if ( ! empty( $value['text_transform'] ) && ! self::isFalsy( $value['text_transform'] ) ) {
+			$cssValue['text-transform'] = $value['text_transform'];
 		}
+
+		if ( ! empty( $value['text_decoration'] ) && ! self::isFalsy( $value['text_decoration'] ) ) {
+			$cssValue['text-decoration'] = $value['text_decoration'];
+		}
+
+		return $cssValue;
 	}
 
-	protected function display_property( $property, $value, $unit = false, $prefix = '' ) {
-		// We don't want to output empty CSS rules.
-		if ( '' === $value ) {
-			return;
+	protected function getCSSProperties( $cssValue, $allowedProperties = false, $propertiesPrefix = '') {
+		$output = '';
+
+		if ( empty( $cssValue ) ) {
+			return $output;
 		}
 
-		if ( false === $unit ) {
-			$unit = '';
+		foreach ( $cssValue as $property => $propertyValue ) {
+			// We don't want to output empty CSS rules.
+			if ( self::isFalsy( $propertyValue ) ) {
+				continue;
+			}
+
+			// If the property is not allowed, skip it.
+			if ( ! $this->isCSSPropertyAllowed( $property, $allowedProperties ) ) {
+				continue;
+            }
+
+			$output .= $propertiesPrefix . $property . ": " . $propertyValue . ";\n";
 		}
 
-		echo $prefix . $property . ": " . $value . $unit . ";\n";
+		return $output;
+	}
+
+	public static function isFalsy( $value ) {
+		return in_array( $value, [ '', 'false', false, ], true );
 	}
 
 	public function enqueue_frontend_scripts() {
@@ -1156,82 +1215,88 @@ if (typeof WebFont !== 'undefined') {
 	}
 
 	/**
-	 * Massage an array containing values (values for subfields) of a `font` field type, into one consistent structure.
+	 * Massage an array containing the value (values for subfields) of a `font` field type, into one consistent structure.
 	 *
 	 * Handle legacy entries.
 	 *
-	 * @param array $values
+	 * @param array $value
 	 *
 	 * @return array
 	 */
-	public static function standardizeFontValues( $values ) {
-		if ( empty( $values ) ) {
+	public static function standardizeFontValue( $value ) {
+		if ( empty( $value ) ) {
 			return array();
 		}
 
 		// If we are given a string, we will consider it a font-family definition
-		if ( is_string( $values ) ) {
-			$values = array( $values );
+		if ( is_string( $value ) ) {
+			$value = array( $value );
+		}
+
+		// The value may be a stdClass object.
+		if ( is_object( $value ) ) {
+			// This is a sure way to get multi-dimensional objects as array (converts deep).
+			$value = json_decode(json_encode( $value ), true);
 		}
 
 		// If by this time we don't have an array, return an empty value.
-		if ( ! is_array( $values ) ) {
+		if ( ! is_array( $value ) ) {
 			return array();
 		}
 
 		// Handle special logic for when the $values array is not an associative array.
-		if ( ! self::isAssocArray( $values ) ) {
-			$values = self::standardizeNonAssociativeFontValues( $values );
+		if ( ! self::isAssocArray( $value ) ) {
+			$value = self::standardizeNonAssociativeFontValues( $value );
 		}
 
-		foreach ( $values as $key => $value ) {
-			$new_key = $key;
+		foreach ( $value as $entry => $entryValue ) {
+			$newEntry = $entry;
 			// First, all entries keys should use underscore not dash.
-			if ( strpos( $new_key, '-' ) !== false ) {
-				$new_key = str_replace( '-', '_', $new_key );
-				$values[ $new_key ] = $value;
-				unset( $values[ $key ] );
+			if ( strpos( $newEntry, '-' ) !== false ) {
+				$newEntry           = str_replace( '-', '_', $newEntry );
+				$value[ $newEntry ] = $entryValue;
+				unset( $value[ $entry ] );
 			}
 
-			if ( 'font_family' === $new_key ) {
+			if ( 'font_family' === $newEntry ) {
 				// The font family may be a comma separated list like "Roboto, sans"
 				// We will keep only the first item.
-				if ( false !== strpos( $value, ',' ) ) {
-					$value = trim( substr( $value, 0, strpos( $value, ',' ) ) );
+				if ( false !== strpos( $entryValue, ',' ) ) {
+					$entryValue = trim( substr( $entryValue, 0, strpos( $entryValue, ',' ) ) );
 				}
 
 				// Make sure that the font family is free from " or '
-				$value = trim( $value, "\"\'" );
+				$entryValue = trim( $entryValue, "\"\'" );
 
-				$values[ $new_key ] = $value;
+				$value[ $newEntry ] = $entryValue;
 			}
 
 			// Standardize numerical fields.
-			if ( in_array( $new_key, ['font_size', 'line_height', 'letter_spacing'] ) ) {
-				$values[ $new_key ] = self::standardizeNumericalValue( $value );
+			if ( in_array( $newEntry, ['font_size', 'line_height', 'letter_spacing'] ) ) {
+				$value[ $newEntry ] = self::standardizeNumericalValue( $entryValue );
 			}
 		}
 
 		// We no longer use the `selected_variants` key, but the proper one: `font_variant`.
-		if ( isset( $values['selected_variants'] ) && ! isset( $values['font_variant'] ) ) {
-			$values['font_variant'] = $values['selected_variants'];
-			unset( $values['selected_variants'] );
+		if ( isset( $value['selected_variants'] ) && ! isset( $value['font_variant'] ) ) {
+			$value['font_variant'] = $value['selected_variants'];
+			unset( $value['selected_variants'] );
 		}
 
 		// Make sure that we have a single value in font_variant.
-		if ( ! empty( $values['font_variant'] ) && is_array( $values['font_variant'] ) && ! self::isAssocArray( $values['font_variant'] ) ) {
-			$values['font_variant'] = reset( $values['font_variant'] );
+		if ( ! empty( $value['font_variant'] ) && is_array( $value['font_variant'] ) && ! self::isAssocArray( $value['font_variant'] ) ) {
+			$value['font_variant'] = reset( $value['font_variant'] );
 		}
 
 		// We no longer hold variants and subsets in the value.
-		if ( isset( $values['variants'] ) ) {
-			unset( $values['variants'] );
+		if ( isset( $value['variants'] ) ) {
+			unset( $value['variants'] );
 		}
-		if ( isset( $values['subsets'] ) ) {
-			unset( $values['subsets'] );
+		if ( isset( $value['subsets'] ) ) {
+			unset( $value['subsets'] );
 		}
 
-		return $values;
+		return $value;
 	}
 
 	/**
@@ -1276,7 +1341,7 @@ if (typeof WebFont !== 'undefined') {
 			'unit' => false,
 		);
 
-		if ( in_array( $value, ['', 'false', false], true ) ) {
+		if ( self::isFalsy( $value ) ) {
 			return $standard_value;
 		}
 
@@ -1316,11 +1381,36 @@ if (typeof WebFont !== 'undefined') {
 		}
 
 		// Make sure that we convert all falsy unit values to the boolean false.
-		if ( in_array( $standard_value['unit'], ['', 'false'], true ) ) {
+		if ( self::isFalsy( $standard_value['unit'] ) ) {
 			$standard_value['unit'] = false;
 		}
 
 		return $standard_value;
+	}
+
+	public static function standardizeRangeFieldAttributes( $attributes ) {
+		if ( ! is_array( $attributes ) ) {
+			return array(
+				'min' => '',
+				'max' => '',
+				'step' => '',
+				'unit' => '',
+			);
+		}
+
+		// Make sure that if we have a numerical indexed array, we will convert it to an associative one.
+		if ( ! self::isAssocArray( $attributes ) ) {
+			$defaults = array(
+				'min',
+				'max',
+				'step',
+				'unit',
+			);
+
+			$attributes = array_combine( $defaults, array_values( $attributes ) );
+		}
+
+		return $attributes;
 	}
 
 	/**
@@ -1433,12 +1523,12 @@ if (typeof WebFont !== 'undefined') {
 
 		if ( isset( $font['fields'][ $field ]['unit'] ) ) {
 			// Make sure that we convert all falsy unit values to the boolean false.
-			return in_array( $font['fields'][ $field ]['unit'], ['', 'false'], true ) ? false : $font['fields'][ $field ]['unit'];
+			return self::isFalsy( $font['fields'][ $field ]['unit'] ) ? false : $font['fields'][ $field ]['unit'];
 		}
 
 		if ( isset( $font['fields'][ $field ][3] ) ) {
 			// Make sure that we convert all falsy unit values to the boolean false.
-			return in_array( $font['fields'][ $field ][3], ['', 'false'], true ) ? false : $font['fields'][ $field ][3];
+			return self::isFalsy( $font['fields'][ $field ][3] ) ? false : $font['fields'][ $field ][3];
 		}
 
 		return 'px';

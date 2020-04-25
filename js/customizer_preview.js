@@ -45,14 +45,14 @@
               return
             }
 
-            const cssValues = getFontFieldCSSValues(this.id, newValue)
-            if (_.isEmpty(cssValues)) {
+            const cssValue = getFontFieldCSSValue(this.id, newValue)
+            if (_.isEmpty(cssValue)) {
               // Empty the style element.
               $styleElement.html('')
               return
             }
 
-            $styleElement.html(getFontFieldCSSCode(this.id, cssValues, propertiesPrefix))
+            $styleElement.html(getFontFieldCSSCode(this.id, cssValue, propertiesPrefix, newValue))
           })
         })
 
@@ -121,24 +121,24 @@
      * HELPERS
      **/
 
-    const getFontFieldCSSValues = function (ID, values) {
+    const getFontFieldCSSValue = function (ID, value) {
 
-      const store = {}
+      const CSSValue = {}
 
-      if (typeof values.font_family !== 'undefined' && !_.includes(['','false',false], values.font_family)) {
-        store['font-family'] = values.font_family
+      if (typeof value.font_family !== 'undefined' && !_.includes(['','false',false], value.font_family)) {
+        CSSValue['font-family'] = value.font_family
       }
 
-      if (typeof values.font_variant !== 'undefined' && !_.includes(['','false',false], values.font_variant)) {
-        let variant = values.font_variant
+      if (typeof value.font_variant !== 'undefined' && !_.includes(['','false',false], value.font_variant)) {
+        let variant = value.font_variant
 
         if (_.isString(variant)) {
           // We may have a style in the variant; attempt to split.
           if (variant.indexOf('italic') !== -1) {
-            store['font-style'] = 'italic'
+            CSSValue['font-style'] = 'italic'
             variant = variant.replace('italic', '')
           } else if (variant.indexOf('oblique') !== -1) {
-            store['font-style'] = 'oblique'
+            CSSValue['font-style'] = 'oblique'
             variant = variant.replace('oblique', '')
           }
 
@@ -148,24 +148,24 @@
               variant = 'normal'
             }
 
-            store['font-weight'] = variant
+            CSSValue['font-weight'] = variant
           }
         } else if (_.isNumeric(variant)) {
-          store['font-weight'] = variant
+          CSSValue['font-weight'] = variant
         }
       }
 
-      if (typeof values.font_size !== 'undefined' && !_.includes(['','false',false], values.font_size)) {
+      if (typeof value.font_size !== 'undefined' && !_.includes(['','false',false], value.font_size)) {
         let fontSizeUnit = false
 
-        store['font-size'] = values.font_size
+        CSSValue['font-size'] = value.font_size
         // If the value already contains a unit (is not numeric), go with that.
-        if (isNaN(values.font_size)) {
+        if (isNaN(value.font_size)) {
           // If we have a standardized value field (as array), use that.
-          if (typeof values.font_size.value !== 'undefined') {
-            store['font-size'] = values.font_size.value
-            if (typeof values.font_size.unit !== 'undefined') {
-              fontSizeUnit = values.font_size.unit
+          if (typeof value.font_size.value !== 'undefined') {
+            CSSValue['font-size'] = value.font_size.value
+            if (typeof value.font_size.unit !== 'undefined') {
+              fontSizeUnit = value.font_size.unit
             }
           } else {
             fontSizeUnit = getFieldUnit(ID, 'font-size')
@@ -175,21 +175,21 @@
         }
 
         if (false !== fontSizeUnit) {
-          store['font-size'] += fontSizeUnit
+          CSSValue['font-size'] += fontSizeUnit
         }
       }
 
-      if (typeof values.letter_spacing !== 'undefined' && !_.includes(['','false',false], values.letter_spacing)) {
+      if (typeof value.letter_spacing !== 'undefined' && !_.includes(['','false',false], value.letter_spacing)) {
         let letterSpacingUnit = false
 
-        store['letter-spacing'] = values.letter_spacing
+        CSSValue['letter-spacing'] = value.letter_spacing
         // If the value already contains a unit (is not numeric), go with that.
-        if (isNaN(values.letter_spacing)) {
+        if (isNaN(value.letter_spacing)) {
           // If we have a standardized value field (as array), use that.
-          if (typeof values.letter_spacing.value !== 'undefined') {
-            store['letter-spacing'] = values.letter_spacing.value
-            if (typeof values.letter_spacing.unit !== 'undefined') {
-              letterSpacingUnit = values.letter_spacing.unit
+          if (typeof value.letter_spacing.value !== 'undefined') {
+            CSSValue['letter-spacing'] = value.letter_spacing.value
+            if (typeof value.letter_spacing.unit !== 'undefined') {
+              letterSpacingUnit = value.letter_spacing.unit
             }
           } else {
             letterSpacingUnit = getFieldUnit(ID, 'letter-spacing')
@@ -199,21 +199,21 @@
         }
 
         if (false !== letterSpacingUnit) {
-          store['letter-spacing'] += letterSpacingUnit
+          CSSValue['letter-spacing'] += letterSpacingUnit
         }
       }
 
-      if (typeof values.line_height !== 'undefined' && !_.includes(['','false',false], values.line_height)) {
+      if (typeof value.line_height !== 'undefined' && !_.includes(['','false',false], value.line_height)) {
         let lineHeightUnit = false
 
-        store['line-height'] = values.line_height
+        CSSValue['line-height'] = value.line_height
         // If the value already contains a unit (is not numeric), go with that.
-        if (isNaN(values.line_height)) {
+        if (isNaN(value.line_height)) {
           // If we have a standardized value field (as array), use that.
-          if (typeof values.line_height.value !== 'undefined') {
-            store['line-height'] = values.line_height.value
-            if (typeof values.line_height.unit !== 'undefined') {
-              lineHeightUnit = values.line_height.unit
+          if (typeof value.line_height.value !== 'undefined') {
+            CSSValue['line-height'] = value.line_height.value
+            if (typeof value.line_height.unit !== 'undefined') {
+              lineHeightUnit = value.line_height.unit
             }
           } else {
             lineHeightUnit = getFieldUnit(ID, 'line-height')
@@ -223,39 +223,64 @@
         }
 
         if (false !== lineHeightUnit) {
-          store['line-height'] += lineHeightUnit
+          CSSValue['line-height'] += lineHeightUnit
         }
       }
 
-      if (typeof values.text_align !== 'undefined' && !_.includes(['','false',false], values.text_align)) {
-        store['text-align'] = values.text_align
+      if (typeof value.text_align !== 'undefined' && !_.includes(['','false',false], value.text_align)) {
+        CSSValue['text-align'] = value.text_align
       }
 
-      if (typeof values.text_transform !== 'undefined' && !_.includes(['','false',false], values.text_transform)) {
-        store['text-transform'] = values.text_transform
-      }
-      if (typeof values.text_decoration !== 'undefined' && !_.includes(['','false',false], values.text_decoration)) {
-        store['text-decoration'] = values.text_decoration
+      if (typeof value.text_transform !== 'undefined' && !_.includes(['','false',false], value.text_transform)) {
+        CSSValue['text-transform'] = value.text_transform
       }
 
-      return store
+      if (typeof value.text_decoration !== 'undefined' && !_.includes(['','false',false], value.text_decoration)) {
+        CSSValue['text-decoration'] = value.text_decoration
+      }
+
+      return CSSValue
     }
 
     // Mirror logic of server-side Customify_Fonts_Global::get_font_style()
-    const getFontFieldCSSCode = function (ID, values, prefix) {
-      const field = customify.config.settings[ID]
+    const getFontFieldCSSCode = function (ID, cssValue, prefix, value) {
+      const fontConfig = customify.config.settings[ID]
       let output = ''
 
-      if (typeof window !== 'undefined' && typeof field.callback !== 'undefined' && typeof window[field.callback] === 'function') {
-        return window[field.callback](values, field)
+      if (typeof window !== 'undefined' && typeof fontConfig.callback !== 'undefined' && typeof window[fontConfig.callback] === 'function') {
+        // The callbacks expect a string selector right now, not a standardized list.
+        // @todo Maybe migrate all callbacks to the new standardized data and remove all this.
+        const plainSelectors = []
+        _.each(fontConfig.selector, function (details, selector) {
+          plainSelectors.push(selector)
+        })
+        const adjustedFontConfig = $.extend(true,{},fontConfig)
+        adjustedFontConfig.selector = plainSelectors.join(', ')
+
+        // Also, "kill" all fields unit since we pass final CSS values.
+        // @todo For some reason, the client-side Typeline cbs are not consistent and expect the font-size value with unit.
+        _.each(adjustedFontConfig['fields'], function(fieldValue, fieldKey) {
+          if (typeof fieldValue.unit !== 'undefined') {
+            adjustedFontConfig['fields'][fieldKey]['unit'] = false;
+          }
+        })
+
+        // Callbacks want the value keys with underscores, not dashes.
+        // We will provide them in both versions for a smoother transition.
+        _.each(cssValue, function (propertyValue, property) {
+          const newKey = property.replace(regexForMultipleReplace, '_')
+          cssValue[newKey] = propertyValue
+        })
+
+        return window[fontConfig.callback](cssValue, adjustedFontConfig)
       }
 
-      if (typeof field.selector === 'undefined' || _.isEmpty(field.selector) || _.isEmpty(values)) {
+      if (typeof fontConfig.selector === 'undefined' || _.isEmpty(fontConfig.selector) || _.isEmpty(cssValue)) {
         return output
       }
 
       // The general CSS allowed properties.
-      const subFieldsCSSAllowedProperties = extractAllowedCSSPropertiesFromFontFields(field['fields'])
+      const subFieldsCSSAllowedProperties = extractAllowedCSSPropertiesFromFontFields(fontConfig['fields'])
 
       // The selector is standardized to a list of simple string selectors, or a list of complex selectors with details.
       // In either case, the actual selector is in the key, and the value is an array (possibly empty).
@@ -267,7 +292,7 @@
       const simpleCSSSelectors = []
       const complexCSSSelectors = {}
 
-      _.each(field.selector, function (details, selector) {
+      _.each(fontConfig.selector, function (details, selector) {
         if (_.isEmpty(details.properties)) {
           // This is a simple selector.
           simpleCSSSelectors.push(selector)
@@ -278,14 +303,14 @@
 
       if (!_.isEmpty(simpleCSSSelectors)) {
         output += '\n' + simpleCSSSelectors.join(', ') + ' {\n'
-        output += getFontFieldCSSProperties(values, subFieldsCSSAllowedProperties, prefix)
+        output += getFontFieldCSSProperties(cssValue, subFieldsCSSAllowedProperties, prefix)
         output += '}\n'
       }
 
       if (!_.isEmpty(complexCSSSelectors)) {
         _.each(complexCSSSelectors, function (details, selector) {
           output += '\n' + selector + ' {\n'
-          output += getFontFieldCSSProperties(values, details.properties, prefix)
+          output += getFontFieldCSSProperties(cssValue, details.properties, prefix)
           output += '}\n'
         })
       }
@@ -293,12 +318,12 @@
       return output
     }
 
-    const getFontFieldCSSProperties = function (values, allowedProperties = false, prefix = '') {
+    const getFontFieldCSSProperties = function (cssValue, allowedProperties = false, prefix = '') {
       let output = ''
 
-      $.each(values, function (property, value) {
+      $.each(cssValue, function (property, propertyValue) {
         // We don't want to output empty CSS rules.
-        if ('' === value || false === value) {
+        if ('' === propertyValue || false === propertyValue) {
           return
         }
 
@@ -307,7 +332,7 @@
           return
         }
 
-        output += prefix + property + ': ' + value + ';\n'
+        output += prefix + property + ': ' + propertyValue + ';\n'
       })
 
       return output
