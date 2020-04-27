@@ -1,160 +1,40 @@
-# Copyright (C) 2017 Customify
-# This file is distributed under the same license as the Customify package.
+# Copyright (C) 2020 Pixelgrade
+# This file is distributed under the same license as the Customify plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Customify 1.5.4\n"
+"Project-Id-Version: Customify 2.7.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/customify\n"
-"POT-Creation-Date: 2017-02-13 13:29:14+00:00\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"POT-Creation-Date: 2020-04-27T15:03:03+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.4.0\n"
+"X-Domain: customify\n"
 
-#: class-pixcustomify.php:977
+#. Plugin Name of the plugin
+#: includes/admin-settings/views/admin.php:26
+#: includes/class-customify-settings.php:82
+#: includes/class-customify-settings.php:83
 msgid "Customify"
 msgstr ""
 
-#: class-pixcustomify.php:994
-msgid "Settings"
+#. Plugin URI of the plugin
+msgid "https://wordpress.org/plugins/customify/"
 msgstr ""
 
-#: class-pixcustomify.php:1033
-msgid "Panel title is required"
+#. Description of the plugin
+msgid "A Theme Customizer Booster to easily and consistently customize Fonts, Colors, and other options for your site."
 msgstr ""
 
-#: class-pixcustomify.php:1034
-msgid "Description of what this panel does."
+#. Author of the plugin
+msgid "Pixelgrade"
 msgstr ""
 
-#: class-pixcustomify.php:1099
-msgid "Reset Customify to Defaults"
-msgstr ""
-
-#: class-pixcustomify.php:1140
-msgid "Title Section is required"
-msgstr ""
-
-#: class-pixcustomify.php:1527
-msgid "Import"
-msgstr ""
-
-#: core/defaults.php:30
-msgid "Numberic value required."
-msgstr ""
-
-#: core/defaults.php:31
-msgid "Field is required."
-msgstr ""
-
-#: customify_config.php:23
-msgid "Style Presets"
-msgstr ""
-
-#: customify_config.php:27
-msgid "Select a style:"
-msgstr ""
-
-#: customify_config.php:28
-msgid "Conveniently change the design of your site with built-in style presets. Easy as pie."
-msgstr ""
-
-#: customify_config.php:33
-msgid "Royal"
-msgstr ""
-
-#: customify_config.php:51
-msgid "Lovely"
-msgstr ""
-
-#: customify_config.php:69
-msgid "Queen"
-msgstr ""
-
-#: customify_config.php:87
-msgid "Carrot"
-msgstr ""
-
-#: customify_config.php:108
-msgid "Adler"
-msgstr ""
-
-#: customify_config.php:126
-msgid "Velvet"
-msgstr ""
-
-#: customify_config.php:153 settings/general.php:52
-msgid "Colors"
-msgstr ""
-
-#: customify_config.php:157
-msgid "Links Color"
-msgstr ""
-
-#: customify_config.php:169
-msgid "Headings Color"
-msgstr ""
-
-#: customify_config.php:184
-msgid "Body Color"
-msgstr ""
-
-#: customify_config.php:201
-msgid "Fonts"
-msgstr ""
-
-#: customify_config.php:205
-msgid "Headings"
-msgstr ""
-
-#: customify_config.php:236
-msgid "Body Text"
-msgstr ""
-
-#: customify_config.php:257
-msgid "Backgrounds"
-msgstr ""
-
-#: customify_config.php:261
-msgid "Page Background"
-msgstr ""
-
-#: customify_config.php:277
-msgid "Layout"
-msgstr ""
-
-#: features/class-CSS_Editor.php:68 features/class-CSS_Editor.php:130
-msgid ""
-"/*\n"
-" * Welcome to the Custom CSS Editor\n"
-" *\n"
-" * CSS (Cascading Style Sheets) is a language that helps\n"
-" * the browser render your website. You may remove these\n"
-" * lines and get started with your own customizations.\n"
-" *\n"
-" * The generated code will be placed after the theme\n"
-" * stylesheets, which means that your rules can take\n"
-" * precedence and override the theme CSS rules. Just\n"
-" * write here what you want to change, you don't need\n"
-" * to copy all your theme's stylesheet content.\n"
-" *\n"
-" * Getting started with CSS (tutorial):\n"
-" * http://bit.ly/css-getting-started\n"
-" */\n"
-"\n"
-"/* An example of a Custom CSS Snippet */\n"
-"selector {\n"
-"\tcolor: green;\n"
-"}"
-msgstr ""
-
-#: features/class-CSS_Editor.php:120 features/class-CSS_Editor.php:127
-msgid "CSS Editor"
-msgstr ""
-
-#: features/class-CSS_Editor.php:157
-msgid "Edit Live Css"
+#. Author URI of the plugin
+msgid "https://pixelgrade.com"
 msgstr ""
 
 #: features/class-Customify_Importer.php:52
@@ -225,283 +105,951 @@ msgstr ""
 msgid "Nothing to import"
 msgstr ""
 
-#: features/class-Font_Selector.php:35
-msgid "Theme Fonts"
-msgstr ""
-
-#: features/customizer/controls/class-Pix_Customize_Background_Control.php:99
+#: features/customizer/controls/class-Pix_Customize_Background_Control.php:74
 msgid "No media selected"
 msgstr ""
 
-#: features/customizer/controls/class-Pix_Customize_Background_Control.php:138
+#: features/customizer/controls/class-Pix_Customize_Background_Control.php:131
 msgid "Upload"
 msgstr ""
 
-#: features/customizer/controls/class-Pix_Customize_Background_Control.php:145
+#: features/customizer/controls/class-Pix_Customize_Background_Control.php:138
 msgid "Remove"
 msgstr ""
 
-#: features/customizer/controls/class-Pix_Customize_Font_Control.php:180
-#: features/customizer/controls/class-Pix_Customize_Font_Control.php:188
-#: features/customizer/controls/class-Pix_Customize_Typography_Control.php:215
-#: features/customizer/controls/class-Pix_Customize_Typography_Control.php:223
-msgid "Google fonts"
+#: features/customizer/controls/class-Pix_Customize_Background_Control.php:161
+msgid "Background repeat.."
 msgstr ""
 
-#: features/customizer/controls/class-Pix_Customize_Font_Control.php:255
-#: features/customizer/controls/class-Pix_Customize_Typography_Control.php:169
+#: features/customizer/controls/class-Pix_Customize_Background_Control.php:185
+msgid "Background clip.."
+msgstr ""
+
+#: features/customizer/controls/class-Pix_Customize_Background_Control.php:209
+msgid "Background origin.."
+msgstr ""
+
+#: features/customizer/controls/class-Pix_Customize_Background_Control.php:232
+msgid "Background size.."
+msgstr ""
+
+#: features/customizer/controls/class-Pix_Customize_Background_Control.php:251
+msgid "Background attachment.."
+msgstr ""
+
+#: features/customizer/controls/class-Pix_Customize_Background_Control.php:281
+msgid "Background position.."
+msgstr ""
+
+#: features/customizer/controls/class-Pix_Customize_Font_Control.php:126
 msgid "Recommended"
 msgstr ""
 
-#: features/customizer/controls/class-Pix_Customize_Font_Control.php:278
-#: features/customizer/controls/class-Pix_Customize_Typography_Control.php:193
-msgid "Standard fonts"
-msgstr ""
-
-#: features/customizer/controls/class-Pix_Customize_Font_Control.php:361
+#: features/customizer/controls/class-Pix_Customize_Font_Control.php:190
 msgid "Font Size"
 msgstr ""
 
-#: features/customizer/controls/class-Pix_Customize_Font_Control.php:373
+#: features/customizer/controls/class-Pix_Customize_Font_Control.php:191
 msgid "Line height"
 msgstr ""
 
-#: features/customizer/controls/class-Pix_Customize_Font_Control.php:386
+#: features/customizer/controls/class-Pix_Customize_Font_Control.php:192
 msgid "Letter Spacing"
 msgstr ""
 
-#: features/customizer/controls/class-Pix_Customize_Font_Control.php:398
+#: features/customizer/controls/class-Pix_Customize_Font_Control.php:194
 msgid "Text Align"
 msgstr ""
 
-#: features/customizer/controls/class-Pix_Customize_Font_Control.php:400
-msgid "Initial"
-msgstr ""
-
-#: features/customizer/controls/class-Pix_Customize_Font_Control.php:401
-msgid "Center"
-msgstr ""
-
-#: features/customizer/controls/class-Pix_Customize_Font_Control.php:402
-msgid "Left"
-msgstr ""
-
-#: features/customizer/controls/class-Pix_Customize_Font_Control.php:403
-msgid "Right"
-msgstr ""
-
-#: features/customizer/controls/class-Pix_Customize_Font_Control.php:413
+#: features/customizer/controls/class-Pix_Customize_Font_Control.php:195
 msgid "Text Transform"
 msgstr ""
 
-#: features/customizer/controls/class-Pix_Customize_Font_Control.php:415
-#: features/customizer/controls/class-Pix_Customize_Font_Control.php:430
-msgid "None"
-msgstr ""
-
-#: features/customizer/controls/class-Pix_Customize_Font_Control.php:416
-msgid "Capitalize"
-msgstr ""
-
-#: features/customizer/controls/class-Pix_Customize_Font_Control.php:417
-msgid "Uppercase"
-msgstr ""
-
-#: features/customizer/controls/class-Pix_Customize_Font_Control.php:418
-msgid "Lowercase"
-msgstr ""
-
-#: features/customizer/controls/class-Pix_Customize_Font_Control.php:428
+#: features/customizer/controls/class-Pix_Customize_Font_Control.php:196
 msgid "Text Decoration"
 msgstr ""
 
-#: features/customizer/controls/class-Pix_Customize_Font_Control.php:431
-msgid "Underline"
+#: features/customizer/controls/class-Pix_Customize_Font_Control.php:255
+msgid "Font Variant"
 msgstr ""
 
-#: features/customizer/controls/class-Pix_Customize_Font_Control.php:432
-msgid "Overline"
+#: features/customizer/controls/class-Pix_Customize_Font_Control.php:293
+msgid "Languages"
 msgstr ""
 
-#: features/customizer/controls/class-Pix_Customize_Font_Control.php:433
-msgid "Line Through"
+#: includes/admin-settings/core/defaults.php:30
+msgid "Numberic value required."
 msgstr ""
 
-#: features/customizer/controls/class-Pix_Customize_Import_Demo_Data_Control.php:41
-msgid "Please wait a few minutes (between 1 and 3 minutes usually, but depending on your hosting it can take longer) and "
+#: includes/admin-settings/core/defaults.php:31
+msgid "Field is required."
 msgstr ""
 
-#: features/customizer/controls/class-Pix_Customize_Import_Demo_Data_Control.php:42
-msgid "don't reload the page"
-msgstr ""
-
-#: features/customizer/controls/class-Pix_Customize_Import_Demo_Data_Control.php:43
-msgid "You will be notified as soon as the import has finished!"
-msgstr ""
-
-#: features/customizer/controls/class-Pix_Customize_Typography_Control.php:157
-msgid "Typekit"
-msgstr ""
-
-#: plugin-config.php:46
-msgid "Invalid Value."
-msgstr ""
-
-#: settings/css_editor.php:9
-msgid "Enable CSS Editor"
-msgstr ""
-
-#: settings/css_editor.php:21
-msgid "Use Ace Editor?"
-msgstr ""
-
-#: settings/general.php:33
-msgid "Store values as:"
-msgstr ""
-
-#: settings/general.php:34
-msgid "You can store the values globally so you can use them with other themes or store them as a \"theme_mod\" which will make an individual set of options only for the current theme"
-msgstr ""
-
-#: settings/general.php:38
-msgid "Option (global options)"
-msgstr ""
-
-#: settings/general.php:39
-msgid "Theme Mod (per theme options)"
-msgstr ""
-
-#: settings/general.php:45
-msgid "Disable default sections"
-msgstr ""
-
-#: settings/general.php:46
-msgid "You can disable default sections"
-msgstr ""
-
-#: settings/general.php:49
-msgid "Navigation"
-msgstr ""
-
-#: settings/general.php:50
-msgid "Front Page"
-msgstr ""
-
-#: settings/general.php:51
-msgid "Title"
-msgstr ""
-
-#: settings/general.php:53
-msgid "Background"
-msgstr ""
-
-#: settings/general.php:54
-msgid "Header"
-msgstr ""
-
-#: settings/general.php:55
-msgid "Widgets"
-msgstr ""
-
-#: settings/general.php:61
-msgid "Enable Reset Buttons"
-msgstr ""
-
-#: settings/general.php:62
-msgid "You can enable \"Reset to defaults\" buttons for panels / sections or all settings. We have disabled this feature by default to avoid accidental resets. If you are sure that you need it please enable this."
-msgstr ""
-
-#: settings/general.php:69
-msgid "Enable Editor Style"
-msgstr ""
-
-#: settings/general.php:70
-msgid "The styling added by Customify in front-end can be added in the WordPress editor too by enabling this option"
-msgstr ""
-
-#: settings/general.php:80
-msgid "Disable Customify sections"
-msgstr ""
-
-#: settings/general.php:81
-msgid "You can also disable Customify's sections"
-msgstr ""
-
-#: settings/output.php:10
-msgid "Styles location:"
-msgstr ""
-
-#: settings/output.php:11
-msgid "Here you can decide where to put your style output, in header or footer"
-msgstr ""
-
-#: settings/output.php:15
-msgid "In header (just before the head tag)"
-msgstr ""
-
-#: settings/output.php:16
-msgid "Footer (just before the end of the body tag)"
-msgstr ""
-
-#: settings/typography.php:9
-msgid "Enable Typography Options"
-msgstr ""
-
-#: settings/typography.php:21
-msgid "Use Standard fonts:"
-msgstr ""
-
-#: settings/typography.php:22 settings/typography.php:29
-msgid "Would you like them?"
-msgstr ""
-
-#: settings/typography.php:28
-msgid "Use Google fonts:"
-msgstr ""
-
-#: settings/typography.php:40
-msgid "Group Google fonts:"
-msgstr ""
-
-#: settings/typography.php:41
-msgid "You can chose to see the google fonts in groups"
-msgstr ""
-
-#: views/admin.php:26
-msgid "PixCustomify"
-msgstr ""
-
-#: views/admin.php:33
+#: includes/admin-settings/views/admin.php:33
 msgid "Unable to save settings."
 msgstr ""
 
-#: views/admin.php:34
+#: includes/admin-settings/views/admin.php:34
 msgid "Please check the fields for errors and typos."
 msgstr ""
 
-#: views/admin.php:41
+#: includes/admin-settings/views/admin.php:41
 msgid "Settings have been updated."
 msgstr ""
 
-#: views/admin.php:51
+#: includes/admin-settings/views/admin.php:53
 msgid "Save Changes"
 msgstr ""
-#. Plugin Name of the plugin/theme
-msgid "Customify"
+
+#: includes/admin-settings/views/admin.php:60
+msgid "Critical Error"
 msgstr ""
 
-#. Plugin URI of the plugin/theme
-msgid "http://pixelgrade.com"
+#: includes/admin-settings/views/form-partials/fields/reset_theme_mod.php:28
+msgid "Reset Customizer Settings"
 msgstr ""
 
-#. Description of the plugin/theme
-msgid "A Theme Customizer Booster"
+#: includes/class-customify-block-editor.php:538
+#: includes/class-customify-block-editor.php:548
+#: includes/class-customify-classic-editor.php:237
+#: includes/class-customify-classic-editor.php:247
+#: includes/class-customify-cloud-fonts.php:204
+#: includes/class-customify-cloud-fonts.php:214
+#: includes/class-customify-color-palettes.php:1215
+#: includes/class-customify-color-palettes.php:1225
+#: includes/class-customify-customizer.php:1507
+#: includes/class-customify-customizer.php:1517
+#: includes/class-customify-font-palettes.php:1303
+#: includes/class-customify-font-palettes.php:1313
+#: includes/class-customify-fonts-global.php:1709
+#: includes/class-customify-fonts-global.php:1717
+#: includes/class-customify-settings.php:446
+#: includes/class-customify-settings.php:456
+#: includes/class-customify-style-manager.php:936
+#: includes/class-customify-style-manager.php:946
+#: includes/class-customify-theme-configs.php:367
+#: includes/class-customify-theme-configs.php:377
+#: includes/class-pixcustomify.php:1000
+#: includes/class-pixcustomify.php:1010
+#: includes/lib/class-customify-design-assets.php:235
+#: includes/lib/class-customify-design-assets.php:245
+msgid "You should not do that!"
 msgstr ""
 
-#. Author of the plugin/theme
-msgid "Pixelgrade"
+#: includes/class-customify-color-palettes.php:176
+msgid "Select a color palette:"
 msgstr ""
 
-#. Author URI of the plugin/theme
-msgid "http://pixelgrade.com"
+#: includes/class-customify-color-palettes.php:177
+msgid "Conveniently change the design of your site with color palettes. Easy as pie."
+msgstr ""
+
+#: includes/class-customify-color-palettes.php:186
+msgid "Filters:"
+msgstr ""
+
+#: includes/class-customify-color-palettes.php:191
+msgid "Original"
+msgstr ""
+
+#: includes/class-customify-color-palettes.php:192
+msgid "Clarendon"
+msgstr ""
+
+#: includes/class-customify-color-palettes.php:193
+msgid "Vivid"
+msgstr ""
+
+#: includes/class-customify-color-palettes.php:194
+msgid "Softer"
+msgstr ""
+
+#: includes/class-customify-color-palettes.php:195
+msgid "Pastel"
+msgstr ""
+
+#: includes/class-customify-color-palettes.php:196
+msgid "Greyish"
+msgstr ""
+
+#: includes/class-customify-color-palettes.php:213
+msgid "Color Primary"
+msgstr ""
+
+#: includes/class-customify-color-palettes.php:229
+msgid "Color Primary Final"
+msgstr ""
+
+#: includes/class-customify-color-palettes.php:239
+msgid "Color Secondary"
+msgstr ""
+
+#: includes/class-customify-color-palettes.php:255
+msgid "Color Secondary Final"
+msgstr ""
+
+#: includes/class-customify-color-palettes.php:265
+msgid "Color Tertiary"
+msgstr ""
+
+#: includes/class-customify-color-palettes.php:281
+msgid "Color Tertiary Final"
+msgstr ""
+
+#: includes/class-customify-color-palettes.php:291
+msgid "Dark Primary"
+msgstr ""
+
+#: includes/class-customify-color-palettes.php:307
+msgid "Dark Primary Final"
+msgstr ""
+
+#: includes/class-customify-color-palettes.php:317
+msgid "Dark Secondary"
+msgstr ""
+
+#: includes/class-customify-color-palettes.php:333
+msgid "Dark Secondary Final"
+msgstr ""
+
+#: includes/class-customify-color-palettes.php:343
+msgid "Dark Tertiary"
+msgstr ""
+
+#: includes/class-customify-color-palettes.php:359
+msgid "Dark Tertiary Final"
+msgstr ""
+
+#: includes/class-customify-color-palettes.php:369
+msgid "Light Primary"
+msgstr ""
+
+#: includes/class-customify-color-palettes.php:385
+msgid "Light Primary Final"
+msgstr ""
+
+#: includes/class-customify-color-palettes.php:395
+msgid "Light Secondary"
+msgstr ""
+
+#: includes/class-customify-color-palettes.php:411
+msgid "Light Secondary Final"
+msgstr ""
+
+#: includes/class-customify-color-palettes.php:421
+msgid "Light Tertiary"
+msgstr ""
+
+#: includes/class-customify-color-palettes.php:437
+msgid "Light Tertiary Final"
+msgstr ""
+
+#: includes/class-customify-color-palettes.php:446
+msgid "Swap Colors"
+msgstr ""
+
+#: includes/class-customify-color-palettes.php:454
+msgid "Swap Dark ⇆ Light"
+msgstr ""
+
+#: includes/class-customify-color-palettes.php:462
+msgid "Swap Colors ⇆ Dark"
+msgstr ""
+
+#: includes/class-customify-color-palettes.php:470
+msgid "Swap Secondary Color ⇆ Secondary Dark"
+msgstr ""
+
+#: includes/class-customify-color-palettes.php:520
+msgid "One or more colors connected to your color palette have been modified. By changing or altering the current palette you will lose changes made prior to this action."
+msgstr ""
+
+#: includes/class-customify-color-palettes.php:538
+msgid "Palettes"
+msgstr ""
+
+#: includes/class-customify-color-palettes.php:539
+msgid "Filters"
+msgstr ""
+
+#: includes/class-customify-color-palettes.php:540
+msgid "Customize"
+msgstr ""
+
+#: includes/class-customify-color-palettes.php:547
+msgid "Choose your <em>base color palette</em> and go deeper with the <em>Filters</em> and <em>Customize</em> tabs. Make it shine, mate!"
+msgstr ""
+
+#: includes/class-customify-color-palettes.php:558
+msgid "Adjust the <i>colors properties</i> by using the filters. Keep the look fresh and engaging!"
+msgstr ""
+
+#: includes/class-customify-color-palettes.php:569
+msgid "Adjust how the colors are used on your site with ease. Modify their usage level to craft a playful design!"
+msgstr ""
+
+#: includes/class-customify-color-palettes.php:580
+msgid "Coloration Level"
+msgstr ""
+
+#: includes/class-customify-color-palettes.php:589
+msgid "Color Diversity"
+msgstr ""
+
+#: includes/class-customify-color-palettes.php:593
+#: includes/class-customify-color-palettes.php:742
+msgid "Low"
+msgstr ""
+
+#: includes/class-customify-color-palettes.php:594
+#: includes/class-customify-color-palettes.php:743
+msgid "Medium"
+msgstr ""
+
+#: includes/class-customify-color-palettes.php:595
+#: includes/class-customify-color-palettes.php:744
+msgid "High"
+msgstr ""
+
+#: includes/class-customify-color-palettes.php:602
+msgid "Shuffle Colors"
+msgstr ""
+
+#: includes/class-customify-color-palettes.php:606
+msgid "Default"
+msgstr ""
+
+#: includes/class-customify-color-palettes.php:607
+msgid "Mixed"
+msgstr ""
+
+#: includes/class-customify-color-palettes.php:608
+msgid "Remix"
+msgstr ""
+
+#: includes/class-customify-color-palettes.php:615
+msgid "Dark Mode"
+msgstr ""
+
+#: includes/class-customify-color-palettes.php:619
+msgid "Off"
+msgstr ""
+
+#: includes/class-customify-color-palettes.php:620
+msgid "On"
+msgstr ""
+
+#: includes/class-customify-color-palettes.php:626
+msgid "Dark to Color (primary)"
+msgstr ""
+
+#: includes/class-customify-color-palettes.php:641
+msgid "Dark to Color (secondary)"
+msgstr ""
+
+#: includes/class-customify-color-palettes.php:657
+msgid "Dark to Color (tertiary)"
+msgstr ""
+
+#: includes/class-customify-color-palettes.php:745
+msgid "Striking"
+msgstr ""
+
+#: includes/class-customify-color-palettes.php:874
+msgid "Forest Pastel"
+msgstr ""
+
+#: includes/class-customify-color-palettes.php:891
+msgid "Dawn Lights"
+msgstr ""
+
+#: includes/class-customify-color-palettes.php:908
+msgid "Royal Shadow"
+msgstr ""
+
+#: includes/class-customify-customizer.php:95
+msgid "Panel's defaults"
+msgstr ""
+
+#: includes/class-customify-customizer.php:96
+msgid "Reset All Options for This Section"
+msgstr ""
+
+#: includes/class-customify-customizer.php:97
+msgid "Do you really want to reset to defaults all the fields? Watch out, this will reset all your Customify options and will save them!"
+msgstr ""
+
+#: includes/class-customify-customizer.php:98
+msgid "Do you really want to reset the settings in this panel?"
+msgstr ""
+
+#: includes/class-customify-customizer.php:99
+msgid "Do you really want to reset the settings in this section?"
+msgstr ""
+
+#: includes/class-customify-customizer.php:269
+msgid "<strong>Customify: Development Mode</strong><p>All options are switched to default. While they are changing in the live preview, they will not be kept when you hit publish.</p>"
+msgstr ""
+
+#: includes/class-customify-customizer.php:593
+msgid "Panel title is required"
+msgstr ""
+
+#: includes/class-customify-customizer.php:594
+msgid "Description of what this panel does."
+msgstr ""
+
+#: includes/class-customify-customizer.php:645
+msgid "Customify Toolbox"
+msgstr ""
+
+#: includes/class-customify-customizer.php:651
+msgid "Reset Customify"
+msgstr ""
+
+#: includes/class-customify-customizer.php:671
+msgid "Reset All Customify Options to Default"
+msgstr ""
+
+#: includes/class-customify-customizer.php:706
+msgid "Title Section is required"
+msgstr ""
+
+#: includes/class-customify-font-palettes.php:378
+msgid "Select a font palette:"
+msgstr ""
+
+#: includes/class-customify-font-palettes.php:379
+msgid "Conveniently change the design of your site with font palettes. Easy as pie."
+msgstr ""
+
+#: includes/class-customify-font-palettes.php:393
+msgid "Font Primary"
+msgstr ""
+
+#: includes/class-customify-font-palettes.php:421
+msgid "Font Secondary"
+msgstr ""
+
+#: includes/class-customify-font-palettes.php:449
+msgid "Font Body"
+msgstr ""
+
+#: includes/class-customify-font-palettes.php:480
+msgid "Font Accent"
+msgstr ""
+
+#: includes/class-customify-font-palettes.php:698
+#: includes/class-customify-font-palettes.php:701
+msgid "Gema"
+msgstr ""
+
+#: includes/class-customify-font-palettes.php:702
+#: includes/class-customify-font-palettes.php:802
+#: includes/class-customify-font-palettes.php:909
+#: includes/class-customify-font-palettes.php:1036
+msgid "A graceful nature, truly tasteful and polished."
+msgstr ""
+
+#: includes/class-customify-font-palettes.php:798
+#: includes/class-customify-font-palettes.php:801
+msgid "Julia"
+msgstr ""
+
+#: includes/class-customify-font-palettes.php:905
+#: includes/class-customify-font-palettes.php:908
+msgid "Patch"
+msgstr ""
+
+#: includes/class-customify-font-palettes.php:1032
+#: includes/class-customify-font-palettes.php:1035
+msgid "Hive"
+msgstr ""
+
+#: includes/class-customify-fonts-global.php:261
+msgid "Initial"
+msgstr ""
+
+#: includes/class-customify-fonts-global.php:262
+msgid "Center"
+msgstr ""
+
+#: includes/class-customify-fonts-global.php:263
+msgid "Left"
+msgstr ""
+
+#: includes/class-customify-fonts-global.php:264
+msgid "Right"
+msgstr ""
+
+#: includes/class-customify-fonts-global.php:267
+#: includes/class-customify-fonts-global.php:273
+msgid "None"
+msgstr ""
+
+#: includes/class-customify-fonts-global.php:268
+msgid "Capitalize"
+msgstr ""
+
+#: includes/class-customify-fonts-global.php:269
+msgid "Uppercase"
+msgstr ""
+
+#: includes/class-customify-fonts-global.php:270
+msgid "Lowercase"
+msgstr ""
+
+#: includes/class-customify-fonts-global.php:274
+msgid "Underline"
+msgstr ""
+
+#: includes/class-customify-fonts-global.php:275
+msgid "Overline"
+msgstr ""
+
+#: includes/class-customify-fonts-global.php:276
+msgid "Line Through"
+msgstr ""
+
+#: includes/class-customify-fonts-global.php:358
+msgid "Cloud Fonts"
+msgstr ""
+
+#: includes/class-customify-fonts-global.php:377
+msgid "Theme Fonts"
+msgstr ""
+
+#: includes/class-customify-fonts-global.php:397
+msgid "Standard fonts"
+msgstr ""
+
+#: includes/class-customify-fonts-global.php:415
+#: includes/class-customify-fonts-global.php:474
+msgid "Google fonts"
+msgstr ""
+
+#. translators: %s: The font category name
+#: includes/class-customify-fonts-global.php:466
+msgid "Google fonts %s"
+msgstr ""
+
+#: includes/class-customify-fonts-global.php:1051
+msgid "Select a font family"
+msgstr ""
+
+#: includes/class-customify-fonts-global.php:1052
+msgid "Auto"
+msgstr ""
+
+#: includes/class-customify-fonts-global.php:1053
+msgid "More subsets"
+msgstr ""
+
+#: includes/class-customify-settings.php:155
+msgid "Settings"
+msgstr ""
+
+#: includes/class-customify-settings.php:168
+msgid "You don't have admin privileges."
+msgstr ""
+
+#: includes/class-customify-settings.php:228
+msgid "General Settings"
+msgstr ""
+
+#: includes/class-customify-settings.php:232
+msgid "Store values as:"
+msgstr ""
+
+#: includes/class-customify-settings.php:233
+msgid "You can store the values globally so you can use them with other themes or store them as a \"theme_mod\" which will make an individual set of options only for the current theme"
+msgstr ""
+
+#: includes/class-customify-settings.php:237
+msgid "Option (global options)"
+msgstr ""
+
+#: includes/class-customify-settings.php:238
+msgid "Theme Mod (per theme options)"
+msgstr ""
+
+#: includes/class-customify-settings.php:244
+msgid "Disable default sections"
+msgstr ""
+
+#: includes/class-customify-settings.php:245
+msgid "You can disable default sections"
+msgstr ""
+
+#: includes/class-customify-settings.php:248
+msgid "Navigation"
+msgstr ""
+
+#: includes/class-customify-settings.php:249
+msgid "Front Page"
+msgstr ""
+
+#: includes/class-customify-settings.php:250
+msgid "Title"
+msgstr ""
+
+#: includes/class-customify-settings.php:251
+#: includes/class-customify-style-manager.php:357
+#: includes/customify_theme_root.php:518
+#: includes/extras.php:154
+msgid "Colors"
+msgstr ""
+
+#: includes/class-customify-settings.php:252
+msgid "Background"
+msgstr ""
+
+#: includes/class-customify-settings.php:253
+#: includes/customify_theme_root.php:87
+msgid "Header"
+msgstr ""
+
+#: includes/class-customify-settings.php:254
+msgid "Widgets"
+msgstr ""
+
+#: includes/class-customify-settings.php:260
+msgid "Enable Reset Buttons"
+msgstr ""
+
+#: includes/class-customify-settings.php:261
+msgid "You can enable \"Reset to defaults\" buttons for panels / sections or all settings. We have disabled this feature by default to avoid accidental resets. If you are sure that you need it please enable this."
+msgstr ""
+
+#: includes/class-customify-settings.php:268
+msgid "Enable Editor Style"
+msgstr ""
+
+#: includes/class-customify-settings.php:269
+msgid "The styling added by Customify in front-end can be added in the WordPress editor too by enabling this option"
+msgstr ""
+
+#: includes/class-customify-settings.php:277
+msgid "Output Settings"
+msgstr ""
+
+#: includes/class-customify-settings.php:281
+msgid "Styles location:"
+msgstr ""
+
+#: includes/class-customify-settings.php:282
+msgid "Here you can decide where to put your style output, in header or footer"
+msgstr ""
+
+#: includes/class-customify-settings.php:286
+msgid "In header (just before the head tag)"
+msgstr ""
+
+#: includes/class-customify-settings.php:287
+msgid "Footer (just before the end of the body tag)"
+msgstr ""
+
+#: includes/class-customify-settings.php:294
+msgid "Typography Settings"
+msgstr ""
+
+#: includes/class-customify-settings.php:297
+msgid "Enable Typography Options"
+msgstr ""
+
+#: includes/class-customify-settings.php:309
+msgid "Use Standard fonts"
+msgstr ""
+
+#: includes/class-customify-settings.php:310
+msgid "Would you like to use system fonts?"
+msgstr ""
+
+#: includes/class-customify-settings.php:316
+msgid "Use Google fonts:"
+msgstr ""
+
+#: includes/class-customify-settings.php:317
+msgid "Would you like to use Google fonts?"
+msgstr ""
+
+#: includes/class-customify-settings.php:328
+msgid "Group Google fonts:"
+msgstr ""
+
+#: includes/class-customify-settings.php:329
+msgid "You can chose to see the google fonts in groups"
+msgstr ""
+
+#: includes/class-customify-settings.php:337
+msgid "Use Cloud fonts"
+msgstr ""
+
+#: includes/class-customify-settings.php:338
+msgid "Would you to use Cloud fonts?"
+msgstr ""
+
+#: includes/class-customify-settings.php:349
+msgid "Tools"
+msgstr ""
+
+#: includes/class-customify-settings.php:353
+msgid "Reset"
+msgstr ""
+
+#: includes/class-customify-settings.php:379
+msgid "Invalid Value."
+msgstr ""
+
+#: includes/class-customify-style-manager.php:243
+#: includes/class-customify-style-manager.php:291
+msgid "Style Manager"
+msgstr ""
+
+#: includes/class-customify-style-manager.php:292
+msgid "<strong>Style Manager</strong> is an intuitive system to help you change the look of your website and make an excellent impression."
+msgstr ""
+
+#: includes/class-customify-style-manager.php:392
+#: includes/customify_theme_root.php:79
+#: includes/extras.php:202
+msgid "Fonts"
+msgstr ""
+
+#: includes/class-customify-style-manager.php:423
+msgid "Theme Options"
+msgstr ""
+
+#: includes/class-customify-style-manager.php:424
+msgid "Advanced options to change your site look-and-feel on a detailed level."
+msgstr ""
+
+#: includes/class-customify-style-manager.php:497
+msgid "Site Identity"
+msgstr ""
+
+#: includes/class-customify-style-manager.php:657
+msgid "General"
+msgstr ""
+
+#: includes/class-customify-style-manager.php:792
+msgid "Send us your insights"
+msgstr ""
+
+#: includes/class-customify-style-manager.php:870
+msgid "No type provided"
+msgstr ""
+
+#: includes/class-customify-style-manager.php:874
+msgid "No rating provided"
+msgstr ""
+
+#: includes/class-customify-style-manager.php:896
+#: includes/class-customify-style-manager.php:901
+msgid "Sorry, something went wrong and we couldn't save your feedback."
+msgstr ""
+
+#: includes/class-customify-style-manager.php:907
+msgid "Thank you for your feedback."
+msgstr ""
+
+#: includes/customify_theme_root.php:91
+msgid "Site Title Font"
+msgstr ""
+
+#: includes/customify_theme_root.php:121
+msgid "Navigation Text"
+msgstr ""
+
+#: includes/customify_theme_root.php:155
+msgid "Main Content"
+msgstr ""
+
+#: includes/customify_theme_root.php:159
+msgid "Page Title Font"
+msgstr ""
+
+#: includes/customify_theme_root.php:189
+msgid "Body Text Font"
+msgstr ""
+
+#: includes/customify_theme_root.php:219
+msgid "Quote Block Font"
+msgstr ""
+
+#: includes/customify_theme_root.php:249
+msgid "Heading 1"
+msgstr ""
+
+#: includes/customify_theme_root.php:280
+msgid "Heading 2"
+msgstr ""
+
+#: includes/customify_theme_root.php:311
+msgid "Heading 4"
+msgstr ""
+
+#: includes/customify_theme_root.php:342
+msgid "Heading 5"
+msgstr ""
+
+#: includes/customify_theme_root.php:373
+msgid "Heading 6"
+msgstr ""
+
+#: includes/customify_theme_root.php:404
+msgid "Heading 3"
+msgstr ""
+
+#: includes/customify_theme_root.php:438
+#: includes/customify_theme_root.php:442
+msgid "Buttons"
+msgstr ""
+
+#: includes/customify_theme_root.php:477
+msgid "Cards"
+msgstr ""
+
+#: includes/customify_theme_root.php:482
+msgid "Price"
+msgstr ""
+
+#: includes/customify_theme_root.php:530
+msgid "Header Text Color"
+msgstr ""
+
+#: includes/customify_theme_root.php:562
+msgid "Navigation Links Color"
+msgstr ""
+
+#: includes/customify_theme_root.php:596
+msgid "Links Active Color"
+msgstr ""
+
+#: includes/customify_theme_root.php:614
+msgid "Header Background"
+msgstr ""
+
+#: includes/customify_theme_root.php:687
+msgid "Page Title Color"
+msgstr ""
+
+#: includes/customify_theme_root.php:700
+msgid "Body Text Color"
+msgstr ""
+
+#: includes/customify_theme_root.php:767
+msgid "Body Link Color"
+msgstr ""
+
+#: includes/customify_theme_root.php:807
+msgid "Body Link Active Color"
+msgstr ""
+
+#: includes/customify_theme_root.php:1033
+msgid "Text Color"
+msgstr ""
+
+#: includes/customify_theme_root.php:1053
+msgid "Background Color"
+msgstr ""
+
+#: includes/customify_theme_root.php:1096
+msgid "Alternate Text Color"
+msgstr ""
+
+#: includes/customify_theme_root.php:1108
+msgid "Alternate Background Color"
+msgstr ""
+
+#: includes/customify_theme_root.php:1154
+msgid "Footer Text Color"
+msgstr ""
+
+#: includes/customify_theme_root.php:1166
+msgid "Footer Links Color"
+msgstr ""
+
+#: includes/customify_theme_root.php:1178
+msgid "Footer Headings Color"
+msgstr ""
+
+#: includes/customify_theme_root.php:1190
+msgid "Footer Background"
+msgstr ""
+
+#: includes/customify_theme_root.php:1211
+msgid "WooCommerce Info"
+msgstr ""
+
+#: includes/extras.php:24
+msgid "Style Presets"
+msgstr ""
+
+#: includes/extras.php:28
+msgid "Select a style:"
+msgstr ""
+
+#: includes/extras.php:29
+msgid "Conveniently change the design of your site with built-in style presets. Easy as pie."
+msgstr ""
+
+#: includes/extras.php:34
+msgid "Royal"
+msgstr ""
+
+#: includes/extras.php:52
+msgid "Lovely"
+msgstr ""
+
+#: includes/extras.php:70
+msgid "Queen"
+msgstr ""
+
+#: includes/extras.php:88
+msgid "Carrot"
+msgstr ""
+
+#: includes/extras.php:109
+msgid "Adler"
+msgstr ""
+
+#: includes/extras.php:127
+msgid "Velvet"
+msgstr ""
+
+#: includes/extras.php:158
+msgid "Links Color"
+msgstr ""
+
+#: includes/extras.php:170
+msgid "Headings Color"
+msgstr ""
+
+#: includes/extras.php:185
+msgid "Body Color"
+msgstr ""
+
+#: includes/extras.php:206
+msgid "Headings"
+msgstr ""
+
+#: includes/extras.php:237
+msgid "Body Text"
+msgstr ""
+
+#: includes/extras.php:257
+msgid "Backgrounds"
+msgstr ""
+
+#: includes/extras.php:261
+msgid "Page Background"
+msgstr ""
+
+#: includes/extras.php:277
+msgid "Layout"
+msgstr ""
+
+#: includes/extras.php:281
+msgid "Site Title Size"
 msgstr ""
