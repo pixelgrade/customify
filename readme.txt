@@ -35,7 +35,8 @@ This plugin is **primarily intended** to be used together with [Pixelgrade theme
 * More consistent behavior in the Customizer, but also when editing posts or in the frontend.
 * Fixed inconsistencies in block editor and classic editor integration.
 * Styling fixes for the Customizer controls.
-* Behavior fixes and improvements for Customizer controls, with a focus on font controls.
+* Behavior fixes and improvements for Customizer controls, with a big focus on font controls.
+* Fixed custom background control.
 * Improved web font handling.
 * Updated the Google Fonts list.
 * Enhanced configuration capabilities for font field type CSS selectors (ability to specify allowed CSS properties per selector).
