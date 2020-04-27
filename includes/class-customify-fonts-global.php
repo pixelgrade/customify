@@ -171,6 +171,9 @@ class Customify_Fonts_Global {
 
 			// If $item['load_all_weights'] is truthy then that means we don't need a font-weight subfield.
 			if ( ! empty( $item['load_all_weights'] ) ) {
+				if ( empty( $item['fields'] ) ) {
+					$item['fields'] = array();
+				}
 				$item['fields']['font-weight'] = false;
 				unset( $item['load_all_weights'] );
 			}
@@ -235,7 +238,7 @@ class Customify_Fonts_Global {
 
 			// Standardize the fields that are ranges.
 			foreach ( self::$rangeFields as $rangeField ) {
-				if ( isset( $subfieldsConfig[ $rangeField ] ) ) {
+				if ( isset( $subfieldsConfig[ $rangeField ] ) && false !== $subfieldsConfig[ $rangeField ] ) {
 					$subfieldsConfig[ $rangeField ] = self::standardizeRangeFieldAttributes( $subfieldsConfig[ $rangeField ] );
 				}
 			}
@@ -1389,6 +1392,10 @@ if (typeof WebFont !== 'undefined') {
 	}
 
 	public static function standardizeRangeFieldAttributes( $attributes ) {
+		if ( false === $attributes ) {
+			return $attributes;
+		}
+
 		if ( ! is_array( $attributes ) ) {
 			return array(
 				'min' => '',
