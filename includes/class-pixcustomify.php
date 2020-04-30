@@ -216,6 +216,8 @@ class PixCustomifyPlugin {
 
 		// Put the current version in the database.
 		update_option( 'customify_dbversion', $this->get_version(), true );
+
+		$this->invalidate_all_caches();
 	}
 
 	/**
