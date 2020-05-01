@@ -2,8 +2,8 @@
 Contributors: pixelgrade, vlad.olaru, babbardel, razvanonofrei, gorby31
 Tags: customizer, css, editor, gutenberg, live, preview, customizer
 Requires at least: 4.9.9
-Tested up to: 5.4.0
-Stable tag: 2.7.0
+Tested up to: 5.4.1
+Stable tag: 2.7.1
 Requires PHP: 5.4.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -27,6 +27,10 @@ This plugin is **primarily intended** to be used together with [Pixelgrade theme
 * Default [image](https://unsplash.com/photos/OgM4RKdr2kY) for Style Manager Color Palette control - License: (Unsplash)[https://unsplash.com/license]
 
 == Changelog ==
+
+= 2.7.1 =
+* Fixed a couple of inconsistencies related to cache invalidation
+* Added integrations for the main caching plugins to prevent them minifying or moving the Web Font Loader script
 
 = 2.7.0 =
 * Overall performance improvements, especially on the client-side (JavaScript).
