@@ -71,7 +71,7 @@ if ( ! class_exists( 'Customify_Classic_Editor' ) ) {
 				// Make sure the the script is enqueued in the footer. We want all the DOM to be loaded and need jQuery.
 				wp_deregister_script( PixCustomifyPlugin()->get_slug() . '-web-font-loader' );
 				wp_register_script( PixCustomifyPlugin()->get_slug() . '-web-font-loader',
-					plugins_url( 'js/vendor/webfontloader-1-6-28.js', PixCustomifyPlugin()->get_file() ), array('jquery'), null, true );
+					plugins_url( 'js/vendor/webfontloader-1-6-28.min.js', PixCustomifyPlugin()->get_file() ), array('jquery'), null, true );
 				wp_enqueue_script( PixCustomifyPlugin()->get_slug() . '-web-font-loader' );
 				wp_add_inline_script( PixCustomifyPlugin()->get_slug() . '-web-font-loader', $script );
 			}

@@ -13,3 +13,4 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 require_once 'integrations/pixelgrade-care.php';
 require_once 'integrations/pixelgrade-assistant.php';
+require_once 'integrations/autoptimize.php';

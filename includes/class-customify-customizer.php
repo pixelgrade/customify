@@ -87,7 +87,7 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 				'config' => array(
 					'options_name' => PixCustomifyPlugin()->get_options_key(),
 					'ajax_url' => admin_url( 'admin-ajax.php' ),
-					'webfontloader_url' => plugins_url( 'js/vendor/webfontloader-1-6-28.js', PixCustomifyPlugin()->get_file() ),
+					'webfontloader_url' => plugins_url( 'js/vendor/webfontloader-1-6-28.min.js', PixCustomifyPlugin()->get_file() ),
 					'px_dependent_css_props' => self::$pixel_dependent_css_properties,
 				),
 				// For localizing strings.

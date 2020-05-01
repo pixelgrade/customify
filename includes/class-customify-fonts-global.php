@@ -133,7 +133,7 @@ class Customify_Fonts_Global {
 		// Add a preconnect links as early as possible for faster external fonts loading.
 		add_action('wp_head', array( $this, 'add_preconnect_links' ), 0);
 		wp_register_script( PixCustomifyPlugin()->get_slug() . '-web-font-loader',
-			plugins_url( 'js/vendor/webfontloader-1-6-28.js', PixCustomifyPlugin()->get_file() ), array(), null, ( 'wp_head' === $load_location ) ? false : true );
+			plugins_url( 'js/vendor/webfontloader-1-6-28.min.js', PixCustomifyPlugin()->get_file() ), array(), null, ( 'wp_head' === $load_location ) ? false : true );
 		add_action('wp_enqueue_scripts', array( $this, 'enqueue_frontend_scripts' ) );
 		add_action( $load_location, array( $this, 'output_fonts_dynamic_style' ), 100 );
 
