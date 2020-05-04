@@ -187,16 +187,6 @@ class Customify_Fonts_Global {
 
 		// If we have a `font` field configuration, we have work to do.
 		if ( isset( $item['type'] ) && 'font' === $item['type'] ) {
-			// We want to standardize the default value, if present.
-			if ( ! empty( $item['default'] ) ) {
-				$item['default'] = self::standardizeFontValue( $item['default'] );
-			}
-
-			// We want to standardize the selector(s), if present.
-			if ( ! empty( $item['selector'] ) ) {
-				$item['selector'] = self::standardizeFontSelector( $item['selector'] );
-			}
-
 			// Standardize the subfields config.
 			if ( empty( $item['fields'] ) ) {
 				$item['fields'] = array();
@@ -243,7 +233,18 @@ class Customify_Fonts_Global {
 				}
 			}
 
+			// Finally save the new subfields config.
 			$item['fields'] = $subfieldsConfig;
+
+			// We want to standardize the selector(s), if present.
+			if ( ! empty( $item['selector'] ) ) {
+				$item['selector'] = self::standardizeFontSelector( $item['selector'] );
+			}
+
+			// We want to standardize the default value, if present.
+			if ( ! empty( $item['default'] ) ) {
+				$item['default'] = self::standardizeFontValue( $item['default'], $item );
+			}
 
 			// We have no reason to go recursively further when we have come across a `font` field configuration.
 			return;
@@ -527,7 +528,7 @@ class Customify_Fonts_Global {
 				continue;
 			}
 
-			$value = $this->standardizeFontValue( self::maybeDecodeValue( $font['value'] ) );
+			$value = $this->standardizeFontValue( self::maybeDecodeValue( $font['value'] ), $font );
 
 			// In case the value is empty, try a default value if the $font['value'] is actually the font family.
 			if ( empty( $value ) && is_string( $font['value'] ) ) {
@@ -690,7 +691,7 @@ class Customify_Fonts_Global {
 			return '';
 		}
 
-		$value = $this->standardizeFontValue( self::maybeDecodeValue( $fontConfig['value'] ) );
+		$value = $this->standardizeFontValue( self::maybeDecodeValue( $fontConfig['value'] ), $fontConfig );
 
 		// In case the value is empty, try a default value if the $font['value'] is actually the font family.
 		if ( empty( $value ) && is_string( $fontConfig['value'] ) ) {
@@ -1223,10 +1224,11 @@ if (typeof WebFont !== 'undefined') {
 	 * Handle legacy entries.
 	 *
 	 * @param array $value
+	 * @param array $fontConfig Optional.
 	 *
 	 * @return array
 	 */
-	public static function standardizeFontValue( $value ) {
+	public static function standardizeFontValue( $value, $fontConfig = array() ) {
 		if ( empty( $value ) ) {
 			return array();
 		}
@@ -1299,7 +1301,27 @@ if (typeof WebFont !== 'undefined') {
 			unset( $value['subsets'] );
 		}
 
-		return $value;
+		// Finally, we need to correlate the subfields values with the fact that they are allowed or not, just to be safe.
+		if ( ! empty( $fontConfig['fields'] ) && is_array( $fontConfig['fields'] ) ) {
+			foreach ( $fontConfig['fields'] as $field => $fieldDetails ) {
+				if ( false === $fieldDetails ) {
+					// Need to make sure that there is no entry in the value for this field, since it's disabled.
+					// Fields configs use dashes, while the value uses underscores.
+					$fieldValueKey = str_replace( '-', '_', $field );
+					// We have a special case for the font-weight field; it corresponds to the font_variant value entry.
+					if ( 'font_weight' === $fieldValueKey ) {
+						$fieldValueKey = 'font_variant';
+					}
+
+					// Now remove the value entry, if present.
+					if ( isset( $value[ $fieldValueKey ] ) ) {
+						unset( $value[ $fieldValueKey ] );
+					}
+				}
+			}
+		}
+
+		return apply_filters( 'customify_standardized_font_value', $value, $fontConfig );
 	}
 
 	/**

@@ -99,7 +99,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 	 * @param mixed $value
 	 * @param WP_Customize_Setting $setting
 	 *
-	 * @return string
+	 * @return array
 	 */
 	public function standardizeSettingValue( $value ) {
 		$value = Customify_Fonts_Global::maybeDecodeValue( $value );
