@@ -791,6 +791,16 @@ class Customify_Fonts_Global {
 		return $output;
 	}
 
+	/**
+	 * Return a list with all the properties values corresponding to a given font value.
+	 *
+	 * The list has the keys as CSS properties (using dashes, not underscores; the received value uses underscores, not dashes).
+	 *
+	 * @param $value
+	 * @param $font
+	 *
+	 * @return array
+	 */
 	protected function getCSSValue( $value, $font ) {
 		$cssValue = [];
 
@@ -801,8 +811,8 @@ class Customify_Fonts_Global {
 		// If this is a custom font (like from our plugin Fonto) with individual styles & weights - i.e. the font-family says it all
 		// We need to "force" the font-weight and font-style
 		if ( ! empty( $value['type'] ) && 'custom_individual' == $value['type'] ) {
-			$cssValue['font_weight'] = '400 !important';
-			$cssValue['font_style']  = 'normal !important';
+			$cssValue['font-weight'] = '400 !important';
+			$cssValue['font-style']  = 'normal !important';
 		}
 
 		// Handle the case where we have the font_family in the font_variant (usually this means a custom font from our Fonto plugin)
@@ -825,15 +835,15 @@ class Customify_Fonts_Global {
 
 			if ( strpos( $font_variant, 'italic' ) !== false ) {
 				$font_variant        = str_replace( 'italic', '', $font_variant );
-				$cssValue['font_style'] = 'italic';
+				$cssValue['font-style'] = 'italic';
 			} elseif ( strpos( $font_variant, 'oblique' ) !== false ) {
 				$font_variant        = str_replace( 'oblique', '', $font_variant );
-				$cssValue['font_style'] = 'oblique';
+				$cssValue['font-style'] = 'oblique';
 			}
 
 			// If we have a remainder like '400', use it as font weight.
 			if ( ! empty( $font_variant ) ) {
-				$cssValue['font_weight'] = $font_variant;
+				$cssValue['font-weight'] = $font_variant;
 			}
 		}
 

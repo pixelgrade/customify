@@ -124,11 +124,6 @@ class PixCustomifyPlugin {
 	 * Initialize plugin
 	 */
 	private function init() {
-		// We don't want to put extra load on the heartbeat AJAX request.
-		if ( wp_doing_ajax() && isset( $_REQUEST['action'] ) && 'heartbeat' === $_REQUEST['action'] ) {
-			return;
-		}
-
 		// Handle the install and uninstall logic
 		register_activation_hook( $this->get_file(), array( 'PixCustomifyPlugin', 'install' ) );
 
@@ -196,6 +191,7 @@ class PixCustomifyPlugin {
 		add_action( 'upgrader_process_complete', array( $this, 'invalidate_all_caches' ), 1 );
 
 		// Whenever we update data from the Customizer, we will invalidate the options details (that include the value).
+		// Customize save (publish) used the same changeset save logic, so this filter is fired then also.
 		add_filter( 'customize_changeset_save_data', array( $this, 'filter_invalidate_options_details_cache' ), 50, 1 );
 	}
 
@@ -288,9 +284,9 @@ class PixCustomifyPlugin {
 			$data = $this->get_customizer_config( 'opt-name' );
 
 			if ( true !== $skip_cache ) {
-				// Cache the data in an option for 6 hours, but only if we are not supposed to skip the cache entirely.
+				// Cache the data in an option for 24 hours, but only if we are not supposed to skip the cache entirely.
 				update_option( $this->get_customizer_opt_name_cache_key(), $data, true );
-				update_option( $this->get_customizer_opt_name_cache_key() . '_timestamp', time() + 6 * HOUR_IN_SECONDS, true );
+				update_option( $this->get_customizer_opt_name_cache_key() . '_timestamp', time() + 24 * HOUR_IN_SECONDS, true );
 			}
 		}
 
@@ -421,10 +417,10 @@ class PixCustomifyPlugin {
 			}
 
 			if ( true !== $skip_cache ) {
-				// Cache the data for 6 hours, but only if we are not supposed to skip the cache entirely.
+				// Cache the data for 24 hours, but only if we are not supposed to skip the cache entirely.
 				update_option( $this->get_options_minimal_details_cache_key(), $options_minimal_details, true );
 				update_option( $this->get_options_extra_details_cache_key(), $options_extra_details, false ); // we will not autoload extra details for performance reasons.
-				update_option( $this->get_options_details_cache_timestamp_key(), time() + 6 * HOUR_IN_SECONDS, true );
+				update_option( $this->get_options_details_cache_timestamp_key(), time() + 24 * HOUR_IN_SECONDS, true );
 			}
 
 			$data = $this->options_minimal_details = $options_minimal_details;
@@ -561,9 +557,9 @@ class PixCustomifyPlugin {
 			$data = apply_filters( 'customify_final_config', $data );
 
 			if ( true !== $skip_cache ) {
-				// Cache the data in an option for 6 hours, but only if we are not supposed to skip the cache entirely.
+				// Cache the data in an option for 24 hours, but only if we are not supposed to skip the cache entirely.
 				update_option( $this->get_customizer_config_cache_key(), $data, false );
-				update_option( $this->get_customizer_config_cache_key() . '_timestamp', time() + 6 * HOUR_IN_SECONDS, true );
+				update_option( $this->get_customizer_config_cache_key() . '_timestamp', time() + 24 * HOUR_IN_SECONDS, true );
 			}
 		}
 
