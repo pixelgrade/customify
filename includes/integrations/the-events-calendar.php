@@ -15,6 +15,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 // These mess up our Select2.
 add_action( 'admin_enqueue_scripts', function () {
+	if ( ! is_customize_preview() ) {
+		return;
+	}
+
 	wp_deregister_script( 'tribe-select2' );
 	wp_register_script( 'tribe-select2', '' );
 
