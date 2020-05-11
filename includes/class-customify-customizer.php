@@ -169,7 +169,7 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 			$suffix = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min';
 
 			wp_register_script( PixCustomifyPlugin()->get_slug() . '-select2',
-				plugins_url( 'js/vendor/select2' . $suffix . '.js', PixCustomifyPlugin()->get_file() ),
+				plugins_url( 'js/vendor/select2-4.0.13/dist/js/select2.full' . $suffix . '.js', PixCustomifyPlugin()->get_file() ),
 				array( 'jquery' ), PixCustomifyPlugin()->get_version() );
 			wp_register_script( 'jquery-react',
 				plugins_url( 'js/vendor/jquery-react' . $suffix . '.js', PixCustomifyPlugin()->get_file() ),

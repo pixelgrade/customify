@@ -18,3 +18,4 @@ require_once 'integrations/w3-total-cache.php';
 require_once 'integrations/wp-fastest-cache.php';
 require_once 'integrations/wp-optimize.php';
 require_once 'integrations/wp-rocket.php';
+require_once 'integrations/the-events-calendar.php';
