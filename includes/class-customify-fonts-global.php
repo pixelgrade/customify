@@ -82,16 +82,17 @@ class Customify_Fonts_Global {
 		 */
 
 		if ( PixCustomifyPlugin()->settings->get_plugin_setting( 'typography_cloud_fonts', 1 ) ) {
-			$this->cloud_fonts = apply_filters( 'customify_cloud_fonts', array() );
+			$this->cloud_fonts = self::standardizeFontsList( apply_filters( 'customify_cloud_fonts', array() ) );
 			// Add the fonts to selects of the Customizer controls.
 			add_action( 'customify_font_family_select_options', array( $this, 'output_cloud_fonts_select_options_group' ), 20, 2 );
 		}
 
-		$this->theme_fonts = apply_filters( 'customify_theme_fonts', array() );
+		$this->theme_fonts = self::standardizeFontsList( apply_filters( 'customify_theme_fonts', array() ) );
 		// Add the fonts to selects of the Customizer controls.
 		add_action( 'customify_font_family_select_options', array( $this, 'output_theme_fonts_select_options_group' ), 30, 2 );
 
 		if ( PixCustomifyPlugin()->settings->get_plugin_setting( 'typography_standard_fonts', 1 ) ) {
+			// @todo Convert this into a proper source fonts list (with variants, subsets?, and the rest).
 			$this->std_fonts = apply_filters( 'customify_standard_fonts_list', array(
 				"Arial, Helvetica, sans-serif"                         => "Arial, Helvetica, sans-serif",
 				"'Arial Black', Gadget, sans-serif"                    => "'Arial Black', Gadget, sans-serif",
@@ -1079,6 +1080,7 @@ if (typeof WebFont !== 'undefined') {
 
 			if ( file_exists( $fonts_path ) ) {
 				$this->google_fonts = apply_filters( 'customify_filter_google_fonts_list', require( $fonts_path ) );
+				$this->google_fonts = self::standardizeFontsList( $this->google_fonts );
 			}
 		}
 
@@ -1332,6 +1334,144 @@ if (typeof WebFont !== 'undefined') {
 		}
 
 		return apply_filters( 'customify_standardized_font_value', $value, $fontConfig );
+	}
+
+	/**
+	 * Given a (source) fonts list (like Google fonts list), standardize it (e.g., make sure font variants use the 400 one instead of 'regular' or 'normal').
+	 *
+	 * @param array $fontList
+	 *
+	 * @return array|false
+	 */
+	public static function standardizeFontsList( $fontList ) {
+		// Reject anything that is not an array.
+		if ( ! is_array( $fontList ) ) {
+			return false;
+		}
+
+		$newFontsList = [];
+
+		// In case a font is missing any of these entries, these are the safe defaults.
+		$defaultFontEntries = [
+			'family' => null,
+			'category' => 'other',
+			'variants' => [ '400' ],
+			'subsets'  => [ 'latin' ],
+		];
+
+		foreach ( $fontList as $key => $font ) {
+			$newFont = $font;
+			if ( ! is_array( $newFont ) ) {
+				$newFont = [];
+			}
+
+			if ( ! isset( $newFont['family'] ) ) {
+				$newFont['family'] = $key;
+			}
+
+			$newFont = wp_parse_args( $newFont, $defaultFontEntries );
+
+			// Standardize the font family
+			$newFont['family'] = self::standardizeSourceFontFamily( $newFont['family'], $newFont );
+			// Standardize the font variants list.
+			if ( ! is_bool( $newFont['variants'] ) && empty( $newFont['variants'] ) ) {
+				$newFont['variants'] = ['400'];
+			}
+			$newFont['variants'] = self::standardizeSourceFontVariantsList( $newFont['variants'] );
+			// Standardize the font subsets list.
+			if ( ! is_bool( $newFont['subsets'] ) && empty( $newFont['subsets'] ) ) {
+				$newFont['subsets'] = ['latin'];
+			}
+			$newFont['subsets'] = self::standardizeSourceFontSubsetsList( $newFont['subsets'] );
+
+			// Add the standardized font to the new list, keeping the relative order.
+			$newFontsList += [ $key => $newFont ];
+		}
+
+		// Allow others to filter this.
+		return apply_filters( 'customify_standardized_fonts_list', $newFontsList, $fontList );
+	}
+
+	/**
+	 * @param string $fontFamily
+	 * @param array $font
+	 *
+	 * @return string
+	 */
+	public static function standardizeSourceFontFamily( $fontFamily, $font ) {
+		// Make sure that the font family is free from " or '
+		$fontFamily = trim( $fontFamily, "\"\'" );
+
+		return $fontFamily;
+	}
+
+	/**
+	 * @param array|string $variantsList
+	 *
+	 * @return array
+	 */
+	public static function standardizeSourceFontVariantsList( $variantsList ) {
+		// Make sure we treat comma delimited strings as list.
+		$variantsList = self::maybeExplodeList( $variantsList );
+
+		if ( empty( $variantsList ) ) {
+			return $variantsList;
+		}
+
+		foreach ( $variantsList as $key => $variant ) {
+			// We want all variants to be strings, since they are not numerical values (even if they may look like it).
+			$variant = (string) $variant;
+
+			switch ( $variant ) {
+				case 'thin':
+					$variant = '100';
+					break;
+				case 'light':
+					$variant = '200';
+					break;
+				case 'regular':
+				case 'normal':
+					$variant = '400';
+					break;
+				case 'italic':
+					$variant = '400italic';
+					break;
+				case 'medium':
+					$variant = '500';
+					break;
+				case 'bold':
+					$variant = '700';
+					break;
+				default:
+					break;
+			}
+
+			$variantsList[ $key ] = $variant;
+		}
+
+		// Make sure the variants list is ordered ascending, by value.
+		sort( $variantsList, SORT_STRING );
+
+		return $variantsList;
+	}
+
+	/**
+	 * @param array|string $subsetsList
+	 *
+	 * @return array
+	 */
+	public static function standardizeSourceFontSubsetsList( $subsetsList ) {
+		// Make sure we treat comma delimited strings as list.
+		$subsetsList = self::maybeExplodeList( $subsetsList );
+
+		if ( empty( $subsetsList ) ) {
+			return $subsetsList;
+		}
+
+		// Make sure the subsets list is ordered ascending, by value.
+		sort( $subsetsList, SORT_STRING );
+
+		return $subsetsList;
 	}
 
 	/**
