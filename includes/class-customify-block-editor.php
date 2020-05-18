@@ -145,7 +145,8 @@ if ( ! class_exists( 'Customify_Block_Editor' ) ) {
 			}
 
 			// Determine if the block editor is being used in the WP admin.
-			if ( is_admin() && get_current_screen()->is_block_editor() ) {
+			$current_screen = get_current_screen();
+			if ( is_admin() && method_exists( $current_screen, 'is_block_editor' ) && get_current_screen()->is_block_editor() ) {
 				$gutenberg = true;
 			}
 

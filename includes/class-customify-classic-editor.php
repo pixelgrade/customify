@@ -58,11 +58,13 @@ if ( ! class_exists( 'Customify_Classic_Editor' ) ) {
 		 * Add our customizer styling edits into the wp_editor
 		 */
 		function script_to_add_customizer_settings_into_wp_editor() {
+			$current_screen = get_current_screen();
 			// Bail if setting unchecked, if using the block editor,
 			// or we are not on an admin page that might have editors (something related to posts, at the moment).
 			if ( ! PixCustomifyPlugin()->settings->get_plugin_setting( 'enable_editor_style', true )
-				|| get_current_screen()->is_block_editor()
-				|| ! in_array( get_current_screen()->base, ['post'] ) ) {
+			     || ! in_array( $current_screen->base, ['post'] )
+			     || ( method_exists( $current_screen, 'is_block_editor' ) && $current_screen->is_block_editor() )
+				) {
 				return;
 			}
 
