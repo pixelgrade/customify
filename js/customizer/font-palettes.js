@@ -95,8 +95,8 @@ window.customify = window.customify || parent.customify || {};
               }
 
               // We will apply what we've got.
-              if (!_.isEmpty(fontsLogic.font_styles_intervals[idx].font_weight)) {
-                newFontData['font_variant'] = fontsLogic.font_styles_intervals[idx].font_weight
+              if (!_.isEmpty(fontsLogic.font_styles_intervals[idx].font_variant)) {
+                newFontData['font_variant'] = fontsLogic.font_styles_intervals[idx].font_variant
               }
               if (!_.isEmpty(fontsLogic.font_styles_intervals[idx].letter_spacing)) {
                 newFontData['letter_spacing'] = customify.fontFields.standardizeNumericalValue(fontsLogic.font_styles_intervals[idx].letter_spacing)

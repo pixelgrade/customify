@@ -392,6 +392,9 @@ window.customify = window.customify || parent.customify || {};
       const newFontDetails = getFontDetails(newFontData['font_family'])
       // Check the font variant
       if (typeof newFontData['font_variant'] !== 'undefined' && typeof newFontDetails.variants !== 'undefined' && Object.keys(newFontDetails.variants).length > 0) {
+        // Make sure that the font_variant is a string, not a number.
+        newFontData['font_variant'] = String(newFontData['font_variant'])
+
         if (!_.includes(newFontDetails.variants, newFontData['font_variant'])) {
           // The new font doesn't have this variant. Nor should the value.
          delete newFontData['font_variant']

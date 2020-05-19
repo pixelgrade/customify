@@ -37,7 +37,7 @@
             }
 
             if (typeof newValue.font_family !== 'undefined') {
-              maybeLoadFontFamily(newValue)
+              maybeLoadFontFamily(newValue, this.id)
             }
 
             const $styleElement = $('#customify_font_output_for_' + settingConfig.html_safe_option_id)
@@ -121,12 +121,12 @@
      * HELPERS
      **/
 
-    const getFontFieldCSSValue = function (ID, value) {
+    const getFontFieldCSSValue = function (settingID, value) {
 
       const CSSValue = {}
 
       if (typeof value.font_family !== 'undefined' && !_.includes(['','false',false], value.font_family)) {
-        CSSValue['font-family'] = value.font_family
+        CSSValue['font-family'] = sanitizeFontFamilyCSSValue(value.font_family)
       }
 
       if (typeof value.font_variant !== 'undefined' && !_.includes(['','false',false], value.font_variant)) {
@@ -144,14 +144,14 @@
 
           // If anything remained, then we have a font weight also.
           if (variant !== '') {
-            if (variant === 'regular') {
-              variant = 'normal'
+            if (variant === 'regular' || variant === 'normal') {
+              variant = '400'
             }
 
             CSSValue['font-weight'] = variant
           }
         } else if (_.isNumeric(variant)) {
-          CSSValue['font-weight'] = variant
+          CSSValue['font-weight'] = String(variant);
         }
       }
 
@@ -168,10 +168,10 @@
               fontSizeUnit = value.font_size.unit
             }
           } else {
-            fontSizeUnit = getFieldUnit(ID, 'font-size')
+            fontSizeUnit = getFieldUnit(settingID, 'font-size')
           }
         } else {
-          fontSizeUnit = getFieldUnit(ID, 'font-size')
+          fontSizeUnit = getFieldUnit(settingID, 'font-size')
         }
 
         if (false !== fontSizeUnit) {
@@ -192,10 +192,10 @@
               letterSpacingUnit = value.letter_spacing.unit
             }
           } else {
-            letterSpacingUnit = getFieldUnit(ID, 'letter-spacing')
+            letterSpacingUnit = getFieldUnit(settingID, 'letter-spacing')
           }
         } else {
-          letterSpacingUnit = getFieldUnit(ID, 'letter-spacing')
+          letterSpacingUnit = getFieldUnit(settingID, 'letter-spacing')
         }
 
         if (false !== letterSpacingUnit) {
@@ -216,10 +216,10 @@
               lineHeightUnit = value.line_height.unit
             }
           } else {
-            lineHeightUnit = getFieldUnit(ID, 'line-height')
+            lineHeightUnit = getFieldUnit(settingID, 'line-height')
           }
         } else {
-          lineHeightUnit = getFieldUnit(ID, 'line-height')
+          lineHeightUnit = getFieldUnit(settingID, 'line-height')
         }
 
         if (false !== lineHeightUnit) {
@@ -243,8 +243,8 @@
     }
 
     // Mirror logic of server-side Customify_Fonts_Global::get_font_style()
-    const getFontFieldCSSCode = function (ID, cssValue, prefix, value) {
-      const fontConfig = customify.config.settings[ID]
+    const getFontFieldCSSCode = function (settingID, cssValue, prefix, value) {
+      const fontConfig = customify.config.settings[settingID]
       let output = ''
 
       if (typeof window !== 'undefined' && typeof fontConfig.callback !== 'undefined' && typeof window[fontConfig.callback] === 'function') {
@@ -400,8 +400,8 @@
     }
 
     // This is a mirror logic of the server-side Customify_Fonts_Global::getSubFieldUnit()
-    const getFieldUnit = function (ID, field) {
-      if (typeof customify.config.settings[ID] === 'undefined' || typeof customify.config.settings[ID].fields[field] === 'undefined') {
+    const getFieldUnit = function (settingID, field) {
+      if (typeof customify.config.settings[settingID] === 'undefined' || typeof customify.config.settings[settingID].fields[field] === 'undefined') {
         // These fields don't have an unit, by default.
         if (_.includes(['font-family', 'font-weight', 'font-style', 'line-height', 'text-align', 'text-transform', 'text-decoration'], field)) {
           return false
@@ -411,28 +411,30 @@
         return 'px'
       }
 
-      if (typeof customify.config.settings[ID].fields[field].unit !== 'undefined') {
+      if (typeof customify.config.settings[settingID].fields[field].unit !== 'undefined') {
         // Make sure that we convert all falsy unit values to the boolean false.
-        return _.includes(['', 'false', false], customify.config.settings[ID].fields[field].unit) ? false : customify.config.settings[ID].fields[field].unit
+        return _.includes(['', 'false', false], customify.config.settings[settingID].fields[field].unit) ? false : customify.config.settings[settingID].fields[field].unit
       }
 
-      if (typeof customify.config.settings[ID].fields[field][3] !== 'undefined') {
+      if (typeof customify.config.settings[settingID].fields[field][3] !== 'undefined') {
         // Make sure that we convert all falsy unit values to the boolean false.
-        return _.includes(['', 'false', false], customify.config.settings[ID].fields[field][3]) ? false : customify.config.settings[ID].fields[field][3]
+        return _.includes(['', 'false', false], customify.config.settings[settingID].fields[field][3]) ? false : customify.config.settings[settingID].fields[field][3]
       }
 
       return 'px'
     }
 
-    const maybeLoadFontFamily = function (font) {
+    const maybeLoadFontFamily = function (font, settingID) {
       if (typeof font.font_family === 'undefined') {
         return
       }
 
+      const fontConfig = customify.config.settings[settingID]
+
       let family = font.font_family
       // The font family may be a comma separated list like "Roboto, sans"
-
       const fontType = customify.fontFields.determineFontType(family)
+
       if ('std_font' === fontType) {
         // Nothing to do for standard fonts
         return
@@ -448,9 +450,15 @@
           return
         }
 
-        // Handle the font variants
-        // First if there is a selected font variant, otherwise all the available variants.
-        let variants = typeof font.font_variant !== 'undefined' ? font.font_variant : typeof fontDetails.variants !== 'undefined' ? fontDetails.variants : []
+        // Handle the font variants.
+        // If there is a selected font variant and we haven't been instructed to load all, load only that,
+        // otherwise load all the available variants.
+        let variants =
+          (
+            typeof font.font_variant !== 'undefined'
+            && (typeof fontConfig['fields']['font-weight']['loadAllVariants'] === 'undefined' || !fontConfig['fields']['font-weight']['loadAllVariants'])
+          ) ? font.font_variant : typeof fontDetails.variants !== 'undefined' ? fontDetails.variants : []
+
         if (!_.isEmpty(variants)) {
           variants = standardizeToArray(variants)
 
@@ -479,8 +487,14 @@
       else if (fontType === 'google_font') {
 
         // Handle the font variants
-        // First if there is a selected font variant, otherwise all the available variants.
-        let variants = typeof font.font_variant !== 'undefined' ? font.font_variant : typeof fontDetails.variants !== 'undefined' ? fontDetails.variants : []
+        // If there is a selected font variant and we haven't been instructed to load all, load only that,
+        // otherwise load all the available variants.
+        let variants =
+          (
+            typeof font.font_variant !== 'undefined'
+            && (typeof fontConfig['fields']['font-weight']['loadAllVariants'] === 'undefined' || !fontConfig['fields']['font-weight']['loadAllVariants'])
+          ) ? font.font_variant : typeof fontDetails.variants !== 'undefined' ? fontDetails.variants : []
+
         if (!_.isEmpty(variants)) {
           variants = standardizeToArray(variants)
 
@@ -522,6 +536,178 @@
       }
 
       return value
+    }
+
+    // Mirror logic of server-side Customify_Fonts_Global::sanitizeFontFamilyCSSValue()
+    const sanitizeFontFamilyCSSValue = function(value) {
+      // Since we might get a stack, attempt to treat is a comma-delimited list.
+      let fontFamilies = maybeExplodeList( value );
+      if ( !fontFamilies.length ) {
+        return '';
+      }
+
+      _.each(fontFamilies, function(fontFamily, key) {
+        // No whitespace at the back or the front.
+        fontFamily = fontFamily.trim();
+        // First, make sure that the font family is free from " or '
+        fontFamily = fontFamily.replace(new RegExp("^[\"\']+|[\"\']+$"), "");
+        // No whitespace at the back or the front, again.
+        fontFamily = fontFamily.trim();
+
+        // Now, if the font family contains spaces, wrap it in ".
+        if ( fontFamily.indexOf(' ') !== -1 ) {
+          fontFamily = '"' + fontFamily + '"';
+        }
+
+        // Finally, put it back.
+        fontFamilies[ key ] = fontFamily;
+      })
+
+      return maybeImplodeList( fontFamilies );
+    }
+
+    const maybeExplodeList = function(str, delimiter = ',') {
+      if (typeof str === 'object') {
+        str = standardizeToArray(str)
+      }
+
+      // If by any chance we are given an array, just return it
+      if (Array.isArray(str)) {
+        return str
+      }
+
+      // Anything else we coerce to a string
+      if ( typeof str !== 'string' ) {
+        str = String(str);
+      }
+
+      // Make sure we trim it
+      str = str.trim();
+
+      // Bail on empty string
+      if ( !str.length ) {
+        return [];
+      }
+
+      // Return the whole string as an element if the delimiter is missing
+      if ( str.indexOf(delimiter) === -1 ) {
+        return [str];
+      }
+
+      // Explode it and return it
+      return explode(delimiter, str);
+    }
+
+    const maybeImplodeList = function(value, glue = ',') {
+      // If by any chance we are given a string, just return it
+      if (typeof value === 'string' || typeof value === 'number') {
+        return String(value)
+      }
+
+      if (typeof value === 'object') {
+        value = standardizeToArray(value)
+      }
+
+      if (Array.isArray(value)) {
+        return implode(glue, value)
+      }
+
+      // For anything else we return an empty string.
+      return ''
+    }
+
+    const explode = function (delimiter, string, limit) {
+      //  discuss at: https://locutus.io/php/explode/
+      // original by: Kevin van Zonneveld (https://kvz.io)
+      //   example 1: explode(' ', 'Kevin van Zonneveld')
+      //   returns 1: [ 'Kevin', 'van', 'Zonneveld' ]
+
+      if (arguments.length < 2 ||
+        typeof delimiter === 'undefined' ||
+        typeof string === 'undefined') {
+        return null
+      }
+      if (delimiter === '' ||
+        delimiter === false ||
+        delimiter === null) {
+        return false
+      }
+      if (typeof delimiter === 'function' ||
+        typeof delimiter === 'object' ||
+        typeof string === 'function' ||
+        typeof string === 'object') {
+        return {
+          0: ''
+        }
+      }
+      if (delimiter === true) {
+        delimiter = '1'
+      }
+
+      // Here we go...
+      delimiter += ''
+      string += ''
+
+      let s = string.split(delimiter)
+
+      if (typeof limit === 'undefined') return s
+
+      // Support for limit
+      if (limit === 0) limit = 1
+
+      // Positive limit
+      if (limit > 0) {
+        if (limit >= s.length) {
+          return s
+        }
+        return s
+          .slice(0, limit - 1)
+          .concat([s.slice(limit - 1)
+            .join(delimiter)
+          ])
+      }
+
+      // Negative limit
+      if (-limit >= s.length) {
+        return []
+      }
+
+      s.splice(s.length + limit)
+      return s
+    }
+
+    const implode = function (glue, pieces) {
+      //  discuss at: https://locutus.io/php/implode/
+      // original by: Kevin van Zonneveld (https://kvz.io)
+      // improved by: Waldo Malqui Silva (https://waldo.malqui.info)
+      // improved by: Itsacon (https://www.itsacon.net/)
+      // bugfixed by: Brett Zamir (https://brett-zamir.me)
+      //   example 1: implode(' ', ['Kevin', 'van', 'Zonneveld'])
+      //   returns 1: 'Kevin van Zonneveld'
+      //   example 2: implode(' ', {first:'Kevin', last: 'van Zonneveld'})
+      //   returns 2: 'Kevin van Zonneveld'
+
+      let i = ''
+      let retVal = ''
+      let tGlue = ''
+
+      if (arguments.length === 1) {
+        pieces = glue
+        glue = ''
+      }
+
+      if (typeof pieces === 'object') {
+        if (Object.prototype.toString.call(pieces) === '[object Array]') {
+          return pieces.join(glue)
+        }
+        for (i in pieces) {
+          retVal += tGlue + pieces[i]
+          tGlue = glue
+        }
+        return retVal
+      }
+
+      return pieces
     }
   })
 })(jQuery, window, document)

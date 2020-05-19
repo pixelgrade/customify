@@ -170,12 +170,13 @@ class Customify_Fonts_Global {
 			// Now there is no going back :)
 			$item['type'] = 'font';
 
-			// If $item['load_all_weights'] is truthy then that means we don't need a font-weight subfield.
+			// If $item['load_all_weights'] is truthy then that means we allow for a font_variant to be selected,
+			// but as far as loading the font files, we will load all variants.
 			if ( ! empty( $item['load_all_weights'] ) ) {
 				if ( empty( $item['fields'] ) ) {
 					$item['fields'] = array();
 				}
-				$item['fields']['font-weight'] = false;
+				$item['fields']['font-weight'] = [ 'load_all_variants' => true ];
 				unset( $item['load_all_weights'] );
 			}
 
@@ -214,7 +215,7 @@ class Customify_Fonts_Global {
 
 			$subfieldsConfig = apply_filters( 'customify_default_font_subfields_config', array(
 				'font-family'     => true,
-				'font-weight'     => true, // This is actually the font-variant (weight and maybe style)
+				'font-weight'     => true, // This is actually for the font-variant field (weight and maybe style)
 				'subsets'         => true,
 				'font-size'       => false,
 				'line-height'     => false,
@@ -556,7 +557,9 @@ class Customify_Fonts_Global {
 			$font_details = $this->getFontDetails( $value['font_family'], $font_type );
 
 			if ( 'google_font' !== $font_type ) {
-				if ( ! empty( $value['font_variant'] ) ) {
+				// If there is a selected font variant and we haven't been instructed to load all, load only that,
+				// otherwise load all the available variants.
+				if ( ! empty( $value['font_variant'] ) && empty( $font['fields']['font-weight']['loadAllVariants'] ) ) {
 					$font_family .= ":" . join( ',', self::convertFontVariantsToFvds( $value['font_variant'] ) );
 				} elseif ( ! empty( $font_details['variants'] ) ) {
 					$font_family .= ':' . join( ',', self::convertFontVariantsToFvds( $font_details['variants'] ) );
@@ -568,9 +571,10 @@ class Customify_Fonts_Global {
 				continue;
 			}
 
-			// This is a Google font.
-			// We load just the selected variants, if available, or all variants.
-			if ( ! empty( $value['font_variant'] ) ) {
+			// This is a Google font (if we've reached thus far).
+			// If there is a selected font variant and we haven't been instructed to load all, load only that,
+			// otherwise load all the available variants.
+			if ( ! empty( $value['font_variant'] ) && empty( $font['fields']['font-weight']['loadAllVariants'] ) ) {
 				$font_family .= ":" . self::maybeImplodeList( $value['font_variant'] );
 			} elseif ( ! empty( $font_details['variants'] ) ) {
 				$font_family .= ":" . self::maybeImplodeList( $font_details['variants'] );
@@ -806,7 +810,7 @@ class Customify_Fonts_Global {
 		$cssValue = [];
 
 		if ( ! empty( $value['font_family'] ) && ! self::isFalsy( $value['font_family'] ) ) {
-			$cssValue['font-family'] = $value['font_family'];
+			$cssValue['font-family'] = self::sanitizeFontFamilyCSSValue( $value['font_family'] );
 		}
 
 		// If this is a custom font (like from our plugin Fonto) with individual styles & weights - i.e. the font-family says it all
@@ -828,11 +832,8 @@ class Customify_Fonts_Global {
 
 		// Split the font_variant into font_weight and font_style, it that is the case.
 		if ( ! empty( $value['font_variant'] ) && ! self::isFalsy( $value['font_variant'] ) ) {
-			$font_variant = strtolower( $value['font_variant'] );
-			// A little bit of sanity check.
-			if ( $font_variant === 'regular' ) {
-				$font_variant = 'normal';
-			}
+			// Standardize it.
+			$font_variant = self::standardizeFontVariant( $value['font_variant'] );
 
 			if ( strpos( $font_variant, 'italic' ) !== false ) {
 				$font_variant        = str_replace( 'italic', '', $font_variant );
@@ -917,6 +918,33 @@ class Customify_Fonts_Global {
 		return $output;
 	}
 
+	public static function sanitizeFontFamilyCSSValue( $value ) {
+		// Since we might get a stack, attempt to treat is a comma-delimited list.
+		$fontFamilies = self::maybeExplodeList( $value );
+		if ( empty( $fontFamilies ) ) {
+			return '';
+		}
+
+		foreach ( $fontFamilies as $key => $fontFamily ) {
+			// No whitespace at the back or the front.
+			$fontFamily = trim( $fontFamily );
+			// First, make sure that the font family is free from " or '
+			$fontFamily = trim( $fontFamily, "\"\'" );
+			// No whitespace at the back or the front, again.
+			$fontFamily = trim( $fontFamily );
+
+			// Now, if the font family contains spaces, wrap it in ".
+			if ( false !== strpos( $fontFamily, ' ' ) ) {
+				$fontFamily = '"' . $fontFamily . '"';
+			}
+
+			// Finally, put it back.
+			$fontFamilies[ $key ] = $fontFamily;
+		}
+
+		return self::maybeImplodeList( $fontFamilies );
+	}
+
 	public static function isFalsy( $value ) {
 		return in_array( $value, [ '', 'false', false, ], true );
 	}
@@ -926,9 +954,26 @@ class Customify_Fonts_Global {
 		if ( ! empty( $script ) ) {
 			wp_enqueue_script( PixCustomifyPlugin()->get_slug() . '-web-font-loader' );
 			wp_add_inline_script( PixCustomifyPlugin()->get_slug() . '-web-font-loader', $script );
-		} elseif ( is_customize_preview() ) {
+		} else {
 			// If we are in the Customizer preview, we still need the Web Font Loader.
-			wp_enqueue_script( PixCustomifyPlugin()->get_slug() . '-web-font-loader' );
+			if ( is_customize_preview() ) {
+				wp_enqueue_script( PixCustomifyPlugin()->get_slug() . '-web-font-loader' );
+			}
+
+			// If there are no webfonts to load, add a script to the footer, on window loaded,
+			// to trigger the font loaded event and add the class to the html element.
+			// This way the behavior is consistent.
+			add_action( 'wp_footer', function() { ?>
+<script>
+	window.addEventListener('load', function() {
+		// Trigger the 'wf-active' event, just like Web Font Loader would do.
+		window.dispatchEvent(new Event('wf-active'));
+		// Add the 'wf-active' class on the html element, just like Web Font Loader would do.
+		document.getElementsByTagName('html')[0].classList.add('wf-active');
+	});
+</script>
+<?php
+			});
 		}
 	}
 
@@ -950,13 +995,13 @@ const customifyFontLoader = function() {
         classes: true,
         events: true,
 		loading: function() {
-			jQuery( window ).trigger( 'wf-loading' );
+			window.dispatchEvent(new Event('wf-loading'));
 		},
 		active: function() {
-			jQuery( window ).trigger( 'wf-active' );
+			window.dispatchEvent(new Event('wf-active'));
 		},
 		inactive: function() {
-			jQuery( window ).trigger( 'wf-inactive' );
+			window.dispatchEvent(new Event('wf-inactive'));
 		}
     };
         <?php if ( ! empty( $args['google_families'] ) ) { ?>
@@ -1295,9 +1340,21 @@ if (typeof WebFont !== 'undefined') {
 		}
 
 		// We no longer use the `selected_variants` key, but the proper one: `font_variant`.
-		if ( isset( $value['selected_variants'] ) && ! isset( $value['font_variant'] ) ) {
-			$value['font_variant'] = $value['selected_variants'];
+		if ( isset( $value['selected_variants'] ) ) {
+			if ( ! isset( $value['font_variant'] ) ) {
+				$value['font_variant'] = $value['selected_variants'];
+			}
+
 			unset( $value['selected_variants'] );
+		}
+
+		// Convert 'font_weight' entry to 'font_variant'.
+		if ( isset( $value['font_weight'] ) ) {
+			if ( ! isset( $value['font_variant'] ) ) {
+				$value['font_variant'] = $value['font_weight'];
+			}
+
+			unset( $value['font_weight'] );
 		}
 
 		// Make sure that we have a single value in font_variant.
@@ -1305,7 +1362,7 @@ if (typeof WebFont !== 'undefined') {
 			$value['font_variant'] = reset( $value['font_variant'] );
 		}
 
-		// We no longer hold variants and subsets in the value.
+		// We no longer hold source font variants and subsets in the value.
 		if ( isset( $value['variants'] ) ) {
 			unset( $value['variants'] );
 		}
@@ -1419,40 +1476,47 @@ if (typeof WebFont !== 'undefined') {
 		}
 
 		foreach ( $variantsList as $key => $variant ) {
-			// We want all variants to be strings, since they are not numerical values (even if they may look like it).
-			$variant = (string) $variant;
-
-			switch ( $variant ) {
-				case 'thin':
-					$variant = '100';
-					break;
-				case 'light':
-					$variant = '200';
-					break;
-				case 'regular':
-				case 'normal':
-					$variant = '400';
-					break;
-				case 'italic':
-					$variant = '400italic';
-					break;
-				case 'medium':
-					$variant = '500';
-					break;
-				case 'bold':
-					$variant = '700';
-					break;
-				default:
-					break;
-			}
-
-			$variantsList[ $key ] = $variant;
+			$variantsList[ $key ] = self::standardizeFontVariant( $variant );
 		}
 
 		// Make sure the variants list is ordered ascending, by value.
 		sort( $variantsList, SORT_STRING );
 
 		return $variantsList;
+	}
+
+	public static function standardizeFontVariant( $variant ) {
+		// We want all variants to be strings, since they are not numerical values (even if they may look like it).
+		$variant = (string) $variant;
+
+		// Lowercase it.
+		$variant = strtolower($variant);
+
+		switch ( $variant ) {
+			case 'thin':
+				$variant = '100';
+				break;
+			case 'light':
+				$variant = '200';
+				break;
+			case 'regular':
+			case 'normal':
+				$variant = '400';
+				break;
+			case 'italic':
+				$variant = '400italic';
+				break;
+			case 'medium':
+				$variant = '500';
+				break;
+			case 'bold':
+				$variant = '700';
+				break;
+			default:
+				break;
+		}
+
+		return $variant;
 	}
 
 	/**

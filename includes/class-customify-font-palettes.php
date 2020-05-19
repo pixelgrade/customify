@@ -288,14 +288,33 @@ class Customify_Font_Palettes {
 
 				// Finally, go through each font style and standardize it.
 				foreach( $font_styles_intervals as $key => $value ) {
+
+					// Since there is not font value "font_weight", but "font_variant", treat it as such.
+					// Font weight is only a CSS value.
+					// Font variant "splits" into font-weight and (maybe) "font-style".
+					if ( isset( $value['font_weight'] ) && ! isset( $value['font_variant'] ) ) {
+						$font_styles_intervals[ $key ]['font_variant'] = $value['font_weight'];
+						unset( $font_styles_intervals[ $key ]['font_weight'] );
+					}
+
+					// Standardize the font variant.
+					if ( isset( $font_styles_intervals[ $key ]['font_variant'] ) ) {
+						$font_styles_intervals[ $key ]['font_variant'] = Customify_Fonts_Global::standardizeFontVariant( $font_styles_intervals[ $key ]['font_variant'] );
+					}
+
 					if ( isset( $value['letter_spacing'] ) ) {
 						// We have some special values for letter-spacing that need to taken care of.
 						if ( 'normal' === $value['letter_spacing'] ) {
 							$value['letter_spacing'] = 0;
 						}
-
 						$font_styles_intervals[ $key ]['letter_spacing'] = Customify_Fonts_Global::standardizeNumericalValue( $value['letter_spacing'] );
 					}
+
+					// We really don't want font_size or line_height in here,
+					// since line_height is determined through the curve that matches it to a font_size;
+					// and also font_size is the main driving force behind the font palettes logic; so it is absurd to have it here.
+					unset( $font_styles_intervals[ $key ]['font_size'] );
+					unset( $font_styles_intervals[ $key ]['line_height'] );
 				}
 
 				$fonts_logic_config[ $font_setting_id ]['font_styles_intervals'] = $font_styles_intervals;
