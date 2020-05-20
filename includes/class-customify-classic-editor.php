@@ -81,7 +81,7 @@ if ( ! class_exists( 'Customify_Classic_Editor' ) ) {
 			ob_start();
 
 			PixCustomify_Customizer::instance()->output_dynamic_style();
-			Customify_Fonts_Global::instance()->output_fonts_dynamic_style();
+			Customify_Fonts_Global::instance()->outputFontsDynamicStyle();
 
 			$custom_output = ob_get_clean();
 
@@ -153,7 +153,7 @@ if ( ! class_exists( 'Customify_Classic_Editor' ) ) {
 			return '';
 		}
 
-		$args = Customify_Fonts_Global::instance()->get_font_families_details_for_webfontloader();
+		$args = Customify_Fonts_Global::instance()->getFontFamiliesDetailsForWebfontloader();
 
 		if ( empty ( $args['custom_families'] ) && empty ( $args['google_families'] ) ) {
 			return '';

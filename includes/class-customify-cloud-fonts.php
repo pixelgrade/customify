@@ -57,11 +57,16 @@ class Customify_Cloud_Fonts {
 		 * Add the cloud fonts to the Font Selector
 		 */
 		add_filter( 'customify_cloud_fonts', array( $this, 'add_fonts_to_font_selector' ), 10, 1 );
+
+		/*
+		 * Add the cloud font categories to the list.
+		 */
+		add_filter( 'customify_font_categories', array( $this, 'add_cloud_font_categories' ), 10, 1 );
 	}
 
 	public function add_fonts_to_font_selector( $fonts ) {
 		if ( empty( $fonts ) ) {
-			$fonts = array();
+			$fonts = [];
 		}
 
 		if ( ! $this->is_supported() ) {
@@ -71,6 +76,20 @@ class Customify_Cloud_Fonts {
 		$fonts = array_merge( $fonts, $this->get_fonts() );
 
 		return $fonts;
+	}
+
+	public function add_cloud_font_categories( $categories ) {
+		if ( empty( $categories ) ) {
+			$categories = [];
+		}
+
+		if ( ! $this->is_supported() ) {
+			return $categories;
+		}
+
+		$categories = array_merge( $categories, $this->get_categories() );
+
+		return $categories;
 	}
 
 	/**
@@ -120,7 +139,9 @@ class Customify_Cloud_Fonts {
 		return array(
 			'family' => $font_config['font_family'],
 			'src' => $font_config['stylesheet'],
-			'variants' => empty( $font_config['variants'] ) ? array() : $font_config['variants'],
+			'variants' => empty( $font_config['variants'] ) ? [] : $font_config['variants'],
+			'category' => empty( $font_config['category'] ) ? '' : $font_config['category'],
+			'fallback_stack' => empty( $font_config['fallback_stack'] ) ? '' : $font_config['fallback_stack'],
 		);
 	}
 
@@ -149,6 +170,30 @@ class Customify_Cloud_Fonts {
 	}
 
 	/**
+	 * Get the font categories configuration.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @param bool $skip_cache Optional. Whether to use the cached config or fetch a new one.
+	 *
+	 * @return array
+	 */
+	public function get_categories( $skip_cache = false ) {
+		// Make sure that the Design Assets class is loaded.
+		require_once 'lib/class-customify-design-assets.php';
+
+		// Get the design assets data.
+		$design_assets = Customify_Design_Assets::instance()->get( $skip_cache );
+		if ( false === $design_assets || empty( $design_assets['font_categories'] ) ) {
+			$categories = $this->get_default_categories();
+		} else {
+			$categories = $design_assets['font_categories'];
+		}
+
+		return apply_filters( 'customify_get_cloud_font_categories', $categories );
+	}
+
+	/**
 	 * Get the default (hard-coded) cloud fonts configuration.
 	 *
 	 * This is only a fallback config in case we can't communicate with the cloud, the first time.
@@ -158,10 +203,24 @@ class Customify_Cloud_Fonts {
 	 * @return array
 	 */
 	protected function get_default_config() {
-		$default_config = array(
-		);
+		$default_config = [];
 
 		return apply_filters( 'customify_style_manager_default_cloud_fonts', $default_config );
+	}
+
+	/**
+	 * Get the default (hard-coded) font categories configuration.
+	 *
+	 * This is only a fallback config in case we can't communicate with the cloud, the first time.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @return array
+	 */
+	protected function get_default_categories() {
+		$default_categories = [];
+
+		return apply_filters( 'customify_style_manager_default_cloud_font_categories', $default_categories );
 	}
 
 	/**

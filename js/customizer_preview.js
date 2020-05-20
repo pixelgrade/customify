@@ -539,28 +539,33 @@
     }
 
     // Mirror logic of server-side Customify_Fonts_Global::sanitizeFontFamilyCSSValue()
-    const sanitizeFontFamilyCSSValue = function(value) {
+    const sanitizeFontFamilyCSSValue = function (value) {
       // Since we might get a stack, attempt to treat is a comma-delimited list.
-      let fontFamilies = maybeExplodeList( value );
-      if ( !fontFamilies.length ) {
-        return '';
+      let fontFamilies = maybeExplodeList(value)
+      if (!fontFamilies.length) {
+        return ''
       }
 
-      _.each(fontFamilies, function(fontFamily, key) {
+      _.each(fontFamilies, function (fontFamily, key) {
         // No whitespace at the back or the front.
-        fontFamily = fontFamily.trim();
+        fontFamily = fontFamily.trim()
         // First, make sure that the font family is free from " or '
-        fontFamily = fontFamily.replace(new RegExp("^[\"\']+|[\"\']+$"), "");
+        fontFamily = fontFamily.replace(new RegExp('^["\'\‘\’\“\”]+|["\'\‘\’\“\”]+$'), '')
         // No whitespace at the back or the front, again.
-        fontFamily = fontFamily.trim();
+        fontFamily = fontFamily.trim()
+
+        if ('' === fontFamily) {
+          delete fontFamilies[key]
+          return;
+        }
 
         // Now, if the font family contains spaces, wrap it in ".
-        if ( fontFamily.indexOf(' ') !== -1 ) {
-          fontFamily = '"' + fontFamily + '"';
+        if (fontFamily.indexOf(' ') !== -1) {
+          fontFamily = '"' + fontFamily + '"'
         }
 
         // Finally, put it back.
-        fontFamilies[ key ] = fontFamily;
+        fontFamilies[key] = fontFamily
       })
 
       return maybeImplodeList( fontFamilies );

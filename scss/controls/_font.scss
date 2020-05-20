@@ -45,6 +45,10 @@
     @include select-focus;
   }
 
+  .font-options__option-title {
+    margin-right: 10px;
+  }
+
   .font-options__checkbox:checked ~ & {
     @include select-opened;
   }

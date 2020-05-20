@@ -238,7 +238,7 @@ if ( ! class_exists( 'Customify_Block_Editor' ) ) {
 
 			add_filter( 'customify_font_css_selector', array( $this, 'gutenbergify_font_css_selectors' ), 10, 2 );
 			Customify_Fonts_Global::instance()->enqueue_frontend_scripts();
-			wp_add_inline_style( $enqueue_parent_handle, Customify_Fonts_Global::instance()->get_fonts_dynamic_style() );
+			wp_add_inline_style( $enqueue_parent_handle, Customify_Fonts_Global::instance()->getFontsDynamicStyle() );
 			remove_filter( 'customify_font_css_selector', array( $this, 'gutenbergify_font_css_selectors' ), 10 );
 
 			add_filter( 'customify_css_selector', array( $this, 'gutenbergify_css_selectors' ), 10, 2 );

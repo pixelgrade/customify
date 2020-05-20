@@ -14,28 +14,35 @@ class Customify_Fonts_Global {
 	 * @since    2.7.0
 	 * @var      array
 	 */
-	protected $std_fonts = array();
+	protected $std_fonts = [];
 
 	/**
 	 * The Google fonts list.
 	 * @since    2.7.0
 	 * @var      array
 	 */
-	protected $google_fonts = array();
+	protected $google_fonts = [];
 
 	/**
 	 * The theme defined fonts list.
 	 * @since    2.7.0
 	 * @var      array
 	 */
-	protected $theme_fonts = array();
+	protected $theme_fonts = [];
 
 	/**
 	 * The cloud fonts list.
 	 * @since    2.7.0
 	 * @var      array
 	 */
-	protected $cloud_fonts = array();
+	protected $cloud_fonts = [];
+
+	/**
+	 * The font categories list.
+	 * @since    2.8.0
+	 * @var      array
+	 */
+	protected $categories = [];
 
 	/**
 	 * The precision to use when dealing with float values.
@@ -78,22 +85,38 @@ class Customify_Fonts_Global {
 	public function init() {
 
 		/*
+		 * Grab font categories details.
+		 * Used for determining fallback stacks, etc.
+		 */
+		$this->categories = self::standardizeFontsList( apply_filters( 'customify_font_categories', [] ) );
+
+		/*
 		 * Gather all fonts, by type.
 		 */
 
 		if ( PixCustomifyPlugin()->settings->get_plugin_setting( 'typography_cloud_fonts', 1 ) ) {
-			$this->cloud_fonts = self::standardizeFontsList( apply_filters( 'customify_cloud_fonts', array() ) );
+			$this->cloud_fonts = self::standardizeFontsList( apply_filters( 'customify_cloud_fonts', [] ) );
 			// Add the fonts to selects of the Customizer controls.
-			add_action( 'customify_font_family_select_options', array( $this, 'output_cloud_fonts_select_options_group' ), 20, 2 );
+			if ( ! empty( $this->cloud_fonts ) ) {
+				add_action( 'customify_font_family_select_options', array(
+					$this,
+					'output_cloud_fonts_select_options_group'
+				), 20, 2 );
+			}
 		}
 
-		$this->theme_fonts = self::standardizeFontsList( apply_filters( 'customify_theme_fonts', array() ) );
+		$this->theme_fonts = self::standardizeFontsList( apply_filters( 'customify_theme_fonts', [] ) );
 		// Add the fonts to selects of the Customizer controls.
-		add_action( 'customify_font_family_select_options', array( $this, 'output_theme_fonts_select_options_group' ), 30, 2 );
+		if ( ! empty( $this->theme_fonts ) ) {
+			add_action( 'customify_font_family_select_options', array(
+				$this,
+				'output_theme_fonts_select_options_group'
+			), 30, 2 );
+		}
 
 		if ( PixCustomifyPlugin()->settings->get_plugin_setting( 'typography_standard_fonts', 1 ) ) {
 			// @todo Convert this into a proper source fonts list (with variants, subsets?, and the rest).
-			$this->std_fonts = apply_filters( 'customify_standard_fonts_list', array(
+			$this->std_fonts = self::standardizeFontsList( apply_filters( 'customify_standard_fonts_list', array(
 				"Arial, Helvetica, sans-serif"                         => "Arial, Helvetica, sans-serif",
 				"'Arial Black', Gadget, sans-serif"                    => "'Arial Black', Gadget, sans-serif",
 				"'Bookman Old Style', serif"                           => "'Bookman Old Style', serif",
@@ -111,32 +134,44 @@ class Customify_Fonts_Global {
 				"'Times New Roman', Times,serif"                       => "'Times New Roman', Times, serif",
 				"'Trebuchet MS', Helvetica, sans-serif"                => "'Trebuchet MS', Helvetica, sans-serif",
 				"Verdana, Geneva, sans-serif"                          => "Verdana, Geneva, sans-serif",
-			) );
+			) ) );
 
-			// Add the fonts to selects of the Customizer controls.
-			add_action( 'customify_font_family_select_options', array( $this, 'output_standard_fonts_select_options_group' ), 40, 2 );
+			// Add the standard fonts to selects of the Customizer controls.
+			if ( ! empty( $this->std_fonts ) ) {
+				add_action( 'customify_font_family_select_options', array(
+					$this,
+					'output_standard_fonts_select_options_group'
+				), 40, 2 );
+			}
 		}
 
 		if ( PixCustomifyPlugin()->settings->get_plugin_setting( 'typography_google_fonts', 1 ) ) {
-			$this->maybe_load_google_fonts();
+			if ( ! empty( $this->maybe_load_google_fonts() ) ) {
 
-			// Add the fonts to selects of the Customizer controls.
-			// For Google fonts we will first output just an empty option group, and the rest of the options in a JS variable.
-			// This way we don't hammer the DOM too much.
-			add_action( 'customify_font_family_select_options', array( $this, 'output_google_fonts_select_options_group' ), 50, 2 );
-			add_action( 'customize_controls_print_footer_scripts', array( $this, 'customize_pane_settings_google_fonts_options' ), 10000 );
+				// Add the fonts to selects of the Customizer controls.
+				// For Google fonts we will first output just an empty option group, and the rest of the options in a JS variable.
+				// This way we don't hammer the DOM too much.
+				add_action( 'customify_font_family_select_options', array(
+					$this,
+					'output_google_fonts_select_options_group'
+				), 50, 2 );
+				add_action( 'customize_controls_print_footer_scripts', array(
+					$this,
+					'customize_pane_settings_google_fonts_options'
+				), 10000 );
+			}
 		}
 
 		/*
 		 * Output the frontend fonts specific scripts and styles.
 		 */
 		$load_location = PixCustomifyPlugin()->settings->get_plugin_setting( 'style_resources_location', 'wp_head' );
-		// Add a preconnect links as early as possible for faster external fonts loading.
+		// Add preconnect links as early as possible for faster external fonts loading.
 		add_action('wp_head', array( $this, 'add_preconnect_links' ), 0);
 		wp_register_script( PixCustomifyPlugin()->get_slug() . '-web-font-loader',
-			plugins_url( 'js/vendor/webfontloader-1-6-28.min.js', PixCustomifyPlugin()->get_file() ), array(), null, ( 'wp_head' === $load_location ) ? false : true );
+			plugins_url( 'js/vendor/webfontloader-1-6-28.min.js', PixCustomifyPlugin()->get_file() ), [], null, ( 'wp_head' === $load_location ) ? false : true );
 		add_action('wp_enqueue_scripts', array( $this, 'enqueue_frontend_scripts' ) );
-		add_action( $load_location, array( $this, 'output_fonts_dynamic_style' ), 100 );
+		add_action( $load_location, array( $this, 'outputFontsDynamicStyle' ), 100 );
 
 		// Add data to be passed to JS.
 		add_filter( 'customify_localized_js_settings', array( $this, 'add_to_localized_data' ), 10, 1 );
@@ -174,7 +209,7 @@ class Customify_Fonts_Global {
 			// but as far as loading the font files, we will load all variants.
 			if ( ! empty( $item['load_all_weights'] ) ) {
 				if ( empty( $item['fields'] ) ) {
-					$item['fields'] = array();
+					$item['fields'] = [];
 				}
 				$item['fields']['font-weight'] = [ 'load_all_variants' => true ];
 				unset( $item['load_all_weights'] );
@@ -191,7 +226,7 @@ class Customify_Fonts_Global {
 		if ( isset( $item['type'] ) && 'font' === $item['type'] ) {
 			// Standardize the subfields config.
 			if ( empty( $item['fields'] ) ) {
-				$item['fields'] = array();
+				$item['fields'] = [];
 			}
 
 			// Some legacy configs specify a couple of fields outside the `fields` entry. We must cleanup.
@@ -289,12 +324,12 @@ class Customify_Fonts_Global {
 			return $valid_values[ $subfield ];
 		}
 
-		return array();
+		return [];
 	}
 
 	public function get_std_fonts() {
 		if ( empty( $this->std_fonts ) ) {
-			return array();
+			return [];
 		}
 
 		return $this->std_fonts;
@@ -302,7 +337,7 @@ class Customify_Fonts_Global {
 
 	public function get_google_fonts() {
 		if ( empty( $this->google_fonts ) ) {
-			return array();
+			return [];
 		}
 
 		return $this->google_fonts;
@@ -310,7 +345,7 @@ class Customify_Fonts_Global {
 
 	public function get_theme_fonts() {
 		if ( empty( $this->theme_fonts ) ) {
-			return array();
+			return [];
 		}
 
 		return $this->theme_fonts;
@@ -318,7 +353,7 @@ class Customify_Fonts_Global {
 
 	public function get_cloud_fonts() {
 		if ( empty( $this->cloud_fonts ) ) {
-			return array();
+			return [];
 		}
 
 		return $this->cloud_fonts;
@@ -398,8 +433,11 @@ class Customify_Fonts_Global {
 		if ( ! empty( $this->std_fonts ) ) {
 
 			echo '<optgroup label="' . esc_attr__( 'Standard fonts', 'customify' ) . '">';
-			foreach ( $this->get_std_fonts() as $font_family ) {
-				Pix_Customize_Font_Control::output_font_family_option( $font_family, $active_font_family );
+			foreach ( $this->get_std_fonts() as $font ) {
+				if ( ! empty( $font['family'] ) ) {
+					// Display the select option's HTML.
+					Pix_Customize_Font_Control::output_font_family_option( $font['family'], $active_font_family );
+				}
 			}
 			echo "</optgroup>";
 		}
@@ -438,7 +476,7 @@ class Customify_Fonts_Global {
 
 			printf(
 				"sAdditional['google_fonts_opts'] = %s;\n",
-				wp_json_encode( $this->get_google_fonts_select_options() )
+				wp_json_encode( $this->getGoogleFontsSelectOptions() )
 			);
 			echo "})( _wpCustomizeSettings );\n";
 			?>
@@ -446,7 +484,7 @@ class Customify_Fonts_Global {
 		<?php
 	}
 
-	protected function get_google_fonts_select_options() {
+	protected function getGoogleFontsSelectOptions() {
 
 		if ( ! PixCustomifyPlugin()->settings->get_plugin_setting( 'typography_google_fonts' ) || empty( $this->google_fonts ) ) {
 			return '';
@@ -455,7 +493,7 @@ class Customify_Fonts_Global {
 		ob_start();
 		if ( PixCustomifyPlugin()->settings->get_plugin_setting( 'typography_group_google_fonts' ) ) {
 
-			$grouped_google_fonts = array();
+			$grouped_google_fonts = [];
 			foreach ( $this->get_google_fonts() as $font_details ) {
 				if ( isset( $font_details['category'] ) ) {
 					$grouped_google_fonts[ $font_details['category'] ][] = $font_details;
@@ -489,18 +527,18 @@ class Customify_Fonts_Global {
 	 *
 	 * @return array
 	 */
-	public function get_font_families_details_for_webfontloader() {
+	public function getFontFamiliesDetailsForWebfontloader() {
 
 		$args = array(
-			'google_families' => array(),
-			'custom_families'  => array(),
-			'custom_srcs'      => array(),
+			'google_families' => [],
+			'custom_families'  => [],
+			'custom_srcs'      => [],
 		);
 
 		/** @var PixCustomifyPlugin $local_plugin */
 		$local_plugin = PixCustomifyPlugin();
 
-		$font_fields = array();
+		$font_fields = [];
 		$local_plugin->customizer->get_fields_by_key( $local_plugin->get_options_details(), 'type', 'font', $font_fields );
 
 		if ( empty( $font_fields ) ) {
@@ -534,7 +572,7 @@ class Customify_Fonts_Global {
 
 			// In case the value is empty, try a default value if the $font['value'] is actually the font family.
 			if ( empty( $value ) && is_string( $font['value'] ) ) {
-				$value = $this->get_font_defaults_value( str_replace( '"', '', $font['value'] ) );
+				$value = $this->getFontDefaultsValue( str_replace( '"', '', $font['value'] ) );
 			}
 
 			// Bail if we don't have a value or the value isn't an array
@@ -603,9 +641,9 @@ class Customify_Fonts_Global {
 	 *
 	 * @return array
 	 */
-	public function get_font_defaults_value( $font_family ) {
+	public function getFontDefaultsValue( $font_family ) {
 		if ( empty( $font_family ) ) {
-			return array();
+			return [];
 		}
 
 		return array(
@@ -614,12 +652,12 @@ class Customify_Fonts_Global {
 		);
 	}
 
-	function output_fonts_dynamic_style() {
+	function outputFontsDynamicStyle() {
 
 		/** @var PixCustomifyPlugin $local_plugin */
 		$local_plugin = PixCustomifyPlugin();
 
-		$font_fields = array();
+		$font_fields = [];
 		$local_plugin->customizer->get_fields_by_key( $local_plugin->get_options_details(), 'type', 'font', $font_fields );
 
 		if ( empty( $font_fields ) ) {
@@ -629,7 +667,7 @@ class Customify_Fonts_Global {
 		$output = '';
 
 		foreach ( $font_fields as $key => $font ) {
-			$font_output = $this->get_font_style( $font );
+			$font_output = $this->getFontStyle( $font );
 			// If no output do not print anything, except if we are in the Customizer preview.
 			// In the Customizer preview we need the empty <style> since we target it by id.
 			if ( empty( $font_output ) && ! is_customize_preview() ) {
@@ -656,14 +694,14 @@ class Customify_Fonts_Global {
 		}
 	}
 
-	function get_fonts_dynamic_style() {
+	function getFontsDynamicStyle() {
 
 		$output = '';
 
 		/** @var PixCustomifyPlugin $local_plugin */
 		$local_plugin = PixCustomifyPlugin();
 
-		$font_fields = array();
+		$font_fields = [];
 		$local_plugin->customizer->get_fields_by_key( $local_plugin->get_options_details(), 'type', 'font', $font_fields );
 
 		if ( empty( $font_fields ) ) {
@@ -672,7 +710,7 @@ class Customify_Fonts_Global {
 
 		foreach ( $font_fields as $key => $font ) {
 
-			$font_output = $this->get_font_style( $font );
+			$font_output = $this->getFontStyle( $font );
 			if ( empty( $font_output ) ) {
 				continue;
 			}
@@ -690,7 +728,7 @@ class Customify_Fonts_Global {
 	 *
 	 * @return string The CSS rules.
 	 */
-	protected function get_font_style( $fontConfig ) {
+	protected function getFontStyle( $fontConfig ) {
 
 		if ( ! isset( $fontConfig['selector'] ) || ! isset( $fontConfig['value'] ) ) {
 			return '';
@@ -700,7 +738,7 @@ class Customify_Fonts_Global {
 
 		// In case the value is empty, try a default value if the $font['value'] is actually the font family.
 		if ( empty( $value ) && is_string( $fontConfig['value'] ) ) {
-			$value = $this->get_font_defaults_value( str_replace( '"', '', $fontConfig['value'] ) );
+			$value = $this->getFontDefaultsValue( str_replace( '"', '', $fontConfig['value'] ) );
 		}
 
 		$cssValue = $this->getCSSValue( $value, $fontConfig );
@@ -801,16 +839,18 @@ class Customify_Fonts_Global {
 	 *
 	 * The list has the keys as CSS properties (using dashes, not underscores; the received value uses underscores, not dashes).
 	 *
-	 * @param $value
-	 * @param $font
+	 * @param array $value
+	 * @param array $fontConfig
 	 *
 	 * @return array
 	 */
-	protected function getCSSValue( $value, $font ) {
+	protected function getCSSValue( $value, $fontConfig ) {
 		$cssValue = [];
 
 		if ( ! empty( $value['font_family'] ) && ! self::isFalsy( $value['font_family'] ) ) {
-			$cssValue['font-family'] = self::sanitizeFontFamilyCSSValue( $value['font_family'] );
+			// "Expand" the font family by appending the fallback stack, if any is available.
+			$fallbackStack = $this->getFontFamilyFallbackStack( $value['font_family'] );
+			$cssValue['font-family'] = self::sanitizeFontFamilyCSSValue( $value['font_family'] . ',' . $fallbackStack );
 		}
 
 		// If this is a custom font (like from our plugin Fonto) with individual styles & weights - i.e. the font-family says it all
@@ -850,7 +890,7 @@ class Customify_Fonts_Global {
 		}
 
 		if ( ! empty( $value['font_size'] ) && ! self::isFalsy( $value['font_size'] ) ) {
-			$font_size = self::standardizeNumericalValue( $value['font_size'], 'font-size', $font );
+			$font_size = self::standardizeNumericalValue( $value['font_size'], 'font-size', $fontConfig );
 			if ( false !== $font_size['value'] ) {
 				$cssValue['font-size'] = $font_size['value'];
 
@@ -864,7 +904,7 @@ class Customify_Fonts_Global {
 		}
 
 		if ( ! empty( $value['letter_spacing'] ) && ! self::isFalsy( $value['letter_spacing'] ) ) {
-			$letter_spacing = self::standardizeNumericalValue( $value['letter_spacing'], 'letter-spacing', $font );
+			$letter_spacing = self::standardizeNumericalValue( $value['letter_spacing'], 'letter-spacing', $fontConfig );
 
 			if ( false !== $letter_spacing['value'] ) {
 				$cssValue['letter-spacing'] = $letter_spacing['value'] . $letter_spacing['unit'];
@@ -872,7 +912,7 @@ class Customify_Fonts_Global {
 		}
 
 		if ( ! empty( $value['line_height'] ) && ! self::isFalsy( $value['line_height'] ) ) {
-			$line_height = self::standardizeNumericalValue( $value['line_height'], 'line-height', $font );
+			$line_height = self::standardizeNumericalValue( $value['line_height'], 'line-height', $fontConfig );
 
 			if ( false !== $line_height['value'] ) {
 				$cssValue['line-height'] = $line_height['value'] . $line_height['unit'];
@@ -918,6 +958,36 @@ class Customify_Fonts_Global {
 		return $output;
 	}
 
+	protected function getFontFamilyFallbackStack( $fontFamily ) {
+		$fallbackStack = '';
+
+		$fontDetails = $this->getFontDetails( $fontFamily );
+		if ( ! empty( $fontDetails['fallback_stack'] ) ) {
+			$fallbackStack = $fontDetails['fallback_stack'];
+		} elseif ( ! empty( $fontDetails['category'] ) ) {
+			$category = $fontDetails['category'];
+			// Search in the available categories for a match.
+			if ( ! empty( $this->categories[ $category ] ) ) {
+				// Matched by category ID/key
+				$fallbackStack = ! empty( $this->categories[ $category ]['fallback_stack'] ) ? $this->categories[ $category ]['fallback_stack'] : '';
+			} else {
+				// We need to search for aliases.
+				foreach ( $this->categories as $category_id => $category_details ) {
+					if ( ! empty( $category_details['aliases'] ) ) {
+						$aliases = self::maybeImplodeList( $category_details['aliases'] );
+						if ( false !== strpos( $aliases, $category ) ) {
+							// Found it.
+							$fallbackStack = ! empty( $category_details['fallback_stack'] ) ? $category_details['fallback_stack'] : '';
+							break;
+						}
+					}
+				}
+			}
+		}
+
+		return $fallbackStack;
+	}
+
 	public static function sanitizeFontFamilyCSSValue( $value ) {
 		// Since we might get a stack, attempt to treat is a comma-delimited list.
 		$fontFamilies = self::maybeExplodeList( $value );
@@ -929,9 +999,14 @@ class Customify_Fonts_Global {
 			// No whitespace at the back or the front.
 			$fontFamily = trim( $fontFamily );
 			// First, make sure that the font family is free from " or '
-			$fontFamily = trim( $fontFamily, "\"\'" );
+			$fontFamily = trim( $fontFamily, "\"\'\‘\’\“\”" );
 			// No whitespace at the back or the front, again.
 			$fontFamily = trim( $fontFamily );
+
+			if ( '' === $fontFamily ) {
+				unset( $fontFamilies[ $key ] );
+				continue;
+			}
 
 			// Now, if the font family contains spaces, wrap it in ".
 			if ( false !== strpos( $fontFamily, ' ' ) ) {
@@ -942,7 +1017,10 @@ class Customify_Fonts_Global {
 			$fontFamilies[ $key ] = $fontFamily;
 		}
 
-		return self::maybeImplodeList( $fontFamilies );
+		// Make sure that we have no duplicates.
+		$fontFamilies = array_unique( $fontFamilies );
+
+		return self::maybeImplodeList( $fontFamilies, ', ' );
 	}
 
 	public static function isFalsy( $value ) {
@@ -983,7 +1061,7 @@ class Customify_Fonts_Global {
 			return '';
 		}
 
-		$args = $this->get_font_families_details_for_webfontloader();
+		$args = $this->getFontFamiliesDetailsForWebfontloader();
 
 		if ( empty ( $args['custom_families'] ) && empty ( $args['google_families'] ) ) {
 			return '';
@@ -1009,8 +1087,8 @@ const customifyFontLoader = function() {
 	        families: [<?php echo join( ',', $args['google_families'] ); ?>]
 	    };
         <?php }
-        $custom_families = array();
-        $custom_urls = array();
+        $custom_families = [];
+        $custom_urls = [];
 
 		if ( ! empty( $args['custom_families'] ) && ! empty( $args['custom_srcs'] ) ) {
 			$custom_families += $args['custom_families'];
@@ -1043,7 +1121,7 @@ if (typeof WebFont !== 'undefined') {
 			return;
 		}
 
-		$args = $this->get_font_families_details_for_webfontloader();
+		$args = $this->getFontFamiliesDetailsForWebfontloader();
 		// If we are not using external fonts, bail.
 		if ( empty ( $args['custom_families'] ) && empty ( $args['google_families'] ) ) {
 			return;
@@ -1063,7 +1141,7 @@ if (typeof WebFont !== 'undefined') {
 			// Remove the protocol
 			$own_origin = preg_replace( '#((http|https|ftp|ftps)?\:?)#i', '', $own_origin );
 
-			$external_origins = array();
+			$external_origins = [];
 			foreach ( $args['custom_srcs'] as $src ) {
 				$origin = self::extractOriginFromUrl( $src );
 				if ( ! empty( $origin ) && false === strpos( $origin, $own_origin ) ) {
@@ -1091,7 +1169,7 @@ if (typeof WebFont !== 'undefined') {
 	 */
 	public function add_to_localized_data( $localized ) {
 		if ( empty( $localized['fonts'] ) ) {
-			$localized['fonts'] = array();
+			$localized['fonts'] = [];
 		}
 
 		$localized['fonts']['floatPrecision'] =self::$floatPrecision;
@@ -1102,7 +1180,7 @@ if (typeof WebFont !== 'undefined') {
 		$localized['fonts']['std_fonts'] = $this->get_std_fonts();
 
 		if ( empty( $localized['l10n'] ) ) {
-			$localized['l10n'] = array();
+			$localized['l10n'] = [];
 		}
 		$localized['l10n']['fonts'] = array(
 			'familyPlaceholderText' => esc_html__( 'Select a font family', 'customify' ),
@@ -1133,7 +1211,7 @@ if (typeof WebFont !== 'undefined') {
 			return $this->google_fonts;
 		}
 
-		return array();
+		return [];
 	}
 
 	/** HELPERS */
@@ -1211,7 +1289,7 @@ if (typeof WebFont !== 'undefined') {
 
 		// Bail on empty string
 		if ( empty( $str ) ) {
-			return array();
+			return [];
 		}
 
 		// Return the whole string as an element if the delimiter is missing
@@ -1285,9 +1363,9 @@ if (typeof WebFont !== 'undefined') {
 	 *
 	 * @return array
 	 */
-	public static function standardizeFontValue( $value, $fontConfig = array() ) {
+	public static function standardizeFontValue( $value, $fontConfig = [] ) {
 		if ( empty( $value ) ) {
-			return array();
+			return [];
 		}
 
 		// If we are given a string, we will consider it a font-family definition
@@ -1303,7 +1381,7 @@ if (typeof WebFont !== 'undefined') {
 
 		// If by this time we don't have an array, return an empty value.
 		if ( ! is_array( $value ) ) {
-			return array();
+			return [];
 		}
 
 		// Handle special logic for when the $values array is not an associative array.
@@ -1322,15 +1400,19 @@ if (typeof WebFont !== 'undefined') {
 
 			if ( 'font_family' === $newEntry ) {
 				// The font family may be a comma separated list like "Roboto, sans"
-				// We will keep only the first item.
+				// We will keep only the first item, but only if the resulting font can be found.
+				// Otherwise we will leave the font stack as it is.
+
 				if ( false !== strpos( $entryValue, ',' ) ) {
 					$entryValue = trim( substr( $entryValue, 0, strpos( $entryValue, ',' ) ) );
 				}
-
 				// Make sure that the font family is free from " or '
-				$entryValue = trim( $entryValue, "\"\'" );
-
-				$value[ $newEntry ] = $entryValue;
+				$entryValue = trim( $entryValue, "\"\'\‘\’\“\”" );
+				// Search for the font.
+				$fontDetails = Customify_Fonts_Global::instance()->getFontDetails( $entryValue );
+				if ( false !== $fontDetails ) {
+					$value[ $newEntry ] = $entryValue;
+				}
 			}
 
 			// Standardize numerical fields.
@@ -1456,8 +1538,10 @@ if (typeof WebFont !== 'undefined') {
 	 * @return string
 	 */
 	public static function standardizeSourceFontFamily( $fontFamily, $font ) {
-		// Make sure that the font family is free from " or '
-		$fontFamily = trim( $fontFamily, "\"\'" );
+		// Make sure that the font family is free from " or ', but only if it is missing commas (i.e., it is not a font stack).
+		if ( false === strpos( $fontFamily, ',' ) ) {
+			$fontFamily = trim( $fontFamily, "\"\'\‘\’\“\”" );
+		}
 
 		return $fontFamily;
 	}
@@ -1550,7 +1634,7 @@ if (typeof WebFont !== 'undefined') {
 			return $value;
 		}
 
-		$new_value = array();
+		$new_value = [];
 
 		// The first entry is the font-family
 		if ( isset( $value[0] ) ) {
@@ -1780,7 +1864,7 @@ if (typeof WebFont !== 'undefined') {
 	/**
 	 * Determine a font type based on its font family.
 	 *
-	 * We will follow a stack in the following order: theme fonts, cloud fonts, Google fonts, standard fonts.
+	 * We will follow a stack in the following order: cloud fonts, theme fonts, Google fonts, standard fonts.
 	 *
 	 * @param string $fontFamily
 	 *
@@ -1790,11 +1874,11 @@ if (typeof WebFont !== 'undefined') {
 		// The default is a standard font (aka no special loading or processing).
 		$fontType = 'std_font';
 
-		if ( ! empty( $this->theme_fonts[ $fontFamily ] ) ) {
-			$fontType = 'theme_font';
-		} elseif ( ! empty( $this->cloud_fonts[ $fontFamily ] ) ) {
+		if ( ! empty( $this->cloud_fonts[ $fontFamily ] ) ) {
 			$fontType = 'cloud_font';
-		} else if ( ! empty( $this->google_fonts[ $fontFamily ] ) ) {
+		} elseif ( ! empty( $this->theme_fonts[ $fontFamily ] ) ) {
+			$fontType = 'theme_font';
+		} elseif ( ! empty( $this->google_fonts[ $fontFamily ] ) ) {
 			$fontType = 'google_font';
 		}
 
@@ -1809,7 +1893,7 @@ if (typeof WebFont !== 'undefined') {
 	 * @return array
 	 */
 	public static function convertFontVariantsToFvds( $variants ) {
-		$fvds = array();
+		$fvds = [];
 		if ( ! is_array( $variants ) || empty( $variants ) ) {
 			return $fvds;
 		}

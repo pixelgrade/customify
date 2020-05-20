@@ -540,10 +540,10 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 		protected function load_customizer_controls() {
 
 			// First require the base customizer extend class.
-			require_once( PixCustomifyPlugin()->get_base_path() . 'features/customizer/class-Pix_Customize_Control.php' );
+			require_once( trailingslashit( PixCustomifyPlugin()->get_base_path() ) . 'includes/customizer-controls/class-Pix_Customize_Control.php' );
 
 			// Now load all the controls' files.
-			$path = apply_filters( 'customify_customizer_controls_path', PixCustomifyPlugin()->get_base_path() . 'features/customizer/controls/' );
+			$path = apply_filters( 'customify_customizer_controls_path', trailingslashit( PixCustomifyPlugin()->get_base_path() ) . 'includes/customizer-controls/' );
 			pixcustomify::require_all( $path );
 
 			do_action( 'customify_loaded_customizer_controls' );
@@ -867,7 +867,7 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 				$wp_customize->add_control( $setting_id . '_control', $control_args );
 			}
 
-			// If we arrive here this means we have a custom field control (with a corresponding class in features/customizer/controls).
+			// If we arrive here this means we have a custom field control (with a corresponding class in includes/customizer-controls).
 			switch ( $field_config['type'] ) {
 
 				case 'text':
