@@ -121,12 +121,23 @@
      * HELPERS
      **/
 
+    // Mirror logic of server-side Customify_Fonts_Global::getCSSValue()
     const getFontFieldCSSValue = function (settingID, value) {
 
       const CSSValue = {}
 
       if (typeof value.font_family !== 'undefined' && !_.includes(['','false',false], value.font_family)) {
-        CSSValue['font-family'] = sanitizeFontFamilyCSSValue(value.font_family)
+        CSSValue['font-family'] = value.font_family
+        // "Expand" the font family by appending the fallback stack, if any is available.
+        // But only do this, if the value is not already a font stack!
+        if (CSSValue['font-family'].indexOf(',') === -1) {
+          const fallbackStack = getFontFamilyFallbackStack(CSSValue['font-family'])
+          if (fallbackStack.length) {
+            CSSValue['font-family'] += ',' + fallbackStack
+          }
+        }
+
+        CSSValue['font-family'] = sanitizeFontFamilyCSSValue(CSSValue['font-family'])
       }
 
       if (typeof value.font_variant !== 'undefined' && !_.includes(['','false',false], value.font_variant)) {
@@ -242,7 +253,7 @@
       return CSSValue
     }
 
-    // Mirror logic of server-side Customify_Fonts_Global::get_font_style()
+    // Mirror logic of server-side Customify_Fonts_Global::getFontStyle()
     const getFontFieldCSSCode = function (settingID, cssValue, prefix, value) {
       const fontConfig = customify.config.settings[settingID]
       let output = ''
@@ -318,6 +329,7 @@
       return output
     }
 
+    // Mirror logic of server-side Customify_Fonts_Global::getCSSProperties()
     const getFontFieldCSSProperties = function (cssValue, allowedProperties = false, prefix = '') {
       let output = ''
 
@@ -538,6 +550,39 @@
       return value
     }
 
+    // This is a mirror logic of the server-side Customify_Fonts_Global::getFontFamilyFallbackStack()
+    const getFontFamilyFallbackStack = function (fontFamily) {
+      let fallbackStack = ''
+
+      const fontDetails = customify.fontFields.getFontDetails(fontFamily)
+      if (typeof fontDetails.fallback_stack !== 'undefined' && !_.isEmpty(fontDetails.fallback_stack)) {
+        fallbackStack = fontDetails.fallback_stack
+      } else if (typeof fontDetails.category !== 'undefined' && !_.isEmpty(fontDetails.category)) {
+        const category = fontDetails.category
+        // Search in the available categories for a match.
+        if (typeof customify.fonts.categories[category] !== 'undefined') {
+          // Matched by category ID/key
+          fallbackStack = typeof customify.fonts.categories[category].fallback_stack !== 'undefined' ? typeof customify.fonts.categories[category].fallback_stack : ''
+        } else {
+          // We need to search for aliases.
+          _.find(customify.fonts.categories, function (categoryDetails) {
+            if (typeof categoryDetails.aliases !== 'undefined') {
+              const aliases = maybeImplodeList(categoryDetails.aliases)
+              if (aliases.indexOf(category) !== -1) {
+                // Found it.
+                fallbackStack = typeof categoryDetails.fallback_stack !== 'undefined' ? typeof categoryDetails.fallback_stack : ''
+                return true
+              }
+            }
+
+            return false
+          })
+        }
+      }
+
+      return fallbackStack
+    }
+
     // Mirror logic of server-side Customify_Fonts_Global::sanitizeFontFamilyCSSValue()
     const sanitizeFontFamilyCSSValue = function (value) {
       // Since we might get a stack, attempt to treat is a comma-delimited list.
@@ -547,12 +592,9 @@
       }
 
       _.each(fontFamilies, function (fontFamily, key) {
-        // No whitespace at the back or the front.
-        fontFamily = fontFamily.trim()
-        // First, make sure that the font family is free from " or '
-        fontFamily = fontFamily.replace(new RegExp('^["\'\‘\’\“\”]+|["\'\‘\’\“\”]+$'), '')
-        // No whitespace at the back or the front, again.
-        fontFamily = fontFamily.trim()
+        // Make sure that the font family is free from " or ' or whitespace.
+        fontFamily = fontFamily.replace(new RegExp(/^\s*["'‘’“”]*\s*/), '')
+        fontFamily = fontFamily.replace(new RegExp(/\s*["'‘’“”]*\s*$/), '')
 
         if ('' === fontFamily) {
           delete fontFamilies[key]

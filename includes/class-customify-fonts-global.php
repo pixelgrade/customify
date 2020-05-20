@@ -340,6 +340,14 @@ class Customify_Fonts_Global {
 		return $this->cloud_fonts;
 	}
 
+	public function get_categories() {
+		if ( empty( $this->categories ) ) {
+			return [];
+		}
+
+		return $this->categories;
+	}
+
 	public function getFontDetails( $font_family, $font_type = false ) {
 		if ( empty( $font_type ) ) {
 			// We will determine the font type based on font family.
@@ -829,9 +837,17 @@ class Customify_Fonts_Global {
 		$cssValue = [];
 
 		if ( ! empty( $value['font_family'] ) && ! self::isFalsy( $value['font_family'] ) ) {
+			$cssValue['font-family'] = $value['font_family'];
 			// "Expand" the font family by appending the fallback stack, if any is available.
-			$fallbackStack = $this->getFontFamilyFallbackStack( $value['font_family'] );
-			$cssValue['font-family'] = self::sanitizeFontFamilyCSSValue( $value['font_family'] . ',' . $fallbackStack );
+			// But only do this, if the value is not already a font stack!
+			if ( false === strpos( $cssValue['font-family'], ',' ) ) {
+				$fallbackStack           = $this->getFontFamilyFallbackStack( $cssValue['font-family'] );
+				if ( ! empty( $fallbackStack ) ) {
+					$cssValue['font-family'] .= ',' . $fallbackStack;
+				}
+			}
+
+			$cssValue['font-family'] = self::sanitizeFontFamilyCSSValue( $cssValue['font-family'] );
 		}
 
 		// If this is a custom font (like from our plugin Fonto) with individual styles & weights - i.e. the font-family says it all
@@ -1159,6 +1175,7 @@ if (typeof WebFont !== 'undefined') {
 		$localized['fonts']['cloud_fonts'] = $this->get_cloud_fonts();
 		$localized['fonts']['google_fonts'] = $this->get_google_fonts();
 		$localized['fonts']['system_fonts'] = $this->get_system_fonts();
+		$localized['fonts']['categories'] = $this->get_categories();
 
 		if ( empty( $localized['l10n'] ) ) {
 			$localized['l10n'] = [];

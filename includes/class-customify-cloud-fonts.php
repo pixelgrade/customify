@@ -89,7 +89,7 @@ class Customify_Cloud_Fonts {
 		}
 
 		if ( ! $this->is_supported() ) {
-			return $fonts;
+			return array_merge( $fonts, $this->get_default_system_fonts() );
 		}
 
 		$fonts = array_merge( $fonts, $this->get_system_fonts() );
@@ -129,7 +129,7 @@ class Customify_Cloud_Fonts {
 
 		$new_config = array();
 		foreach ( $config as $font_id => $font_config ) {
-			if ( empty( $font_config['font_family'] ) || empty( $font_config['stylesheet'] ) ) {
+			if ( empty( $font_config['font_family'] ) ) {
 				continue;
 			}
 
@@ -157,7 +157,7 @@ class Customify_Cloud_Fonts {
 		// We need to convert the received data structure to the one expected by Customify.
 		return array(
 			'family' => $font_config['font_family'],
-			'src' => $font_config['stylesheet'],
+			'src' => empty( $font_config['stylesheet'] ) ? false : $font_config['stylesheet'],
 			'variants' => empty( $font_config['variants'] ) ? [] : $font_config['variants'],
 			'category' => empty( $font_config['category'] ) ? '' : $font_config['category'],
 			'fallback_stack' => empty( $font_config['fallback_stack'] ) ? '' : $font_config['fallback_stack'],
@@ -246,7 +246,6 @@ class Customify_Cloud_Fonts {
 	 * @return array
 	 */
 	protected function get_default_system_fonts() {
-		// @todo Convert this into a proper source fonts list (with variants, subsets?, and the rest).
 		$default_system_fonts = array(
 			"Arial, Helvetica, sans-serif"                         => "Arial, Helvetica, sans-serif",
 			"'Arial Black', Gadget, sans-serif"                    => "'Arial Black', Gadget, sans-serif",
