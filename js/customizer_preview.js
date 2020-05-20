@@ -562,7 +562,7 @@
         // Search in the available categories for a match.
         if (typeof customify.fonts.categories[category] !== 'undefined') {
           // Matched by category ID/key
-          fallbackStack = typeof customify.fonts.categories[category].fallback_stack !== 'undefined' ? typeof customify.fonts.categories[category].fallback_stack : ''
+          fallbackStack = typeof customify.fonts.categories[category].fallback_stack !== 'undefined' ? customify.fonts.categories[category].fallback_stack : ''
         } else {
           // We need to search for aliases.
           _.find(customify.fonts.categories, function (categoryDetails) {
@@ -570,7 +570,7 @@
               const aliases = maybeImplodeList(categoryDetails.aliases)
               if (aliases.indexOf(category) !== -1) {
                 // Found it.
-                fallbackStack = typeof categoryDetails.fallback_stack !== 'undefined' ? typeof categoryDetails.fallback_stack : ''
+                fallbackStack = typeof categoryDetails.fallback_stack !== 'undefined' ? categoryDetails.fallback_stack : ''
                 return true
               }
             }
@@ -592,8 +592,9 @@
       }
 
       _.each(fontFamilies, function (fontFamily, key) {
-        // Make sure that the font family is free from " or ' or whitespace.
+        // Make sure that the font family is free from " or ' or whitespace, at the front.
         fontFamily = fontFamily.replace(new RegExp(/^\s*["'‘’“”]*\s*/), '')
+        // Make sure that the font family is free from " or ' or whitespace, at the back.
         fontFamily = fontFamily.replace(new RegExp(/\s*["'‘’“”]*\s*$/), '')
 
         if ('' === fontFamily) {
