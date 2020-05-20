@@ -56,7 +56,12 @@ class Customify_Cloud_Fonts {
 		/*
 		 * Add the cloud fonts to the Font Selector
 		 */
-		add_filter( 'customify_cloud_fonts', array( $this, 'add_fonts_to_font_selector' ), 10, 1 );
+		add_filter( 'customify_cloud_fonts', array( $this, 'add_cloud_fonts_to_font_selector' ), 10, 1 );
+
+		/*
+		 * Add the cloud system fonts to the Font Selector
+		 */
+		add_filter( 'customify_system_fonts', array( $this, 'add_cloud_system_fonts_to_font_selector' ), 10, 1 );
 
 		/*
 		 * Add the cloud font categories to the list.
@@ -64,7 +69,7 @@ class Customify_Cloud_Fonts {
 		add_filter( 'customify_font_categories', array( $this, 'add_cloud_font_categories' ), 10, 1 );
 	}
 
-	public function add_fonts_to_font_selector( $fonts ) {
+	public function add_cloud_fonts_to_font_selector( $fonts ) {
 		if ( empty( $fonts ) ) {
 			$fonts = [];
 		}
@@ -73,7 +78,21 @@ class Customify_Cloud_Fonts {
 			return $fonts;
 		}
 
-		$fonts = array_merge( $fonts, $this->get_fonts() );
+		$fonts = array_merge( $fonts, $this->get_cloud_fonts() );
+
+		return $fonts;
+	}
+
+	public function add_cloud_system_fonts_to_font_selector( $fonts ) {
+		if ( empty( $fonts ) ) {
+			$fonts = [];
+		}
+
+		if ( ! $this->is_supported() ) {
+			return $fonts;
+		}
+
+		$fonts = array_merge( $fonts, $this->get_system_fonts() );
 
 		return $fonts;
 	}
@@ -154,19 +173,43 @@ class Customify_Cloud_Fonts {
 	 *
 	 * @return array
 	 */
-	public function get_fonts( $skip_cache = false ) {
+	public function get_cloud_fonts( $skip_cache = false ) {
 		// Make sure that the Design Assets class is loaded.
 		require_once 'lib/class-customify-design-assets.php';
 
 		// Get the design assets data.
 		$design_assets = Customify_Design_Assets::instance()->get( $skip_cache );
 		if ( false === $design_assets || empty( $design_assets['cloud_fonts'] ) ) {
-			$config = $this->get_default_config();
+			$config = $this->get_default_cloud_fonts();
 		} else {
 			$config = $design_assets['cloud_fonts'];
 		}
 
 		return apply_filters( 'customify_get_cloud_fonts', $config );
+	}
+
+	/**
+	 * Get the cloud standard fonts configuration.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @param bool $skip_cache Optional. Whether to use the cached config or fetch a new one.
+	 *
+	 * @return array
+	 */
+	public function get_system_fonts( $skip_cache = false ) {
+		// Make sure that the Design Assets class is loaded.
+		require_once 'lib/class-customify-design-assets.php';
+
+		// Get the design assets data.
+		$design_assets = Customify_Design_Assets::instance()->get( $skip_cache );
+		if ( false === $design_assets || empty( $design_assets['system_fonts'] ) ) {
+			$config = $this->get_default_system_fonts();
+		} else {
+			$config = $design_assets['system_fonts'];
+		}
+
+		return apply_filters( 'customify_get_cloud_system_fonts', $config );
 	}
 
 	/**
@@ -194,6 +237,40 @@ class Customify_Cloud_Fonts {
 	}
 
 	/**
+	 * Get the default (hard-coded) standard fonts configuration.
+	 *
+	 * This is only a fallback config in case we can't communicate with the cloud, the first time.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @return array
+	 */
+	protected function get_default_system_fonts() {
+		// @todo Convert this into a proper source fonts list (with variants, subsets?, and the rest).
+		$default_system_fonts = array(
+			"Arial, Helvetica, sans-serif"                         => "Arial, Helvetica, sans-serif",
+			"'Arial Black', Gadget, sans-serif"                    => "'Arial Black', Gadget, sans-serif",
+			"'Bookman Old Style', serif"                           => "'Bookman Old Style', serif",
+			"'Comic Sans MS', cursive"                             => "'Comic Sans MS', cursive",
+			"Courier, monospace"                                   => "Courier, monospace",
+			"Garamond, serif"                                      => "Garamond, serif",
+			"Georgia, serif"                                       => "Georgia, serif",
+			"Impact, Charcoal, sans-serif"                         => "Impact, Charcoal, sans-serif",
+			"'Lucida Console', Monaco, monospace"                  => "'Lucida Console', Monaco, monospace",
+			"'Lucida Sans Unicode', 'Lucida Grande', sans-serif"   => "'Lucida Sans Unicode', 'Lucida Grande', sans-serif",
+			"'MS Sans Serif', Geneva, sans-serif"                  => "'MS Sans Serif', Geneva, sans-serif",
+			"'MS Serif', 'New York', sans-serif"                   => "'MS Serif', 'New York', sans-serif",
+			"'Palatino Linotype', 'Book Antiqua', Palatino, serif" => "'Palatino Linotype', 'Book Antiqua', Palatino, serif",
+			"Tahoma, Geneva, sans-serif"                           => "Tahoma, Geneva, sans-serif",
+			"'Times New Roman', Times,serif"                       => "'Times New Roman', Times, serif",
+			"'Trebuchet MS', Helvetica, sans-serif"                => "'Trebuchet MS', Helvetica, sans-serif",
+			"Verdana, Geneva, sans-serif"                          => "Verdana, Geneva, sans-serif",
+		);
+
+		return apply_filters( 'customify_style_manager_default_system_fonts', $default_system_fonts );
+	}
+
+	/**
 	 * Get the default (hard-coded) cloud fonts configuration.
 	 *
 	 * This is only a fallback config in case we can't communicate with the cloud, the first time.
@@ -202,7 +279,7 @@ class Customify_Cloud_Fonts {
 	 *
 	 * @return array
 	 */
-	protected function get_default_config() {
+	protected function get_default_cloud_fonts() {
 		$default_config = [];
 
 		return apply_filters( 'customify_style_manager_default_cloud_fonts', $default_config );

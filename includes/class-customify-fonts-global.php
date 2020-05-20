@@ -10,11 +10,11 @@ class Customify_Fonts_Global {
 	protected static $_instance = null;
 
 	/**
-	 * The standard fonts list.
-	 * @since    2.7.0
+	 * The system fonts list.
+	 * @since    2.8.0
 	 * @var      array
 	 */
-	protected $std_fonts = [];
+	protected $system_fonts = [];
 
 	/**
 	 * The Google fonts list.
@@ -114,33 +114,14 @@ class Customify_Fonts_Global {
 			), 30, 2 );
 		}
 
-		if ( PixCustomifyPlugin()->settings->get_plugin_setting( 'typography_standard_fonts', 1 ) ) {
-			// @todo Convert this into a proper source fonts list (with variants, subsets?, and the rest).
-			$this->std_fonts = self::standardizeFontsList( apply_filters( 'customify_standard_fonts_list', array(
-				"Arial, Helvetica, sans-serif"                         => "Arial, Helvetica, sans-serif",
-				"'Arial Black', Gadget, sans-serif"                    => "'Arial Black', Gadget, sans-serif",
-				"'Bookman Old Style', serif"                           => "'Bookman Old Style', serif",
-				"'Comic Sans MS', cursive"                             => "'Comic Sans MS', cursive",
-				"Courier, monospace"                                   => "Courier, monospace",
-				"Garamond, serif"                                      => "Garamond, serif",
-				"Georgia, serif"                                       => "Georgia, serif",
-				"Impact, Charcoal, sans-serif"                         => "Impact, Charcoal, sans-serif",
-				"'Lucida Console', Monaco, monospace"                  => "'Lucida Console', Monaco, monospace",
-				"'Lucida Sans Unicode', 'Lucida Grande', sans-serif"   => "'Lucida Sans Unicode', 'Lucida Grande', sans-serif",
-				"'MS Sans Serif', Geneva, sans-serif"                  => "'MS Sans Serif', Geneva, sans-serif",
-				"'MS Serif', 'New York', sans-serif"                   => "'MS Serif', 'New York', sans-serif",
-				"'Palatino Linotype', 'Book Antiqua', Palatino, serif" => "'Palatino Linotype', 'Book Antiqua', Palatino, serif",
-				"Tahoma, Geneva, sans-serif"                           => "Tahoma, Geneva, sans-serif",
-				"'Times New Roman', Times,serif"                       => "'Times New Roman', Times, serif",
-				"'Trebuchet MS', Helvetica, sans-serif"                => "'Trebuchet MS', Helvetica, sans-serif",
-				"Verdana, Geneva, sans-serif"                          => "Verdana, Geneva, sans-serif",
-			) ) );
+		if ( PixCustomifyPlugin()->settings->get_plugin_setting( 'typography_system_fonts', 1 ) ) {
+			$this->system_fonts = self::standardizeFontsList( apply_filters( 'customify_system_fonts', [] ) );
 
-			// Add the standard fonts to selects of the Customizer controls.
-			if ( ! empty( $this->std_fonts ) ) {
+			// Add the system fonts to selects of the Customizer controls.
+			if ( ! empty( $this->system_fonts ) ) {
 				add_action( 'customify_font_family_select_options', array(
 					$this,
-					'output_standard_fonts_select_options_group'
+					'output_system_fonts_select_options_group'
 				), 40, 2 );
 			}
 		}
@@ -327,12 +308,12 @@ class Customify_Fonts_Global {
 		return [];
 	}
 
-	public function get_std_fonts() {
-		if ( empty( $this->std_fonts ) ) {
+	public function get_system_fonts() {
+		if ( empty( $this->system_fonts ) ) {
 			return [];
 		}
 
-		return $this->std_fonts;
+		return $this->system_fonts;
 	}
 
 	public function get_google_fonts() {
@@ -375,9 +356,9 @@ class Customify_Fonts_Global {
 			case 'google_font':
 				return $this->google_fonts[ $font_family ];
 				break;
-			case 'std_font':
-				if ( isset( $this->std_fonts[ $font_family ] ) ) {
-					return $this->std_fonts[ $font_family ];
+			case 'system_font':
+				if ( isset( $this->system_fonts[ $font_family ] ) ) {
+					return $this->system_fonts[ $font_family ];
 				}
 				break;
 			default:
@@ -426,14 +407,14 @@ class Customify_Fonts_Global {
 		do_action( 'customify_font_family_after_theme_fonts_options', $active_font_family, $current_value );
 	}
 
-	function output_standard_fonts_select_options_group( $active_font_family, $current_value ) {
+	function output_system_fonts_select_options_group( $active_font_family, $current_value ) {
 		// Allow others to add options here
-		do_action( 'customify_font_family_before_standard_fonts_options', $active_font_family, $current_value );
+		do_action( 'customify_font_family_before_system_fonts_options', $active_font_family, $current_value );
 
-		if ( ! empty( $this->std_fonts ) ) {
+		if ( ! empty( $this->system_fonts ) ) {
 
-			echo '<optgroup label="' . esc_attr__( 'Standard fonts', 'customify' ) . '">';
-			foreach ( $this->get_std_fonts() as $font ) {
+			echo '<optgroup label="' . esc_attr__( 'System fonts', 'customify' ) . '">';
+			foreach ( $this->get_system_fonts() as $font ) {
 				if ( ! empty( $font['family'] ) ) {
 					// Display the select option's HTML.
 					Pix_Customize_Font_Control::output_font_family_option( $font['family'], $active_font_family );
@@ -443,7 +424,7 @@ class Customify_Fonts_Global {
 		}
 
 		// Allow others to add options here
-		do_action( 'customify_font_family_after_standard_fonts_options', $active_font_family, $current_value );
+		do_action( 'customify_font_family_after_system_fonts_options', $active_font_family, $current_value );
 	}
 
 	function output_google_fonts_select_options_group( $active_font_family, $current_value ) {
@@ -491,7 +472,7 @@ class Customify_Fonts_Global {
 		}
 
 		ob_start();
-		if ( PixCustomifyPlugin()->settings->get_plugin_setting( 'typography_group_google_fonts' ) ) {
+		if ( PixCustomifyPlugin()->settings->get_plugin_setting( 'typography_group_google_fonts', 1 ) ) {
 
 			$grouped_google_fonts = [];
 			foreach ( $this->get_google_fonts() as $font_details ) {
@@ -588,7 +569,7 @@ class Customify_Fonts_Global {
 
 			$font_type = $this->determineFontType( $value['font_family'] );
 			// If this is a standard font, we have nothing to do.
-			if ( 'std_font' === $font_type ) {
+			if ( 'system_font' === $font_type ) {
 				continue;
 			}
 
@@ -1177,7 +1158,7 @@ if (typeof WebFont !== 'undefined') {
 		$localized['fonts']['theme_fonts'] = $this->get_theme_fonts();
 		$localized['fonts']['cloud_fonts'] = $this->get_cloud_fonts();
 		$localized['fonts']['google_fonts'] = $this->get_google_fonts();
-		$localized['fonts']['std_fonts'] = $this->get_std_fonts();
+		$localized['fonts']['system_fonts'] = $this->get_system_fonts();
 
 		if ( empty( $localized['l10n'] ) ) {
 			$localized['l10n'] = [];
@@ -1763,22 +1744,22 @@ if (typeof WebFont !== 'undefined') {
 		// - non-associative: meaning that if a property is part of the list, it is allowed
 		// - associative: with the key as the property and a value; if the value is not empty() then it is allowed.
 		// Standardize the $allowed to a "property" => true or false format.
-		$stdAllowedProperties = [];
+		$standardizedAllowedProperties = [];
 		foreach ( $allowedProperties as $key => $value ) {
 			// This means a simple string.
 			if ( is_numeric( $key ) && is_string( $value ) ) {
-				$stdAllowedProperties[ $value ] = true;
+				$standardizedAllowedProperties[ $value ] = true;
 				continue;
 			}
 
-			$stdAllowedProperties[ $key ] = empty( $value ) ? false : true;
+			$standardizedAllowedProperties[ $key ] = empty( $value ) ? false : true;
 		}
 
-		if ( empty( $stdAllowedProperties ) ) {
+		if ( empty( $standardizedAllowedProperties ) ) {
 			return true;
 		}
 
-		return ! empty( $stdAllowedProperties[ $property ] );
+		return ! empty( $standardizedAllowedProperties[ $property ] );
 	}
 
 	/**
@@ -1864,15 +1845,15 @@ if (typeof WebFont !== 'undefined') {
 	/**
 	 * Determine a font type based on its font family.
 	 *
-	 * We will follow a stack in the following order: cloud fonts, theme fonts, Google fonts, standard fonts.
+	 * We will follow a stack in the following order: cloud fonts, theme fonts, Google fonts, system fonts.
 	 *
 	 * @param string $fontFamily
 	 *
-	 * @return string The font type: google, theme_font, cloud_font, or std_font.
+	 * @return string The font type: google_font, theme_font, cloud_font, or system_font.
 	 */
 	public function determineFontType( $fontFamily ) {
 		// The default is a standard font (aka no special loading or processing).
-		$fontType = 'std_font';
+		$fontType = 'system_font';
 
 		if ( ! empty( $this->cloud_fonts[ $fontFamily ] ) ) {
 			$fontType = 'cloud_font';

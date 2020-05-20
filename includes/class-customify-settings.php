@@ -304,17 +304,17 @@ class Customify_Settings {
 						'typography_group' => array(
 							'type'    => 'group',
 							'options' => array(
-								'typography_standard_fonts'     => array(
-									'name'    => 'typography_standard_fonts',
-									'label'   => esc_html__( 'Use Standard fonts', 'customify' ),
-									'desc'    => esc_html__( 'Would you like to use system fonts?', 'customify' ),
+								'typography_system_fonts'     => array(
+									'name'    => 'typography_system_fonts',
+									'label'   => esc_html__( 'Use system fonts', 'customify' ),
+									'desc'    => esc_html__( 'Would you like to have system fonts available in the font controls?', 'customify' ),
 									'default' => true,
 									'type'    => 'switch',
 								),
 								'typography_google_fonts'       => array(
 									'name'           => 'typography_google_fonts',
 									'label'          => esc_html__( 'Use Google fonts:', 'customify' ),
-									'desc'           => esc_html__( 'Would you like to use Google fonts?', 'customify' ),
+									'desc'           => esc_html__( 'Would you like to have Google fonts available in the font controls?', 'customify' ),
 									'default'        => true,
 									'type'           => 'switch',
 									'show_group'     => 'typography_google_fonts_group',
@@ -324,9 +324,9 @@ class Customify_Settings {
 									'type'    => 'group',
 									'options' => array(
 										'typography_group_google_fonts' => array(
-											'name'    => 'typography_standard_fonts',
+											'name'    => 'typography_group_google_fonts',
 											'label'   => esc_html__( 'Group Google fonts:', 'customify' ),
-											'desc'    => esc_html__( 'You can chose to see the google fonts in groups', 'customify' ),
+											'desc'    => esc_html__( 'You can chose to see the Google fonts in groups', 'customify' ),
 											'default' => true,
 											'type'    => 'switch',
 										),
@@ -334,8 +334,8 @@ class Customify_Settings {
 								),
 								'typography_cloud_fonts'       => array(
 									'name'           => 'typography_cloud_fonts',
-									'label'          => esc_html__( 'Use Cloud fonts', 'customify' ),
-									'desc'           => esc_html__( 'Would you to use Cloud fonts?', 'customify' ),
+									'label'          => esc_html__( 'Use cloud fonts', 'customify' ),
+									'desc'           => esc_html__( 'Would you to have Cloud fonts available in the font controls?', 'customify' ),
 									'default'        => true,
 									'type'           => 'switch',
 									'display_option' => true,

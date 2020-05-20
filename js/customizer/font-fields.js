@@ -564,7 +564,7 @@ window.customify = window.customify || parent.customify || {};
 
     const determineFontType = function (fontFamily) {
       // The default is a standard font (aka no special loading or processing).
-      let fontType = 'std_font'
+      let fontType = 'system_font'
 
       // We will follow a stack in the following order: cloud fonts, theme fonts, Google fonts, standard fonts.
       if (typeof customify.fonts.cloud_fonts[fontFamily] !== 'undefined') {
@@ -594,9 +594,9 @@ window.customify = window.customify || parent.customify || {};
         case 'google_font':
           return customify.fonts.google_fonts[fontFamily]
           break
-        case 'std_font':
-          if (typeof customify.fonts.std_fonts[fontFamily] !== 'undefined') {
-            return customify.fonts.std_fonts[fontFamily]
+        case 'system_font':
+          if (typeof customify.fonts.system_fonts[fontFamily] !== 'undefined') {
+            return customify.fonts.system_fonts[fontFamily]
           }
           break
         default:

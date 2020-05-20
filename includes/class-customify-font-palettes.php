@@ -180,6 +180,10 @@ class Customify_Font_Palettes {
 				continue;
 			}
 
+			// We don't need font types as we will determine them dynamically.
+			unset( $fonts_logic_config[ $font_setting_id ]['type'] );
+			unset( $fonts_logic_config[ $font_setting_id ]['font_type'] );
+
 			if ( empty( $font_logic['font_family'] ) ) {
 				// If we don't have a font family we can't do much with this config - remove it.
 				unset( $fonts_logic_config[ $font_setting_id ] );

@@ -435,7 +435,7 @@
       // The font family may be a comma separated list like "Roboto, sans"
       const fontType = customify.fontFields.determineFontType(family)
 
-      if ('std_font' === fontType) {
+      if ('system_font' === fontType) {
         // Nothing to do for standard fonts
         return
       }

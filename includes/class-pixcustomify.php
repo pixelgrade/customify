@@ -944,7 +944,7 @@ class PixCustomifyPlugin {
 			'values_store_mod'                => 'theme_mod',
 
 			'typography' => true,
-			'typography_standard_fonts' => true,
+			'typography_system_fonts' => true,
 			'typography_google_fonts' => true,
 			'typography_group_google_fonts' => true,
 			'typography_cloud_fonts' => true,
