@@ -1502,8 +1502,13 @@ if (typeof WebFont !== 'undefined') {
 				$newFont = [];
 			}
 
-			if ( ! isset( $newFont['family'] ) ) {
-				$newFont['family'] = $key;
+			if ( ! isset( $newFont['family'] ) && ! is_numeric( $key ) ) {
+				$newFont['family'] = (string) $key;
+			}
+
+			if ( empty( $newFont['family'] ) ) {
+				// We will skip this font if we couldn't get a font family.
+				continue;
 			}
 
 			$newFont = wp_parse_args( $newFont, $defaultFontEntries );
@@ -1522,7 +1527,8 @@ if (typeof WebFont !== 'undefined') {
 			$newFont['subsets'] = self::standardizeSourceFontSubsetsList( $newFont['subsets'] );
 
 			// Add the standardized font to the new list, keeping the relative order.
-			$newFontsList += [ $key => $newFont ];
+			// We want to have the font family as key for easy searching!
+			$newFontsList += [ $newFont['family'] => $newFont ];
 		}
 
 		// Allow others to filter this.

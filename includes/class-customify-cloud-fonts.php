@@ -59,6 +59,11 @@ class Customify_Cloud_Fonts {
 		add_filter( 'customify_cloud_fonts', array( $this, 'add_cloud_fonts_to_font_selector' ), 10, 1 );
 
 		/*
+		 * Handle the cloud fonts preprocessing.
+		 */
+		add_filter( 'customify_get_cloud_system_fonts', array( $this, 'preprocess_config' ), 5, 1 );
+
+		/*
 		 * Add the cloud system fonts to the Font Selector
 		 */
 		add_filter( 'customify_system_fonts', array( $this, 'add_cloud_system_fonts_to_font_selector' ), 10, 1 );
