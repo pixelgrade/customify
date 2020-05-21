@@ -559,6 +559,11 @@ window.customify = window.customify || parent.customify || {};
         standardValue.unit = fallbackInputUnit
       }
 
+      // Make sure that if we have a numerical value, it is a float.
+      if (!isNaN(standardValue.value)) {
+        standardValue.value = parseFloat(standardValue.value);
+      }
+
       return standardValue
     }
 
