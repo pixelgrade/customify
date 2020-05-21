@@ -222,8 +222,8 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 	protected function display_field_title( $font_family, $current_font_details ) {
 		// Determine if we have a "pretty" display for this font family
 		$font_family_display = $font_family;
-		if ( ! empty( $current_font_details['font_family_display'] ) ) {
-			$font_family_display = $current_font_details['font_family_display'];
+		if ( ! empty( $current_font_details['family_display'] ) ) {
+			$font_family_display = $current_font_details['family_display'];
 		}
 		?>
 		<label class="font-options__head  select" for="tooltip_toogle_<?php echo esc_attr( $this->CSSID ); ?>">
@@ -420,8 +420,8 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 
 		// Now determine if we have a "pretty" display for this font family.
 		$font_family_display = $font_family;
-		if ( is_array( $font_details ) && ! empty( $font_details['font_family_display'] ) ) {
-			$font_family_display = $font_details['font_family_display'];
+		if ( is_array( $font_details ) && ! empty( $font_details['family_display'] ) ) {
+			$font_family_display = $font_details['family_display'];
 		}
 
 		// Determine if the font is selected.

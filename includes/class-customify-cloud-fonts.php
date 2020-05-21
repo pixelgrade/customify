@@ -162,6 +162,7 @@ class Customify_Cloud_Fonts {
 		// We need to convert the received data structure to the one expected by Customify.
 		return array(
 			'family' => $font_config['font_family'],
+			'family_display' => empty( $font_config['font_family_display'] ) ? '' : $font_config['font_family_display'],
 			'src' => empty( $font_config['stylesheet'] ) ? false : $font_config['stylesheet'],
 			'variants' => empty( $font_config['variants'] ) ? [] : $font_config['variants'],
 			'category' => empty( $font_config['category'] ) ? '' : $font_config['category'],
