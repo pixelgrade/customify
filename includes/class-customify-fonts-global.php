@@ -88,7 +88,7 @@ class Customify_Fonts_Global {
 		 * Grab font categories details.
 		 * Used for determining fallback stacks, etc.
 		 */
-		$this->categories = self::standardizeFontsList( apply_filters( 'customify_font_categories', [] ) );
+		$this->categories = apply_filters( 'customify_font_categories', [] );
 
 		/*
 		 * Gather all fonts, by type.
@@ -1491,9 +1491,11 @@ if (typeof WebFont !== 'undefined') {
 		// In case a font is missing any of these entries, these are the safe defaults.
 		$defaultFontEntries = [
 			'family' => null,
+			'family_display' => '',
 			'category' => 'other',
 			'variants' => [ '400' ],
 			'subsets'  => [ 'latin' ],
+			'fallback_stack' => '',
 		];
 
 		foreach ( $fontList as $key => $font ) {

@@ -29,9 +29,10 @@ This plugin is **primarily intended** to be used together with [Pixelgrade theme
 == Changelog ==
 
 = 2.8.0 =
-* Improvement: All fonts now have **fallback font stacks** added for the font family CSS property
-* Improvement: Made it much easier to use system fonts instead or beside web fonts
-* Improvement: Allow font palettes to provide font stacks instead of a single font family
+* **Improvement:** **Better font palettes logic** for even more accurate site typography
+* **Improvement:** All fonts now have **fallback font stacks** added for the font family CSS property
+* **Improvement:** Made it much easier to use system fonts instead or beside web fonts
+* **Improvement:** Allow font palettes to provide font stacks instead of a single font family
 * Fix inconsistencies between fonts behavior in the Customizer preview and site frontend
 * Properly sanitize font family names before using them in CSS
 * Convert inconsistent font variants to standard values (regular, normal, bold)

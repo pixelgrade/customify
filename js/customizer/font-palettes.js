@@ -50,7 +50,6 @@ window.customify = window.customify || parent.customify || {};
           const newFontData = {}
           const fontsLogic = parentSettingData.fonts_logic
 
-          // @todo Is this still in use? Can't find the logic that triggers it.
           if (typeof fontsLogic.reset !== 'undefined') {
             const settingID = connectedFieldData.setting_id
             const defaultValue = customify.config.settings[settingID].default
@@ -82,6 +81,22 @@ window.customify = window.customify || parent.customify || {};
           if (typeof connectedFieldData.font_size !== 'undefined' && false !== connectedFieldData.font_size) {
             newFontData['font_size'] = customify.fontFields.standardizeNumericalValue(connectedFieldData.font_size)
 
+            // Next, we what to apply the overall font size multiplier.
+            if (!isNaN(newFontData['font_size'].value)) {
+              // By default we use 1.
+              let overallFontSizeMultiplier = 1.0
+              if (typeof fontsLogic.font_size_multiplier !== 'undefined') {
+                // Make sure it is a positive float.
+                overallFontSizeMultiplier = parseFloat(fontsLogic.font_size_multiplier)
+
+                // We reject negative or 0 values.
+                if (overallFontSizeMultiplier <= 0) {
+                  overallFontSizeMultiplier = 1.0
+                }
+              }
+              newFontData['font_size'].value = round(parseFloat(newFontData['font_size'].value) * overallFontSizeMultiplier, customify.fonts.floatPrecision)
+            }
+
             // The font variant, letter spacing and text transform all come together from the font styles (intervals).
             // We just need to find the one that best matches the connected field given font size (if given).
             // Please bear in mind that we expect the font logic styles to be preprocessed, without any overlapping and using numerical keys.
@@ -103,6 +118,23 @@ window.customify = window.customify || parent.customify || {};
               }
               if (!_.isEmpty(fontsLogic.font_styles_intervals[idx].text_transform)) {
                 newFontData['text_transform'] = fontsLogic.font_styles_intervals[idx].text_transform
+              }
+
+              // Next, we what to apply the interval font size multiplier.
+              if (!isNaN(newFontData['font_size'].value)) {
+                // By default we use 1.
+                let fontSizeMultiplier = 1.0
+                if (typeof fontsLogic.font_styles_intervals[idx].font_size_multiplier !== 'undefined') {
+                  // Make sure it is a positive float.
+                  fontSizeMultiplier = parseFloat(fontsLogic.font_styles_intervals[idx].font_size_multiplier)
+
+                  // We reject negative or 0 values.
+                  if (fontSizeMultiplier <= 0) {
+                    fontSizeMultiplier = 1.0
+                  }
+                }
+
+                newFontData['font_size'].value = round(parseFloat(newFontData['font_size'].value) * fontSizeMultiplier, customify.fonts.floatPrecision)
               }
             }
 
@@ -225,6 +257,21 @@ window.customify = window.customify || parent.customify || {};
           input.trigger('customify:preset-change')
         }
       })
+    }
+
+    /**
+     * Round a number to a precision, specified in number of decimal places
+     *
+     * @param {number} number - The number to round
+     * @param {number} precision - The number of decimal places to round to:
+     *                             > 0 means decimals, < 0 means powers of 10
+     *
+     *
+     * @return {number} - The number, rounded
+     */
+    const round = function (number, precision) {
+      const factor = Math.pow(10, precision)
+      return Math.round(number * factor) / factor;
     }
 
     api.bind('ready', handlePalettes)
