@@ -1,6 +1,6 @@
-=== Customify - A Theme Customizer Booster ===
+=== Customify - Intuitive Website Styling ===
 Contributors: pixelgrade, vlad.olaru, babbardel, razvanonofrei, gorby31
-Tags: customizer, css, editor, gutenberg, live, preview, customizer
+Tags: design, customizer, fonts, colors, gutenberg, font palettes, color palettes
 Requires at least: 4.9.9
 Tested up to: 5.4.1
 Stable tag: 2.7.3
@@ -16,7 +16,7 @@ With [Customify](https://github.com/pixelgrade/customify), developers can easily
 
 This plugin is **primarily intended** to be used together with [Pixelgrade themes](https://wordpress.org/themes/author/pixelgrade/). So the best way to get acquainted with it's capabilities is to study the way [one of Pixelgrade's themes](https://github.com/pixelgrade/rosa2-lite/tree/master/inc/integrations/customify) integrates with it.
 
-**Made with love by Pixelgrade**
+**Made with care by Pixelgrade**
 
 == Credits ==
 
@@ -27,6 +27,17 @@ This plugin is **primarily intended** to be used together with [Pixelgrade theme
 * Default [image](https://unsplash.com/photos/OgM4RKdr2kY) for Style Manager Color Palette control - License: (Unsplash)[https://unsplash.com/license]
 
 == Changelog ==
+
+= 2.8.0 =
+* Improvement: All fonts now have **fallback font stacks** added for the font family CSS property
+* Improvement: Made it much easier to use system fonts instead or beside web fonts
+* Improvement: Allow font palettes to provide font stacks instead of a single font family
+* Fix inconsistencies between fonts behavior in the Customizer preview and site frontend
+* Properly sanitize font family names before using them in CSS
+* Convert inconsistent font variants to standard values (regular, normal, bold)
+* Handle both numerical and string font variant values
+* Fix missing fonts loaded class and JavaScript event when no web fonts used
+* Fix backward compatibility with WordPres 4.9
 
 = 2.7.3 =
 * Fixes for some edge situations when fonts would not apply on the frontend, after some time. Mainly related to cache issues.
