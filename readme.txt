@@ -1,7 +1,7 @@
 === Customify - Intuitive Website Styling ===
 Contributors: pixelgrade, vlad.olaru, babbardel, razvanonofrei, gorby31
 Tags: design, customizer, fonts, colors, gutenberg, font palettes, color palettes
-Requires at least: 4.9.9
+Requires at least: 4.9.14
 Tested up to: 5.4.1
 Stable tag: 2.7.3
 Requires PHP: 5.4.0
@@ -38,7 +38,7 @@ This plugin is **primarily intended** to be used together with [Pixelgrade theme
 * Convert inconsistent font variants to standard values (regular, normal, bold)
 * Handle both numerical and string font variant values
 * Fix missing fonts loaded class and JavaScript event when no web fonts used
-* Fix backward compatibility with WordPres 4.9
+* Fix backward compatibility with WordPres 4.9.14
 
 = 2.7.3 =
 * Fixes for some edge situations when fonts would not apply on the frontend, after some time. Mainly related to cache issues.
