@@ -1,17 +1,17 @@
 # Copyright (C) 2020 Pixelgrade
-# This file is distributed under the same license as the Customify plugin.
+# This file is distributed under the GPL-2.0+.
 msgid ""
 msgstr ""
-"Project-Id-Version: Customify 2.7.0\n"
+"Project-Id-Version: Customify 2.8.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/customify\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2020-04-27T15:03:03+00:00\n"
+"POT-Creation-Date: 2020-05-21T13:46:48+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"X-Generator: WP-CLI 2.4.0\n"
+"X-Generator: WP-CLI 2.5.0-alpha\n"
 "X-Domain: customify\n"
 
 #. Plugin Name of the plugin
@@ -35,146 +35,6 @@ msgstr ""
 
 #. Author URI of the plugin
 msgid "https://pixelgrade.com"
-msgstr ""
-
-#: features/class-Customify_Importer.php:52
-msgid "Missing option key"
-msgstr ""
-
-#: features/class-Customify_Importer.php:57
-msgid "Missing step id"
-msgstr ""
-
-#: features/class-Customify_Importer.php:81
-#: features/class-Customify_Importer.php:108
-msgid "Wrong value, I cannot decode"
-msgstr ""
-
-#: features/class-Customify_Importer.php:88
-msgid "This option is already here"
-msgstr ""
-
-#: features/class-Customify_Importer.php:94
-#: features/class-Customify_Importer.php:117
-msgid "I can't import this!"
-msgstr ""
-
-#: features/class-Customify_Importer.php:127
-msgid "No file"
-msgstr ""
-
-#: features/class-Customify_Importer.php:134
-msgid "No url"
-msgstr ""
-
-#: features/class-Customify_Importer.php:157
-msgid "No recall type"
-msgstr ""
-
-#: features/class-Customify_Importer.php:165
-msgid "No recall data"
-msgstr ""
-
-#: features/class-Customify_Importer.php:204
-msgid "This is already imported"
-msgstr ""
-
-#: features/class-Customify_Importer.php:210
-msgid "Done"
-msgstr ""
-
-#: features/class-Customify_Importer.php:219
-msgid "wrong recall type"
-msgstr ""
-
-#: features/class-Customify_Importer.php:228
-msgid "I dont think i should be here"
-msgstr ""
-
-#: features/class-Customify_Importer.php:237
-msgid "Wrong import type"
-msgstr ""
-
-#: features/class-Customify_Importer.php:314
-#: features/class-Customify_Importer.php:360
-msgid "They are already here"
-msgstr ""
-
-#: features/class-Customify_Importer.php:320
-#: features/class-Customify_Importer.php:366
-msgid "Nothing to import"
-msgstr ""
-
-#: features/customizer/controls/class-Pix_Customize_Background_Control.php:74
-msgid "No media selected"
-msgstr ""
-
-#: features/customizer/controls/class-Pix_Customize_Background_Control.php:131
-msgid "Upload"
-msgstr ""
-
-#: features/customizer/controls/class-Pix_Customize_Background_Control.php:138
-msgid "Remove"
-msgstr ""
-
-#: features/customizer/controls/class-Pix_Customize_Background_Control.php:161
-msgid "Background repeat.."
-msgstr ""
-
-#: features/customizer/controls/class-Pix_Customize_Background_Control.php:185
-msgid "Background clip.."
-msgstr ""
-
-#: features/customizer/controls/class-Pix_Customize_Background_Control.php:209
-msgid "Background origin.."
-msgstr ""
-
-#: features/customizer/controls/class-Pix_Customize_Background_Control.php:232
-msgid "Background size.."
-msgstr ""
-
-#: features/customizer/controls/class-Pix_Customize_Background_Control.php:251
-msgid "Background attachment.."
-msgstr ""
-
-#: features/customizer/controls/class-Pix_Customize_Background_Control.php:281
-msgid "Background position.."
-msgstr ""
-
-#: features/customizer/controls/class-Pix_Customize_Font_Control.php:126
-msgid "Recommended"
-msgstr ""
-
-#: features/customizer/controls/class-Pix_Customize_Font_Control.php:190
-msgid "Font Size"
-msgstr ""
-
-#: features/customizer/controls/class-Pix_Customize_Font_Control.php:191
-msgid "Line height"
-msgstr ""
-
-#: features/customizer/controls/class-Pix_Customize_Font_Control.php:192
-msgid "Letter Spacing"
-msgstr ""
-
-#: features/customizer/controls/class-Pix_Customize_Font_Control.php:194
-msgid "Text Align"
-msgstr ""
-
-#: features/customizer/controls/class-Pix_Customize_Font_Control.php:195
-msgid "Text Transform"
-msgstr ""
-
-#: features/customizer/controls/class-Pix_Customize_Font_Control.php:196
-msgid "Text Decoration"
-msgstr ""
-
-#: features/customizer/controls/class-Pix_Customize_Font_Control.php:255
-msgid "Font Variant"
-msgstr ""
-
-#: features/customizer/controls/class-Pix_Customize_Font_Control.php:293
-msgid "Languages"
 msgstr ""
 
 #: includes/admin-settings/core/defaults.php:30
@@ -209,28 +69,28 @@ msgstr ""
 msgid "Reset Customizer Settings"
 msgstr ""
 
-#: includes/class-customify-block-editor.php:538
-#: includes/class-customify-block-editor.php:548
-#: includes/class-customify-classic-editor.php:237
-#: includes/class-customify-classic-editor.php:247
-#: includes/class-customify-cloud-fonts.php:204
-#: includes/class-customify-cloud-fonts.php:214
+#: includes/class-customify-block-editor.php:539
+#: includes/class-customify-block-editor.php:549
+#: includes/class-customify-classic-editor.php:239
+#: includes/class-customify-classic-editor.php:249
+#: includes/class-customify-cloud-fonts.php:345
+#: includes/class-customify-cloud-fonts.php:355
 #: includes/class-customify-color-palettes.php:1215
 #: includes/class-customify-color-palettes.php:1225
 #: includes/class-customify-customizer.php:1507
 #: includes/class-customify-customizer.php:1517
-#: includes/class-customify-font-palettes.php:1303
-#: includes/class-customify-font-palettes.php:1313
-#: includes/class-customify-fonts-global.php:1709
-#: includes/class-customify-fonts-global.php:1717
+#: includes/class-customify-font-palettes.php:1350
+#: includes/class-customify-font-palettes.php:1360
+#: includes/class-customify-fonts-global.php:2035
+#: includes/class-customify-fonts-global.php:2043
 #: includes/class-customify-settings.php:446
 #: includes/class-customify-settings.php:456
 #: includes/class-customify-style-manager.php:936
 #: includes/class-customify-style-manager.php:946
 #: includes/class-customify-theme-configs.php:367
 #: includes/class-customify-theme-configs.php:377
-#: includes/class-pixcustomify.php:1000
-#: includes/class-pixcustomify.php:1010
+#: includes/class-pixcustomify.php:998
+#: includes/class-pixcustomify.php:1008
 #: includes/lib/class-customify-design-assets.php:235
 #: includes/lib/class-customify-design-assets.php:245
 msgid "You should not do that!"
@@ -515,133 +375,133 @@ msgstr ""
 msgid "Title Section is required"
 msgstr ""
 
-#: includes/class-customify-font-palettes.php:378
+#: includes/class-customify-font-palettes.php:425
 msgid "Select a font palette:"
 msgstr ""
 
-#: includes/class-customify-font-palettes.php:379
+#: includes/class-customify-font-palettes.php:426
 msgid "Conveniently change the design of your site with font palettes. Easy as pie."
 msgstr ""
 
-#: includes/class-customify-font-palettes.php:393
+#: includes/class-customify-font-palettes.php:440
 msgid "Font Primary"
 msgstr ""
 
-#: includes/class-customify-font-palettes.php:421
+#: includes/class-customify-font-palettes.php:468
 msgid "Font Secondary"
 msgstr ""
 
-#: includes/class-customify-font-palettes.php:449
+#: includes/class-customify-font-palettes.php:496
 msgid "Font Body"
 msgstr ""
 
-#: includes/class-customify-font-palettes.php:480
+#: includes/class-customify-font-palettes.php:527
 msgid "Font Accent"
 msgstr ""
 
-#: includes/class-customify-font-palettes.php:698
-#: includes/class-customify-font-palettes.php:701
+#: includes/class-customify-font-palettes.php:745
+#: includes/class-customify-font-palettes.php:748
 msgid "Gema"
 msgstr ""
 
-#: includes/class-customify-font-palettes.php:702
-#: includes/class-customify-font-palettes.php:802
-#: includes/class-customify-font-palettes.php:909
-#: includes/class-customify-font-palettes.php:1036
+#: includes/class-customify-font-palettes.php:749
+#: includes/class-customify-font-palettes.php:849
+#: includes/class-customify-font-palettes.php:956
+#: includes/class-customify-font-palettes.php:1083
 msgid "A graceful nature, truly tasteful and polished."
 msgstr ""
 
-#: includes/class-customify-font-palettes.php:798
-#: includes/class-customify-font-palettes.php:801
+#: includes/class-customify-font-palettes.php:845
+#: includes/class-customify-font-palettes.php:848
 msgid "Julia"
 msgstr ""
 
-#: includes/class-customify-font-palettes.php:905
-#: includes/class-customify-font-palettes.php:908
+#: includes/class-customify-font-palettes.php:952
+#: includes/class-customify-font-palettes.php:955
 msgid "Patch"
 msgstr ""
 
-#: includes/class-customify-font-palettes.php:1032
-#: includes/class-customify-font-palettes.php:1035
+#: includes/class-customify-font-palettes.php:1079
+#: includes/class-customify-font-palettes.php:1082
 msgid "Hive"
 msgstr ""
 
-#: includes/class-customify-fonts-global.php:261
+#: includes/class-customify-fonts-global.php:280
 msgid "Initial"
 msgstr ""
 
-#: includes/class-customify-fonts-global.php:262
+#: includes/class-customify-fonts-global.php:281
 msgid "Center"
 msgstr ""
 
-#: includes/class-customify-fonts-global.php:263
+#: includes/class-customify-fonts-global.php:282
 msgid "Left"
 msgstr ""
 
-#: includes/class-customify-fonts-global.php:264
+#: includes/class-customify-fonts-global.php:283
 msgid "Right"
 msgstr ""
 
-#: includes/class-customify-fonts-global.php:267
-#: includes/class-customify-fonts-global.php:273
+#: includes/class-customify-fonts-global.php:286
+#: includes/class-customify-fonts-global.php:292
 msgid "None"
 msgstr ""
 
-#: includes/class-customify-fonts-global.php:268
+#: includes/class-customify-fonts-global.php:287
 msgid "Capitalize"
 msgstr ""
 
-#: includes/class-customify-fonts-global.php:269
+#: includes/class-customify-fonts-global.php:288
 msgid "Uppercase"
 msgstr ""
 
-#: includes/class-customify-fonts-global.php:270
+#: includes/class-customify-fonts-global.php:289
 msgid "Lowercase"
 msgstr ""
 
-#: includes/class-customify-fonts-global.php:274
+#: includes/class-customify-fonts-global.php:293
 msgid "Underline"
 msgstr ""
 
-#: includes/class-customify-fonts-global.php:275
+#: includes/class-customify-fonts-global.php:294
 msgid "Overline"
 msgstr ""
 
-#: includes/class-customify-fonts-global.php:276
+#: includes/class-customify-fonts-global.php:295
 msgid "Line Through"
 msgstr ""
 
-#: includes/class-customify-fonts-global.php:358
+#: includes/class-customify-fonts-global.php:385
 msgid "Cloud Fonts"
 msgstr ""
 
-#: includes/class-customify-fonts-global.php:377
+#: includes/class-customify-fonts-global.php:404
 msgid "Theme Fonts"
 msgstr ""
 
-#: includes/class-customify-fonts-global.php:397
-msgid "Standard fonts"
+#: includes/class-customify-fonts-global.php:424
+msgid "System fonts"
 msgstr ""
 
-#: includes/class-customify-fonts-global.php:415
-#: includes/class-customify-fonts-global.php:474
+#: includes/class-customify-fonts-global.php:445
+#: includes/class-customify-fonts-global.php:504
 msgid "Google fonts"
 msgstr ""
 
 #. translators: %s: The font category name
-#: includes/class-customify-fonts-global.php:466
+#: includes/class-customify-fonts-global.php:496
 msgid "Google fonts %s"
 msgstr ""
 
-#: includes/class-customify-fonts-global.php:1051
+#: includes/class-customify-fonts-global.php:1184
 msgid "Select a font family"
 msgstr ""
 
-#: includes/class-customify-fonts-global.php:1052
+#: includes/class-customify-fonts-global.php:1185
 msgid "Auto"
 msgstr ""
 
-#: includes/class-customify-fonts-global.php:1053
+#: includes/class-customify-fonts-global.php:1186
 msgid "More subsets"
 msgstr ""
 
@@ -758,11 +618,11 @@ msgid "Enable Typography Options"
 msgstr ""
 
 #: includes/class-customify-settings.php:309
-msgid "Use Standard fonts"
+msgid "Use system fonts"
 msgstr ""
 
 #: includes/class-customify-settings.php:310
-msgid "Would you like to use system fonts?"
+msgid "Would you like to have system fonts available in the font controls?"
 msgstr ""
 
 #: includes/class-customify-settings.php:316
@@ -770,7 +630,7 @@ msgid "Use Google fonts:"
 msgstr ""
 
 #: includes/class-customify-settings.php:317
-msgid "Would you like to use Google fonts?"
+msgid "Would you like to have Google fonts available in the font controls?"
 msgstr ""
 
 #: includes/class-customify-settings.php:328
@@ -778,15 +638,15 @@ msgid "Group Google fonts:"
 msgstr ""
 
 #: includes/class-customify-settings.php:329
-msgid "You can chose to see the google fonts in groups"
+msgid "You can chose to see the Google fonts in groups"
 msgstr ""
 
 #: includes/class-customify-settings.php:337
-msgid "Use Cloud fonts"
+msgid "Use cloud fonts"
 msgstr ""
 
 #: includes/class-customify-settings.php:338
-msgid "Would you to use Cloud fonts?"
+msgid "Would you to have Cloud fonts available in the font controls?"
 msgstr ""
 
 #: includes/class-customify-settings.php:349
@@ -980,6 +840,78 @@ msgstr ""
 
 #: includes/customify_theme_root.php:1211
 msgid "WooCommerce Info"
+msgstr ""
+
+#: includes/customizer-controls/class-Pix_Customize_Background_Control.php:74
+msgid "No media selected"
+msgstr ""
+
+#: includes/customizer-controls/class-Pix_Customize_Background_Control.php:131
+msgid "Upload"
+msgstr ""
+
+#: includes/customizer-controls/class-Pix_Customize_Background_Control.php:138
+msgid "Remove"
+msgstr ""
+
+#: includes/customizer-controls/class-Pix_Customize_Background_Control.php:161
+msgid "Background repeat.."
+msgstr ""
+
+#: includes/customizer-controls/class-Pix_Customize_Background_Control.php:185
+msgid "Background clip.."
+msgstr ""
+
+#: includes/customizer-controls/class-Pix_Customize_Background_Control.php:209
+msgid "Background origin.."
+msgstr ""
+
+#: includes/customizer-controls/class-Pix_Customize_Background_Control.php:232
+msgid "Background size.."
+msgstr ""
+
+#: includes/customizer-controls/class-Pix_Customize_Background_Control.php:251
+msgid "Background attachment.."
+msgstr ""
+
+#: includes/customizer-controls/class-Pix_Customize_Background_Control.php:281
+msgid "Background position.."
+msgstr ""
+
+#: includes/customizer-controls/class-Pix_Customize_Font_Control.php:126
+msgid "Recommended"
+msgstr ""
+
+#: includes/customizer-controls/class-Pix_Customize_Font_Control.php:190
+msgid "Font Size"
+msgstr ""
+
+#: includes/customizer-controls/class-Pix_Customize_Font_Control.php:191
+msgid "Line height"
+msgstr ""
+
+#: includes/customizer-controls/class-Pix_Customize_Font_Control.php:192
+msgid "Letter Spacing"
+msgstr ""
+
+#: includes/customizer-controls/class-Pix_Customize_Font_Control.php:194
+msgid "Text Align"
+msgstr ""
+
+#: includes/customizer-controls/class-Pix_Customize_Font_Control.php:195
+msgid "Text Transform"
+msgstr ""
+
+#: includes/customizer-controls/class-Pix_Customize_Font_Control.php:196
+msgid "Text Decoration"
+msgstr ""
+
+#: includes/customizer-controls/class-Pix_Customize_Font_Control.php:255
+msgid "Font Variant"
+msgstr ""
+
+#: includes/customizer-controls/class-Pix_Customize_Font_Control.php:293
+msgid "Languages"
 msgstr ""
 
 #: includes/extras.php:24
