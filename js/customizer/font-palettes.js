@@ -81,7 +81,7 @@ window.customify = window.customify || parent.customify || {};
           if (typeof connectedFieldData.font_size !== 'undefined' && false !== connectedFieldData.font_size) {
             newFontData['font_size'] = customify.fontFields.standardizeNumericalValue(connectedFieldData.font_size)
 
-            // Next, we what to apply the overall font size boost.
+            // Next, we what to apply the overall font size multiplier.
             if (!isNaN(newFontData['font_size'].value)) {
               // By default we use 1.
               let overallFontSizeMultiplier = 1.0
@@ -120,7 +120,7 @@ window.customify = window.customify || parent.customify || {};
                 newFontData['text_transform'] = fontsLogic.font_styles_intervals[idx].text_transform
               }
 
-              // Next, we what to apply the interval font size boost.
+              // Next, we what to apply the interval font size multiplier.
               if (!isNaN(newFontData['font_size'].value)) {
                 // By default we use 1.
                 let fontSizeMultiplier = 1.0
