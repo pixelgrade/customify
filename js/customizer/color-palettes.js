@@ -910,6 +910,10 @@ window.customify = window.customify || parent.customify || {};
         reinitializeConnectedFields()
       })
 
+      initializeStyleManagerTabs();
+    }
+
+    const initializeStyleManagerTabs = function() {
       $( '.sm-tabs' ).each( function( i, obj ) {
         const $wrapper = $( obj );
         const $section = $wrapper.closest( '.control-section' );
@@ -937,7 +941,6 @@ window.customify = window.customify || parent.customify || {};
 
         setActiveTab( $tabs.first() );
       } );
-
     }
 
     const updateFilterPreviews = _.debounce(() => {

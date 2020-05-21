@@ -58,7 +58,7 @@ class Customify_Font_Palettes {
 		 */
 		add_filter( 'customify_filter_fields', array( $this, 'add_style_manager_section_master_fonts_config' ), 12, 1 );
 		// This needs to come after the external theme config has been applied
-//		add_filter( 'customify_filter_fields', array( $this, 'add_current_palette_control' ), 110, 1 );
+		add_filter( 'customify_filter_fields', array( $this, 'add_current_palette_control' ), 110, 1 );
 		add_filter( 'customify_final_config', array( $this, 'standardize_connected_fields' ), 10, 1 );
 
 		/*
@@ -522,6 +522,12 @@ class Customify_Font_Palettes {
 					),
 					'connected_fields' => array(),
 				),
+				'sm_font_palettes_spacing_bottom' => array(
+					'type'       => 'html',
+					'html'       => '',
+					'setting_id' => 'sm_font_palettes_spacing_bottom',
+					'priority'   => 31,
+				),
 			),
 		) );
 
@@ -547,62 +553,19 @@ class Customify_Font_Palettes {
 			$config['sections']['style_manager_section'] = array();
 		}
 
-		$current_palette = '';
-		$current_palette_sets = array( 'current', 'next' );
-
-		$master_font_controls_ids = $this->get_all_master_font_controls_ids( $config['sections']['style_manager_section']['options'] );
-
-		foreach ( $current_palette_sets as $set ) {
-			$current_palette .= '<div class="fonts ' . $set . '">';
-			foreach ( $master_font_controls_ids as $setting_id ) {
-				if ( ! empty( $config['sections']['style_manager_section']['options'][ $setting_id ]['connected_fields'] ) ) {
-					$current_palette .=
-						'<div class="font ' . $setting_id . '" data-setting="' . $setting_id . '"></div>' . "\n";
-				}
-			}
-			$current_palette .= '</div>';
-		}
-
 		// The section might be already defined, thus we merge, not replace the entire section config.
 		$config['sections']['style_manager_section']['options'] = array(
-              'sm_current_font_palette' => array(
-                  'type' => 'html',
-                  'html' =>
-                      '<div class="font-palette-container">' . "\n" .
-                      '<span class="customize-control-title">Current Font Palette:</span>' . "\n" .
-                      '<span class="description customize-control-description">Choose a font palette to start with. Adjust its style using the variation buttons below.</span>' . "\n" .
-                      '<div class="c-font-palette">' . "\n" .
-                      $current_palette .
-                      '<div class="c-font-palette__overlay">' . "\n" .
-                      '<div class="c-font-palette__label">' .
-                      '<div class="c-font-palette__name">' . 'Original Style' . '</div>' .
-                      '<div class="c-font-palette__control variation-light active" data-target="#_customize-input-sm_font_palette_variation_control-radio-light">' .
-                      '<span class="dashicons dashicons-image-rotate"></span>' .
-                      '<div class="c-font-palette__tooltip">Light</div>' .
-                      '</div>' .
-                      '<div class="c-font-palette__control variation-dark" data-target="#_customize-input-sm_font_palette_variation_control-radio-dark">' .
-                      '<span class="dashicons dashicons-image-filter"></span>'.
-                      '<div class="c-font-palette__tooltip">Dark</div>' .
-                      '</div>' .
-                      '<div class="c-font-palette__control variation-fontful" data-target="#_customize-input-sm_font_palette_variation_control-radio-fontful">' .
-                      '<span class="dashicons dashicons-admin-appearance"></span>' .
-                      '<div class="c-font-palette__tooltip">Fontful</div>' .
-                      '</div>' .
-                      '</div>' . "\n" .
-                      '</div>' . "\n" .
-                      '</div>' . "\n" .
-                      '</div>' . "\n" .
-                      '<svg class="c-font-palette__blur" width="15em" height="15em" viewBox="0 0 15 15" xmlns="http://www.w3.org/2000/svg" version="1.1">' . "\n" .
-                      '<defs>' . "\n" .
-                      '<filter id="goo">' . "\n" .
-                      '<feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />' . "\n" .
-                      '<feFontMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 50 -20" result="goo" />' . "\n" .
-                      '<feBlend in="SourceGraphic" in2="goo" />' . "\n" .
-                      '</filter>' . "\n" .
-                      '</defs>' . "\n" .
-                      '</svg>',
-              ),
-          ) + $config['sections']['style_manager_section']['options'];
+			'sm_current_font_palette' => array(
+				'type'       => 'html',
+				'setting_id' => 'sm_current_font_palette',
+				'priority'   => 3,
+				'html'       =>
+					'<div class="sm-tabs">' . "\n" .
+						'<div class="sm-tabs__item" data-target="palettes">' . esc_html__( 'Palettes', 'customify' ) . '</div>' . "\n" .
+						'<div class="sm-tabs__item" data-target="advanced">' . esc_html__( 'Advanced', 'customify' ) . '</div>' . "\n" .
+					'</div>',
+				)
+            ) + $config['sections']['style_manager_section']['options'];
 
 		return $config;
 	}

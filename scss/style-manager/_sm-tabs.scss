@@ -1,7 +1,8 @@
 .sm-tabs {
   display: flex;
   justify-content: space-between;
-  padding: 0 16px;
+  padding-left: 8px;
+  padding-right: 16px;
   text-align: center;
 
   border-bottom: 1px solid $border-color;
@@ -10,9 +11,10 @@
     position: relative;
 
     padding: 12px 0;
+    margin-left: 8px;
     margin-bottom: -1px;
 
-    flex-basis: 31%;
+    flex: 1 1 0;
 
     font-size: 14px;
     color: $blue-dark;
