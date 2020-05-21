@@ -84,17 +84,17 @@ window.customify = window.customify || parent.customify || {};
             // Next, we what to apply the overall font size boost.
             if (!isNaN(newFontData['font_size'].value)) {
               // By default we use 1.
-              let overallFontSizeBoost = 1.0
-              if (typeof fontsLogic.font_size_boost !== 'undefined') {
+              let overallFontSizeMultiplier = 1.0
+              if (typeof fontsLogic.font_size_multiplier !== 'undefined') {
                 // Make sure it is a positive float.
-                overallFontSizeBoost = parseFloat(fontsLogic.font_size_boost)
+                overallFontSizeMultiplier = parseFloat(fontsLogic.font_size_multiplier)
 
                 // We reject negative or 0 values.
-                if (overallFontSizeBoost <= 0) {
-                  overallFontSizeBoost = 1.0
+                if (overallFontSizeMultiplier <= 0) {
+                  overallFontSizeMultiplier = 1.0
                 }
               }
-              newFontData['font_size'].value = round(parseFloat(newFontData['font_size'].value) * overallFontSizeBoost, customify.fonts.floatPrecision)
+              newFontData['font_size'].value = round(parseFloat(newFontData['font_size'].value) * overallFontSizeMultiplier, customify.fonts.floatPrecision)
             }
 
             // The font variant, letter spacing and text transform all come together from the font styles (intervals).
@@ -123,18 +123,18 @@ window.customify = window.customify || parent.customify || {};
               // Next, we what to apply the interval font size boost.
               if (!isNaN(newFontData['font_size'].value)) {
                 // By default we use 1.
-                let fontSizeBoost = 1.0
-                if (typeof fontsLogic.font_styles_intervals[idx].font_size_boost !== 'undefined') {
+                let fontSizeMultiplier = 1.0
+                if (typeof fontsLogic.font_styles_intervals[idx].font_size_multiplier !== 'undefined') {
                   // Make sure it is a positive float.
-                  fontSizeBoost = parseFloat(fontsLogic.font_styles_intervals[idx].font_size_boost)
+                  fontSizeMultiplier = parseFloat(fontsLogic.font_styles_intervals[idx].font_size_multiplier)
 
                   // We reject negative or 0 values.
-                  if (fontSizeBoost <= 0) {
-                    fontSizeBoost = 1.0
+                  if (fontSizeMultiplier <= 0) {
+                    fontSizeMultiplier = 1.0
                   }
                 }
 
-                newFontData['font_size'].value = round(parseFloat(newFontData['font_size'].value) * fontSizeBoost, customify.fonts.floatPrecision)
+                newFontData['font_size'].value = round(parseFloat(newFontData['font_size'].value) * fontSizeMultiplier, customify.fonts.floatPrecision)
               }
             }
 

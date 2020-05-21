@@ -190,16 +190,16 @@ class Customify_Font_Palettes {
 			unset( $fonts_logic_config[ $font_setting_id ]['type'] );
 			unset( $fonts_logic_config[ $font_setting_id ]['font_type'] );
 
-			// If we have been given a `font_size_boost` value, make sure it is a float.
-			if ( isset( $fonts_logic_config[ $font_setting_id ]['font_size_boost'] ) ) {
-				$fonts_logic_config[ $font_setting_id ]['font_size_boost'] = (float) $fonts_logic_config[ $font_setting_id ]['font_size_boost'];
-				if ( $fonts_logic_config[ $font_setting_id ]['font_size_boost'] <= 0 ) {
+			// If we have been given a `font_size_multiplier` value, make sure it is a float.
+			if ( isset( $fonts_logic_config[ $font_setting_id ]['font_size_multiplier'] ) ) {
+				$fonts_logic_config[ $font_setting_id ]['font_size_multiplier'] = (float) $fonts_logic_config[ $font_setting_id ]['font_size_multiplier'];
+				if ( $fonts_logic_config[ $font_setting_id ]['font_size_multiplier'] <= 0 ) {
 					// We reject negative or 0 values.
-					$fonts_logic_config[ $font_setting_id ]['font_size_boost'] = 1.0;
+					$fonts_logic_config[ $font_setting_id ]['font_size_multiplier'] = 1.0;
 				}
 			} else {
 				// By default we use 1.
-				$fonts_logic_config[ $font_setting_id ]['font_size_boost'] = 1.0;
+				$fonts_logic_config[ $font_setting_id ]['font_size_multiplier'] = 1.0;
 			}
 
 			// Process the font_styles_intervals and make sure that they are in the right order and not overlapping.
@@ -326,16 +326,16 @@ class Customify_Font_Palettes {
 						$font_styles_intervals[ $key ]['letter_spacing'] = Customify_Fonts_Global::standardizeNumericalValue( $value['letter_spacing'] );
 					}
 
-					// If we have been given a `font_size_boost` value, make sure it is a positive float.
-					if ( isset( $font_styles_intervals[ $key ]['font_size_boost'] ) ) {
-						$font_styles_intervals[ $key ]['font_size_boost'] = (float) $font_styles_intervals[ $key ]['font_size_boost'];
-						if ( $font_styles_intervals[ $key ]['font_size_boost'] <= 0 ) {
+					// If we have been given a `font_size_multiplier` value, make sure it is a positive float.
+					if ( isset( $font_styles_intervals[ $key ]['font_size_multiplier'] ) ) {
+						$font_styles_intervals[ $key ]['font_size_multiplier'] = (float) $font_styles_intervals[ $key ]['font_size_multiplier'];
+						if ( $font_styles_intervals[ $key ]['font_size_multiplier'] <= 0 ) {
 							// We reject negative or 0 values.
-							$font_styles_intervals[ $key ]['font_size_boost'] = 1.0;
+							$font_styles_intervals[ $key ]['font_size_multiplier'] = 1.0;
 						}
 					} else {
 						// By default we use 1, meaning no effect.
-						$font_styles_intervals[ $key ]['font_size_boost'] = 1.0;
+						$font_styles_intervals[ $key ]['font_size_multiplier'] = 1.0;
 					}
 
 					// We really don't want font_size or line_height in here,
