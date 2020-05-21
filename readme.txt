@@ -3,7 +3,7 @@ Contributors: pixelgrade, vlad.olaru, babbardel, razvanonofrei, gorby31
 Tags: design, customizer, fonts, colors, gutenberg, font palettes, color palettes
 Requires at least: 4.9.14
 Tested up to: 5.4.1
-Stable tag: 2.7.3
+Stable tag: 2.8.0
 Requires PHP: 5.4.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
