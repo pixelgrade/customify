@@ -2,7 +2,7 @@ $sm-colors-id: unquote( '#accordion-section-sm_color_palettes_section' );
 $sm-fonts-id: unquote( '#accordion-section-sm_font_palettes_section' );
 
 // Add spacing and borders between section toggle buttons
-#customize-controls {
+#customize-theme-controls {
 
   #{$sm-colors-id} > .accordion-section-title {
     border-bottom: 1px solid $border-color;
@@ -15,7 +15,7 @@ $sm-fonts-id: unquote( '#accordion-section-sm_font_palettes_section' );
 }
 
 // Make icons stand out
-#customize-controls {
+#customize-theme-controls {
 
   #{$sm-colors-id},
   #{$sm-fonts-id} {

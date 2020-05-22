@@ -53,10 +53,10 @@
   border-color: $border-color;
 }
 
-#customize-controls .customize-info .customize-panel-description,
-#customize-controls .customize-info .customize-section-description,
+#customize-theme-controls .customize-info .customize-panel-description,
+#customize-theme-controls .customize-info .customize-section-description,
 #customize-outer-theme-controls .customize-info .customize-section-description,
-#customize-controls .no-widget-areas-rendered-notice {
+#customize-theme-controls .no-widget-areas-rendered-notice {
   padding: $container-spacing;
   border-color: $border-color;
   background: $white;
