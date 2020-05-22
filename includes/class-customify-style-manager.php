@@ -350,7 +350,7 @@ if ( ! class_exists( 'Customify_Style_Manager' ) ) {
 					'sm_swap_colors_dark',
 					'sm_swap_secondary_colors_dark',
 					'sm_advanced_toggle',
-					'sm_spacing_bottom',
+					'sm_color_palettes_spacing_bottom',
 				);
 
 				$color_palettes_section_config = array(
@@ -378,6 +378,7 @@ if ( ! class_exists( 'Customify_Style_Manager' ) ) {
 			if ( is_array( $style_manager_section_config ) && class_exists( 'Customify_Font_Palettes' ) && Customify_Font_Palettes::instance()->is_supported() ) {
 
 				$font_palettes_fields = array(
+					'sm_current_font_palette',
 					'sm_font_palette',
 					'sm_font_palette_variation',
 					'sm_font_primary',
@@ -386,6 +387,7 @@ if ( ! class_exists( 'Customify_Style_Manager' ) ) {
 					'sm_font_accent',
 					'sm_swap_fonts',
 					'sm_swap_primary_secondary_fonts',
+					'sm_font_palettes_spacing_bottom',
 				);
 
 				$font_palettes_section_config = array(

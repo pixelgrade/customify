@@ -470,10 +470,10 @@ class Customify_Color_Palettes {
 					'label'        => esc_html__( 'Swap Secondary Color ⇆ Secondary Dark', 'customify' ),
 					'action'       => 'sm_swap_secondary_colors_dark',
 				),
-				'sm_spacing_bottom' => array(
+				'sm_color_palettes_spacing_bottom' => array(
 					'type'       => 'html',
 					'html'       => '',
-					'setting_id' => 'sm_spacing_bottom',
+					'setting_id' => 'sm_color_palettes_spacing_bottom',
 					'priority'   => 31,
 				),
 			),
