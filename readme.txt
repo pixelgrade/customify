@@ -25,6 +25,7 @@ This plugin is **primarily intended** to be used together with [Pixelgrade theme
 * [Ace Editor](https://ace.c9.io/) JavaScript editor - License: BSD
 * [jQuery React](https://github.com/natedavisolds/jquery-react) JavaScript jQuery plugin - License: MIT
 * [Web Font Loader](https://github.com/typekit/webfontloader) JavaScript library - License: Apache 2.0
+* [Fuse.js](http://fusejs.io) Lightweight fuzzy-search JavaScript library - License: Apache 2.0
 * Default [image](https://unsplash.com/photos/OgM4RKdr2kY) for Style Manager Color Palette control - License: (Unsplash)[https://unsplash.com/license]
 
 == Changelog ==

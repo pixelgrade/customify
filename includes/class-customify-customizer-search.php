@@ -59,6 +59,9 @@ class Customify_Customizer_Search {
 		 * Print the needed JavaScript templates.
 		 */
 		add_action( 'customize_controls_print_footer_scripts', array( $this, 'print_js_template' ) );
+
+		// Add configuration data to be passed to JS.
+		add_filter( 'customify_localized_js_settings', array( $this, 'add_to_localized_data' ), 10, 1 );
 	}
 
 	/**
@@ -69,9 +72,13 @@ class Customify_Customizer_Search {
 	public function register_admin_customizer_scripts() {
 		$suffix = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min';
 
+		wp_register_script( PixCustomifyPlugin()->get_slug() . '-fuse',
+			plugins_url( 'js/vendor/fuse-6.0.0/fuse.basic' . $suffix . '.js', PixCustomifyPlugin()->get_file() ),
+			[], null );
+
 		wp_register_script( PixCustomifyPlugin()->get_slug() . '-customizer-search',
 			plugins_url( 'js/customizer/search' . $suffix . '.js', PixCustomifyPlugin()->get_file() ),
-			array( 'jquery', ), PixCustomifyPlugin()->get_version() );
+			[ 'jquery', PixCustomifyPlugin()->get_slug() . '-fuse', ], PixCustomifyPlugin()->get_version() );
 	}
 
 	/**
@@ -113,6 +120,75 @@ class Customify_Customizer_Search {
 			</div>
 		</script>
 	<?php }
+
+	/**
+	 * Add data to be available in JS.
+	 *
+	 * @since 2.9.0
+	 *
+	 * @param $localized
+	 *
+	 * @return mixed
+	 */
+	public function add_to_localized_data( $localized ) {
+		if ( empty( $localized['search'] ) ) {
+			$localized['search'] = [];
+		}
+
+		$localized['search']['excludedControls'] = [
+			// Color Palettes Controls
+			'sm_dark_color_master_slider',
+			'sm_dark_color_primary_slider',
+			'sm_dark_color_secondary_slider',
+			'sm_dark_color_tertiary_slider',
+			'sm_colors_dispersion',
+			'sm_colors_focus_point',
+			'sm_color_palette',
+			'sm_color_palette_variation',
+			'sm_color_primary',
+			'sm_color_primary_final',
+			'sm_color_secondary',
+			'sm_color_secondary_final',
+			'sm_color_tertiary',
+			'sm_color_tertiary_final',
+			'sm_dark_primary',
+			'sm_dark_primary_final',
+			'sm_dark_secondary',
+			'sm_dark_secondary_final',
+			'sm_dark_tertiary',
+			'sm_dark_tertiary_final',
+			'sm_light_primary',
+			'sm_light_primary_final',
+			'sm_light_secondary',
+			'sm_light_secondary_final',
+			'sm_light_tertiary',
+			'sm_light_tertiary_final',
+			'sm_swap_colors',
+			'sm_swap_dark_light',
+			'sm_swap_colors_dark',
+			'sm_swap_secondary_colors_dark',
+			'sm_advanced_toggle',
+			'sm_spacing_bottom',
+			// Font Palettes Controls
+			'sm_font_palette',
+			'sm_font_palette_variation',
+			'sm_font_primary',
+			'sm_font_secondary',
+			'sm_font_body',
+			'sm_font_accent',
+			'sm_swap_fonts',
+			'sm_swap_primary_secondary_fonts',
+		];
+
+		if ( empty( $localized['l10n'] ) ) {
+			$localized['l10n'] = [];
+		}
+		$localized['l10n']['search'] = [
+			'resultsSectionScreenReaderText' => esc_html__( 'Press return or enter to open this section', 'customify' ),
+		];
+
+		return $localized;
+	}
 
 	/**
 	 * Determine if the Customizer search is supported.
