@@ -133,6 +133,21 @@ window.customify = window.customify || parent.customify || {};
       })
 
       api.previewer.targetWindow.bind(showSearchButtonToggle)
+
+      // Handle showing the current search results when returning to the top pane.
+      api.state( 'expandedSection' ).bind(showSearchResultsWhenTopPaneVisible)
+      api.state( 'expandedPanel' ).bind(showSearchResultsWhenTopPaneVisible)
+    }
+
+    const showSearchResultsWhenTopPaneVisible = function() {
+      if (!api.state( 'expandedSection' ).get() && !api.state( 'expandedPanel' ).get()) {
+        const searchString = $(searchInputSelector).val()
+        if (searchString.length > 2) {
+          setTimeout( function() {
+            displayResults(searchString)
+          }, 400)
+        }
+      }
     }
 
     const displayResults = function (stringToSearch) {
@@ -183,7 +198,7 @@ window.customify = window.customify || parent.customify || {};
       }).join('')
 
       customizePanelsParent.addClass('search-found')
-      document.getElementById('customify-search-results').innerHTML = `<ul id="customizer-search-results">${html}</ul>`
+      document.getElementById('customify-search-results').innerHTML = `<ul>${html}</ul>`
 
       const searchSettings = document.querySelectorAll('#customify-search-results .accordion-section')
       searchSettings.forEach(setting => setting.addEventListener('click', expandSection))
@@ -255,7 +270,10 @@ window.customify = window.customify || parent.customify || {};
       const sectionName = this.getAttribute('data-section')
       const section = api.section(sectionName)
 
-      clearSearch()
+      customizePanelsParent.removeClass('search-found')
+      document.getElementById('customify-search-results').innerHTML = ''
+      $(searchInputSelector).focus()
+
       section.expand()
     }
 

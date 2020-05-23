@@ -132,18 +132,9 @@ $container-placeholder-color: #999;
 // This is put on the #customize-theme-controls wrapper, so it is used to hide the regular panels.
 .search-found {
   height: 0;
-  transition: height 0.3s ease-in-out;
   visibility: hidden;
   opacity: 0;
   display: none;
-}
-
-.section-open #customify-search-results,
-.in-sub-panel #customify-search-results {
-  visibility: hidden;
-  height: 0;
-  overflow: hidden;
-  transform: translateX(-100%);
 }
 
 #customify-search-results .accordion-section {
