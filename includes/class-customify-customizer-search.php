@@ -108,7 +108,7 @@ class Customify_Customizer_Search {
 		<script type="text/html" id="tmpl-customify-search-form">
 			<div id="accordion-section-customify-customizer-search" style="display: none;">
 				<h4 class="customify-customizer-search-section accordion-section-title">
-					<span class="search-input-label"><?php esc_html_e( 'Search through all available controls', 'customify' ); ?></span>
+					<span class="search-input-label"><?php esc_html_e( 'Search through all controls, menus, and widgets.', 'customify' ); ?></span>
 					<span class="search-field-wrapper">
 						<input type="text" placeholder="<?php esc_html_e( 'Start typing...', 'customify' ); ?>" name="customify-customizer-search-input" autofocus="autofocus" id="customify-customizer-search-input" class="customizer-search-input" />
 						<span class="search-field-button-wrapper">
