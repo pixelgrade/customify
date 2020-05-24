@@ -34,7 +34,6 @@ window.customify = window.customify || parent.customify || {};
           /*
            * Create the value of the font field and set in the setting.
            */
-
           if (_.isUndefined(connectedFieldData) || _.isUndefined(connectedFieldData.setting_id) || !_.isString(connectedFieldData.setting_id) || _.isUndefined(parentSettingData.fonts_logic)) {
             return
           }
@@ -70,7 +69,7 @@ window.customify = window.customify || parent.customify || {};
 
           // The font family is straight forward as it comes directly from the parent field font logic configuration.
           if (typeof fontsLogic.font_family !== 'undefined') {
-            newFontData['font_family'] = fontsLogic.font_family
+            newFontData['font_family'] = newValue.font_family
           }
 
           if (_.isEmpty(newFontData['font_family'])) {
@@ -212,15 +211,15 @@ window.customify = window.customify || parent.customify || {};
       // when new info arrives, the setting callbacks will be fired (.set() doesn't do anything if the new value is the same as the old).
       // Also some entries will be used to set the master font subfields (mainly font family).
       // This value is not used in any other way!
-      setting.set(config)
+      setting.set( config );
     }
 
     const handlePalettes = () => {
       // We need to do this here to be sure the data is available.
       apiSettings = api.settings.settings
 
-      initializePalettes()
-      reloadConnectedFields()
+      initializePalettes();
+      reloadConnectedFields();
 
       // Handle the palette change logic.
       $('.js-font-palette input[name="sm_font_palette"]').on('change', onPaletteChange)
