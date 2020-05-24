@@ -93,6 +93,14 @@ class PixCustomifyPlugin {
 	 */
 	public $classic_editor = null;
 
+	/**
+	 * Customizer Search class object.
+	 * @var Customify_Customizer_Search
+	 * @access  public
+	 * @since   2.9.0
+	 */
+	public $customizer_search = null;
+
 	protected $options_minimal_details = array();
 	protected $options_details = array();
 
@@ -161,6 +169,12 @@ class PixCustomifyPlugin {
 		require_once( $this->get_base_path() . 'includes/class-customify-classic-editor.php' );
 		if ( is_null( $this->classic_editor ) ) {
 			$this->classic_editor = Customify_Classic_Editor::instance();
+		}
+
+		/* Initialize the Customizer Search logic. */
+		require_once( $this->get_base_path() . 'includes/class-customify-customizer-search.php' );
+		if ( is_null( $this->customizer_search ) ) {
+			$this->customizer_search = Customify_Customizer_Search::instance();
 		}
 
 		// Register all the needed hooks
