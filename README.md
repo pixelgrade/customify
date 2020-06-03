@@ -1,18 +1,20 @@
-Customify [![Build Status](https://travis-ci.org/pixelgrade/customify.svg?branch=wporg)](https://travis-ci.org/pixelgrade/customify) [![Code Climate](https://lima.codeclimate.com/github/pixelgrade/customify/badges/gpa.svg)](https://lima.codeclimate.com/github/pixelgrade/customify) [![Issue Count](https://lima.codeclimate.com/github/pixelgrade/customify/badges/issue_count.svg)](https://lima.codeclimate.com/github/pixelgrade/customify)
+Customify - Intuitive Website Styling for WordPress
 ========
-**A Theme Customizer Booster**
 
-With Customify, you can easily add Fonts, Colors, Live CSS Editor and other options to your theme.
+With [Customify](https://github.com/pixelgrade/customify), developers can easily create **advanced theme-specific options** inside the WordPress Customizer. Using those options, a user can make presentational changes without having to know or edit the theme code.
 
-### How to use it?
+This plugin is **primarily intended** to be used together with [Pixelgrade themes](https://wordpress.org/themes/author/pixelgrade/). So the best way to get acquainted with it's capabilities is to study the way [one of Pixelgrade's themes](https://github.com/pixelgrade/rosa2-lite/tree/master/inc/integrations/customify) integrates with it.
+
+**Made with care by Pixelgrade**
+
+## How to use it?
 
 First you need to install and activate the stable version. This will always be on [wordpress.org](https://wordpress.org/plugins/customify/)
 
-Now go to ‘Appearance -> Customize’ menu and have fun with the new fields.
+Now go to ‘Appearance -> Customize’ menu and have fun with the new fields provided by your active theme.
 
-### Make your own customizer
-
-So this plugin adds some fields in customizer, no big deal right? How about adding your own customizer fields?
+## For WordPress theme developers
+### Make your own Customizer options
 
 The Customify [$config](#about_config_var) can be filtered by any theme and this is how you do it, include this filter in your theme(probably in functions.php)
 
@@ -62,14 +64,14 @@ function make_this_function_name_unique( $config ) {
 }
 ```
 
-The Customify plugin also create's its own defaults this way. You can see that in `customify/customify_config.php`
+Customify also creates its own defaults this way. You can see that in `customify/customify_config.php`
 Personally I like to simply copy this file in my child theme and include it in `functions.php` with
 
 ```php
 require 'customify_config.php'
 ```
 
-And after that the sky is the limit, I can style any elements or group of elements in customizer.
+And after that the sky is the limit. I can style any elements or group of elements in the Customizer.
 
 The intro is over let's get to some advanced stuff.
 
@@ -93,7 +95,7 @@ Pages select | No | The standard WordPress Page Select
 [Select2](https://select2.github.io/) | No | An awesome select 
 [Presets](#presets_title) | No | An radio input option to select a group of options (inception style ^^)
 
-# Advanced Things
+## Advanced Things
 
 ### The $config variable<a name="about_config_var"></a> ###
 
