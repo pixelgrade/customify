@@ -26,7 +26,7 @@ This plugin is **primarily intended** to be used together with [Pixelgrade theme
 * [jQuery React](https://github.com/natedavisolds/jquery-react) JavaScript jQuery plugin - License: MIT
 * [Web Font Loader](https://github.com/typekit/webfontloader) JavaScript library - License: Apache 2.0
 * [Fuse.js](http://fusejs.io) Lightweight fuzzy-search JavaScript library - License: Apache 2.0
-* Default [image](https://unsplash.com/photos/OgM4RKdr2kY) for Style Manager Color Palette control - License: (Unsplash)[https://unsplash.com/license]
+* Default [image](https://unsplash.com/photos/OgM4RKdr2kY) for Style Manager Color Palette control - License: [Unsplash](https://unsplash.com/license)
 
 == Changelog ==
 
@@ -40,7 +40,7 @@ This plugin is **primarily intended** to be used together with [Pixelgrade theme
 * Convert inconsistent font variants to standard values (regular, normal, bold)
 * Handle both numerical and string font variant values
 * Fix missing fonts loaded class and JavaScript event when no web fonts used
-* Fix backward compatibility with WordPres 4.9.14
+* Fix backward compatibility with WordPress 4.9.14
 
 = 2.7.3 =
 * Fixes for some edge situations when fonts would not apply on the frontend, after some time. Mainly related to cache issues.
