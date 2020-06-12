@@ -1135,21 +1135,23 @@ if (typeof WebFont !== 'undefined') {
 		if ( ! empty( $args['custom_srcs'] ) ) {
 			// Get the site's origin (without the protocol) so we can exclude it.
 			$own_origin = self::extractOriginFromUrl( get_bloginfo( 'url' ) );
-			// Remove the protocol
-			$own_origin = preg_replace( '#((http|https|ftp|ftps)?\:?)#i', '', $own_origin );
+			if ( ! empty( $own_origin ) ) {
+				// Remove the protocol
+				$own_origin = preg_replace( '#((http|https|ftp|ftps)?\:?)#i', '', $own_origin );
 
-			$external_origins = [];
-			foreach ( $args['custom_srcs'] as $src ) {
-				$origin = self::extractOriginFromUrl( $src );
-				if ( ! empty( $origin ) && false === strpos( $origin, $own_origin ) ) {
-					$external_origins[] = $origin;
+				$external_origins = [];
+				foreach ( $args['custom_srcs'] as $src ) {
+					$origin = self::extractOriginFromUrl( $src );
+					if ( ! empty( $origin ) && false === strpos( $origin, $own_origin ) ) {
+						$external_origins[] = $origin;
+					}
 				}
-			}
 
-			$external_origins = array_unique( $external_origins );
-			if ( ! empty( $external_origins ) ) {
-				foreach ( $external_origins as $external_origin ) {
-					echo '<link href="' . esc_url( $external_origin ) . '" rel="preconnect" crossorigin>';
+				$external_origins = array_unique( $external_origins );
+				if ( ! empty( $external_origins ) ) {
+					foreach ( $external_origins as $external_origin ) {
+						echo '<link href="' . esc_url( $external_origin ) . '" rel="preconnect" crossorigin>';
+					}
 				}
 			}
 		}
