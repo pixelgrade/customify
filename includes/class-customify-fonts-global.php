@@ -151,7 +151,7 @@ class Customify_Fonts_Global {
 		add_action('wp_head', array( $this, 'add_preconnect_links' ), 0);
 		wp_register_script( PixCustomifyPlugin()->get_slug() . '-web-font-loader',
 			plugins_url( 'js/vendor/webfontloader-1-6-28.min.js', PixCustomifyPlugin()->get_file() ), [], null, ( 'wp_head' === $load_location ) ? false : true );
-		add_action('wp_enqueue_scripts', array( $this, 'enqueue_frontend_scripts' ) );
+		add_action('wp_enqueue_scripts', array( $this, 'enqueue_frontend_scripts_styles' ), 0 );
 		add_action( $load_location, array( $this, 'outputFontsDynamicStyle' ), 100 );
 
 		// Add data to be passed to JS.
@@ -725,6 +725,12 @@ class Customify_Fonts_Global {
 					'family' => $google_font,
 				], $google_url );
 			}
+
+			// Request with font-display: swap;
+			$google_url = add_query_arg( [
+				'display' => 'swap',
+			], $google_url );
+
 			$urls[] = $google_url;
 		}
 
@@ -1134,7 +1140,7 @@ class Customify_Fonts_Global {
 	/**
 	 * Output and enqueue the scripts needed to handle web fonts loading on the frontend (including the Customizer preview).
 	 */
-	public function enqueue_frontend_scripts() {
+	public function enqueue_frontend_scripts_styles() {
 		// If we are in the Customizer preview, we will always use the WebFontLoader.
 		if ( is_customize_preview() ) {
 			// We always enqueue the WebFontLoader script.
@@ -1145,20 +1151,7 @@ class Customify_Fonts_Global {
 			if ( ! empty( $script ) ) {
 				wp_add_inline_script( PixCustomifyPlugin()->get_slug() . '-web-font-loader', $script );
 			} else {
-				// If there are no webfonts to load, add a script to the footer, on window loaded,
-				// to trigger the font loaded event and add the class to the html element.
-				// This way the behavior is consistent.
-				add_action( 'wp_footer', function() { ?>
-					<script>
-						window.addEventListener('load', function() {
-							// Trigger the 'wf-active' event, just like Web Font Loader would do.
-							window.dispatchEvent(new Event('wf-active'));
-							// Add the 'wf-active' class on the html element, just like Web Font Loader would do.
-							document.getElementsByTagName('html')[0].classList.add('wf-active');
-						});
-					</script>
-					<?php
-				});
+				$this->handleNoWebFontsEvents();
 			}
 		} else {
 			// In the actual frontend of the site, we rely on more efficient techniques like the FontFace API
@@ -1170,8 +1163,50 @@ class Customify_Fonts_Global {
 				foreach ( $fontStylesheetUrls as $key => $fontStylesheetUrl ) {
 					wp_enqueue_style( 'customify-font-stylesheet-' . $key, $fontStylesheetUrl, [], null );
 				}
+
+				// Now we need to output the JavaScript logic for detecting the fonts loaded event, just like WebFontLoader does.
+				add_action( 'wp_footer', function() { ?>
+					<script>
+						let customifyTriggerFontsLoadedEvents = function() {
+							// Trigger the 'wf-active' event, just like Web Font Loader would do.
+							window.dispatchEvent(new Event('wf-active'));
+							// Add the 'wf-active' class on the html element, just like Web Font Loader would do.
+							document.getElementsByTagName('html')[0].classList.add('wf-active');
+						}
+
+						// Try to use the modern FontFaceSet browser APIs.
+						if ( typeof document.fonts !== 'undefined' && typeof document.fonts.ready !== 'undefined' ) {
+							document.fonts.ready.then(customifyTriggerFontsLoadedEvents);
+						} else {
+							// Fallback to just waiting a little bit and triggering the events for older browsers.
+							window.addEventListener('load', function() {
+								setTimeout( customifyTriggerFontsLoadedEvents, 300 );
+							});
+						}
+					</script>
+					<?php
+				});
+			} else {
+				$this->handleNoWebFontsEvents();
 			}
 		}
+	}
+
+	protected function handleNoWebFontsEvents() {
+		// If there are no web fonts to load, add a script to the footer, on window loaded,
+		// to trigger the font loaded event and add the class to the html element.
+		// This way the behavior is consistent.
+		add_action( 'wp_footer', function() { ?>
+			<script>
+				window.addEventListener('load', function() {
+					// Trigger the 'wf-active' event, just like Web Font Loader would do.
+					window.dispatchEvent(new Event('wf-active'));
+					// Add the 'wf-active' class on the html element, just like Web Font Loader would do.
+					document.getElementsByTagName('html')[0].classList.add('wf-active');
+				});
+			</script>
+			<?php
+		});
 	}
 
 	function get_webfontloader_dynamic_script() {
