@@ -625,6 +625,113 @@ class Customify_Fonts_Global {
 	}
 
 	/**
+	 * Gather all the needed web fonts stylesheet URLs (the stylesheets contain the @font-face definition).
+	 *
+	 * @return array
+	 */
+	public function getFontsStylesheetUrls() {
+
+		$urls = [];
+
+		/** @var PixCustomifyPlugin $local_plugin */
+		$local_plugin = PixCustomifyPlugin();
+
+		$font_fields = [];
+		$local_plugin->customizer->get_fields_by_key( $local_plugin->get_options_details(), 'type', 'font', $font_fields );
+
+		if ( empty( $font_fields ) ) {
+			return $urls;
+		}
+
+		// These are fields that should have no frontend impact.
+		$excluded_fields = array(
+			'sm_font_palette',
+			'sm_font_palette_variation',
+			'sm_font_primary',
+			'sm_font_secondary',
+			'sm_font_body',
+			'sm_font_accent',
+			'sm_swap_fonts',
+			'sm_swap_primary_secondary_fonts',
+		);
+
+		// We will gather Google Fonts and make a single request to the Google Fonts API.
+		$google_fonts = [];
+
+		foreach ( $font_fields as $id => $font ) {
+			// Bail if this is an excluded field.
+			if ( in_array( $id, $excluded_fields ) ) {
+				continue;
+			}
+
+			// Bail without a value.
+			if ( empty( $font['value'] ) ) {
+				continue;
+			}
+
+			$value = $this->standardizeFontValue( self::maybeDecodeValue( $font['value'] ), $font );
+
+			// In case the value is empty, try a default value if the $font['value'] is actually the font family.
+			if ( empty( $value ) && is_string( $font['value'] ) ) {
+				$value = $this->getFontDefaultsValue( str_replace( '"', '', $font['value'] ) );
+			}
+
+			// Bail if we don't have a value or the value isn't an array
+			if ( empty( $value ) || ! is_array( $value ) ) {
+				continue;
+			}
+
+			// We can't do anything without a font family.
+			if ( empty( $value['font_family'] ) ) {
+				continue;
+			}
+			$font_family = $value['font_family'];
+
+			$font_type = $this->determineFontType( $value['font_family'] );
+			// If this is a standard font, we have nothing to do.
+			if ( 'system_font' === $font_type ) {
+				continue;
+			}
+
+			$font_details = $this->getFontDetails( $value['font_family'], $font_type );
+
+			if ( 'google_font' !== $font_type ) {
+				// When a src is given, we have nothing to do.
+				if ( ! empty( $font_details['src'] ) ) {
+					$urls[] = $font_details['src'];
+				}
+				continue;
+			}
+
+			// This is a Google font (if we've reached thus far).
+			// We request all the available variants.
+			if ( ! empty( $font_details['variants'] ) ) {
+				$font_family .= ':' . self::convertFontVariantsToGoogleFontsCSS2Styles( $font_details['variants'] );
+			}
+
+			// @todo With the new Google Fonts API v2 the subset is not needed anymore as there is widespread browser support for the unicode-range of @font-face.
+			// We only load selected subsets. The latin subset is automatically loaded.
+//			if ( ! empty( $value['selected_subsets'] ) ) {
+//				$font_family .= ":" . self::maybeImplodeList( $value['selected_subsets'] );
+//			}
+
+			$google_fonts[] = $font_family;
+		}
+
+		if ( ! empty( $google_fonts ) ) {
+			$google_url = 'https://fonts.googleapis.com/css2';
+			foreach ( $google_fonts as $google_font ) {
+				$google_url = add_query_arg( [
+					'family' => $google_font,
+				], $google_url );
+			}
+			$urls[] = $google_url;
+		}
+
+		return $urls;
+	}
+
+	/**
 	 *
 	 * @param string $font_family
 	 *
@@ -1024,35 +1131,50 @@ class Customify_Fonts_Global {
 		return in_array( $value, [ '', 'false', false, ], true );
 	}
 
+	/**
+	 * Output and enqueue the scripts needed to handle web fonts loading on the frontend (including the Customizer preview).
+	 */
 	public function enqueue_frontend_scripts() {
-		$script = $this->get_fonts_dynamic_script();
-		if ( ! empty( $script ) ) {
+		// If we are in the Customizer preview, we will always use the WebFontLoader.
+		if ( is_customize_preview() ) {
+			// We always enqueue the WebFontLoader script.
 			wp_enqueue_script( PixCustomifyPlugin()->get_slug() . '-web-font-loader' );
-			wp_add_inline_script( PixCustomifyPlugin()->get_slug() . '-web-font-loader', $script );
-		} else {
-			// If we are in the Customizer preview, we still need the Web Font Loader.
-			if ( is_customize_preview() ) {
-				wp_enqueue_script( PixCustomifyPlugin()->get_slug() . '-web-font-loader' );
-			}
 
-			// If there are no webfonts to load, add a script to the footer, on window loaded,
-			// to trigger the font loaded event and add the class to the html element.
-			// This way the behavior is consistent.
-			add_action( 'wp_footer', function() { ?>
-<script>
-	window.addEventListener('load', function() {
-		// Trigger the 'wf-active' event, just like Web Font Loader would do.
-		window.dispatchEvent(new Event('wf-active'));
-		// Add the 'wf-active' class on the html element, just like Web Font Loader would do.
-		document.getElementsByTagName('html')[0].classList.add('wf-active');
-	});
-</script>
-<?php
-			});
+			// Get the inline script to load all the needed fonts via WebFontLoader.
+			$script = $this->get_webfontloader_dynamic_script();
+			if ( ! empty( $script ) ) {
+				wp_add_inline_script( PixCustomifyPlugin()->get_slug() . '-web-font-loader', $script );
+			} else {
+				// If there are no webfonts to load, add a script to the footer, on window loaded,
+				// to trigger the font loaded event and add the class to the html element.
+				// This way the behavior is consistent.
+				add_action( 'wp_footer', function() { ?>
+					<script>
+						window.addEventListener('load', function() {
+							// Trigger the 'wf-active' event, just like Web Font Loader would do.
+							window.dispatchEvent(new Event('wf-active'));
+							// Add the 'wf-active' class on the html element, just like Web Font Loader would do.
+							document.getElementsByTagName('html')[0].classList.add('wf-active');
+						});
+					</script>
+					<?php
+				});
+			}
+		} else {
+			// In the actual frontend of the site, we rely on more efficient techniques like the FontFace API
+			// with fallback to FontFaceObserver library when the browser doesn't support the FontFace API.
+			// So we enqueue directly the stylesheet URLs.
+
+			$fontStylesheetUrls = $this->getFontsStylesheetUrls();
+			if ( ! empty( $fontStylesheetUrls ) ) {
+				foreach ( $fontStylesheetUrls as $key => $fontStylesheetUrl ) {
+					wp_enqueue_style( 'customify-font-stylesheet-' . $key, $fontStylesheetUrl, [], null );
+				}
+			}
 		}
 	}
 
-	function get_fonts_dynamic_script() {
+	function get_webfontloader_dynamic_script() {
 		// If typography has been deactivated from the settings, bail.
 		if ( ! PixCustomifyPlugin()->settings->get_plugin_setting( 'typography', '1' ) ) {
 			return '';
@@ -1967,6 +2089,115 @@ if (typeof WebFont !== 'undefined') {
 		}
 
 		return $fvds;
+	}
+
+	/**
+	 * Will convert an array of CSS like variants into the appropriate Google Fonts CSS 2 API format.
+	 * @link https://developers.google.com/fonts/docs/css2
+	 *
+	 * @param array $variants
+	 * @return string
+	 */
+	public static function convertFontVariantsToGoogleFontsCSS2Styles( $variants ) {
+		$stylesString = '';
+		if ( ! is_array( $variants ) || empty( $variants ) ) {
+			return $stylesString;
+		}
+
+		$styleWeights = [
+			'italic' => [],
+			'normal' => [],
+		];
+
+		foreach ( $variants as $variant ) {
+			// Make sure that we are working with strings.
+			$variant = (string) $variant;
+
+			// This is the default font style.
+			$font_style = 'normal'; // normal
+			if ( false !== strrpos( $variant, 'italic'  ) ) {
+				$font_style = 'italic';
+				$variant    = str_replace( 'italic', '', $variant );
+			}
+
+//          The equivalence:
+//
+//			1: 100
+//			2: 200
+//			3: 300
+//			4: 400 (default, also recognized as 'normal')
+//			5: 500
+//			6: 600
+//			7: 700 (also recognized as 'bold')
+//			8: 800
+//			9: 900
+
+			switch ( $variant ) {
+				case '100':
+					$font_weight = 100;
+					break;
+				case '200':
+					$font_weight = 200;
+					break;
+				case '300':
+					$font_weight = 300;
+					break;
+				case '500':
+					$font_weight = 500;
+					break;
+				case '600':
+					$font_weight = 600;
+					break;
+				case '700':
+				case 'bold':
+					$font_weight = 700;
+					break;
+				case '800':
+					$font_weight = 800;
+					break;
+				case '900':
+					$font_weight = 900;
+					break;
+				default:
+					$font_weight = 400;
+					break;
+			}
+
+			$styleWeights[ $font_style ][] = $font_weight;
+		}
+
+		// Now construct the string.
+
+		// All supported weights, ordered numerically.
+		$allWeights = [ 100, 200, 300, 400, 500, 600, 700, 800, 900 ];
+
+		$axisTagsList = [];
+		// We always have both `ital` and `wght` axis, for a clearer logic.
+		$axisTagsList[] = 'ital';
+		$axisTagsList[] = 'wght';
+
+		$axisTuplesList = [];
+		foreach ( $allWeights as $weight ) {
+			// Go through all axis determine the tuple (e.g. italic 400 becomes 1,400; or 700 becomes 0,700)
+			// The ital axis can only have the value 0 or 1.
+			if ( false !== array_search( $weight, $styleWeights['normal'] ) ) {
+				$axisTuplesList[] = '0,' . $weight;
+			}
+			if ( false !== array_search( $weight, $styleWeights['italic'] ) ) {
+				$axisTuplesList[] = '1,' . $weight;
+			}
+		}
+
+		if ( ! empty( $axisTuplesList ) ) {
+			// We must make sure that the axis tags are ordered alphabetically.
+			sort( $axisTagsList, SORT_STRING );
+			// We also need to sort the tuples, numerically.
+			sort( $axisTuplesList, SORT_NUMERIC );
+
+			$stylesString = join( ',', $axisTagsList ) . '@' . join( ';', $axisTuplesList );
+		}
+
+		return $stylesString;
 	}
 
 	/**
