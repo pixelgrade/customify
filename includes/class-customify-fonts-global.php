@@ -232,7 +232,6 @@ class Customify_Fonts_Global {
 			$subfieldsConfig = apply_filters( 'customify_default_font_subfields_config', array(
 				'font-family'     => true,
 				'font-weight'     => true, // This is actually for the font-variant field (weight and maybe style)
-				'subsets'         => true,
 				'font-size'       => false,
 				'line-height'     => false,
 				'letter-spacing'  => false,
@@ -607,11 +606,6 @@ class Customify_Fonts_Global {
 				$font_family .= ":" . self::maybeImplodeList( $font_details['variants'] );
 			}
 
-			// We only load selected subsets. The latin subset is automatically loaded.
-			if ( ! empty( $value['selected_subsets'] ) ) {
-				$font_family .= ":" . self::maybeImplodeList( $value['selected_subsets'] );
-			}
-
 			$args['google_families'][] = "'" . $font_family . "'";
 		}
 
@@ -709,27 +703,20 @@ class Customify_Fonts_Global {
 				$font_family .= ':' . self::convertFontVariantsToGoogleFontsCSS2Styles( $font_details['variants'] );
 			}
 
-			// @todo With the new Google Fonts API v2 the subset is not needed anymore as there is widespread browser support for the unicode-range of @font-face.
-			// We only load selected subsets. The latin subset is automatically loaded.
-//			if ( ! empty( $value['selected_subsets'] ) ) {
-//				$font_family .= ":" . self::maybeImplodeList( $value['selected_subsets'] );
-//			}
-
 			$google_fonts[] = $font_family;
 		}
 
 		if ( ! empty( $google_fonts ) ) {
 			$google_url = 'https://fonts.googleapis.com/css2';
-			foreach ( $google_fonts as $google_font ) {
-				$google_url = add_query_arg( [
-					'family' => $google_font,
-				], $google_url );
-			}
+			// Add `family=` to each font family.
+			$google_fonts = array_map( function( $font_family ) {
+				return 'family=' . $font_family;
+			}, $google_fonts );
+			// We can't use add_query_arg() because it will not allow for multiple `family` args like Google Fonts expects.
+			$google_url .= '?' . join('&', $google_fonts );
 
-			// Request with font-display: swap;
-			$google_url = add_query_arg( [
-				'display' => 'swap',
-			], $google_url );
+			// Request @font-face stylesheets with font-display: swap;
+			$google_url .= '&display=swap';
 
 			$urls[] = $google_url;
 		}
@@ -1178,7 +1165,7 @@ class Customify_Fonts_Global {
 						if ( typeof document.fonts !== 'undefined' && typeof document.fonts.ready !== 'undefined' ) {
 							document.fonts.ready.then(customifyTriggerFontsLoadedEvents);
 						} else {
-							// Fallback to just waiting a little bit and triggering the events for older browsers.
+							// Fallback to just waiting a little bit and then triggering the events for older browsers.
 							window.addEventListener('load', function() {
 								setTimeout( customifyTriggerFontsLoadedEvents, 300 );
 							});
@@ -1342,7 +1329,6 @@ if (typeof WebFont !== 'undefined') {
 		$localized['l10n']['fonts'] = array(
 			'familyPlaceholderText' => esc_html__( 'Select a font family', 'customify' ),
 			'variantAutoText' => esc_html__( 'Auto', 'customify' ),
-			'subsetPlaceholderText' => esc_html__( 'More subsets', 'customify' ),
 		);
 
 		return $localized;
@@ -1650,7 +1636,7 @@ if (typeof WebFont !== 'undefined') {
 		// In case a font is missing any of these entries, these are the safe defaults.
 		$defaultFontEntries = [
 			'family' => null,
-			'family_display' => '',
+			'family_display' => null,
 			'category' => 'other',
 			'variants' => [ '400' ],
 			'subsets'  => [ 'latin' ],
@@ -1681,11 +1667,6 @@ if (typeof WebFont !== 'undefined') {
 				$newFont['variants'] = ['400'];
 			}
 			$newFont['variants'] = self::standardizeSourceFontVariantsList( $newFont['variants'] );
-			// Standardize the font subsets list.
-			if ( ! is_bool( $newFont['subsets'] ) && empty( $newFont['subsets'] ) ) {
-				$newFont['subsets'] = ['latin'];
-			}
-			$newFont['subsets'] = self::standardizeSourceFontSubsetsList( $newFont['subsets'] );
 
 			// Add the standardized font to the new list, keeping the relative order.
 			// We want to have the font family as key for easy searching!
@@ -1766,25 +1747,6 @@ if (typeof WebFont !== 'undefined') {
 		}
 
 		return $variant;
-	}
-
-	/**
-	 * @param array|string $subsetsList
-	 *
-	 * @return array
-	 */
-	public static function standardizeSourceFontSubsetsList( $subsetsList ) {
-		// Make sure we treat comma delimited strings as list.
-		$subsetsList = self::maybeExplodeList( $subsetsList );
-
-		if ( empty( $subsetsList ) ) {
-			return $subsetsList;
-		}
-
-		// Make sure the subsets list is ordered ascending, by value.
-		sort( $subsetsList, SORT_STRING );
-
-		return $subsetsList;
 	}
 
 	/**

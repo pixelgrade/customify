@@ -17,12 +17,10 @@ window.customify = window.customify || parent.customify || {};
       valueHolderSelector = '.customify_font_values',
       fontFamilySelector = '.customify_font_family',
       fontVariantSelector = '.customify_font_weight',
-      fontSubsetsSelector = '.customify_font_subsets',
       fontHeadTitleSelector = '.font-options__head .font-options__font-title'
 
     let familyPlaceholderText ,
-      variantAutoText, // This is for the empty value.
-      subsetPlaceholderText
+      variantAutoText // This is for the empty value.
 
     const api = wp.customize
 
@@ -34,7 +32,6 @@ window.customify = window.customify || parent.customify || {};
     const init = function () {
       familyPlaceholderText = customify.l10n.fonts.familyPlaceholderText
       variantAutoText = customify.l10n.fonts.variantAutoText
-      subsetPlaceholderText = customify.l10n.fonts.subsetPlaceholderText
 
       const $fontFamilyFields = $(fontFamilySelector)
 
@@ -76,9 +73,6 @@ window.customify = window.customify || parent.customify || {};
         // Update the variant subfield with the new options given by the selected font family.
         updateVariantField(newFontDetails, wrapper)
 
-        // Update the subset subfield with the new options given by the selected font family.
-        updateSubsetField(newFontDetails, wrapper, setting)
-
         if (typeof who !== 'undefined' && who === 'customify') {
           // The change was triggered programmatically by Customify.
           // No need to self-update the value.
@@ -106,9 +100,6 @@ window.customify = window.customify || parent.customify || {};
 
       // Initialize the select2 field for the font variant
       initSubfield($(fontVariantSelector), true)
-
-      // Initialize the select2 field for the font subsets
-      initSubfield($(fontSubsetsSelector), true, subsetPlaceholderText)
 
       // Initialize all the regular selects in the font subfields
       initSubfield($fontFamilyFields.parents(wrapperSelector).find('select').not('select[class*=\' select2\'],select[class^=\'select2\']'), false);
@@ -182,7 +173,7 @@ window.customify = window.customify || parent.customify || {};
       const fontTitleElement = wrapper.find(fontHeadTitleSelector)
 
       let fontFamilyDisplay = newFontDetails.family
-      if (typeof newFontDetails.family_display !== 'undefined') {
+      if (typeof newFontDetails.family_display === 'string' && newFontDetails.family_display.length ) {
         fontFamilyDisplay = newFontDetails.family_display
       }
 
@@ -252,79 +243,6 @@ window.customify = window.customify || parent.customify || {};
     }
 
     /**
-     *  This function updates the data in font subset selector from the given <option> element
-     * @param newFontDetails
-     * @param wrapper
-     * @param setting
-     */
-    const updateSubsetField = function (newFontDetails, wrapper, setting) {
-      const subsets = typeof newFontDetails.subsets !== 'undefined' ? newFontDetails.subsets : [],
-        fontSubsetsInput = wrapper.find(fontSubsetsSelector),
-        newSubsets = []
-
-      // We clear everything about this subfield.
-      fontSubsetsInput.val(null).empty()
-      if (fontSubsetsInput.hasClass("select2-hidden-accessible")) {
-        fontSubsetsInput.select2('destroy')
-      }
-
-      // Mark this input as not touched by the user.
-      fontSubsetsInput.data('touched', false)
-
-      if (typeof subsets === 'undefined' || Object.keys(subsets).length < 2) {
-        fontSubsetsInput.parent().hide()
-        fontSubsetsInput.parent().prev('label').hide()
-        // Mark this input as disabled.
-        fontSubsetsInput.data('disabled', true)
-        return
-      }
-
-      // Attempt to keep (some of) the previously selected subsets, depending on what the new font supports.
-      const currentFontValue = setting()
-      let selectedSubsets = []
-      if (!_.isUndefined(currentFontValue.selected_subsets) && !_.isEmpty(currentFontValue.selected_subsets)) {
-        selectedSubsets = currentFontValue.selected_subsets
-        // Make sure it is an array
-        if (!Array.isArray(selectedSubsets)) {
-          selectedSubsets = Object.keys(selectedSubsets).map(function (key) {
-            return selectedSubsets[key]
-          })
-        }
-      }
-
-      // we need to turn the data array into a specific form like [{id:"id", text:"Text"}]
-      $.each(subsets, function (index, subset) {
-        // We want to skip the 'latin' subset since that is loaded by default.
-        if ('latin' === subset) {
-          return
-        }
-
-        const newSubset = {
-          'id': subset,
-          'text': subset
-        }
-
-        if (selectedSubsets.indexOf(subset) !== -1) {
-          newSubset.selected = true
-        }
-
-        newSubsets.push(newSubset)
-      })
-
-      // Only reinitialize the select2.
-      // No need to rebind on change or on input since those are still bound to the original HTML element.
-      fontSubsetsInput.select2({
-        data: newSubsets,
-        placeholder: subsetPlaceholderText
-      })
-
-      fontSubsetsInput.parent().show()
-      fontSubsetsInput.parent().prev('label').show()
-      // Mark this input as enabled.
-      fontSubsetsInput.data('disabled', false)
-    }
-
-    /**
      * Gather the value for our entire font field and save it in the setting.
      */
     const selfUpdateValue = function (wrapper, settingID) {
@@ -387,7 +305,7 @@ window.customify = window.customify || parent.customify || {};
       delete newFontData['variants']
       delete newFontData['subsets']
 
-      // We need to make sure that we don't "use" any variants or subsets not supported by the new font (values passed over from the old value).
+      // We need to make sure that we don't "use" any variants not supported by the new font (values passed over from the old value).
       // Get the new font details
       const newFontDetails = getFontDetails(newFontData['font_family'])
       // Check the font variant
@@ -402,14 +320,6 @@ window.customify = window.customify || parent.customify || {};
       } else {
         // The new font has no variants. Nor should the value.
         delete newFontData['font_variant']
-      }
-      // Check the subsets
-      if (typeof newFontData['selected_subsets'] !== 'undefined' && typeof newFontDetails.subsets !== 'undefined' && Object.keys(newFontDetails.subsets).length > 0) {
-        // We will use the intersection between the font's subsets and the selected subsets.
-        newFontData['selected_subsets'] = _.intersection(newFontData['selected_subsets'],newFontDetails.subsets)
-      } else {
-        // The new font has no subsets. Nor should the value.
-        delete newFontData['selected_subsets']
       }
 
       // Update the Customizer setting value.

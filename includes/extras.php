@@ -209,7 +209,6 @@ if ( ! function_exists('add_customify_base_options') ) {
 										h1 a, h2 a, h3 a, h4 a, h5 a, h6 a,
 										.widget-title',
 						'font_weight' => true,
-						'subsets' => true,
 						'recommended' => array(
 							'Playfair Display',
 							'Oswald',
