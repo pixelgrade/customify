@@ -382,7 +382,7 @@ function customify_child_theme_migrate_theme_mods_notice() {
 	<script>
 		(function ($) {
 			$(function () {
-				var $noticeContainer = $('.customify-notice__container'),
+				let $noticeContainer = $('.customify-notice__container'),
 					$button = $noticeContainer.find('.js-handle-customify'),
 					$buttonText = $noticeContainer.find('.customify-notice-button__text'),
 					$dismissButton = $noticeContainer.find('.js-dismiss-customify'),
@@ -395,6 +395,7 @@ function customify_child_theme_migrate_theme_mods_notice() {
 					$button.attr('disabled', true)
 					$dismissButton.hide()
 
+					// Do an AJAX call to migrate the theme_mods.
 					$.ajax({
 						url: "<?php echo admin_url( 'admin-ajax.php' ); ?>",
 						type: 'post',
@@ -418,6 +419,7 @@ function customify_child_theme_migrate_theme_mods_notice() {
 					})
 				})
 
+				// Dismiss the notice.
 				$dismissButton.on('click', function (e) {
 					e.preventDefault();
 
