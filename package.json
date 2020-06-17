@@ -10,7 +10,7 @@
         "gulp-beautify": "^3.0.0",
         "gulp-clean-css": "^4.3.0",
         "gulp-concat": "^2.6.1",
-        "gulp-exec": "^4.0.0",
+        "gulp-exec": "^5.0.0",
         "gulp-load-plugins": "^2.0.3",
         "gulp-rename": "^2.0.0",
         "gulp-replace": "^1.0.0",
@@ -19,6 +19,6 @@
         "gulp-sass": "^4.1.0",
         "gulp-terser": "^1.2.0",
         "request": "^2.88.2",
-        "terser": "^4.7.0"
+        "terser": "^4.8.0"
     }
 }
