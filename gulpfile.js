@@ -18,7 +18,7 @@ const scriptsSrc = ['./js/customizer/*.js','./js/*.js','!./js/**/*.min.js'];
 // This is a helper function used to update the Google fonts list and recreate the php file holding it (includes/resources/google.fonts.php).
 // -----------------------------------------------------------------------------
 function updatePhpGoogleFontsList(done) {
-  const endpoint = 'https://www.googleapis.com/webfonts/v1/webfonts?key=AIzaSyB7Yj842mK5ogSiDa3eRrZUIPTzgiGopls';
+  const endpoint = 'https://www.googleapis.com/webfonts/v1/webfonts?key=AIzaSyAn2JiVvY0QL1T1430udIHS-nB3vBnjrf4';
   require('request').get({
     url: endpoint,
   }, function(error, response, body) {
