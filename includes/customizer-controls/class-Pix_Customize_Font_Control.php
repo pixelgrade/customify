@@ -185,8 +185,6 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 				<?php
 				$this->display_font_variant_field( $current_value, $current_font_details );
 
-				$this->display_font_subsets_field( $current_value, $current_font_details );
-
 				$this->display_range_field( 'font-size', $current_value, 'font_size', esc_html__( 'Font Size', 'customify' ) );
 				$this->display_range_field( 'line-height', $current_value, 'line_height', esc_html__( 'Line height', 'customify' ) );
 				$this->display_range_field( 'letter-spacing', $current_value, 'letter_spacing', esc_html__( 'Letter Spacing', 'customify' ) );
@@ -275,47 +273,6 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 				} ?>
 			</select>
 		</li>
-		<?php
-	}
-
-	protected function display_font_subsets_field( $current_value, $current_font_details ) {
-		// If the `subsets` field entry is falsy, this means we don't want to use the field.
-		if ( empty( $this->fields['subsets'] ) ) {
-			return;
-		}
-
-		// Display is for the initial state. Depending on the selected fonts, the JS logic will show or hide it.
-		$display       = 'none';
-		if ( ! empty( $current_font_details['subsets'] ) && $current_font_details['subsets'] !== ['latin'] ) {
-			$display = 'inline-block';
-		} ?>
-		<li class="customify_subsets_wrapper customize-control font-options__option" style="display: <?php echo $display; ?>;">
-			<label><?php esc_html_e( 'Languages', 'customify' ); ?></label>
-			<select multiple class="customify_font_subsets" data-value_entry="selected_subsets" <?php echo ( 'none' === $display ) ?  'data-disabled="true"' : ''?>>
-				<?php
-				$selected = array();
-				if ( isset( $current_value->selected_subsets ) ) {
-					$selected = (array) $current_value->selected_subsets;
-				}
-
-				if ( ! empty( $current_font_details['subsets'] ) ) {
-					foreach ( $current_font_details['subsets'] as $key => $subset ) {
-						// The latin subset is always loaded so there is no need to have it as an option.
-						if ( $subset === 'latin' ) {
-							continue;
-						}
-
-						$attrs = '';
-						if ( in_array( $subset, $selected ) ) {
-							$attrs .= ' selected="selected"';
-						}
-
-						echo '<option value="' . esc_attr( $subset ) . '" ' . $attrs . '> ' . $subset . '</option>';
-					}
-				}?>
-			</select>
-		</li>
-
 		<?php
 	}
 

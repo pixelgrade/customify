@@ -841,7 +841,7 @@ class Customify_Color_Palettes {
 			return;
 		}
 
-		// The coloration level and diversity values are calculated dynamically and it is different for each theme (depending on connected fields).
+		// The coloration level and diversity values are calculated dynamically and they are different for each theme (depending on connected fields).
 		// That is why we will set it's value to the default value so we don't end up with invalid values (i.e. nothing is selected).
 		$config = PixCustomifyPlugin()->get_customizer_config();
 		if ( ! empty( $config['sections']['style_manager_section']['options'] ) ) {

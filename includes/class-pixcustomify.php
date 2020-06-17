@@ -931,6 +931,27 @@ class PixCustomifyPlugin {
 	}
 
 	/**
+	 * Provide a useful error message when the user's PHP version is less than the required version
+	 */
+	public function notice_php_version_wrong() {
+		$allowed = array(
+			'div'    => array(
+				'class' => array(),
+				'id'    => array(),
+			),
+			'p'      => array(),
+			'br'     => array(),
+			'strong' => array(),
+		);
+		$html = '<div class="updated fade">' .
+		        sprintf( esc_html__( 'Error: plugin "%s" requires a newer version of PHP to be running.', 'customify' ), 'Customify' ) .
+		        '<br/>' . sprintf( esc_html__( 'Minimal version of PHP required: %s', 'customify' ), '<strong>' . $this->minimalRequiredPhpVersion . '</strong>' ) .
+		        '<br/>' . sprintf( esc_html__( 'Your server\'s PHP version: %s', 'customify' ), '<strong>' . phpversion() . '</strong>' ) .
+		        '</div>';
+		echo wp_kses( $html, $allowed );
+	}
+
+	/**
 	 * PHP version check
 	 */
 	protected function php_version_check() {

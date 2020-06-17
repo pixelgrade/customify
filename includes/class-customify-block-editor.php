@@ -237,7 +237,7 @@ if ( ! class_exists( 'Customify_Block_Editor' ) ) {
 				plugins_url( 'js/vendor/webfontloader-1-6-28.min.js', PixCustomifyPlugin()->get_file() ), array('wp-editor'), null );
 
 			add_filter( 'customify_font_css_selector', array( $this, 'gutenbergify_font_css_selectors' ), 10, 2 );
-			Customify_Fonts_Global::instance()->enqueue_frontend_scripts();
+			Customify_Fonts_Global::instance()->enqueue_frontend_scripts_styles();
 			wp_add_inline_style( $enqueue_parent_handle, Customify_Fonts_Global::instance()->getFontsDynamicStyle() );
 			remove_filter( 'customify_font_css_selector', array( $this, 'gutenbergify_font_css_selectors' ), 10 );
 

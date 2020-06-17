@@ -515,15 +515,6 @@
           }
         }
 
-        let subsets = typeof font.selected_subsets !== 'undefined' ? font.selected_subsets : []
-        if (!_.isEmpty(subsets)) {
-          subsets = standardizeToArray(subsets)
-
-          if (!_.isEmpty(subsets)) {
-            family = family + ':' + subsets.join(',')
-          }
-        }
-
         if (fontsCache.indexOf(family) === -1) {
           WebFont.load({
             google: {families: [family]},
@@ -531,7 +522,7 @@
             events: false,
           })
 
-          // Remember we've loaded this family (with it's variants and subsets) so we don't load it again.
+          // Remember we've loaded this family (with it's variants) so we don't load it again.
           fontsCache.push(family)
         }
 
