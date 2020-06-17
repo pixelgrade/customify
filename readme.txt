@@ -35,6 +35,9 @@ This plugin is **primarily intended** to be used together with [Pixelgrade theme
 * **Feature:** Introduces the ability to migrate parent theme customization options when switching to a child theme; this way you don't lose your existing customizations
 * **Improvement:** Switches to using **modern browser capabilities for fonts loading** on the frontend of your site; this should lead to better web performance and user experience, and save CO2
 * **Improvement:** Use the swap font-display technique for better performance and PageSpeed score
+* Updates the Google Fonts list
+* Switches to using the Google Fonts CSS API V2 instead of the previous V1
+* Removes the font subsets control since it is no longer needed; the needed (and available) subsets will be loaded automatically by the browser
 
 = 2.8.0 =
 * **Improvement:** **Better font palettes logic** for even more accurate site typography
