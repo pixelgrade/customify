@@ -2175,7 +2175,7 @@ if (typeof WebFont !== 'undefined') {
 
 		$axisTuplesList = [];
 		foreach ( $allWeights as $weight ) {
-			// Go through all axis determine the tuple (e.g. italic 400 becomes 1,400; or 700 becomes 0,700)
+			// Go through all axes determine the tuple (e.g. italic 400 becomes 1,400; or 700 becomes 0,700)
 			// The ital axis can only have the value 0 or 1.
 			if ( false !== array_search( $weight, $styleWeights['normal'] ) ) {
 				$axisTuplesList[] = '0,' . $weight;
@@ -2189,7 +2189,7 @@ if (typeof WebFont !== 'undefined') {
 			// We must make sure that the axis tags are ordered alphabetically.
 			sort( $axisTagsList, SORT_STRING );
 			// We also need to sort the tuples, numerically.
-			sort( $axisTuplesList, SORT_NUMERIC );
+			sort( $axisTuplesList, SORT_STRING );
 
 			$stylesString = join( ',', $axisTagsList ) . '@' . join( ';', $axisTuplesList );
 		}
