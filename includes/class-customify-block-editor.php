@@ -29,7 +29,7 @@ if ( ! class_exists( 'Customify_Block_Editor' ) ) {
 		public static $editor_namespace_selector = '.edit-post-visual-editor.editor-styles-wrapper';
 		public static $title_namespace_selector = '.editor-styles-wrapper .editor-post-title__block';
 		public static $title_input_namespace_selector = '.editor-styles-wrapper .editor-post-title__block .editor-post-title__input';
-		public static $block_namespace_selector = '.edit-post-visual-editor.editor-styles-wrapper .editor-block-list__block';
+		public static $block_namespace_selector = '.edit-post-visual-editor.editor-styles-wrapper .block-editor-block-list__block';
 
 		/**
 		 * Regexes
