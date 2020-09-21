@@ -29,7 +29,17 @@ if ( ! class_exists( 'Customify_Block_Editor' ) ) {
 		public static $editor_namespace_selector = '.edit-post-visual-editor.editor-styles-wrapper';
 		public static $title_namespace_selector = '.editor-styles-wrapper .editor-post-title__block';
 		public static $title_input_namespace_selector = '.editor-styles-wrapper .editor-post-title__block .editor-post-title__input';
-		public static $block_namespace_selector = '.edit-post-visual-editor.editor-styles-wrapper .block-editor-block-list__block';
+		public static function get_block_namespace_selector() {
+			global $wp_version;
+
+			$is_old_wp_version = version_compare($wp_version, '5.4', '<');
+
+			if( $is_old_wp_version ) {
+				return '.edit-post-visual-editor.editor-styles-wrapper .editor-block-list__block';
+			}
+
+			return '.edit-post-visual-editor.editor-styles-wrapper .block-editor-block-list__block';
+		}
 
 		/**
 		 * Regexes
@@ -303,7 +313,7 @@ if ( ! class_exists( 'Customify_Block_Editor' ) ) {
 					if ( isset( $css_property['property'] ) && 0 === strpos( $css_property['property'], 'background' ) ) {
 						$new_selectors[] = preg_replace( '/^(html body|body|html)/', self::$editor_namespace_selector, $selector );
 					} else {
-						$new_selectors[] = preg_replace( '/^(html body|body|html)/', self::$block_namespace_selector, $selector );
+						$new_selectors[] = preg_replace( '/^(html body|body|html)/', self::get_block_namespace_selector(), $selector );
 						$new_selectors[] = preg_replace( '/^(html body|body|html)/', self::$title_namespace_selector, $selector );
 					}
 					continue;
@@ -315,7 +325,7 @@ if ( ! class_exists( 'Customify_Block_Editor' ) ) {
 					$new_selectors[] = preg_replace( self::$title_regex, self::$title_input_namespace_selector, $selector );
 				}
 
-				$new_selectors[] = self::$block_namespace_selector . ' ' . $selector;
+				$new_selectors[] = self::get_block_namespace_selector() . ' ' . $selector;
 			}
 
 			return implode( ', ', $new_selectors );
@@ -349,7 +359,7 @@ if ( ! class_exists( 'Customify_Block_Editor' ) ) {
 
 				// For root html elements, we will not prefix them, but replace them with the block and title namespace.
 				if ( preg_match( self::$root_regex, $selector ) ) {
-					$new_selector = preg_replace( '/^(html body|body|html|)/', self::$block_namespace_selector, $selector );
+					$new_selector = preg_replace( '/^(html body|body|html|)/', self::get_block_namespace_selector(), $selector );
 					$new_selectors[ $new_selector ] = $selector_details;
 					$new_selector = preg_replace( '/^(html body|body|html)/', self::$title_namespace_selector, $selector );
 					$new_selectors[ $new_selector ] = $selector_details;
@@ -363,7 +373,7 @@ if ( ! class_exists( 'Customify_Block_Editor' ) ) {
 					$new_selectors[ $new_selector ] = $selector_details;
 				}
 
-				$selector = self::$block_namespace_selector . ' ' . $selector;
+				$selector = self::get_block_namespace_selector() . ' ' . $selector;
 				$new_selectors[ $selector ] = $selector_details;
 			}
 
