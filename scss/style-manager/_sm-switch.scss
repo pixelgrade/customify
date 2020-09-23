@@ -13,6 +13,16 @@
   }
 }
 
+.customize-control-sm_switch {
+
+  #customize-theme-controls & {
+
+    .customize-control-title {
+      margin-bottom: 0;
+    }
+  }
+}
+
 .sm-switch {
   display: flex;
   flex-wrap: nowrap;
