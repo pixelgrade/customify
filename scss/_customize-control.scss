@@ -98,6 +98,13 @@
       cursor: grabbing;
     }
   }
+
+  &.menu-item {
+    .menu-item-settings {
+      width: 100%;
+      background-color: $blue-white;
+    }
+  }
 }
 
 .customize-control-checkbox,
