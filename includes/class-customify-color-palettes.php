@@ -689,7 +689,7 @@ class Customify_Color_Palettes {
 					'type'         => 'sm_radio',
 					'setting_id'   => 'sm_dark_mode_advanced',
 					'label'        => esc_html__( 'Appearance', 'customify' ),
-					'default'      => 'auto',
+					'default'      => 'light',
 					'choices' => array(
 						'auto'  => esc_html__( 'Auto', 'customify' ),
 						'light' => esc_html__( 'Light', 'customify' ),
