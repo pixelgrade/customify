@@ -54,6 +54,7 @@ class Customify_Color_Palettes {
 		add_filter( 'customify_filter_fields', array( $this, 'add_style_manager_section_master_colors_config' ), 12, 1 );
 		// This needs to come after the external theme config has been applied
 		add_filter( 'customify_filter_fields', array( $this, 'add_current_palette_control' ), 110, 1 );
+		add_filter( 'customify_filter_fields', array( $this, 'enhance_dark_mode_controls' ), 120, 1 );
 
 		/*
 		 * Scripts enqueued in the Customizer.
@@ -492,6 +493,7 @@ class Customify_Color_Palettes {
 	 * @return array
 	 */
 	public function add_current_palette_control( $config ) {
+
 		// If there is no style manager support, bail early.
 		if ( ! $this->is_supported() ) {
 			return $config;
@@ -668,6 +670,34 @@ class Customify_Color_Palettes {
 	              'css'         => array(),
               ),
           ) + $config['sections']['style_manager_section']['options'];
+
+		return $config;
+	}
+
+	public function enhance_dark_mode_controls( $config ) {
+		$supports_advanced_dark_mode = (bool) current_theme_supports( 'style_manager_advanced_dark_mode' );
+
+		if ( ! $supports_advanced_dark_mode || ! isset( $config['sections']['style_manager_section'] ) ) {
+			return $config;
+		}
+
+		unset( $config['sections']['style_manager_section']['options']['sm_dark_mode'] );
+
+		$config['sections']['style_manager_section'] = Customify_Array::array_merge_recursive_distinct( $config['sections']['style_manager_section'], array(
+			'options' => array(
+				'sm_dark_mode_advanced'       => array(
+					'type'         => 'sm_radio',
+					'setting_id'   => 'sm_dark_mode_advanced',
+					'label'        => esc_html__( 'Appearance', 'customify' ),
+					'default'      => 'auto',
+					'choices' => array(
+						'auto'  => esc_html__( 'Auto', 'customify' ),
+						'light' => esc_html__( 'Light', 'customify' ),
+						'dark'  => esc_html__( 'Dark', 'customify' ),
+					),
+				),
+			),
+		) );
 
 		return $config;
 	}
