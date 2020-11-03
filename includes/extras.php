@@ -471,3 +471,44 @@ function customify_migrate_customizations_from_parent_to_child_theme() {
 	wp_send_json_success();
 }
 add_action( 'wp_ajax_customify_migrate_customizations_from_parent_to_child_theme', 'customify_migrate_customizations_from_parent_to_child_theme' );
+
+/**
+ * Migrate from classic Dark Mode control to Advanced Dark Mode Control.
+ */
+
+function customify_migrate_to_advanced_dark_mode_control() {
+	$supports_advanced_dark_mode = (bool) current_theme_supports( 'style_manager_advanced_dark_mode' );
+
+	if ( ! $supports_advanced_dark_mode ) {
+		return;
+	}
+
+	$simple_dark_mode   = get_option( 'sm_dark_mode', NULL );
+	$advanced_dark_mode = get_option( 'sm_dark_mode_advanced', NULL );
+
+    $old_sm_dark_primary_final = get_option('sm_dark_primary_final');
+    $old_sm_dark_secondary_final = get_option('sm_dark_secondary_final');
+    $old_sm_dark_tertiary_final = get_option('sm_dark_tertiary_final');
+    $old_sm_light_primary_final = get_option('sm_light_primary_final');
+    $old_sm_light_secondary_final = get_option('sm_light_secondary_final');
+    $old_sm_light_tertiary_final = get_option('sm_light_tertiary_final');
+
+	if ( ! is_null( $simple_dark_mode ) && is_null( $advanced_dark_mode ) ) {
+
+		if ( $simple_dark_mode === 'on' ) {
+			update_option( 'sm_dark_mode_advanced', 'on' );
+			update_option('sm_dark_mode', 'off' );
+			update_option('sm_dark_primary_final', $old_sm_light_primary_final);
+			update_option('sm_dark_secondary_final', $old_sm_light_secondary_final);
+			update_option('sm_dark_tertiary_final', $old_sm_light_tertiary_final);
+			update_option('sm_light_primary_final', $old_sm_dark_primary_final);
+			update_option('sm_light_secondary_final', $old_sm_dark_secondary_final);
+			update_option('sm_light_tertiary_final', $old_sm_dark_tertiary_final);
+		} else {
+			update_option( 'sm_dark_mode_advanced', 'off'  );
+		}
+	}
+}
+
+add_action( 'admin_init', 'customify_migrate_to_advanced_dark_mode_control' );
+

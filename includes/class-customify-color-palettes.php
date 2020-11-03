@@ -688,12 +688,13 @@ class Customify_Color_Palettes {
 				'sm_dark_mode_advanced'       => array(
 					'type'         => 'sm_radio',
 					'setting_id'   => 'sm_dark_mode_advanced',
+					'setting_type' => 'option',
 					'label'        => esc_html__( 'Appearance', 'customify' ),
-					'default'      => 'auto',
+					'default'      => 'off',
 					'choices' => array(
 						'auto'  => esc_html__( 'Auto', 'customify' ),
-						'light' => esc_html__( 'Light', 'customify' ),
-						'dark'  => esc_html__( 'Dark', 'customify' ),
+						'off' => esc_html__( 'Light', 'customify' ),
+						'on'  => esc_html__( 'Dark', 'customify' ),
 					),
 				),
 			),
