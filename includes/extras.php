@@ -473,42 +473,46 @@ function customify_migrate_customizations_from_parent_to_child_theme() {
 add_action( 'wp_ajax_customify_migrate_customizations_from_parent_to_child_theme', 'customify_migrate_customizations_from_parent_to_child_theme' );
 
 /**
- * Migrate from classic Dark Mode control to Advanced Dark Mode Control.
+ * Migrate data from the simple Dark Mode control to Advanced Dark Mode Control, if the current theme supports it.
  */
-
 function customify_migrate_to_advanced_dark_mode_control() {
+	// Bail if the current theme doesn't support the advanced control.
 	$supports_advanced_dark_mode = (bool) current_theme_supports( 'style_manager_advanced_dark_mode' );
-
 	if ( ! $supports_advanced_dark_mode ) {
 		return;
 	}
 
-	$simple_dark_mode   = get_option( 'sm_dark_mode', NULL );
-	$advanced_dark_mode = get_option( 'sm_dark_mode_advanced', NULL );
+	$advanced_dark_mode = get_option( 'sm_dark_mode_advanced', null );
+	// Bail if we already have advanced control data saved.
+	if ( ! is_null( $advanced_dark_mode ) ) {
+		return;
+	}
 
-    $old_sm_dark_primary_final = get_option('sm_dark_primary_final');
-    $old_sm_dark_secondary_final = get_option('sm_dark_secondary_final');
-    $old_sm_dark_tertiary_final = get_option('sm_dark_tertiary_final');
-    $old_sm_light_primary_final = get_option('sm_light_primary_final');
-    $old_sm_light_secondary_final = get_option('sm_light_secondary_final');
-    $old_sm_light_tertiary_final = get_option('sm_light_tertiary_final');
+	// Bail if there isn't a simple dark mode option saved.
+	$simple_dark_mode = get_option( 'sm_dark_mode', null );
+	if ( is_null( $simple_dark_mode ) ) {
+		return;
+	}
 
-	if ( ! is_null( $simple_dark_mode ) && is_null( $advanced_dark_mode ) ) {
+	// If the simple control value was on, we have work to do.
+	if ( 'on' === $simple_dark_mode ) {
+		$old_sm_dark_primary_final    = get_option( 'sm_dark_primary_final' );
+		$old_sm_dark_secondary_final  = get_option( 'sm_dark_secondary_final' );
+		$old_sm_dark_tertiary_final   = get_option( 'sm_dark_tertiary_final' );
+		$old_sm_light_primary_final   = get_option( 'sm_light_primary_final' );
+		$old_sm_light_secondary_final = get_option( 'sm_light_secondary_final' );
+		$old_sm_light_tertiary_final  = get_option( 'sm_light_tertiary_final' );
 
-		if ( $simple_dark_mode === 'on' ) {
-			update_option( 'sm_dark_mode_advanced', 'on' );
-			update_option('sm_dark_mode', 'off' );
-			update_option('sm_dark_primary_final', $old_sm_light_primary_final);
-			update_option('sm_dark_secondary_final', $old_sm_light_secondary_final);
-			update_option('sm_dark_tertiary_final', $old_sm_light_tertiary_final);
-			update_option('sm_light_primary_final', $old_sm_dark_primary_final);
-			update_option('sm_light_secondary_final', $old_sm_dark_secondary_final);
-			update_option('sm_light_tertiary_final', $old_sm_dark_tertiary_final);
-		} else {
-			update_option( 'sm_dark_mode_advanced', 'off'  );
-		}
+		update_option( 'sm_dark_mode_advanced', 'on' );
+		update_option( 'sm_dark_mode', 'off' );
+		update_option( 'sm_dark_primary_final', $old_sm_light_primary_final );
+		update_option( 'sm_dark_secondary_final', $old_sm_light_secondary_final );
+		update_option( 'sm_dark_tertiary_final', $old_sm_light_tertiary_final );
+		update_option( 'sm_light_primary_final', $old_sm_dark_primary_final );
+		update_option( 'sm_light_secondary_final', $old_sm_dark_secondary_final );
+		update_option( 'sm_light_tertiary_final', $old_sm_dark_tertiary_final );
+	} else {
+		update_option( 'sm_dark_mode_advanced', 'off' );
 	}
 }
-
 add_action( 'admin_init', 'customify_migrate_to_advanced_dark_mode_control' );
-
