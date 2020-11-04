@@ -2,7 +2,7 @@
 Contributors: pixelgrade, vlad.olaru, babbardel, razvanonofrei, gorby31
 Tags: design, customizer, fonts, colors, gutenberg, font palettes, color palettes
 Requires at least: 4.9.14
-Tested up to: 5.5.1
+Tested up to: 5.5.3
 Stable tag: 2.10.0
 Requires PHP: 5.4.0
 License: GPLv2 or later
@@ -31,7 +31,7 @@ This plugin is **primarily intended** to be used together with [Pixelgrade theme
 == Changelog ==
 
 = 2.10.0 =
-* Add an enhanced version of the Dark Mode control that can be enabled through theme support.
+* Add an enhanced version of the Dark Mode control that can be enabled by themes.
 
 = 2.9.2 =
 * Fix compatibility with WordPress 5.5.
