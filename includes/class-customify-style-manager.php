@@ -319,6 +319,7 @@ if ( ! class_exists( 'Customify_Style_Manager' ) ) {
 					'sm_color_diversity',
 					'sm_shuffle_colors',
 					'sm_dark_mode',
+					'sm_dark_mode_advanced',
 					'sm_dark_color_master_slider',
 					'sm_dark_color_primary_slider',
 					'sm_dark_color_secondary_slider',
