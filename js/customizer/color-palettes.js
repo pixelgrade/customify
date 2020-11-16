@@ -791,7 +791,7 @@ window.customify = window.customify || parent.customify || {};
         tempSettings = swapConnectedFields(tempSettings, shuffleVariation)
       }
 
-      const dark_mode = $('[name*="sm_dark_mode"]:checked').val()
+      const dark_mode = $('[name*="sm_dark_mode_control"]:checked').val()
       if (dark_mode === 'on') {
         const dark_mmode_variation = getSwapMap('dark')
         tempSettings = swapConnectedFields(tempSettings, dark_mmode_variation)

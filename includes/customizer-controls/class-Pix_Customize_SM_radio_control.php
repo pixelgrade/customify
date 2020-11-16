@@ -32,6 +32,10 @@ class Pix_Customize_SM_radio_Control extends Pix_Customize_Control {
 		    <?php } ?>
         </div>
 
+		<?php if ( ! empty( $this->description ) ) { ?>
+			<span class="description customize-control-description"><?php echo $this->description; ?></span>
+		<?php } ?>
+
 		<?php
 		do_action( 'customify_after_sm_radio_control', $this );
 	}

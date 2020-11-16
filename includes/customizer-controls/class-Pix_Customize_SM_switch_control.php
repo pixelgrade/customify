@@ -1,6 +1,6 @@
 <?php
 /**
- * Class Pix_Customize_SM_radio_Control
+ * Class Pix_Customize_SM_switch_Control
  */
 class Pix_Customize_SM_switch_Control extends Pix_Customize_Control {
 	public $type            = 'sm_switch';
