@@ -34,7 +34,7 @@ window.customify = window.customify || parent.customify || {};
           /*
            * Create the value of the font field and set in the setting.
            */
-          if (_.isUndefined(connectedFieldData) || _.isUndefined(connectedFieldData.setting_id) || !_.isString(connectedFieldData.setting_id) || _.isUndefined(parentSettingData.fonts_logic)) {
+          if (_.isUndefined(connectedFieldData) || _.isUndefined(connectedFieldData.setting_id) || !_.isString(connectedFieldData.setting_id)) {
             return
           }
 
@@ -44,10 +44,13 @@ window.customify = window.customify || parent.customify || {};
           }
 
           /* ======================
-           * Process the font logic for the master (parent) font control to get the value that should be applied to the connected (font) fields.
+           * Process the font logic to get the value that should be applied to the connected (font) fields.
+           *
+           * The font logic is already in the new value - @see setFieldFontsLogicConfig()
            */
           const newFontData = {}
-          const fontsLogic = parentSettingData.fonts_logic
+
+          const fontsLogic = newValue
 
           if (typeof fontsLogic.reset !== 'undefined') {
             const settingID = connectedFieldData.setting_id
@@ -69,7 +72,7 @@ window.customify = window.customify || parent.customify || {};
 
           // The font family is straight forward as it comes directly from the parent field font logic configuration.
           if (typeof fontsLogic.font_family !== 'undefined') {
-            newFontData['font_family'] = newValue.font_family
+            newFontData['font_family'] = fontsLogic.font_family
           }
 
           if (_.isEmpty(newFontData['font_family'])) {
@@ -185,6 +188,9 @@ window.customify = window.customify || parent.customify || {};
     }
 
     const onPaletteChange = function () {
+      // Make sure that the advanced tab is visible.
+      showAdvancedFontPaletteControls();
+
       // Take the fonts config for each setting and distribute it to each (master) setting.
       const data = $(this).data('fonts_logic')
 
@@ -199,8 +205,6 @@ window.customify = window.customify || parent.customify || {};
     }
 
     const setFieldFontsLogicConfig = function (settingID, config) {
-      apiSettings[settingID].fonts_logic = config
-
       // We also need to trigger a fake setting value change since the master font controls don't usually hold a (usable) value.
       const setting = api(settingID)
       if (_.isUndefined(setting)) {
@@ -223,6 +227,7 @@ window.customify = window.customify || parent.customify || {};
 
       // Handle the palette change logic.
       $('.js-font-palette input[name="sm_font_palette"]').on('change', onPaletteChange)
+
       // Handle the case where one clicks on the already selected palette - force a reset.
       $('.js-font-palette .customize-inside-control-row').on('click', function(event) {
         // Find the input
@@ -256,6 +261,21 @@ window.customify = window.customify || parent.customify || {};
           input.trigger('customify:preset-change')
         }
       })
+
+      // Handle the case when there is no selected font palette (like on a fresh installation without any demo data import).
+      // In this case we want to hide the advanced tab.
+      const currentFontPaletteSetting = api('sm_font_palette');
+      if (typeof currentFontPaletteSetting === 'function' && '' === currentFontPaletteSetting()) {
+        hideAdvancedFontPaletteControls();
+      }
+    }
+
+    const hideAdvancedFontPaletteControls = () => {
+      $('#sub-accordion-section-sm_font_palettes_section .sm-tabs__item[data-target="advanced"]').css('visibility', 'hidden');
+    }
+
+    const showAdvancedFontPaletteControls = () => {
+      $('#sub-accordion-section-sm_font_palettes_section .sm-tabs__item[data-target="advanced"]').css('visibility', 'visible');
     }
 
     /**
