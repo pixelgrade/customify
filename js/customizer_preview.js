@@ -469,6 +469,8 @@
           (
             typeof font.font_variant !== 'undefined'
             && (typeof fontConfig['fields']['font-weight']['loadAllVariants'] === 'undefined' || !fontConfig['fields']['font-weight']['loadAllVariants'])
+            && typeof fontDetails.variants !== 'undefined' // If the font has no variants, any variant value we may have received should be ignored.
+            && _.includes(fontDetails.variants, font.font_variant) // If the value variant is not amongst the available ones, load all available variants.
           ) ? font.font_variant : typeof fontDetails.variants !== 'undefined' ? fontDetails.variants : []
 
         if (!_.isEmpty(variants)) {
@@ -505,6 +507,8 @@
           (
             typeof font.font_variant !== 'undefined'
             && (typeof fontConfig['fields']['font-weight']['loadAllVariants'] === 'undefined' || !fontConfig['fields']['font-weight']['loadAllVariants'])
+            && typeof fontDetails.variants !== 'undefined' // If the font has no variants, any variant value we may have received should be ignored.
+            && _.includes(fontDetails.variants, font.font_variant) // If the value variant is not amongst the available ones, load all available variants.
           ) ? font.font_variant : typeof fontDetails.variants !== 'undefined' ? fontDetails.variants : []
 
         if (!_.isEmpty(variants)) {

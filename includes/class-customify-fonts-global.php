@@ -601,7 +601,13 @@ class Customify_Fonts_Global {
 			// If there is a selected font variant and we haven't been instructed to load all, load only that,
 			// otherwise load all the available variants.
 			if ( ! empty( $value['font_variant'] ) && empty( $font['fields']['font-weight']['loadAllVariants'] ) ) {
-				$font_family .= ":" . self::maybeImplodeList( $value['font_variant'] );
+				// We need to make sure that we don't load a non-existent variant.
+				// In that case we will load all available variants.
+				if ( ! empty( $font_details['variants'] ) && is_array( $font_details['variants'] ) && ! in_array( $value['font_variant'], $font_details['variants'] ) ) {
+					$font_family .= ":" . self::maybeImplodeList( $font_details['variants'] );
+				} else {
+					$font_family .= ":" . self::maybeImplodeList( $value['font_variant'] );
+				}
 			} elseif ( ! empty( $font_details['variants'] ) ) {
 				$font_family .= ":" . self::maybeImplodeList( $font_details['variants'] );
 			}
@@ -1221,6 +1227,9 @@ const customifyFontLoader = function() {
 		},
 		inactive: function() {
 			window.dispatchEvent(new Event('wf-inactive'));
+			// Since we rely on this event to show text, if [all] the webfonts have failed, we still want to let the browser handle it.
+			// So we set the .wf-active class on the html element.
+			document.getElementByTag('html')[0].classList.add('wf-active');
 		}
     };
         <?php if ( ! empty( $args['google_families'] ) ) { ?>
