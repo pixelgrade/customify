@@ -1,10 +1,10 @@
 <?php
 
 /**
- * Class Pix_Customize_Select2_Control
+ * Class Pix_Customize_Select_Color_Control
  */
-class Pix_Customize_Select2_Control extends Pix_Customize_Control {
-	public $type = 'select2';
+class Pix_Customize_Select_Color_Control extends Pix_Customize_Control {
+	public $type = 'select_color';
 
 	/**
 	 * Render the control's content.
@@ -16,10 +16,10 @@ class Pix_Customize_Select2_Control extends Pix_Customize_Control {
 				<span class="customize-control-title"><?php echo esc_html( $this->label ); ?></span>
 			<?php endif; ?>
 
-			<select <?php $this->link(); ?> class="customify_select2">
+			<select <?php $this->link(); ?> class="js-color-select">
 				<?php
 				foreach ( $this->choices as $value => $label )
-					echo '<option value="' . esc_attr( $value ) . '" ' . selected( $this->value(), $value, false ) . '>' . $label . '</option>';
+					echo '<option value="' . esc_attr( $value ) . '" ' . selected( $this->value(), $value, false ) . '>' . esc_html( $label ) . '</option>';
 				?>
 			</select>
 

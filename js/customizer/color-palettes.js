@@ -3,6 +3,13 @@ window.customify = window.customify || parent.customify || {};
 
 (function ($, customify, wp) {
 
+  var newMasterIDs = [
+      'sm_accent_color_master',
+      'sm_text_color_master',
+      'sm_titles_color_master',
+      'sm_background_color_master',
+  ];
+
   /**
    * Expose the API publicly on window.customify.colorPalettes
    *
@@ -175,7 +182,7 @@ window.customify = window.customify || parent.customify || {};
 
     const getMasterFieldCallback = function (parentSettingData, parentSettingID) {
       return function (newValue, oldValue) {
-        const finalValue = getFilteredColor(parentSettingID)
+        const finalValue = _.includes(newMasterIDs,parentSettingID) ? newValue : getFilteredColor(parentSettingID)
 
         _.each(parentSettingData.connected_fields, function (connectedFieldData) {
           if (_.isUndefined(connectedFieldData) || _.isUndefined(connectedFieldData.setting_id) || !_.isString(connectedFieldData.setting_id)) {
@@ -204,7 +211,9 @@ window.customify = window.customify || parent.customify || {};
     }
 
     const bindConnectedFields = function () {
-      _.each(customify.colorPalettes.masterSettingIds, function (parentSettingID) {
+      var settingIDs = customify.colorPalettes.masterSettingIds.concat( newMasterIDs );
+
+      _.each(settingIDs, function (parentSettingID) {
         if (typeof apiSettings[parentSettingID] !== 'undefined') {
           const parentSettingData = apiSettings[parentSettingID]
           const parentSetting = api(parentSettingID)
@@ -212,7 +221,6 @@ window.customify = window.customify || parent.customify || {};
           if (!_.isUndefined(parentSettingData.connected_fields)) {
             customify.colorPalettes.connectedFieldsCallbacks[parentSettingID] = getMasterFieldCallback(parentSettingData, parentSettingID)
             parentSetting.bind(customify.colorPalettes.connectedFieldsCallbacks[parentSettingID])
-
             _.each(parentSettingData.connected_fields, function (connectedFieldData) {
               const connectedSettingID = connectedFieldData.setting_id
               const connectedSetting = api(connectedSettingID)
@@ -771,6 +779,9 @@ window.customify = window.customify || parent.customify || {};
         tempSettings = moveConnectedFields(tempSettings, 'sm_dark_primary', 'sm_color_primary', primaryRatio)
         tempSettings = moveConnectedFields(tempSettings, 'sm_dark_secondary', 'sm_color_secondary', secondaryRatio)
         tempSettings = moveConnectedFields(tempSettings, 'sm_dark_tertiary', 'sm_color_tertiary', tertiaryRatio)
+        tempSettings = moveConnectedFields(tempSettings, 'sm_accent_color_master', 'sm_text_color_master', tertiaryRatio)
+
+        console.log( tempSettings['sm_accent_color_master'], tempSettings['sm_text_color_master'] );
 
         const diversity_variation = getSwapMap('color_diversity_low')
         tempSettings = swapConnectedFields(tempSettings, diversity_variation)
@@ -797,7 +808,9 @@ window.customify = window.customify || parent.customify || {};
         tempSettings = swapConnectedFields(tempSettings, dark_mmode_variation)
       }
 
-      _.each(customify.colorPalettes.masterSettingIds, function (masterSettingId) {
+      var settingIDs = customify.colorPalettes.masterSettingIds.concat( newMasterIDs );
+
+      _.each(settingIDs, function (masterSettingId) {
         apiSettings[masterSettingId] = tempSettings[masterSettingId]
       })
     }

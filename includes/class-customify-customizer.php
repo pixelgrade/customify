@@ -995,6 +995,16 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 					$control_class_name = 'Pix_Customize_Select2_Control';
 					break;
 
+				case 'select_color' :
+					if ( ! isset( $field_config['choices'] ) || empty( $field_config['choices'] ) ) {
+						return;
+					}
+
+					$control_args['choices'] = $field_config['choices'];
+
+					$control_class_name = 'Pix_Customize_Select_Color_Control';
+					break;
+
 				case 'sm_radio' :
 					if ( ! isset( $field_config['choices'] ) || empty( $field_config['choices'] ) ) {
 						return;

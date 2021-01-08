@@ -764,5 +764,6 @@
 
       return pieces
     }
-  })
+  });
+
 })(jQuery, window, document)

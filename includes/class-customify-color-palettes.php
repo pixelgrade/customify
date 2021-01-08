@@ -202,6 +202,74 @@ class Customify_Color_Palettes {
 //						 'dumb'      => esc_html__( 'Dumb', 'customify' ),
 					),
 				),
+				'sm_accent_color_master' => array(
+					'type'    => 'select_color',
+					// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
+					'setting_type' => 'option',
+					// We will force this setting id preventing prefixing and other regular processing.
+					'setting_id'   => 'sm_accent_color_master',
+					'label'   => esc_html__( 'Accent Master', '__theme_txtd' ),
+					'live'    => true,
+					'default' => 'accent',
+					'connected_fields' => array(),
+					'choices' => array(
+						'text'       => esc_html__( 'Text', '__theme_txtd' ),
+						'titles'     => esc_html__( 'Title', '__theme_txtd' ),
+						'accent'     => esc_html__( 'Accent', '__theme_txtd' ),
+						'background' => esc_html__( 'Background', '__theme_txtd' ),
+					),
+				),
+				'sm_text_color_master' => array(
+					'type'    => 'select_color',
+					// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
+					'setting_type' => 'option',
+					// We will force this setting id preventing prefixing and other regular processing.
+					'setting_id'   => 'sm_text_color_master',
+					'label'   => esc_html__( 'Text Master', '__theme_txtd' ),
+					'live'    => true,
+					'default' => 'text',
+					'connected_fields' => array(),
+					'choices' => array(
+						'text'       => esc_html__( 'Text', '__theme_txtd' ),
+						'titles'     => esc_html__( 'Title', '__theme_txtd' ),
+						'accent'     => esc_html__( 'Accent', '__theme_txtd' ),
+						'background' => esc_html__( 'Background', '__theme_txtd' ),
+					),
+				),
+				'sm_titles_color_master' => array(
+					'type'    => 'select_color',
+					// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
+					'setting_type' => 'option',
+					// We will force this setting id preventing prefixing and other regular processing.
+					'setting_id'   => 'sm_titles_color_master',
+					'label'   => esc_html__( 'Titles Master', '__theme_txtd' ),
+					'live'    => true,
+					'default' => 'text',
+					'connected_fields' => array(),
+					'choices' => array(
+						'text'       => esc_html__( 'Text', '__theme_txtd' ),
+						'titles'     => esc_html__( 'Title', '__theme_txtd' ),
+						'accent'     => esc_html__( 'Accent', '__theme_txtd' ),
+						'background' => esc_html__( 'Background', '__theme_txtd' ),
+					),
+				),
+				'sm_background_color_master' => array(
+					'type'    => 'select_color',
+					// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
+					'setting_type' => 'option',
+					// We will force this setting id preventing prefixing and other regular processing.
+					'setting_id'   => 'sm_background_color_master',
+					'label'   => esc_html__( 'Background Master', '__theme_txtd' ),
+					'live'    => true,
+					'default' => 'background',
+					'connected_fields' => array(),
+					'choices' => array(
+						'text'       => esc_html__( 'Text', '__theme_txtd' ),
+						'titles'     => esc_html__( 'Title', '__theme_txtd' ),
+						'accent'     => esc_html__( 'Accent', '__theme_txtd' ),
+						'background' => esc_html__( 'Background', '__theme_txtd' ),
+					),
+				),
 				'sm_color_primary'           => array(
 					'type'             => 'color',
 					// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
@@ -1056,7 +1124,7 @@ class Customify_Color_Palettes {
 		}
 
 		foreach ( $options_details as $option_id => $option_details ) {
-			if ( ! empty( $option_details['type'] ) && 'color' === $option_details['type'] && 0 === strpos( $option_id, 'sm_' ) ) {
+			if ( ! empty( $option_details['type'] ) && in_array( $option_details['type'], array( 'color' ) ) && 0 === strpos( $option_id, 'sm_' ) ) {
 				$control_ids[] = $option_id;
 			}
 		}
