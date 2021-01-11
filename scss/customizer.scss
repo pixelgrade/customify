@@ -87,7 +87,8 @@
     overflow: hidden;
     background-color: currentColor;
     text-indent: -999em;
-    flex: 0 1 30px;
+    flex: 0 0 auto;
+    width: 30px;
     margin-left: 5px;
     border: 2px solid transparent;
     box-shadow: #FFF 0 0 1px 2px inset;
@@ -113,5 +114,28 @@
 .customify-color-select__option--selected {
   border-color: #28A;
 }
+
+li.customize-control-select_color {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  #customize-theme-controls & {
+
+    .customize-control-title {
+      margin-bottom: 0;
+    }
+
+    .customify-color-select {
+      margin-left: 20px;
+      flex: 1 0 auto;
+    }
+
+    .customify-color-select__option-list {
+      justify-content: flex-end;
+    }
+  }
+}
+
 
 @import "shame";

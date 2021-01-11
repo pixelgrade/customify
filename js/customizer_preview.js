@@ -68,63 +68,65 @@
           })
         })
 
-      } else if (typeof apiSettings !== 'undefined'
-        && typeof apiSettings[key] !== 'undefined'
-        && typeof settingConfig.css !== 'undefined'
-        && typeof settingConfig.live !== 'undefined'
-        && settingConfig.live === true) {
+      } else {
+        if (typeof apiSettings !== 'undefined'
+            && typeof apiSettings[key] !== 'undefined'
+            && typeof settingConfig.css !== 'undefined'
+            && typeof settingConfig.live !== 'undefined'
+            && settingConfig.live === true) {
 
-        api(key, function (setting) {
-          setting.bind(function (newValue) {
+          api(key, function (setting) {
+            setting.bind(function (newValue) {
 
-            $.each(settingConfig.css, function (idx, propertyConfig) {
-              // Replace all dashes with underscores thus making the CSS property safe to us in a HTML ID.
-              const $styleElement = $('.dynamic_setting_' + settingConfig.html_safe_option_id + '_property_' + propertyConfig.property.replace(regexForMultipleReplace, '_') + '_' + idx)
-              if (!$styleElement.length) {
-                return
-              }
+              $.each(settingConfig.css, function (idx, propertyConfig) {
+                // Replace all dashes with underscores thus making the CSS property safe to us in a HTML ID.
+                const $styleElement = $('.dynamic_setting_' + settingConfig.html_safe_option_id + '_property_' + propertyConfig.property.replace(regexForMultipleReplace, '_') + '_' + idx)
+                if (!$styleElement.length) {
+                  return
+                }
 
-              const properties = {}
-              if (typeof propertyConfig.property !== 'undefined' && typeof propertyConfig.selector !== 'undefined') {
-                properties[propertyConfig.property] = propertyConfig.selector
-              }
-              if (typeof propertyConfig.callback_filter !== 'undefined') {
-                properties['callback'] = propertyConfig.callback_filter
-              }
-              if (_.isEmpty(properties)) {
-                return
-              }
+                const properties = {}
+                if (typeof propertyConfig.property !== 'undefined' && typeof propertyConfig.selector !== 'undefined') {
+                  properties[propertyConfig.property] = propertyConfig.selector
+                }
+                if (typeof propertyConfig.callback_filter !== 'undefined') {
+                  properties['callback'] = propertyConfig.callback_filter
+                }
+                if (_.isEmpty(properties)) {
+                  return
+                }
 
-              const cssUpdateArgs = {
-                properties: properties,
-                propertyValue: newValue,
-                negative_value: propertyConfig.hasOwnProperty('negative_value') ? propertyConfig['negative_value'] : false
-              }
+                const cssUpdateArgs = {
+                  properties: properties,
+                  propertyValue: newValue,
+                  negative_value: propertyConfig.hasOwnProperty('negative_value') ? propertyConfig['negative_value'] : false
+                }
 
-              if (typeof this.unit !== 'undefined') {
-                cssUpdateArgs.unit = this.unit
-              }
+                if (typeof this.unit !== 'undefined') {
+                  cssUpdateArgs.unit = this.unit
+                }
 
-              $styleElement.cssUpdate(cssUpdateArgs)
-            })
+                $styleElement.cssUpdate(cssUpdateArgs)
+              })
 
-          })
-        })
-      } else if (typeof settingConfig.live === 'object' && settingConfig.live.length > 0) {
-        // If the live parameter is an object it means that this is a list of css classes.
-        // These classes should be affected by the change of the text fields.
-        const fieldClass = settingConfig.live.join()
-
-        // if this field is allowed to modify text then we'll edit this live
-        if ($.inArray(settingConfig.type, ['text', 'textarea', 'ace_editor']) > -1) {
-          api(key, function (value) {
-            value.bind(function (text) {
-              let sanitizer = document.createElement('div')
-
-              sanitizer.innerHTML = text
-              $(fieldClass).html(text)
             })
           })
+        } else if (typeof settingConfig.live === 'object' && settingConfig.live.length > 0) {
+          // If the live parameter is an object it means that this is a list of css classes.
+          // These classes should be affected by the change of the text fields.
+          const fieldClass = settingConfig.live.join()
+
+          // if this field is allowed to modify text then we'll edit this live
+          if ($.inArray(settingConfig.type, ['text', 'textarea', 'ace_editor']) > -1) {
+            api(key, function (value) {
+              value.bind(function (text) {
+                let sanitizer = document.createElement('div')
+
+                sanitizer.innerHTML = text
+                $(fieldClass).html(text)
+              })
+            })
+          }
         }
       }
     })

@@ -15,19 +15,17 @@ class Pix_Customize_Select_Color_Control extends Pix_Customize_Control {
 			<?php if ( ! empty( $this->label ) ) : ?>
 				<span class="customize-control-title"><?php echo esc_html( $this->label ); ?></span>
 			<?php endif; ?>
-
-			<select <?php $this->link(); ?> class="js-color-select">
-				<?php
-				foreach ( $this->choices as $value => $label )
-					echo '<option value="' . esc_attr( $value ) . '" ' . selected( $this->value(), $value, false ) . '>' . esc_html( $label ) . '</option>';
-				?>
-			</select>
-
-			<?php if ( ! empty( $this->description ) ) : ?>
-				<span class="description customize-control-description"><?php echo $this->description; ?></span>
-			<?php endif; ?>
 		</label>
-		<?php
 
+		<select <?php $this->link(); ?> class="js-color-select">
+			<?php
+			foreach ( $this->choices as $value => $label )
+				echo '<option value="' . esc_attr( $value ) . '" ' . selected( $this->value(), $value, false ) . '>' . esc_html( $label ) . '</option>';
+			?>
+		</select>
+
+		<?php if ( ! empty( $this->description ) ) : ?>
+			<span class="description customize-control-description"><?php echo $this->description; ?></span>
+		<?php endif;
 	}
 }

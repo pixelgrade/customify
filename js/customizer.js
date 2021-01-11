@@ -375,10 +375,10 @@ window.customify = window.customify || parent.customify || {};
     var masterSettingIDs = [];
 
     var newMasterIDs = [
-      'sm_accent_color_master',
-      'sm_text_color_master',
-      'sm_titles_color_master',
-      'sm_background_color_master',
+      'sm_accent_color_switch_master',
+      'sm_accent_color_select_master',
+      'sm_text_color_switch_master',
+      'sm_text_color_select_master',
     ];
 
     masterSettingIDs = masterSettingIDs.concat( colorsMaterIDs ).concat( fontsMaterIDs ).concat( newMasterIDs );

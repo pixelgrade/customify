@@ -4,10 +4,10 @@ window.customify = window.customify || parent.customify || {};
 (function ($, customify, wp) {
 
   var newMasterIDs = [
-      'sm_accent_color_master',
-      'sm_text_color_master',
-      'sm_titles_color_master',
-      'sm_background_color_master',
+      'sm_accent_color_switch_master',
+      'sm_accent_color_select_master',
+      'sm_text_color_switch_master',
+      'sm_text_color_select_master',
   ];
 
   /**
@@ -26,10 +26,19 @@ window.customify = window.customify || parent.customify || {};
 
     const filteredColors = {}
 
+    const switchColorSelector = '#_customize-input-sm_dark_color_switch_slider_control'
+    const selectColorSelector = '#_customize-input-sm_dark_color_select_slider_control'
     const primaryColorSelector = '#_customize-input-sm_dark_color_primary_slider_control'
     const secondaryColorSelector = '#_customize-input-sm_dark_color_secondary_slider_control'
     const tertiaryColorSelector = '#_customize-input-sm_dark_color_tertiary_slider_control'
-    const colorSlidersSelector = primaryColorSelector + ', ' + secondaryColorSelector + ', ' + tertiaryColorSelector
+
+    const colorSlidersSelector = [
+      switchColorSelector,
+      selectColorSelector,
+      primaryColorSelector,
+      secondaryColorSelector,
+      tertiaryColorSelector
+    ].join( ', ' );
 
     let setupGlobalsDone = false
 
@@ -131,13 +140,15 @@ window.customify = window.customify || parent.customify || {};
     }
 
     const resetSettings = () => {
-      _.each(customify.colorPalettes.masterSettingIds, function (settingID) {
+      var settingIDs = customify.colorPalettes.masterSettingIds.concat( newMasterIDs );
+
+      _.each(settingIDs, function (settingID) {
         const setting = api(settingID)
 
         if (typeof setting !== 'undefined') {
           let parentSettingData = apiSettings[settingID]
 
-          const finalValue = getFilteredColor(settingID)
+          const finalValue = _.includes(newMasterIDs,settingID) ? setting() : getFilteredColor( settingID )
 
           _.each(parentSettingData.connected_fields, function (connectedFieldData) {
             if (_.isUndefined(connectedFieldData) || _.isUndefined(connectedFieldData.setting_id) || !_.isString(connectedFieldData.setting_id)) {
@@ -325,11 +336,6 @@ window.customify = window.customify || parent.customify || {};
 
       let newColor = hex2rgba(color)
       const palette = getCurrentPaletteColors()
-      const paletteColors = palette.slice(0, 3)
-      const paletteDark = palette.slice(3, 6)
-      const average = getAveragePixel(getPixelsFromColors(palette))
-      const averageColor = getAveragePixel(getPixelsFromColors(paletteColors))
-      const averageDark = getAveragePixel(getPixelsFromColors(paletteDark))
 
       // Intensity Filters
       if (filter === 'vivid') {
@@ -772,16 +778,18 @@ window.customify = window.customify || parent.customify || {};
       const selectedDiversity = hasDiversityOption ? $('[name*="sm_color_diversity"]:checked').val() : api('sm_color_diversity')()
 
       if (!isDefaultDiversity || !isDefaultColoration) {
-        const primaryRatio = $(primaryColorSelector).val() / 100
-        const secondaryRatio = $(secondaryColorSelector).val() / 100
-        const tertiaryRatio = $(tertiaryColorSelector).val() / 100
+        const switchRatio = $( switchColorSelector ).val() / 100;
+        const selectRatio = $( selectColorSelector ).val() / 100;
+        const primaryRatio = $( primaryColorSelector ).val() / 100;
+        const secondaryRatio = $( secondaryColorSelector ).val() / 100;
+        const tertiaryRatio = $( tertiaryColorSelector ).val() / 100;
 
         tempSettings = moveConnectedFields(tempSettings, 'sm_dark_primary', 'sm_color_primary', primaryRatio)
         tempSettings = moveConnectedFields(tempSettings, 'sm_dark_secondary', 'sm_color_secondary', secondaryRatio)
         tempSettings = moveConnectedFields(tempSettings, 'sm_dark_tertiary', 'sm_color_tertiary', tertiaryRatio)
-        tempSettings = moveConnectedFields(tempSettings, 'sm_accent_color_master', 'sm_text_color_master', tertiaryRatio)
 
-        console.log( tempSettings['sm_accent_color_master'], tempSettings['sm_text_color_master'] );
+        tempSettings = moveConnectedFields(tempSettings, 'sm_text_color_switch_master', 'sm_accent_color_switch_master', switchRatio)
+        tempSettings = moveConnectedFields(tempSettings, 'sm_text_color_select_master', 'sm_accent_color_select_master', selectRatio)
 
         const diversity_variation = getSwapMap('color_diversity_low')
         tempSettings = swapConnectedFields(tempSettings, diversity_variation)
@@ -813,41 +821,6 @@ window.customify = window.customify || parent.customify || {};
       _.each(settingIDs, function (masterSettingId) {
         apiSettings[masterSettingId] = tempSettings[masterSettingId]
       })
-    }
-
-    const getPixelsFromColors = function (colors) {
-      const pixels = []
-      _.each(colors, function (color) {
-        pixels.push(hex2rgba(color))
-      })
-      return pixels
-    }
-
-    const getAveragePixel = function (pixels) {
-      const averagePixel = {
-        red: 0,
-        green: 0,
-        blue: 0,
-        alpha: 0,
-        hue: 0,
-        saturation: 0,
-        lightness: 0,
-        luma: 0
-      }
-
-      for (let i = 0; i < pixels.length; i++) {
-        const pixel = pixels[i]
-
-        for (let k in averagePixel) {
-          averagePixel[k] += pixel[k]
-        }
-      }
-
-      for (let k in averagePixel) {
-        averagePixel[k] /= pixels.length
-      }
-
-      return averagePixel
     }
 
     const applyColorationValueToFields = () => {
@@ -914,6 +887,8 @@ window.customify = window.customify || parent.customify || {};
         }
       })
 
+      $( colorSlidersSelector ).on( 'change', reinitializeConnectedFields );
+
       $('[name*="sm_coloration_level"]').on('change', applyColorationValueToFields)
       $('[name*="sm_color_diversity"]').on('change', reinitializeConnectedFields)
       $('[name*="sm_shuffle_colors"]').on('change', reinitializeConnectedFields)
@@ -946,42 +921,6 @@ window.customify = window.customify || parent.customify || {};
       })
     }, 30)
 
-    function swapValues (settingOne, settingTwo) {
-      const colorPrimary = api(settingOne)()
-      const colorSecondary = api(settingTwo)()
-
-      api(settingOne).set(colorSecondary)
-      api(settingTwo).set(colorPrimary)
-    }
-
-    const handleSwapValues = function () {
-      const $document = $(document)
-
-      $document.on('click', '[data-action="sm_swap_colors"]', function (e) {
-        e.preventDefault()
-        swapValues('sm_color_primary', 'sm_color_secondary')
-      })
-
-      $document.on('click', '[data-action="sm_swap_dark_light"]', function (e) {
-        e.preventDefault()
-        swapValues('sm_dark_primary', 'sm_light_primary')
-        swapValues('sm_dark_secondary', 'sm_light_secondary')
-        swapValues('sm_dark_tertiary', 'sm_light_tertiary')
-      })
-
-      $document.on('click', '[data-action="sm_swap_colors_dark"]', function (e) {
-        e.preventDefault()
-        swapValues('sm_color_primary', 'sm_dark_primary')
-        swapValues('sm_color_secondary', 'sm_dark_secondary')
-        swapValues('sm_color_tertiary', 'sm_dark_tertiary')
-      })
-
-      $document.on('click', '[data-action="sm_swap_secondary_colors_dark"]', function (e) {
-        e.preventDefault()
-        swapValues('sm_color_secondary', 'sm_dark_secondary')
-      })
-    }
-
     api.bind('ready', function () {
       // We need to do this here to be sure the data is available.
       apiSettings = api.settings.settings
@@ -997,8 +936,6 @@ window.customify = window.customify || parent.customify || {};
       refreshCurrentPaletteControl()
 
       updateFilterPreviews()
-
-      handleSwapValues()
 
       bindEvents()
     })

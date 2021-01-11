@@ -1,7 +1,7 @@
 //---- TOGGLE BUTTON ----
 
-[id="sub-accordion-section-sm_color_palettes_section"].sm-view-customize li.customize-control-sm_switch {
-  display: flex !important;
+li.customize-control-sm_switch {
+  display: flex;
   align-items: center;
   justify-content: space-between;
 
@@ -11,6 +11,10 @@
   .customize-control-title {
     display: inline-block;
   }
+}
+
+[id="sub-accordion-section-sm_color_palettes_section"].sm-view-customize li.customize-control-sm_switch {
+  display: flex !important;
 }
 
 .customize-control-sm_switch {

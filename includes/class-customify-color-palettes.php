@@ -52,6 +52,9 @@ class Customify_Color_Palettes {
 		 * Handle the Customizer Style Manager section config.
 		 */
 		add_filter( 'customify_filter_fields', array( $this, 'add_style_manager_section_master_colors_config' ), 12, 1 );
+//		add_filter( 'customify_filter_fields', array( $this, 'remove_style_manager_section_master_colors_config' ), 14, 1 );
+		add_filter( 'customify_filter_fields', array( $this, 'add_style_manager_new_section_master_colors_config' ), 14, 1 );
+
 		// This needs to come after the external theme config has been applied
 		add_filter( 'customify_filter_fields', array( $this, 'add_current_palette_control' ), 110, 1 );
 		add_filter( 'customify_filter_fields', array( $this, 'maybe_enhance_dark_mode_control' ), 120, 1 );
@@ -195,79 +198,6 @@ class Customify_Color_Palettes {
 						'softer'    => esc_html__( 'Softer', 'customify' ),
 						'pastel'    => esc_html__( 'Pastel', 'customify' ),
 						'greyish'   => esc_html__( 'Greyish', 'customify' ),
-//						 'warm'      => esc_html__( 'Warming', 'customify' ),
-//						 'cold'      => esc_html__( 'Cooling', 'customify' ),
-//						 'sierra'    => esc_html__( 'Sierra', 'customify' ),
-//						 'mayfair'   => esc_html__( 'Mayfair', 'customify' ),
-//						 'dumb'      => esc_html__( 'Dumb', 'customify' ),
-					),
-				),
-				'sm_accent_color_master' => array(
-					'type'    => 'select_color',
-					// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
-					'setting_type' => 'option',
-					// We will force this setting id preventing prefixing and other regular processing.
-					'setting_id'   => 'sm_accent_color_master',
-					'label'   => esc_html__( 'Accent Master', '__theme_txtd' ),
-					'live'    => true,
-					'default' => 'accent',
-					'connected_fields' => array(),
-					'choices' => array(
-						'text'       => esc_html__( 'Text', '__theme_txtd' ),
-						'titles'     => esc_html__( 'Title', '__theme_txtd' ),
-						'accent'     => esc_html__( 'Accent', '__theme_txtd' ),
-						'background' => esc_html__( 'Background', '__theme_txtd' ),
-					),
-				),
-				'sm_text_color_master' => array(
-					'type'    => 'select_color',
-					// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
-					'setting_type' => 'option',
-					// We will force this setting id preventing prefixing and other regular processing.
-					'setting_id'   => 'sm_text_color_master',
-					'label'   => esc_html__( 'Text Master', '__theme_txtd' ),
-					'live'    => true,
-					'default' => 'text',
-					'connected_fields' => array(),
-					'choices' => array(
-						'text'       => esc_html__( 'Text', '__theme_txtd' ),
-						'titles'     => esc_html__( 'Title', '__theme_txtd' ),
-						'accent'     => esc_html__( 'Accent', '__theme_txtd' ),
-						'background' => esc_html__( 'Background', '__theme_txtd' ),
-					),
-				),
-				'sm_titles_color_master' => array(
-					'type'    => 'select_color',
-					// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
-					'setting_type' => 'option',
-					// We will force this setting id preventing prefixing and other regular processing.
-					'setting_id'   => 'sm_titles_color_master',
-					'label'   => esc_html__( 'Titles Master', '__theme_txtd' ),
-					'live'    => true,
-					'default' => 'text',
-					'connected_fields' => array(),
-					'choices' => array(
-						'text'       => esc_html__( 'Text', '__theme_txtd' ),
-						'titles'     => esc_html__( 'Title', '__theme_txtd' ),
-						'accent'     => esc_html__( 'Accent', '__theme_txtd' ),
-						'background' => esc_html__( 'Background', '__theme_txtd' ),
-					),
-				),
-				'sm_background_color_master' => array(
-					'type'    => 'select_color',
-					// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
-					'setting_type' => 'option',
-					// We will force this setting id preventing prefixing and other regular processing.
-					'setting_id'   => 'sm_background_color_master',
-					'label'   => esc_html__( 'Background Master', '__theme_txtd' ),
-					'live'    => true,
-					'default' => 'background',
-					'connected_fields' => array(),
-					'choices' => array(
-						'text'       => esc_html__( 'Text', '__theme_txtd' ),
-						'titles'     => esc_html__( 'Title', '__theme_txtd' ),
-						'accent'     => esc_html__( 'Accent', '__theme_txtd' ),
-						'background' => esc_html__( 'Background', '__theme_txtd' ),
 					),
 				),
 				'sm_color_primary'           => array(
@@ -507,43 +437,98 @@ class Customify_Color_Palettes {
 					'live'             => true,
 					'default'          => '',
 				),
-				'sm_swap_colors'                => array(
-					'type'         => 'button',
-					'setting_type' => 'option',
-					'setting_id'   => 'sm_swap_colors',
-					'priority'     => 30,
-					'label'        => esc_html__( 'Swap Colors', 'customify' ),
-					'action'       => 'sm_swap_colors',
-				),
-				'sm_swap_dark_light'            => array(
-					'type'         => 'button',
-					'setting_type' => 'option',
-					'setting_id'   => 'sm_swap_dark_light',
-					'priority'     => 30.1,
-					'label'        => esc_html__( 'Swap Dark ⇆ Light', 'customify' ),
-					'action'       => 'sm_swap_dark_light',
-				),
-				'sm_swap_colors_dark'           => array(
-					'type'         => 'button',
-					'setting_type' => 'option',
-					'setting_id'   => 'sm_swap_colors_dark',
-					'priority'     => 30.2,
-					'label'        => esc_html__( 'Swap Colors ⇆ Dark', 'customify' ),
-					'action'       => 'sm_swap_colors_dark',
-				),
-				'sm_swap_secondary_colors_dark' => array(
-					'type'         => 'button',
-					'setting_type' => 'option',
-					'setting_id'   => 'sm_swap_secondary_colors_dark',
-					'priority'     => 30.3,
-					'label'        => esc_html__( 'Swap Secondary Color ⇆ Secondary Dark', 'customify' ),
-					'action'       => 'sm_swap_secondary_colors_dark',
-				),
 				'sm_color_palettes_spacing_bottom' => array(
 					'type'       => 'html',
 					'html'       => '',
 					'setting_id' => 'sm_color_palettes_spacing_bottom',
 					'priority'   => 31,
+				),
+			),
+		) );
+
+		return $config;
+	}
+
+	public function remove_style_manager_section_master_colors_config( $config ) {
+//		$config['sections']['style_manager_section'] = array();
+
+		return $config;
+	}
+
+	public function add_style_manager_new_section_master_colors_config( $config ) {
+		// If there is no style manager support, bail early.
+		if ( ! $this->is_supported() ) {
+			return $config;
+		}
+
+		if ( ! isset( $config['sections']['style_manager_section'] ) ) {
+			$config['sections']['style_manager_section'] = array();
+		}
+
+		// The section might be already defined, thus we merge, not replace the entire section config.
+		$config['sections']['style_manager_section'] = Customify_Array::array_merge_recursive_distinct( $config['sections']['style_manager_section'], array(
+			'options' => array(
+				'sm_text_color_switch_master'   => array(
+					'type'             => 'sm_switch',
+					// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
+					'setting_type'     => 'option',
+					// We will force this setting id preventing prefixing and other regular processing.
+					'setting_id'       => 'sm_text_color_switch_master',
+					'label'            => esc_html__( 'Text Master', '__theme_txtd' ),
+					'live'             => true,
+					'default'          => 'off',
+					'connected_fields' => array(),
+					'css'              => array(),
+					'choices'          => array(
+						'off' => esc_html__( 'Off', 'customify' ),
+						'on'  => esc_html__( 'On', 'customify' ),
+					),
+				),
+				'sm_text_color_select_master'   => array(
+					'type'             => 'select_color',
+					// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
+					'setting_type'     => 'option',
+					// We will force this setting id preventing prefixing and other regular processing.
+					'setting_id'       => 'sm_text_color_select_master',
+					'label'            => esc_html__( 'Text Select Master', '__theme_txtd' ),
+					'live'             => true,
+					'default'          => 'text',
+					'connected_fields' => array(),
+					'css'              => array(),
+					'choices'          => array(
+						'text' => esc_html__( 'Text', '__theme_txtd' ),
+					),
+				),
+				'sm_accent_color_switch_master' => array(
+					'type'             => 'sm_switch',
+					// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
+					'setting_type'     => 'option',
+					// We will force this setting id preventing prefixing and other regular processing.
+					'setting_id'       => 'sm_accent_color_switch_master',
+					'label'            => esc_html__( 'Accent Master', '__theme_txtd' ),
+					'live'             => true,
+					'default'          => 'on',
+					'connected_fields' => array(),
+					'css'              => array(),
+					'choices'          => array(
+						'off' => esc_html__( 'Off', 'customify' ),
+						'on'  => esc_html__( 'On', 'customify' ),
+					),
+				),
+				'sm_accent_color_select_master' => array(
+					'type'             => 'select_color',
+					// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
+					'setting_type'     => 'option',
+					// We will force this setting id preventing prefixing and other regular processing.
+					'setting_id'       => 'sm_accent_color_select_master',
+					'label'            => esc_html__( 'Accent Select Master', '__theme_txtd' ),
+					'live'             => true,
+					'default'          => 'accent',
+					'connected_fields' => array(),
+					'css'              => array(),
+					'choices'          => array(
+						'accent' => esc_html__( 'Accent', '__theme_txtd' ),
+					),
 				),
 			),
 		) );
@@ -689,6 +674,36 @@ class Customify_Color_Palettes {
 		              'off' => esc_html__( 'Off', 'customify' ),
 		              'on'  => esc_html__( 'On', 'customify' ),
 	              ),
+              ),
+              'sm_dark_color_switch_slider'   => array(
+	              'setting_id'  => 'sm_dark_color_switch_slider',
+	              'type'        => 'range',
+	              'label'       => esc_html__( 'Dark to Color (switch)', 'customify' ),
+	              'desc'        => '',
+	              'live'        => true,
+	              'default'     => $this->get_dark_to_color_slider_default_value( $config['sections']['style_manager_section']['options'], 'sm_text_color_switch_master', 'sm_accent_color_switch_master' ),
+	              'input_attrs' => array(
+		              'min'          => 0,
+		              'max'          => 100,
+		              'step'         => 1,
+		              'data-preview' => true,
+	              ),
+	              'css'         => array(),
+              ),
+              'sm_dark_color_select_slider'   => array(
+	              'setting_id'  => 'sm_dark_color_select_slider',
+	              'type'        => 'range',
+	              'label'       => esc_html__( 'Dark to Color (select)', 'customify' ),
+	              'desc'        => '',
+	              'live'        => true,
+	              'default'     => $this->get_dark_to_color_slider_default_value( $config['sections']['style_manager_section']['options'], 'sm_text_color_select_master', 'sm_accent_color_select_master' ),
+	              'input_attrs' => array(
+		              'min'          => 0,
+		              'max'          => 100,
+		              'step'         => 1,
+		              'data-preview' => true,
+	              ),
+	              'css'         => array(),
               ),
               'sm_dark_color_primary_slider'   => array(
 	              'setting_id'  => 'sm_dark_color_primary_slider',
