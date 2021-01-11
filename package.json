@@ -18,7 +18,13 @@
         "gulp-rtlcss": "^1.4.1",
         "gulp-sass": "^4.1.0",
         "gulp-terser": "^1.2.0",
+        "jquery": "^3.5.1",
+        "lodash": "^4.17.20",
+        "path": "^0.12.7",
         "request": "^2.88.2",
-        "terser": "^4.8.0"
+        "terser": "^4.8.0",
+        "terser-webpack-plugin": "^5.1.1",
+        "uglifyjs-webpack-plugin": "^2.2.0",
+        "webpack": "^5.12.3"
     }
 }

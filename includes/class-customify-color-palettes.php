@@ -91,8 +91,8 @@ class Customify_Color_Palettes {
 		$suffix = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min';
 
 		wp_register_script( PixCustomifyPlugin()->get_slug() . '-color-palettes',
-			plugins_url( 'js/customizer/color-palettes' . $suffix . '.js', PixCustomifyPlugin()->get_file() ),
-			array( 'jquery', ), PixCustomifyPlugin()->get_version() );
+			plugins_url( 'dist/js/customizer/color-palettes' . $suffix . '.js', PixCustomifyPlugin()->get_file() ),
+			array( 'jquery', 'lodash' ), PixCustomifyPlugin()->get_version() );
 	}
 
 	/**
