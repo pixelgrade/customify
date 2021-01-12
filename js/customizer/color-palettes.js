@@ -340,6 +340,7 @@ window.customify = window.customify || parent.customify || {};
       // Intensity Filters
       if (filter === 'vivid') {
         newColor = hsl2Rgb(newColor.hue, mixValues(newColor.saturation, 1, 0.5), newColor.lightness)
+        console.log( color, rgb2hex(newColor) );
         return rgb2hex(newColor)
       }
 
@@ -384,6 +385,7 @@ window.customify = window.customify || parent.customify || {};
         // Slightly increase saturation
         if (color === palette[0] || color === palette[1] || color === palette[2]) {
           newColor = hsl2Rgb(newColor.hue, mixValues(newColor.saturation, 1, 0.3), newColor.lightness)
+          console.log( color, rgb2hex( newColor ) );
           return rgb2hex(newColor)
         }
 
@@ -399,6 +401,7 @@ window.customify = window.customify || parent.customify || {};
           newColor.lightness = mix('lightness', newColor, hex2rgba('#FFF'), 0.4)
         }
 
+        console.log( color, hsl2hex( newColor ) );
         return hsl2hex(newColor)
       }
 

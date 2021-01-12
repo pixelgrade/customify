@@ -13,13 +13,21 @@ const newMasterIDs = [
   'sm_text_color_select_master',
 ];
 
-const switchColorSelector = '#_customize-input-sm_dark_color_switch_slider_control'
-const selectColorSelector = '#_customize-input-sm_dark_color_select_slider_control'
-const primaryColorSelector = '#_customize-input-sm_dark_color_primary_slider_control'
-const secondaryColorSelector = '#_customize-input-sm_dark_color_secondary_slider_control'
-const tertiaryColorSelector = '#_customize-input-sm_dark_color_tertiary_slider_control'
+const switchColorSelector = '#_customize-input-sm_dark_color_switch_slider_control';
+const selectColorSelector = '#_customize-input-sm_dark_color_select_slider_control';
+const primaryColorSelector = '#_customize-input-sm_dark_color_primary_slider_control';
+const secondaryColorSelector = '#_customize-input-sm_dark_color_secondary_slider_control';
+const tertiaryColorSelector = '#_customize-input-sm_dark_color_tertiary_slider_control';
 
-const defaultVariation = 'light'
+const colorSlidersSelector = [
+  switchColorSelector,
+  selectColorSelector,
+  primaryColorSelector,
+  secondaryColorSelector,
+  tertiaryColorSelector
+].join( ', ' );
+
+const defaultVariation = 'light';
 
 /**
  * Expose the API publicly on window.customify.colorPalettes
@@ -29,21 +37,13 @@ const defaultVariation = 'light'
 if ( typeof customify.colorPalettes === 'undefined' ) {
   customify.colorPalettes = {}
 }
+
 _.extend( customify.colorPalettes, function () {
   const api = wp.customize
   let apiSettings
 
-
   const filteredColors = {}
-
-
-  const colorSlidersSelector = [
-    switchColorSelector,
-    selectColorSelector,
-    primaryColorSelector,
-    secondaryColorSelector,
-    tertiaryColorSelector
-  ].join( ', ' );
+  const $colorSliders = $( colorSlidersSelector );
 
   let setupGlobalsDone = false
 
@@ -87,22 +87,22 @@ _.extend( customify.colorPalettes, function () {
           if (_.isUndefined(connectedFieldData) || _.isUndefined(connectedFieldData.setting_id) || !_.isString(connectedFieldData.setting_id)) {
             return
           }
-          const connectedSetting = api(connectedFieldData.setting_id)
-          if (_.isUndefined(connectedSetting)) {
+          const connectedSetting = api( connectedFieldData.setting_id )
+          if ( _.isUndefined( connectedSetting ) ) {
             return
           }
 
-          connectedSetting.set(finalValue)
+          connectedSetting.set( finalValue )
         })
 
         // Also set the final setting value, for safe keeping.
-        const finalSettingID = settingID + '_final'
-        const finalSetting = api(finalSettingID)
-        if (!_.isUndefined(finalSetting)) {
-          if (!_.isUndefined(parentSettingData.connected_fields) && !_.isEmpty(parentSettingData.connected_fields)) {
-            finalSetting.set(finalValue)
+        const finalSettingID = `${ settingID }_final`;
+        const finalSetting = api( finalSettingID );
+        if ( !_.isUndefined( finalSetting ) ) {
+          if ( !_.isUndefined( parentSettingData.connected_fields ) && !_.isEmpty( parentSettingData.connected_fields ) ) {
+            finalSetting.set( finalValue )
           } else {
-            finalSetting.set('')
+            finalSetting.set( '' )
           }
         }
       }
@@ -573,19 +573,24 @@ _.extend( customify.colorPalettes, function () {
   }
 
   const applyColorationValueToFields = () => {
-    const coloration = $('[name*="sm_coloration_level"]:checked').val()
+    const $selectedColoration = $( '[name*="sm_coloration_level"]:checked' );
+    const coloration = $selectedColoration.val();
 
-    if (typeof $('[name*="sm_coloration_level"]:checked').data('default') !== 'undefined') {
+    if ( typeof $selectedColoration.data( 'default' ) !== 'undefined' ) {
 
-      const sliders = ['sm_dark_color_primary_slider', 'sm_dark_color_secondary_slider', 'sm_dark_color_tertiary_slider']
-      _.each(sliders, function (sliderID) {
-        const sliderSetting = customify.config.settings[sliderID]
-        api(sliderID).set(sliderSetting.default)
-        $('#_customize-input-' + sliderID + '_control ').val(sliderSetting.default)
-      })
+      const sliders = [
+        'sm_dark_color_primary_slider',
+        'sm_dark_color_secondary_slider',
+        'sm_dark_color_tertiary_slider',
+      ];
+
+      _.each( sliders, function( sliderID ) {
+        const sliderSetting = customify.config.settings[sliderID];
+        wp.customize( sliderID ).set( sliderSetting.default );
+        $( `#_customize-input-${ sliderID }_control` ).val( sliderSetting.default );
+      } )
     } else {
-      const ratio = parseFloat(coloration)
-      $(colorSlidersSelector).val(ratio)
+      $colorSliders.val( parseFloat( coloration ) )
     }
     reinitializeConnectedFields()
   }
@@ -636,7 +641,7 @@ _.extend( customify.colorPalettes, function () {
       }
     })
 
-    $( colorSlidersSelector ).on( 'change', reinitializeConnectedFields );
+    $colorSliders.on( 'change', reinitializeConnectedFields );
 
     $('[name*="sm_coloration_level"]').on('change', applyColorationValueToFields)
     $('[name*="sm_color_diversity"]').on('change', reinitializeConnectedFields)

@@ -92,6 +92,7 @@ class Customify_Color_Palettes {
 
 		wp_register_script( PixCustomifyPlugin()->get_slug() . '-color-palettes',
 			plugins_url( 'dist/js/customizer/color-palettes' . $suffix . '.js', PixCustomifyPlugin()->get_file() ),
+//			plugins_url( 'js/customizer/color-palettes' . $suffix . '.js', PixCustomifyPlugin()->get_file() ),
 			array( 'jquery', 'lodash' ), PixCustomifyPlugin()->get_version() );
 	}
 
@@ -826,26 +827,50 @@ class Customify_Color_Palettes {
 		return 'low';
 	}
 
+	private function get_connected_fields_count( $setting_id ) {
+		if ( isset( $options_config[ $setting_id ][ 'connected_fields' ] ) ) {
+			return count( $options_config[ $setting_id ][ 'connected_fields' ] );
+		}
+		return 0;
+	}
+
 	private function get_coloration_level_average( $options_config ) {
 
-		$colors1 = count( $options_config['sm_color_primary']['connected_fields'] );
-		$colors2 = count( $options_config['sm_color_secondary']['connected_fields'] );
-		$colors3 = count( $options_config['sm_color_tertiary']['connected_fields'] );
-		$colors = $colors1 + $colors2 + $colors3;
+		$accent_master_setting_ids = array(
+			'sm_color_primary',
+			'sm_color_secondary',
+			'sm_color_tertiary',
+			'sm_accent_color_switch_master',
+			'sm_accent_color_select_master',
+		);
 
-		$dark1 = count( $options_config['sm_dark_primary']['connected_fields'] );
-		$dark2 = count( $options_config['sm_dark_secondary']['connected_fields'] );
-		$dark3 = count( $options_config['sm_dark_tertiary']['connected_fields'] );
-		$dark = $dark1 + $dark2 + $dark3;
+		$accent_fields_count = 0;
+		$dark_fields_count = 0;
 
-		$total = $colors + $dark;
+		foreach ( $accent_master_setting_ids as $setting_id ) {
+			$accent_fields_count = $accent_fields_count + $this->get_connected_fields_count( $setting_id );
+		}
+
+		$dark_master_controls = array(
+			'sm_dark_primary',
+			'sm_dark_secondary',
+			'sm_dark_tertiary',
+			'sm_text_color_switch_master',
+			'sm_text_color_select_master',
+		);
+
+		foreach ( $dark_master_controls as $setting_id ) {
+			$dark_fields_count = $dark_fields_count + $this->get_connected_fields_count( $setting_id );
+		}
+
+		$total = $accent_fields_count + $dark_fields_count;
 
 		// Avoid division by zero.
 		if ( 0 === $total ) {
 			$total = 1;
 		}
 
-		return round( $colors * 100 / $total, 2 );
+		return round( $accent_fields_count * 100 / $total, 2 );
 	}
 
 	private function get_coloration_level_default_value( $options_config ) {
