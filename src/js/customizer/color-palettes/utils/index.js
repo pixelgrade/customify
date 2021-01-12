@@ -6,14 +6,21 @@ import chroma from "chroma-js";
 export const getCurrentPaletteColors = () => {
   const colors = []
   _.each( customify.colorPalettes.masterSettingIds, function( settingID ) {
-    const setting = wp.customize( settingID )
-    const color = setting()
-    colors.push( color )
-  } )
+    const setting = wp.customize( settingID );
+
+    if ( typeof setting !== 'undefined' ) {
+      const color = setting();
+      colors.push( color );
+    }
+  } );
   return colors
 }
 
-const applyClarendonFilter = ( hex, palette ) => {
+export const getActiveFilter = () => {
+  return $( '[name*="sm_palette_filter"]:checked' ).val();
+}
+
+const applyClarendonFilter = ( hex, palette = [] ) => {
   const color = chroma( hex );
 
   // Color Group
@@ -83,15 +90,16 @@ const filters = {
   greyish: applyGreyishFilter,
 }
 
-export const filterColor = ( hex, label ) => {
-  label = typeof label === 'undefined' ? $('[name*="sm_palette_filter"]:checked').val() : label;
-
+export const filterColor = ( hex, palette, label ) => {
   const filter = filters[label];
-  const palette = getCurrentPaletteColors();
 
   if ( typeof filter === 'function' ) {
     return filter( hex, palette );
   }
 
   return hex;
+}
+
+export const filterPalette = ( palette, label ) => {
+  return palette.map( hex => filterColor( hex, palette, label ) );
 }

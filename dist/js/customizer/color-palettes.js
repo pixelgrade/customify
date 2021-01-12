@@ -3355,14 +3355,21 @@ var utils_getCurrentPaletteColors = function getCurrentPaletteColors() {
 
   external_lodash_default.a.each(customify.colorPalettes.masterSettingIds, function (settingID) {
     var setting = wp.customize(settingID);
-    var color = setting();
-    colors.push(color);
+
+    if (typeof setting !== 'undefined') {
+      var color = setting();
+      colors.push(color);
+    }
   });
 
   return colors;
 };
+var utils_getActiveFilter = function getActiveFilter() {
+  return external_jQuery_default()('[name*="sm_palette_filter"]:checked').val();
+};
 
-var utils_applyClarendonFilter = function applyClarendonFilter(hex, palette) {
+var utils_applyClarendonFilter = function applyClarendonFilter(hex) {
+  var palette = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
   var color = chroma_default()(hex); // Color Group
   // Slightly increase saturation
 
@@ -3432,16 +3439,19 @@ var filters = {
   pastel: utils_applyPastelFilter,
   greyish: utils_applyGreyishFilter
 };
-var utils_filterColor = function filterColor(hex, label) {
-  label = typeof label === 'undefined' ? external_jQuery_default()('[name*="sm_palette_filter"]:checked').val() : label;
+var filterColor = function filterColor(hex, palette, label) {
   var filter = filters[label];
-  var palette = utils_getCurrentPaletteColors();
 
   if (typeof filter === 'function') {
     return filter(hex, palette);
   }
 
   return hex;
+};
+var filterPalette = function filterPalette(palette, label) {
+  return palette.map(function (hex) {
+    return filterColor(hex, palette, label);
+  });
 };
 // CONCATENATED MODULE: ./src/js/customizer/color-palettes/index.js
 
@@ -3539,12 +3549,15 @@ external_lodash_default.a.extend(customify.colorPalettes, function () {
   };
 
   var updateFilteredColors = function updateFilteredColors() {
+    var currentPalette = utils_getCurrentPaletteColors();
+    var activeFilter = utils_getActiveFilter();
+
     external_lodash_default.a.each(customify.colorPalettes.masterSettingIds, function (settingID) {
-      var setting = api(settingID);
+      var setting = wp.customize(settingID);
 
       if (typeof setting !== 'undefined') {
-        var value = setting();
-        filteredColors[settingID] = utils_filterColor(value);
+        var color = setting();
+        filteredColors[settingID] = filterColor(color, currentPalette, activeFilter);
       }
     });
   };
@@ -3668,9 +3681,12 @@ external_lodash_default.a.extend(customify.colorPalettes, function () {
 
       $input.iris({
         change: function change(event, ui) {
+          var currentPalette = utils_getCurrentPaletteColors();
+          var activeFilter = utils_getActiveFilter();
           var currentColor = ui.color.toString();
-          $obj.css('color', utils_filterColor(currentColor));
-          filteredColors[settingID] = utils_filterColor(currentColor);
+          var filteredColor = filterColor(currentColor, currentPalette, activeFilter);
+          $obj.css('color', filteredColor);
+          filteredColors[settingID] = filteredColor;
           setting.set(currentColor);
 
           if (event.originalEvent.type !== 'external') {
@@ -3798,6 +3814,8 @@ external_lodash_default.a.extend(customify.colorPalettes, function () {
 
   var toggleAlteredClassOnMasterControls = external_lodash_default.a.debounce(function () {
     var alteredSettings = [];
+    var currentPalette = utils_getCurrentPaletteColors();
+    var activeFilter = utils_getActiveFilter();
     var alteredSettingsSelector;
 
     external_lodash_default.a.each(customify.colorPalettes.masterSettingIds, function (masterSettingId) {
@@ -3818,8 +3836,9 @@ external_lodash_default.a.extend(customify.colorPalettes, function () {
 
           if (typeof connectedSetting !== 'undefined') {
             var connectedFieldValue = connectedSetting();
+            var filteredColor = filterColor(masterSettingValue, currentPalette, activeFilter);
 
-            if (typeof connectedFieldValue === 'string' && connectedFieldValue.toLowerCase() !== utils_filterColor(masterSettingValue).toLowerCase()) {
+            if (typeof connectedFieldValue === 'string' && connectedFieldValue.toLowerCase() !== filteredColor.toLowerCase()) {
               connectedFieldsWereAltered = true;
             }
           }
@@ -4062,6 +4081,7 @@ external_lodash_default.a.extend(customify.colorPalettes, function () {
   };
 
   var updateFilterPreviews = external_lodash_default.a.debounce(function () {
+    var currentPalette = utils_getCurrentPaletteColors();
     external_jQuery_default()('.sm-palette-filter').each(function () {
       var $filters = external_jQuery_default()(this).find('input');
       $filters.each(function (i, obj) {
@@ -4074,7 +4094,7 @@ external_lodash_default.a.extend(customify.colorPalettes, function () {
           var settingID = $color.data('setting');
           var setting = api(settingID);
           var originalColor = setting();
-          $color.css('color', utils_filterColor(originalColor, label));
+          $color.css('color', filterColor(originalColor, currentPalette, label));
         });
       });
     });

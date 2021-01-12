@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import $ from 'jquery';
 
-import { filterColor, getCurrentPaletteColors } from './utils';
+import { filterColor, getCurrentPaletteColors, getActiveFilter } from './utils';
 
 /** @namespace customify */
 window.customify = window.customify || parent.customify || {};
@@ -110,14 +110,17 @@ _.extend( customify.colorPalettes, function () {
   }
 
   const updateFilteredColors = () => {
-    _.each(customify.colorPalettes.masterSettingIds, function (settingID) {
-      const setting = api(settingID)
+    const currentPalette = getCurrentPaletteColors();
+    const activeFilter = getActiveFilter();
 
-      if (typeof setting !== 'undefined') {
-        const value = setting()
-        filteredColors[settingID] = filterColor(value)
+    _.each( customify.colorPalettes.masterSettingIds, function( settingID ) {
+      const setting = wp.customize( settingID );
+
+      if ( typeof setting !== 'undefined' ) {
+        const color = setting();
+        filteredColors[settingID] = filterColor( color, currentPalette, activeFilter )
       }
-    })
+    } )
   }
 
   const getFilteredColor = (settingID) => {
@@ -217,10 +220,10 @@ _.extend( customify.colorPalettes, function () {
 
 
   const createCurrentPaletteControls = () => {
-    const $palette = $('.c-color-palette')
-    const $fields = $palette.find('.c-color-palette__fields').find('input')
+    const $palette = $( '.c-color-palette' );
+    const $fields = $palette.find( '.c-color-palette__fields' ).find( 'input' );
 
-    if (!$palette.length) {
+    if ( !$palette.length ) {
       return
     }
 
@@ -238,12 +241,15 @@ _.extend( customify.colorPalettes, function () {
 
       $input.iris({
         change: (event, ui) => {
-          const currentColor = ui.color.toString()
+          const currentPalette = getCurrentPaletteColors();
+          const activeFilter = getActiveFilter();
+          const currentColor = ui.color.toString();
+          const filteredColor = filterColor( currentColor, currentPalette, activeFilter );
 
-          $obj.css('color', filterColor(currentColor))
+          $obj.css( 'color', filteredColor );
 
-          filteredColors[settingID] = filterColor(currentColor)
-          setting.set(currentColor)
+          filteredColors[settingID] = filteredColor;
+          setting.set( currentColor )
 
           if (event.originalEvent.type !== 'external') {
             $palette.find('.sm-color-palette__color.' + settingID).removeClass('altered')
@@ -375,7 +381,9 @@ _.extend( customify.colorPalettes, function () {
   }, 30)
 
   const toggleAlteredClassOnMasterControls = _.debounce(() => {
-    const alteredSettings = []
+    const alteredSettings = [];
+    const currentPalette = getCurrentPaletteColors();
+    const activeFilter = getActiveFilter();
     let alteredSettingsSelector
 
     _.each(customify.colorPalettes.masterSettingIds, function (masterSettingId) {
@@ -395,9 +403,10 @@ _.extend( customify.colorPalettes, function () {
           const connectedSetting = api(connectedSettingId)
 
           if (typeof connectedSetting !== 'undefined') {
-            const connectedFieldValue = connectedSetting()
+            const connectedFieldValue = connectedSetting();
+            const filteredColor = filterColor(masterSettingValue, currentPalette, activeFilter);
 
-            if (typeof connectedFieldValue === 'string' && connectedFieldValue.toLowerCase() !== filterColor(masterSettingValue).toLowerCase()) {
+            if (typeof connectedFieldValue === 'string' && connectedFieldValue.toLowerCase() !== filteredColor.toLowerCase()) {
               connectedFieldsWereAltered = true
             }
           }
@@ -654,6 +663,8 @@ _.extend( customify.colorPalettes, function () {
   }
 
   const updateFilterPreviews = _.debounce(() => {
+    const currentPalette = getCurrentPaletteColors();
+
     $('.sm-palette-filter').each(function () {
       const $filters = $(this).find('input')
 
@@ -669,7 +680,7 @@ _.extend( customify.colorPalettes, function () {
           const setting = api(settingID)
           const originalColor = setting()
 
-          $color.css('color', filterColor(originalColor, label))
+          $color.css('color', filterColor(originalColor, currentPalette, label))
         })
       })
     })
