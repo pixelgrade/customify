@@ -1,6 +1,6 @@
 import $ from "jquery";
-import { moveConnectedFields } from "./move-connected-fields";
-import { swapConnectedFields } from "./swap-connected-fields";
+import { moveConnectedFields } from "./connected-fields/move-connected-fields";
+import { swapConnectedFields } from "./connected-fields/swap-connected-fields";
 
 const getSwapMap = ( variation ) => {
   if ( ! customify.colorPalettes.variations.hasOwnProperty( variation ) ) {
@@ -108,12 +108,12 @@ const applyDarkMode = ( tempSettings ) => {
 }
 
 export const applyConnectedFieldsAlterations = ( tempSettings ) => {
+  tempSettings = applyOldColorationLevel( tempSettings );
+  tempSettings = applyOldColorationLevel( tempSettings );
+  tempSettings = applyNewColorationLevel( tempSettings );
+  tempSettings = applyColorDiversity( tempSettings );
+  tempSettings = applyShuffle( tempSettings );
+  tempSettings = applyDarkMode( tempSettings );
 
-  return Promise.resolve( tempSettings )
-                .then( applyOldColorationLevel )
-                .then( applyNewColorationLevel )
-                .then( applyColorDiversity )
-                .then( applyShuffle )
-                .then( applyDarkMode );
-
+  return tempSettings
 }

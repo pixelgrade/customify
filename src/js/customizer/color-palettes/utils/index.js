@@ -2,8 +2,11 @@ import $ from 'jquery';
 import _ from "lodash";
 
 import * as filters from './filters';
-export * from './connected-fields';
+export * from './create-current-palette-controls';
+export * from './update-filter-previews';
+export * from './apply-connected-fields-alterations';
 export * from './update-color-pickers';
+export * from './confirm-changes';
 
 export const getCurrentPaletteColors = () => {
   const colors = []
@@ -36,11 +39,16 @@ export const filterPalette = ( palette, label ) => {
   return palette.map( hex => filterColor( hex, palette, label ) );
 }
 
-export const getFilteredColor = (settingID) => {
+export const getFilteredColor = ( color ) => {
   const currentPalette = getCurrentPaletteColors();
   const activeFilter = getActiveFilter();
-  const setting = wp.customize( settingID );
-  const initialColor = setting();
 
-  return filterColor( initialColor, currentPalette, activeFilter );
+  return filterColor( color, currentPalette, activeFilter );
+}
+
+export const getFilteredColorByID = ( settingID ) => {
+  const setting = wp.customize( settingID );
+  const color = setting();
+
+  return getFilteredColor( color );
 }

@@ -4,14 +4,14 @@ import {
   filterColor,
   getActiveFilter,
   getCurrentPaletteColors,
-  getFilteredColor,
+  getFilteredColorByID,
   updateColorPickersSwatches,
-} from "./utils";
+} from "./index";
 
 const showNewColors = function() {
 
   customify.colorPalettes.masterSettingIds.forEach( function( id ) {
-    const filteredColor = getFilteredColor( id );
+    const filteredColor = getFilteredColorByID( id );
 
     $( '.c-color-palette' ).find( '.sm-color-palette__color.' + id ).css( 'color', filteredColor )
   } );

@@ -3348,243 +3348,6 @@ var external_lodash_default = /*#__PURE__*/__webpack_require__.n(external_lodash
 var external_jQuery_ = __webpack_require__(1);
 var external_jQuery_default = /*#__PURE__*/__webpack_require__.n(external_jQuery_);
 
-// EXTERNAL MODULE: ./node_modules/chroma-js/chroma.js
-var chroma = __webpack_require__(2);
-var chroma_default = /*#__PURE__*/__webpack_require__.n(chroma);
-
-// CONCATENATED MODULE: ./src/js/customizer/color-palettes/utils/filters.js
-
-var filters_clarendon = function clarendon(hex) {
-  var palette = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
-  var color = chroma_default()(hex); // Color Group
-  // Slightly increase saturation
-
-  if (palette.slice(0, 3).some(function (x) {
-    return x === hex;
-  })) {
-    var saturation = color.get('hsl.s');
-    return color.set('hsl.s', saturation * 0.7 + 0.3).hex();
-  } // Dark Group
-  // Add dark to darker colors
-
-
-  if (palette.slice(3, 6).some(function (x) {
-    return x === hex;
-  })) {
-    var lightness = color.get('hsl.l');
-    return color.set('hsl.l', lightness * 0.4).hex();
-  } // Light Group
-  // Add light to lighter colors
-
-
-  if (palette.slice(6, 9).some(function (x) {
-    return x === hex;
-  })) {
-    var _lightness = color.get('hsl.l');
-
-    return color.set('hsl.l', _lightness * 0.6 + 0.4).hex();
-  }
-
-  return hex;
-};
-var filters_vivid = function vivid(hex, palette) {
-  var color = chroma_default()(hex);
-  var saturation = color.get('hsl.s');
-  return color.set('hsl.s', saturation * 0.5 + 0.5).hex();
-};
-var filters_softer = function softer(hex, palette) {
-  var color = chroma_default()(hex);
-  var saturation = color.get('hsl.s');
-  var lightness = color.get('hsl.l');
-  color = color.set('hsl.s', saturation * 0.7);
-  color = color.set('hsl.l', lightness * 0.9 + 0.1);
-  return color.hex();
-};
-var filters_pastel = function pastel(hex, palette) {
-  var color = chroma_default()(hex);
-  var saturation = color.get('hsl.s');
-  var lightness = color.get('hsl.l');
-  color = color.set('hsl.s', saturation * 0.4);
-  color = color.set('hsl.l', lightness * 0.8 + 0.2);
-  return color.hex();
-};
-var filters_greyish = function greyish(hex, palette) {
-  var color = chroma_default()(hex);
-  var saturation = color.get('hsl.s');
-  return color.set('hsl.s', saturation * 0.2).hex();
-};
-// CONCATENATED MODULE: ./src/js/customizer/color-palettes/utils/connected-fields/move-connected-fields.js
-
-var move_connected_fields_moveConnectedFields = function moveConnectedFields(oldSettings, from, to, ratio) {
-  var settings = external_lodash_default.a.clone(oldSettings);
-
-  if (!external_lodash_default.a.isUndefined(settings[to]) && !external_lodash_default.a.isUndefined(settings[from])) {
-    if (external_lodash_default.a.isUndefined(settings[from]['connected_fields'])) {
-      settings[from]['connected_fields'] = [];
-    }
-
-    if (external_lodash_default.a.isUndefined(settings[to]['connected_fields'])) {
-      settings[to]['connected_fields'] = [];
-    }
-
-    var oldFromConnectedFields = Object.values(settings[from]['connected_fields']);
-    var oldToConnectedFields = Object.values(settings[to]['connected_fields']);
-    var oldConnectedFields = oldToConnectedFields.concat(oldFromConnectedFields);
-    var count = Math.round(ratio * oldConnectedFields.length);
-    var newToConnectedFields = oldConnectedFields.slice(0, count);
-    var newFromConnectedFields = oldConnectedFields.slice(count);
-    newToConnectedFields = Object.keys(newToConnectedFields).map(function (key) {
-      return newToConnectedFields[key];
-    });
-    newToConnectedFields = Object.keys(newToConnectedFields).map(function (key) {
-      return newToConnectedFields[key];
-    });
-    settings[to]['connected_fields'] = newToConnectedFields;
-    settings[from]['connected_fields'] = newFromConnectedFields;
-  }
-
-  return settings;
-};
-// CONCATENATED MODULE: ./src/js/customizer/color-palettes/utils/connected-fields/swap-connected-fields.js
-
-var swap_connected_fields_swapConnectedFields = function swapConnectedFields(settings, swapMap) {
-  // @todo This is weird. We should be able to have the settings in the proper form.
-  var newSettings = JSON.parse(JSON.stringify(settings));
-  var oldSettings = JSON.parse(JSON.stringify(settings));
-
-  external_lodash_default.a.each(swapMap, function (fromArray, to) {
-    if (typeof newSettings[to] !== 'undefined') {
-      var newConnectedFields = [];
-
-      if (fromArray instanceof Array) {
-        external_lodash_default.a.each(fromArray, function (from) {
-          var oldConnectedFields;
-
-          if (external_lodash_default.a.isUndefined(oldSettings[from]['connected_fields'])) {
-            oldSettings[from]['connected_fields'] = [];
-          }
-
-          oldConnectedFields = Object.values(oldSettings[from]['connected_fields']);
-          newConnectedFields = newConnectedFields.concat(oldConnectedFields);
-        });
-      }
-
-      newSettings[to]['connected_fields'] = Object.keys(newConnectedFields).map(function (key) {
-        return newConnectedFields[key];
-      });
-    }
-  });
-
-  return external_lodash_default.a.clone(newSettings);
-};
-// CONCATENATED MODULE: ./src/js/customizer/color-palettes/utils/connected-fields/index.js
-
-
-
-
-var getSwapMap = function getSwapMap(variation) {
-  if (!customify.colorPalettes.variations.hasOwnProperty(variation)) {
-    return customify.colorPalettes.variations['light'];
-  }
-
-  return customify.colorPalettes.variations[variation];
-};
-
-var connected_fields_getSelectedDiversity = function getSelectedDiversity() {
-  var diversityOptions = external_jQuery_default()('[name*="sm_color_diversity"]');
-  var hasDiversityOption = !!diversityOptions.length;
-  return hasDiversityOption ? external_jQuery_default()('[name*="sm_color_diversity"]:checked').val() : wp.customize('sm_color_diversity')();
-};
-
-var connected_fields_isDefaultDiversitySet = function isDefaultDiversitySet() {
-  var diversityOptions = external_jQuery_default()('[name*="sm_color_diversity"]');
-  var hasDiversityOption = !!diversityOptions.length;
-  var isDefaultDiversitySelected = typeof diversityOptions.filter(':checked').data('default') !== 'undefined';
-  return hasDiversityOption ? isDefaultDiversitySelected : true;
-};
-
-var connected_fields_isDefaultColorationSet = function isDefaultColorationSet() {
-  var colorationOptions = external_jQuery_default()('[name*="sm_coloration_level"]');
-  var hasColorationOptions = !!colorationOptions.length;
-  var isDefaultColorationSelected = typeof external_jQuery_default()('[name*="sm_coloration_level"]:checked').data('default') !== 'undefined';
-  return hasColorationOptions ? isDefaultColorationSelected : true;
-};
-
-var connected_fields_applyNewColorationLevel = function applyNewColorationLevel(tempSettings) {
-  var switchColorSelector = '#_customize-input-sm_dark_color_switch_slider_control';
-  var selectColorSelector = '#_customize-input-sm_dark_color_select_slider_control';
-
-  if (!connected_fields_isDefaultDiversitySet()) {
-    var switchRatio = external_jQuery_default()(switchColorSelector).val() / 100;
-    var selectRatio = external_jQuery_default()(selectColorSelector).val() / 100;
-    tempSettings = move_connected_fields_moveConnectedFields(tempSettings, 'sm_text_color_switch_master', 'sm_accent_color_switch_master', switchRatio);
-    tempSettings = move_connected_fields_moveConnectedFields(tempSettings, 'sm_text_color_select_master', 'sm_accent_color_select_master', selectRatio);
-  }
-
-  return tempSettings;
-};
-
-var connected_fields_applyOldColorationLevel = function applyOldColorationLevel(tempSettings) {
-  var primaryColorSelector = '#_customize-input-sm_dark_color_primary_slider_control';
-  var secondaryColorSelector = '#_customize-input-sm_dark_color_secondary_slider_control';
-  var tertiaryColorSelector = '#_customize-input-sm_dark_color_tertiary_slider_control';
-
-  if (!connected_fields_isDefaultDiversitySet() || !connected_fields_isDefaultColorationSet()) {
-    var primaryRatio = external_jQuery_default()(primaryColorSelector).val() / 100;
-    var secondaryRatio = external_jQuery_default()(secondaryColorSelector).val() / 100;
-    var tertiaryRatio = external_jQuery_default()(tertiaryColorSelector).val() / 100;
-    tempSettings = move_connected_fields_moveConnectedFields(tempSettings, 'sm_dark_primary', 'sm_color_primary', primaryRatio);
-    tempSettings = move_connected_fields_moveConnectedFields(tempSettings, 'sm_dark_secondary', 'sm_color_secondary', secondaryRatio);
-    tempSettings = move_connected_fields_moveConnectedFields(tempSettings, 'sm_dark_tertiary', 'sm_color_tertiary', tertiaryRatio);
-  }
-
-  return tempSettings;
-};
-
-var connected_fields_applyColorDiversity = function applyColorDiversity(tempSettings) {
-  if (!connected_fields_isDefaultDiversitySet() || !connected_fields_isDefaultColorationSet()) {
-    var selectedDiversity = connected_fields_getSelectedDiversity();
-    var diversity_variation = getSwapMap('color_diversity_low');
-    tempSettings = swap_connected_fields_swapConnectedFields(tempSettings, diversity_variation);
-
-    if (selectedDiversity === 'medium') {
-      tempSettings = move_connected_fields_moveConnectedFields(tempSettings, 'sm_color_primary', 'sm_color_secondary', 0.5);
-    }
-
-    if (selectedDiversity === 'high') {
-      tempSettings = move_connected_fields_moveConnectedFields(tempSettings, 'sm_color_primary', 'sm_color_secondary', 0.67);
-      tempSettings = move_connected_fields_moveConnectedFields(tempSettings, 'sm_color_secondary', 'sm_color_tertiary', 0.50);
-    }
-  }
-
-  return tempSettings;
-};
-
-var connected_fields_applyShuffle = function applyShuffle(tempSettings) {
-  var shuffle = external_jQuery_default()('[name*="sm_shuffle_colors"]:checked').val();
-
-  if (shuffle !== 'default') {
-    var shuffleVariation = getSwapMap('shuffle_' + shuffle);
-    tempSettings = swap_connected_fields_swapConnectedFields(tempSettings, shuffleVariation);
-  }
-
-  return tempSettings;
-};
-
-var connected_fields_applyDarkMode = function applyDarkMode(tempSettings) {
-  var dark_mode = external_jQuery_default()('[name*="sm_dark_mode_control"]:checked').val();
-
-  if (dark_mode === 'on') {
-    var dark_mmode_variation = getSwapMap('dark');
-    tempSettings = swap_connected_fields_swapConnectedFields(tempSettings, dark_mmode_variation);
-  }
-
-  return tempSettings;
-};
-
-var applyConnectedFieldsAlterations = function applyConnectedFieldsAlterations(tempSettings) {
-  return Promise.resolve(tempSettings).then(connected_fields_applyOldColorationLevel).then(connected_fields_applyNewColorationLevel).then(connected_fields_applyColorDiversity).then(connected_fields_applyShuffle).then(connected_fields_applyDarkMode);
-};
 // CONCATENATED MODULE: ./src/js/customizer/color-palettes/global-service.js
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -3652,6 +3415,396 @@ var globalServiceClass = /*#__PURE__*/function () {
 
 var globalService = new globalServiceClass();
 
+// EXTERNAL MODULE: ./node_modules/chroma-js/chroma.js
+var chroma = __webpack_require__(2);
+var chroma_default = /*#__PURE__*/__webpack_require__.n(chroma);
+
+// CONCATENATED MODULE: ./src/js/customizer/color-palettes/utils/filters.js
+
+var filters_clarendon = function clarendon(hex) {
+  var palette = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
+  var color = chroma_default()(hex); // Color Group
+  // Slightly increase saturation
+
+  if (palette.slice(0, 3).some(function (x) {
+    return x === hex;
+  })) {
+    var saturation = color.get('hsl.s');
+    return color.set('hsl.s', saturation * 0.7 + 0.3).hex();
+  } // Dark Group
+  // Add dark to darker colors
+
+
+  if (palette.slice(3, 6).some(function (x) {
+    return x === hex;
+  })) {
+    var lightness = color.get('hsl.l');
+    return color.set('hsl.l', lightness * 0.4).hex();
+  } // Light Group
+  // Add light to lighter colors
+
+
+  if (palette.slice(6, 9).some(function (x) {
+    return x === hex;
+  })) {
+    var _lightness = color.get('hsl.l');
+
+    return color.set('hsl.l', _lightness * 0.6 + 0.4).hex();
+  }
+
+  return hex;
+};
+var filters_vivid = function vivid(hex, palette) {
+  var color = chroma_default()(hex);
+  var saturation = color.get('hsl.s');
+  return color.set('hsl.s', saturation * 0.5 + 0.5).hex();
+};
+var filters_softer = function softer(hex, palette) {
+  var color = chroma_default()(hex);
+  var saturation = color.get('hsl.s');
+  var lightness = color.get('hsl.l');
+  color = color.set('hsl.s', saturation * 0.7);
+  color = color.set('hsl.l', lightness * 0.9 + 0.1);
+  return color.hex();
+};
+var filters_pastel = function pastel(hex, palette) {
+  var color = chroma_default()(hex);
+  var saturation = color.get('hsl.s');
+  var lightness = color.get('hsl.l');
+  color = color.set('hsl.s', saturation * 0.4);
+  color = color.set('hsl.l', lightness * 0.8 + 0.2);
+  return color.hex();
+};
+var filters_greyish = function greyish(hex, palette) {
+  var color = chroma_default()(hex);
+  var saturation = color.get('hsl.s');
+  return color.set('hsl.s', saturation * 0.2).hex();
+};
+// CONCATENATED MODULE: ./src/js/customizer/color-palettes/utils/create-current-palette-controls.js
+
+
+
+var create_current_palette_controls_showNewColors = function showNewColors() {
+  customify.colorPalettes.masterSettingIds.forEach(function (id) {
+    var filteredColor = getFilteredColorByID(id);
+    external_jQuery_default()('.c-color-palette').find('.sm-color-palette__color.' + id).css('color', filteredColor);
+  });
+};
+
+var create_current_palette_controls_showOldColors = function showOldColors() {
+  customify.colorPalettes.masterSettingIds.forEach(function (id) {
+    var setting = wp.customize(id);
+    var initialColor = setting();
+    external_jQuery_default()('.c-color-palette').find('.sm-color-palette__color.' + id).css('color', initialColor);
+  });
+};
+
+var create_current_palette_controls_createCurrentPaletteControls = function createCurrentPaletteControls() {
+  var $palette = external_jQuery_default()('.c-color-palette');
+  var $colors = $palette.find('.sm-color-palette__color');
+  var $fields = $palette.find('.c-color-palette__fields').find('input');
+
+  if (!$palette.length) {
+    return;
+  }
+
+  $colors.each(function (i, obj) {
+    var $obj = external_jQuery_default()(obj);
+    var settingID = $obj.data('setting');
+    var $input = $fields.filter('.' + settingID);
+    var setting = wp.customize(settingID);
+    $obj.data('target', $input);
+
+    if ($obj.hasClass('js-no-picker')) {
+      return;
+    }
+
+    $input.iris({
+      change: function change(event, ui) {
+        var currentPalette = utils_getCurrentPaletteColors();
+        var activeFilter = utils_getActiveFilter();
+        var currentColor = ui.color.toString();
+        var filteredColor = utils_filterColor(currentColor, currentPalette, activeFilter);
+        $obj.css('color', filteredColor);
+        setting.set(currentColor);
+
+        if (event.originalEvent.type !== 'external') {
+          $palette.find('.sm-color-palette__color.' + settingID).removeClass('altered');
+        }
+
+        updateColorPickersSwatches();
+      }
+    });
+    $obj.find('.iris-picker').on('click', function (e) {
+      e.stopPropagation();
+      e.preventDefault();
+    });
+
+    var showColorPicker = function showColorPicker() {
+      $colors.not($obj).each(function (i, obj) {
+        external_jQuery_default()(obj).data('target').not($input).hide();
+      });
+      $input.show().focus();
+    };
+
+    $obj.on('click', function (e) {
+      e.stopPropagation();
+      e.preventDefault();
+
+      if ($input.is(':visible')) {
+        $input.iris('hide');
+        $input.hide();
+        $colors.removeClass('active inactive');
+      } else {
+        if ($obj.is('.altered')) {
+          confirmChanges(showColorPicker);
+        } else {
+          showColorPicker();
+        }
+      }
+    });
+    $input.on('click', function (e) {
+      e.stopPropagation();
+      e.preventDefault();
+    });
+    $input.on('focus', function (e) {
+      $colors.not($obj).addClass('inactive').removeClass('active');
+      $obj.addClass('active').removeClass('inactive');
+      $colors.not($obj).each(function (i, other) {
+        external_jQuery_default()(other).data('target').iris('hide');
+      });
+      var $iris = $input.next('.iris-picker');
+      var paletteWidth = $palette.find('.c-color-palette__colors').outerWidth();
+      var $visibleColors = $colors.filter(':visible');
+      var index = $visibleColors.index($obj);
+      $iris.css('left', (paletteWidth - 200) * index / ($visibleColors.length - 1));
+      create_current_palette_controls_showOldColors();
+      $input.iris('show');
+    });
+    $input.on('focusout', function (e) {
+      create_current_palette_controls_showNewColors();
+    });
+  });
+  create_current_palette_controls_showNewColors();
+  external_jQuery_default()('body').on('click', function () {
+    $colors.removeClass('active inactive');
+    $colors.each(function (i, obj) {
+      var $input = external_jQuery_default()(obj).data('target');
+
+      if (!external_jQuery_default()(obj).hasClass('js-no-picker')) {
+        $input.iris('hide');
+      }
+
+      $input.hide();
+    });
+  });
+};
+
+
+// CONCATENATED MODULE: ./src/js/customizer/color-palettes/utils/update-filter-previews.js
+
+
+
+
+var updateFilterPreviews = external_lodash_default.a.debounce(function () {
+  var currentPalette = utils_getCurrentPaletteColors();
+  external_jQuery_default()('.sm-palette-filter').each(function () {
+    var $filters = external_jQuery_default()(this).find('input');
+    $filters.each(function (i, obj) {
+      var $input = external_jQuery_default()(obj);
+      var $label = $input.next('label');
+      var label = $input.val();
+      var $colors = $label.find('.sm-color-palette__color');
+      $colors.each(function (j, color) {
+        var $color = external_jQuery_default()(color);
+        var settingID = $color.data('setting');
+        var setting = wp.customize(settingID);
+        var originalColor = setting();
+        $color.css('color', utils_filterColor(originalColor, currentPalette, label));
+      });
+    });
+  });
+}, 30);
+
+
+// CONCATENATED MODULE: ./src/js/customizer/color-palettes/utils/connected-fields/move-connected-fields.js
+
+var move_connected_fields_moveConnectedFields = function moveConnectedFields(oldSettings, from, to, ratio) {
+  var settings = external_lodash_default.a.clone(oldSettings);
+
+  if (!external_lodash_default.a.isUndefined(settings[to]) && !external_lodash_default.a.isUndefined(settings[from])) {
+    if (external_lodash_default.a.isUndefined(settings[from]['connected_fields'])) {
+      settings[from]['connected_fields'] = [];
+    }
+
+    if (external_lodash_default.a.isUndefined(settings[to]['connected_fields'])) {
+      settings[to]['connected_fields'] = [];
+    }
+
+    var oldFromConnectedFields = Object.values(settings[from]['connected_fields']);
+    var oldToConnectedFields = Object.values(settings[to]['connected_fields']);
+    var oldConnectedFields = oldToConnectedFields.concat(oldFromConnectedFields);
+    var count = Math.round(ratio * oldConnectedFields.length);
+    var newToConnectedFields = oldConnectedFields.slice(0, count);
+    var newFromConnectedFields = oldConnectedFields.slice(count);
+    newToConnectedFields = Object.keys(newToConnectedFields).map(function (key) {
+      return newToConnectedFields[key];
+    });
+    newToConnectedFields = Object.keys(newToConnectedFields).map(function (key) {
+      return newToConnectedFields[key];
+    });
+    settings[to]['connected_fields'] = newToConnectedFields;
+    settings[from]['connected_fields'] = newFromConnectedFields;
+  }
+
+  return settings;
+};
+// CONCATENATED MODULE: ./src/js/customizer/color-palettes/utils/connected-fields/swap-connected-fields.js
+
+var swap_connected_fields_swapConnectedFields = function swapConnectedFields(settings, swapMap) {
+  // @todo This is weird. We should be able to have the settings in the proper form.
+  var newSettings = JSON.parse(JSON.stringify(settings));
+  var oldSettings = JSON.parse(JSON.stringify(settings));
+
+  external_lodash_default.a.each(swapMap, function (fromArray, to) {
+    if (typeof newSettings[to] !== 'undefined') {
+      var newConnectedFields = [];
+
+      if (fromArray instanceof Array) {
+        external_lodash_default.a.each(fromArray, function (from) {
+          var oldConnectedFields;
+
+          if (external_lodash_default.a.isUndefined(oldSettings[from]['connected_fields'])) {
+            oldSettings[from]['connected_fields'] = [];
+          }
+
+          oldConnectedFields = Object.values(oldSettings[from]['connected_fields']);
+          newConnectedFields = newConnectedFields.concat(oldConnectedFields);
+        });
+      }
+
+      newSettings[to]['connected_fields'] = Object.keys(newConnectedFields).map(function (key) {
+        return newConnectedFields[key];
+      });
+    }
+  });
+
+  return external_lodash_default.a.clone(newSettings);
+};
+// CONCATENATED MODULE: ./src/js/customizer/color-palettes/utils/apply-connected-fields-alterations.js
+
+
+
+
+var getSwapMap = function getSwapMap(variation) {
+  if (!customify.colorPalettes.variations.hasOwnProperty(variation)) {
+    return customify.colorPalettes.variations['light'];
+  }
+
+  return customify.colorPalettes.variations[variation];
+};
+
+var apply_connected_fields_alterations_getSelectedDiversity = function getSelectedDiversity() {
+  var diversityOptions = external_jQuery_default()('[name*="sm_color_diversity"]');
+  var hasDiversityOption = !!diversityOptions.length;
+  return hasDiversityOption ? external_jQuery_default()('[name*="sm_color_diversity"]:checked').val() : wp.customize('sm_color_diversity')();
+};
+
+var apply_connected_fields_alterations_isDefaultDiversitySet = function isDefaultDiversitySet() {
+  var diversityOptions = external_jQuery_default()('[name*="sm_color_diversity"]');
+  var hasDiversityOption = !!diversityOptions.length;
+  var isDefaultDiversitySelected = typeof diversityOptions.filter(':checked').data('default') !== 'undefined';
+  return hasDiversityOption ? isDefaultDiversitySelected : true;
+};
+
+var apply_connected_fields_alterations_isDefaultColorationSet = function isDefaultColorationSet() {
+  var colorationOptions = external_jQuery_default()('[name*="sm_coloration_level"]');
+  var hasColorationOptions = !!colorationOptions.length;
+  var isDefaultColorationSelected = typeof external_jQuery_default()('[name*="sm_coloration_level"]:checked').data('default') !== 'undefined';
+  return hasColorationOptions ? isDefaultColorationSelected : true;
+};
+
+var apply_connected_fields_alterations_applyNewColorationLevel = function applyNewColorationLevel(tempSettings) {
+  var switchColorSelector = '#_customize-input-sm_dark_color_switch_slider_control';
+  var selectColorSelector = '#_customize-input-sm_dark_color_select_slider_control';
+
+  if (!apply_connected_fields_alterations_isDefaultDiversitySet()) {
+    var switchRatio = external_jQuery_default()(switchColorSelector).val() / 100;
+    var selectRatio = external_jQuery_default()(selectColorSelector).val() / 100;
+    tempSettings = move_connected_fields_moveConnectedFields(tempSettings, 'sm_text_color_switch_master', 'sm_accent_color_switch_master', switchRatio);
+    tempSettings = move_connected_fields_moveConnectedFields(tempSettings, 'sm_text_color_select_master', 'sm_accent_color_select_master', selectRatio);
+  }
+
+  return tempSettings;
+};
+
+var apply_connected_fields_alterations_applyOldColorationLevel = function applyOldColorationLevel(tempSettings) {
+  var primaryColorSelector = '#_customize-input-sm_dark_color_primary_slider_control';
+  var secondaryColorSelector = '#_customize-input-sm_dark_color_secondary_slider_control';
+  var tertiaryColorSelector = '#_customize-input-sm_dark_color_tertiary_slider_control';
+
+  if (!apply_connected_fields_alterations_isDefaultDiversitySet() || !apply_connected_fields_alterations_isDefaultColorationSet()) {
+    var primaryRatio = external_jQuery_default()(primaryColorSelector).val() / 100;
+    var secondaryRatio = external_jQuery_default()(secondaryColorSelector).val() / 100;
+    var tertiaryRatio = external_jQuery_default()(tertiaryColorSelector).val() / 100;
+    tempSettings = move_connected_fields_moveConnectedFields(tempSettings, 'sm_dark_primary', 'sm_color_primary', primaryRatio);
+    tempSettings = move_connected_fields_moveConnectedFields(tempSettings, 'sm_dark_secondary', 'sm_color_secondary', secondaryRatio);
+    tempSettings = move_connected_fields_moveConnectedFields(tempSettings, 'sm_dark_tertiary', 'sm_color_tertiary', tertiaryRatio);
+  }
+
+  return tempSettings;
+};
+
+var apply_connected_fields_alterations_applyColorDiversity = function applyColorDiversity(tempSettings) {
+  if (!apply_connected_fields_alterations_isDefaultDiversitySet() || !apply_connected_fields_alterations_isDefaultColorationSet()) {
+    var selectedDiversity = apply_connected_fields_alterations_getSelectedDiversity();
+    var diversity_variation = getSwapMap('color_diversity_low');
+    tempSettings = swap_connected_fields_swapConnectedFields(tempSettings, diversity_variation);
+
+    if (selectedDiversity === 'medium') {
+      tempSettings = move_connected_fields_moveConnectedFields(tempSettings, 'sm_color_primary', 'sm_color_secondary', 0.5);
+    }
+
+    if (selectedDiversity === 'high') {
+      tempSettings = move_connected_fields_moveConnectedFields(tempSettings, 'sm_color_primary', 'sm_color_secondary', 0.67);
+      tempSettings = move_connected_fields_moveConnectedFields(tempSettings, 'sm_color_secondary', 'sm_color_tertiary', 0.50);
+    }
+  }
+
+  return tempSettings;
+};
+
+var apply_connected_fields_alterations_applyShuffle = function applyShuffle(tempSettings) {
+  var shuffle = external_jQuery_default()('[name*="sm_shuffle_colors"]:checked').val();
+
+  if (shuffle !== 'default') {
+    var shuffleVariation = getSwapMap('shuffle_' + shuffle);
+    tempSettings = swap_connected_fields_swapConnectedFields(tempSettings, shuffleVariation);
+  }
+
+  return tempSettings;
+};
+
+var apply_connected_fields_alterations_applyDarkMode = function applyDarkMode(tempSettings) {
+  var dark_mode = external_jQuery_default()('[name*="sm_dark_mode_control"]:checked').val();
+
+  if (dark_mode === 'on') {
+    var dark_mmode_variation = getSwapMap('dark');
+    tempSettings = swap_connected_fields_swapConnectedFields(tempSettings, dark_mmode_variation);
+  }
+
+  return tempSettings;
+};
+
+var applyConnectedFieldsAlterations = function applyConnectedFieldsAlterations(tempSettings) {
+  tempSettings = apply_connected_fields_alterations_applyOldColorationLevel(tempSettings);
+  tempSettings = apply_connected_fields_alterations_applyOldColorationLevel(tempSettings);
+  tempSettings = apply_connected_fields_alterations_applyNewColorationLevel(tempSettings);
+  tempSettings = apply_connected_fields_alterations_applyColorDiversity(tempSettings);
+  tempSettings = apply_connected_fields_alterations_applyShuffle(tempSettings);
+  tempSettings = apply_connected_fields_alterations_applyDarkMode(tempSettings);
+  return tempSettings;
+};
 // CONCATENATED MODULE: ./src/js/customizer/color-palettes/utils/update-color-pickers.js
 
 
@@ -3766,7 +3919,55 @@ var updateColorPickersHidden = external_lodash_default.a.debounce(function () {
   var $target = external_jQuery_default()('.sm-palette-filter .color, .sm-color-palette__color, .js-color-palette .palette__item');
   $target.addClass('hidden').filter(optionsSelector).removeClass('hidden');
 }, 30);
+// CONCATENATED MODULE: ./src/js/customizer/color-palettes/utils/confirm-changes.js
+
+
+var confirm_changes_confirmChanges = function confirmChanges(callback) {
+  var altered = external_jQuery_default()('.c-color-palette .color.altered').length;
+  var confirmed = true;
+
+  if (altered) {
+    confirmed = confirm('One or more fields connected to the color palette have been modified. By changing the palette variation you will lose changes to any color made prior to this action.');
+  }
+
+  if (!altered || confirmed) {
+    if (typeof callback === 'function') {
+      callback();
+    }
+
+    return true;
+  }
+
+  return false;
+};
+
+var confirm_changes_onPaletteChange = function onPaletteChange() {
+  external_jQuery_default()(this).trigger('customify:preset-change');
+  reinitializeConnectedFields();
+};
+
+var confirm_changes_bindConfirmChanges = function bindConfirmChanges() {
+  // confirm changes before changing the color palette
+  external_jQuery_default()(document).on('click', '.js-color-palette input', function (e) {
+    if (!confirm_changes_confirmChanges(confirm_changes_onPaletteChange.bind(this))) {
+      e.preventDefault();
+    }
+  }); // confirm changes before changing the color palette
+
+  var controls = ['sm_palette_filter', 'sm_coloration_level', 'sm_color_diversity', 'sm_shuffle_colors', 'sm_dark_mode'];
+  var selector = controls.map(function (name) {
+    return "[for*=\"".concat(name, "\"]");
+  }).join(', ');
+  external_jQuery_default()(document).on('click', selector, function (e) {
+    if (!confirm_changes_confirmChanges()) {
+      e.preventDefault();
+    }
+  });
+};
 // CONCATENATED MODULE: ./src/js/customizer/color-palettes/utils/index.js
+
+
+
 
 
 
@@ -3803,130 +4004,35 @@ var filterPalette = function filterPalette(palette, label) {
     return utils_filterColor(hex, palette, label);
   });
 };
-var getFilteredColor = function getFilteredColor(settingID) {
+var getFilteredColor = function getFilteredColor(color) {
   var currentPalette = utils_getCurrentPaletteColors();
   var activeFilter = utils_getActiveFilter();
+  return utils_filterColor(color, currentPalette, activeFilter);
+};
+var getFilteredColorByID = function getFilteredColorByID(settingID) {
   var setting = wp.customize(settingID);
-  var initialColor = setting();
-  return utils_filterColor(initialColor, currentPalette, activeFilter);
+  var color = setting();
+  return getFilteredColor(color);
 };
-// CONCATENATED MODULE: ./src/js/customizer/color-palettes/palette-controls.js
+// CONCATENATED MODULE: ./src/js/customizer/color-palettes/utils/connected-fields/update-connected-fields-value.js
 
 
 
-var palette_controls_showNewColors = function showNewColors() {
-  customify.colorPalettes.masterSettingIds.forEach(function (id) {
-    var filteredColor = getFilteredColor(id);
-    external_jQuery_default()('.c-color-palette').find('.sm-color-palette__color.' + id).css('color', filteredColor);
-  });
-};
+var update_connected_fields_value_updateConnectedFieldsValue = function updateConnectedFieldsValue(settingID, value) {
+  var parentSettingData = globalService.getSetting(settingID);
 
-var palette_controls_showOldColors = function showOldColors() {
-  customify.colorPalettes.masterSettingIds.forEach(function (id) {
-    var setting = wp.customize(id);
-    var initialColor = setting();
-    external_jQuery_default()('.c-color-palette').find('.sm-color-palette__color.' + id).css('color', initialColor);
-  });
-};
-
-var palette_controls_createCurrentPaletteControls = function createCurrentPaletteControls() {
-  var $palette = external_jQuery_default()('.c-color-palette');
-  var $colors = $palette.find('.sm-color-palette__color');
-  var $fields = $palette.find('.c-color-palette__fields').find('input');
-
-  if (!$palette.length) {
-    return;
-  }
-
-  $colors.each(function (i, obj) {
-    var $obj = external_jQuery_default()(obj);
-    var settingID = $obj.data('setting');
-    var $input = $fields.filter('.' + settingID);
-    var setting = wp.customize(settingID);
-    $obj.data('target', $input);
-
-    if ($obj.hasClass('js-no-picker')) {
+  external_lodash_default.a.each(parentSettingData.connected_fields, function (connectedFieldData) {
+    if (external_lodash_default.a.isUndefined(connectedFieldData) || external_lodash_default.a.isUndefined(connectedFieldData.setting_id) || !external_lodash_default.a.isString(connectedFieldData.setting_id)) {
       return;
     }
 
-    $input.iris({
-      change: function change(event, ui) {
-        var currentPalette = utils_getCurrentPaletteColors();
-        var activeFilter = utils_getActiveFilter();
-        var currentColor = ui.color.toString();
-        var filteredColor = utils_filterColor(currentColor, currentPalette, activeFilter);
-        $obj.css('color', filteredColor);
-        setting.set(currentColor);
+    var connectedSetting = wp.customize(connectedFieldData.setting_id);
 
-        if (event.originalEvent.type !== 'external') {
-          $palette.find('.sm-color-palette__color.' + settingID).removeClass('altered');
-        }
+    if (external_lodash_default.a.isUndefined(connectedSetting)) {
+      return;
+    }
 
-        updateColorPickersSwatches();
-      }
-    });
-    $obj.find('.iris-picker').on('click', function (e) {
-      e.stopPropagation();
-      e.preventDefault();
-    });
-
-    var showColorPicker = function showColorPicker() {
-      $colors.not($obj).each(function (i, obj) {
-        external_jQuery_default()(obj).data('target').not($input).hide();
-      });
-      $input.show().focus();
-    };
-
-    $obj.on('click', function (e) {
-      e.stopPropagation();
-      e.preventDefault();
-
-      if ($input.is(':visible')) {
-        $input.iris('hide');
-        $input.hide();
-        $colors.removeClass('active inactive');
-      } else {
-        if ($obj.is('.altered')) {
-          confirmChanges(showColorPicker);
-        } else {
-          showColorPicker();
-        }
-      }
-    });
-    $input.on('click', function (e) {
-      e.stopPropagation();
-      e.preventDefault();
-    });
-    $input.on('focus', function (e) {
-      $colors.not($obj).addClass('inactive').removeClass('active');
-      $obj.addClass('active').removeClass('inactive');
-      $colors.not($obj).each(function (i, other) {
-        external_jQuery_default()(other).data('target').iris('hide');
-      });
-      var $iris = $input.next('.iris-picker');
-      var paletteWidth = $palette.find('.c-color-palette__colors').outerWidth();
-      var $visibleColors = $colors.filter(':visible');
-      var index = $visibleColors.index($obj);
-      $iris.css('left', (paletteWidth - 200) * index / ($visibleColors.length - 1));
-      palette_controls_showOldColors();
-      $input.iris('show');
-    });
-    $input.on('focusout', function (e) {
-      palette_controls_showNewColors();
-    });
-  });
-  palette_controls_showNewColors();
-  external_jQuery_default()('body').on('click', function () {
-    $colors.removeClass('active inactive');
-    $colors.each(function (i, obj) {
-      var $input = external_jQuery_default()(obj).data('target');
-
-      if (!external_jQuery_default()(obj).hasClass('js-no-picker')) {
-        $input.iris('hide');
-      }
-
-      $input.hide();
-    });
+    connectedSetting.set(value);
   });
 };
 
@@ -3937,17 +4043,11 @@ var palette_controls_createCurrentPaletteControls = function createCurrentPalett
 
 
 
-
 /** @namespace customify */
 
 window.customify = window.customify || parent.customify || {};
 var newMasterIDs = ['sm_accent_color_switch_master', 'sm_accent_color_select_master', 'sm_text_color_switch_master', 'sm_text_color_select_master'];
-var color_palettes_switchColorSelector = '#_customize-input-sm_dark_color_switch_slider_control';
-var color_palettes_selectColorSelector = '#_customize-input-sm_dark_color_select_slider_control';
-var color_palettes_primaryColorSelector = '#_customize-input-sm_dark_color_primary_slider_control';
-var color_palettes_secondaryColorSelector = '#_customize-input-sm_dark_color_secondary_slider_control';
-var color_palettes_tertiaryColorSelector = '#_customize-input-sm_dark_color_tertiary_slider_control';
-var colorSlidersSelector = [color_palettes_switchColorSelector, color_palettes_selectColorSelector, color_palettes_primaryColorSelector, color_palettes_secondaryColorSelector, color_palettes_tertiaryColorSelector].join(', ');
+var darkToColorSliderControls = ['sm_dark_color_switch_slider', 'sm_dark_color_select_slider', 'sm_dark_color_primary_slider', 'sm_dark_color_secondary_slider', 'sm_dark_color_tertiary_slider'];
 /**
  * Expose the API publicly on window.customify.colorPalettes
  *
@@ -3960,101 +4060,81 @@ if (typeof customify.colorPalettes === 'undefined') {
 
 external_lodash_default.a.extend(customify.colorPalettes, function () {
   var resetSettings = function resetSettings() {
-    var settingIDs = customify.colorPalettes.masterSettingIds.concat(newMasterIDs);
+    updateConnectedFieldsOld();
+    updateConnectedFields(newMasterIDs);
+  };
 
+  var updateConnectedFieldsOld = function updateConnectedFieldsOld() {
+    external_lodash_default.a.each(customify.colorPalettes.masterSettingIds, function (settingID) {
+      var setting = wp.customize(settingID);
+
+      if (typeof setting !== 'undefined') {
+        var finalValue = getFilteredColorByID(settingID);
+        update_connected_fields_value_updateConnectedFieldsValue(settingID, finalValue);
+        updateFinalSettingValue(settingID, finalValue);
+      }
+    });
+  };
+
+  var updateFinalSettingValue = function updateFinalSettingValue(settingID, value) {
+    // Also set the final setting value, for safe keeping.
+    var finalSettingID = "".concat(settingID, "_final");
+    var finalSetting = wp.customize(finalSettingID);
+
+    if (!external_lodash_default.a.isUndefined(finalSetting)) {
+      finalSetting.set(value);
+    }
+  };
+
+  var updateConnectedFields = function updateConnectedFields(settingIDs, filter) {
     external_lodash_default.a.each(settingIDs, function (settingID) {
       var setting = wp.customize(settingID);
 
       if (typeof setting !== 'undefined') {
-        var parentSettingData = globalService.getSetting(settingID);
-        var finalValue = external_lodash_default.a.includes(newMasterIDs, settingID) ? setting() : getFilteredColor(settingID);
-
-        external_lodash_default.a.each(parentSettingData.connected_fields, function (connectedFieldData) {
-          if (external_lodash_default.a.isUndefined(connectedFieldData) || external_lodash_default.a.isUndefined(connectedFieldData.setting_id) || !external_lodash_default.a.isString(connectedFieldData.setting_id)) {
-            return;
-          }
-
-          var connectedSetting = wp.customize(connectedFieldData.setting_id);
-
-          if (external_lodash_default.a.isUndefined(connectedSetting)) {
-            return;
-          }
-
-          connectedSetting.set(finalValue);
-        }); // Also set the final setting value, for safe keeping.
-
-
-        var finalSettingID = "".concat(settingID, "_final");
-        var finalSetting = wp.customize(finalSettingID);
-
-        if (!external_lodash_default.a.isUndefined(finalSetting)) {
-          if (!external_lodash_default.a.isUndefined(parentSettingData.connected_fields) && !external_lodash_default.a.isEmpty(parentSettingData.connected_fields)) {
-            finalSetting.set(finalValue);
-          } else {
-            finalSetting.set('');
-          }
-        }
+        var settingValue = setting();
+        var finalValue = typeof filter !== "function" ? settingValue : filter(settingValue);
+        update_connected_fields_value_updateConnectedFieldsValue(settingID, finalValue);
       }
     });
   };
 
   var getMasterFieldCallback = function getMasterFieldCallback(parentSettingData, parentSettingID) {
     return function (newValue, oldValue) {
-      var finalValue = external_lodash_default.a.includes(newMasterIDs, parentSettingID) ? newValue : getFilteredColor(parentSettingID);
-
-      external_lodash_default.a.each(parentSettingData.connected_fields, function (connectedFieldData) {
-        if (external_lodash_default.a.isUndefined(connectedFieldData) || external_lodash_default.a.isUndefined(connectedFieldData.setting_id) || !external_lodash_default.a.isString(connectedFieldData.setting_id)) {
-          return;
-        }
-
-        var setting = wp.customize(connectedFieldData.setting_id);
-
-        if (external_lodash_default.a.isUndefined(setting)) {
-          return;
-        }
-
-        setting.set(finalValue);
-      });
-
-      updateFilterPreviews(); // Also set the final setting value, for safe keeping.
-
-      var finalSettingID = parentSettingID + '_final';
-      var finalSetting = wp.customize(finalSettingID);
-
-      if (!external_lodash_default.a.isUndefined(finalSetting)) {
-        if (!external_lodash_default.a.isUndefined(parentSettingData.connected_fields) && !external_lodash_default.a.isEmpty(parentSettingData.connected_fields)) {
-          finalSetting.set(finalValue);
-        } else {
-          finalSetting.set('');
-        }
-      }
+      var finalValue = external_lodash_default.a.includes(newMasterIDs, parentSettingID) ? newValue : getFilteredColorByID(parentSettingID);
+      update_connected_fields_value_updateConnectedFieldsValue(parentSettingID, finalValue);
+      updateFinalSettingValue(parentSettingID, finalValue);
+      updateFilterPreviews();
     };
   };
 
   var bindConnectedFields = function bindConnectedFields() {
     var settingIDs = customify.colorPalettes.masterSettingIds.concat(newMasterIDs);
 
-    external_lodash_default.a.each(settingIDs, function (parentSettingID) {
-      if (typeof globalService.getSetting(parentSettingID) !== 'undefined') {
-        var parentSettingData = globalService.getSetting(parentSettingID);
-        var parentSetting = wp.customize(parentSettingID);
+    external_lodash_default.a.each(settingIDs, bindParentCallbacks);
+  };
 
-        if (!external_lodash_default.a.isUndefined(parentSettingData.connected_fields)) {
-          globalService.setCallback(parentSettingID, getMasterFieldCallback(parentSettingData, parentSettingID));
-          parentSetting.bind(globalService.setCallback(parentSettingID));
+  var bindParentCallbacks = function bindParentCallbacks(parentSettingID) {
+    if (typeof globalService.getSetting(parentSettingID) !== 'undefined') {
+      var parentSettingData = globalService.getSetting(parentSettingID);
+      var parentSetting = wp.customize(parentSettingID);
 
-          external_lodash_default.a.each(parentSettingData.connected_fields, function (connectedFieldData) {
-            var connectedSettingID = connectedFieldData.setting_id;
-            var connectedSetting = wp.customize(connectedSettingID);
+      if (!external_lodash_default.a.isUndefined(parentSettingData.connected_fields)) {
+        globalService.setCallback(parentSettingID, getMasterFieldCallback(parentSettingData, parentSettingID));
+        parentSetting.bind(globalService.setCallback(parentSettingID));
 
-            if (typeof connectedSetting !== 'undefined') {
-              globalService.setCallback(connectedSettingID, updateColorPickersAltered);
-              connectedSetting.bind(globalService.getCallback(connectedSettingID));
-            }
-          });
-        }
+        external_lodash_default.a.each(parentSettingData.connected_fields, bindConnectedFieldsCallbacks);
       }
-    });
+    }
+  };
+
+  var bindConnectedFieldsCallbacks = function bindConnectedFieldsCallbacks(connectedFieldData) {
+    var connectedSettingID = connectedFieldData.setting_id;
+    var connectedSetting = wp.customize(connectedSettingID);
+
+    if (typeof connectedSetting !== 'undefined') {
+      globalService.setCallback(connectedSettingID, updateColorPickersAltered);
+      connectedSetting.bind(globalService.getCallback(connectedSettingID));
+    }
   };
 
   var unbindConnectedFields = function unbindConnectedFields() {
@@ -4066,11 +4146,6 @@ external_lodash_default.a.extend(customify.colorPalettes, function () {
     globalService.deleteCallbacks();
   };
 
-  var onPaletteChange = function onPaletteChange() {
-    external_jQuery_default()(this).trigger('customify:preset-change');
-    reinitializeConnectedFields();
-  };
-
   var refreshCurrentPaletteControl = function refreshCurrentPaletteControl() {
     updateColorPickersAltered();
     updateColorPickersHidden();
@@ -4078,36 +4153,31 @@ external_lodash_default.a.extend(customify.colorPalettes, function () {
   };
 
   var reloadConnectedFields = function reloadConnectedFields() {
-    applyConnectedFieldsAlterations(globalService.getSettings()).then(function (settings) {
-      console.log(settings['sm_text_color_switch_master']['connected_fields'], settings['sm_accent_color_switch_master']['connected_fields']);
-      var settingIDs = customify.colorPalettes.masterSettingIds.concat(newMasterIDs);
+    var settingIDs = customify.colorPalettes.masterSettingIds.concat(newMasterIDs);
+    var settings = applyConnectedFieldsAlterations(globalService.getSettings());
 
-      external_lodash_default.a.each(settingIDs, function (masterSettingId) {
-        globalService.setSetting(masterSettingId, settings[masterSettingId]);
-      });
+    external_lodash_default.a.each(settingIDs, function (masterSettingId) {
+      globalService.setSetting(masterSettingId, settings[masterSettingId]);
     });
+
+    unbindConnectedFields();
+    bindConnectedFields();
   };
 
   var applyColorationValueToFields = function applyColorationValueToFields() {
     var $selectedColoration = external_jQuery_default()('[name*="sm_coloration_level"]:checked');
     var coloration = $selectedColoration.val();
-
-    if (typeof $selectedColoration.data('default') !== 'undefined') {
-      var settingIDs = ['sm_dark_color_switch_slider', 'sm_dark_color_select_slider', 'sm_dark_color_primary_slider', 'sm_dark_color_secondary_slider', 'sm_dark_color_tertiary_slider'];
-
-      external_lodash_default.a.each(settingIDs, function (settingID) {
-        var sliderSetting = customify.config.settings[settingID];
-        wp.customize(settingID).set(sliderSetting.default);
-      });
-    } else {
-      external_jQuery_default()(colorSlidersSelector).val(parseFloat(coloration)).change();
-    }
+    var isDefaultColoration = typeof $selectedColoration.data('default') !== 'undefined';
+    darkToColorSliderControls.forEach(function (settingID) {
+      var setting = wp.customize(settingID);
+      var defaultValue = customify.config.settings[settingID].default;
+      var value = isDefaultColoration ? defaultValue : parseFloat(coloration);
+      setting.set(value);
+    });
   };
 
   var reinitializeConnectedFields = external_lodash_default.a.debounce(function () {
     reloadConnectedFields();
-    unbindConnectedFields();
-    bindConnectedFields();
     refreshCurrentPaletteControl();
     resetSettings();
   }, 30);
@@ -4132,53 +4202,48 @@ external_lodash_default.a.extend(customify.colorPalettes, function () {
   };
 
   var bindEvents = function bindEvents() {
-    var $paletteControl = external_jQuery_default()('.c-color-palette__control');
-    $paletteControl.removeClass('active');
+    bindConfirmChanges();
+    wp.customize('sm_coloration_level').bind(applyColorationValueToFields);
+    var alterationControls = ['sm_color_diversity', 'sm_shuffle_colors', 'sm_dark_mode', 'sm_palette_filter'];
+    alterationControls.concat(darkToColorSliderControls).forEach(function (settingID) {
+      var setting = wp.customize(settingID);
+
+      if (typeof setting !== "undefined") {
+        setting.bind(reinitializeConnectedFields);
+      }
+    });
+  };
+
+  var onPaletteChange = function onPaletteChange() {
+    console.log(this, external_jQuery_default()(this));
+    external_jQuery_default()(this).trigger('customify:preset-change');
+    reinitializeConnectedFields();
+  };
+
+  var bindConfirmChanges = function bindConfirmChanges() {
+    // confirm changes before changing the color palette
     external_jQuery_default()(document).on('click', '.js-color-palette input', function (e) {
       if (!confirmChanges(onPaletteChange.bind(this))) {
         e.preventDefault();
       }
-    });
-    external_jQuery_default()('[for*="sm_palette_filter"], [for*="sm_coloration_level"], [for*="sm_color_diversity"], [for*="sm_shuffle_colors"], [for*="sm_dark_mode"]').on('click', function (e) {
+    }); // confirm changes before changing the color palette
+
+    var controls = ['sm_palette_filter', 'sm_coloration_level', 'sm_color_diversity', 'sm_shuffle_colors', 'sm_dark_mode'];
+    var selector = controls.map(function (name) {
+      return "[for*=\"".concat(name, "\"]");
+    }).join(', ');
+    external_jQuery_default()(document).on('click', selector, function (e) {
       if (!confirmChanges()) {
         e.preventDefault();
       }
     });
-    external_jQuery_default()(colorSlidersSelector).on('change', reinitializeConnectedFields);
-    external_jQuery_default()('[name*="sm_coloration_level"]').on('change', applyColorationValueToFields);
-    external_jQuery_default()('[name*="sm_color_diversity"]').on('change', reinitializeConnectedFields);
-    external_jQuery_default()('[name*="sm_shuffle_colors"]').on('change', reinitializeConnectedFields);
-    external_jQuery_default()('[name*="sm_dark_mode"]').on('change', reinitializeConnectedFields);
-    external_jQuery_default()('[name*="sm_palette_filter"]').on('change', reinitializeConnectedFields);
   };
-
-  var updateFilterPreviews = external_lodash_default.a.debounce(function () {
-    var currentPalette = utils_getCurrentPaletteColors();
-    external_jQuery_default()('.sm-palette-filter').each(function () {
-      var $filters = external_jQuery_default()(this).find('input');
-      $filters.each(function (i, obj) {
-        var $input = external_jQuery_default()(obj);
-        var $label = $input.next('label');
-        var label = $input.val();
-        var $colors = $label.find('.sm-color-palette__color');
-        $colors.each(function (j, color) {
-          var $color = external_jQuery_default()(color);
-          var settingID = $color.data('setting');
-          var setting = wp.customize(settingID);
-          var originalColor = setting();
-          $color.css('color', utils_filterColor(originalColor, currentPalette, label));
-        });
-      });
-    });
-  }, 30);
 
   wp.customize.bind('ready', function () {
     // We need to do this here to be sure the data is available.
     globalService.loadSettings();
-    palette_controls_createCurrentPaletteControls();
+    create_current_palette_controls_createCurrentPaletteControls();
     reloadConnectedFields();
-    unbindConnectedFields();
-    bindConnectedFields();
     refreshCurrentPaletteControl();
     updateFilterPreviews();
     bindEvents();
