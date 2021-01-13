@@ -167,7 +167,6 @@ _.extend( customify.colorPalettes, function () {
 
   const reinitializeConnectedFields = _.debounce( () => {
     reloadConnectedFields();
-    refreshCurrentPaletteControl();
     resetSettings();
   }, 30 );
 
@@ -205,9 +204,7 @@ _.extend( customify.colorPalettes, function () {
   }
 
   const onPaletteChange = function () {
-    console.log( this, $( this ) );
     $( this ).trigger( 'customify:preset-change' );
-    reinitializeConnectedFields();
   }
 
   const bindConfirmChanges = () => {

@@ -4178,7 +4178,6 @@ external_lodash_default.a.extend(customify.colorPalettes, function () {
 
   var reinitializeConnectedFields = external_lodash_default.a.debounce(function () {
     reloadConnectedFields();
-    refreshCurrentPaletteControl();
     resetSettings();
   }, 30);
 
@@ -4215,9 +4214,7 @@ external_lodash_default.a.extend(customify.colorPalettes, function () {
   };
 
   var onPaletteChange = function onPaletteChange() {
-    console.log(this, external_jQuery_default()(this));
     external_jQuery_default()(this).trigger('customify:preset-change');
-    reinitializeConnectedFields();
   };
 
   var bindConfirmChanges = function bindConfirmChanges() {
