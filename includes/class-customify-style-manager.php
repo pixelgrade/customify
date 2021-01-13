@@ -309,6 +309,14 @@ if ( ! class_exists( 'Customify_Style_Manager' ) ) {
 
 				// We need to split the fields in the Style Manager section into two: color palettes and fonts.
 				$color_palettes_fields = array(
+					'sm_advanced_palette_source',
+					'sm_advanced_palette_output',
+
+					'sm_text_color_switch_master',
+					'sm_text_color_select_master',
+					'sm_accent_color_switch_master',
+					'sm_accent_color_select_master',
+
 					'sm_current_color_palette',
 					'sm_palettes_description',
 					'sm_filters_description',
@@ -329,10 +337,7 @@ if ( ! class_exists( 'Customify_Style_Manager' ) ) {
 					'sm_colors_focus_point',
 					'sm_color_palette',
 					'sm_color_palette_variation',
-					'sm_text_color_switch_master',
-					'sm_text_color_select_master',
-					'sm_accent_color_switch_master',
-					'sm_accent_color_select_master',
+
 					'sm_titles_color_master',
 					'sm_background_color_master',
 					'sm_color_primary',

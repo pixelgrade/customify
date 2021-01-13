@@ -53,11 +53,11 @@ class Customify_Color_Palettes {
 		 */
 		add_filter( 'customify_filter_fields', array( $this, 'add_style_manager_section_master_colors_config' ), 12, 1 );
 //		add_filter( 'customify_filter_fields', array( $this, 'remove_style_manager_section_master_colors_config' ), 14, 1 );
-		add_filter( 'customify_filter_fields', array( $this, 'add_style_manager_new_section_master_colors_config' ), 14, 1 );
 
 		// This needs to come after the external theme config has been applied
 		add_filter( 'customify_filter_fields', array( $this, 'add_current_palette_control' ), 110, 1 );
 		add_filter( 'customify_filter_fields', array( $this, 'maybe_enhance_dark_mode_control' ), 120, 1 );
+		add_filter( 'customify_filter_fields', array( $this, 'add_style_manager_new_section_master_colors_config' ), 200, 1 );
 
 		/*
 		 * Scripts enqueued in the Customizer.
@@ -93,7 +93,7 @@ class Customify_Color_Palettes {
 		wp_register_script( PixCustomifyPlugin()->get_slug() . '-color-palettes',
 			plugins_url( 'dist/js/customizer/color-palettes' . $suffix . '.js', PixCustomifyPlugin()->get_file() ),
 //			plugins_url( 'js/customizer/color-palettes' . $suffix . '.js', PixCustomifyPlugin()->get_file() ),
-			array( 'jquery', 'lodash' ), PixCustomifyPlugin()->get_version() );
+			array( 'jquery', 'lodash', 'wp-element' ), PixCustomifyPlugin()->get_version() );
 	}
 
 	/**
@@ -467,72 +467,86 @@ class Customify_Color_Palettes {
 		}
 
 		// The section might be already defined, thus we merge, not replace the entire section config.
-		$config['sections']['style_manager_section'] = Customify_Array::array_merge_recursive_distinct( $config['sections']['style_manager_section'], array(
-			'options' => array(
-				'sm_text_color_switch_master'   => array(
-					'type'             => 'sm_switch',
-					// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
-					'setting_type'     => 'option',
-					// We will force this setting id preventing prefixing and other regular processing.
-					'setting_id'       => 'sm_text_color_switch_master',
-					'label'            => esc_html__( 'Text Master', '__theme_txtd' ),
-					'live'             => true,
-					'default'          => 'off',
-					'connected_fields' => array(),
-					'css'              => array(),
-					'choices'          => array(
-						'off' => esc_html__( 'Off', 'customify' ),
-						'on'  => esc_html__( 'On', 'customify' ),
-					),
-				),
-				'sm_text_color_select_master'   => array(
-					'type'             => 'select_color',
-					// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
-					'setting_type'     => 'option',
-					// We will force this setting id preventing prefixing and other regular processing.
-					'setting_id'       => 'sm_text_color_select_master',
-					'label'            => esc_html__( 'Text Select Master', '__theme_txtd' ),
-					'live'             => true,
-					'default'          => 'text',
-					'connected_fields' => array(),
-					'css'              => array(),
-					'choices'          => array(
-						'text' => esc_html__( 'Text', '__theme_txtd' ),
-					),
-				),
-				'sm_accent_color_switch_master' => array(
-					'type'             => 'sm_switch',
-					// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
-					'setting_type'     => 'option',
-					// We will force this setting id preventing prefixing and other regular processing.
-					'setting_id'       => 'sm_accent_color_switch_master',
-					'label'            => esc_html__( 'Accent Master', '__theme_txtd' ),
-					'live'             => true,
-					'default'          => 'on',
-					'connected_fields' => array(),
-					'css'              => array(),
-					'choices'          => array(
-						'off' => esc_html__( 'Off', 'customify' ),
-						'on'  => esc_html__( 'On', 'customify' ),
-					),
-				),
-				'sm_accent_color_select_master' => array(
-					'type'             => 'select_color',
-					// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
-					'setting_type'     => 'option',
-					// We will force this setting id preventing prefixing and other regular processing.
-					'setting_id'       => 'sm_accent_color_select_master',
-					'label'            => esc_html__( 'Accent Select Master', '__theme_txtd' ),
-					'live'             => true,
-					'default'          => 'accent',
-					'connected_fields' => array(),
-					'css'              => array(),
-					'choices'          => array(
-						'accent' => esc_html__( 'Accent', '__theme_txtd' ),
-					),
+		$config['sections']['style_manager_section']['options'] = array(
+			'sm_advanced_palette_source' => array(
+				'type'         => 'text',
+				// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
+				'setting_type' => 'option',
+				// We will force this setting id preventing prefixing and other regular processing.
+				'setting_id'   => 'sm_advanced_palette_source',
+				'label'        => esc_html__( 'Palette Source', '__theme_txtd' ),
+			),
+			'sm_advanced_palette_output' => array(
+				'type'         => 'text',
+				// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
+				'setting_type' => 'option',
+				// We will force this setting id preventing prefixing and other regular processing.
+				'setting_id'   => 'sm_advanced_palette_output',
+				'label'        => esc_html__( 'Palette Output', '__theme_txtd' ),
+			),
+			'sm_text_color_switch_master'   => array(
+				'type'             => 'sm_switch',
+				// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
+				'setting_type'     => 'option',
+				// We will force this setting id preventing prefixing and other regular processing.
+				'setting_id'       => 'sm_text_color_switch_master',
+				'label'            => esc_html__( 'Text Master', '__theme_txtd' ),
+				'live'             => true,
+				'default'          => 'off',
+				'connected_fields' => array(),
+				'css'              => array(),
+				'choices'          => array(
+					'off' => esc_html__( 'Off', 'customify' ),
+					'on'  => esc_html__( 'On', 'customify' ),
 				),
 			),
-		) );
+			'sm_text_color_select_master'   => array(
+				'type'             => 'select_color',
+				// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
+				'setting_type'     => 'option',
+				// We will force this setting id preventing prefixing and other regular processing.
+				'setting_id'       => 'sm_text_color_select_master',
+				'label'            => esc_html__( 'Text Select Master', '__theme_txtd' ),
+				'live'             => true,
+				'default'          => 'text',
+				'connected_fields' => array(),
+				'css'              => array(),
+				'choices'          => array(
+					'text' => esc_html__( 'Text', '__theme_txtd' ),
+				),
+			),
+			'sm_accent_color_switch_master' => array(
+				'type'             => 'sm_switch',
+				// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
+				'setting_type'     => 'option',
+				// We will force this setting id preventing prefixing and other regular processing.
+				'setting_id'       => 'sm_accent_color_switch_master',
+				'label'            => esc_html__( 'Accent Master', '__theme_txtd' ),
+				'live'             => true,
+				'default'          => 'on',
+				'connected_fields' => array(),
+				'css'              => array(),
+				'choices'          => array(
+					'off' => esc_html__( 'Off', 'customify' ),
+					'on'  => esc_html__( 'On', 'customify' ),
+				),
+			),
+			'sm_accent_color_select_master' => array(
+				'type'             => 'select_color',
+				// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
+				'setting_type'     => 'option',
+				// We will force this setting id preventing prefixing and other regular processing.
+				'setting_id'       => 'sm_accent_color_select_master',
+				'label'            => esc_html__( 'Accent Select Master', '__theme_txtd' ),
+				'live'             => true,
+				'default'          => 'accent',
+				'connected_fields' => array(),
+				'css'              => array(),
+				'choices'          => array(
+					'accent' => esc_html__( 'Accent', '__theme_txtd' ),
+				),
+			)
+		) + $config['sections']['style_manager_section']['options'];
 
 		return $config;
 	}

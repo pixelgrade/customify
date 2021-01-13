@@ -13,6 +13,8 @@ import {
   updateColorPickersSwatches,
 } from "./utils";
 
+import { initializePaletteBuilder } from './components/builder';
+
 import { updateConnectedFieldsValue } from "./utils/connected-fields/update-connected-fields-value";
 
 /** @namespace customify */
@@ -228,6 +230,8 @@ _.extend( customify.colorPalettes, function () {
   wp.customize.bind( 'ready', function() {
     // We need to do this here to be sure the data is available.
     globalService.loadSettings();
+
+    initializePaletteBuilder( 'sm_advanced_palette_source', 'sm_advanced_palette_output' );
 
     createCurrentPaletteControls();
     reloadConnectedFields();

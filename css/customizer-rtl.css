@@ -4339,6 +4339,11 @@ input.c-color-palette__input[class] {
   padding: 30px 20px 18px;
 }
 
+#customize-control-sm_advanced_palette_source_control,
+#customize-control-sm_advanced_palette_output_control {
+  display: block !important;
+}
+
 [id="sub-accordion-section-sm_color_palettes_section"] [id="customize-control-sm_current_color_palette_control"] ~ * {
   display: none !important;
 }

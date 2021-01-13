@@ -1,0 +1,24 @@
+.c-palette-builder {
+  padding: 20px;
+
+  > * + * {
+    margin-top: 15px;
+  }
+}
+
+.c-palette-builder__source-list {
+  & + & {
+    margin-top: 10px;
+  }
+}
+
+[class][class] {
+
+  .c-palette-builder__source-item {
+    display: flex;
+
+    > * + * {
+      margin-left: 5px;
+    }
+  }
+}
