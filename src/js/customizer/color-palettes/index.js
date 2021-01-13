@@ -102,7 +102,6 @@ _.extend( customify.colorPalettes, function () {
   const bindParentCallbacks = ( parentSettingID ) => {
 
     if ( typeof globalService.getSetting( parentSettingID ) !== 'undefined' ) {
-
       const parentSettingData = globalService.getSetting( parentSettingID );
       const parentSetting = wp.customize( parentSettingID );
 
