@@ -5056,7 +5056,6 @@ var builder_Builder = function Builder(props) {
   var changeListener = useCallback(function (value) {
     var colors = getColorsFromInputValue(value);
     var palettes = getPalettesFromColors(colors);
-    console.log(builder_getCSSFromInputValue(value));
     setColors(colors);
 
     if (typeof outputSetting !== "undefined") {

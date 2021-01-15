@@ -33,7 +33,6 @@ const Builder = ( props ) => {
     const colors = getColorsFromInputValue( value );
     const palettes = getPalettesFromColors( colors );
 
-    console.log( getCSSFromInputValue( value ) );
     setColors( colors );
 
     if ( typeof outputSetting !== "undefined" ) {
