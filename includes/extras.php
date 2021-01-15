@@ -516,3 +516,270 @@ function customify_migrate_to_advanced_dark_mode_control() {
 	}
 }
 add_action( 'admin_init', 'customify_migrate_to_advanced_dark_mode_control' );
+
+
+function sm_get_color_select_darker_config( $label, $selector, $default, $properties = [ 'color' ] ) {
+	return sm_get_color_select_dark_config( $label, $selector, $default, $properties, true );
+}
+function sm_get_color_select_dark_config( $label, $selector, $default, $properties = [ 'color' ], $isDarker = false ) {
+
+	$css = array();
+	$callback = 'sm_color_select_dark_cb';
+	$choices = array(
+		'background' => esc_html__( 'Background', '__theme_txtd' ),
+		'dark'       => esc_html__( 'Dark', '__theme_txtd' ),
+		'accent'     => esc_html__( 'Accent', '__theme_txtd' ),
+	);
+
+	if ( ! is_array( $properties ) ) {
+		$properties = [ $properties ];
+	}
+
+	if ( $isDarker ) {
+		$callback = 'sm_color_select_darker_cb';
+
+		$choices = array(
+			'background' => esc_html__( 'Background', '__theme_txtd' ),
+			'darker'     => esc_html__( 'Dark', '__theme_txtd' ),
+			'accent'     => esc_html__( 'Accent', '__theme_txtd' ),
+		);
+	}
+
+	foreach ( $properties as $property ) {
+		$css[] = array(
+			'property'        => $property,
+			'selector'        => $selector,
+			'callback_filter' => $callback,
+		);
+	}
+
+	return array(
+		'type'    => 'select_color',
+		'label'   => esc_html__( $label, '__theme_txtd' ),
+		'live'    => true,
+		'default' => $default,
+		'css'     => $css,
+		'choices' => $choices,
+	);
+}
+function sm_color_select_dark_cb( $value, $selector, $property ) {
+	return $selector . ' { ' . $property . ': var(--sm-current-' . $value . '-color); }' . PHP_EOL;
+}
+function sm_color_select_dark_cb_customizer_preview() {
+	$js = "";
+
+	$js .= "
+function sm_color_select_dark_cb(value, selector, property) {
+    var css = '',
+        string = selector + property,
+        id = string.hashCode(),
+        idAttr = 'rosa2_color_select' + id;
+        style = document.getElementById( idAttr ),
+        head = document.head || document.getElementsByTagName('head')[0];
+
+    css += selector + ' {' +
+        property + ': var(--sm-current-' + value + '-color);' +
+        '}';
+    
+    if ( style !== null ) {
+        style.innerHTML = css;
+    } else {
+        style = document.createElement('style');
+        style.setAttribute( 'id', idAttr );
+
+        style.type = 'text/css';
+        if ( style.styleSheet ) {
+            style.styleSheet.cssText = css;
+        } else {
+            style.appendChild(document.createTextNode(css));
+        }
+
+        head.appendChild(style);
+    }" . PHP_EOL .
+		   "}" . PHP_EOL;
+
+	wp_add_inline_script( 'customify-previewer-scripts', $js );
+}
+add_action( 'customize_preview_init', 'sm_color_select_dark_cb_customizer_preview', 20 );
+function sm_color_select_darker_cb( $value, $selector, $property ) {
+	return $selector . ' { ' . $property . ': var(--sm-current-' . $value . '-color); }' . PHP_EOL;
+}
+function sm_color_select_darker_cb_customizer_preview() {
+	$js = "";
+
+	$js .= "
+function sm_color_select_darker_cb(value, selector, property) {
+    var css = '',
+        string = selector + property,
+        id = string.hashCode(),
+        idAttr = 'rosa2_color_select' + id;
+        style = document.getElementById( idAttr ),
+        head = document.head || document.getElementsByTagName('head')[0];
+
+    css += selector + ' {' +
+        property + ': var(--sm-current-' + value + '-color);' +
+        '}';
+    
+    if ( style !== null ) {
+        style.innerHTML = css;
+    } else {
+        style = document.createElement('style');
+        style.setAttribute( 'id', idAttr );
+
+        style.type = 'text/css';
+        if ( style.styleSheet ) {
+            style.styleSheet.cssText = css;
+        } else {
+            style.appendChild(document.createTextNode(css));
+        }
+
+        head.appendChild(style);
+    }" . PHP_EOL .
+		   "}" . PHP_EOL;
+
+	wp_add_inline_script( 'customify-previewer-scripts', $js );
+}
+add_action( 'customize_preview_init', 'sm_color_select_darker_cb_customizer_preview', 20 );
+
+function sm_get_color_switch_darker_config( $label, $selector, $default, $properties = [ 'color' ] ) {
+	return sm_get_color_switch_dark_config( $label, $selector, $default, $properties, true );
+}
+function sm_get_color_switch_dark_config( $label, $selector, $default, $properties = [ 'color' ], $isDarker = false ) {
+
+	$css = array();
+	$callback = 'sm_color_switch_dark_cb';
+
+	if ( ! is_array( $properties ) ) {
+		$properties = [ $properties ];
+	}
+
+	if ( $isDarker ) {
+		$callback = 'sm_color_switch_darker_cb';
+	}
+
+	foreach ( $properties as $property ) {
+		$css[] = array(
+			'property'        => $property,
+			'selector'        => $selector,
+			'callback_filter' => $callback,
+		);
+	}
+
+	return array(
+		'type'    => 'sm_switch',
+		'label'   => esc_html__( $label, '__theme_txtd' ),
+		'live'    => true,
+		'default' => $default,
+		'css'     => $css,
+		'choices' => array(
+			'off' => esc_html__( 'Off', 'customify' ),
+			'on'  => esc_html__( 'On', 'customify' ),
+		),
+	);
+}
+function sm_color_switch_dark_cb( $value, $selector, $property ) {
+	$output = '';
+	$color = '';
+
+	if ( $value === 'on' ) {
+		$color = 'accent';
+	}
+
+	if ( ! empty( $color ) ) {
+		$output .= $selector . ' {' . $property . ': var(--sm-current-' . $color . '-color); }' . PHP_EOL;
+	}
+
+	return $output;
+}
+function sm_color_switch_dark_cb_customizer_preview() {
+	$js = "";
+
+	$js .= "
+function sm_color_switch_dark_cb(value, selector, property) {
+    var css = '',
+        string = selector + property,
+        id = string.hashCode(),
+        idAttr = 'rosa2_color_source' + id;
+        style = document.getElementById( idAttr ),
+        color = 'dark',
+        head = document.head || document.getElementsByTagName('head')[0];
+        
+        if ( value === 'on' ) {
+            color = 'accent';
+        }
+        
+    css += selector + ' { ' + property + ': var(--sm-current-' + color + '-color); }';
+
+    if ( style !== null ) {
+        style.innerHTML = css;
+    } else {
+        style = document.createElement('style');
+        style.setAttribute( 'id', idAttr );
+
+        style.type = 'text/css';
+        if ( style.styleSheet ) {
+            style.styleSheet.cssText = css;
+        } else {
+            style.appendChild(document.createTextNode(css));
+        }
+
+        head.appendChild(style);
+    }" . PHP_EOL .
+		   "}" . PHP_EOL;
+
+	wp_add_inline_script( 'customify-previewer-scripts', $js );
+}
+add_action( 'customize_preview_init', 'sm_color_switch_dark_cb_customizer_preview', 20 );
+function sm_color_switch_darker_cb( $value, $selector, $property ) {
+	$output = '';
+	$color = 'darker';
+
+	if ( $value === 'on' ) {
+		$color = 'accent';
+	}
+
+	if ( ! empty( $color ) ) {
+		$output .= $selector . ' {' . $property . ': var(--sm-current-' . $color . '-color); }' . PHP_EOL;
+	}
+
+	return $output;
+}
+function sm_color_switch_darker_cb_customizer_preview() {
+	$js = "";
+
+	$js .= "
+function sm_color_switch_darker_cb(value, selector, property) {
+    var css = '',
+        string = selector + property,
+        id = string.hashCode(),
+        idAttr = 'rosa2_color_source' + id;
+        style = document.getElementById( idAttr ),
+        color = 'darker',
+        head = document.head || document.getElementsByTagName('head')[0];
+        
+        if ( value === 'on' ) {
+            color = 'accent';
+        }
+        
+    css += selector + ' { ' + property + ': var(--sm-current-' + color + '-color); }';
+
+    if ( style !== null ) {
+        style.innerHTML = css;
+    } else {
+        style = document.createElement('style');
+        style.setAttribute( 'id', idAttr );
+
+        style.type = 'text/css';
+        if ( style.styleSheet ) {
+            style.styleSheet.cssText = css;
+        } else {
+            style.appendChild(document.createTextNode(css));
+        }
+
+        head.appendChild(style);
+    }" . PHP_EOL .
+		   "}" . PHP_EOL;
+
+	wp_add_inline_script( 'customify-previewer-scripts', $js );
+}
+add_action( 'customize_preview_init', 'sm_color_switch_darker_cb_customizer_preview', 20 );

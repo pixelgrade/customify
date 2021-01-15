@@ -13,7 +13,11 @@ import {
   updateColorPickersSwatches,
 } from "./utils";
 
-import { initializePaletteBuilder } from './components/builder';
+import {
+  initializePaletteBuilder,
+  getCSSFromPalettes,
+  getCSSFromInputValue,
+} from './components/builder';
 
 import { updateConnectedFieldsValue } from "./utils/connected-fields/update-connected-fields-value";
 
@@ -36,15 +40,15 @@ const darkToColorSliderControls = [
 ];
 
 /**
- * Expose the API publicly on window.customify.colorPalettes
+ * Expose the API publicly on window.customify.api
  *
- * @namespace customify.colorPalettes
+ * @namespace customify.api
  */
-if ( typeof customify.colorPalettes === 'undefined' ) {
-  customify.colorPalettes = {}
+if ( typeof customify.api === 'undefined' ) {
+  customify.api = {};
 }
 
-_.extend( customify.colorPalettes, function () {
+customify.api = Object.assign( {}, customify.api, ( function() {
 
   const resetSettings = () => {
     updateConnectedFieldsOld();
@@ -242,5 +246,9 @@ _.extend( customify.colorPalettes, function () {
     bindEvents();
   } )
 
-  return {}
-}() )
+  return {
+    getCSSFromPalettes,
+    getCSSFromInputValue,
+  }
+
+})() );

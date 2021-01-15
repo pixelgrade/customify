@@ -114,6 +114,9 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 			// Styles for the Customizer
 			add_action( 'customize_controls_init', array( $this, 'register_admin_customizer_styles' ), 10 );
 			add_action( 'customize_controls_enqueue_scripts', array( $this, 'enqueue_admin_customizer_styles' ), 10 );
+
+			add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_frontend_styles' ), 10 );
+
 			// Scripts enqueued in the Customizer
 			add_action( 'customize_controls_init', array( $this, 'register_admin_customizer_scripts' ), 15 );
 			add_action( 'customize_controls_enqueue_scripts', array( $this, 'enqueue_admin_customizer_scripts' ), 15 );
@@ -160,6 +163,10 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 		 */
 		function enqueue_admin_customizer_styles() {
 			wp_enqueue_style( 'customify_style' );
+		}
+
+		function enqueue_frontend_styles() {
+			wp_enqueue_style( 'sm_colors', plugins_url( 'css/sm-colors.css', PixCustomifyPlugin()->get_file() ), array(), PixCustomifyPlugin()->get_version() );
 		}
 
 		/**

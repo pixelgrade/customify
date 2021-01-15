@@ -5056,6 +5056,7 @@ var builder_Builder = function Builder(props) {
   var changeListener = useCallback(function (value) {
     var colors = getColorsFromInputValue(value);
     var palettes = getPalettesFromColors(colors);
+    console.log(builder_getCSSFromInputValue(value));
     setColors(colors);
 
     if (typeof outputSetting !== "undefined") {
@@ -5095,6 +5096,31 @@ var initializePaletteBuilder = function initializePaletteBuilder(sourceSettingID
   }), target);
 };
 
+var getCSSFromPalette = function getCSSFromPalette(palette) {
+  var colors = palette.colors;
+  return colors.reduce(function (colorsAcc, color, colorIndex) {
+    return "".concat(colorsAcc, "\n        --sm-current-color-").concat(colorIndex, ": ").concat(color.value, ";");
+  }, '');
+};
+
+var getCSSFromPalettes = function getCSSFromPalettes(palettes) {
+  return palettes.reduce(function (palettesAcc, palette, paletteIndex) {
+    var selector = ".sm-palette-".concat(paletteIndex);
+
+    if (paletteIndex === 0) {
+      selector = ":root, ".concat(selector);
+    }
+
+    return "\n      ".concat(palettesAcc, "\n      \n      ").concat(selector, " { ").concat(getCSSFromPalette(palette), " }\n    ");
+  }, '');
+};
+
+var builder_getCSSFromInputValue = function getCSSFromInputValue(value) {
+  var colors = getColorsFromInputValue(value);
+  var palettes = getPalettesFromColors(colors);
+  return getCSSFromPalettes(palettes);
+};
+
 
 // CONCATENATED MODULE: ./src/js/customizer/color-palettes/utils/connected-fields/update-connected-fields-value.js
 
@@ -5132,16 +5158,16 @@ window.customify = window.customify || parent.customify || {};
 var newMasterIDs = ['sm_accent_color_switch_master', 'sm_accent_color_select_master', 'sm_text_color_switch_master', 'sm_text_color_select_master'];
 var darkToColorSliderControls = ['sm_dark_color_switch_slider', 'sm_dark_color_select_slider', 'sm_dark_color_primary_slider', 'sm_dark_color_secondary_slider', 'sm_dark_color_tertiary_slider'];
 /**
- * Expose the API publicly on window.customify.colorPalettes
+ * Expose the API publicly on window.customify.api
  *
- * @namespace customify.colorPalettes
+ * @namespace customify.api
  */
 
-if (typeof customify.colorPalettes === 'undefined') {
-  customify.colorPalettes = {};
+if (typeof customify.api === 'undefined') {
+  customify.api = {};
 }
 
-external_lodash_default.a.extend(customify.colorPalettes, function () {
+customify.api = Object.assign({}, customify.api, function () {
   var resetSettings = function resetSettings() {
     updateConnectedFieldsOld();
     updateConnectedFields(newMasterIDs);
@@ -5329,7 +5355,10 @@ external_lodash_default.a.extend(customify.colorPalettes, function () {
     updateFilterPreviews();
     bindEvents();
   });
-  return {};
+  return {
+    getCSSFromPalettes: getCSSFromPalettes,
+    getCSSFromInputValue: builder_getCSSFromInputValue
+  };
 }());
 
 /***/ })

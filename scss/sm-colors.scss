@@ -1,0 +1,75 @@
+@function get-colors( $variation ) {
+  $textIsWhite: $variation > 5;
+  $textLightColor: var(--sm-current-color-0);
+  $textDarkColor: var(--sm-current-color-12);
+  $textDarkerColor: var(--sm-current-color-13);
+
+  @if $variation >= 4 {
+    $textDarkColor: var(--sm-current-color-13);
+  }
+
+  $accentIndex: 5;
+
+  @if $textIsWhite {
+    $accentIndex: $variation - 4;
+  } @else {
+    $accentIndex: $variation + 4;
+  }
+
+  $text: $textDarkColor;
+  $titles: $textDarkerColor;
+  $accent: var(--sm-current-color-#{ $accentIndex });
+
+  @if ( $textIsWhite ) {
+    $text: $textLightColor;
+    $titles: $textLightColor;
+  }
+
+  $map: (
+    accent: $accent,
+    dark: $text,
+    darker: $titles,
+    background: var(--sm-current-color-#{ $variation })
+  );
+
+  @return $map
+}
+
+@function get-color( $source, $variation: 0 ) {
+  $colors: get-colors( $variation );
+  $color: map-get( $colors, $source );
+
+  @return $color;
+}
+
+@mixin apply-palette( $label ) {
+
+  @for $i from 0 through 13 {
+    --sm-current-color-#{ $i }: var(--#{ $label }-color-#{ $i });
+  }
+}
+
+
+@mixin apply-variation( $i ) {
+  --sm-current-accent-color: #{ get-color( 'accent', $i ) };
+  --sm-current-dark-color: #{ get-color( 'dark', $i ) };
+  --sm-current-darker-color: #{ get-color( 'darker', $i ) };
+  --sm-current-background-color: #{ get-color( 'background', $i ) };
+}
+
+:root {
+  @include apply-palette(sm);
+  @include apply-variation(0);
+}
+
+@for $i from 0 through 11 {
+
+  .sm-variation-#{ $i } {
+    @include apply-variation($i);
+  }
+
+  [class*="sm-variation-"] {
+    background-color: var(--sm-current-background-color);
+    color: var(--sm-current-dark-color);
+  }
+}

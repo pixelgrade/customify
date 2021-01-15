@@ -33,6 +33,7 @@ const Builder = ( props ) => {
     const colors = getColorsFromInputValue( value );
     const palettes = getPalettesFromColors( colors );
 
+    console.log( getCSSFromInputValue( value ) );
     setColors( colors );
 
     if ( typeof outputSetting !== "undefined" ) {
@@ -74,4 +75,41 @@ const initializePaletteBuilder = ( sourceSettingID, outputSettingID ) => {
   wp.element.render( <Builder sourceSettingID={ sourceSettingID } outputSettingID={ outputSettingID }/>, target );
 }
 
-export { initializePaletteBuilder }
+const getCSSFromPalette = ( palette ) => {
+  const { colors } = palette;
+
+  return colors.reduce( ( colorsAcc, color, colorIndex ) => {
+    return `${ colorsAcc }
+        --sm-current-color-${ colorIndex }: ${ color.value };`;
+  }, '' );
+}
+
+const getCSSFromPalettes = ( palettes ) => {
+  return palettes.reduce( ( palettesAcc, palette, paletteIndex ) => {
+
+    let selector = `.sm-palette-${ paletteIndex }`;
+
+    if ( paletteIndex === 0 ) {
+      selector = `:root, ${ selector }`
+    }
+
+    return `
+      ${ palettesAcc }
+      
+      ${ selector } { ${ getCSSFromPalette( palette ) } }
+    `;
+  }, '');
+}
+
+const getCSSFromInputValue = ( value ) => {
+  const colors = getColorsFromInputValue( value );
+  const palettes = getPalettesFromColors( colors );
+
+  return getCSSFromPalettes( palettes );
+}
+
+export {
+  initializePaletteBuilder,
+  getCSSFromInputValue,
+  getCSSFromPalettes,
+}
