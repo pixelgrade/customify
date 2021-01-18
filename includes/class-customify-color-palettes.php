@@ -1396,6 +1396,8 @@ class Customify_Color_Palettes {
 }
 
 	function get_fallback_palettes() {
+		$alphabet = range( 'A', 'Z' );
+
 		$options_details = PixCustomifyPlugin()->get_options_configs();
 		$master_color_control_ids = Customify_Color_Palettes::instance()->get_all_master_color_controls_ids();
 		$color_control_ids = array_filter( $master_color_control_ids, "novablocks_filter_color_ids" );
@@ -1408,7 +1410,7 @@ class Customify_Color_Palettes {
 
 		$palettes = array();
 
-		foreach ( $color_control_ids as $control_id ) {
+		foreach ( $color_control_ids as $index => $control_id ) {
 
 			if ( empty( $options_details[ $control_id ] ) ) {
 				continue;
@@ -1448,7 +1450,8 @@ class Customify_Color_Palettes {
 			}
 
 			$palettes[] = ( object ) array(
-				'colors' => $color_objects
+				'colors' => $color_objects,
+				'label' => 'Color ' . $alphabet[ $index ]
 			);
 		}
 

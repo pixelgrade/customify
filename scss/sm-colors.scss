@@ -42,10 +42,10 @@
   @return $color;
 }
 
-@mixin apply-palette( $label ) {
+@mixin apply-palette {
 
   @for $i from 0 through 13 {
-    --sm-current-color-#{ $i }: var(--#{ $label }-color-#{ $i });
+    --sm-current-color-#{ $i }: var(--sm-color-#{ $i });
   }
 }
 
@@ -57,8 +57,12 @@
   --sm-current-background-color: #{ get-color( 'background', $i ) };
 }
 
+:root,
+[class*="sm-palette-"] {
+  @include apply-palette;
+}
+
 :root {
-  @include apply-palette(sm);
   @include apply-variation(0);
 }
 
@@ -67,9 +71,10 @@
   .sm-variation-#{ $i } {
     @include apply-variation($i);
   }
-
-  [class*="sm-variation-"] {
-    background-color: var(--sm-current-background-color);
-    color: var(--sm-current-dark-color);
-  }
 }
+
+[class*="sm-variation-"] {
+  background-color: var(--sm-current-background-color);
+  color: var(--sm-current-dark-color);
+}
+
