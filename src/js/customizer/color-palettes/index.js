@@ -209,6 +209,22 @@ customify.api = Object.assign( {}, customify.api, ( function() {
   }
 
   const onPaletteChange = function () {
+    const $target = $( this );
+    const options = $target.data( 'options' );
+    const colorSettingIds = [ 'sm_color_primary', 'sm_color_secondary', 'sm_color_tertiary' ];
+    const sources = Object.keys( options ).filter( settingId => colorSettingIds.includes( settingId ) ).map( ( settingId, index ) => {
+      return {
+        label: `Color ${ 'ABC'[index] }`,
+        value: options[ settingId ]
+      }
+    } );
+
+    const setting = wp.customize( 'sm_advanced_palette_source' );
+
+    if ( typeof setting !== 'undefined' ) {
+      setting.set( JSON.stringify( sources ) );
+    }
+
     $( this ).trigger( 'customify:preset-change' );
   }
 

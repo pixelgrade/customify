@@ -84,6 +84,18 @@ const getCSSFromPalette = ( palette ) => {
 }
 
 const getCSSFromPalettes = ( palettes ) => {
+
+  if ( ! palettes.length ) {
+    return '';
+  }
+
+  // the old implementation generates 3 fallback palettes and
+  // we need to overwrite all 3 of them when the user starts building a new palette
+  // @todo this is necessary only in the Customizer preview
+  while ( palettes.length < 3 ) {
+    palettes.push( palettes[0] );
+  }
+
   return palettes.reduce( ( palettesAcc, palette, paletteIndex ) => {
 
     let selector = `.sm-palette-${ paletteIndex }`;

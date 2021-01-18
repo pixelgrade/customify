@@ -4723,12 +4723,12 @@ var style = __webpack_require__(3);
 
             
 
-var options = {};
+var style_options = {};
 
-options.insert = "head";
-options.singleton = false;
+style_options.insert = "head";
+style_options.singleton = false;
 
-var update = injectStylesIntoStyleTag_default()(style["a" /* default */], options);
+var update = injectStylesIntoStyleTag_default()(style["a" /* default */], style_options);
 
 
 
@@ -5103,6 +5103,17 @@ var getCSSFromPalette = function getCSSFromPalette(palette) {
 };
 
 var getCSSFromPalettes = function getCSSFromPalettes(palettes) {
+  if (!palettes.length) {
+    return '';
+  } // the old implementation generates 3 fallback palettes and
+  // we need to overwrite all 3 of them when the user starts building a new palette
+  // @todo this is necessary only in the Customizer preview
+
+
+  while (palettes.length < 3) {
+    palettes.push(palettes[0]);
+  }
+
   return palettes.reduce(function (palettesAcc, palette, paletteIndex) {
     var selector = ".sm-palette-".concat(paletteIndex);
 
@@ -5322,6 +5333,23 @@ customify.api = Object.assign({}, customify.api, function () {
   };
 
   var onPaletteChange = function onPaletteChange() {
+    var $target = external_jQuery_default()(this);
+    var options = $target.data('options');
+    var colorSettingIds = ['sm_color_primary', 'sm_color_secondary', 'sm_color_tertiary'];
+    var sources = Object.keys(options).filter(function (settingId) {
+      return colorSettingIds.includes(settingId);
+    }).map(function (settingId, index) {
+      return {
+        label: "Color ".concat('ABC'[index]),
+        value: options[settingId]
+      };
+    });
+    var setting = wp.customize('sm_advanced_palette_source');
+
+    if (typeof setting !== 'undefined') {
+      setting.set(JSON.stringify(sources));
+    }
+
     external_jQuery_default()(this).trigger('customify:preset-change');
   };
 

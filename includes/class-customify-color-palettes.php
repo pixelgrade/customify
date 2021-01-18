@@ -485,8 +485,8 @@ class Customify_Color_Palettes {
 				                                                          'label'        => esc_html__( 'Palette Output', '__theme_txtd' ),
 				                                                          'css'          => array(
 					                                                          array(
-						                                                          'selector'        => ':root',
-						                                                          'property'        => 'color',
+						                                                          'selector'        => '.dummy-selector',
+						                                                          'property'        => 'dummy-property',
 						                                                          'callback_filter' => 'sm_palette_output_cb'
 					                                                          )
 				                                                          )
@@ -1458,13 +1458,8 @@ class Customify_Color_Palettes {
 		return $palettes;
 	}
 
-	function sm_palette_output_cb( $value ) {
+	function palettes_output( $palettes ) {
 		$output = '';
-		$palettes = json_decode( $value );
-
-		if ( empty( $palettes ) ) {
-			$palettes = get_fallback_palettes();
-		}
 
 		foreach ( $palettes as $palette_index => $palette ) {
 			$colors = $palette->colors;
@@ -1475,6 +1470,7 @@ class Customify_Color_Palettes {
 			}
 
 			$output .=  $selector . ' { ' . PHP_EOL;
+			$output .= '--sm-property-that-customify-can-break: #FFF; ' . PHP_EOL;
 
 			foreach ( $colors as $color_index => $color ) {
 				$output .= '--sm-color-' . $color_index . ': ' . $color->value . ';' . PHP_EOL;
@@ -1482,6 +1478,18 @@ class Customify_Color_Palettes {
 
 			$output .= '}' . PHP_EOL;
 		}
+
+		return $output;
+	}
+
+	function sm_palette_output_cb( $value ) {
+		$output = '';
+
+		$fallback_palettes = get_fallback_palettes();
+		$palettes = json_decode( $value );
+
+		$output .= palettes_output( $fallback_palettes );
+		$output .= palettes_output( $palettes );
 
 		return $output;
 	}
