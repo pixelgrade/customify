@@ -51,19 +51,12 @@ class Customify_Color_Palettes {
 		/*
 		 * Handle the Customizer Style Manager section config.
 		 */
-		add_filter( 'customify_filter_fields', array(
-			$this,
-			'add_style_manager_section_master_colors_config'
-		), 12, 1 );
-//		add_filter( 'customify_filter_fields', array( $this, 'remove_style_manager_section_master_colors_config' ), 14, 1 );
+		add_filter( 'customify_filter_fields', array( $this, 'add_style_manager_section_master_colors_config' ), 12, 1 );
+		add_filter( 'customify_filter_fields', array( $this, 'add_style_manager_new_section_master_colors_config' ), 13, 1 );
 
 		// This needs to come after the external theme config has been applied
 		add_filter( 'customify_filter_fields', array( $this, 'add_current_palette_control' ), 110, 1 );
 		add_filter( 'customify_filter_fields', array( $this, 'maybe_enhance_dark_mode_control' ), 120, 1 );
-		add_filter( 'customify_filter_fields', array(
-			$this,
-			'add_style_manager_new_section_master_colors_config'
-		), 200, 1 );
 
 		/*
 		 * Scripts enqueued in the Customizer.
@@ -447,12 +440,6 @@ class Customify_Color_Palettes {
 		return $config;
 	}
 
-	public function remove_style_manager_section_master_colors_config( $config ) {
-//		$config['sections']['style_manager_section'] = array();
-
-		return $config;
-	}
-
 	public function add_style_manager_new_section_master_colors_config( $config ) {
 		// If there is no style manager support, bail early.
 		if ( ! $this->is_supported() ) {
@@ -485,7 +472,7 @@ class Customify_Color_Palettes {
 				                                                          'label'        => esc_html__( 'Palette Output', '__theme_txtd' ),
 				                                                          'css'          => array(
 					                                                          array(
-						                                                          'selector'        => '.dummy-selector',
+						                                                          'selector'        => ':root',
 						                                                          'property'        => 'dummy-property',
 						                                                          'callback_filter' => 'sm_palette_output_cb'
 					                                                          )

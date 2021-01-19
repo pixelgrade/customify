@@ -3,11 +3,11 @@ import $ from "jquery";
 
 import {
   getCurrentPaletteColors,
-  filterColor,
+  getFilteredColor,
 } from "./index";
 
 const updateFilterPreviews = _.debounce( () => {
-  const currentPalette = getCurrentPaletteColors();
+  const colors = getCurrentPaletteColors();
 
   $( '.sm-palette-filter' ).each( function() {
     const $filters = $( this ).find( 'input' );
@@ -24,7 +24,7 @@ const updateFilterPreviews = _.debounce( () => {
         const setting = wp.customize( settingID );
         const originalColor = setting();
 
-        $color.css( 'color', filterColor( originalColor, currentPalette, label ) );
+        $color.css( 'color', getFilteredColor( originalColor, label, colors ) );
       } );
     } );
   } );

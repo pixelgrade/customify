@@ -4,9 +4,12 @@ import $ from 'jquery';
 import { globalService } from './global-service';
 
 import {
-  getFilteredColorByID,
+  getFilteredColor,
   applyConnectedFieldsAlterations,
   createCurrentPaletteControls,
+  updateConnectedFieldsValue,
+
+  updatePalettePreview,
   updateFilterPreviews,
   updateColorPickersAltered,
   updateColorPickersHidden,
@@ -18,8 +21,6 @@ import {
   getCSSFromPalettes,
   getCSSFromInputValue,
 } from './components/builder';
-
-import { updateConnectedFieldsValue } from "./utils/connected-fields/update-connected-fields-value";
 
 /** @namespace customify */
 window.customify = window.customify || parent.customify || {};
@@ -50,84 +51,24 @@ if ( typeof customify.api === 'undefined' ) {
 
 customify.api = Object.assign( {}, customify.api, ( function() {
 
-  const resetSettings = () => {
-    updateConnectedFieldsOld();
-    updateConnectedFields( newMasterIDs );
-  }
-
-  const updateConnectedFieldsOld = () => {
-    _.each( customify.colorPalettes.masterSettingIds, function( settingID ) {
-      const setting = wp.customize( settingID );
-
-      if ( typeof setting !== 'undefined' ) {
-        const finalValue = getFilteredColorByID( settingID );
-
-        updateConnectedFieldsValue( settingID, finalValue );
-        updateFinalSettingValue( settingID, finalValue );
-      }
-    } );
-  }
-
-  const updateFinalSettingValue = ( settingID, value ) => {
-    // Also set the final setting value, for safe keeping.
-    const finalSettingID = `${ settingID }_final`;
-    const finalSetting = wp.customize( finalSettingID );
-    if ( !_.isUndefined( finalSetting ) ) {
-      finalSetting.set( value );
-    }
-  }
-
-  const updateConnectedFields = ( settingIDs, filter ) => {
-    _.each( settingIDs, function( settingID ) {
-      const setting = wp.customize( settingID );
-
-      if ( typeof setting !== 'undefined' ) {
-        let settingValue = setting();
-        let finalValue = typeof filter !== "function" ? settingValue : filter( settingValue );
-        updateConnectedFieldsValue( settingID, finalValue );
-      }
-    } );
-  }
-
-  const getMasterFieldCallback = function( parentSettingData, parentSettingID ) {
-    return function( newValue, oldValue ) {
-      const finalValue = _.includes( newMasterIDs, parentSettingID ) ? newValue : getFilteredColorByID( parentSettingID )
-
-      updateConnectedFieldsValue( parentSettingID, finalValue );
-      updateFinalSettingValue( parentSettingID, finalValue );
-      updateFilterPreviews();
-    }
-  }
-
   const bindConnectedFields = function() {
-    var settingIDs = customify.colorPalettes.masterSettingIds.concat( newMasterIDs );
+    const settingIDs = customify.colorPalettes.masterSettingIds.concat( newMasterIDs );
 
-    _.each( settingIDs, bindParentCallbacks );
-  }
+    _.each( settingIDs, ( settingID ) => {
+      const parentSettingData = globalService.getSetting( settingID );
 
-  const bindParentCallbacks = ( parentSettingID ) => {
+      if ( typeof parentSettingData !== 'undefined' ) {
+        _.each( parentSettingData.connected_fields, ( connectedFieldData ) => {
+          const connectedSettingID = connectedFieldData.setting_id;
+          const connectedSetting = wp.customize( connectedSettingID );
 
-    if ( typeof globalService.getSetting( parentSettingID ) !== 'undefined' ) {
-      const parentSettingData = globalService.getSetting( parentSettingID );
-      const parentSetting = wp.customize( parentSettingID );
-
-      if ( !_.isUndefined( parentSettingData.connected_fields ) ) {
-        globalService.setCallback( parentSettingID, getMasterFieldCallback( parentSettingData, parentSettingID ) );
-        parentSetting.bind( globalService.setCallback( parentSettingID ) );
-
-        _.each( parentSettingData.connected_fields, bindConnectedFieldsCallbacks )
+          if ( typeof connectedSetting !== 'undefined' ) {
+            globalService.setCallback( connectedSettingID, updateColorPickersAltered );
+            connectedSetting.bind( globalService.getCallback( connectedSettingID ) );
+          }
+        } )
       }
-    }
-  }
-
-  const bindConnectedFieldsCallbacks = ( connectedFieldData ) => {
-    const connectedSettingID = connectedFieldData.setting_id;
-    const connectedSetting = wp.customize( connectedSettingID );
-
-    if ( typeof connectedSetting !== 'undefined' ) {
-      globalService.setCallback( connectedSettingID, updateColorPickersAltered );
-      connectedSetting.bind( globalService.getCallback( connectedSettingID ) );
-    }
+    } );
   }
 
   const unbindConnectedFields = function() {
@@ -138,23 +79,37 @@ customify.api = Object.assign( {}, customify.api, ( function() {
     globalService.deleteCallbacks();
   }
 
-  const refreshCurrentPaletteControl = () => {
-    updateColorPickersAltered();
-    updateColorPickersHidden();
-    updateColorPickersSwatches();
-  }
+  const reloadConnectedFields = _.debounce( () => {
+    globalService.loadSettings();
 
-  const reloadConnectedFields = () => {
-    const settingIDs = customify.colorPalettes.masterSettingIds.concat( newMasterIDs );
-    const settings = applyConnectedFieldsAlterations( globalService.getSettings() )
+    const settings = applyConnectedFieldsAlterations( globalService.getSettings() );
 
-    _.each( settingIDs, function( masterSettingId ) {
-      globalService.setSetting( masterSettingId, settings[masterSettingId] );
-    } );
+    globalService.setSettings( settings );
 
     unbindConnectedFields();
     bindConnectedFields();
-  }
+
+    customify.colorPalettes.masterSettingIds.forEach( settingID => {
+      globalService.setSetting( settingID, settings[ settingID ] );
+      const setting = wp.customize( settingID );
+      const finalSetting = wp.customize( `${ settingID }_final` );
+
+      if ( typeof setting !== "undefined" && typeof finalSetting !== "undefined" ) {
+        updateConnectedFieldsValue( settingID, finalSetting() );
+      }
+    } );
+
+    newMasterIDs.forEach( settingID => {
+      globalService.setSetting( settingID, settings[ settingID ] );
+      const setting = wp.customize( settingID );
+
+      if ( typeof setting !== "undefined" ) {
+        updateConnectedFieldsValue( settingID, setting() );
+      }
+    } );
+
+    updateColorPickersHidden();
+  }, 30 );
 
   const applyColorationValueToFields = () => {
     const $selectedColoration = $( '[name*="sm_coloration_level"]:checked' );
@@ -169,11 +124,6 @@ customify.api = Object.assign( {}, customify.api, ( function() {
       setting.set( value );
     } );
   }
-
-  const reinitializeConnectedFields = _.debounce( () => {
-    reloadConnectedFields();
-    resetSettings();
-  }, 30 );
 
   const confirmChanges = ( callback ) => {
     const altered = $( '.c-color-palette .color.altered' ).length
@@ -193,22 +143,80 @@ customify.api = Object.assign( {}, customify.api, ( function() {
     return false
   }
 
+  const bindFilteredColors = () => {
+
+    const updatePreview = _.debounce( ( newValue ) => {
+      updatePalettePreview();
+      updateFilterPreviews();
+      updateColorPickersSwatches();
+    }, 20 );
+
+    customify.colorPalettes.masterSettingIds.forEach( settingID => {
+      const setting = wp.customize( settingID );
+      const finalSetting = wp.customize( `${ settingID }_final` );
+
+      if ( typeof setting !== "undefined" && typeof finalSetting !== "undefined" ) {
+        setting.bind( ( newValue, oldValue ) => {
+          finalSetting.set( getFilteredColor( newValue ) );
+        } );
+
+        finalSetting.bind( ( newValue ) => {
+          updateConnectedFieldsValue( settingID, newValue );
+          updatePreview();
+        } );
+      }
+    } );
+
+    newMasterIDs.forEach( settingID => {
+      const setting = wp.customize( settingID );
+      if ( typeof setting !== "undefined" ) {
+        setting.bind( ( newValue, oldValue ) => {
+          updateConnectedFieldsValue( settingID, newValue );
+        } );
+      }
+    } );
+
+    const filterSetting = wp.customize( 'sm_palette_filter' );
+
+    if ( typeof filterSetting !== "undefined" ) {
+      filterSetting.bind( onFilterChange );
+    }
+  }
+
+  const onFilterChange = ( newFilter, oldFilter ) => {
+
+    customify.colorPalettes.masterSettingIds.forEach( settingID => {
+      const setting = wp.customize( settingID );
+      const finalSetting = wp.customize( `${ settingID }_final` );
+
+      if ( typeof setting !== "undefined" && typeof finalSetting !== "undefined" ) {
+        const color = setting();
+        finalSetting.set( getFilteredColor( color, newFilter ) );
+      }
+    } );
+  };
+
+  const bindConnectedFieldsAlterations = () => {
+    const alterationControls = [ 'sm_color_diversity', 'sm_shuffle_colors', 'sm_dark_mode' ];
+
+    alterationControls.concat( darkToColorSliderControls ).forEach( settingID => {
+      const setting = wp.customize( settingID );
+      if ( typeof setting !== "undefined" ) {
+        setting.bind( reloadConnectedFields );
+      }
+    } );
+  }
+
   const bindEvents = () => {
     bindConfirmChanges();
 
     wp.customize( 'sm_coloration_level' ).bind( applyColorationValueToFields );
 
-    const alterationControls = [ 'sm_color_diversity', 'sm_shuffle_colors', 'sm_dark_mode', 'sm_palette_filter' ];
-
-    alterationControls.concat( darkToColorSliderControls ).forEach( settingID => {
-      const setting = wp.customize( settingID );
-      if ( typeof setting !== "undefined" ) {
-        setting.bind( reinitializeConnectedFields );
-      }
-    } );
+    bindFilteredColors();
+    bindConnectedFieldsAlterations();
   }
 
-  const onPaletteChange = function () {
+  function onPaletteChange() {
     const $target = $( this );
     const options = $target.data( 'options' );
     const colorSettingIds = [ 'sm_color_primary', 'sm_color_secondary', 'sm_color_tertiary' ];
@@ -224,8 +232,6 @@ customify.api = Object.assign( {}, customify.api, ( function() {
     if ( typeof setting !== 'undefined' ) {
       setting.set( JSON.stringify( sources ) );
     }
-
-    $( this ).trigger( 'customify:preset-change' );
   }
 
   const bindConfirmChanges = () => {
@@ -252,12 +258,12 @@ customify.api = Object.assign( {}, customify.api, ( function() {
     globalService.loadSettings();
 
     initializePaletteBuilder( 'sm_advanced_palette_source', 'sm_advanced_palette_output' );
-
     createCurrentPaletteControls();
     reloadConnectedFields();
 
-    refreshCurrentPaletteControl();
     updateFilterPreviews();
+    updateColorPickersAltered();
+    updateColorPickersHidden();
 
     bindEvents();
   } )

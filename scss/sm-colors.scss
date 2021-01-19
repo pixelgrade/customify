@@ -1,3 +1,8 @@
+// 0 is white
+// 11 is piano black
+
+// 12 is text color
+// 13 is text darker color
 @function get-colors( $variation ) {
   $textIsWhite: $variation > 5;
   $textLightColor: var(--sm-current-color-0);

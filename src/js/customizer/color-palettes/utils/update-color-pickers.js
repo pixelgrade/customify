@@ -2,9 +2,9 @@ import _ from "lodash";
 import $ from "jquery";
 
 import {
-  filterColor,
-  getActiveFilter,
-  getCurrentPaletteColors
+  getFilteredColor,
+  getFilteredColorByID,
+  getCurrentPaletteColors, getActiveFilter
 } from "./index";
 
 import {
@@ -50,8 +50,6 @@ export const updateColorPickersSwatches = _.debounce(() => {
 
 export const updateColorPickersAltered = _.debounce( () => {
   const alteredSettings = [];
-  const currentPalette = getCurrentPaletteColors();
-  const activeFilter = getActiveFilter();
   let alteredSettingsSelector
 
   _.each( customify.colorPalettes.masterSettingIds, function( masterSettingId ) {
@@ -78,7 +76,7 @@ export const updateColorPickersAltered = _.debounce( () => {
 
         if ( typeof connectedSetting !== 'undefined' ) {
           const connectedFieldValue = connectedSetting();
-          const filteredColor = filterColor( masterSettingValue, currentPalette, activeFilter );
+          const filteredColor = getFilteredColorByID( masterSettingId );
 
           if ( typeof connectedFieldValue === 'string' && connectedFieldValue.toLowerCase() !== filteredColor.toLowerCase() ) {
             connectedFieldsWereAltered = true
@@ -102,7 +100,7 @@ export const updateColorPickersAltered = _.debounce( () => {
 
 }, 30 );
 
-export const updateColorPickersHidden = _.debounce( () => {
+export const updateColorPickersHidden = () => {
   const optionsToShow = []
   let optionsSelector
 
@@ -129,5 +127,26 @@ export const updateColorPickersHidden = _.debounce( () => {
   const $target = $( '.sm-palette-filter .color, .sm-color-palette__color, .js-color-palette .palette__item' );
 
   $target.addClass( 'hidden' ).filter( optionsSelector ).removeClass( 'hidden' );
+}
 
-}, 30 );
+export const updatePalettePreview = function( filtered = true ) {
+  console.log( 'update' );
+
+  const getFilteredColorFromSettingID = ( settingID ) => {
+    const activeFilter = getActiveFilter();
+    const currentColors = getCurrentPaletteColors();
+    return getFilteredColorByID( settingID, activeFilter, currentColors );
+  }
+
+  const getOriginalColorFromSettingID = ( settingID ) => {
+    const setting = wp.customize( settingID );
+    return setting();
+  }
+
+  const getColor = filtered ? getFilteredColorFromSettingID : getOriginalColorFromSettingID;
+
+  customify.colorPalettes.masterSettingIds.forEach( function( settingID ) {
+    $( '.c-color-palette' ).find( `.sm-color-palette__color.${ settingID }` ).css( 'color', getColor( settingID ) );
+  } );
+
+}

@@ -286,9 +286,9 @@ if ( ! class_exists( 'Customify_Block_Editor' ) ) {
 				$selector = trim( $selector );
 
 				// If the selector matches the excluded, skip it.
-				if ( $this->preg_match_any( self::$excluded_selectors_regex, $selector ) ) {
-					continue;
-				}
+//				if ( $this->preg_match_any( self::$excluded_selectors_regex, $selector ) ) {
+//					continue;
+//				}
 
 				// If the selector is already Gutenbergy, we will not do anything to it
 				if ( preg_match( self::$gutenbergy_selector_regex, $selector ) ) {

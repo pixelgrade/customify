@@ -7,6 +7,7 @@ export * from './update-filter-previews';
 export * from './apply-connected-fields-alterations';
 export * from './update-color-pickers';
 export * from './confirm-changes';
+export * from './connected-fields';
 
 export const getCurrentPaletteColors = () => {
   const colors = []
@@ -22,11 +23,14 @@ export const getCurrentPaletteColors = () => {
 }
 
 export const getActiveFilter = () => {
-  return $( '[name*="sm_palette_filter"]:checked' ).val();
+  const filterSetting = wp.customize( 'sm_palette_filter' );
+  return filterSetting();
 }
 
-export const filterColor = ( hex, palette, label ) => {
+export const getFilteredColor = ( hex, filterLabel, colors ) => {
+  const label = typeof filterLabel !== "undefined" ? filterLabel : getActiveFilter();
   const filter = filters[label];
+  const palette = typeof colors !== "undefined" ? colors : getCurrentPaletteColors();
 
   if ( typeof filter === 'function' ) {
     return filter( hex, palette );
@@ -35,20 +39,9 @@ export const filterColor = ( hex, palette, label ) => {
   return hex;
 }
 
-export const filterPalette = ( palette, label ) => {
-  return palette.map( hex => filterColor( hex, palette, label ) );
-}
-
-export const getFilteredColor = ( color ) => {
-  const currentPalette = getCurrentPaletteColors();
-  const activeFilter = getActiveFilter();
-
-  return filterColor( color, currentPalette, activeFilter );
-}
-
-export const getFilteredColorByID = ( settingID ) => {
+export const getFilteredColorByID = ( settingID, filterLabel, colors ) => {
   const setting = wp.customize( settingID );
   const color = setting();
 
-  return getFilteredColor( color );
+  return getFilteredColor( color, filterLabel, colors );
 }

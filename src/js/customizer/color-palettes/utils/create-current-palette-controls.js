@@ -1,30 +1,8 @@
 import $ from "jquery";
 
 import {
-  filterColor,
-  getActiveFilter,
-  getCurrentPaletteColors,
-  getFilteredColorByID,
-  updateColorPickersSwatches,
+  updatePalettePreview,
 } from "./index";
-
-const showNewColors = function() {
-
-  customify.colorPalettes.masterSettingIds.forEach( function( id ) {
-    const filteredColor = getFilteredColorByID( id );
-
-    $( '.c-color-palette' ).find( '.sm-color-palette__color.' + id ).css( 'color', filteredColor )
-  } );
-}
-
-const showOldColors = function() {
-  customify.colorPalettes.masterSettingIds.forEach( function( id ) {
-    const setting = wp.customize( id );
-    const initialColor = setting();
-
-    $( '.c-color-palette' ).find( '.sm-color-palette__color.' + id ).css( 'color', initialColor )
-  } )
-}
 
 const createCurrentPaletteControls = () => {
   const $palette = $( '.c-color-palette' );
@@ -47,24 +25,15 @@ const createCurrentPaletteControls = () => {
       return
     }
 
-    $input.iris( {
-      change: ( event, ui ) => {
-        const currentPalette = getCurrentPaletteColors();
-        const activeFilter = getActiveFilter();
-        const currentColor = ui.color.toString();
-        const filteredColor = filterColor( currentColor, currentPalette, activeFilter );
+    const onChange = _.throttle( ( event, ui ) => {
+      setting.set( ui.color.toString() );
 
-        $obj.css( 'color', filteredColor );
+      if ( event.originalEvent.type !== 'external' ) {
+        $palette.find( '.sm-color-palette__color.' + settingID ).removeClass( 'altered' )
+      }
+    }, 20, { trailing: true } )
 
-        setting.set( currentColor )
-
-        if ( event.originalEvent.type !== 'external' ) {
-          $palette.find( '.sm-color-palette__color.' + settingID ).removeClass( 'altered' )
-        }
-
-        updateColorPickersSwatches();
-      },
-    } )
+    $input.iris( { change: onChange } );
 
     $obj.find( '.iris-picker' ).on( 'click', function( e ) {
       e.stopPropagation()
@@ -115,17 +84,17 @@ const createCurrentPaletteControls = () => {
 
       $iris.css( 'left', ( paletteWidth - 200 ) * index / ( $visibleColors.length - 1 ) );
 
-      showOldColors()
+      updatePalettePreview( false );
 
       $input.iris( 'show' );
     } )
 
     $input.on( 'focusout', ( e ) => {
-      showNewColors()
+      updatePalettePreview()
     } )
   } );
 
-  showNewColors();
+  updatePalettePreview();
 
   $( 'body' ).on( 'click', function() {
     $colors.removeClass( 'active inactive' )

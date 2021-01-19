@@ -4,6 +4,8 @@ import { globalService } from "../../global-service";
 const updateConnectedFieldsValue = ( settingID, value ) => {
   let parentSettingData = globalService.getSetting( settingID )
 
+  console.log( settingID, parentSettingData.connected_fields, value );
+
   _.each( parentSettingData.connected_fields, function( connectedFieldData ) {
 
     if ( _.isUndefined( connectedFieldData ) || _.isUndefined( connectedFieldData.setting_id ) || !_.isString( connectedFieldData.setting_id ) ) {

@@ -1,6 +1,10 @@
+import _ from "lodash";
 import $ from "jquery";
-import { moveConnectedFields } from "./connected-fields/move-connected-fields";
-import { swapConnectedFields } from "./connected-fields/swap-connected-fields";
+
+import {
+  moveConnectedFields,
+  swapConnectedFields
+} from "./connected-fields";
 
 const getSwapMap = ( variation ) => {
   if ( ! customify.colorPalettes.variations.hasOwnProperty( variation ) ) {
@@ -37,7 +41,8 @@ const applyNewColorationLevel = ( tempSettings ) => {
   const switchColorSelector = '#_customize-input-sm_dark_color_switch_slider_control';
   const selectColorSelector = '#_customize-input-sm_dark_color_select_slider_control';
 
-  if ( ! isDefaultDiversitySet() ) {
+  if ( ! isDefaultColorationSet() ) {
+    console.log( 'aisha' );
     const switchRatio = $( switchColorSelector ).val() / 100;
     const selectRatio = $( selectColorSelector ).val() / 100;
 
@@ -108,7 +113,6 @@ const applyDarkMode = ( tempSettings ) => {
 }
 
 export const applyConnectedFieldsAlterations = ( tempSettings ) => {
-  tempSettings = applyOldColorationLevel( tempSettings );
   tempSettings = applyOldColorationLevel( tempSettings );
   tempSettings = applyNewColorationLevel( tempSettings );
   tempSettings = applyColorDiversity( tempSettings );
