@@ -238,7 +238,7 @@ customify.api = Object.assign( {}, customify.api, ( function() {
     // confirm changes before changing the color palette
     $( document ).on( 'click', '.js-color-palette input', function( e ) {
       if ( ! confirmChanges( onPaletteChange.bind( this ) ) ) {
-        e.preventDefault()
+        e.preventDefault();
       }
     } );
 
@@ -248,7 +248,7 @@ customify.api = Object.assign( {}, customify.api, ( function() {
 
     $( document ).on( 'click', selector, function( e ) {
       if ( ! confirmChanges() ) {
-        e.preventDefault()
+        e.preventDefault();
       }
     } );
   }

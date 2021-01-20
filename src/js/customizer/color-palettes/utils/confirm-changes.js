@@ -1,6 +1,6 @@
 import $ from "jquery";
 
-const confirmChanges = ( callback ) => {
+export const confirmChanges = ( callback ) => {
   const altered = $( '.c-color-palette .color.altered' ).length
   let confirmed = true
 

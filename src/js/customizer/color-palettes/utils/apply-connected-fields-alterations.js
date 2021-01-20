@@ -42,7 +42,6 @@ const applyNewColorationLevel = ( tempSettings ) => {
   const selectColorSelector = '#_customize-input-sm_dark_color_select_slider_control';
 
   if ( ! isDefaultColorationSet() ) {
-    console.log( 'aisha' );
     const switchRatio = $( switchColorSelector ).val() / 100;
     const selectRatio = $( selectColorSelector ).val() / 100;
 

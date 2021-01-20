@@ -130,7 +130,6 @@ export const updateColorPickersHidden = () => {
 }
 
 export const updatePalettePreview = function( filtered = true ) {
-  console.log( 'update' );
 
   const getFilteredColorFromSettingID = ( settingID ) => {
     const activeFilter = getActiveFilter();

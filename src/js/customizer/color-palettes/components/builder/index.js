@@ -70,6 +70,10 @@ const initializePaletteBuilder = ( sourceSettingID, outputSettingID ) => {
     return;
   }
 
+  container.children.forEach( child => {
+    child.style.display = 'none';
+  } );
+
   container.insertBefore( target, container.firstChild );
   wp.element.render( <Builder sourceSettingID={ sourceSettingID } outputSettingID={ outputSettingID }/>, target );
 }

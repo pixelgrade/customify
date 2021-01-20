@@ -1382,6 +1382,16 @@ class Customify_Color_Palettes {
 
 }
 
+	function get_final_color( $setting_id ) {
+		$color = PixCustomifyPlugin()->get_option( $setting_id . '_final' );
+
+		if ( empty( $color ) ) {
+			$color = PixCustomifyPlugin()->get_option( $setting_id );
+		}
+
+		return $color;
+	}
+
 	function get_fallback_palettes() {
 		$alphabet = range( 'A', 'Z' );
 
@@ -1389,11 +1399,11 @@ class Customify_Color_Palettes {
 		$master_color_control_ids = Customify_Color_Palettes::instance()->get_all_master_color_controls_ids();
 		$color_control_ids = array_filter( $master_color_control_ids, "novablocks_filter_color_ids" );
 
-		$dark = get_option( 'sm_dark_primary_final' );
-		$darker = get_option( 'sm_dark_tertiary_final' );
-		$text_color = get_option( 'sm_dark_secondary_final' );
-		$lighter = get_option( 'sm_light_primary_final' );
-		$light = get_option( 'sm_light_tertiary_final' );
+		$dark = get_final_color( 'sm_dark_primary' );
+		$darker = get_final_color( 'sm_dark_tertiary' );
+		$text_color = get_final_color( 'sm_dark_secondary' );
+		$lighter = get_final_color( 'sm_light_primary' );
+		$light = get_final_color( 'sm_light_tertiary' );
 
 		$palettes = array();
 
@@ -1472,16 +1482,20 @@ class Customify_Color_Palettes {
 	function sm_palette_output_cb( $value ) {
 		$output = '';
 
-		$fallback_palettes = get_fallback_palettes();
 		$palettes = json_decode( $value );
 
-		$output .= palettes_output( $fallback_palettes );
+		if ( empty( $palettes ) ) {
+			$palettes = get_fallback_palettes();
+		}
+
 		$output .= palettes_output( $palettes );
 
 		return $output;
 	}
 
 	function sm_palette_output_cb_customizer_preview() {
+		$palettes = get_fallback_palettes();
+
 		$js = "";
 
 		$js .= "
@@ -1492,9 +1506,11 @@ function sm_palette_output_cb( value, selector, property ) {
         id = string.hashCode(),
         idAttr = 'rosa2_color_select' + id,
         style = document.getElementById( idAttr ),
-        head = document.head || document.getElementsByTagName('head')[0];
+        head = document.head || document.getElementsByTagName('head')[0],
+        fallbackPalettes = JSON.parse('" . json_encode( $palettes ) . "');
         
-    css = customify.api.getCSSFromPalettes( palettes );
+    css = customify.api.getCSSFromPalettes( fallbackPalettes );    
+    css += customify.api.getCSSFromPalettes( palettes );
     
     if ( style !== null ) {
         style.innerHTML = css;

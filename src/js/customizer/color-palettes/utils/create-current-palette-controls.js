@@ -1,6 +1,7 @@
 import $ from "jquery";
 
 import {
+  confirmChanges,
   updatePalettePreview,
 } from "./index";
 
@@ -26,14 +27,22 @@ const createCurrentPaletteControls = () => {
     }
 
     const onChange = _.throttle( ( event, ui ) => {
-      setting.set( ui.color.toString() );
 
       if ( event.originalEvent.type !== 'external' ) {
+        setting.set( ui.color.toString() );
         $palette.find( '.sm-color-palette__color.' + settingID ).removeClass( 'altered' )
       }
+
     }, 20, { trailing: true } )
 
-    $input.iris( { change: onChange } );
+    $input.iris( {
+      color: setting(),
+      change: onChange
+    } );
+
+    setting.bind( ( newValue ) => {
+      $input.iris( 'color', newValue );
+    } );
 
     $obj.find( '.iris-picker' ).on( 'click', function( e ) {
       e.stopPropagation()
@@ -96,12 +105,16 @@ const createCurrentPaletteControls = () => {
 
   updatePalettePreview();
 
+  $( '.c-color-palette__fields' ).on( 'click', '.iris-picker', function( e ) {
+    e.stopPropagation();
+  } );
+
   $( 'body' ).on( 'click', function() {
     $colors.removeClass( 'active inactive' )
     $colors.each( function( i, obj ) {
       const $input = $( obj ).data( 'target' )
 
-      if ( !$( obj ).hasClass( 'js-no-picker' ) ) {
+      if ( ! $( obj ).hasClass( 'js-no-picker' ) ) {
         $input.iris( 'hide' )
       }
       $input.hide()
