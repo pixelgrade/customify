@@ -1,73 +1,26 @@
-// 0 is white
-// 11 is piano black
-
-// 12 is text color
-// 13 is text darker color
-@function get-colors( $variation ) {
-  $textIsWhite: $variation > 5;
-  $textLightColor: var(--sm-current-color-0);
-  $textDarkColor: var(--sm-current-color-12);
-  $textDarkerColor: var(--sm-current-color-13);
-
-  @if $variation >= 4 {
-    $textDarkColor: var(--sm-current-color-13);
-  }
-
-  $accentIndex: 5;
-
-  @if $textIsWhite {
-    $accentIndex: $variation - 4;
-  } @else {
-    $accentIndex: $variation + 4;
-  }
-
-  $text: $textDarkColor;
-  $titles: $textDarkerColor;
-  $accent: var(--sm-current-color-#{ $accentIndex });
-
-  @if ( $textIsWhite ) {
-    $text: $textLightColor;
-    $titles: $textLightColor;
-  }
-
-  $map: (
-    accent: $accent,
-    dark: $text,
-    darker: $titles,
-    background: var(--sm-current-color-#{ $variation })
-  );
-
-  @return $map
-}
-
-@function get-color( $source, $variation: 0 ) {
-  $colors: get-colors( $variation );
-  $color: map-get( $colors, $source );
-
-  @return $color;
-}
-
 @mixin apply-palette {
 
-  @for $i from 0 through 13 {
-    --sm-current-color-#{ $i }: var(--sm-color-#{ $i });
+  @for $i from 0 through 11 {
+    --sm-current-accent-color-#{ $i }: var(--sm-accent-color-#{ $i });
+    --sm-current-dark-color-#{ $i }: var(--sm-dark-color-#{ $i });
+    --sm-current-darker-color-#{ $i }: var(--sm-darker-color-#{ $i });
+    --sm-current-background-color-#{ $i }: var(--sm-background-color-#{ $i });
   }
 }
 
-
 @mixin apply-variation( $i ) {
-  --sm-current-accent-color: #{ get-color( 'accent', $i ) };
-  --sm-current-dark-color: #{ get-color( 'dark', $i ) };
-  --sm-current-darker-color: #{ get-color( 'darker', $i ) };
-  --sm-current-background-color: #{ get-color( 'background', $i ) };
+  --sm-current-accent-color: var(--sm-current-accent-color-#{ $i });
+  --sm-current-dark-color: var(--sm-current-dark-color-#{ $i });
+  --sm-current-darker-color: var(--sm-current-darker-color-#{ $i });
+  --sm-current-background-color: var(--sm-current-background-color-#{ $i });
 }
 
-:root,
+html,
 [class*="sm-palette-"] {
   @include apply-palette;
 }
 
-:root {
+html {
   @include apply-variation(0);
 }
 
@@ -78,6 +31,7 @@
   }
 }
 
+html,
 [class*="sm-variation-"] {
   background-color: var(--sm-current-background-color);
   color: var(--sm-current-dark-color);

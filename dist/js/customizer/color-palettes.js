@@ -4863,6 +4863,12 @@ function utils_arrayWithoutHoles(arr) { if (Array.isArray(arr)) return utils_arr
 
 function utils_arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 
 
 
@@ -4871,7 +4877,48 @@ var utils_attributes = {
   useSources: true
 };
 var getPalettesFromColors = function getPalettesFromColors(colors) {
-  return colors.map(utils_mapColorToPalette(utils_attributes)).map(mapInterpolateSource(utils_attributes)).map(utils_mapCorrectLightness(utils_attributes)).map(mapUpdateProps).map(mapUseSource(utils_attributes)).map(utils_mapAddTextColor(9, utils_attributes)).map(utils_mapAddTextColor(10, utils_attributes));
+  return colors.map(utils_mapColorToPalette(utils_attributes)).map(mapInterpolateSource(utils_attributes)).map(utils_mapCorrectLightness(utils_attributes)).map(mapUpdateProps).map(mapUseSource(utils_attributes)).map(mapAddSourceIndex).map(mapAddColorCategories);
+};
+var getSourceIndex = function getSourceIndex(palette) {
+  return palette.colors.findIndex(function (color) {
+    return color.value === palette.source;
+  });
+};
+var mapAddSourceIndex = function mapAddSourceIndex(palette, index, palettes) {
+  return _objectSpread({
+    sourceIndex: getSourceIndex(palette)
+  }, palette);
+};
+
+var getShiftedArray = function getShiftedArray(array, positions) {
+  var arrayClone = array.slice();
+  var chunk = arrayClone.splice(0, positions);
+  arrayClone.push.apply(arrayClone, utils_toConsumableArray(chunk));
+  return arrayClone;
+};
+
+var mapShiftColors = function mapShiftColors(palette) {
+  palette.colors = getShiftedArray(palette.colors);
+  return palette;
+};
+
+var utils_isDarkColor = function isDarkColor(hex) {
+  return chroma_default.a.contrast(hex, 'white') > Math.sqrt(21);
+};
+
+var mapAddColorCategories = function mapAddColorCategories(palette, paletteIndex, palettes) {
+  var colors = palette.colors,
+      source = palette.source;
+  palette.colors = palette.colors.map(function (color, colorIndex, colors) {
+    var hex = color.value;
+    return {
+      background: hex,
+      dark: utils_isDarkColor(hex) ? '#FFFFFF' : utils_getTextColor(source, 9),
+      darker: utils_isDarkColor(hex) ? '#FFFFFF' : utils_getTextColor(source, 10),
+      accent: colors[(colorIndex + 5) % colors.length].value
+    };
+  });
+  return palette;
 };
 var utils_mapColorToPalette = function mapColorToPalette(attributes) {
   var mode = attributes.mode;
@@ -5003,21 +5050,24 @@ var utils_getBestPositionInPaletteByLuminance = function getBestPositionInPalett
   return pos;
 };
 
-var utils_mapAddTextColor = function mapAddTextColor(position, attributes) {
-  var mode = attributes.mode;
+var utils_getTextColor = function getTextColor(source, position, mode) {
   var luminance = contrastToLuminance(contrast_array[position]);
+  var hpluv = Object(hsluv["hexToHpluv"])(source);
+  var h = Math.min(Math.max(hpluv[0], 0), 360);
+  var p = Math.min(Math.max(hpluv[1], 0), 100);
+  var l = Math.min(Math.max(hpluv[2], 0), 100);
+  var rgb = Object(hsluv["hpluvToRgb"])([h, p, l]).map(function (x) {
+    return Math.max(0, Math.min(x * 255, 255));
+  });
+  return chroma_default()(rgb).luminance(luminance, mode).hex();
+};
+
+var mapAddTextColor = function mapAddTextColor(position, attributes) {
+  var mode = attributes.mode;
   return function (palette) {
     var source = palette.source;
-    var hpluv = Object(hsluv["hexToHpluv"])(source);
-    var h = Math.min(Math.max(hpluv[0], 0), 360);
-    var p = Math.min(Math.max(hpluv[1], 0), 100);
-    var l = Math.min(Math.max(hpluv[2], 0), 100);
-    var rgb = Object(hsluv["hpluvToRgb"])([h, p, l]).map(function (x) {
-      return Math.max(0, Math.min(x * 255, 255));
-    });
-    var textColor = chroma_default()(rgb).luminance(luminance, mode).hex();
     palette.colors.push({
-      value: textColor
+      value: utils_getTextColor(source, position, mode)
     });
     return palette;
   };
@@ -5025,6 +5075,36 @@ var utils_mapAddTextColor = function mapAddTextColor(position, attributes) {
 
 var contrastToLuminance = function contrastToLuminance(contrast) {
   return 1.05 / contrast - 0.05;
+};
+
+var getCSSFromColors = function getCSSFromColors(colors) {
+  return colors.reduce(function (colorsAcc, color, colorIndex) {
+    return "".concat(colorsAcc, "\n        --sm-background-color-").concat(colorIndex, ": ").concat(color.background, ";\n        --sm-dark-color-").concat(colorIndex, ": ").concat(color.dark, ";\n        --sm-darker-color-").concat(colorIndex, ": ").concat(color.darker, ";\n        --sm-accent-color-").concat(colorIndex, ": ").concat(color.accent, ";\n        ");
+  }, '');
+};
+var getCSSFromPalettes = function getCSSFromPalettes(palettes) {
+  if (!palettes.length) {
+    return '';
+  } // the old implementation generates 3 fallback palettes and
+  // we need to overwrite all 3 of them when the user starts building a new palette
+  // @todo this is necessary only in the Customizer preview
+
+
+  while (palettes.length < 3) {
+    palettes.push(palettes[0]);
+  }
+
+  return palettes.reduce(function (palettesAcc, palette, paletteIndex, palettes) {
+    var selector = ".sm-palette-".concat(paletteIndex);
+    var sourceIndex = palette.sourceIndex;
+    var shiftedColors = getShiftedArray(palette.colors, sourceIndex);
+
+    if (paletteIndex === 0) {
+      selector = ":root, ".concat(selector);
+    }
+
+    return "\n      ".concat(palettesAcc, "\n      \n      ").concat(selector, " { ").concat(getCSSFromColors(palette.colors), " }\n      .sm-palette-").concat(paletteIndex, ".sm-palette--shifted { ").concat(getCSSFromColors(shiftedColors), " }\n    ");
+  }, '');
 };
 
 var noop = function noop(palette) {
@@ -5097,9 +5177,37 @@ var builder_Builder = function Builder(props) {
   useEffect(function () {
     sourceSetting.set(getValueFromColors(colors));
   }, [colors]);
+  var palettes = getPalettesFromColors(colors);
   return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement(color_controls, {
     colors: colors,
     setColors: setColors
+  }), palettes.map(function (palette) {
+    var colors = palette.colors;
+    return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+      className: "palette-preview"
+    }, colors.map(function (color) {
+      return /*#__PURE__*/React.createElement("div", {
+        style: {
+          color: color.background
+        }
+      });
+    })), /*#__PURE__*/React.createElement("div", {
+      className: "palette-preview"
+    }, colors.map(function (color) {
+      return /*#__PURE__*/React.createElement("div", {
+        style: {
+          color: color.dark
+        }
+      });
+    })), /*#__PURE__*/React.createElement("div", {
+      className: "palette-preview"
+    }, colors.map(function (color) {
+      return /*#__PURE__*/React.createElement("div", {
+        style: {
+          color: color.accent
+        }
+      });
+    })));
   }));
 };
 
@@ -5122,39 +5230,10 @@ var initializePaletteBuilder = function initializePaletteBuilder(sourceSettingID
   }), target);
 };
 
-var getCSSFromPalette = function getCSSFromPalette(palette) {
-  var colors = palette.colors;
-  return colors.reduce(function (colorsAcc, color, colorIndex) {
-    return "".concat(colorsAcc, "\n        --sm-current-color-").concat(colorIndex, ": ").concat(color.value, ";");
-  }, '');
-};
-
-var getCSSFromPalettes = function getCSSFromPalettes(palettes) {
-  if (!palettes.length) {
-    return '';
-  } // the old implementation generates 3 fallback palettes and
-  // we need to overwrite all 3 of them when the user starts building a new palette
-  // @todo this is necessary only in the Customizer preview
-
-
-  while (palettes.length < 3) {
-    palettes.push(palettes[0]);
-  }
-
-  return palettes.reduce(function (palettesAcc, palette, paletteIndex) {
-    var selector = ".sm-palette-".concat(paletteIndex);
-
-    if (paletteIndex === 0) {
-      selector = ":root, ".concat(selector);
-    }
-
-    return "\n      ".concat(palettesAcc, "\n      \n      ").concat(selector, " { ").concat(getCSSFromPalette(palette), " }\n    ");
-  }, '');
-};
-
 var builder_getCSSFromInputValue = function getCSSFromInputValue(value) {
   var colors = getColorsFromInputValue(value);
   var palettes = getPalettesFromColors(colors);
+  console.log(getCSSFromPalettes(palettes));
   return getCSSFromPalettes(palettes);
 };
 

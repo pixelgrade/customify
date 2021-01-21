@@ -1,112 +1,147 @@
-:root,
+html,
 [class*="sm-palette-"] {
-  --sm-current-color-0: var(--sm-color-0);
-  --sm-current-color-1: var(--sm-color-1);
-  --sm-current-color-2: var(--sm-color-2);
-  --sm-current-color-3: var(--sm-color-3);
-  --sm-current-color-4: var(--sm-color-4);
-  --sm-current-color-5: var(--sm-color-5);
-  --sm-current-color-6: var(--sm-color-6);
-  --sm-current-color-7: var(--sm-color-7);
-  --sm-current-color-8: var(--sm-color-8);
-  --sm-current-color-9: var(--sm-color-9);
-  --sm-current-color-10: var(--sm-color-10);
-  --sm-current-color-11: var(--sm-color-11);
-  --sm-current-color-12: var(--sm-color-12);
-  --sm-current-color-13: var(--sm-color-13);
+  --sm-current-accent-color-0: var(--sm-accent-color-0);
+  --sm-current-dark-color-0: var(--sm-dark-color-0);
+  --sm-current-darker-color-0: var(--sm-darker-color-0);
+  --sm-current-background-color-0: var(--sm-background-color-0);
+  --sm-current-accent-color-1: var(--sm-accent-color-1);
+  --sm-current-dark-color-1: var(--sm-dark-color-1);
+  --sm-current-darker-color-1: var(--sm-darker-color-1);
+  --sm-current-background-color-1: var(--sm-background-color-1);
+  --sm-current-accent-color-2: var(--sm-accent-color-2);
+  --sm-current-dark-color-2: var(--sm-dark-color-2);
+  --sm-current-darker-color-2: var(--sm-darker-color-2);
+  --sm-current-background-color-2: var(--sm-background-color-2);
+  --sm-current-accent-color-3: var(--sm-accent-color-3);
+  --sm-current-dark-color-3: var(--sm-dark-color-3);
+  --sm-current-darker-color-3: var(--sm-darker-color-3);
+  --sm-current-background-color-3: var(--sm-background-color-3);
+  --sm-current-accent-color-4: var(--sm-accent-color-4);
+  --sm-current-dark-color-4: var(--sm-dark-color-4);
+  --sm-current-darker-color-4: var(--sm-darker-color-4);
+  --sm-current-background-color-4: var(--sm-background-color-4);
+  --sm-current-accent-color-5: var(--sm-accent-color-5);
+  --sm-current-dark-color-5: var(--sm-dark-color-5);
+  --sm-current-darker-color-5: var(--sm-darker-color-5);
+  --sm-current-background-color-5: var(--sm-background-color-5);
+  --sm-current-accent-color-6: var(--sm-accent-color-6);
+  --sm-current-dark-color-6: var(--sm-dark-color-6);
+  --sm-current-darker-color-6: var(--sm-darker-color-6);
+  --sm-current-background-color-6: var(--sm-background-color-6);
+  --sm-current-accent-color-7: var(--sm-accent-color-7);
+  --sm-current-dark-color-7: var(--sm-dark-color-7);
+  --sm-current-darker-color-7: var(--sm-darker-color-7);
+  --sm-current-background-color-7: var(--sm-background-color-7);
+  --sm-current-accent-color-8: var(--sm-accent-color-8);
+  --sm-current-dark-color-8: var(--sm-dark-color-8);
+  --sm-current-darker-color-8: var(--sm-darker-color-8);
+  --sm-current-background-color-8: var(--sm-background-color-8);
+  --sm-current-accent-color-9: var(--sm-accent-color-9);
+  --sm-current-dark-color-9: var(--sm-dark-color-9);
+  --sm-current-darker-color-9: var(--sm-darker-color-9);
+  --sm-current-background-color-9: var(--sm-background-color-9);
+  --sm-current-accent-color-10: var(--sm-accent-color-10);
+  --sm-current-dark-color-10: var(--sm-dark-color-10);
+  --sm-current-darker-color-10: var(--sm-darker-color-10);
+  --sm-current-background-color-10: var(--sm-background-color-10);
+  --sm-current-accent-color-11: var(--sm-accent-color-11);
+  --sm-current-dark-color-11: var(--sm-dark-color-11);
+  --sm-current-darker-color-11: var(--sm-darker-color-11);
+  --sm-current-background-color-11: var(--sm-background-color-11);
 }
 
-:root {
-  --sm-current-accent-color: var(--sm-current-color-4);
-  --sm-current-dark-color: var(--sm-current-color-12);
-  --sm-current-darker-color: var(--sm-current-color-13);
-  --sm-current-background-color: var(--sm-current-color-0);
+html {
+  --sm-current-accent-color: var(--sm-current-accent-color-0);
+  --sm-current-dark-color: var(--sm-current-dark-color-0);
+  --sm-current-darker-color: var(--sm-current-darker-color-0);
+  --sm-current-background-color: var(--sm-current-background-color-0);
 }
 
 .sm-variation-0 {
-  --sm-current-accent-color: var(--sm-current-color-4);
-  --sm-current-dark-color: var(--sm-current-color-12);
-  --sm-current-darker-color: var(--sm-current-color-13);
-  --sm-current-background-color: var(--sm-current-color-0);
+  --sm-current-accent-color: var(--sm-current-accent-color-0);
+  --sm-current-dark-color: var(--sm-current-dark-color-0);
+  --sm-current-darker-color: var(--sm-current-darker-color-0);
+  --sm-current-background-color: var(--sm-current-background-color-0);
 }
 
 .sm-variation-1 {
-  --sm-current-accent-color: var(--sm-current-color-5);
-  --sm-current-dark-color: var(--sm-current-color-12);
-  --sm-current-darker-color: var(--sm-current-color-13);
-  --sm-current-background-color: var(--sm-current-color-1);
+  --sm-current-accent-color: var(--sm-current-accent-color-1);
+  --sm-current-dark-color: var(--sm-current-dark-color-1);
+  --sm-current-darker-color: var(--sm-current-darker-color-1);
+  --sm-current-background-color: var(--sm-current-background-color-1);
 }
 
 .sm-variation-2 {
-  --sm-current-accent-color: var(--sm-current-color-6);
-  --sm-current-dark-color: var(--sm-current-color-12);
-  --sm-current-darker-color: var(--sm-current-color-13);
-  --sm-current-background-color: var(--sm-current-color-2);
+  --sm-current-accent-color: var(--sm-current-accent-color-2);
+  --sm-current-dark-color: var(--sm-current-dark-color-2);
+  --sm-current-darker-color: var(--sm-current-darker-color-2);
+  --sm-current-background-color: var(--sm-current-background-color-2);
 }
 
 .sm-variation-3 {
-  --sm-current-accent-color: var(--sm-current-color-7);
-  --sm-current-dark-color: var(--sm-current-color-12);
-  --sm-current-darker-color: var(--sm-current-color-13);
-  --sm-current-background-color: var(--sm-current-color-3);
+  --sm-current-accent-color: var(--sm-current-accent-color-3);
+  --sm-current-dark-color: var(--sm-current-dark-color-3);
+  --sm-current-darker-color: var(--sm-current-darker-color-3);
+  --sm-current-background-color: var(--sm-current-background-color-3);
 }
 
 .sm-variation-4 {
-  --sm-current-accent-color: var(--sm-current-color-8);
-  --sm-current-dark-color: var(--sm-current-color-13);
-  --sm-current-darker-color: var(--sm-current-color-13);
-  --sm-current-background-color: var(--sm-current-color-4);
+  --sm-current-accent-color: var(--sm-current-accent-color-4);
+  --sm-current-dark-color: var(--sm-current-dark-color-4);
+  --sm-current-darker-color: var(--sm-current-darker-color-4);
+  --sm-current-background-color: var(--sm-current-background-color-4);
 }
 
 .sm-variation-5 {
-  --sm-current-accent-color: var(--sm-current-color-9);
-  --sm-current-dark-color: var(--sm-current-color-13);
-  --sm-current-darker-color: var(--sm-current-color-13);
-  --sm-current-background-color: var(--sm-current-color-5);
+  --sm-current-accent-color: var(--sm-current-accent-color-5);
+  --sm-current-dark-color: var(--sm-current-dark-color-5);
+  --sm-current-darker-color: var(--sm-current-darker-color-5);
+  --sm-current-background-color: var(--sm-current-background-color-5);
 }
 
 .sm-variation-6 {
-  --sm-current-accent-color: var(--sm-current-color-2);
-  --sm-current-dark-color: var(--sm-current-color-0);
-  --sm-current-darker-color: var(--sm-current-color-0);
-  --sm-current-background-color: var(--sm-current-color-6);
+  --sm-current-accent-color: var(--sm-current-accent-color-6);
+  --sm-current-dark-color: var(--sm-current-dark-color-6);
+  --sm-current-darker-color: var(--sm-current-darker-color-6);
+  --sm-current-background-color: var(--sm-current-background-color-6);
 }
 
 .sm-variation-7 {
-  --sm-current-accent-color: var(--sm-current-color-3);
-  --sm-current-dark-color: var(--sm-current-color-0);
-  --sm-current-darker-color: var(--sm-current-color-0);
-  --sm-current-background-color: var(--sm-current-color-7);
+  --sm-current-accent-color: var(--sm-current-accent-color-7);
+  --sm-current-dark-color: var(--sm-current-dark-color-7);
+  --sm-current-darker-color: var(--sm-current-darker-color-7);
+  --sm-current-background-color: var(--sm-current-background-color-7);
 }
 
 .sm-variation-8 {
-  --sm-current-accent-color: var(--sm-current-color-4);
-  --sm-current-dark-color: var(--sm-current-color-0);
-  --sm-current-darker-color: var(--sm-current-color-0);
-  --sm-current-background-color: var(--sm-current-color-8);
+  --sm-current-accent-color: var(--sm-current-accent-color-8);
+  --sm-current-dark-color: var(--sm-current-dark-color-8);
+  --sm-current-darker-color: var(--sm-current-darker-color-8);
+  --sm-current-background-color: var(--sm-current-background-color-8);
 }
 
 .sm-variation-9 {
-  --sm-current-accent-color: var(--sm-current-color-5);
-  --sm-current-dark-color: var(--sm-current-color-0);
-  --sm-current-darker-color: var(--sm-current-color-0);
-  --sm-current-background-color: var(--sm-current-color-9);
+  --sm-current-accent-color: var(--sm-current-accent-color-9);
+  --sm-current-dark-color: var(--sm-current-dark-color-9);
+  --sm-current-darker-color: var(--sm-current-darker-color-9);
+  --sm-current-background-color: var(--sm-current-background-color-9);
 }
 
 .sm-variation-10 {
-  --sm-current-accent-color: var(--sm-current-color-6);
-  --sm-current-dark-color: var(--sm-current-color-0);
-  --sm-current-darker-color: var(--sm-current-color-0);
-  --sm-current-background-color: var(--sm-current-color-10);
+  --sm-current-accent-color: var(--sm-current-accent-color-10);
+  --sm-current-dark-color: var(--sm-current-dark-color-10);
+  --sm-current-darker-color: var(--sm-current-darker-color-10);
+  --sm-current-background-color: var(--sm-current-background-color-10);
 }
 
 .sm-variation-11 {
-  --sm-current-accent-color: var(--sm-current-color-7);
-  --sm-current-dark-color: var(--sm-current-color-0);
-  --sm-current-darker-color: var(--sm-current-color-0);
-  --sm-current-background-color: var(--sm-current-color-11);
+  --sm-current-accent-color: var(--sm-current-accent-color-11);
+  --sm-current-dark-color: var(--sm-current-dark-color-11);
+  --sm-current-darker-color: var(--sm-current-darker-color-11);
+  --sm-current-background-color: var(--sm-current-background-color-11);
 }
 
+html,
 [class*="sm-variation-"] {
   background-color: var(--sm-current-background-color);
   color: var(--sm-current-dark-color);

@@ -1470,7 +1470,23 @@ class Customify_Color_Palettes {
 			$output .= '--sm-property-that-customify-can-break: #FFF; ' . PHP_EOL;
 
 			foreach ( $colors as $color_index => $color ) {
-				$output .= '--sm-color-' . $color_index . ': ' . $color->value . ';' . PHP_EOL;
+				$output .= '--sm-background-color-' . $color_index . ': ' . $color->background . ';' . PHP_EOL;
+				$output .= '--sm-dark-color-' . $color_index . ': ' . $color->dark . ';' . PHP_EOL;
+				$output .= '--sm-darker-color-' . $color_index . ': ' . $color->darker . ';' . PHP_EOL;
+				$output .= '--sm-accent-color-' . $color_index . ': ' . $color->accent . ';' . PHP_EOL;
+			}
+
+			$output .= '}' . PHP_EOL;
+
+			$output .= '.sm-palette-' . $palette_index . '.sm-palette--shifted { ' . PHP_EOL;
+			$chunk = array_splice( $colors, 0, $palette->sourceIndex  );
+			$colors = array_merge( $colors, $chunk );
+
+			foreach ( $colors as $color_index => $color ) {
+				$output .= '--sm-background-color-' . $color_index . ': ' . $color->background . ';' . PHP_EOL;
+				$output .= '--sm-dark-color-' . $color_index . ': ' . $color->dark . ';' . PHP_EOL;
+				$output .= '--sm-darker-color-' . $color_index . ': ' . $color->darker . ';' . PHP_EOL;
+				$output .= '--sm-accent-color-' . $color_index . ': ' . $color->accent . ';' . PHP_EOL;
 			}
 
 			$output .= '}' . PHP_EOL;

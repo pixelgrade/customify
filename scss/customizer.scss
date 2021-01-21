@@ -137,5 +137,15 @@ li.customize-control-select_color {
   }
 }
 
+.palette-preview {
+  display: flex;
+  align-items: stretch;
+  height: 20px;
+
+  > div {
+    flex: 1 1 auto;
+    background-color: currentColor;
+  }
+}
 
 @import "shame";

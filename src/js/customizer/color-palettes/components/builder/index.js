@@ -5,7 +5,10 @@ const {
 } = wp.element;
 
 import ColorControls from "./components/color-controls";
-import { getPalettesFromColors } from "./utils";
+import {
+  getPalettesFromColors,
+  getCSSFromPalettes,
+} from "./utils";
 
 const getColorsFromInputValue = ( value ) => {
   let colors;
@@ -50,13 +53,26 @@ const Builder = ( props ) => {
     }
   }, []);
 
-  useEffect(() => {
+  useEffect( () => {
     sourceSetting.set( getValueFromColors( colors ) );
-  }, [colors])
+  }, [ colors ] );
+
+  const palettes = getPalettesFromColors( colors );
 
   return (
     <div>
       <ColorControls colors={ colors } setColors={ setColors } />
+      { palettes.map( palette => {
+        const { colors } = palette;
+
+        return (
+          <div>
+            <div className={ "palette-preview" }>{ colors.map( color => <div style={ { color: color.background } }></div> ) }</div>
+            <div className={ "palette-preview" }>{ colors.map( color => <div style={ { color: color.dark } }></div> ) }</div>
+            <div className={ "palette-preview" }>{ colors.map( color => <div style={ { color: color.accent } }></div> ) }</div>
+          </div>
+        )
+      } ) }
     </div>
   );
 }
@@ -78,48 +94,11 @@ const initializePaletteBuilder = ( sourceSettingID, outputSettingID ) => {
   wp.element.render( <Builder sourceSettingID={ sourceSettingID } outputSettingID={ outputSettingID }/>, target );
 }
 
-const getCSSFromPalette = ( palette ) => {
-  const { colors } = palette;
-
-  return colors.reduce( ( colorsAcc, color, colorIndex ) => {
-    return `${ colorsAcc }
-        --sm-current-color-${ colorIndex }: ${ color.value };`;
-  }, '' );
-}
-
-const getCSSFromPalettes = ( palettes ) => {
-
-  if ( ! palettes.length ) {
-    return '';
-  }
-
-  // the old implementation generates 3 fallback palettes and
-  // we need to overwrite all 3 of them when the user starts building a new palette
-  // @todo this is necessary only in the Customizer preview
-  while ( palettes.length < 3 ) {
-    palettes.push( palettes[0] );
-  }
-
-  return palettes.reduce( ( palettesAcc, palette, paletteIndex ) => {
-
-    let selector = `.sm-palette-${ paletteIndex }`;
-
-    if ( paletteIndex === 0 ) {
-      selector = `:root, ${ selector }`
-    }
-
-    return `
-      ${ palettesAcc }
-      
-      ${ selector } { ${ getCSSFromPalette( palette ) } }
-    `;
-  }, '');
-}
-
 const getCSSFromInputValue = ( value ) => {
   const colors = getColorsFromInputValue( value );
   const palettes = getPalettesFromColors( colors );
 
+  console.log( getCSSFromPalettes( palettes ) );
   return getCSSFromPalettes( palettes );
 }
 

@@ -14,9 +14,55 @@ export const getPalettesFromColors = ( colors => {
                .map( mapCorrectLightness( attributes ) )
                .map( mapUpdateProps )
                .map( mapUseSource( attributes ) )
-               .map( mapAddTextColor( 9, attributes ) )
-               .map( mapAddTextColor( 10, attributes ) );
+               .map( mapAddSourceIndex )
+               .map( mapAddColorCategories );
+
 } );
+
+export const getSourceIndex = ( palette ) => {
+  return palette.colors.findIndex( color => color.value === palette.source )
+}
+
+export const mapAddSourceIndex = ( palette, index, palettes ) => {
+  return {
+    sourceIndex: getSourceIndex( palette ),
+    ...palette
+  };
+}
+
+const getShiftedArray = ( array, positions ) => {
+  const arrayClone = array.slice();
+  const chunk = arrayClone.splice( 0, positions );
+  arrayClone.push( ...chunk );
+  return arrayClone;
+}
+
+export const mapShiftColors = ( palette ) => {
+  palette.colors = getShiftedArray( palette.colors );
+
+  return palette;
+}
+
+const isDarkColor = ( hex ) => {
+  return chroma.contrast( hex, 'white' ) > Math.sqrt( 21 )
+}
+
+export const mapAddColorCategories = ( palette, paletteIndex, palettes ) => {
+  const { colors, source } = palette;
+
+  palette.colors = palette.colors.map( ( color, colorIndex, colors ) => {
+    const hex = color.value;
+
+    return {
+      background: hex,
+      dark: isDarkColor( hex ) ? '#FFFFFF' : getTextColor( source, 9 ),
+      darker: isDarkColor( hex ) ? '#FFFFFF' : getTextColor( source, 10 ),
+      accent: colors[ ( colorIndex + 5 ) % colors.length ].value,
+    }
+  } );
+
+  return palette;
+}
 
 export const mapColorToPalette = ( ( attributes ) => {
   const { mode } = attributes;
@@ -153,27 +199,72 @@ export const getBestPositionInPaletteByLuminance = ( color, colors, attributes, 
   return pos;
 }
 
+const getTextColor = ( source, position, mode ) => {
+  const luminance = contrastToLuminance( contrastArray[ position ] );
+  const hpluv = hexToHpluv( source );
+
+  const h = Math.min( Math.max( hpluv[0], 0), 360 );
+  const p = Math.min( Math.max( hpluv[1], 0), 100 );
+  const l = Math.min( Math.max( hpluv[2], 0), 100 );
+  const rgb = hpluvToRgb( [h, p, l] ).map( x => Math.max(0, Math.min( x * 255, 255 ) ) )
+
+  return chroma( rgb ).luminance( luminance, mode ).hex();
+}
+
 const mapAddTextColor = ( position, attributes ) => {
   const { mode } = attributes;
-  const luminance = contrastToLuminance( contrastArray[ position ] );
 
   return ( palette ) => {
     const { source } = palette;
-    const hpluv = hexToHpluv( source );
-    const h = Math.min( Math.max( hpluv[0], 0), 360 );
-    const p = Math.min( Math.max( hpluv[1], 0), 100 );
-    const l = Math.min( Math.max( hpluv[2], 0), 100 );
-    const rgb = hpluvToRgb( [h, p, l] ).map( x => Math.max(0, Math.min( x * 255, 255 ) ) )
-    const textColor = chroma( rgb ).luminance( luminance, mode ).hex();
-
-    palette.colors.push( { value: textColor } );
-
+    palette.colors.push( { value: getTextColor( source, position, mode ) } );
     return palette;
   }
 }
 
 const contrastToLuminance = ( contrast ) => {
   return 1.05 / contrast - 0.05;
+}
+
+export const getCSSFromColors = ( colors ) => {
+  return colors.reduce( ( colorsAcc, color, colorIndex ) => {
+    return `${ colorsAcc }
+        --sm-background-color-${ colorIndex }: ${ color.background };
+        --sm-dark-color-${ colorIndex }: ${ color.dark };
+        --sm-darker-color-${ colorIndex }: ${ color.darker };
+        --sm-accent-color-${ colorIndex }: ${ color.accent };
+        `;
+  }, '' );
+}
+
+export const getCSSFromPalettes = ( palettes ) => {
+
+  if ( ! palettes.length ) {
+    return '';
+  }
+
+  // the old implementation generates 3 fallback palettes and
+  // we need to overwrite all 3 of them when the user starts building a new palette
+  // @todo this is necessary only in the Customizer preview
+  while ( palettes.length < 3 ) {
+    palettes.push( palettes[0] );
+  }
+
+  return palettes.reduce( ( palettesAcc, palette, paletteIndex, palettes ) => {
+    let selector = `.sm-palette-${ paletteIndex }`;
+    const { sourceIndex } = palette;
+    const shiftedColors = getShiftedArray( palette.colors, sourceIndex );
+
+    if ( paletteIndex === 0 ) {
+      selector = `:root, ${ selector }`
+    }
+
+    return `
+      ${ palettesAcc }
+      
+      ${ selector } { ${ getCSSFromColors( palette.colors ) } }
+      .sm-palette-${ paletteIndex }.sm-palette--shifted { ${ getCSSFromColors( shiftedColors ) } }
+    `;
+  }, '');
 }
 
 const noop = palette => palette;

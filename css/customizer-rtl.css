@@ -4640,6 +4640,23 @@ li.customize-control-select_color {
           justify-content: flex-end;
 }
 
+.palette-preview {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: stretch;
+      -ms-flex-align: stretch;
+          align-items: stretch;
+  height: 20px;
+}
+
+.palette-preview > div {
+  -webkit-box-flex: 1;
+      -ms-flex: 1 1 auto;
+          flex: 1 1 auto;
+  background-color: currentColor;
+}
+
 #customize-theme-controls .theme * {
   -webkit-box-sizing: content-box;
           box-sizing: content-box;
