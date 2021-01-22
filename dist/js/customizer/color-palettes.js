@@ -5177,9 +5177,8 @@ var builder_Builder = function Builder(props) {
     setColors: setColors
   }), /*#__PURE__*/React.createElement("style", null, getCSSFromPalettes(palettes)), palettes.map(function (palette, index) {
     var colors = palette.colors;
-    var shiftedColors = getShiftedArray(colors, getSourceIndex(palette));
     return /*#__PURE__*/React.createElement("div", {
-      className: "sm-palette-".concat(index)
+      className: "palette-preview-set sm-palette-".concat(index)
     }, /*#__PURE__*/React.createElement("div", {
       className: "palette-preview"
     }, colors.map(function (color, colorIndex) {

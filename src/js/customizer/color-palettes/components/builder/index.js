@@ -69,10 +69,9 @@ const Builder = ( props ) => {
       </style>
       { palettes.map( ( palette, index ) => {
         const { colors } = palette;
-        const shiftedColors = getShiftedArray( colors, getSourceIndex( palette ) );
 
         return (
-          <div className={ `sm-palette-${ index }` }>
+          <div className={ `palette-preview-set sm-palette-${ index }` }>
             <div className={ "palette-preview" }>
               { colors.map( ( color, colorIndex ) => <div style={ { color: `var(--sm-background-color-${ colorIndex })` } }></div> ) }
             </div>

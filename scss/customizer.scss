@@ -148,4 +148,11 @@ li.customize-control-select_color {
   }
 }
 
+.palette-preview-set {
+
+  & + & {
+    margin-top: 5px;
+  }
+}
+
 @import "shame";

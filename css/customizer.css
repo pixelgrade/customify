@@ -4657,6 +4657,10 @@ li.customize-control-select_color {
   background-color: currentColor;
 }
 
+.palette-preview-set + .palette-preview-set {
+  margin-top: 5px;
+}
+
 #customize-theme-controls .theme * {
   -webkit-box-sizing: content-box;
           box-sizing: content-box;
