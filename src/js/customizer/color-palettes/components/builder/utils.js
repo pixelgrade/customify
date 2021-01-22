@@ -225,15 +225,7 @@ const contrastToLuminance = ( contrast ) => {
   return 1.05 / contrast - 0.05;
 }
 
-export const getVariablesCSS = ( colors ) => {
-  return colors.reduce( ( colorsAcc, color, colorIndex ) => {
-    return `${ colorsAcc }
-        --sm-color-${ colorIndex }: ${ color.background };
-        `;
-  }, '' );
-}
-
-export const getVariationVariablesCSS = ( colors ) => {
+export const getCSSFromColors = ( colors ) => {
   return colors.reduce( ( colorsAcc, color, colorIndex ) => {
     return `${ colorsAcc }
         --sm-background-color-${ colorIndex }: ${ color.background };
@@ -269,8 +261,8 @@ export const getCSSFromPalettes = ( palettes ) => {
     return `
       ${ palettesAcc }
       
-      ${ selector } { ${ getVariationVariablesCSS( palette.colors ) } }
-      .sm-palette-${ paletteIndex }.sm-palette--shifted { ${ getVariationVariablesCSS( shiftedColors ) } }
+      ${ selector } { ${ getCSSFromColors( palette.colors ) } }
+      .sm-palette-${ paletteIndex }.sm-palette--shifted { ${ getCSSFromColors( shiftedColors ) } }
     `;
   }, '');
 }

@@ -5075,12 +5075,7 @@ var contrastToLuminance = function contrastToLuminance(contrast) {
   return 1.05 / contrast - 0.05;
 };
 
-var getVariablesCSS = function getVariablesCSS(colors) {
-  return colors.reduce(function (colorsAcc, color, colorIndex) {
-    return "".concat(colorsAcc, "\n        --sm-color-").concat(colorIndex, ": ").concat(color.background, ";\n        ");
-  }, '');
-};
-var getVariationVariablesCSS = function getVariationVariablesCSS(colors) {
+var getCSSFromColors = function getCSSFromColors(colors) {
   return colors.reduce(function (colorsAcc, color, colorIndex) {
     return "".concat(colorsAcc, "\n        --sm-background-color-").concat(colorIndex, ": ").concat(color.background, ";\n        --sm-dark-color-").concat(colorIndex, ": ").concat(color.dark, ";\n        --sm-darker-color-").concat(colorIndex, ": ").concat(color.darker, ";\n        --sm-accent-color-").concat(colorIndex, ": ").concat(color.accent, ";\n        ");
   }, '');
@@ -5106,7 +5101,7 @@ var getCSSFromPalettes = function getCSSFromPalettes(palettes) {
       selector = ":root, ".concat(selector);
     }
 
-    return "\n      ".concat(palettesAcc, "\n      \n      ").concat(selector, " { ").concat(getVariationVariablesCSS(palette.colors), " }\n      .sm-palette-").concat(paletteIndex, ".sm-palette--shifted { ").concat(getVariationVariablesCSS(shiftedColors), " }\n    ");
+    return "\n      ".concat(palettesAcc, "\n      \n      ").concat(selector, " { ").concat(getCSSFromColors(palette.colors), " }\n      .sm-palette-").concat(paletteIndex, ".sm-palette--shifted { ").concat(getCSSFromColors(shiftedColors), " }\n    ");
   }, '');
 };
 
