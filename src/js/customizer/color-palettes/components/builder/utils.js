@@ -15,12 +15,21 @@ export const getPalettesFromColors = ( colors => {
                .map( mapUpdateProps )
                .map( mapUseSource( attributes ) )
                .map( mapAddSourceIndex )
-               .map( mapAddColorCategories );
-
+               .map( mapAddTextColors );
 } );
 
 export const getSourceIndex = ( palette ) => {
   return palette.colors.findIndex( color => color.value === palette.source )
+}
+
+export const mapAddTextColors = ( palette ) => {
+  palette.textColors = palette.colors.slice( 9, 11 ).map( ( color, index ) => {
+    return {
+      value: getTextColor( palette.source, index ),
+      ...color
+    }
+  } );
+  return palette;
 }
 
 export const mapAddSourceIndex = ( palette, index, palettes ) => {
@@ -39,27 +48,6 @@ export const getShiftedArray = ( array, positions ) => {
 
 export const mapShiftColors = ( palette ) => {
   palette.colors = getShiftedArray( palette.colors );
-
-  return palette;
-}
-
-const isDarkColor = ( hex ) => {
-  return chroma.contrast( hex, 'white' ) > Math.sqrt( 21 )
-}
-
-export const mapAddColorCategories = ( palette, paletteIndex, palettes ) => {
-  const { colors, source } = palette;
-
-  palette.colors = palette.colors.map( ( color, colorIndex, colors ) => {
-    const hex = color.value;
-
-    return {
-      background: hex,
-      dark: isDarkColor( hex ) ? '#FFFFFF' : getTextColor( source, 9 ),
-      darker: isDarkColor( hex ) ? '#FFFFFF' : getTextColor( source, 10 ),
-      accent: colors[ ( colorIndex + 5 ) % colors.length ].value,
-    }
-  } );
 
   return palette;
 }
@@ -211,27 +199,44 @@ const getTextColor = ( source, position, mode ) => {
   return chroma( rgb ).luminance( luminance, mode ).hex();
 }
 
-const mapAddTextColor = ( position, attributes ) => {
-  const { mode } = attributes;
-
-  return ( palette ) => {
-    const { source } = palette;
-    palette.colors.push( { value: getTextColor( source, position, mode ) } );
-    return palette;
-  }
-}
-
 const contrastToLuminance = ( contrast ) => {
   return 1.05 / contrast - 0.05;
 }
 
-export const getCSSFromColors = ( colors ) => {
-  return colors.reduce( ( colorsAcc, color, colorIndex ) => {
+export const getVariablesCSS = ( palette ) => {
+  const colors = palette.colors.map( color => color.value );
+  const textColors = palette.textColors.map( color => color.value );
+
+  const colorsCSS = colors.reduce( ( colorsAcc, color, colorIndex ) => {
     return `${ colorsAcc }
-        --sm-background-color-${ colorIndex }: ${ color.background };
-        --sm-dark-color-${ colorIndex }: ${ color.dark };
-        --sm-darker-color-${ colorIndex }: ${ color.darker };
-        --sm-accent-color-${ colorIndex }: ${ color.accent };
+        --sm-color-${ colorIndex }: ${ color };
+        `;
+  }, '' );
+
+  const textColorsCSS = textColors.reduce( ( colorsAcc, color, colorIndex ) => {
+    return `${ colorsAcc }
+        --sm-text-color-${ colorIndex }: ${ color };
+        `;
+  }, '' );
+
+  return `
+  ${ colorsCSS }
+  ${ textColorsCSS }
+  `
+}
+
+export const getVariationVariablesCSS = ( palette, isShifted = false ) => {
+  const { colors, sourceIndex } = palette;
+  const offset = isShifted ? sourceIndex : 0;
+
+  return colors.reduce( ( colorsAcc, color, index ) => {
+    const colorIndex = ( index + offset ) % colors.length;
+
+    return `${ colorsAcc }
+        --sm-background-color-${ index }: var(--sm-color-${ colorIndex });
+        --sm-dark-color-${ index }: ${ index > 5 ? 'var(--sm-text-color-0)' : 'var(--sm-color-0)' };
+        --sm-darker-color-${ index }: ${ index > 5 ? 'var(--sm-text-color-1)' : 'var(--sm-color-0)' };
+        --sm-accent-color-${ index }: var(--sm-color-${ ( colorIndex + 6 ) % colors.length });
         `;
   }, '' );
 }
@@ -251,8 +256,6 @@ export const getCSSFromPalettes = ( palettes ) => {
 
   return palettes.reduce( ( palettesAcc, palette, paletteIndex, palettes ) => {
     let selector = `.sm-palette-${ paletteIndex }`;
-    const { sourceIndex } = palette;
-    const shiftedColors = getShiftedArray( palette.colors, sourceIndex );
 
     if ( paletteIndex === 0 ) {
       selector = `:root, ${ selector }`
@@ -261,8 +264,14 @@ export const getCSSFromPalettes = ( palettes ) => {
     return `
       ${ palettesAcc }
       
-      ${ selector } { ${ getCSSFromColors( palette.colors ) } }
-      .sm-palette-${ paletteIndex }.sm-palette--shifted { ${ getCSSFromColors( shiftedColors ) } }
+      ${ selector } { 
+        ${ getVariablesCSS( palette ) } 
+        ${ getVariationVariablesCSS( palette ) } 
+      }
+      
+      .sm-palette-${ paletteIndex }.sm-palette--shifted { 
+        ${ getVariationVariablesCSS( palette, true ) } 
+      }
     `;
   }, '');
 }

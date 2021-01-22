@@ -1448,6 +1448,7 @@ class Customify_Color_Palettes {
 
 			$palettes[] = ( object ) array(
 				'colors' => $color_objects,
+				'source' => $value,
 				'label' => 'Color ' . $alphabet[ $index ]
 			);
 		}
@@ -1455,11 +1456,34 @@ class Customify_Color_Palettes {
 		return $palettes;
 	}
 
+	function get_variation_variables( $palette, $isShifted = false ) {
+		$colors = $palette->colors;
+		$offset =  $isShifted ? $palette->sourceIndex : 0;
+
+		$output = '';
+
+		foreach ( $colors as $index => $color ) {
+			$color_index = ( $index + $offset ) % count( $colors );
+			$background_color = 'var(--sm-color-' . $color_index . ')';
+			$dark_color = $color_index > 5 ? 'var(--sm-color-0)' : 'var(--sm-text-color-0)';
+			$darker_color = $color_index > 5 ? 'var(--sm-color-0)' : 'var(--sm-text-color-1)';
+			$accent_color = 'var(--sm-color-' . ( $color_index + 6 ) % 12 . ')';
+
+			$output .= '--sm-background-color-' . $index . ': ' . $background_color . ';' . PHP_EOL;
+			$output .= '--sm-dark-color-' . $index  . ': ' . $dark_color . ';' . PHP_EOL;
+			$output .= '--sm-darker-color-' . $index  . ': ' . $darker_color . ';' . PHP_EOL;
+			$output .= '--sm-accent-color-' . $index  . ': ' . $accent_color . ';' . PHP_EOL;
+		}
+
+		return $output;
+	}
+
 	function palettes_output( $palettes ) {
 		$output = '';
 
 		foreach ( $palettes as $palette_index => $palette ) {
 			$colors = $palette->colors;
+			$textColors = $palette->textColors;
 			$selector = '.sm-palette-' . $palette_index;
 
 			if ( $palette_index === 0 ) {
@@ -1470,24 +1494,21 @@ class Customify_Color_Palettes {
 			$output .= '--sm-property-that-customify-can-break: #FFF; ' . PHP_EOL;
 
 			foreach ( $colors as $color_index => $color ) {
-				$output .= '--sm-background-color-' . $color_index . ': ' . $color->background . ';' . PHP_EOL;
-				$output .= '--sm-dark-color-' . $color_index . ': ' . $color->dark . ';' . PHP_EOL;
-				$output .= '--sm-darker-color-' . $color_index . ': ' . $color->darker . ';' . PHP_EOL;
-				$output .= '--sm-accent-color-' . $color_index . ': ' . $color->accent . ';' . PHP_EOL;
+				$output .= '--sm-color-' . $color_index . ': ' . $color->value . ';' . PHP_EOL;
 			}
+
+			foreach ( $textColors as $color_index => $color ) {
+				$output .= '--sm-text-color-' . $color_index . ': ' . $color->value . ';' . PHP_EOL;
+			}
+
+			$output .= get_variation_variables( $palette ) . PHP_EOL;
 
 			$output .= '}' . PHP_EOL;
 
 			$output .= '.sm-palette-' . $palette_index . '.sm-palette--shifted { ' . PHP_EOL;
-			$chunk = array_splice( $colors, 0, $palette->sourceIndex  );
-			$colors = array_merge( $colors, $chunk );
+			$output .= '--sm-property-that-customify-can-break: #FFF; ' . PHP_EOL;
 
-			foreach ( $colors as $color_index => $color ) {
-				$output .= '--sm-background-color-' . $color_index . ': ' . $color->background . ';' . PHP_EOL;
-				$output .= '--sm-dark-color-' . $color_index . ': ' . $color->dark . ';' . PHP_EOL;
-				$output .= '--sm-darker-color-' . $color_index . ': ' . $color->darker . ';' . PHP_EOL;
-				$output .= '--sm-accent-color-' . $color_index . ': ' . $color->accent . ';' . PHP_EOL;
-			}
+			$output .= get_variation_variables( $palette, true ) . PHP_EOL;
 
 			$output .= '}' . PHP_EOL;
 		}
@@ -1525,8 +1546,11 @@ function sm_palette_output_cb( value, selector, property ) {
         head = document.head || document.getElementsByTagName('head')[0],
         fallbackPalettes = JSON.parse('" . json_encode( $palettes ) . "');
         
-    css = customify.api.getCSSFromPalettes( fallbackPalettes );    
-    css += customify.api.getCSSFromPalettes( palettes );
+    if ( ! palettes.length ) {
+        paletees = fallbackPalettes;
+    }
+        
+    css = customify.api.getCSSFromPalettes( palettes );
     
     if ( style !== null ) {
         style.innerHTML = css;

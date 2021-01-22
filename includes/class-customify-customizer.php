@@ -157,6 +157,7 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 		function register_admin_customizer_styles() {
 			$rtl_suffix = is_rtl() ? '-rtl' : '';
 			wp_register_style( 'customify_style', plugins_url( 'css/customizer' . $rtl_suffix . '.css', PixCustomifyPlugin()->get_file() ), array( 'dashicons' ), PixCustomifyPlugin()->get_version() );
+			wp_register_style( 'customify_colors_css', plugins_url( 'css/sm-colors.css', PixCustomifyPlugin()->get_file() ), array(), PixCustomifyPlugin()->get_version() );
 		}
 
 		/**
@@ -164,6 +165,7 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 		 */
 		function enqueue_admin_customizer_styles() {
 			wp_enqueue_style( 'customify_style' );
+			wp_enqueue_style( 'customify_colors_css' );
 		}
 
 		function enqueue_style_manager_styles() {

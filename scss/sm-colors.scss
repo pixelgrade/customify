@@ -1,23 +1,8 @@
-@mixin apply-palette {
-
-  @for $i from 0 through 11 {
-    --sm-current-accent-color-#{ $i }: var(--sm-accent-color-#{ $i });
-    --sm-current-dark-color-#{ $i }: var(--sm-dark-color-#{ $i });
-    --sm-current-darker-color-#{ $i }: var(--sm-darker-color-#{ $i });
-    --sm-current-background-color-#{ $i }: var(--sm-background-color-#{ $i });
-  }
-}
-
 @mixin apply-variation( $i ) {
-  --sm-current-accent-color: var(--sm-current-accent-color-#{ $i });
-  --sm-current-dark-color: var(--sm-current-dark-color-#{ $i });
-  --sm-current-darker-color: var(--sm-current-darker-color-#{ $i });
-  --sm-current-background-color: var(--sm-current-background-color-#{ $i });
-}
-
-html,
-[class*="sm-palette-"] {
-  @include apply-palette;
+  --sm-current-accent-color: var(--sm-accent-color-#{ $i });
+  --sm-current-dark-color: var(--sm-dark-color-#{ $i });
+  --sm-current-darker-color: var(--sm-darker-color-#{ $i });
+  --sm-current-background-color: var(--sm-background-color-#{ $i });
 }
 
 html {

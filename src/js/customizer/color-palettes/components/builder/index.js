@@ -9,6 +9,7 @@ import {
   getPalettesFromColors,
   getCSSFromPalettes,
   getShiftedArray,
+  getSourceIndex,
 } from "./utils";
 
 const getColorsFromInputValue = ( value ) => {
@@ -42,7 +43,7 @@ const Builder = ( props ) => {
     if ( typeof outputSetting !== "undefined" ) {
       outputSetting.set( JSON.stringify( palettes ) );
     }
-  }, [] );
+  }, [ colors ] );
 
   useEffect(() => {
     // Attach the listeners on component mount.
@@ -63,15 +64,24 @@ const Builder = ( props ) => {
   return (
     <div>
       <ColorControls colors={ colors } setColors={ setColors } />
-      { palettes.map( palette => {
-        const { colors, sourceIndex } = palette;
-        const shiftedColors = getShiftedArray( colors, sourceIndex );
+      <style>
+        { getCSSFromPalettes( palettes ) }
+      </style>
+      { palettes.map( ( palette, index ) => {
+        const { colors } = palette;
+        const shiftedColors = getShiftedArray( colors, getSourceIndex( palette ) );
 
         return (
-          <div>
-            <div className={ "palette-preview" }>{ shiftedColors.map( color => <div style={ { color: color.background } }></div> ) }</div>
-            {/*<div className={ "palette-preview" }>{ shiftedColors.map( color => <div style={ { color: color.dark } }></div> ) }</div>*/}
-            {/*<div className={ "palette-preview" }>{ shiftedColors.map( color => <div style={ { color: color.accent } }></div> ) }</div>*/}
+          <div className={ `sm-palette-${ index }` }>
+            <div className={ "palette-preview" }>
+              { colors.map( ( color, colorIndex ) => <div style={ { color: `var(--sm-background-color-${ colorIndex })` } }></div> ) }
+            </div>
+            <div className={ "palette-preview" }>
+              { colors.map( ( color, colorIndex ) => <div style={ { color: `var(--sm-dark-color-${ colorIndex })` } }></div> ) }
+            </div>
+            <div className={ "palette-preview" }>
+              { colors.map( ( color, colorIndex ) => <div style={ { color: `var(--sm-accent-color-${ colorIndex })` } }></div> ) }
+            </div>
           </div>
         )
       } ) }

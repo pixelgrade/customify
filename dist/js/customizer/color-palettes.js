@@ -4877,12 +4877,20 @@ var utils_attributes = {
   useSources: true
 };
 var getPalettesFromColors = function getPalettesFromColors(colors) {
-  return colors.map(utils_mapColorToPalette(utils_attributes)).map(mapInterpolateSource(utils_attributes)).map(utils_mapCorrectLightness(utils_attributes)).map(mapUpdateProps).map(mapUseSource(utils_attributes)).map(mapAddSourceIndex).map(mapAddColorCategories);
+  return colors.map(utils_mapColorToPalette(utils_attributes)).map(mapInterpolateSource(utils_attributes)).map(utils_mapCorrectLightness(utils_attributes)).map(mapUpdateProps).map(mapUseSource(utils_attributes)).map(mapAddSourceIndex).map(mapAddTextColors);
 };
 var getSourceIndex = function getSourceIndex(palette) {
   return palette.colors.findIndex(function (color) {
     return color.value === palette.source;
   });
+};
+var mapAddTextColors = function mapAddTextColors(palette) {
+  palette.textColors = palette.colors.slice(9, 11).map(function (color, index) {
+    return _objectSpread({
+      value: utils_getTextColor(palette.source, index)
+    }, color);
+  });
+  return palette;
 };
 var mapAddSourceIndex = function mapAddSourceIndex(palette, index, palettes) {
   return _objectSpread({
@@ -4897,25 +4905,6 @@ var getShiftedArray = function getShiftedArray(array, positions) {
 };
 var mapShiftColors = function mapShiftColors(palette) {
   palette.colors = getShiftedArray(palette.colors);
-  return palette;
-};
-
-var utils_isDarkColor = function isDarkColor(hex) {
-  return chroma_default.a.contrast(hex, 'white') > Math.sqrt(21);
-};
-
-var mapAddColorCategories = function mapAddColorCategories(palette, paletteIndex, palettes) {
-  var colors = palette.colors,
-      source = palette.source;
-  palette.colors = palette.colors.map(function (color, colorIndex, colors) {
-    var hex = color.value;
-    return {
-      background: hex,
-      dark: utils_isDarkColor(hex) ? '#FFFFFF' : utils_getTextColor(source, 9),
-      darker: utils_isDarkColor(hex) ? '#FFFFFF' : utils_getTextColor(source, 10),
-      accent: colors[(colorIndex + 5) % colors.length].value
-    };
-  });
   return palette;
 };
 var utils_mapColorToPalette = function mapColorToPalette(attributes) {
@@ -5060,24 +5049,33 @@ var utils_getTextColor = function getTextColor(source, position, mode) {
   return chroma_default()(rgb).luminance(luminance, mode).hex();
 };
 
-var mapAddTextColor = function mapAddTextColor(position, attributes) {
-  var mode = attributes.mode;
-  return function (palette) {
-    var source = palette.source;
-    palette.colors.push({
-      value: utils_getTextColor(source, position, mode)
-    });
-    return palette;
-  };
-};
-
 var contrastToLuminance = function contrastToLuminance(contrast) {
   return 1.05 / contrast - 0.05;
 };
 
-var getCSSFromColors = function getCSSFromColors(colors) {
-  return colors.reduce(function (colorsAcc, color, colorIndex) {
-    return "".concat(colorsAcc, "\n        --sm-background-color-").concat(colorIndex, ": ").concat(color.background, ";\n        --sm-dark-color-").concat(colorIndex, ": ").concat(color.dark, ";\n        --sm-darker-color-").concat(colorIndex, ": ").concat(color.darker, ";\n        --sm-accent-color-").concat(colorIndex, ": ").concat(color.accent, ";\n        ");
+var getVariablesCSS = function getVariablesCSS(palette) {
+  var colors = palette.colors.map(function (color) {
+    return color.value;
+  });
+  var textColors = palette.textColors.map(function (color) {
+    return color.value;
+  });
+  var colorsCSS = colors.reduce(function (colorsAcc, color, colorIndex) {
+    return "".concat(colorsAcc, "\n        --sm-color-").concat(colorIndex, ": ").concat(color, ";\n        ");
+  }, '');
+  var textColorsCSS = textColors.reduce(function (colorsAcc, color, colorIndex) {
+    return "".concat(colorsAcc, "\n        --sm-text-color-").concat(colorIndex, ": ").concat(color, ";\n        ");
+  }, '');
+  return "\n  ".concat(colorsCSS, "\n  ").concat(textColorsCSS, "\n  ");
+};
+var getVariationVariablesCSS = function getVariationVariablesCSS(palette) {
+  var isShifted = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+  var colors = palette.colors,
+      sourceIndex = palette.sourceIndex;
+  var offset = isShifted ? sourceIndex : 0;
+  return colors.reduce(function (colorsAcc, color, index) {
+    var colorIndex = (index + offset) % colors.length;
+    return "".concat(colorsAcc, "\n        --sm-background-color-").concat(index, ": var(--sm-color-").concat(colorIndex, ");\n        --sm-dark-color-").concat(index, ": ").concat(index > 5 ? 'var(--sm-text-color-0)' : 'var(--sm-color-0)', ";\n        --sm-darker-color-").concat(index, ": ").concat(index > 5 ? 'var(--sm-text-color-1)' : 'var(--sm-color-0)', ";\n        --sm-accent-color-").concat(index, ": var(--sm-color-").concat((colorIndex + 6) % colors.length, ");\n        ");
   }, '');
 };
 var getCSSFromPalettes = function getCSSFromPalettes(palettes) {
@@ -5094,14 +5092,12 @@ var getCSSFromPalettes = function getCSSFromPalettes(palettes) {
 
   return palettes.reduce(function (palettesAcc, palette, paletteIndex, palettes) {
     var selector = ".sm-palette-".concat(paletteIndex);
-    var sourceIndex = palette.sourceIndex;
-    var shiftedColors = getShiftedArray(palette.colors, sourceIndex);
 
     if (paletteIndex === 0) {
       selector = ":root, ".concat(selector);
     }
 
-    return "\n      ".concat(palettesAcc, "\n      \n      ").concat(selector, " { ").concat(getCSSFromColors(palette.colors), " }\n      .sm-palette-").concat(paletteIndex, ".sm-palette--shifted { ").concat(getCSSFromColors(shiftedColors), " }\n    ");
+    return "\n      ".concat(palettesAcc, "\n      \n      ").concat(selector, " { \n        ").concat(getVariablesCSS(palette), " \n        ").concat(getVariationVariablesCSS(palette), " \n      }\n      \n      .sm-palette-").concat(paletteIndex, ".sm-palette--shifted { \n        ").concat(getVariationVariablesCSS(palette, true), " \n      }\n    ");
   }, '');
 };
 
@@ -5163,7 +5159,7 @@ var builder_Builder = function Builder(props) {
     if (typeof outputSetting !== "undefined") {
       outputSetting.set(JSON.stringify(palettes));
     }
-  }, []);
+  }, [colors]);
   useEffect(function () {
     // Attach the listeners on component mount.
     sourceSetting.bind(changeListener); // Detach the listeners on component unmount.
@@ -5179,16 +5175,33 @@ var builder_Builder = function Builder(props) {
   return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement(color_controls, {
     colors: colors,
     setColors: setColors
-  }), palettes.map(function (palette) {
-    var colors = palette.colors,
-        sourceIndex = palette.sourceIndex;
-    var shiftedColors = getShiftedArray(colors, sourceIndex);
-    return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+  }), /*#__PURE__*/React.createElement("style", null, getCSSFromPalettes(palettes)), palettes.map(function (palette, index) {
+    var colors = palette.colors;
+    var shiftedColors = getShiftedArray(colors, getSourceIndex(palette));
+    return /*#__PURE__*/React.createElement("div", {
+      className: "sm-palette-".concat(index)
+    }, /*#__PURE__*/React.createElement("div", {
       className: "palette-preview"
-    }, shiftedColors.map(function (color) {
+    }, colors.map(function (color, colorIndex) {
       return /*#__PURE__*/React.createElement("div", {
         style: {
-          color: color.background
+          color: "var(--sm-background-color-".concat(colorIndex, ")")
+        }
+      });
+    })), /*#__PURE__*/React.createElement("div", {
+      className: "palette-preview"
+    }, colors.map(function (color, colorIndex) {
+      return /*#__PURE__*/React.createElement("div", {
+        style: {
+          color: "var(--sm-dark-color-".concat(colorIndex, ")")
+        }
+      });
+    })), /*#__PURE__*/React.createElement("div", {
+      className: "palette-preview"
+    }, colors.map(function (color, colorIndex) {
+      return /*#__PURE__*/React.createElement("div", {
+        style: {
+          color: "var(--sm-accent-color-".concat(colorIndex, ")")
         }
       });
     })));
