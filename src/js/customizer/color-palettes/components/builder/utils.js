@@ -234,8 +234,8 @@ export const getVariationVariablesCSS = ( palette, isShifted = false ) => {
 
     return `${ colorsAcc }
         --sm-background-color-${ index }: var(--sm-color-${ colorIndex });
-        --sm-dark-color-${ index }: ${ index > 5 ? 'var(--sm-text-color-0)' : 'var(--sm-color-0)' };
-        --sm-darker-color-${ index }: ${ index > 5 ? 'var(--sm-text-color-1)' : 'var(--sm-color-0)' };
+        --sm-dark-color-${ index }: ${ colorIndex > 5 ? 'var(--sm-color-0)' : 'var(--sm-text-color-0)' };
+        --sm-darker-color-${ index }: ${ colorIndex > 5 ? 'var(--sm-color-1)' : 'var(--sm-text-color-0)' };
         --sm-accent-color-${ index }: var(--sm-color-${ ( colorIndex + 6 ) % colors.length });
         `;
   }, '' );

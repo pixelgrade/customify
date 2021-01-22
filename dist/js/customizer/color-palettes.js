@@ -5075,7 +5075,7 @@ var getVariationVariablesCSS = function getVariationVariablesCSS(palette) {
   var offset = isShifted ? sourceIndex : 0;
   return colors.reduce(function (colorsAcc, color, index) {
     var colorIndex = (index + offset) % colors.length;
-    return "".concat(colorsAcc, "\n        --sm-background-color-").concat(index, ": var(--sm-color-").concat(colorIndex, ");\n        --sm-dark-color-").concat(index, ": ").concat(index > 5 ? 'var(--sm-text-color-0)' : 'var(--sm-color-0)', ";\n        --sm-darker-color-").concat(index, ": ").concat(index > 5 ? 'var(--sm-text-color-1)' : 'var(--sm-color-0)', ";\n        --sm-accent-color-").concat(index, ": var(--sm-color-").concat((colorIndex + 6) % colors.length, ");\n        ");
+    return "".concat(colorsAcc, "\n        --sm-background-color-").concat(index, ": var(--sm-color-").concat(colorIndex, ");\n        --sm-dark-color-").concat(index, ": ").concat(colorIndex > 5 ? 'var(--sm-color-0)' : 'var(--sm-text-color-0)', ";\n        --sm-darker-color-").concat(index, ": ").concat(colorIndex > 5 ? 'var(--sm-color-1)' : 'var(--sm-text-color-0)', ";\n        --sm-accent-color-").concat(index, ": var(--sm-color-").concat((colorIndex + 6) % colors.length, ");\n        ");
   }, '');
 };
 var getCSSFromPalettes = function getCSSFromPalettes(palettes) {
