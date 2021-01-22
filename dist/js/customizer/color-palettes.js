@@ -4815,7 +4815,7 @@ var ColorControls = function ColorControls(props) {
         setColors(newColors);
       }
     }, "Delete"));
-  })), colors.length < 3 && /*#__PURE__*/React.createElement("button", {
+  })), /*#__PURE__*/React.createElement("button", {
     className: "c-palette-builder__add",
     onClick: function onClick(e) {
       e.preventDefault();
@@ -4889,14 +4889,12 @@ var mapAddSourceIndex = function mapAddSourceIndex(palette, index, palettes) {
     sourceIndex: getSourceIndex(palette)
   }, palette);
 };
-
 var getShiftedArray = function getShiftedArray(array, positions) {
   var arrayClone = array.slice();
   var chunk = arrayClone.splice(0, positions);
   arrayClone.push.apply(arrayClone, utils_toConsumableArray(chunk));
   return arrayClone;
 };
-
 var mapShiftColors = function mapShiftColors(palette) {
   palette.colors = getShiftedArray(palette.colors);
   return palette;
@@ -5077,7 +5075,12 @@ var contrastToLuminance = function contrastToLuminance(contrast) {
   return 1.05 / contrast - 0.05;
 };
 
-var getCSSFromColors = function getCSSFromColors(colors) {
+var getVariablesCSS = function getVariablesCSS(colors) {
+  return colors.reduce(function (colorsAcc, color, colorIndex) {
+    return "".concat(colorsAcc, "\n        --sm-color-").concat(colorIndex, ": ").concat(color.background, ";\n        ");
+  }, '');
+};
+var getVariationVariablesCSS = function getVariationVariablesCSS(colors) {
   return colors.reduce(function (colorsAcc, color, colorIndex) {
     return "".concat(colorsAcc, "\n        --sm-background-color-").concat(colorIndex, ": ").concat(color.background, ";\n        --sm-dark-color-").concat(colorIndex, ": ").concat(color.dark, ";\n        --sm-darker-color-").concat(colorIndex, ": ").concat(color.darker, ";\n        --sm-accent-color-").concat(colorIndex, ": ").concat(color.accent, ";\n        ");
   }, '');
@@ -5103,7 +5106,7 @@ var getCSSFromPalettes = function getCSSFromPalettes(palettes) {
       selector = ":root, ".concat(selector);
     }
 
-    return "\n      ".concat(palettesAcc, "\n      \n      ").concat(selector, " { ").concat(getCSSFromColors(palette.colors), " }\n      .sm-palette-").concat(paletteIndex, ".sm-palette--shifted { ").concat(getCSSFromColors(shiftedColors), " }\n    ");
+    return "\n      ".concat(palettesAcc, "\n      \n      ").concat(selector, " { ").concat(getVariationVariablesCSS(palette.colors), " }\n      .sm-palette-").concat(paletteIndex, ".sm-palette--shifted { ").concat(getVariationVariablesCSS(shiftedColors), " }\n    ");
   }, '');
 };
 
@@ -5182,29 +5185,15 @@ var builder_Builder = function Builder(props) {
     colors: colors,
     setColors: setColors
   }), palettes.map(function (palette) {
-    var colors = palette.colors;
+    var colors = palette.colors,
+        sourceIndex = palette.sourceIndex;
+    var shiftedColors = getShiftedArray(colors, sourceIndex);
     return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
       className: "palette-preview"
-    }, colors.map(function (color) {
+    }, shiftedColors.map(function (color) {
       return /*#__PURE__*/React.createElement("div", {
         style: {
           color: color.background
-        }
-      });
-    })), /*#__PURE__*/React.createElement("div", {
-      className: "palette-preview"
-    }, colors.map(function (color) {
-      return /*#__PURE__*/React.createElement("div", {
-        style: {
-          color: color.dark
-        }
-      });
-    })), /*#__PURE__*/React.createElement("div", {
-      className: "palette-preview"
-    }, colors.map(function (color) {
-      return /*#__PURE__*/React.createElement("div", {
-        style: {
-          color: color.accent
         }
       });
     })));
@@ -5233,7 +5222,6 @@ var initializePaletteBuilder = function initializePaletteBuilder(sourceSettingID
 var builder_getCSSFromInputValue = function getCSSFromInputValue(value) {
   var colors = getColorsFromInputValue(value);
   var palettes = getPalettesFromColors(colors);
-  console.log(getCSSFromPalettes(palettes));
   return getCSSFromPalettes(palettes);
 };
 

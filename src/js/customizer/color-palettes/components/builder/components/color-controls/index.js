@@ -38,17 +38,14 @@ const ColorControls = ( props ) => {
           } )
         }
       </div>
-      {
-        colors.length < 3 &&
-        <button className="c-palette-builder__add" onClick={(e) => {
-          e.preventDefault();
-          setColors( [ ...colors, {
-            label: 'Dark',
-            value: '#111111'
-          } ] )
-        } }>Add Color
-        </button>
-      }
+      <button className="c-palette-builder__add" onClick={(e) => {
+        e.preventDefault();
+        setColors( [ ...colors, {
+          label: 'Dark',
+          value: '#111111'
+        } ] )
+      } }>Add Color
+      </button>
     </div>
 
   )

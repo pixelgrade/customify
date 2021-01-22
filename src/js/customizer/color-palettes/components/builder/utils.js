@@ -30,7 +30,7 @@ export const mapAddSourceIndex = ( palette, index, palettes ) => {
   };
 }
 
-const getShiftedArray = ( array, positions ) => {
+export const getShiftedArray = ( array, positions ) => {
   const arrayClone = array.slice();
   const chunk = arrayClone.splice( 0, positions );
   arrayClone.push( ...chunk );
@@ -225,7 +225,15 @@ const contrastToLuminance = ( contrast ) => {
   return 1.05 / contrast - 0.05;
 }
 
-export const getCSSFromColors = ( colors ) => {
+export const getVariablesCSS = ( colors ) => {
+  return colors.reduce( ( colorsAcc, color, colorIndex ) => {
+    return `${ colorsAcc }
+        --sm-color-${ colorIndex }: ${ color.background };
+        `;
+  }, '' );
+}
+
+export const getVariationVariablesCSS = ( colors ) => {
   return colors.reduce( ( colorsAcc, color, colorIndex ) => {
     return `${ colorsAcc }
         --sm-background-color-${ colorIndex }: ${ color.background };
@@ -261,8 +269,8 @@ export const getCSSFromPalettes = ( palettes ) => {
     return `
       ${ palettesAcc }
       
-      ${ selector } { ${ getCSSFromColors( palette.colors ) } }
-      .sm-palette-${ paletteIndex }.sm-palette--shifted { ${ getCSSFromColors( shiftedColors ) } }
+      ${ selector } { ${ getVariationVariablesCSS( palette.colors ) } }
+      .sm-palette-${ paletteIndex }.sm-palette--shifted { ${ getVariationVariablesCSS( shiftedColors ) } }
     `;
   }, '');
 }

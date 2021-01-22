@@ -8,6 +8,7 @@ import ColorControls from "./components/color-controls";
 import {
   getPalettesFromColors,
   getCSSFromPalettes,
+  getShiftedArray,
 } from "./utils";
 
 const getColorsFromInputValue = ( value ) => {
@@ -63,13 +64,14 @@ const Builder = ( props ) => {
     <div>
       <ColorControls colors={ colors } setColors={ setColors } />
       { palettes.map( palette => {
-        const { colors } = palette;
+        const { colors, sourceIndex } = palette;
+        const shiftedColors = getShiftedArray( colors, sourceIndex );
 
         return (
           <div>
-            <div className={ "palette-preview" }>{ colors.map( color => <div style={ { color: color.background } }></div> ) }</div>
-            <div className={ "palette-preview" }>{ colors.map( color => <div style={ { color: color.dark } }></div> ) }</div>
-            <div className={ "palette-preview" }>{ colors.map( color => <div style={ { color: color.accent } }></div> ) }</div>
+            <div className={ "palette-preview" }>{ shiftedColors.map( color => <div style={ { color: color.background } }></div> ) }</div>
+            {/*<div className={ "palette-preview" }>{ shiftedColors.map( color => <div style={ { color: color.dark } }></div> ) }</div>*/}
+            {/*<div className={ "palette-preview" }>{ shiftedColors.map( color => <div style={ { color: color.accent } }></div> ) }</div>*/}
           </div>
         )
       } ) }
@@ -98,7 +100,6 @@ const getCSSFromInputValue = ( value ) => {
   const colors = getColorsFromInputValue( value );
   const palettes = getPalettesFromColors( colors );
 
-  console.log( getCSSFromPalettes( palettes ) );
   return getCSSFromPalettes( palettes );
 }
 
