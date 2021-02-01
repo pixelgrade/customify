@@ -1427,13 +1427,11 @@ class Customify_Color_Palettes {
 				$value,
 				$value,
 				$value,
-				$value,
+				$dark,
 				$dark,
 				$dark,
 				$darker,
 				'#000000',
-				$text_color,
-				$text_color,
 			);
 
 			$color_objects = array();
@@ -1446,10 +1444,27 @@ class Customify_Color_Palettes {
 				$color_objects[] = $obj;
 			}
 
+			$textColors = array(
+				$text_color,
+				$text_color,
+			);
+
+			$textColor_objects = array();
+
+			foreach ( $textColors as $color ) {
+				$obj = ( object ) array(
+					'value' => $color
+				);
+
+				$textColor_objects[] = $obj;
+			}
+
 			$palettes[] = ( object ) array(
-				'colors' => $color_objects,
-				'source' => $value,
-				'label' => 'Color ' . $alphabet[ $index ]
+				'colors'      => $color_objects,
+				'textColors'  => $textColor_objects,
+				'source'      => $value,
+				'sourceIndex' => 6,
+				'label'       => 'Color ' . $alphabet[ $index ]
 			);
 		}
 
