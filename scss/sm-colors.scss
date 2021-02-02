@@ -1,8 +1,14 @@
 @mixin apply-variation( $i ) {
-  --sm-current-accent-color: var(--sm-accent-color-#{ $i });
+
+  @for $j from 0 through 11 {
+    $index: #{ ( $i + $j ) % 12 };
+    --sm-current-color-#{ $j }: var(--sm-color-#{ $index });
+  }
+
+  --sm-current-accent-color: var(--sm-current-color-6);
+  --sm-current-background-color: var(--sm-current-color-0);
   --sm-current-dark-color: var(--sm-dark-color-#{ $i });
   --sm-current-darker-color: var(--sm-darker-color-#{ $i });
-  --sm-current-background-color: var(--sm-background-color-#{ $i });
 }
 
 @for $i from 0 through 11 {

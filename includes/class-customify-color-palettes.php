@@ -1471,28 +1471,6 @@ class Customify_Color_Palettes {
 		return $palettes;
 	}
 
-	function get_variation_variables( $palette, $isShifted = false ) {
-		$colors = $palette->colors;
-		$offset =  $isShifted ? $palette->sourceIndex : 0;
-
-		$output = '';
-
-		foreach ( $colors as $index => $color ) {
-			$color_index = ( $index + $offset ) % count( $colors );
-			$background_color = 'var(--sm-color-' . $color_index . ')';
-			$dark_color = $color_index > 5 ? 'var(--sm-color-0)' : 'var(--sm-text-color-0)';
-			$darker_color = $color_index > 5 ? 'var(--sm-color-0)' : 'var(--sm-text-color-1)';
-			$accent_color = 'var(--sm-color-' . ( $color_index + 6 ) % 12 . ')';
-
-			$output .= '--sm-background-color-' . $index . ': ' . $background_color . ';' . PHP_EOL;
-			$output .= '--sm-dark-color-' . $index  . ': ' . $dark_color . ';' . PHP_EOL;
-			$output .= '--sm-darker-color-' . $index  . ': ' . $darker_color . ';' . PHP_EOL;
-			$output .= '--sm-accent-color-' . $index  . ': ' . $accent_color . ';' . PHP_EOL;
-		}
-
-		return $output;
-	}
-
 	function palettes_output( $palettes ) {
 		$output = '';
 
@@ -1510,20 +1488,33 @@ class Customify_Color_Palettes {
 
 			foreach ( $colors as $color_index => $color ) {
 				$output .= '--sm-color-' . $color_index . ': ' . $color->value . ';' . PHP_EOL;
-			}
 
-			foreach ( $textColors as $color_index => $color ) {
-				$output .= '--sm-text-color-' . $color_index . ': ' . $color->value . ';' . PHP_EOL;
+				if ( $color_index > 5 ) {
+					$output .= '--sm-dark-color-' . $color_index . ': #FFFFFF;' . PHP_EOL;
+					$output .= '--sm-darker-color-' . $color_index . ': #FFFFFF;' . PHP_EOL;
+				} else {
+					$output .= '--sm-dark-color-' . $color_index . ': ' . $textColors[0]->value . ';' . PHP_EOL;
+					$output .= '--sm-darker-color-' . $color_index . ': ' . $textColors[1]->value . ';' . PHP_EOL;
+				}
 			}
-
-			$output .= get_variation_variables( $palette ) . PHP_EOL;
 
 			$output .= '}' . PHP_EOL;
 
 			$output .= '.sm-palette-' . $palette_index . '.sm-palette--shifted { ' . PHP_EOL;
 			$output .= '--sm-property-that-customify-can-break: #FFF; ' . PHP_EOL;
 
-			$output .= get_variation_variables( $palette, true ) . PHP_EOL;
+			foreach ( $colors as $index => $color ) {
+				$color_index = ( $index + $palette->sourceIndex ) % count( $colors );
+				$output .= '--sm-color-' . $index . ': ' . $colors[ $color_index ]->value . ';' . PHP_EOL;
+
+				if ( $color_index > 5 ) {
+					$output .= '--sm-dark-color-' . $index . ': #FFFFFF;' . PHP_EOL;
+					$output .= '--sm-darker-color-' . $index . ': #FFFFFF;' . PHP_EOL;
+				} else {
+					$output .= '--sm-dark-color-' . $index . ': ' . $textColors[0]->value . ';' . PHP_EOL;
+					$output .= '--sm-darker-color-' . $index . ': ' . $textColors[1]->value . ';' . PHP_EOL;
+				}
+			}
 
 			$output .= '}' . PHP_EOL;
 		}

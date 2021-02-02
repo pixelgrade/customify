@@ -586,30 +586,47 @@ function sm_get_variation_range_control( $label, $selector, $default ) {
 }
 
 function sm_variation_range_cb( $value, $selector, $property ) {
-	return $selector . ' { ' . PHP_EOL .
-	   '--sm-current-accent-color: var(--sm-accent-color-' . $value . ');' .
-	   '--sm-current-background-color: var(--sm-background-color-' . $value . ');' .
-	   '--sm-current-dark-color: var(--sm-dark-color-' . $value . ');' .
-	   '--sm-current-darker-color: var(--sm-darker-color-' . $value . ');' .
-   PHP_EOL . '}' . PHP_EOL;
+	$output = '';
+	$output .= $selector . ' { ' . PHP_EOL;
+
+	for ( $i = 0; $i < 12; $i++ ) {
+		$output .= '--sm-current-color-' . $i . ': var(--sm-color-' . ( $value + $i ) % 12 . ');' . PHP_EOL;
+	}
+
+	$output .=
+	   '--sm-current-accent-color: var(--sm-color-' . ( $value + 6 ) % 12 . ');' . PHP_EOL .
+	   '--sm-current-background-color: var(--sm-color-' . $value . ');' . PHP_EOL .
+	   '--sm-current-dark-color: var(--sm-dark-color-' . $value . ');' . PHP_EOL .
+	   '--sm-current-darker-color: var(--sm-darker-color-' . $value . ');' . PHP_EOL .
+	'}' . PHP_EOL;
+
+	return $output;
 }
+
 function sm_variation_range_cb_customizer_preview() {
 	$js = "";
 
 	$js .= "
 function sm_variation_range_cb(value, selector, property) {
     var css = '',
+        variation = parseInt( value, 10 ),
         string = selector + property,
         id = string.hashCode(),
         idAttr = 'rosa2_color_select' + id;
         style = document.getElementById( idAttr ),
         head = document.head || document.getElementsByTagName('head')[0];
 
-    css += selector + ' {' +
-        '--sm-current-accent-color: var(--sm-accent-color-' + value + ');' +
-        '--sm-current-background-color: var(--sm-background-color-' + value + ');' +
-        '--sm-current-dark-color: var(--sm-dark-color-' + value + ');' +
-        '--sm-current-darker-color: var(--sm-darker-color-' + value + ');' +
+    css += selector + ' {';
+    
+    for ( var i = 0; i < 12; i++ ) {
+    	css += '--sm-current-color-' + i + ': var(--sm-color-' + (( variation + i ) % 12) + ');';
+    }
+    
+    css +=
+		'--sm-current-accent-color: var(--sm-color-' + (( variation + 6 ) % 12) + ');' +
+		'--sm-current-background-color: var(--sm-color-' + variation + ');' +
+		'--sm-current-dark-color: var(--sm-dark-color-' + variation + ');' +
+		'--sm-current-darker-color: var(--sm-darker-color-' + variation + ');' +
         '}';
     
     if ( style !== null ) {
