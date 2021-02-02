@@ -562,6 +562,77 @@ function sm_get_color_select_dark_config( $label, $selector, $default, $properti
 		'choices' => $choices,
 	);
 }
+
+function sm_get_variation_range_control( $label, $selector, $default ) {
+	return array(
+		'type'        => 'range',
+		'live'        => true,
+		'label'       => esc_html__( $label, '__theme_txtd' ),
+		'default'     => $default,
+		'input_attrs' => array(
+			'min'  => 0,
+			'max'  => 11,
+			'step' => 1,
+		),
+		'css'         => array(
+			array(
+				'property'        => '--sm-property',
+				'selector'        => $selector,
+				'unit'            => '',
+				'callback_filter' => 'sm_variation_range_cb'
+			),
+		)
+	);
+}
+
+function sm_variation_range_cb( $value, $selector, $property ) {
+	return $selector . ' { ' . PHP_EOL .
+	   '--sm-current-accent-color: var(--sm-accent-color-' . $value . ');' .
+	   '--sm-current-background-color: var(--sm-background-color-' . $value . ');' .
+	   '--sm-current-dark-color: var(--sm-dark-color-' . $value . ');' .
+	   '--sm-current-darker-color: var(--sm-darker-color-' . $value . ');' .
+   PHP_EOL . '}' . PHP_EOL;
+}
+function sm_variation_range_cb_customizer_preview() {
+	$js = "";
+
+	$js .= "
+function sm_variation_range_cb(value, selector, property) {
+    var css = '',
+        string = selector + property,
+        id = string.hashCode(),
+        idAttr = 'rosa2_color_select' + id;
+        style = document.getElementById( idAttr ),
+        head = document.head || document.getElementsByTagName('head')[0];
+
+    css += selector + ' {' +
+        '--sm-current-accent-color: var(--sm-accent-color-' + value + ');' +
+        '--sm-current-background-color: var(--sm-background-color-' + value + ');' +
+        '--sm-current-dark-color: var(--sm-dark-color-' + value + ');' +
+        '--sm-current-darker-color: var(--sm-darker-color-' + value + ');' +
+        '}';
+    
+    if ( style !== null ) {
+        style.innerHTML = css;
+    } else {
+        style = document.createElement('style');
+        style.setAttribute( 'id', idAttr );
+
+        style.type = 'text/css';
+        if ( style.styleSheet ) {
+            style.styleSheet.cssText = css;
+        } else {
+            style.appendChild(document.createTextNode(css));
+        }
+
+        head.appendChild(style);
+    }" . PHP_EOL .
+		   "}" . PHP_EOL;
+
+	wp_add_inline_script( 'customify-previewer-scripts', $js );
+}
+add_action( 'customize_preview_init', 'sm_variation_range_cb_customizer_preview', 20 );
+
 function sm_color_select_dark_cb( $value, $selector, $property ) {
 	return $selector . ' { ' . $property . ': var(--sm-current-' . $value . '-color); }' . PHP_EOL;
 }

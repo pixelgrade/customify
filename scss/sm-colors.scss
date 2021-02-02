@@ -5,10 +5,6 @@
   --sm-current-background-color: var(--sm-background-color-#{ $i });
 }
 
-html {
-  @include apply-variation(0);
-}
-
 @for $i from 0 through 11 {
 
   .sm-variation-#{ $i } {
