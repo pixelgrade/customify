@@ -30,28 +30,35 @@ const getValueFromColors = ( colors ) => {
 
 const Builder = ( props ) => {
   const { sourceSettingID, outputSettingID } = props;
+  const variationSetting = wp.customize( 'sm_site_color_variation' );
   const sourceSetting = wp.customize( sourceSettingID );
   const outputSetting = wp.customize( outputSettingID );
   const [ colors, setColors ] = useState( getColorsFromInputValue( sourceSetting() ) );
 
   const changeListener = useCallback( value => {
-    const colors = getColorsFromInputValue( value );
-    const palettes = getPalettesFromColors( colors );
+    const newColors = getColorsFromInputValue( sourceSetting() );
+    const palettes = getPalettesFromColors( newColors );
 
-    setColors( colors );
+    setColors( newColors );
 
     if ( typeof outputSetting !== "undefined" ) {
       outputSetting.set( JSON.stringify( palettes ) );
     }
   }, [ colors ] );
 
+  const variationChangeListener = useCallback( value => {
+
+  }, [] )
+
   useEffect(() => {
     // Attach the listeners on component mount.
     sourceSetting.bind( changeListener );
+    variationSetting.bind( changeListener );
 
     // Detach the listeners on component unmount.
     return () => {
       sourceSetting.unbind( changeListener );
+      variationSetting.unbind( changeListener );
     }
   }, []);
 
@@ -73,13 +80,13 @@ const Builder = ( props ) => {
         return (
           <div className={ `palette-preview-set sm-palette-${ index }` }>
             <div className={ "palette-preview" }>
-              { colors.map( ( color, colorIndex ) => <div style={ { color: `var(--sm-background-color-${ colorIndex })` } }></div> ) }
+              { colors.map( ( color, colorIndex ) => <div className={ `sm-variation-${ colorIndex } `} style={ { color: `var(--sm-current-background-color)` } }></div> ) }
             </div>
             <div className={ "palette-preview" }>
-              { colors.map( ( color, colorIndex ) => <div style={ { color: `var(--sm-dark-color-${ colorIndex })` } }></div> ) }
+              { colors.map( ( color, colorIndex ) => <div className={ `sm-variation-${ colorIndex } `} style={ { color: `var(--sm-current-dark-color)` } }></div> ) }
             </div>
             <div className={ "palette-preview" }>
-              { colors.map( ( color, colorIndex ) => <div style={ { color: `var(--sm-accent-color-${ colorIndex })` } }></div> ) }
+              { colors.map( ( color, colorIndex ) => <div className={ `sm-variation-${ colorIndex } `} style={ { color: `var(--sm-current-accent-color)` } }></div> ) }
             </div>
           </div>
         )

@@ -563,96 +563,10 @@ function sm_get_color_select_dark_config( $label, $selector, $default, $properti
 	);
 }
 
-function sm_get_variation_range_control( $label, $selector, $default ) {
-	return array(
-		'type'        => 'range',
-		'live'        => true,
-		'label'       => esc_html__( $label, '__theme_txtd' ),
-		'default'     => $default,
-		'input_attrs' => array(
-			'min'  => 0,
-			'max'  => 11,
-			'step' => 1,
-		),
-		'css'         => array(
-			array(
-				'property'        => '--sm-property',
-				'selector'        => $selector,
-				'unit'            => '',
-				'callback_filter' => 'sm_variation_range_cb'
-			),
-		)
-	);
-}
-
-function sm_variation_range_cb( $value, $selector, $property ) {
-	$output = '';
-	$output .= $selector . ' { ' . PHP_EOL;
-
-	for ( $i = 0; $i < 12; $i++ ) {
-		$output .= '--sm-current-color-' . $i . ': var(--sm-color-' . ( $value + $i ) % 12 . ');' . PHP_EOL;
-	}
-
-	$output .=
-	   '--sm-current-accent-color: var(--sm-color-' . ( $value + 6 ) % 12 . ');' . PHP_EOL .
-	   '--sm-current-background-color: var(--sm-color-' . $value . ');' . PHP_EOL .
-	   '--sm-current-dark-color: var(--sm-dark-color-' . $value . ');' . PHP_EOL .
-	   '--sm-current-darker-color: var(--sm-darker-color-' . $value . ');' . PHP_EOL .
-	'}' . PHP_EOL;
-
-	return $output;
-}
-
-function sm_variation_range_cb_customizer_preview() {
-	$js = "";
-
-	$js .= "
-function sm_variation_range_cb(value, selector, property) {
-    var css = '',
-        variation = parseInt( value, 10 ),
-        string = selector + property,
-        id = string.hashCode(),
-        idAttr = 'rosa2_color_select' + id;
-        style = document.getElementById( idAttr ),
-        head = document.head || document.getElementsByTagName('head')[0];
-
-    css += selector + ' {';
-    
-    for ( var i = 0; i < 12; i++ ) {
-    	css += '--sm-current-color-' + i + ': var(--sm-color-' + (( variation + i ) % 12) + ');';
-    }
-    
-    css +=
-		'--sm-current-accent-color: var(--sm-color-' + (( variation + 6 ) % 12) + ');' +
-		'--sm-current-background-color: var(--sm-color-' + variation + ');' +
-		'--sm-current-dark-color: var(--sm-dark-color-' + variation + ');' +
-		'--sm-current-darker-color: var(--sm-darker-color-' + variation + ');' +
-        '}';
-    
-    if ( style !== null ) {
-        style.innerHTML = css;
-    } else {
-        style = document.createElement('style');
-        style.setAttribute( 'id', idAttr );
-
-        style.type = 'text/css';
-        if ( style.styleSheet ) {
-            style.styleSheet.cssText = css;
-        } else {
-            style.appendChild(document.createTextNode(css));
-        }
-
-        head.appendChild(style);
-    }" . PHP_EOL .
-		   "}" . PHP_EOL;
-
-	wp_add_inline_script( 'customify-previewer-scripts', $js );
-}
-add_action( 'customize_preview_init', 'sm_variation_range_cb_customizer_preview', 20 );
-
 function sm_color_select_dark_cb( $value, $selector, $property ) {
 	return $selector . ' { ' . $property . ': var(--sm-current-' . $value . '-color); }' . PHP_EOL;
 }
+
 function sm_color_select_dark_cb_customizer_preview() {
 	$js = "";
 
@@ -689,9 +603,11 @@ function sm_color_select_dark_cb(value, selector, property) {
 	wp_add_inline_script( 'customify-previewer-scripts', $js );
 }
 add_action( 'customize_preview_init', 'sm_color_select_dark_cb_customizer_preview', 20 );
+
 function sm_color_select_darker_cb( $value, $selector, $property ) {
 	return $selector . ' { ' . $property . ': var(--sm-current-' . $value . '-color); }' . PHP_EOL;
 }
+
 function sm_color_select_darker_cb_customizer_preview() {
 	$js = "";
 
@@ -732,6 +648,7 @@ add_action( 'customize_preview_init', 'sm_color_select_darker_cb_customizer_prev
 function sm_get_color_switch_darker_config( $label, $selector, $default, $properties = [ 'color' ] ) {
 	return sm_get_color_switch_dark_config( $label, $selector, $default, $properties, true );
 }
+
 function sm_get_color_switch_dark_config( $label, $selector, $default, $properties = [ 'color' ], $isDarker = false ) {
 
 	$css = array();
@@ -818,6 +735,7 @@ function sm_color_switch_dark_cb(value, selector, property) {
 	wp_add_inline_script( 'customify-previewer-scripts', $js );
 }
 add_action( 'customize_preview_init', 'sm_color_switch_dark_cb_customizer_preview', 20 );
+
 function sm_color_switch_darker_cb( $value, $selector, $property ) {
 	$output = '';
 	$color = 'darker';

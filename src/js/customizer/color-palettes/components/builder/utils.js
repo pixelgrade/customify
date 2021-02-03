@@ -226,22 +226,37 @@ export const getVariablesCSS = ( palette ) => {
 }
 
 export const getVariationVariablesCSS = ( palette, isShifted = false ) => {
-  const { colors, sourceIndex } = palette;
-  const offset = isShifted ? sourceIndex : 0;
+  const { colors, textColors, sourceIndex } = palette;
+  const count = colors.length;
+  const variationSetting = wp.customize( 'sm_site_color_variation' );
+  const variation = !! variationSetting ? variationSetting() : 0;
 
   return colors.reduce( ( colorsAcc, color, index ) => {
-    const colorIndex = ( index + offset ) % colors.length;
+    const newColorIndex = ( index - variation + count ) % count;
+    const oldColorIndex = isShifted ? ( newColorIndex + sourceIndex ) % count : index;
 
     return `${ colorsAcc }
-        --sm-background-color-${ index }: var(--sm-color-${ colorIndex });
-        --sm-dark-color-${ index }: ${ colorIndex > 5 ? 'var(--sm-color-0)' : 'var(--sm-text-color-0)' };
-        --sm-darker-color-${ index }: ${ colorIndex > 5 ? 'var(--sm-color-1)' : 'var(--sm-text-color-0)' };
-        --sm-accent-color-${ index }: var(--sm-color-${ ( colorIndex + 6 ) % colors.length });
+        --sm-color-${ newColorIndex }: ${ colors[ oldColorIndex ].value };
+        ${ getDarkColorVariables( textColors, newColorIndex, oldColorIndex ) }
         `;
   }, '' );
 }
 
-export const getCSSFromPalettes = ( palettes ) => {
+export const getDarkColorVariables = ( textColors, newColorIndex, oldColorIndex ) => {
+  let output = '';
+
+  if ( oldColorIndex > 5 ) {
+    output += `--sm-dark-color-${ newColorIndex }: #FFFFFF;`;
+    output += `--sm-darker-color-${ newColorIndex }: #FFFFFF;`;
+  } else {
+    output += `--sm-dark-color-${ newColorIndex }: ${ textColors[0].value };`;
+    output += `--sm-darker-color-${ newColorIndex }: ${ textColors[1].value };`;
+  }
+
+  return output;
+}
+
+export const getCSSFromPalettes = ( palettes, variation = 0 ) => {
 
   if ( ! palettes.length ) {
     return '';

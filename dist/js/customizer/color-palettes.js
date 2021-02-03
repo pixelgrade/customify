@@ -5071,14 +5071,33 @@ var getVariablesCSS = function getVariablesCSS(palette) {
 var getVariationVariablesCSS = function getVariationVariablesCSS(palette) {
   var isShifted = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
   var colors = palette.colors,
+      textColors = palette.textColors,
       sourceIndex = palette.sourceIndex;
-  var offset = isShifted ? sourceIndex : 0;
+  var count = colors.length;
+  var variationSetting = wp.customize('sm_site_color_variation');
+  var variation = !!variationSetting ? variationSetting() : 0;
   return colors.reduce(function (colorsAcc, color, index) {
-    var colorIndex = (index + offset) % colors.length;
-    return "".concat(colorsAcc, "\n        --sm-background-color-").concat(index, ": var(--sm-color-").concat(colorIndex, ");\n        --sm-dark-color-").concat(index, ": ").concat(colorIndex > 5 ? 'var(--sm-color-0)' : 'var(--sm-text-color-0)', ";\n        --sm-darker-color-").concat(index, ": ").concat(colorIndex > 5 ? 'var(--sm-color-1)' : 'var(--sm-text-color-0)', ";\n        --sm-accent-color-").concat(index, ": var(--sm-color-").concat((colorIndex + 6) % colors.length, ");\n        ");
+    var newColorIndex = (index - variation + count) % count;
+    var oldColorIndex = isShifted ? (newColorIndex + sourceIndex) % count : index;
+    return "".concat(colorsAcc, "\n        --sm-color-").concat(newColorIndex, ": ").concat(colors[oldColorIndex].value, ";\n        ").concat(getDarkColorVariables(textColors, newColorIndex, oldColorIndex), "\n        ");
   }, '');
 };
+var getDarkColorVariables = function getDarkColorVariables(textColors, newColorIndex, oldColorIndex) {
+  var output = '';
+
+  if (oldColorIndex > 5) {
+    output += "--sm-dark-color-".concat(newColorIndex, ": #FFFFFF;");
+    output += "--sm-darker-color-".concat(newColorIndex, ": #FFFFFF;");
+  } else {
+    output += "--sm-dark-color-".concat(newColorIndex, ": ").concat(textColors[0].value, ";");
+    output += "--sm-darker-color-".concat(newColorIndex, ": ").concat(textColors[1].value, ";");
+  }
+
+  return output;
+};
 var getCSSFromPalettes = function getCSSFromPalettes(palettes) {
+  var variation = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+
   if (!palettes.length) {
     return '';
   } // the old implementation generates 3 fallback palettes and
@@ -5143,6 +5162,7 @@ var getValueFromColors = function getValueFromColors(colors) {
 var builder_Builder = function Builder(props) {
   var sourceSettingID = props.sourceSettingID,
       outputSettingID = props.outputSettingID;
+  var variationSetting = wp.customize('sm_site_color_variation');
   var sourceSetting = wp.customize(sourceSettingID);
   var outputSetting = wp.customize(outputSettingID);
 
@@ -5152,20 +5172,23 @@ var builder_Builder = function Builder(props) {
       setColors = _useState2[1];
 
   var changeListener = useCallback(function (value) {
-    var colors = getColorsFromInputValue(value);
-    var palettes = getPalettesFromColors(colors);
-    setColors(colors);
+    var newColors = getColorsFromInputValue(sourceSetting());
+    var palettes = getPalettesFromColors(newColors);
+    setColors(newColors);
 
     if (typeof outputSetting !== "undefined") {
       outputSetting.set(JSON.stringify(palettes));
     }
   }, [colors]);
+  var variationChangeListener = useCallback(function (value) {}, []);
   useEffect(function () {
     // Attach the listeners on component mount.
-    sourceSetting.bind(changeListener); // Detach the listeners on component unmount.
+    sourceSetting.bind(changeListener);
+    variationSetting.bind(changeListener); // Detach the listeners on component unmount.
 
     return function () {
       sourceSetting.unbind(changeListener);
+      variationSetting.unbind(changeListener);
     };
   }, []);
   useEffect(function () {
@@ -5183,24 +5206,27 @@ var builder_Builder = function Builder(props) {
       className: "palette-preview"
     }, colors.map(function (color, colorIndex) {
       return /*#__PURE__*/React.createElement("div", {
+        className: "sm-variation-".concat(colorIndex, " "),
         style: {
-          color: "var(--sm-background-color-".concat(colorIndex, ")")
+          color: "var(--sm-current-background-color)"
         }
       });
     })), /*#__PURE__*/React.createElement("div", {
       className: "palette-preview"
     }, colors.map(function (color, colorIndex) {
       return /*#__PURE__*/React.createElement("div", {
+        className: "sm-variation-".concat(colorIndex, " "),
         style: {
-          color: "var(--sm-dark-color-".concat(colorIndex, ")")
+          color: "var(--sm-current-dark-color)"
         }
       });
     })), /*#__PURE__*/React.createElement("div", {
       className: "palette-preview"
     }, colors.map(function (color, colorIndex) {
       return /*#__PURE__*/React.createElement("div", {
+        className: "sm-variation-".concat(colorIndex, " "),
         style: {
-          color: "var(--sm-accent-color-".concat(colorIndex, ")")
+          color: "var(--sm-current-accent-color)"
         }
       });
     })));

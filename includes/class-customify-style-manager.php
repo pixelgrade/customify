@@ -311,6 +311,7 @@ if ( ! class_exists( 'Customify_Style_Manager' ) ) {
 				$color_palettes_fields = array(
 					'sm_advanced_palette_source',
 					'sm_advanced_palette_output',
+					'sm_site_color_variation',
 
 					'sm_text_color_switch_master',
 					'sm_text_color_select_master',
