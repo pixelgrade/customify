@@ -81,6 +81,8 @@ class Customify_Color_Palettes {
 		 * Reset various Color Palettes options on theme switch to ensure consistency.
 		 */
 		add_action( 'after_switch_theme', array( $this, 'reset_various_options_on_switch_theme' ), 100 );
+
+		add_filter( 'language_attributes', array( $this, 'add_color_scheme_attribute' ), 10, 2 );
 	}
 
 	/**
@@ -104,6 +106,7 @@ class Customify_Color_Palettes {
 			return;
 		}
 
+		wp_enqueue_script( 'sm-dark-mode', plugins_url( 'dist/js/dark-mode' . $suffix . '.js', PixCustomifyPlugin()->get_file() ), array( 'jquery' ), PixCustomifyPlugin()->get_version() );
 		wp_enqueue_script( PixCustomifyPlugin()->get_slug() . '-color-palettes' );
 	}
 
@@ -1177,6 +1180,31 @@ class Customify_Color_Palettes {
 	 */
 	public function is_using_custom_palette() {
 		return (bool) get_option( 'sm_is_custom_color_palette', false );
+	}
+
+	/**
+	 * Add Color Scheme attribute to <html> tag.
+	 *
+	 * @since 1.6.0
+	 *
+	 * @param string $output A space-separated list of language attributes.
+	 * @param string $doctype The type of html document (xhtml|html).
+	 *
+	 * @return string $output A space-separated list of language attributes.
+	 */
+	public function add_color_scheme_attribute( $output, $doctype ) {
+
+		if ( is_admin() ) {
+			return null;
+		}
+
+		if ( 'html' !== $doctype ) {
+			return $output;
+		}
+
+		$output .= ' data-dark-mode-advanced=' . pixelgrade_option( 'sm_dark_mode_advanced', 'off' );
+
+		return $output;
 	}
 
 	/**

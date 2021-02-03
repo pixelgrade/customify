@@ -67,9 +67,10 @@ const Builder = ( props ) => {
   }, [ colors ] );
 
   const palettes = getPalettesFromColors( colors );
+  const isDark = window?.myApi?.isDark ? window.myApi.isDark() : false;
 
   return (
-    <div>
+    <div className={ isDark ? 'is-dark' : '' }>
       <ColorControls colors={ colors } setColors={ setColors } />
       <style>
         { getCSSFromPalettes( palettes ) }

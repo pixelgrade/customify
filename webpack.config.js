@@ -5,6 +5,8 @@ module.exports = {
   entry: {
     './dist/js/customizer/color-palettes': './src/js/customizer/color-palettes/index.js',
     './dist/js/customizer/color-palettes.min': './src/js/customizer/color-palettes/index.js',
+    './dist/js/dark-mode': './src/js/dark-mode/index.js',
+    './dist/js/dark-mode.min': './src/js/dark-mode/index.js',
   },
   output: {
     path: path.resolve( __dirname ),

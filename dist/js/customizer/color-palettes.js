@@ -81,7 +81,7 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 7);
+/******/ 	return __webpack_require__(__webpack_require__.s = 8);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -4025,7 +4025,8 @@ module.exports = function (cssWithMappingToString) {
 };
 
 /***/ }),
-/* 7 */
+/* 7 */,
+/* 8 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5170,6 +5171,8 @@ var getValueFromColors = function getValueFromColors(colors) {
 };
 
 var builder_Builder = function Builder(props) {
+  var _window, _window$myApi;
+
   var sourceSettingID = props.sourceSettingID,
       outputSettingID = props.outputSettingID;
   var variationSetting = wp.customize('sm_site_color_variation');
@@ -5205,7 +5208,10 @@ var builder_Builder = function Builder(props) {
     sourceSetting.set(getValueFromColors(colors));
   }, [colors]);
   var palettes = getPalettesFromColors(colors);
-  return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement(color_controls, {
+  var isDark = (_window = window) !== null && _window !== void 0 && (_window$myApi = _window.myApi) !== null && _window$myApi !== void 0 && _window$myApi.isDark ? window.myApi.isDark() : false;
+  return /*#__PURE__*/React.createElement("div", {
+    className: isDark ? 'is-dark' : ''
+  }, /*#__PURE__*/React.createElement(color_controls, {
     colors: colors,
     setColors: setColors
   }), /*#__PURE__*/React.createElement("style", null, getCSSFromPalettes(palettes)), palettes.map(function (palette, index) {
