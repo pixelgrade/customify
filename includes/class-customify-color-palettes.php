@@ -1497,25 +1497,37 @@ class Customify_Color_Palettes {
 
 		foreach ( $palettes as $palette_index => $palette ) {
 			$selector = '.sm-palette-' . $palette_index;
+			$isDarkSelector = '.is-dark' . $selector;
+
 
 			if ( $palette_index === 0 ) {
 				$selector = ':root, ' . $selector;
+				$isDarkSelector = '.is-dark, ' . $selector;
 			}
 
-			$output .=  $selector . ' { ' . PHP_EOL;
+			$output .= $selector . ' { ' . PHP_EOL;
 			$output .= '--sm-property-that-customify-can-break: #FFF; ' . PHP_EOL;
 			$output .= get_color_variables( $palette );
 			$output .= '}' . PHP_EOL;
 
+			$output .= $isDarkSelector . ' { ' . PHP_EOL;
+			$output .= '--sm-property-that-customify-can-break: #FFF; ' . PHP_EOL;
+			$output .= get_color_variables( $palette, false, true );
+			$output .= '}' . PHP_EOL;
+
 			$output .= '.sm-palette-' . $palette_index . '.sm-palette--shifted { ' . PHP_EOL;
 			$output .= get_color_variables( $palette, true );
+			$output .= '}' . PHP_EOL;
+
+			$output .= '.is-dark .sm-palette-' . $palette_index . '.sm-palette--shifted { ' . PHP_EOL;
+			$output .= get_color_variables( $palette, true, true );
 			$output .= '}' . PHP_EOL;
 		}
 
 		return $output;
 	}
 
-	function get_color_variables( $palette, $isShifted = false ) {
+	function get_color_variables( $palette, $isShifted = false, $isDark = false ) {
 		$colors = $palette->colors;
 		$textColors = $palette->textColors;
 		$sourceIndex = $palette->sourceIndex;
@@ -1526,7 +1538,15 @@ class Customify_Color_Palettes {
 		foreach ( $colors as $index => $color ) {
 			$new_color_index = ( $index - $variation + $count ) % $count;
 			$old_color_index = $isShifted ? ( $new_color_index + $sourceIndex ) % $count : $index;
+
+			if ( $isDark && $old_color_index < $count / 2 ) {
+				$old_color_index = 11 - $old_color_index;
+			}
+
+			$accent_color_index = ( $old_color_index + $count / 2 ) % $count;
+
 			$output .= '--sm-color-' . $new_color_index . ': ' . $colors[ $old_color_index ]->value . ';' . PHP_EOL;
+			$output .= '--sm-accent-color-' . $new_color_index . ': ' . $colors[ $accent_color_index ]->value . ';' . PHP_EOL;
 			$output .= get_dark_color_variables( $textColors, $new_color_index, $old_color_index );
 		}
 

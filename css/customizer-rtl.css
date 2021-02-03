@@ -4661,6 +4661,10 @@ li.customize-control-select_color {
   background-color: currentColor;
 }
 
+.palette-preview + .palette-preview {
+  height: 10px;
+}
+
 .palette-preview-set + .palette-preview-set {
   margin-top: 5px;
 }

@@ -6,6 +6,7 @@ import contrastArray from './contrast-array';
 const attributes = {
   correctLightness: true,
   useSources: true,
+  mode: 'hsl',
 }
 
 export const getPalettesFromColors = ( colors => {
@@ -225,7 +226,7 @@ export const getVariablesCSS = ( palette ) => {
   `
 }
 
-export const getVariationVariablesCSS = ( palette, isShifted = false ) => {
+export const getVariationVariablesCSS = ( palette, isShifted = false, isDark = false ) => {
   const { colors, textColors, sourceIndex } = palette;
   const count = colors.length;
   const variationSetting = wp.customize( 'sm_site_color_variation' );
@@ -233,10 +234,17 @@ export const getVariationVariablesCSS = ( palette, isShifted = false ) => {
 
   return colors.reduce( ( colorsAcc, color, index ) => {
     const newColorIndex = ( index - variation + count ) % count;
-    const oldColorIndex = isShifted ? ( newColorIndex + sourceIndex ) % count : index;
+    let oldColorIndex = isShifted ? ( newColorIndex + sourceIndex ) % count : index;
+
+    if ( isDark && oldColorIndex < count / 2 ) {
+      oldColorIndex = 11 - oldColorIndex;
+    }
+
+    const accentColorIndex = ( oldColorIndex + count / 2 ) % count;
 
     return `${ colorsAcc }
         --sm-color-${ newColorIndex }: ${ colors[ oldColorIndex ].value };
+        --sm-accent-color-${ newColorIndex }: ${ colors[ accentColorIndex ].value };
         ${ getDarkColorVariables( textColors, newColorIndex, oldColorIndex ) }
         `;
   }, '' );
@@ -271,9 +279,11 @@ export const getCSSFromPalettes = ( palettes, variation = 0 ) => {
 
   return palettes.reduce( ( palettesAcc, palette, paletteIndex, palettes ) => {
     let selector = `.sm-palette-${ paletteIndex }`;
+    let isDarkSelector = `.is-dark ${ selector }`;
 
     if ( paletteIndex === 0 ) {
-      selector = `:root, ${ selector }`
+      selector = `:root, ${ selector }`;
+      isDarkSelector = `.is-dark, ${ isDarkSelector }`
     }
 
     return `
@@ -284,8 +294,16 @@ export const getCSSFromPalettes = ( palettes, variation = 0 ) => {
         ${ getVariationVariablesCSS( palette ) } 
       }
       
+      ${ isDarkSelector } { 
+        ${ getVariationVariablesCSS( palette, false, true ) } 
+      }
+      
       .sm-palette-${ paletteIndex }.sm-palette--shifted { 
         ${ getVariationVariablesCSS( palette, true ) } 
+      }
+      
+      .is-dark .sm-palette-${ paletteIndex }.sm-palette--shifted { 
+        ${ getVariationVariablesCSS( palette, true, true ) } 
       }
     `;
   }, '');

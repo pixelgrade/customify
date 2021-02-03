@@ -4874,7 +4874,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 var utils_attributes = {
   correctLightness: true,
-  useSources: true
+  useSources: true,
+  mode: 'hsl'
 };
 var getPalettesFromColors = function getPalettesFromColors(colors) {
   return colors.map(utils_mapColorToPalette(utils_attributes)).map(mapInterpolateSource(utils_attributes)).map(utils_mapCorrectLightness(utils_attributes)).map(mapUpdateProps).map(mapUseSource(utils_attributes)).map(mapAddSourceIndex).map(mapAddTextColors);
@@ -5070,6 +5071,7 @@ var getVariablesCSS = function getVariablesCSS(palette) {
 };
 var getVariationVariablesCSS = function getVariationVariablesCSS(palette) {
   var isShifted = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+  var isDark = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
   var colors = palette.colors,
       textColors = palette.textColors,
       sourceIndex = palette.sourceIndex;
@@ -5079,7 +5081,13 @@ var getVariationVariablesCSS = function getVariationVariablesCSS(palette) {
   return colors.reduce(function (colorsAcc, color, index) {
     var newColorIndex = (index - variation + count) % count;
     var oldColorIndex = isShifted ? (newColorIndex + sourceIndex) % count : index;
-    return "".concat(colorsAcc, "\n        --sm-color-").concat(newColorIndex, ": ").concat(colors[oldColorIndex].value, ";\n        ").concat(getDarkColorVariables(textColors, newColorIndex, oldColorIndex), "\n        ");
+
+    if (isDark && oldColorIndex < count / 2) {
+      oldColorIndex = 11 - oldColorIndex;
+    }
+
+    var accentColorIndex = (oldColorIndex + count / 2) % count;
+    return "".concat(colorsAcc, "\n        --sm-color-").concat(newColorIndex, ": ").concat(colors[oldColorIndex].value, ";\n        --sm-accent-color-").concat(newColorIndex, ": ").concat(colors[accentColorIndex].value, ";\n        ").concat(getDarkColorVariables(textColors, newColorIndex, oldColorIndex), "\n        ");
   }, '');
 };
 var getDarkColorVariables = function getDarkColorVariables(textColors, newColorIndex, oldColorIndex) {
@@ -5111,12 +5119,14 @@ var getCSSFromPalettes = function getCSSFromPalettes(palettes) {
 
   return palettes.reduce(function (palettesAcc, palette, paletteIndex, palettes) {
     var selector = ".sm-palette-".concat(paletteIndex);
+    var isDarkSelector = ".is-dark ".concat(selector);
 
     if (paletteIndex === 0) {
       selector = ":root, ".concat(selector);
+      isDarkSelector = ".is-dark, ".concat(isDarkSelector);
     }
 
-    return "\n      ".concat(palettesAcc, "\n      \n      ").concat(selector, " { \n        ").concat(getVariablesCSS(palette), " \n        ").concat(getVariationVariablesCSS(palette), " \n      }\n      \n      .sm-palette-").concat(paletteIndex, ".sm-palette--shifted { \n        ").concat(getVariationVariablesCSS(palette, true), " \n      }\n    ");
+    return "\n      ".concat(palettesAcc, "\n      \n      ").concat(selector, " { \n        ").concat(getVariablesCSS(palette), " \n        ").concat(getVariationVariablesCSS(palette), " \n      }\n      \n      ").concat(isDarkSelector, " { \n        ").concat(getVariationVariablesCSS(palette, false, true), " \n      }\n      \n      .sm-palette-").concat(paletteIndex, ".sm-palette--shifted { \n        ").concat(getVariationVariablesCSS(palette, true), " \n      }\n      \n      .is-dark .sm-palette-").concat(paletteIndex, ".sm-palette--shifted { \n        ").concat(getVariationVariablesCSS(palette, true, true), " \n      }\n    ");
   }, '');
 };
 

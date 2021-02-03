@@ -146,6 +146,10 @@ li.customize-control-select_color {
     flex: 1 1 auto;
     background-color: currentColor;
   }
+
+  & + & {
+    height: 10px;
+  }
 }
 
 .palette-preview-set {

@@ -5,7 +5,7 @@
     --sm-current-color-#{ $j }: var(--sm-color-#{ $index });
   }
 
-  --sm-current-accent-color: var(--sm-current-color-6);
+  --sm-current-accent-color: var(--sm-accent-color-#{ $i });
   --sm-current-background-color: var(--sm-current-color-0);
   --sm-current-dark-color: var(--sm-dark-color-#{ $i });
   --sm-current-darker-color: var(--sm-darker-color-#{ $i });
@@ -16,6 +16,10 @@
   .sm-variation-#{ $i } {
     @include apply-variation($i);
   }
+}
+
+html {
+  @include apply-variation(0);
 }
 
 html,
