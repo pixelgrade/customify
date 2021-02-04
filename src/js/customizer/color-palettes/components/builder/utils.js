@@ -10,7 +10,9 @@ const attributes = {
 }
 
 export const getPalettesFromColors = ( colors => {
-  return colors.map( mapColorToPalette( attributes ) )
+
+  return colors.concat( getFunctionalColors( colors ) )
+               .map( mapColorToPalette( attributes ) )
                .map( mapInterpolateSource( attributes ) )
                .map( mapCorrectLightness( attributes ) )
                .map( mapUpdateProps )
@@ -18,6 +20,21 @@ export const getPalettesFromColors = ( colors => {
                .map( mapAddSourceIndex )
                .map( mapAddTextColors );
 } );
+
+export const getFunctionalColors = ( colors ) => {
+  const color = colors[0].value;
+  const red = chroma( color ).set( 'hsl.h', 0 ).hex();
+  const blue = chroma( color ).set( 'hsl.h', 180 ).hex();
+  const yellow = chroma( color ).set( 'hsl.h', 60 ).hex();
+  const green = chroma( color ).set( 'hsl.h', 120 ).hex();
+
+  return [
+    { label: '_info', value: blue, id: 'info' },
+    { label: '_error', value: red, id: 'error' },
+    { label: '_warning', value: yellow, id: 'warning' },
+    { label: '_success',  value: green, id: 'success' },
+  ];
+}
 
 export const getSourceIndex = ( palette ) => {
   return palette.colors.findIndex( color => color.value === palette.source )
@@ -56,19 +73,19 @@ export const mapShiftColors = ( palette ) => {
 export const mapColorToPalette = ( ( attributes ) => {
   const { mode } = attributes;
 
-  return ( colorObj ) => {
-    const color = colorObj.value;
-    const label = colorObj.label;
-    const reference = chroma( color ).set( 'hsv.s', 1 ).set( 'hsv.v', 1 ).hex();
+  return ( colorObj, index ) => {
+    const { label, id, value } = colorObj;
+    const reference = chroma( value ).set( 'hsv.s', 1 ).set( 'hsv.v', 1 ).hex();
 
     const colors = contrastArray.map( contrast => {
       const luminance = contrastToLuminance( contrast );
-      return chroma( color ).luminance( luminance, mode ).hex();
+      return chroma( value ).luminance( luminance, mode ).hex();
     } );
 
     return {
+      id: id || index,
       label: label,
-      source: color,
+      source: value,
       reference: reference,
       colors: colors,
     };
@@ -204,67 +221,80 @@ const contrastToLuminance = ( contrast ) => {
   return 1.05 / contrast - 0.05;
 }
 
-export const getVariablesCSS = ( palette ) => {
-  const colors = palette.colors.map( color => color.value );
-  const textColors = palette.textColors.map( color => color.value );
+export const getVariablesCSS = ( palette, offset = 0, isDark = false, prefix = false ) => {
+  const { colors, textColors, id, sourceIndex } = palette;
+  const count = colors.length;
 
-  const colorsCSS = colors.reduce( ( colorsAcc, color, colorIndex ) => {
+  return colors.reduce( ( colorsAcc, color, index ) => {
+    let oldColorIndex = ( index + offset ) % count;
+
+    if ( isDark ) {
+      if ( oldColorIndex < count / 2 ) {
+        oldColorIndex = 11 - oldColorIndex;
+      } else {
+        return `${ colorsAcc }`;
+      }
+    }
+
     return `${ colorsAcc }
-        --sm-color-${ colorIndex }: ${ color };
-        `;
+      ${ getColorVaraibles( palette, index, oldColorIndex, prefix ) }
+    `;
+  }, '' );
+}
+
+export const getInitialColorVaraibles = ( palette ) => {
+  const { colors, textColors, id } = palette;
+
+  let accentColors = colors.reduce( ( colorsAcc, color, index ) => {
+    return `${ colorsAcc }
+      --sm-${ id }-color-${ index }: ${ color.value };
+    `;
   }, '' );
 
-  const textColorsCSS = textColors.reduce( ( colorsAcc, color, colorIndex ) => {
+  let darkColors = textColors.reduce( ( colorsAcc, color, index ) => {
     return `${ colorsAcc }
-        --sm-text-color-${ colorIndex }: ${ color };
-        `;
+      --sm-${ id }-text-color-${ index }: ${ color.value };
+    `;
   }, '' );
 
   return `
-  ${ colorsCSS }
-  ${ textColorsCSS }
-  `
+    ${ accentColors }
+    ${ darkColors }
+  `;
 }
 
-export const getVariationVariablesCSS = ( palette, isShifted = false, isDark = false ) => {
-  const { colors, textColors, sourceIndex } = palette;
+export const getColorVaraibles = ( palette, newColorIndex, oldColorIndex, prefix ) => {
+  const { colors, textColors } = palette;
   const count = colors.length;
-  const variationSetting = wp.customize( 'sm_site_color_variation' );
-  const variation = !! variationSetting ? variationSetting() : 0;
+  const accentColorIndex = ( oldColorIndex + count / 2 ) % count;
+  const id = prefix || palette.id;
 
-  return colors.reduce( ( colorsAcc, color, index ) => {
-    const newColorIndex = ( index - variation + count ) % count;
-    let oldColorIndex = isShifted ? ( newColorIndex + sourceIndex ) % count : index;
+  let accentColors = `
+    --sm-${ id }-background-color-${ newColorIndex }: var(--sm-${ id }-color-${ oldColorIndex });
+    --sm-${ id }-accent-color-${ newColorIndex }: var(--sm-${ id }-color-${ accentColorIndex });
+  `;
 
-    if ( isDark && oldColorIndex < count / 2 ) {
-      oldColorIndex = 11 - oldColorIndex;
-    }
+  let darkColors = '';
 
-    const accentColorIndex = ( oldColorIndex + count / 2 ) % count;
-
-    return `${ colorsAcc }
-        --sm-color-${ newColorIndex }: ${ colors[ oldColorIndex ].value };
-        --sm-accent-color-${ newColorIndex }: ${ colors[ accentColorIndex ].value };
-        ${ getDarkColorVariables( textColors, newColorIndex, oldColorIndex ) }
-        `;
-  }, '' );
-}
-
-export const getDarkColorVariables = ( textColors, newColorIndex, oldColorIndex ) => {
-  let output = '';
-
-  if ( oldColorIndex > 5 ) {
-    output += `--sm-dark-color-${ newColorIndex }: #FFFFFF;`;
-    output += `--sm-darker-color-${ newColorIndex }: #FFFFFF;`;
+  if ( oldColorIndex < 6 ) {
+    darkColors = `
+      --sm-${ id }-dark-color-${ newColorIndex }: var(--sm-${ id }-text-color-0);
+      --sm-${ id }-darker-color-${ newColorIndex }: var(--sm-${ id }-text-color-1);
+    `;
   } else {
-    output += `--sm-dark-color-${ newColorIndex }: ${ textColors[0].value };`;
-    output += `--sm-darker-color-${ newColorIndex }: ${ textColors[1].value };`;
+    darkColors = `
+      --sm-${ id }-dark-color-${ newColorIndex }: var(--sm-${ id }-color-0);
+      --sm-${ id }-darker-color-${ newColorIndex }: var(--sm-${ id }-color-0);
+    `;
   }
 
-  return output;
+  return `
+    ${ accentColors }
+    ${ darkColors }
+  `;
 }
 
-export const getCSSFromPalettes = ( palettes, variation = 0 ) => {
+export const getCSSFromPalettes = ( palettes ) => {
 
   if ( ! palettes.length ) {
     return '';
@@ -277,33 +307,25 @@ export const getCSSFromPalettes = ( palettes, variation = 0 ) => {
     palettes.push( palettes[0] );
   }
 
-  return palettes.reduce( ( palettesAcc, palette, paletteIndex, palettes ) => {
-    let selector = `.sm-palette-${ paletteIndex }`;
-    let isDarkSelector = `.is-dark ${ selector }`;
+  const variationSetting = wp.customize( 'sm_site_color_variation' );
+  const variation = !! variationSetting ? variationSetting() : 0;
 
-    if ( paletteIndex === 0 ) {
-      selector = `:root, ${ selector }`;
-      isDarkSelector = `.is-dark, ${ isDarkSelector }`
-    }
+  return palettes.reduce( ( palettesAcc, palette, paletteIndex, palettes ) => {
+
+    const { id, sourceIndex } = palette;
 
     return `
       ${ palettesAcc }
       
-      ${ selector } { 
-        ${ getVariablesCSS( palette ) } 
-        ${ getVariationVariablesCSS( palette ) } 
-      }
+      html {
+        ${ getInitialColorVaraibles( palette ) }
+        ${ getVariablesCSS( palette, variation ) }
+        ${ getVariablesCSS( palette, sourceIndex, false, `${ id }-shifted` ) }
+      } 
       
-      ${ isDarkSelector } { 
-        ${ getVariationVariablesCSS( palette, false, true ) } 
-      }
-      
-      .sm-palette-${ paletteIndex }.sm-palette--shifted { 
-        ${ getVariationVariablesCSS( palette, true ) } 
-      }
-      
-      .is-dark .sm-palette-${ paletteIndex }.sm-palette--shifted { 
-        ${ getVariationVariablesCSS( palette, true, true ) } 
+      html.is-dark {
+        ${ getVariablesCSS( palette, variation, true ) }
+        ${ getVariablesCSS( palette, sourceIndex, true, `${ id }-shifted` ) }
       }
     `;
   }, '');

@@ -11,6 +11,15 @@
   --sm-current-darker-color: var(--sm-darker-color-#{ $i });
 }
 
+@mixin apply-palette( $id ) {
+  @for $i from 0 through 11 {
+    --sm-color-#{ $i }: var(--sm-#{ $id }-color-#{ $i });
+    --sm-accent-color-#{ $i }: var(--sm-#{ $id }-accent-color-#{ $i });
+    --sm-dark-color-#{ $i }: var(--sm-#{ $id }-dark-color-#{ $i });
+    --sm-darker-color-#{ $i }: var(--sm-#{ $id }-darker-color-#{ $i });
+  }
+}
+
 @for $i from 0 through 11 {
 
   .sm-variation-#{ $i } {
@@ -19,8 +28,16 @@
 }
 
 html {
+  @include apply-palette(0);
   @include apply-variation(0);
 }
+
+@each $id in 0, 1, 2, success, error, warning, info {
+  .sm-palette-#{ $id } {
+    @include apply-palette( $id );
+  }
+}
+
 
 html,
 [class*="sm-variation-"] {

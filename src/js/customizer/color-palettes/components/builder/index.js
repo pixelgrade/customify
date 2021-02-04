@@ -5,6 +5,7 @@ const {
 } = wp.element;
 
 import ColorControls from "./components/color-controls";
+
 import {
   getPalettesFromColors,
   getCSSFromPalettes,
@@ -76,10 +77,10 @@ const Builder = ( props ) => {
         { getCSSFromPalettes( palettes ) }
       </style>
       { palettes.map( ( palette, index ) => {
-        const { colors } = palette;
+        const { colors, id } = palette;
 
         return (
-          <div className={ `palette-preview-set sm-palette-${ index }` }>
+          <div className={ `palette-preview-set sm-palette-${ id }` }>
             <div className={ "palette-preview" }>
               { colors.map( ( color, colorIndex ) => <div className={ `sm-variation-${ colorIndex } `} style={ { color: `var(--sm-current-background-color)` } }></div> ) }
             </div>

@@ -4879,7 +4879,31 @@ var utils_attributes = {
   mode: 'hsl'
 };
 var getPalettesFromColors = function getPalettesFromColors(colors) {
-  return colors.map(utils_mapColorToPalette(utils_attributes)).map(mapInterpolateSource(utils_attributes)).map(utils_mapCorrectLightness(utils_attributes)).map(mapUpdateProps).map(mapUseSource(utils_attributes)).map(mapAddSourceIndex).map(mapAddTextColors);
+  return colors.concat(utils_getFunctionalColors(colors)).map(utils_mapColorToPalette(utils_attributes)).map(mapInterpolateSource(utils_attributes)).map(utils_mapCorrectLightness(utils_attributes)).map(mapUpdateProps).map(mapUseSource(utils_attributes)).map(mapAddSourceIndex).map(mapAddTextColors);
+};
+var utils_getFunctionalColors = function getFunctionalColors(colors) {
+  var color = colors[0].value;
+  var red = chroma_default()(color).set('hsl.h', 0).hex();
+  var blue = chroma_default()(color).set('hsl.h', 180).hex();
+  var yellow = chroma_default()(color).set('hsl.h', 60).hex();
+  var green = chroma_default()(color).set('hsl.h', 120).hex();
+  return [{
+    label: '_info',
+    value: blue,
+    id: 'info'
+  }, {
+    label: '_error',
+    value: red,
+    id: 'error'
+  }, {
+    label: '_warning',
+    value: yellow,
+    id: 'warning'
+  }, {
+    label: '_success',
+    value: green,
+    id: 'success'
+  }];
 };
 var getSourceIndex = function getSourceIndex(palette) {
   return palette.colors.findIndex(function (color) {
@@ -4911,17 +4935,19 @@ var mapShiftColors = function mapShiftColors(palette) {
 };
 var utils_mapColorToPalette = function mapColorToPalette(attributes) {
   var mode = attributes.mode;
-  return function (colorObj) {
-    var color = colorObj.value;
-    var label = colorObj.label;
-    var reference = chroma_default()(color).set('hsv.s', 1).set('hsv.v', 1).hex();
+  return function (colorObj, index) {
+    var label = colorObj.label,
+        id = colorObj.id,
+        value = colorObj.value;
+    var reference = chroma_default()(value).set('hsv.s', 1).set('hsv.v', 1).hex();
     var colors = contrast_array.map(function (contrast) {
       var luminance = contrastToLuminance(contrast);
-      return chroma_default()(color).luminance(luminance, mode).hex();
+      return chroma_default()(value).luminance(luminance, mode).hex();
     });
     return {
+      id: id || index,
       label: label,
-      source: color,
+      source: value,
       reference: reference,
       colors: colors
     };
@@ -5056,57 +5082,58 @@ var contrastToLuminance = function contrastToLuminance(contrast) {
 };
 
 var getVariablesCSS = function getVariablesCSS(palette) {
-  var colors = palette.colors.map(function (color) {
-    return color.value;
-  });
-  var textColors = palette.textColors.map(function (color) {
-    return color.value;
-  });
-  var colorsCSS = colors.reduce(function (colorsAcc, color, colorIndex) {
-    return "".concat(colorsAcc, "\n        --sm-color-").concat(colorIndex, ": ").concat(color, ";\n        ");
-  }, '');
-  var textColorsCSS = textColors.reduce(function (colorsAcc, color, colorIndex) {
-    return "".concat(colorsAcc, "\n        --sm-text-color-").concat(colorIndex, ": ").concat(color, ";\n        ");
-  }, '');
-  return "\n  ".concat(colorsCSS, "\n  ").concat(textColorsCSS, "\n  ");
-};
-var getVariationVariablesCSS = function getVariationVariablesCSS(palette) {
-  var isShifted = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+  var offset = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
   var isDark = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+  var prefix = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
   var colors = palette.colors,
       textColors = palette.textColors,
+      id = palette.id,
       sourceIndex = palette.sourceIndex;
   var count = colors.length;
-  var variationSetting = wp.customize('sm_site_color_variation');
-  var variation = !!variationSetting ? variationSetting() : 0;
   return colors.reduce(function (colorsAcc, color, index) {
-    var newColorIndex = (index - variation + count) % count;
-    var oldColorIndex = isShifted ? (newColorIndex + sourceIndex) % count : index;
+    var oldColorIndex = (index + offset) % count;
 
-    if (isDark && oldColorIndex < count / 2) {
-      oldColorIndex = 11 - oldColorIndex;
+    if (isDark) {
+      if (oldColorIndex < count / 2) {
+        oldColorIndex = 11 - oldColorIndex;
+      } else {
+        return "".concat(colorsAcc);
+      }
     }
 
-    var accentColorIndex = (oldColorIndex + count / 2) % count;
-    return "".concat(colorsAcc, "\n        --sm-color-").concat(newColorIndex, ": ").concat(colors[oldColorIndex].value, ";\n        --sm-accent-color-").concat(newColorIndex, ": ").concat(colors[accentColorIndex].value, ";\n        ").concat(getDarkColorVariables(textColors, newColorIndex, oldColorIndex), "\n        ");
+    return "".concat(colorsAcc, "\n      ").concat(getColorVaraibles(palette, index, oldColorIndex, prefix), "\n    ");
   }, '');
 };
-var getDarkColorVariables = function getDarkColorVariables(textColors, newColorIndex, oldColorIndex) {
-  var output = '';
+var getInitialColorVaraibles = function getInitialColorVaraibles(palette) {
+  var colors = palette.colors,
+      textColors = palette.textColors,
+      id = palette.id;
+  var accentColors = colors.reduce(function (colorsAcc, color, index) {
+    return "".concat(colorsAcc, "\n      --sm-").concat(id, "-color-").concat(index, ": ").concat(color.value, ";\n    ");
+  }, '');
+  var darkColors = textColors.reduce(function (colorsAcc, color, index) {
+    return "".concat(colorsAcc, "\n      --sm-").concat(id, "-text-color-").concat(index, ": ").concat(color.value, ";\n    ");
+  }, '');
+  return "\n    ".concat(accentColors, "\n    ").concat(darkColors, "\n  ");
+};
+var getColorVaraibles = function getColorVaraibles(palette, newColorIndex, oldColorIndex, prefix) {
+  var colors = palette.colors,
+      textColors = palette.textColors;
+  var count = colors.length;
+  var accentColorIndex = (oldColorIndex + count / 2) % count;
+  var id = prefix || palette.id;
+  var accentColors = "\n    --sm-".concat(id, "-background-color-").concat(newColorIndex, ": var(--sm-").concat(id, "-color-").concat(oldColorIndex, ");\n    --sm-").concat(id, "-accent-color-").concat(newColorIndex, ": var(--sm-").concat(id, "-color-").concat(accentColorIndex, ");\n  ");
+  var darkColors = '';
 
-  if (oldColorIndex > 5) {
-    output += "--sm-dark-color-".concat(newColorIndex, ": #FFFFFF;");
-    output += "--sm-darker-color-".concat(newColorIndex, ": #FFFFFF;");
+  if (oldColorIndex < 6) {
+    darkColors = "\n      --sm-".concat(id, "-dark-color-").concat(newColorIndex, ": var(--sm-").concat(id, "-text-color-0);\n      --sm-").concat(id, "-darker-color-").concat(newColorIndex, ": var(--sm-").concat(id, "-text-color-1);\n    ");
   } else {
-    output += "--sm-dark-color-".concat(newColorIndex, ": ").concat(textColors[0].value, ";");
-    output += "--sm-darker-color-".concat(newColorIndex, ": ").concat(textColors[1].value, ";");
+    darkColors = "\n      --sm-".concat(id, "-dark-color-").concat(newColorIndex, ": var(--sm-").concat(id, "-color-0);\n      --sm-").concat(id, "-darker-color-").concat(newColorIndex, ": var(--sm-").concat(id, "-color-0);\n    ");
   }
 
-  return output;
+  return "\n    ".concat(accentColors, "\n    ").concat(darkColors, "\n  ");
 };
 var getCSSFromPalettes = function getCSSFromPalettes(palettes) {
-  var variation = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
-
   if (!palettes.length) {
     return '';
   } // the old implementation generates 3 fallback palettes and
@@ -5118,16 +5145,12 @@ var getCSSFromPalettes = function getCSSFromPalettes(palettes) {
     palettes.push(palettes[0]);
   }
 
+  var variationSetting = wp.customize('sm_site_color_variation');
+  var variation = !!variationSetting ? variationSetting() : 0;
   return palettes.reduce(function (palettesAcc, palette, paletteIndex, palettes) {
-    var selector = ".sm-palette-".concat(paletteIndex);
-    var isDarkSelector = ".is-dark ".concat(selector);
-
-    if (paletteIndex === 0) {
-      selector = ":root, ".concat(selector);
-      isDarkSelector = ".is-dark, ".concat(isDarkSelector);
-    }
-
-    return "\n      ".concat(palettesAcc, "\n      \n      ").concat(selector, " { \n        ").concat(getVariablesCSS(palette), " \n        ").concat(getVariationVariablesCSS(palette), " \n      }\n      \n      ").concat(isDarkSelector, " { \n        ").concat(getVariationVariablesCSS(palette, false, true), " \n      }\n      \n      .sm-palette-").concat(paletteIndex, ".sm-palette--shifted { \n        ").concat(getVariationVariablesCSS(palette, true), " \n      }\n      \n      .is-dark .sm-palette-").concat(paletteIndex, ".sm-palette--shifted { \n        ").concat(getVariationVariablesCSS(palette, true, true), " \n      }\n    ");
+    var id = palette.id,
+        sourceIndex = palette.sourceIndex;
+    return "\n      ".concat(palettesAcc, "\n      \n      html {\n        ").concat(getInitialColorVaraibles(palette), "\n        ").concat(getVariablesCSS(palette, variation), "\n        ").concat(getVariablesCSS(palette, sourceIndex, false, "".concat(id, "-shifted")), "\n      } \n      \n      html.is-dark {\n        ").concat(getVariablesCSS(palette, variation, true), "\n        ").concat(getVariablesCSS(palette, sourceIndex, true, "".concat(id, "-shifted")), "\n      }\n    ");
   }, '');
 };
 
@@ -5215,9 +5238,10 @@ var builder_Builder = function Builder(props) {
     colors: colors,
     setColors: setColors
   }), /*#__PURE__*/React.createElement("style", null, getCSSFromPalettes(palettes)), palettes.map(function (palette, index) {
-    var colors = palette.colors;
+    var colors = palette.colors,
+        id = palette.id;
     return /*#__PURE__*/React.createElement("div", {
-      className: "palette-preview-set sm-palette-".concat(index)
+      className: "palette-preview-set sm-palette-".concat(id)
     }, /*#__PURE__*/React.createElement("div", {
       className: "palette-preview"
     }, colors.map(function (color, colorIndex) {
