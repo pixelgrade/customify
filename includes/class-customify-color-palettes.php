@@ -1522,74 +1522,82 @@ class Customify_Color_Palettes {
 
 	function palettes_output( $palettes ) {
 		$output = '';
+		$variation = intval( get_option( 'sm_site_color_variation', 0 ) );
 
 		foreach ( $palettes as $palette_index => $palette ) {
-			$selector = '.sm-palette-' . $palette_index;
-			$isDarkSelector = '.is-dark' . $selector;
+			$sourceIndex = $palette->sourceIndex;
+			$id = $palette->id;
 
-
-			if ( $palette_index === 0 ) {
-				$selector = ':root, ' . $selector;
-				$isDarkSelector = '.is-dark, ' . $selector;
-			}
-
-			$output .= $selector . ' { ' . PHP_EOL;
-			$output .= '--sm-property-that-customify-can-break: #FFF; ' . PHP_EOL;
-			$output .= get_color_variables( $palette );
+			$output .= 'html { ' . PHP_EOL;
+			$output .= get_initial_color_variables( $palette );
+			$output .= get_variables_css( $palette, $variation );
+			$output .= get_variables_css( $palette, $sourceIndex, false, true );
 			$output .= '}' . PHP_EOL;
 
-			$output .= $isDarkSelector . ' { ' . PHP_EOL;
-			$output .= '--sm-property-that-customify-can-break: #FFF; ' . PHP_EOL;
-			$output .= get_color_variables( $palette, false, true );
-			$output .= '}' . PHP_EOL;
-
-			$output .= '.sm-palette-' . $palette_index . '.sm-palette--shifted { ' . PHP_EOL;
-			$output .= get_color_variables( $palette, true );
-			$output .= '}' . PHP_EOL;
-
-			$output .= '.is-dark .sm-palette-' . $palette_index . '.sm-palette--shifted { ' . PHP_EOL;
-			$output .= get_color_variables( $palette, true, true );
+			$output .= '.is-dark { ' . PHP_EOL;
+			$output .= get_variables_css( $palette, $variation, true );
+			$output .= get_variables_css( $palette, $sourceIndex, true, true );
 			$output .= '}' . PHP_EOL;
 		}
 
 		return $output;
 	}
 
-	function get_color_variables( $palette, $isShifted = false, $isDark = false ) {
+	function get_initial_color_variables( $palette ) {
 		$colors = $palette->colors;
 		$textColors = $palette->textColors;
-		$sourceIndex = $palette->sourceIndex;
-		$count = count( $colors );
-		$variation = intval( get_option( 'sm_site_color_variation', 0 ) );
+		$id = $palette->id;
+
 		$output = '';
 
 		foreach ( $colors as $index => $color ) {
-			$new_color_index = ( $index - $variation + $count ) % $count;
-			$old_color_index = $isShifted ? ( $new_color_index + $sourceIndex ) % $count : $index;
+			$output .= '--sm-' . $id . '-color-' . $index . ': ' . $color->value . ';' . PHP_EOL;
+		}
 
-			if ( $isDark && $old_color_index < $count / 2 ) {
-				$old_color_index = 11 - $old_color_index;
-			}
-
-			$accent_color_index = ( $old_color_index + $count / 2 ) % $count;
-
-			$output .= '--sm-color-' . $new_color_index . ': ' . $colors[ $old_color_index ]->value . ';' . PHP_EOL;
-			$output .= '--sm-accent-color-' . $new_color_index . ': ' . $colors[ $accent_color_index ]->value . ';' . PHP_EOL;
-			$output .= get_dark_color_variables( $textColors, $new_color_index, $old_color_index );
+		foreach ( $textColors as $index => $color ) {
+			$output .= '--sm-' . $id . '-text-color-' . $index . ': ' . $color->value . ';' . PHP_EOL;
 		}
 
 		return $output;
 	}
 
-	function get_dark_color_variables( $textColors, $new_color_index, $old_color_index ) {
+	function get_variables_css( $palette, $offset = 0, $isDark = false, $isShifted = false ) {
+		$colors = $palette->colors;
+		$count = count( $colors );
+		$suffix = $isShifted ? '-shifted' : '';
+
 		$output = '';
 
-		if ( $old_color_index > 5 ) {
-			$output .= '--sm-dark-color-' . $new_color_index . ': #FFFFFF;' . PHP_EOL;
-			$output .= '--sm-darker-color-' . $new_color_index . ': #FFFFFF;' . PHP_EOL;
+		foreach ( $colors as $index => $color ) {
+			$oldColorIndex = ( $index + $offset ) % $count;
+
+			if ( $isDark && $oldColorIndex < $count / 2 ) {
+				$oldColorIndex = 11 - $oldColorIndex;
+			}
+
+			$output .= get_color_variables( $palette, $index . $suffix, $oldColorIndex );
+		}
+
+		return $output;
+	}
+
+	function get_color_variables( $palette, $newColorIndex, $oldColorIndex ) {
+		$colors = $palette->colors;
+		$id = $palette->id;
+		$count = count( $colors );
+		$accentColorIndex = ( $oldColorIndex + $count / 2 ) % $count;
+
+		$output = '';
+
+		$output .= '--sm-' . $id . '-background-color-' . $newColorIndex . ': var(--sm-' . $id . '-color-' . $oldColorIndex . ');' . PHP_EOL;
+		$output .= '--sm-' . $id . '-accent-color-' . $newColorIndex . ': var(--sm-' . $id . '-color-' . $accentColorIndex . ');' . PHP_EOL;
+
+		if ( $oldColorIndex < $count / 2 ) {
+			$output .= '--sm-' . $id . '-dark-color-' . $newColorIndex . ': var(--sm-' . $id . '-text-color-0);' . PHP_EOL;
+			$output .= '--sm-' . $id . '-darker-color-' . $newColorIndex . ': var(--sm-' . $id . '-text-color-1);' . PHP_EOL;
 		} else {
-			$output .= '--sm-dark-color-' . $new_color_index . ': ' . $textColors[0]->value . ';' . PHP_EOL;
-			$output .= '--sm-darker-color-' . $new_color_index . ': ' . $textColors[1]->value . ';' . PHP_EOL;
+			$output .= '--sm-' . $id . '-dark-color-' . $newColorIndex . ': var(--sm-' . $id . '-color-0);' . PHP_EOL;
+			$output .= '--sm-' . $id . '-darker-color-' . $newColorIndex . ': var(--sm-' . $id . '-color-0);' . PHP_EOL;
 		}
 
 		return $output;

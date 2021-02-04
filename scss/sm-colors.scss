@@ -1,23 +1,25 @@
-@mixin apply-variation( $i ) {
+@mixin apply-palette( $id, $isShifted: false ) {
 
-  @for $j from 0 through 11 {
-    $index: #{ ( $i + $j ) % 12 };
-    --sm-current-color-#{ $j }: var(--sm-color-#{ $index });
+  @for $i from 0 through 11 {
+
+    $suffix: $i;
+
+    @if ( $isShifted ) {
+      $suffix: #{ $i }-shifted;
+    }
+
+    --sm-color-#{ $i }: var(--sm-#{ $id }-background-color-#{ $suffix });
+    --sm-accent-color-#{ $i }: var(--sm-#{ $id }-accent-color-#{ $suffix });
+    --sm-dark-color-#{ $i }: var(--sm-#{ $id }-dark-color-#{ $suffix });
+    --sm-darker-color-#{ $i }: var(--sm-#{ $id }-darker-color-#{ $suffix });
   }
-
-  --sm-current-accent-color: var(--sm-accent-color-#{ $i });
-  --sm-current-background-color: var(--sm-current-color-0);
-  --sm-current-dark-color: var(--sm-dark-color-#{ $i });
-  --sm-current-darker-color: var(--sm-darker-color-#{ $i });
 }
 
-@mixin apply-palette( $id ) {
-  @for $i from 0 through 11 {
-    --sm-color-#{ $i }: var(--sm-#{ $id }-color-#{ $i });
-    --sm-accent-color-#{ $i }: var(--sm-#{ $id }-accent-color-#{ $i });
-    --sm-dark-color-#{ $i }: var(--sm-#{ $id }-dark-color-#{ $i });
-    --sm-darker-color-#{ $i }: var(--sm-#{ $id }-darker-color-#{ $i });
-  }
+@mixin apply-variation( $i ) {
+  --sm-current-accent-color: var(--sm-accent-color-#{ $i });
+  --sm-current-background-color: var(--sm-color-#{ $i });
+  --sm-current-dark-color: var(--sm-dark-color-#{ $i });
+  --sm-current-darker-color: var(--sm-darker-color-#{ $i });
 }
 
 @for $i from 0 through 11 {
@@ -33,8 +35,13 @@ html {
 }
 
 @each $id in 0, 1, 2, success, error, warning, info {
+
   .sm-palette-#{ $id } {
     @include apply-palette( $id );
+  }
+
+  .sm-palette-#{ $id }.sm-palette--shifted {
+    @include apply-palette( $id, true );
   }
 }
 

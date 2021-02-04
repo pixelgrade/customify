@@ -5084,24 +5084,18 @@ var contrastToLuminance = function contrastToLuminance(contrast) {
 var getVariablesCSS = function getVariablesCSS(palette) {
   var offset = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
   var isDark = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-  var prefix = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
-  var colors = palette.colors,
-      textColors = palette.textColors,
-      id = palette.id,
-      sourceIndex = palette.sourceIndex;
+  var isShifted = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
+  var colors = palette.colors;
   var count = colors.length;
+  var suffix = isShifted ? '-shifted' : '';
   return colors.reduce(function (colorsAcc, color, index) {
     var oldColorIndex = (index + offset) % count;
 
-    if (isDark) {
-      if (oldColorIndex < count / 2) {
-        oldColorIndex = 11 - oldColorIndex;
-      } else {
-        return "".concat(colorsAcc);
-      }
+    if (isDark && oldColorIndex < count / 2) {
+      oldColorIndex = 11 - oldColorIndex;
     }
 
-    return "".concat(colorsAcc, "\n      ").concat(getColorVaraibles(palette, index, oldColorIndex, prefix), "\n    ");
+    return "".concat(colorsAcc, "\n      ").concat(getColorVariables(palette, "".concat(index).concat(suffix), oldColorIndex), "\n    ");
   }, '');
 };
 var getInitialColorVaraibles = function getInitialColorVaraibles(palette) {
@@ -5116,16 +5110,15 @@ var getInitialColorVaraibles = function getInitialColorVaraibles(palette) {
   }, '');
   return "\n    ".concat(accentColors, "\n    ").concat(darkColors, "\n  ");
 };
-var getColorVaraibles = function getColorVaraibles(palette, newColorIndex, oldColorIndex, prefix) {
+var getColorVariables = function getColorVariables(palette, newColorIndex, oldColorIndex) {
   var colors = palette.colors,
-      textColors = palette.textColors;
+      id = palette.id;
   var count = colors.length;
   var accentColorIndex = (oldColorIndex + count / 2) % count;
-  var id = prefix || palette.id;
   var accentColors = "\n    --sm-".concat(id, "-background-color-").concat(newColorIndex, ": var(--sm-").concat(id, "-color-").concat(oldColorIndex, ");\n    --sm-").concat(id, "-accent-color-").concat(newColorIndex, ": var(--sm-").concat(id, "-color-").concat(accentColorIndex, ");\n  ");
   var darkColors = '';
 
-  if (oldColorIndex < 6) {
+  if (oldColorIndex < count / 2) {
     darkColors = "\n      --sm-".concat(id, "-dark-color-").concat(newColorIndex, ": var(--sm-").concat(id, "-text-color-0);\n      --sm-").concat(id, "-darker-color-").concat(newColorIndex, ": var(--sm-").concat(id, "-text-color-1);\n    ");
   } else {
     darkColors = "\n      --sm-".concat(id, "-dark-color-").concat(newColorIndex, ": var(--sm-").concat(id, "-color-0);\n      --sm-").concat(id, "-darker-color-").concat(newColorIndex, ": var(--sm-").concat(id, "-color-0);\n    ");
@@ -5146,11 +5139,11 @@ var getCSSFromPalettes = function getCSSFromPalettes(palettes) {
   }
 
   var variationSetting = wp.customize('sm_site_color_variation');
-  var variation = !!variationSetting ? variationSetting() : 0;
+  var variation = !!variationSetting ? parseInt(variationSetting(), 10) : 0;
   return palettes.reduce(function (palettesAcc, palette, paletteIndex, palettes) {
     var id = palette.id,
         sourceIndex = palette.sourceIndex;
-    return "\n      ".concat(palettesAcc, "\n      \n      html {\n        ").concat(getInitialColorVaraibles(palette), "\n        ").concat(getVariablesCSS(palette, variation), "\n        ").concat(getVariablesCSS(palette, sourceIndex, false, "".concat(id, "-shifted")), "\n      } \n      \n      html.is-dark {\n        ").concat(getVariablesCSS(palette, variation, true), "\n        ").concat(getVariablesCSS(palette, sourceIndex, true, "".concat(id, "-shifted")), "\n      }\n    ");
+    return "\n      ".concat(palettesAcc, "\n      \n      html {\n        ").concat(getInitialColorVaraibles(palette), "\n        ").concat(getVariablesCSS(palette, variation), "\n        ").concat(getVariablesCSS(palette, sourceIndex, false, true), "\n      } \n      \n      .is-dark {\n        ").concat(getVariablesCSS(palette, variation, true), "\n        ").concat(getVariablesCSS(palette, sourceIndex, true, true), "\n      }\n    ");
   }, '');
 };
 

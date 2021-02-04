@@ -221,23 +221,20 @@ const contrastToLuminance = ( contrast ) => {
   return 1.05 / contrast - 0.05;
 }
 
-export const getVariablesCSS = ( palette, offset = 0, isDark = false, prefix = false ) => {
-  const { colors, textColors, id, sourceIndex } = palette;
+export const getVariablesCSS = ( palette, offset = 0, isDark = false, isShifted = false ) => {
+  const { colors } = palette;
   const count = colors.length;
+  const suffix = isShifted ? '-shifted' : '';
 
   return colors.reduce( ( colorsAcc, color, index ) => {
     let oldColorIndex = ( index + offset ) % count;
 
-    if ( isDark ) {
-      if ( oldColorIndex < count / 2 ) {
-        oldColorIndex = 11 - oldColorIndex;
-      } else {
-        return `${ colorsAcc }`;
-      }
+    if ( isDark && oldColorIndex < count / 2 ) {
+      oldColorIndex = 11 - oldColorIndex;
     }
 
     return `${ colorsAcc }
-      ${ getColorVaraibles( palette, index, oldColorIndex, prefix ) }
+      ${ getColorVariables( palette, `${ index }${ suffix }`, oldColorIndex ) }
     `;
   }, '' );
 }
@@ -263,11 +260,10 @@ export const getInitialColorVaraibles = ( palette ) => {
   `;
 }
 
-export const getColorVaraibles = ( palette, newColorIndex, oldColorIndex, prefix ) => {
-  const { colors, textColors } = palette;
+export const getColorVariables = ( palette, newColorIndex, oldColorIndex ) => {
+  const { colors, id } = palette;
   const count = colors.length;
   const accentColorIndex = ( oldColorIndex + count / 2 ) % count;
-  const id = prefix || palette.id;
 
   let accentColors = `
     --sm-${ id }-background-color-${ newColorIndex }: var(--sm-${ id }-color-${ oldColorIndex });
@@ -276,7 +272,7 @@ export const getColorVaraibles = ( palette, newColorIndex, oldColorIndex, prefix
 
   let darkColors = '';
 
-  if ( oldColorIndex < 6 ) {
+  if ( oldColorIndex < count / 2 ) {
     darkColors = `
       --sm-${ id }-dark-color-${ newColorIndex }: var(--sm-${ id }-text-color-0);
       --sm-${ id }-darker-color-${ newColorIndex }: var(--sm-${ id }-text-color-1);
@@ -308,7 +304,7 @@ export const getCSSFromPalettes = ( palettes ) => {
   }
 
   const variationSetting = wp.customize( 'sm_site_color_variation' );
-  const variation = !! variationSetting ? variationSetting() : 0;
+  const variation = !! variationSetting ? parseInt( variationSetting(), 10 ) : 0;
 
   return palettes.reduce( ( palettesAcc, palette, paletteIndex, palettes ) => {
 
@@ -320,12 +316,12 @@ export const getCSSFromPalettes = ( palettes ) => {
       html {
         ${ getInitialColorVaraibles( palette ) }
         ${ getVariablesCSS( palette, variation ) }
-        ${ getVariablesCSS( palette, sourceIndex, false, `${ id }-shifted` ) }
+        ${ getVariablesCSS( palette, sourceIndex, false, true ) }
       } 
       
-      html.is-dark {
+      .is-dark {
         ${ getVariablesCSS( palette, variation, true ) }
-        ${ getVariablesCSS( palette, sourceIndex, true, `${ id }-shifted` ) }
+        ${ getVariablesCSS( palette, sourceIndex, true, true ) }
       }
     `;
   }, '');
