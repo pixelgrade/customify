@@ -3,23 +3,77 @@ import chroma from 'chroma-js';
 
 import contrastArray from './contrast-array';
 
-const attributes = {
-  correctLightness: true,
-  useSources: true,
-  mode: 'hsl',
+export const getPalettesFromColors = ( colors, attributes = {} ) => {
+  const functionalColors = getFunctionalColors( colors );
+  let palettes = colors.map( mapColorToPalette( attributes ) );
+  let functionalPalettes = functionalColors.map( mapColorToPalette( attributes ) );
+
+  palettes = addAutoPalettes( palettes, attributes );
+
+  return mapSanitizePalettes( palettes.concat( functionalPalettes ), attributes );
 }
 
-export const getPalettesFromColors = ( colors => {
+export const addAutoPalettes = ( palettes, attributes ) => {
 
-  return colors.concat( getFunctionalColors( colors ) )
-               .map( mapColorToPalette( attributes ) )
-               .map( mapInterpolateSource( attributes ) )
-               .map( mapCorrectLightness( attributes ) )
+  if ( ! attributes.interpolateColors ) {
+    return palettes;
+  }
+
+  const newPalettes = JSON.parse( JSON.stringify( palettes ) );
+
+  if ( newPalettes.length > 1 ) {
+    const index0 = getBestPositionInPaletteByLuminance( newPalettes[0].source, newPalettes[0].colors, attributes );
+    const index1 = getBestPositionInPaletteByLuminance( newPalettes[1].source, newPalettes[1].colors, attributes );
+    let distance0 = Math.abs( index0 - index1 );
+    let distance1 = 0;
+    let distance2 = 0;
+
+    if ( newPalettes.length > 2 ) {
+      const index2 = getBestPositionInPaletteByLuminance( newPalettes[2].source, newPalettes[2].colors, attributes );
+      distance1 = Math.abs( index1 - index2 );
+      distance2 = Math.abs( index0 - index2 );
+      const distance = Math.min( distance0, distance1, distance2 );
+
+      if ( distance > 2 ) {
+        const newPalette = createAutoPalette( newPalettes.slice( 0, 3 ), attributes );
+        newPalettes.splice( 0, 3, newPalette );
+
+        return newPalettes;
+      }
+    }
+
+    if ( distance0 > 2 ) {
+      const newPalette = createAutoPalette( [ newPalettes[0], newPalettes[1] ], attributes );
+      newPalettes.splice( 0, 2, newPalette );
+
+      return newPalettes;
+    }
+
+    if ( distance2 > 2 ) {
+      const newPalette = createAutoPalette( [ newPalettes[0], newPalettes[2] ], attributes );
+      newPalettes.splice( 0, 3, newPalette, newPalettes[1] );
+
+      return newPalettes;
+    }
+
+    if ( distance1 > 2 ) {
+      const newPalette = createAutoPalette( [ newPalettes[1], newPalettes[2] ], attributes );
+      newPalettes.splice( 0, 3, newPalettes[0], newPalette );
+
+      return newPalettes;
+    }
+  }
+
+  return newPalettes;
+}
+
+export const mapSanitizePalettes = ( colors, attributes = {} ) => {
+  return colors.map( mapCorrectLightness( attributes ) )
                .map( mapUpdateProps )
                .map( mapUseSource( attributes ) )
                .map( mapAddSourceIndex )
                .map( mapAddTextColors );
-} );
+}
 
 export const getFunctionalColors = ( colors ) => {
 
@@ -80,7 +134,6 @@ export const mapColorToPalette = ( ( attributes ) => {
 
   return ( colorObj, index ) => {
     const { label, id, value } = colorObj;
-    const reference = chroma( value ).set( 'hsv.s', 1 ).set( 'hsv.v', 1 ).hex();
 
     const colors = contrastArray.map( contrast => {
       const luminance = contrastToLuminance( contrast );
@@ -91,7 +144,6 @@ export const mapColorToPalette = ( ( attributes ) => {
       id: id || index,
       label: label,
       source: value,
-      reference: reference,
       colors: colors,
     };
   }
@@ -142,7 +194,7 @@ export const mapCorrectLightness = ( { correctLightness, mode } ) => {
   return ( palette ) => {
     palette.colors = palette.colors.map( ( color, index ) => {
       const luminance = contrastToLuminance( contrastArray[ index ] );
-      return chroma( color ).luminance( luminance, mode !== 'none' ? mode : 'rgb' ).hex();
+      return chroma( color ).luminance( luminance, 'rgb' ).hex();
     } );
     return palette;
   }
@@ -330,6 +382,32 @@ export const getCSSFromPalettes = ( palettes ) => {
       }
     `;
   }, '');
+}
+
+const createAutoPalette = ( palettes, attributes = {} ) => {
+  const { mode, bezierInterpolation } = attributes;
+  const palettesCopy = palettes.slice();
+  const colors = palettesCopy.map( palette => palette.source );
+  let autoPalette = colors.slice();
+
+  autoPalette.splice( 0, 0, '#FFFFFF' );
+  autoPalette.push( '#000000' );
+  autoPalette.sort( ( c1, c2 ) => {
+    return chroma( c1 ).luminance() > chroma( c2 ).luminance() ? -1 : 1;
+  } );
+
+  if ( !! bezierInterpolation ) {
+    autoPalette = chroma.bezier( autoPalette ).scale().mode( mode ).correctLightness().colors( 12 );
+  } else {
+    autoPalette = chroma.scale( autoPalette ).mode( mode ).correctLightness().colors( 12 );
+  }
+
+  autoPalette = {
+    ...palettesCopy[0],
+    colors: autoPalette
+  };
+
+  return autoPalette;
 }
 
 const noop = palette => palette;

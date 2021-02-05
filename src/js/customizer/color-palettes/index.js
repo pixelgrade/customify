@@ -19,7 +19,6 @@ import {
 import {
   initializePaletteBuilder,
   getCSSFromPalettes,
-  getCSSFromInputValue,
 } from './components/builder';
 
 /** @namespace customify */
@@ -270,7 +269,6 @@ customify.api = Object.assign( {}, customify.api, ( function() {
 
   return {
     getCSSFromPalettes,
-    getCSSFromInputValue,
   }
 
 })() );

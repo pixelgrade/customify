@@ -4873,13 +4873,68 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 
 
-var utils_attributes = {
-  correctLightness: true,
-  useSources: true,
-  mode: 'hsl'
-};
 var getPalettesFromColors = function getPalettesFromColors(colors) {
-  return colors.concat(utils_getFunctionalColors(colors)).map(utils_mapColorToPalette(utils_attributes)).map(mapInterpolateSource(utils_attributes)).map(utils_mapCorrectLightness(utils_attributes)).map(mapUpdateProps).map(mapUseSource(utils_attributes)).map(mapAddSourceIndex).map(mapAddTextColors);
+  var attributes = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  var functionalColors = utils_getFunctionalColors(colors);
+  var palettes = colors.map(utils_mapColorToPalette(attributes));
+  var functionalPalettes = functionalColors.map(utils_mapColorToPalette(attributes));
+  palettes = addAutoPalettes(palettes, attributes);
+  return mapSanitizePalettes(palettes.concat(functionalPalettes), attributes);
+};
+var addAutoPalettes = function addAutoPalettes(palettes, attributes) {
+  if (!attributes.interpolateColors) {
+    return palettes;
+  }
+
+  var newPalettes = JSON.parse(JSON.stringify(palettes));
+
+  if (newPalettes.length > 1) {
+    var index0 = utils_getBestPositionInPaletteByLuminance(newPalettes[0].source, newPalettes[0].colors, attributes);
+    var index1 = utils_getBestPositionInPaletteByLuminance(newPalettes[1].source, newPalettes[1].colors, attributes);
+    var distance0 = Math.abs(index0 - index1);
+    var distance1 = 0;
+    var distance2 = 0;
+
+    if (newPalettes.length > 2) {
+      var index2 = utils_getBestPositionInPaletteByLuminance(newPalettes[2].source, newPalettes[2].colors, attributes);
+      distance1 = Math.abs(index1 - index2);
+      distance2 = Math.abs(index0 - index2);
+      var distance = Math.min(distance0, distance1, distance2);
+
+      if (distance > 2) {
+        var newPalette = utils_createAutoPalette(newPalettes.slice(0, 3), attributes);
+        newPalettes.splice(0, 3, newPalette);
+        return newPalettes;
+      }
+    }
+
+    if (distance0 > 2) {
+      var _newPalette = utils_createAutoPalette([newPalettes[0], newPalettes[1]], attributes);
+
+      newPalettes.splice(0, 2, _newPalette);
+      return newPalettes;
+    }
+
+    if (distance2 > 2) {
+      var _newPalette2 = utils_createAutoPalette([newPalettes[0], newPalettes[2]], attributes);
+
+      newPalettes.splice(0, 3, _newPalette2, newPalettes[1]);
+      return newPalettes;
+    }
+
+    if (distance1 > 2) {
+      var _newPalette3 = utils_createAutoPalette([newPalettes[1], newPalettes[2]], attributes);
+
+      newPalettes.splice(0, 3, newPalettes[0], _newPalette3);
+      return newPalettes;
+    }
+  }
+
+  return newPalettes;
+};
+var mapSanitizePalettes = function mapSanitizePalettes(colors) {
+  var attributes = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  return colors.map(utils_mapCorrectLightness(attributes)).map(mapUpdateProps).map(mapUseSource(attributes)).map(mapAddSourceIndex).map(mapAddTextColors);
 };
 var utils_getFunctionalColors = function getFunctionalColors(colors) {
   if (!colors || !colors.length) {
@@ -4943,7 +4998,6 @@ var utils_mapColorToPalette = function mapColorToPalette(attributes) {
     var label = colorObj.label,
         id = colorObj.id,
         value = colorObj.value;
-    var reference = chroma_default()(value).set('hsv.s', 1).set('hsv.v', 1).hex();
     var colors = contrast_array.map(function (contrast) {
       var luminance = contrastToLuminance(contrast);
       return chroma_default()(value).luminance(luminance, mode).hex();
@@ -4952,7 +5006,6 @@ var utils_mapColorToPalette = function mapColorToPalette(attributes) {
       id: id || index,
       label: label,
       source: value,
-      reference: reference,
       colors: colors
     };
   };
@@ -5005,7 +5058,7 @@ var utils_mapCorrectLightness = function mapCorrectLightness(_ref) {
   return function (palette) {
     palette.colors = palette.colors.map(function (color, index) {
       var luminance = contrastToLuminance(contrast_array[index]);
-      return chroma_default()(color).luminance(luminance, mode !== 'none' ? mode : 'rgb').hex();
+      return chroma_default()(color).luminance(luminance, 'rgb').hex();
     });
     return palette;
   };
@@ -5151,6 +5204,33 @@ var getCSSFromPalettes = function getCSSFromPalettes(palettes) {
   }, '');
 };
 
+var utils_createAutoPalette = function createAutoPalette(palettes) {
+  var attributes = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  var mode = attributes.mode,
+      bezierInterpolation = attributes.bezierInterpolation;
+  var palettesCopy = palettes.slice();
+  var colors = palettesCopy.map(function (palette) {
+    return palette.source;
+  });
+  var autoPalette = colors.slice();
+  autoPalette.splice(0, 0, '#FFFFFF');
+  autoPalette.push('#000000');
+  autoPalette.sort(function (c1, c2) {
+    return chroma_default()(c1).luminance() > chroma_default()(c2).luminance() ? -1 : 1;
+  });
+
+  if (!!bezierInterpolation) {
+    autoPalette = chroma_default.a.bezier(autoPalette).scale().mode(mode).correctLightness().colors(12);
+  } else {
+    autoPalette = chroma_default.a.scale(autoPalette).mode(mode).correctLightness().colors(12);
+  }
+
+  autoPalette = _objectSpread(_objectSpread({}, palettesCopy[0]), {}, {
+    colors: autoPalette
+  });
+  return autoPalette;
+};
+
 var noop = function noop(palette) {
   return palette;
 };
@@ -5204,16 +5284,32 @@ var builder_Builder = function Builder(props) {
       colors = _useState2[0],
       setColors = _useState2[1];
 
-  var changeListener = useCallback(function (value) {
+  var _useState3 = useState({
+    correctLightness: true,
+    useSources: true,
+    mode: 'hsl',
+    interpolateColors: false,
+    bezierInterpolation: false
+  }),
+      _useState4 = _slicedToArray(_useState3, 2),
+      attributes = _useState4[0],
+      updateAttributes = _useState4[1];
+
+  var setAttributes = function setAttributes(newAttributes) {
+    updateAttributes(Object.assign({}, attributes, newAttributes));
+  };
+
+  var updateOutput = function updateOutput() {
     var newColors = getColorsFromInputValue(sourceSetting());
-    var palettes = getPalettesFromColors(newColors);
+    var palettes = getPalettesFromColors(newColors, attributes);
     setColors(newColors);
 
     if (typeof outputSetting !== "undefined") {
       outputSetting.set(JSON.stringify(palettes));
     }
-  }, [colors]);
-  var variationChangeListener = useCallback(function (value) {}, []);
+  };
+
+  var changeListener = useCallback(updateOutput, [colors]);
   useEffect(function () {
     // Attach the listeners on component mount.
     sourceSetting.bind(changeListener);
@@ -5227,13 +5323,17 @@ var builder_Builder = function Builder(props) {
   useEffect(function () {
     sourceSetting.set(getValueFromColors(colors));
   }, [colors]);
-  var palettes = getPalettesFromColors(colors);
+  useEffect(updateOutput, [attributes]);
+  var palettes = getPalettesFromColors(colors, attributes);
   var isDark = (_window = window) !== null && _window !== void 0 && (_window$myApi = _window.myApi) !== null && _window$myApi !== void 0 && _window$myApi.isDark ? window.myApi.isDark() : false;
   return /*#__PURE__*/React.createElement("div", {
     className: isDark ? 'is-dark' : ''
   }, /*#__PURE__*/React.createElement(color_controls, {
     colors: colors,
     setColors: setColors
+  }), /*#__PURE__*/React.createElement(ParametersControls, {
+    attributes: attributes,
+    setAttributes: setAttributes
   }), /*#__PURE__*/React.createElement("style", null, getCSSFromPalettes(palettes)), palettes.map(function (palette, index) {
     var colors = palette.colors,
         id = palette.id;
@@ -5270,6 +5370,59 @@ var builder_Builder = function Builder(props) {
   }));
 };
 
+var ParametersControls = function ParametersControls(props) {
+  var attributes = props.attributes,
+      setAttributes = props.setAttributes;
+  var interpolateColors = attributes.interpolateColors,
+      bezierInterpolation = attributes.bezierInterpolation;
+  var options = [{
+    label: 'RGB',
+    value: 'rgb'
+  }, {
+    label: 'LAB',
+    value: 'lab'
+  }, {
+    label: 'LRGB',
+    value: 'lrgb'
+  }, {
+    label: 'HSL',
+    value: 'hsl'
+  }, {
+    label: 'LCH',
+    value: 'lch'
+  }];
+  return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("select", {
+    onChange: function onChange(event) {
+      return setAttributes({
+        mode: event.target.value
+      });
+    },
+    value: attributes.mode
+  }, options.map(function (option) {
+    return /*#__PURE__*/React.createElement("option", {
+      value: option.value
+    }, option.label);
+  })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
+    defaultChecked: interpolateColors,
+    onChange: function onChange() {
+      return setAttributes({
+        interpolateColors: !interpolateColors
+      });
+    }
+  }, /*#__PURE__*/React.createElement("input", {
+    type: "checkbox"
+  }), " Interpolate colors")), interpolateColors && /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
+    defaultChecked: bezierInterpolation,
+    onChange: function onChange() {
+      return setAttributes({
+        bezierInterpolation: !bezierInterpolation
+      });
+    }
+  }, /*#__PURE__*/React.createElement("input", {
+    type: "checkbox"
+  }), " Flatten palette")));
+};
+
 var initializePaletteBuilder = function initializePaletteBuilder(sourceSettingID, outputSettingID) {
   var containerID = "customize-control-".concat(sourceSettingID, "_control");
   var container = document.getElementById(containerID);
@@ -5287,12 +5440,6 @@ var initializePaletteBuilder = function initializePaletteBuilder(sourceSettingID
     sourceSettingID: sourceSettingID,
     outputSettingID: outputSettingID
   }), target);
-};
-
-var builder_getCSSFromInputValue = function getCSSFromInputValue(value) {
-  var colors = getColorsFromInputValue(value);
-  var palettes = getPalettesFromColors(colors);
-  return getCSSFromPalettes(palettes);
 };
 
 
@@ -5521,8 +5668,7 @@ customify.api = Object.assign({}, customify.api, function () {
     bindEvents();
   });
   return {
-    getCSSFromPalettes: getCSSFromPalettes,
-    getCSSFromInputValue: builder_getCSSFromInputValue
+    getCSSFromPalettes: getCSSFromPalettes
   };
 }());
 
