@@ -15,7 +15,7 @@ export const getPalettesFromColors = ( colors, attributes = {} ) => {
 
 export const addAutoPalettes = ( palettes, attributes ) => {
 
-  if ( ! attributes.interpolateColors ) {
+  if ( ! attributes.colorInterpolation ) {
     return palettes;
   }
 
@@ -71,7 +71,7 @@ export const mapSanitizePalettes = ( colors, attributes = {} ) => {
   return colors.map( mapCorrectLightness( attributes ) )
                .map( mapUpdateProps )
                .map( mapUseSource( attributes ) )
-               .map( mapAddSourceIndex )
+               .map( mapAddSourceIndex( attributes ) )
                .map( mapAddTextColors );
 }
 
@@ -109,11 +109,22 @@ export const mapAddTextColors = ( palette ) => {
   return palette;
 }
 
-export const mapAddSourceIndex = ( palette, index, palettes ) => {
-  return {
-    sourceIndex: getSourceIndex( palette ),
-    ...palette
-  };
+export const mapAddSourceIndex = ( attributes ) => {
+
+  return ( palette, index, palettes ) => {
+    const { source, colors } = palette;
+    let sourceIndex = getSourceIndex( palette );
+
+    // falback sourceIndex when the source isn't used in the palette
+    if ( ! sourceIndex > -1 ) {
+      sourceIndex = getBestPositionInPaletteByLuminance( source, colors.map( color => color.value ), attributes );
+    }
+
+    return {
+      sourceIndex,
+      ...palette
+    };
+  }
 }
 
 export const getShiftedArray = ( array, positions ) => {
@@ -131,7 +142,6 @@ export const mapShiftColors = ( palette ) => {
 
 export const mapColorToPalette = ( ( attributes ) => {
   const { mode } = attributes;
-
   return ( colorObj, index ) => {
     const { label, id, value } = colorObj;
 
@@ -211,8 +221,9 @@ const mapUpdateProps = ( palette ) => {
 }
 
 export const mapUseSource = ( attributes ) => {
+  const { useSources, colorInterpolation, bezierInterpolation } = attributes;
 
-  if ( ! attributes.useSources ) {
+  if ( ! useSources ) {
     return noop;
   }
 
@@ -237,7 +248,7 @@ export const getBestPositionInPaletteByLuminance = ( color, colors, attributes, 
     let distance;
 
     if ( !! byColorDistance ) {
-      distance = chroma.distance( colors[i], color );
+      distance = chroma.distance( colors[i], color, 'rgb' );
     } else {
       distance = Math.abs( chroma( colors[i] ).luminance() - chroma( color ).luminance() );
     }

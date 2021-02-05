@@ -31,44 +31,52 @@ const getValueFromColors = ( colors ) => {
 
 const Builder = ( props ) => {
   const { sourceSettingID, outputSettingID } = props;
-  const variationSetting = wp.customize( 'sm_site_color_variation' );
   const sourceSetting = wp.customize( sourceSettingID );
+
+  const colorSpaceSetting = wp.customize( 'sm_color_space' );
+  const colorInterpolationSetting = wp.customize( 'sm_color_interpolation' );
+  const bezierInterpolationSetting = wp.customize( 'sm_bezier_interpolation' );
+  const useSourcesSetting = wp.customize( 'sm_use_color_sources' );
+
   const outputSetting = wp.customize( outputSettingID );
   const [ colors, setColors ] = useState( getColorsFromInputValue( sourceSetting() ) );
   const [ attributes, updateAttributes ] = useState( {
     correctLightness: true,
-    useSources: true,
-    mode: 'hsl',
-    interpolateColors: false,
-    bezierInterpolation: false,
+    useSources: useSourcesSetting(),
+    mode: colorSpaceSetting(),
+    colorInterpolation: colorInterpolationSetting(),
+    bezierInterpolation: bezierInterpolationSetting(),
   } );
 
   const setAttributes = ( newAttributes ) => {
     updateAttributes( Object.assign( {}, attributes, newAttributes ) );
   }
 
-  const updateOutput = () => {
-    const newColors = getColorsFromInputValue( sourceSetting() );
-    const palettes = getPalettesFromColors( newColors, attributes );
-
-    setColors( newColors );
-
-    if ( typeof outputSetting !== "undefined" ) {
-      outputSetting.set( JSON.stringify( palettes ) );
-    }
+  const changeListener = () => {
+    setColors( getColorsFromInputValue( sourceSetting() ) );
+    setAttributes( {
+      useSources: useSourcesSetting(),
+      mode: colorSpaceSetting(),
+      colorInterpolation: colorInterpolationSetting(),
+      bezierInterpolation: bezierInterpolationSetting(),
+    } );
   };
-
-  const changeListener = useCallback( updateOutput, [ colors ] );
 
   useEffect(() => {
     // Attach the listeners on component mount.
     sourceSetting.bind( changeListener );
-    variationSetting.bind( changeListener );
+    useSourcesSetting.bind( changeListener );
+    colorSpaceSetting.bind( changeListener );
+    colorInterpolationSetting.bind( changeListener );
+    bezierInterpolationSetting.bind( changeListener );
 
     // Detach the listeners on component unmount.
     return () => {
       sourceSetting.unbind( changeListener );
-      variationSetting.unbind( changeListener );
+      useSourcesSetting.unbind( changeListener );
+      colorSpaceSetting.unbind( changeListener );
+      colorInterpolationSetting.unbind( changeListener );
+      bezierInterpolationSetting.unbind( changeListener );
     }
   }, []);
 
@@ -76,7 +84,13 @@ const Builder = ( props ) => {
     sourceSetting.set( getValueFromColors( colors ) );
   }, [ colors ] );
 
-  useEffect( updateOutput, [ attributes ] )
+  useEffect( () => {
+    const palettes = getPalettesFromColors( colors, attributes );
+
+    if ( typeof outputSetting !== "undefined" ) {
+      outputSetting.set( JSON.stringify( palettes ) );
+    }
+  }, [ colors, attributes ] );
 
   const palettes = getPalettesFromColors( colors, attributes );
   const isDark = window?.myApi?.isDark ? window.myApi.isDark() : false;
@@ -84,7 +98,6 @@ const Builder = ( props ) => {
   return (
     <div className={ isDark ? 'is-dark' : '' }>
       <ColorControls colors={ colors } setColors={ setColors } />
-      <ParametersControls attributes={ attributes } setAttributes={ setAttributes } />
       <style>
         { getCSSFromPalettes( palettes ) }
       </style>
@@ -111,7 +124,7 @@ const Builder = ( props ) => {
 
 const ParametersControls = ( props ) => {
   const { attributes, setAttributes } = props;
-  const { interpolateColors, bezierInterpolation } = attributes;
+  const { colorInterpolation, bezierInterpolation } = attributes;
 
   const options = [
     { label: 'RGB', value: 'rgb' },
@@ -128,13 +141,13 @@ const ParametersControls = ( props ) => {
       </select>
       <div>
         <label
-          defaultChecked={ interpolateColors }
-          onChange={ () => setAttributes( { interpolateColors: ! interpolateColors } ) }>
+          defaultChecked={ colorInterpolation }
+          onChange={ () => setAttributes( { colorInterpolation: ! colorInterpolation } ) }>
           <input type="checkbox" /> Interpolate colors
         </label>
       </div>
       {
-        interpolateColors &&
+        colorInterpolation &&
         <div>
           <label
             defaultChecked={ bezierInterpolation }

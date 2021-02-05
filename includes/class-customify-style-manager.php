@@ -310,6 +310,11 @@ if ( ! class_exists( 'Customify_Style_Manager' ) ) {
 				// We need to split the fields in the Style Manager section into two: color palettes and fonts.
 				$color_palettes_fields = array(
 					'sm_advanced_palette_source',
+					'sm_color_space',
+					'sm_use_color_sources',
+					'sm_color_interpolation',
+					'sm_bezier_interpolation',
+
 					'sm_advanced_palette_output',
 					'sm_site_color_variation',
 

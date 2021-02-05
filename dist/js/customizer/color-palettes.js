@@ -4882,7 +4882,7 @@ var getPalettesFromColors = function getPalettesFromColors(colors) {
   return mapSanitizePalettes(palettes.concat(functionalPalettes), attributes);
 };
 var addAutoPalettes = function addAutoPalettes(palettes, attributes) {
-  if (!attributes.interpolateColors) {
+  if (!attributes.colorInterpolation) {
     return palettes;
   }
 
@@ -4934,7 +4934,7 @@ var addAutoPalettes = function addAutoPalettes(palettes, attributes) {
 };
 var mapSanitizePalettes = function mapSanitizePalettes(colors) {
   var attributes = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-  return colors.map(utils_mapCorrectLightness(attributes)).map(mapUpdateProps).map(mapUseSource(attributes)).map(mapAddSourceIndex).map(mapAddTextColors);
+  return colors.map(utils_mapCorrectLightness(attributes)).map(mapUpdateProps).map(mapUseSource(attributes)).map(mapAddSourceIndex(attributes)).map(mapAddTextColors);
 };
 var utils_getFunctionalColors = function getFunctionalColors(colors) {
   if (!colors || !colors.length) {
@@ -4977,10 +4977,22 @@ var mapAddTextColors = function mapAddTextColors(palette) {
   });
   return palette;
 };
-var mapAddSourceIndex = function mapAddSourceIndex(palette, index, palettes) {
-  return _objectSpread({
-    sourceIndex: getSourceIndex(palette)
-  }, palette);
+var mapAddSourceIndex = function mapAddSourceIndex(attributes) {
+  return function (palette, index, palettes) {
+    var source = palette.source,
+        colors = palette.colors;
+    var sourceIndex = getSourceIndex(palette); // falback sourceIndex when the source isn't used in the palette
+
+    if (!sourceIndex > -1) {
+      sourceIndex = utils_getBestPositionInPaletteByLuminance(source, colors.map(function (color) {
+        return color.value;
+      }), attributes);
+    }
+
+    return _objectSpread({
+      sourceIndex: sourceIndex
+    }, palette);
+  };
 };
 var getShiftedArray = function getShiftedArray(array, positions) {
   var arrayClone = array.slice();
@@ -5074,7 +5086,11 @@ var mapUpdateProps = function mapUpdateProps(palette) {
 };
 
 var mapUseSource = function mapUseSource(attributes) {
-  if (!attributes.useSources) {
+  var useSources = attributes.useSources,
+      colorInterpolation = attributes.colorInterpolation,
+      bezierInterpolation = attributes.bezierInterpolation;
+
+  if (!useSources) {
     return noop;
   }
 
@@ -5098,7 +5114,7 @@ var utils_getBestPositionInPaletteByLuminance = function getBestPositionInPalett
     var distance = void 0;
 
     if (!!byColorDistance) {
-      distance = chroma_default.a.distance(colors[i], color);
+      distance = chroma_default.a.distance(colors[i], color, 'rgb');
     } else {
       distance = Math.abs(chroma_default()(colors[i]).luminance() - chroma_default()(color).luminance());
     }
@@ -5275,8 +5291,11 @@ var builder_Builder = function Builder(props) {
 
   var sourceSettingID = props.sourceSettingID,
       outputSettingID = props.outputSettingID;
-  var variationSetting = wp.customize('sm_site_color_variation');
   var sourceSetting = wp.customize(sourceSettingID);
+  var colorSpaceSetting = wp.customize('sm_color_space');
+  var colorInterpolationSetting = wp.customize('sm_color_interpolation');
+  var bezierInterpolationSetting = wp.customize('sm_bezier_interpolation');
+  var useSourcesSetting = wp.customize('sm_use_color_sources');
   var outputSetting = wp.customize(outputSettingID);
 
   var _useState = useState(getColorsFromInputValue(sourceSetting())),
@@ -5286,10 +5305,10 @@ var builder_Builder = function Builder(props) {
 
   var _useState3 = useState({
     correctLightness: true,
-    useSources: true,
-    mode: 'hsl',
-    interpolateColors: false,
-    bezierInterpolation: false
+    useSources: useSourcesSetting(),
+    mode: colorSpaceSetting(),
+    colorInterpolation: colorInterpolationSetting(),
+    bezierInterpolation: bezierInterpolationSetting()
   }),
       _useState4 = _slicedToArray(_useState3, 2),
       attributes = _useState4[0],
@@ -5299,31 +5318,42 @@ var builder_Builder = function Builder(props) {
     updateAttributes(Object.assign({}, attributes, newAttributes));
   };
 
-  var updateOutput = function updateOutput() {
-    var newColors = getColorsFromInputValue(sourceSetting());
-    var palettes = getPalettesFromColors(newColors, attributes);
-    setColors(newColors);
-
-    if (typeof outputSetting !== "undefined") {
-      outputSetting.set(JSON.stringify(palettes));
-    }
+  var changeListener = function changeListener() {
+    setColors(getColorsFromInputValue(sourceSetting()));
+    setAttributes({
+      useSources: useSourcesSetting(),
+      mode: colorSpaceSetting(),
+      colorInterpolation: colorInterpolationSetting(),
+      bezierInterpolation: bezierInterpolationSetting()
+    });
   };
 
-  var changeListener = useCallback(updateOutput, [colors]);
   useEffect(function () {
     // Attach the listeners on component mount.
     sourceSetting.bind(changeListener);
-    variationSetting.bind(changeListener); // Detach the listeners on component unmount.
+    useSourcesSetting.bind(changeListener);
+    colorSpaceSetting.bind(changeListener);
+    colorInterpolationSetting.bind(changeListener);
+    bezierInterpolationSetting.bind(changeListener); // Detach the listeners on component unmount.
 
     return function () {
       sourceSetting.unbind(changeListener);
-      variationSetting.unbind(changeListener);
+      useSourcesSetting.unbind(changeListener);
+      colorSpaceSetting.unbind(changeListener);
+      colorInterpolationSetting.unbind(changeListener);
+      bezierInterpolationSetting.unbind(changeListener);
     };
   }, []);
   useEffect(function () {
     sourceSetting.set(getValueFromColors(colors));
   }, [colors]);
-  useEffect(updateOutput, [attributes]);
+  useEffect(function () {
+    var palettes = getPalettesFromColors(colors, attributes);
+
+    if (typeof outputSetting !== "undefined") {
+      outputSetting.set(JSON.stringify(palettes));
+    }
+  }, [colors, attributes]);
   var palettes = getPalettesFromColors(colors, attributes);
   var isDark = (_window = window) !== null && _window !== void 0 && (_window$myApi = _window.myApi) !== null && _window$myApi !== void 0 && _window$myApi.isDark ? window.myApi.isDark() : false;
   return /*#__PURE__*/React.createElement("div", {
@@ -5331,9 +5361,6 @@ var builder_Builder = function Builder(props) {
   }, /*#__PURE__*/React.createElement(color_controls, {
     colors: colors,
     setColors: setColors
-  }), /*#__PURE__*/React.createElement(ParametersControls, {
-    attributes: attributes,
-    setAttributes: setAttributes
   }), /*#__PURE__*/React.createElement("style", null, getCSSFromPalettes(palettes)), palettes.map(function (palette, index) {
     var colors = palette.colors,
         id = palette.id;
@@ -5373,7 +5400,7 @@ var builder_Builder = function Builder(props) {
 var ParametersControls = function ParametersControls(props) {
   var attributes = props.attributes,
       setAttributes = props.setAttributes;
-  var interpolateColors = attributes.interpolateColors,
+  var colorInterpolation = attributes.colorInterpolation,
       bezierInterpolation = attributes.bezierInterpolation;
   var options = [{
     label: 'RGB',
@@ -5403,15 +5430,15 @@ var ParametersControls = function ParametersControls(props) {
       value: option.value
     }, option.label);
   })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
-    defaultChecked: interpolateColors,
+    defaultChecked: colorInterpolation,
     onChange: function onChange() {
       return setAttributes({
-        interpolateColors: !interpolateColors
+        colorInterpolation: !colorInterpolation
       });
     }
   }, /*#__PURE__*/React.createElement("input", {
     type: "checkbox"
-  }), " Interpolate colors")), interpolateColors && /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
+  }), " Interpolate colors")), colorInterpolation && /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
     defaultChecked: bezierInterpolation,
     onChange: function onChange() {
       return setAttributes({

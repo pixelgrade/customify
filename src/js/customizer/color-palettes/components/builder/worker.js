@@ -130,8 +130,6 @@ addEventListener( 'message', function( event ) {  // eslint-disable-line no-rest
 
   buckets = filterOutClusters( buckets, 0.03 );
 
-  console.log( buckets );
-
   // cleanup
   buckets = buckets.map( bucket => {
     const clusters = getClusters( bucket, 4, 10 ).map( cluster => cluster.points );
@@ -144,8 +142,6 @@ addEventListener( 'message', function( event ) {  // eslint-disable-line no-rest
   }, [] );
 
   buckets.sort( ( bucket1, bucket2 ) => bucket1.length > bucket2.length ? -1 : 1 );
-
-  console.log( buckets );
 
   const average = buckets.map( bucket => {
 
