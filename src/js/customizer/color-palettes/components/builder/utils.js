@@ -22,6 +22,11 @@ export const getPalettesFromColors = ( colors => {
 } );
 
 export const getFunctionalColors = ( colors ) => {
+
+  if ( ! colors || ! colors.length ) {
+    return [];
+  }
+
   const color = colors[0].value;
   const red = chroma( color ).set( 'hsl.h', 0 ).hex();
   const blue = chroma( color ).set( 'hsl.h', 180 ).hex();

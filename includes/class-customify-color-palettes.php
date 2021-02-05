@@ -1513,7 +1513,8 @@ class Customify_Color_Palettes {
 				'textColors'  => $textColor_objects,
 				'source'      => $value,
 				'sourceIndex' => 6,
-				'label'       => 'Color ' . $alphabet[ $index ]
+				'label'       => 'Color ' . $alphabet[ $index ],
+				'id'          => $index
 			);
 		}
 
@@ -1571,8 +1572,12 @@ class Customify_Color_Palettes {
 		foreach ( $colors as $index => $color ) {
 			$oldColorIndex = ( $index + $offset ) % $count;
 
-			if ( $isDark && $oldColorIndex < $count / 2 ) {
-				$oldColorIndex = 11 - $oldColorIndex;
+			if ( $isDark ) {
+				if ( $oldColorIndex < $count / 2 ) {
+					$oldColorIndex = 11 - $oldColorIndex;
+				} else {
+					continue;
+				}
 			}
 
 			$output .= get_color_variables( $palette, $index . $suffix, $oldColorIndex );

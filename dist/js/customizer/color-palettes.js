@@ -4882,6 +4882,10 @@ var getPalettesFromColors = function getPalettesFromColors(colors) {
   return colors.concat(utils_getFunctionalColors(colors)).map(utils_mapColorToPalette(utils_attributes)).map(mapInterpolateSource(utils_attributes)).map(utils_mapCorrectLightness(utils_attributes)).map(mapUpdateProps).map(mapUseSource(utils_attributes)).map(mapAddSourceIndex).map(mapAddTextColors);
 };
 var utils_getFunctionalColors = function getFunctionalColors(colors) {
+  if (!colors || !colors.length) {
+    return [];
+  }
+
   var color = colors[0].value;
   var red = chroma_default()(color).set('hsl.h', 0).hex();
   var blue = chroma_default()(color).set('hsl.h', 180).hex();
