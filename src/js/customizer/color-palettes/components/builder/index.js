@@ -105,15 +105,15 @@ const Builder = ( props ) => {
         const { colors, id } = palette;
 
         return (
-          <div className={ `palette-preview-set sm-palette-${ id }` }>
+          <div className={ `palette-preview-set` }>
             <div className={ "palette-preview" }>
-              { colors.map( ( color, colorIndex ) => <div className={ `sm-variation-${ colorIndex } `} style={ { color: `var(--sm-current-background-color)` } }></div> ) }
+              { colors.map( ( color, colorIndex ) => <div className={ `sm-variation-${ colorIndex } `} style={ { color: `var(--sm-color-palette-${ id }-bg-color-${ colorIndex })` } }></div> ) }
             </div>
             <div className={ "palette-preview" }>
-              { colors.map( ( color, colorIndex ) => <div className={ `sm-variation-${ colorIndex } `} style={ { color: `var(--sm-current-dark-color)` } }></div> ) }
+              { colors.map( ( color, colorIndex ) => <div className={ `sm-variation-${ colorIndex } `} style={ { color: `var(--sm-color-palette-${ id }-fg1-color-${ colorIndex })` } }></div> ) }
             </div>
             <div className={ "palette-preview" }>
-              { colors.map( ( color, colorIndex ) => <div className={ `sm-variation-${ colorIndex } `} style={ { color: `var(--sm-current-accent-color)` } }></div> ) }
+              { colors.map( ( color, colorIndex ) => <div className={ `sm-variation-${ colorIndex } `} style={ { color: `var(--sm-color-palette-${ id }-accent-color-${ colorIndex })` } }></div> ) }
             </div>
           </div>
         )

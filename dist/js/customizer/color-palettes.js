@@ -5015,7 +5015,7 @@ var utils_mapColorToPalette = function mapColorToPalette(attributes) {
       return chroma_default()(value).luminance(luminance, mode).hex();
     });
     return {
-      id: id || index,
+      id: id || index + 1,
       label: label,
       source: value,
       colors: colors
@@ -5175,11 +5175,12 @@ var getInitialColorVaraibles = function getInitialColorVaraibles(palette) {
   var colors = palette.colors,
       textColors = palette.textColors,
       id = palette.id;
+  var prefix = '--sm-color-palette-';
   var accentColors = colors.reduce(function (colorsAcc, color, index) {
-    return "".concat(colorsAcc, "\n      --sm-").concat(id, "-color-").concat(index, ": ").concat(color.value, ";\n    ");
+    return "".concat(colorsAcc, "\n      ").concat(prefix).concat(id, "-color-").concat(index, ": ").concat(color.value, ";\n    ");
   }, '');
   var darkColors = textColors.reduce(function (colorsAcc, color, index) {
-    return "".concat(colorsAcc, "\n      --sm-").concat(id, "-text-color-").concat(index, ": ").concat(color.value, ";\n    ");
+    return "".concat(colorsAcc, "\n      ").concat(prefix).concat(id, "-text-color-").concat(index, ": ").concat(color.value, ";\n    ");
   }, '');
   return "\n    ".concat(accentColors, "\n    ").concat(darkColors, "\n  ");
 };
@@ -5188,13 +5189,14 @@ var getColorVariables = function getColorVariables(palette, newColorIndex, oldCo
       id = palette.id;
   var count = colors.length;
   var accentColorIndex = (oldColorIndex + count / 2) % count;
-  var accentColors = "\n    --sm-".concat(id, "-background-color-").concat(newColorIndex, ": var(--sm-").concat(id, "-color-").concat(oldColorIndex, ");\n    --sm-").concat(id, "-accent-color-").concat(newColorIndex, ": var(--sm-").concat(id, "-color-").concat(accentColorIndex, ");\n  ");
+  var prefix = '--sm-color-palette-';
+  var accentColors = "\n    ".concat(prefix).concat(id, "-bg-color-").concat(newColorIndex, ": var(").concat(prefix).concat(id, "-color-").concat(oldColorIndex, ");\n    ").concat(prefix).concat(id, "-accent-color-").concat(newColorIndex, ": var(").concat(prefix).concat(id, "-color-").concat(accentColorIndex, ");\n  ");
   var darkColors = '';
 
   if (oldColorIndex < count / 2) {
-    darkColors = "\n      --sm-".concat(id, "-dark-color-").concat(newColorIndex, ": var(--sm-").concat(id, "-text-color-0);\n      --sm-").concat(id, "-darker-color-").concat(newColorIndex, ": var(--sm-").concat(id, "-text-color-1);\n    ");
+    darkColors = "\n      ".concat(prefix).concat(id, "-fg1-color-").concat(newColorIndex, ": var(").concat(prefix).concat(id, "-text-color-0);\n      ").concat(prefix).concat(id, "-fg2-color-").concat(newColorIndex, ": var(").concat(prefix).concat(id, "-text-color-1);\n    ");
   } else {
-    darkColors = "\n      --sm-".concat(id, "-dark-color-").concat(newColorIndex, ": var(--sm-").concat(id, "-color-0);\n      --sm-").concat(id, "-darker-color-").concat(newColorIndex, ": var(--sm-").concat(id, "-color-0);\n    ");
+    darkColors = "\n      ".concat(prefix).concat(id, "-fg1-color-").concat(newColorIndex, ": var(").concat(prefix).concat(id, "-color-0);\n      ").concat(prefix).concat(id, "-fg2-color-").concat(newColorIndex, ": var(").concat(prefix).concat(id, "-color-0);\n    ");
   }
 
   return "\n    ".concat(accentColors, "\n    ").concat(darkColors, "\n  ");
@@ -5365,14 +5367,14 @@ var builder_Builder = function Builder(props) {
     var colors = palette.colors,
         id = palette.id;
     return /*#__PURE__*/React.createElement("div", {
-      className: "palette-preview-set sm-palette-".concat(id)
+      className: "palette-preview-set"
     }, /*#__PURE__*/React.createElement("div", {
       className: "palette-preview"
     }, colors.map(function (color, colorIndex) {
       return /*#__PURE__*/React.createElement("div", {
         className: "sm-variation-".concat(colorIndex, " "),
         style: {
-          color: "var(--sm-current-background-color)"
+          color: "var(--sm-color-palette-".concat(id, "-bg-color-").concat(colorIndex, ")")
         }
       });
     })), /*#__PURE__*/React.createElement("div", {
@@ -5381,7 +5383,7 @@ var builder_Builder = function Builder(props) {
       return /*#__PURE__*/React.createElement("div", {
         className: "sm-variation-".concat(colorIndex, " "),
         style: {
-          color: "var(--sm-current-dark-color)"
+          color: "var(--sm-color-palette-".concat(id, "-fg1-color-").concat(colorIndex, ")")
         }
       });
     })), /*#__PURE__*/React.createElement("div", {
@@ -5390,7 +5392,7 @@ var builder_Builder = function Builder(props) {
       return /*#__PURE__*/React.createElement("div", {
         className: "sm-variation-".concat(colorIndex, " "),
         style: {
-          color: "var(--sm-current-accent-color)"
+          color: "var(--sm-color-palette-".concat(id, "-accent-color-").concat(colorIndex, ")")
         }
       });
     })));

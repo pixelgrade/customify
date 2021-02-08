@@ -1565,7 +1565,6 @@ class Customify_Color_Palettes {
 
 		foreach ( $palettes as $palette_index => $palette ) {
 			$sourceIndex = $palette->sourceIndex;
-			$id = $palette->id;
 
 			$output .= 'html { ' . PHP_EOL;
 			$output .= get_initial_color_variables( $palette );
@@ -1586,15 +1585,16 @@ class Customify_Color_Palettes {
 		$colors = $palette->colors;
 		$textColors = $palette->textColors;
 		$id = $palette->id;
+		$prefix = '--sm-color-palette-';
 
 		$output = '';
 
 		foreach ( $colors as $index => $color ) {
-			$output .= '--sm-' . $id . '-color-' . $index . ': ' . $color->value . ';' . PHP_EOL;
+			$output .= $prefix . $id . '-color-' . ( $index + 1 ) . ': ' . $color->value . ';' . PHP_EOL;
 		}
 
 		foreach ( $textColors as $index => $color ) {
-			$output .= '--sm-' . $id . '-text-color-' . $index . ': ' . $color->value . ';' . PHP_EOL;
+			$output .= $prefix . $id . '-text-color-' . ( $index + 1 ) . ': ' . $color->value . ';' . PHP_EOL;
 		}
 
 		return $output;
@@ -1608,17 +1608,17 @@ class Customify_Color_Palettes {
 		$output = '';
 
 		foreach ( $colors as $index => $color ) {
-			$oldColorIndex = ( $index + $offset ) % $count;
+			$oldColorIndex = ( $index + $offset ) % $count + 1;
 
 			if ( $isDark ) {
-				if ( $oldColorIndex < $count / 2 ) {
-					$oldColorIndex = 11 - $oldColorIndex;
+				if ( ! $oldColorIndex > $count / 2 ) {
+					$oldColorIndex = 12 - $oldColorIndex;
 				} else {
 					continue;
 				}
 			}
 
-			$output .= get_color_variables( $palette, $index . $suffix, $oldColorIndex );
+			$output .= get_color_variables( $palette, ( $index + 1 ) . $suffix, $oldColorIndex );
 		}
 
 		return $output;
@@ -1629,18 +1629,19 @@ class Customify_Color_Palettes {
 		$id = $palette->id;
 		$count = count( $colors );
 		$accentColorIndex = ( $oldColorIndex + $count / 2 ) % $count;
+		$prefix = '--sm-color-palette-';
 
 		$output = '';
 
-		$output .= '--sm-' . $id . '-background-color-' . $newColorIndex . ': var(--sm-' . $id . '-color-' . $oldColorIndex . ');' . PHP_EOL;
-		$output .= '--sm-' . $id . '-accent-color-' . $newColorIndex . ': var(--sm-' . $id . '-color-' . $accentColorIndex . ');' . PHP_EOL;
+		$output .= $prefix . $id . '-bg-color-' . $newColorIndex . ': var(' . $prefix . $id . '-color-' . $oldColorIndex . ');' . PHP_EOL;
+		$output .= $prefix . $id . '-accent-color-' . $newColorIndex . ': var(' . $prefix . $id . '-color-' . $accentColorIndex . ');' . PHP_EOL;
 
 		if ( $oldColorIndex < $count / 2 ) {
-			$output .= '--sm-' . $id . '-dark-color-' . $newColorIndex . ': var(--sm-' . $id . '-text-color-0);' . PHP_EOL;
-			$output .= '--sm-' . $id . '-darker-color-' . $newColorIndex . ': var(--sm-' . $id . '-text-color-1);' . PHP_EOL;
+			$output .= $prefix . $id . '-fg1-color-' . $newColorIndex . ': var(' . $prefix . $id . '-text-color-1);' . PHP_EOL;
+			$output .= $prefix . $id . '-fg2-color-' . $newColorIndex . ': var(' . $prefix . $id . '-text-color-2);' . PHP_EOL;
 		} else {
-			$output .= '--sm-' . $id . '-dark-color-' . $newColorIndex . ': var(--sm-' . $id . '-color-0);' . PHP_EOL;
-			$output .= '--sm-' . $id . '-darker-color-' . $newColorIndex . ': var(--sm-' . $id . '-color-0);' . PHP_EOL;
+			$output .= $prefix . $id . '-fg1-color-' . $newColorIndex . ': var(' . $prefix . $id . '-color-1);' . PHP_EOL;
+			$output .= $prefix . $id . '-fg2-color-' . $newColorIndex . ': var(' . $prefix . $id . '-color-2);' . PHP_EOL;
 		}
 
 		return $output;

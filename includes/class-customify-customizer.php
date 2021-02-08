@@ -157,7 +157,6 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 		function register_admin_customizer_styles() {
 			$rtl_suffix = is_rtl() ? '-rtl' : '';
 			wp_register_style( 'customify_style', plugins_url( 'css/customizer' . $rtl_suffix . '.css', PixCustomifyPlugin()->get_file() ), array( 'dashicons' ), PixCustomifyPlugin()->get_version() );
-			wp_register_style( 'customify_colors_css', plugins_url( 'css/sm-colors.css', PixCustomifyPlugin()->get_file() ), array(), PixCustomifyPlugin()->get_version() );
 		}
 
 		/**
@@ -171,7 +170,6 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 		function enqueue_style_manager_scripts() {
 			$suffix = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min';
 
-			wp_enqueue_style( 'sm-colors', plugins_url( 'css/sm-colors.css', PixCustomifyPlugin()->get_file() ), array(), PixCustomifyPlugin()->get_version() );
 			wp_enqueue_script( 'sm-dark-mode', plugins_url( 'dist/js/dark-mode' . $suffix . '.js', PixCustomifyPlugin()->get_file() ), array( 'jquery' ), PixCustomifyPlugin()->get_version() );
 		}
 

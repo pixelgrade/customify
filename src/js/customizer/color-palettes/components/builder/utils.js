@@ -151,7 +151,7 @@ export const mapColorToPalette = ( ( attributes ) => {
     } );
 
     return {
-      id: id || index,
+      id: id || ( index + 1 ),
       label: label,
       source: value,
       colors: colors,
@@ -309,16 +309,17 @@ export const getVariablesCSS = ( palette, offset = 0, isDark = false, isShifted 
 
 export const getInitialColorVaraibles = ( palette ) => {
   const { colors, textColors, id } = palette;
+  const prefix = '--sm-color-palette-';
 
   let accentColors = colors.reduce( ( colorsAcc, color, index ) => {
     return `${ colorsAcc }
-      --sm-${ id }-color-${ index }: ${ color.value };
+      ${ prefix }${ id }-color-${ index }: ${ color.value };
     `;
   }, '' );
 
   let darkColors = textColors.reduce( ( colorsAcc, color, index ) => {
     return `${ colorsAcc }
-      --sm-${ id }-text-color-${ index }: ${ color.value };
+      ${ prefix }${ id }-text-color-${ index }: ${ color.value };
     `;
   }, '' );
 
@@ -332,23 +333,24 @@ export const getColorVariables = ( palette, newColorIndex, oldColorIndex ) => {
   const { colors, id } = palette;
   const count = colors.length;
   const accentColorIndex = ( oldColorIndex + count / 2 ) % count;
+  const prefix = '--sm-color-palette-';
 
   let accentColors = `
-    --sm-${ id }-background-color-${ newColorIndex }: var(--sm-${ id }-color-${ oldColorIndex });
-    --sm-${ id }-accent-color-${ newColorIndex }: var(--sm-${ id }-color-${ accentColorIndex });
+    ${ prefix }${ id }-bg-color-${ newColorIndex }: var(${ prefix }${ id }-color-${ oldColorIndex });
+    ${ prefix }${ id }-accent-color-${ newColorIndex }: var(${ prefix }${ id }-color-${ accentColorIndex });
   `;
 
   let darkColors = '';
 
   if ( oldColorIndex < count / 2 ) {
     darkColors = `
-      --sm-${ id }-dark-color-${ newColorIndex }: var(--sm-${ id }-text-color-0);
-      --sm-${ id }-darker-color-${ newColorIndex }: var(--sm-${ id }-text-color-1);
+      ${ prefix }${ id }-fg1-color-${ newColorIndex }: var(${ prefix }${ id }-text-color-0);
+      ${ prefix }${ id }-fg2-color-${ newColorIndex }: var(${ prefix }${ id }-text-color-1);
     `;
   } else {
     darkColors = `
-      --sm-${ id }-dark-color-${ newColorIndex }: var(--sm-${ id }-color-0);
-      --sm-${ id }-darker-color-${ newColorIndex }: var(--sm-${ id }-color-0);
+      ${ prefix }${ id }-fg1-color-${ newColorIndex }: var(${ prefix }${ id }-color-0);
+      ${ prefix }${ id }-fg2-color-${ newColorIndex }: var(${ prefix }${ id }-color-0);
     `;
   }
 
