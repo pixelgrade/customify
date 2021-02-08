@@ -81,7 +81,7 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 8);
+/******/ 	return __webpack_require__(__webpack_require__.s = 9);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -4026,7 +4026,8 @@ module.exports = function (cssWithMappingToString) {
 
 /***/ }),
 /* 7 */,
-/* 8 */
+/* 8 */,
+/* 9 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -4047,7 +4048,7 @@ var external_lodash_default = /*#__PURE__*/__webpack_require__.n(external_lodash
 var external_jQuery_ = __webpack_require__(0);
 var external_jQuery_default = /*#__PURE__*/__webpack_require__.n(external_jQuery_);
 
-// CONCATENATED MODULE: ./src/js/customizer/color-palettes/global-service.js
+// CONCATENATED MODULE: ./src/js/color-palettes/global-service.js
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
@@ -4118,7 +4119,7 @@ var globalService = new globalServiceClass();
 var chroma = __webpack_require__(2);
 var chroma_default = /*#__PURE__*/__webpack_require__.n(chroma);
 
-// CONCATENATED MODULE: ./src/js/customizer/color-palettes/utils/filters.js
+// CONCATENATED MODULE: ./src/js/color-palettes/utils/filters.js
 
 var filters_clarendon = function clarendon(hex) {
   var palette = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
@@ -4179,7 +4180,7 @@ var filters_greyish = function greyish(hex, palette) {
   var saturation = color.get('hsl.s');
   return color.set('hsl.s', saturation * 0.2).hex();
 };
-// CONCATENATED MODULE: ./src/js/customizer/color-palettes/utils/create-current-palette-controls.js
+// CONCATENATED MODULE: ./src/js/color-palettes/utils/create-current-palette-controls.js
 
 
 
@@ -4288,7 +4289,7 @@ var create_current_palette_controls_createCurrentPaletteControls = function crea
 };
 
 
-// CONCATENATED MODULE: ./src/js/customizer/color-palettes/utils/update-filter-previews.js
+// CONCATENATED MODULE: ./src/js/color-palettes/utils/update-filter-previews.js
 
 
 
@@ -4314,7 +4315,7 @@ var updateFilterPreviews = external_lodash_default.a.debounce(function () {
 }, 30);
 
 
-// CONCATENATED MODULE: ./src/js/customizer/color-palettes/utils/connected-fields/move-connected-fields.js
+// CONCATENATED MODULE: ./src/js/color-palettes/utils/connected-fields/move-connected-fields.js
 
 var move_connected_fields_moveConnectedFields = function moveConnectedFields(oldSettings, from, to, ratio) {
   var settings = external_lodash_default.a.clone(oldSettings);
@@ -4346,7 +4347,7 @@ var move_connected_fields_moveConnectedFields = function moveConnectedFields(old
 
   return settings;
 };
-// CONCATENATED MODULE: ./src/js/customizer/color-palettes/utils/connected-fields/swap-connected-fields.js
+// CONCATENATED MODULE: ./src/js/color-palettes/utils/connected-fields/swap-connected-fields.js
 
 var swap_connected_fields_swapConnectedFields = function swapConnectedFields(settings, swapMap) {
   // @todo This is weird. We should be able to have the settings in the proper form.
@@ -4378,7 +4379,7 @@ var swap_connected_fields_swapConnectedFields = function swapConnectedFields(set
 
   return external_lodash_default.a.clone(newSettings);
 };
-// CONCATENATED MODULE: ./src/js/customizer/color-palettes/utils/connected-fields/update-connected-fields-value.js
+// CONCATENATED MODULE: ./src/js/color-palettes/utils/connected-fields/update-connected-fields-value.js
 
 
 
@@ -4401,11 +4402,11 @@ var update_connected_fields_value_updateConnectedFieldsValue = function updateCo
 };
 
 
-// CONCATENATED MODULE: ./src/js/customizer/color-palettes/utils/connected-fields/index.js
+// CONCATENATED MODULE: ./src/js/color-palettes/utils/connected-fields/index.js
 
 
 
-// CONCATENATED MODULE: ./src/js/customizer/color-palettes/utils/apply-connected-fields-alterations.js
+// CONCATENATED MODULE: ./src/js/color-palettes/utils/apply-connected-fields-alterations.js
 
 
 
@@ -4518,7 +4519,7 @@ var applyConnectedFieldsAlterations = function applyConnectedFieldsAlterations(t
   tempSettings = apply_connected_fields_alterations_applyDarkMode(tempSettings);
   return tempSettings;
 };
-// CONCATENATED MODULE: ./src/js/customizer/color-palettes/utils/update-color-pickers.js
+// CONCATENATED MODULE: ./src/js/color-palettes/utils/update-color-pickers.js
 
 
 
@@ -4649,7 +4650,7 @@ var update_color_pickers_updatePalettePreview = function updatePalettePreview() 
     external_jQuery_default()('.c-color-palette').find(".sm-color-palette__color.".concat(settingID)).css('color', getColor(settingID));
   });
 };
-// CONCATENATED MODULE: ./src/js/customizer/color-palettes/utils/confirm-changes.js
+// CONCATENATED MODULE: ./src/js/color-palettes/utils/confirm-changes.js
 
 var confirm_changes_confirmChanges = function confirmChanges(callback) {
   var altered = external_jQuery_default()('.c-color-palette .color.altered').length;
@@ -4693,7 +4694,7 @@ var confirm_changes_bindConfirmChanges = function bindConfirmChanges() {
     }
   });
 };
-// CONCATENATED MODULE: ./src/js/customizer/color-palettes/utils/index.js
+// CONCATENATED MODULE: ./src/js/color-palettes/utils/index.js
 
 
 
@@ -4741,10 +4742,10 @@ var getFilteredColorByID = function getFilteredColorByID(settingID, filterLabel,
 var injectStylesIntoStyleTag = __webpack_require__(5);
 var injectStylesIntoStyleTag_default = /*#__PURE__*/__webpack_require__.n(injectStylesIntoStyleTag);
 
-// EXTERNAL MODULE: ./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/js/customizer/color-palettes/components/builder/components/color-controls/style.scss
+// EXTERNAL MODULE: ./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/js/color-palettes/components/builder/components/color-controls/style.scss
 var style = __webpack_require__(3);
 
-// CONCATENATED MODULE: ./src/js/customizer/color-palettes/components/builder/components/color-controls/style.scss
+// CONCATENATED MODULE: ./src/js/color-palettes/components/builder/components/color-controls/style.scss
 
             
 
@@ -4758,7 +4759,7 @@ var update = injectStylesIntoStyleTag_default()(style["a" /* default */], style_
 
 
 /* harmony default export */ var color_controls_style = (style["a" /* default */].locals || {});
-// CONCATENATED MODULE: ./src/js/customizer/color-palettes/components/builder/components/color-controls/index.js
+// CONCATENATED MODULE: ./src/js/color-palettes/components/builder/components/color-controls/index.js
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
 
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
@@ -4832,7 +4833,7 @@ var ColorControls = function ColorControls(props) {
 // EXTERNAL MODULE: ./node_modules/hsluv/hsluv.js
 var hsluv = __webpack_require__(4);
 
-// CONCATENATED MODULE: ./src/js/customizer/color-palettes/components/builder/contrast-array.js
+// CONCATENATED MODULE: ./src/js/color-palettes/components/builder/contrast-array.js
 var optimalContrastArray = Array.from(Array(12)).map(function (x, i) {
   return Math.pow(21, i / 11);
 }); //	https://medium.com/envoy-design/designing-an-accessible-color-scheme-again-fd35cfa9d796
@@ -4851,7 +4852,7 @@ var maxContrastArray = contrastRangesArray.map(function (x) {
   return x[1];
 });
 /* harmony default export */ var contrast_array = (myOptimalContrastArray);
-// CONCATENATED MODULE: ./src/js/customizer/color-palettes/components/builder/utils.js
+// CONCATENATED MODULE: ./src/js/color-palettes/components/builder/utils.js
 function utils_toConsumableArray(arr) { return utils_arrayWithoutHoles(arr) || utils_iterableToArray(arr) || utils_unsupportedIterableToArray(arr) || utils_nonIterableSpread(); }
 
 function utils_nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
@@ -5250,7 +5251,7 @@ var utils_createAutoPalette = function createAutoPalette(palettes) {
 var noop = function noop(palette) {
   return palette;
 };
-// CONCATENATED MODULE: ./src/js/customizer/color-palettes/components/builder/index.js
+// CONCATENATED MODULE: ./src/js/color-palettes/components/builder/index.js
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || builder_unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
@@ -5470,7 +5471,7 @@ var initializePaletteBuilder = function initializePaletteBuilder(sourceSettingID
 };
 
 
-// CONCATENATED MODULE: ./src/js/customizer/color-palettes/index.js
+// CONCATENATED MODULE: ./src/js/color-palettes/index.js
 
 
 
