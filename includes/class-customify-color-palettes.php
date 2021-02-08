@@ -525,10 +525,10 @@ class Customify_Color_Palettes {
 			      'setting_type' => 'option',
 			      'setting_id'   => 'sm_site_color_variation',
 			      'label'        => esc_html__( 'Variation', '__theme_txtd' ),
-			      'default'      => 0,
+			      'default'      => 1,
 			      'input_attrs'  => array(
-				      'min'  => 0,
-				      'max'  => 11,
+				      'min'  => 1,
+				      'max'  => 12,
 				      'step' => 1,
 			      ),
 			      'css'          => array(
@@ -1561,19 +1561,19 @@ class Customify_Color_Palettes {
 
 	function palettes_output( $palettes ) {
 		$output = '';
-		$variation = intval( get_option( 'sm_site_color_variation', 0 ) );
+		$variation = intval( get_option( 'sm_site_color_variation', 1 ) );
 
 		foreach ( $palettes as $palette_index => $palette ) {
 			$sourceIndex = $palette->sourceIndex;
 
 			$output .= 'html { ' . PHP_EOL;
 			$output .= get_initial_color_variables( $palette );
-			$output .= get_variables_css( $palette, $variation );
+			$output .= get_variables_css( $palette, $variation - 1 );
 			$output .= get_variables_css( $palette, $sourceIndex, false, true );
 			$output .= '}' . PHP_EOL;
 
 			$output .= '.is-dark { ' . PHP_EOL;
-			$output .= get_variables_css( $palette, $variation, true );
+			$output .= get_variables_css( $palette, $variation - 1, true );
 			$output .= get_variables_css( $palette, $sourceIndex, true, true );
 			$output .= '}' . PHP_EOL;
 		}
@@ -1603,45 +1603,45 @@ class Customify_Color_Palettes {
 	function get_variables_css( $palette, $offset = 0, $isDark = false, $isShifted = false ) {
 		$colors = $palette->colors;
 		$count = count( $colors );
-		$suffix = $isShifted ? '-shifted' : '';
 
 		$output = '';
 
 		foreach ( $colors as $index => $color ) {
-			$oldColorIndex = ( $index + $offset ) % $count + 1;
+			$oldColorIndex = ( $index + $offset ) % $count;
 
 			if ( $isDark ) {
-				if ( ! $oldColorIndex > $count / 2 ) {
-					$oldColorIndex = 12 - $oldColorIndex;
+				if ( $oldColorIndex < $count / 2 ) {
+					$oldColorIndex = 11 - $oldColorIndex;
 				} else {
 					continue;
 				}
 			}
 
-			$output .= get_color_variables( $palette, ( $index + 1 ) . $suffix, $oldColorIndex );
+			$output .= get_color_variables( $palette, $index, $oldColorIndex, $isShifted );
 		}
 
 		return $output;
 	}
 
-	function get_color_variables( $palette, $newColorIndex, $oldColorIndex ) {
+	function get_color_variables( $palette, $newColorIndex, $oldColorIndex, $isShifted ) {
 		$colors = $palette->colors;
 		$id = $palette->id;
 		$count = count( $colors );
 		$accentColorIndex = ( $oldColorIndex + $count / 2 ) % $count;
 		$prefix = '--sm-color-palette-';
+		$suffix = $isShifted ? '-shifted' : '';
 
 		$output = '';
 
-		$output .= $prefix . $id . '-bg-color-' . $newColorIndex . ': var(' . $prefix . $id . '-color-' . $oldColorIndex . ');' . PHP_EOL;
-		$output .= $prefix . $id . '-accent-color-' . $newColorIndex . ': var(' . $prefix . $id . '-color-' . $accentColorIndex . ');' . PHP_EOL;
+		$output .= $prefix . $id . '-bg-color-' . ( $newColorIndex + 1 ) . $suffix . ': var(' . $prefix . $id . '-color-' . ( $oldColorIndex + 1 ) . ');' . PHP_EOL;
+		$output .= $prefix . $id . '-accent-color-' . ( $newColorIndex + 1 ) . $suffix . ': var(' . $prefix . $id . '-color-' . ( $accentColorIndex + 1 ) . ');' . PHP_EOL;
 
 		if ( $oldColorIndex < $count / 2 ) {
-			$output .= $prefix . $id . '-fg1-color-' . $newColorIndex . ': var(' . $prefix . $id . '-text-color-1);' . PHP_EOL;
-			$output .= $prefix . $id . '-fg2-color-' . $newColorIndex . ': var(' . $prefix . $id . '-text-color-2);' . PHP_EOL;
+			$output .= $prefix . $id . '-fg1-color-' . ( $newColorIndex + 1 ) . $suffix . ': var(' . $prefix . $id . '-text-color-1);' . PHP_EOL;
+			$output .= $prefix . $id . '-fg2-color-' . ( $newColorIndex + 1 ) . $suffix . ': var(' . $prefix . $id . '-text-color-2);' . PHP_EOL;
 		} else {
-			$output .= $prefix . $id . '-fg1-color-' . $newColorIndex . ': var(' . $prefix . $id . '-color-1);' . PHP_EOL;
-			$output .= $prefix . $id . '-fg2-color-' . $newColorIndex . ': var(' . $prefix . $id . '-color-2);' . PHP_EOL;
+			$output .= $prefix . $id . '-fg1-color-' . ( $newColorIndex + 1 ) . $suffix . ': var(' . $prefix . $id . '-color-1);' . PHP_EOL;
+			$output .= $prefix . $id . '-fg2-color-' . ( $newColorIndex + 1 ) . $suffix . ': var(' . $prefix . $id . '-color-2);' . PHP_EOL;
 		}
 
 		return $output;
@@ -1663,7 +1663,7 @@ class Customify_Color_Palettes {
 
 	function sm_palette_output_cb_customizer_preview() {
 		$palettes = get_fallback_palettes();
-		$variation = intval( get_option( 'sm_site_color_variation', 0 ) );
+		$variation = intval( get_option( 'sm_site_color_variation', 1 ) );
 
 		$js = "";
 

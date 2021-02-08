@@ -32,7 +32,7 @@ const myOptimalContrastArray = [
   9.15,
   12.07,
   15.92,
-  21
+  19 // almost black (21)
 ];
 
 const minContrastArray = contrastRangesArray.map( x => x[0] );

@@ -4843,7 +4843,8 @@ var myOptimalContrastArray = [1, 1.07, // 1.32
 1.25, // 1.74
 1.8, // 2.29
 2.63, // 3.03
-3.99, 5.26, 6.94, 9.15, 12.07, 15.92, 21];
+3.99, 5.26, 6.94, 9.15, 12.07, 15.92, 19 // almost black (21)
+];
 var minContrastArray = contrastRangesArray.map(function (x) {
   return x[0];
 });
@@ -5160,15 +5161,18 @@ var getVariablesCSS = function getVariablesCSS(palette) {
   var isShifted = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
   var colors = palette.colors;
   var count = colors.length;
-  var suffix = isShifted ? '-shifted' : '';
   return colors.reduce(function (colorsAcc, color, index) {
     var oldColorIndex = (index + offset) % count;
 
-    if (isDark && oldColorIndex < count / 2) {
-      oldColorIndex = 11 - oldColorIndex;
+    if (isDark) {
+      if (oldColorIndex < count / 2) {
+        oldColorIndex = 11 - oldColorIndex;
+      } else {
+        return colorsAcc;
+      }
     }
 
-    return "".concat(colorsAcc, "\n      ").concat(getColorVariables(palette, "".concat(index).concat(suffix), oldColorIndex), "\n    ");
+    return "".concat(colorsAcc, "\n      ").concat(getColorVariables(palette, "".concat(index), oldColorIndex, isShifted), "\n    ");
   }, '');
 };
 var getInitialColorVaraibles = function getInitialColorVaraibles(palette) {
@@ -5177,26 +5181,28 @@ var getInitialColorVaraibles = function getInitialColorVaraibles(palette) {
       id = palette.id;
   var prefix = '--sm-color-palette-';
   var accentColors = colors.reduce(function (colorsAcc, color, index) {
-    return "".concat(colorsAcc, "\n      ").concat(prefix).concat(id, "-color-").concat(index, ": ").concat(color.value, ";\n    ");
+    return "".concat(colorsAcc, "\n      ").concat(prefix).concat(id, "-color-").concat(index + 1, ": ").concat(color.value, ";\n    ");
   }, '');
   var darkColors = textColors.reduce(function (colorsAcc, color, index) {
-    return "".concat(colorsAcc, "\n      ").concat(prefix).concat(id, "-text-color-").concat(index, ": ").concat(color.value, ";\n    ");
+    return "".concat(colorsAcc, "\n      ").concat(prefix).concat(id, "-text-color-").concat(index + 1, ": ").concat(color.value, ";\n    ");
   }, '');
   return "\n    ".concat(accentColors, "\n    ").concat(darkColors, "\n  ");
 };
-var getColorVariables = function getColorVariables(palette, newColorIndex, oldColorIndex) {
+var getColorVariables = function getColorVariables(palette, newColorIndex, oldColorIndex, isShifted) {
   var colors = palette.colors,
       id = palette.id;
   var count = colors.length;
   var accentColorIndex = (oldColorIndex + count / 2) % count;
   var prefix = '--sm-color-palette-';
-  var accentColors = "\n    ".concat(prefix).concat(id, "-bg-color-").concat(newColorIndex, ": var(").concat(prefix).concat(id, "-color-").concat(oldColorIndex, ");\n    ").concat(prefix).concat(id, "-accent-color-").concat(newColorIndex, ": var(").concat(prefix).concat(id, "-color-").concat(accentColorIndex, ");\n  ");
+  var suffix = isShifted ? '-shifted' : '';
+  var newIndex = parseInt(newColorIndex, 10) + 1;
+  var accentColors = "\n    ".concat(prefix).concat(id, "-bg-color-").concat(newIndex).concat(suffix, ": var(").concat(prefix).concat(id, "-color-").concat(oldColorIndex + 1, ");\n    ").concat(prefix).concat(id, "-accent-color-").concat(newIndex).concat(suffix, ": var(").concat(prefix).concat(id, "-color-").concat(accentColorIndex + 1, ");\n  ");
   var darkColors = '';
 
   if (oldColorIndex < count / 2) {
-    darkColors = "\n      ".concat(prefix).concat(id, "-fg1-color-").concat(newColorIndex, ": var(").concat(prefix).concat(id, "-text-color-0);\n      ").concat(prefix).concat(id, "-fg2-color-").concat(newColorIndex, ": var(").concat(prefix).concat(id, "-text-color-1);\n    ");
+    darkColors = "\n      ".concat(prefix).concat(id, "-fg1-color-").concat(newIndex).concat(suffix, ": var(").concat(prefix).concat(id, "-text-color-1);\n      ").concat(prefix).concat(id, "-fg2-color-").concat(newIndex).concat(suffix, ": var(").concat(prefix).concat(id, "-text-color-2);\n    ");
   } else {
-    darkColors = "\n      ".concat(prefix).concat(id, "-fg1-color-").concat(newColorIndex, ": var(").concat(prefix).concat(id, "-color-0);\n      ").concat(prefix).concat(id, "-fg2-color-").concat(newColorIndex, ": var(").concat(prefix).concat(id, "-color-0);\n    ");
+    darkColors = "\n      ".concat(prefix).concat(id, "-fg1-color-").concat(newIndex).concat(suffix, ": var(").concat(prefix).concat(id, "-color-1);\n      ").concat(prefix).concat(id, "-fg2-color-").concat(newIndex).concat(suffix, ": var(").concat(prefix).concat(id, "-color-1);\n    ");
   }
 
   return "\n    ".concat(accentColors, "\n    ").concat(darkColors, "\n  ");
@@ -5214,11 +5220,11 @@ var getCSSFromPalettes = function getCSSFromPalettes(palettes) {
   }
 
   var variationSetting = wp.customize('sm_site_color_variation');
-  var variation = !!variationSetting ? parseInt(variationSetting(), 10) : 0;
+  var variation = !!variationSetting ? parseInt(variationSetting(), 10) : 1;
   return palettes.reduce(function (palettesAcc, palette, paletteIndex, palettes) {
     var id = palette.id,
         sourceIndex = palette.sourceIndex;
-    return "\n      ".concat(palettesAcc, "\n      \n      html {\n        ").concat(getInitialColorVaraibles(palette), "\n        ").concat(getVariablesCSS(palette, variation), "\n        ").concat(getVariablesCSS(palette, sourceIndex, false, true), "\n      } \n      \n      .is-dark {\n        ").concat(getVariablesCSS(palette, variation, true), "\n        ").concat(getVariablesCSS(palette, sourceIndex, true, true), "\n      }\n    ");
+    return "\n      ".concat(palettesAcc, "\n      \n      html {\n        ").concat(getInitialColorVaraibles(palette), "\n        ").concat(getVariablesCSS(palette, variation - 1), "\n        ").concat(getVariablesCSS(palette, sourceIndex, false, true), "\n      } \n      \n      .is-dark {\n        ").concat(getVariablesCSS(palette, variation - 1, true), "\n        ").concat(getVariablesCSS(palette, sourceIndex, true, true), "\n      }\n    ");
   }, '');
 };
 
@@ -5374,7 +5380,7 @@ var builder_Builder = function Builder(props) {
       return /*#__PURE__*/React.createElement("div", {
         className: "sm-variation-".concat(colorIndex, " "),
         style: {
-          color: "var(--sm-color-palette-".concat(id, "-bg-color-").concat(colorIndex, ")")
+          color: "var(--sm-color-palette-".concat(id, "-bg-color-").concat(colorIndex + 1, ")")
         }
       });
     })), /*#__PURE__*/React.createElement("div", {
@@ -5383,7 +5389,7 @@ var builder_Builder = function Builder(props) {
       return /*#__PURE__*/React.createElement("div", {
         className: "sm-variation-".concat(colorIndex, " "),
         style: {
-          color: "var(--sm-color-palette-".concat(id, "-fg1-color-").concat(colorIndex, ")")
+          color: "var(--sm-color-palette-".concat(id, "-fg1-color-").concat(colorIndex + 1, ")")
         }
       });
     })), /*#__PURE__*/React.createElement("div", {
@@ -5392,7 +5398,7 @@ var builder_Builder = function Builder(props) {
       return /*#__PURE__*/React.createElement("div", {
         className: "sm-variation-".concat(colorIndex, " "),
         style: {
-          color: "var(--sm-color-palette-".concat(id, "-accent-color-").concat(colorIndex, ")")
+          color: "var(--sm-color-palette-".concat(id, "-accent-color-").concat(colorIndex + 1, ")")
         }
       });
     })));
