@@ -649,9 +649,7 @@ function onResetSection(e) {
 
 wp.customize.bind('ready', function () {
   range_handleRangeFields();
-  color_select_handleColorSelectFields();
-  ace_editor_handleAceEditors(); // could be removed
-  // @todo check reason for this timeout
+  color_select_handleColorSelectFields(); // @todo check reason for this timeout
 
   setTimeout(function () {
     folding_fields_handleFoldingFields();

@@ -10,7 +10,6 @@ wp.customize.bind( 'ready', () => {
 
   handleRangeFields();
   handleColorSelectFields();
-  handleAceEditors(); // could be removed
 
   // @todo check reason for this timeout
   setTimeout( function () {
