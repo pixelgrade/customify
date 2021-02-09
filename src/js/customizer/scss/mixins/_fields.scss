@@ -3,6 +3,7 @@
   align-items: center;
 
   width: 100%;
+
   padding: 0.75em 1em;
   margin: 0;
 
@@ -28,7 +29,6 @@
 
 @mixin input {
   @include field;
-  height: var(--customizer-field-height);
 }
 
 @mixin field-select {

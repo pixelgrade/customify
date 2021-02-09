@@ -56,8 +56,13 @@ $results-choice-fg-hover-color: #FFFFFF;
     }
   }
 
+  .select2-container--default .select2-selection--single .select2-selection__rendered {
+    line-height: inherit;
+  }
+
   .select2-selection--single {
     @include select;
+    height: auto;
   }
 
   .select2-selection--multiple {
