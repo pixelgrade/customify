@@ -151,7 +151,7 @@ export const mapColorToPalette = ( ( attributes ) => {
     } );
 
     return {
-      id: id || index,
+      id: id || ( index + 1 ),
       label: label,
       source: value,
       colors: colors,
@@ -292,33 +292,37 @@ const contrastToLuminance = ( contrast ) => {
 export const getVariablesCSS = ( palette, offset = 0, isDark = false, isShifted = false ) => {
   const { colors } = palette;
   const count = colors.length;
-  const suffix = isShifted ? '-shifted' : '';
 
   return colors.reduce( ( colorsAcc, color, index ) => {
     let oldColorIndex = ( index + offset ) % count;
 
-    if ( isDark && oldColorIndex < count / 2 ) {
-      oldColorIndex = 11 - oldColorIndex;
+    if ( isDark ) {
+      if ( oldColorIndex < count / 2 ) {
+        oldColorIndex = 11 - oldColorIndex;
+      } else {
+        return colorsAcc;
+      }
     }
 
     return `${ colorsAcc }
-      ${ getColorVariables( palette, `${ index }${ suffix }`, oldColorIndex ) }
+      ${ getColorVariables( palette, `${ index }`, oldColorIndex, isShifted ) }
     `;
   }, '' );
 }
 
 export const getInitialColorVaraibles = ( palette ) => {
   const { colors, textColors, id } = palette;
+  const prefix = '--sm-color-palette-';
 
   let accentColors = colors.reduce( ( colorsAcc, color, index ) => {
     return `${ colorsAcc }
-      --sm-${ id }-color-${ index }: ${ color.value };
+      ${ prefix }${ id }-color-${ index + 1 }: ${ color.value };
     `;
   }, '' );
 
   let darkColors = textColors.reduce( ( colorsAcc, color, index ) => {
     return `${ colorsAcc }
-      --sm-${ id }-text-color-${ index }: ${ color.value };
+      ${ prefix }${ id }-text-color-${ index + 1 }: ${ color.value };
     `;
   }, '' );
 
@@ -328,27 +332,30 @@ export const getInitialColorVaraibles = ( palette ) => {
   `;
 }
 
-export const getColorVariables = ( palette, newColorIndex, oldColorIndex ) => {
+export const getColorVariables = ( palette, newColorIndex, oldColorIndex, isShifted ) => {
   const { colors, id } = palette;
   const count = colors.length;
   const accentColorIndex = ( oldColorIndex + count / 2 ) % count;
+  const prefix = '--sm-color-palette-';
+  const suffix = isShifted ? '-shifted' : '';
+  const newIndex = parseInt( newColorIndex, 10 ) + 1;
 
   let accentColors = `
-    --sm-${ id }-background-color-${ newColorIndex }: var(--sm-${ id }-color-${ oldColorIndex });
-    --sm-${ id }-accent-color-${ newColorIndex }: var(--sm-${ id }-color-${ accentColorIndex });
+    ${ prefix }${ id }-bg-color-${ newIndex }${ suffix }: var(${ prefix }${ id }-color-${ oldColorIndex + 1 });
+    ${ prefix }${ id }-accent-color-${ newIndex }${ suffix }: var(${ prefix }${ id }-color-${ accentColorIndex + 1 });
   `;
 
   let darkColors = '';
 
   if ( oldColorIndex < count / 2 ) {
     darkColors = `
-      --sm-${ id }-dark-color-${ newColorIndex }: var(--sm-${ id }-text-color-0);
-      --sm-${ id }-darker-color-${ newColorIndex }: var(--sm-${ id }-text-color-1);
+      ${ prefix }${ id }-fg1-color-${ newIndex }${ suffix }: var(${ prefix }${ id }-text-color-1);
+      ${ prefix }${ id }-fg2-color-${ newIndex }${ suffix }: var(${ prefix }${ id }-text-color-2);
     `;
   } else {
     darkColors = `
-      --sm-${ id }-dark-color-${ newColorIndex }: var(--sm-${ id }-color-0);
-      --sm-${ id }-darker-color-${ newColorIndex }: var(--sm-${ id }-color-0);
+      ${ prefix }${ id }-fg1-color-${ newIndex }${ suffix }: var(${ prefix }${ id }-color-1);
+      ${ prefix }${ id }-fg2-color-${ newIndex }${ suffix }: var(${ prefix }${ id }-color-1);
     `;
   }
 
@@ -372,7 +379,7 @@ export const getCSSFromPalettes = ( palettes ) => {
   }
 
   const variationSetting = wp.customize( 'sm_site_color_variation' );
-  const variation = !! variationSetting ? parseInt( variationSetting(), 10 ) : 0;
+  const variation = !! variationSetting ? parseInt( variationSetting(), 10 ) : 1;
 
   return palettes.reduce( ( palettesAcc, palette, paletteIndex, palettes ) => {
 
@@ -383,12 +390,12 @@ export const getCSSFromPalettes = ( palettes ) => {
       
       html {
         ${ getInitialColorVaraibles( palette ) }
-        ${ getVariablesCSS( palette, variation ) }
+        ${ getVariablesCSS( palette, variation - 1 ) }
         ${ getVariablesCSS( palette, sourceIndex, false, true ) }
       } 
       
       .is-dark {
-        ${ getVariablesCSS( palette, variation, true ) }
+        ${ getVariablesCSS( palette, variation - 1, true ) }
         ${ getVariablesCSS( palette, sourceIndex, true, true ) }
       }
     `;
