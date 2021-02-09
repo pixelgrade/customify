@@ -1,0 +1,45 @@
+//------------------------------------*\
+//    VARIABLES
+//------------------------------------*/
+
+$blue-darker: #2A3B44;
+$blue-dark: #416B7E;
+$blue: #48A9D7;
+$blue-light: #85C4EA;
+$blue-lighter: #98C6DD;
+$blue-lightest: #B8DAEB;
+$blue-whitish: #DFE8EF;
+$blue-white: #F7FBFF;
+$white: #FFFFFF;
+
+$checkmark-svg-white: "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB3aWR0aD0iMTJweCIgaGVpZ2h0PSI5cHgiIHZpZXdCb3g9IjAgMCAxMiA5IiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPgogICAgPGcgaWQ9ImNoZWNrIiBzdHJva2U9Im5vbmUiIHN0cm9rZS13aWR0aD0iMSIgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj4KICAgICAgICA8cG9seWdvbiBmaWxsPSIjRkZGRkZGIiBwb2ludHM9IjUgOSAxMiAyIDEwIDAgNSA1IDIgMiAtMS43NTkzMjk4M2UtMTUgNCI+PC9wb2x5Z29uPgogICAgPC9nPgo8L3N2Zz4=";
+$select-svg-arrow-dark: "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB3aWR0aD0iMTVweCIgaGVpZ2h0PSI5cHgiIHZpZXdCb3g9IjAgMCAxNSA5IiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPgogICAgPGcgaWQ9ImFycm93IiBzdHJva2U9Im5vbmUiIHN0cm9rZS13aWR0aD0iMSIgZmlsbD0iIzk4QzZERSIgZmlsbC1ydWxlPSJub256ZXJvIj4KICAgICAgICA8cG9seWdvbiBpZD0iYXJyb3ctc2hhcGUiIHBvaW50cz0iMTMuNDgxMiAwIDE1IDEuNTE0IDcuNSA5IDAgMS41MTQgMS41MTg4IDAgNy41IDUuOTY3MiI+PC9wb2x5Z29uPgogICAgPC9nPgo8L3N2Zz4=";
+$select-svg-arrow-white: "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB3aWR0aD0iMTVweCIgaGVpZ2h0PSI5cHgiIHZpZXdCb3g9IjAgMCAxNSA5IiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPgogICAgPGcgaWQ9ImFycm93IiBzdHJva2U9Im5vbmUiIHN0cm9rZS13aWR0aD0iMSIgZmlsbD0iI0ZGRkZGRiIgZmlsbC1ydWxlPSJub256ZXJvIj4KICAgICAgICA8cG9seWdvbiBpZD0iYXJyb3ctc2hhcGUiIHBvaW50cz0iMTMuNDgxMiAwIDE1IDEuNTE0IDcuNSA5IDAgMS41MTQgMS41MTg4IDAgNy41IDUuOTY3MiI+PC9wb2x5Z29uPgogICAgPC9nPgo8L3N2Zz4=";
+$select-svg-arrow-white-up: "data:image/svg+xml;base64,PHN2ZyBoZWlnaHQ9IjkiIHdpZHRoPSIxNSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJtLTEtMWg1ODJ2NDAyaC01ODJ6IiBmaWxsPSJub25lIi8+PHBhdGggZD0ibTEzLjQ4MTIgMCAxLjUxODggMS41MTQtNy41IDcuNDg2LTcuNS03LjQ4NiAxLjUxODgtMS41MTQgNS45ODEyIDUuOTY3MnoiIGZpbGw9IiNmZmYiIHRyYW5zZm9ybT0ibWF0cml4KC0xIDAgMCAtMSAxNSA5KSIvPjwvc3ZnPg==";
+$select-dropdown-box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.125);
+$iris-box-shadow: 0 7px 8px 0 rgba(0, 0, 0, 0.100);
+
+$container-spacing: 20px;
+
+$fields-height: 44px;
+$fields-spacing: 20px;
+$fields-border-radius: 4px;
+$font-fields-spacing: 12px;
+
+$border-color: $blue-whitish;
+$background-hover: $blue-white;
+
+:root {
+  --customizer-spacing: #{ $container-spacing };
+  --customizer-field-border-width: 2px;
+  --customizer-field-border-color: #{ $border-color };
+  --customizer-field-focus-border-color: #{ $blue };
+  --customizer-field-border-radius: #{ $fields-border-radius };
+  --customizer-field-background-color: #{ $white };
+  --customizer-field-text-color: #{ $blue-dark };
+
+  --customizer-select-focus-background-color: #{ $blue-light };
+
+  --customizer-field-height: 3em;
+  --customizer-checkbox-size: 1.5em;
+}

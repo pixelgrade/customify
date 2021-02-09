@@ -1,0 +1,50 @@
+.customize-control {
+  width: auto;
+  float: none;
+  margin-bottom: 0;
+
+  & + & {
+    margin-top: $fields-spacing;
+  }
+}
+
+.customize-control-title {
+  margin-bottom: $fields-spacing / 2;
+}
+
+.customize-control-description {
+  margin-bottom: $fields-spacing / 2;
+  font-style: normal;
+  opacity: 0.75;
+  clear: both;
+}
+
+#customize-theme-controls {
+
+  // adjustments for weird jetpack markup
+  li.customize-control-title {
+    margin-bottom: 0;
+
+    + .customize-control-checkbox,
+    + .customize-control-radio {
+      margin-top: 0;
+    }
+  }
+
+  .customize-control-textarea .customize-control-description {
+    margin-top: initial;
+  }
+
+  .control-section.open {
+    border-bottom: 0;
+    min-height: 100%;
+  }
+}
+
+@import 'controls/fields';
+@import 'controls/font';
+@import 'controls/font-palette';
+@import 'controls/radio-group';
+@import 'controls/radio-html';
+@import 'controls/switch';
+@import 'controls/tabs';

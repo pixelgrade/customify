@@ -132,9 +132,6 @@ if ( ! class_exists( 'Customify_Block_Editor' ) ) {
 			// Styles and scripts when editing.
 			add_action( 'enqueue_block_editor_assets', array( $this, 'dynamic_styles_scripts' ), 999 );
 
-			// Styles on the front end.
-			add_action( 'enqueue_block_assets', array( $this, 'frontend_styles' ), 999 );
-
 			add_action( 'admin_init', array( $this, 'editor_color_palettes' ), 20 );
 		}
 
@@ -259,16 +256,6 @@ if ( ! class_exists( 'Customify_Block_Editor' ) ) {
 			wp_add_inline_style( $enqueue_parent_handle, $this->editor_color_palettes_css_classes() );
 		}
 
-		public function frontend_styles() {
-			$enqueue_parent_handle = $this->get_frontend_style_handle();
-			if ( empty( $enqueue_parent_handle ) ) {
-				return;
-			}
-
-			// Add color palettes classes.
-			wp_add_inline_style( $enqueue_parent_handle, $this->editor_color_palettes_css_classes() );
-		}
-
 		/**
 		 * @param string $selectors
 		 * @param array $css_property
@@ -286,9 +273,9 @@ if ( ! class_exists( 'Customify_Block_Editor' ) ) {
 				$selector = trim( $selector );
 
 				// If the selector matches the excluded, skip it.
-//				if ( $this->preg_match_any( self::$excluded_selectors_regex, $selector ) ) {
-//					continue;
-//				}
+				if ( $this->preg_match_any( self::$excluded_selectors_regex, $selector ) ) {
+					continue;
+				}
 
 				// If the selector is already Gutenbergy, we will not do anything to it
 				if ( preg_match( self::$gutenbergy_selector_regex, $selector ) ) {
@@ -426,39 +413,13 @@ if ( ! class_exists( 'Customify_Block_Editor' ) ) {
 		 * Add the SM Color Palettes to the editor sidebar.
 		 */
 		public function editor_color_palettes() {
+
 			// Bail if Color Palettes are not supported
 			if ( ! Customify_Color_Palettes::instance()->is_supported() ) {
 				return;
 			}
 
-			$options_details = PixCustomifyPlugin()->get_options_configs();
-
-			$master_color_control_ids = Customify_Color_Palettes::instance()->get_all_master_color_controls_ids();
-			if ( empty( $master_color_control_ids ) ) {
-				return;
-			}
-
 			$editor_color_palettes = array();
-			foreach ( $master_color_control_ids as $control_id ) {
-				if ( empty( $options_details[ $control_id ] ) ) {
-					continue;
-				}
-
-				$value = get_option( $control_id . '_final' );
-				if ( empty( $value ) ) {
-					$value = $options_details[ $control_id ][ 'default' ];
-				}
-
-				if ( empty( $value ) ) {
-					continue;
-				}
-
-				$editor_color_palettes[] = array(
-					'name'  => $options_details[ $control_id ]['label'],
-					'slug'  => $control_id,
-					'color' => esc_html( $value ),
-				);
-			}
 
 			if ( ! empty( $editor_color_palettes ) ) {
 				/**
@@ -471,53 +432,6 @@ if ( ! class_exists( 'Customify_Block_Editor' ) ) {
 					$editor_color_palettes
 				);
 			}
-		}
-
-		/**
-		 * Generate the special classes for our colors.
-		 */
-		public function editor_color_palettes_css_classes() {
-			// Bail if Color Palettes are not supported
-			if ( ! Customify_Color_Palettes::instance()->is_supported() ) {
-				return '';
-			}
-
-			$options_details = PixCustomifyPlugin()->get_options_configs();
-
-			$master_color_control_ids = Customify_Color_Palettes::instance()->get_all_master_color_controls_ids();
-			if ( empty( $master_color_control_ids ) ) {
-				return '';
-			}
-
-			// Build styles.
-			$css = '';
-			foreach ( $master_color_control_ids as $control_id ) {
-				if ( empty( $options_details[ $control_id ] ) ) {
-					continue;
-				}
-
-				$value = get_option( $control_id . '_final' );
-				if ( empty( $value ) ) {
-					continue;
-				}
-
-				$editor_color_palettes[] = array(
-					'name'  => $options_details[ $control_id ]['label'],
-					'slug'  => $control_id,
-					'color' => esc_html( $value ),
-				);
-
-				$color_in_kebab_case = self::to_kebab_case( $control_id );
-
-				$css .= '.has-' . $color_in_kebab_case . '-color { color: ' . esc_attr( $value ) . ' !important; }';
-				$css .= '.has-' . $color_in_kebab_case . '-background-color { background-color: ' . esc_attr( $value ) . '; }';
-			}
-
-			return wp_strip_all_tags( $css );
-		}
-
-		public static function to_kebab_case( $string ) {
-			return implode( '-', array_map( '\strtolower', preg_split( "/[\n\r\t -_]+/", preg_replace( "/['\x{2019}]/u", '', $string ), - 1, PREG_SPLIT_NO_EMPTY ) ) );
 		}
 
 		/**

@@ -1,0 +1,125 @@
+.customize-control-sm_switch {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  .customize-control-title {
+    margin-bottom: 0;
+  }
+}
+
+.sm-switch {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: stretch;
+  justify-content: flex-start;
+  overflow: hidden;
+
+  position: relative;
+  height: 2.428em;
+  max-width: 5.5em;
+
+  border-radius: 999em;
+  color: #FFFFFF;
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+  font-weight: 600;
+  line-height: 1.142em;
+
+  z-index: 10;
+
+  input[type="radio"] {
+    display: none;
+
+    + label {
+      display: flex;
+      align-items: center;
+      flex: 0 0 100%;
+
+      &,
+      &:after {
+        transition: all 0.2s ease-out;
+      }
+    }
+
+    &:checked + label {
+      pointer-events: none;
+    }
+
+    &:nth-of-type(1) {
+      + label {
+        padding-left: 1.214em;
+
+        &:after {
+          content: "";
+
+          position: absolute;
+          top: 0;
+          right: 0;
+          bottom: 0;
+          left: 0;
+
+          background-color: $blue;
+          z-index: -1;
+        }
+      }
+
+      &:not(:checked) {
+        + label {
+          transform: translateX(-100%) translateX(2.125em);
+        }
+
+        + label:after {
+          background: #CCCCCC;
+          transform: translateX(100%) translateX(-2.125em);
+        }
+
+        + label ~ label {
+          transform: translateX(-100%);
+        }
+      }
+
+      &:checked {
+        + label ~ label {
+          transform: translateX(-2.4em);
+        }
+
+        + label ~ label:before {
+          transform: translateX(-100%) translateX(2.125em);
+        }
+      }
+    }
+
+    &:nth-of-type(2) {
+      + label {
+        flex-direction: row-reverse;
+        padding-right: 1em;
+
+        &:before {
+          content: "";
+
+          position: absolute;
+          top: 0;
+          right: 0;
+          bottom: 0;
+          left: 0;
+        }
+
+        &:after {
+          content: "";
+          display: block;
+
+          height: 2.142em;
+          width: 2.142em;
+          margin-right: auto;
+          margin-left: 0.125em;
+
+          border-radius: 50%;
+          background-color: #FFFFFF;
+          box-shadow: 1px 2px 2px 0 rgba(23,21,21,0.15);
+          pointer-events: none;
+        }
+      }
+    }
+  }
+}

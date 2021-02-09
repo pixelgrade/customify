@@ -1,0 +1,128 @@
+@mixin field {
+  display: flex;
+  align-items: center;
+
+  width: 100%;
+  padding: 0.75em 1em;
+  margin: 0;
+
+  border: var(--customizer-field-border-width) solid var(--customizer-field-border-color);
+  border-radius: var(--customizer-field-border-radius);
+  background: var(--customizer-field-background-color);
+  color: var(--customizer-field-text-color);
+
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.5;
+
+  transition: all .2s ease-out;
+  transition-property: color, background-color, border-color;
+
+  outline: 0;
+
+  &:focus {
+    border-color: var(--customizer-field-focus-border-color);
+    box-shadow: none;
+  }
+}
+
+@mixin input {
+  @include field;
+  height: var(--customizer-field-height);
+}
+
+@mixin field-select {
+  padding-right: 44px;
+
+  background-image: url($select-svg-arrow-dark);
+  background-repeat: no-repeat;
+  background-position: right 16px top 16px;
+}
+
+@mixin select {
+  @include field;
+  @include field-select;
+}
+
+@mixin select-focus {
+  border-color: var(--customizer-field-focus-border-color);
+  background-color: var(--customizer-select-focus-background-color);
+  background-image: url($select-svg-arrow-white);
+  color: #FFFFFF;
+}
+
+@mixin select-opened {
+  border-color: var(--customizer-field-focus-border-color);
+  background-color: var(--customizer-select-focus-background-color);
+  background-image: url($select-svg-arrow-white-up);
+  color: #FFFFFF;
+}
+
+@mixin range-track-style {
+
+  &::-webkit-slider-runnable-track {
+    @content;
+  }
+
+  &::-moz-range-track {
+    @content;
+  }
+}
+
+@mixin range-thumb-style {
+
+  &::-webkit-slider-thumb {
+    @content;
+    -webkit-appearance: none;
+  }
+
+
+  &::-moz-range-thumb {
+    @content;
+    -moz-appearance: none;
+  }
+}
+
+@mixin range-active-thumb-style {
+
+  &:active::-webkit-slider-thumb {
+    @content
+  }
+
+  &:active::-moz-range-thumb {
+    @content
+  }
+}
+
+@mixin checkbox {
+  display: none;
+
+  + label {
+    display: flex;
+    align-items: center;
+  }
+
+  + label:before {
+    content: "";
+
+    display: block;
+    width: var(--customizer-checkbox-size);
+    height: var(--customizer-checkbox-size);
+    flex: 0 0 auto;
+
+    margin-right: calc( 0.5 * var(--customizer-spacing) );
+    border: var(--customizer-field-border-width) solid var(--customizer-field-border-color);
+
+    background: var(--customizer-field-background-color) center no-repeat;
+  }
+
+  &:focus + label:before {
+    border-color: var(--customizer-field-focus-border-color);
+  }
+
+  &:checked + label:before {
+    border-color: var(--customizer-field-focus-border-color);
+    background-color: var(--customizer-field-focus-border-color);
+    background-image: url($checkmark-svg-white);
+  }
+}

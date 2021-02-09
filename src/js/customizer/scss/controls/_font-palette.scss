@@ -1,0 +1,69 @@
+//------------------------------------*\
+//    FONT PALETTES
+//------------------------------------*/
+
+.customize-control-font-palette {
+
+  .customize-inside-control-row {
+    position: relative;
+
+    padding-top: 52%;
+    margin-left: 0;
+    overflow: hidden;
+
+    background-color: $white;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: right center;
+    border-radius: $fields-border-radius;
+
+    & + .customize-inside-control-row {
+      margin-top: 15px;
+    }
+
+    input {
+      display: none;
+    }
+
+    input + label {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+
+      border: 2px solid $border-color;
+      border-radius: inherit;
+    }
+
+    &:hover input + label {
+      border-color: $blue-lightest;
+    }
+
+    input:checked + label {
+      border-color: $blue;
+    }
+  }
+}
+
+[id="sub-accordion-section-sm_font_palettes_section"] {
+
+  [id="customize-control-sm_current_font_palette_control"] ~ * {
+    display: none !important;
+  }
+
+  &.sm-view-palettes {
+    [id="customize-control-sm_font_palette_control"] {
+      display: block !important;
+    }
+  }
+
+  &.sm-view-advanced {
+    [id="customize-control-sm_font_primary_control"],
+    [id="customize-control-sm_font_secondary_control"],
+    [id="customize-control-sm_font_accent_control"],
+    [id="customize-control-sm_font_body_control"] {
+      display: block !important;
+    }
+  }
+}

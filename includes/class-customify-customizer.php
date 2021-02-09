@@ -111,10 +111,6 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 		 */
 		public function add_hooks() {
 
-			// Styles for the Customizer
-			add_action( 'customize_controls_init', array( $this, 'register_admin_customizer_styles' ), 10 );
-			add_action( 'customize_controls_enqueue_scripts', array( $this, 'enqueue_admin_customizer_styles' ), 10 );
-
 			add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_style_manager_scripts' ), 10 );
 			add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_style_manager_scripts' ), 10 );
 
@@ -149,22 +145,6 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 				// Add a JS to display a notification
 				add_action( 'customize_controls_print_footer_scripts', array( $this, 'prevent_changeset_save_in_devmode_notification' ), 100 );
 			}
-		}
-
-		/**
-		 * Register Customizer admin styles
-		 */
-		function register_admin_customizer_styles() {
-			$rtl_suffix = is_rtl() ? '-rtl' : '';
-			wp_register_style( 'customify_style', plugins_url( 'css/customizer' . $rtl_suffix . '.css', PixCustomifyPlugin()->get_file() ), array( 'dashicons' ), PixCustomifyPlugin()->get_version() );
-		}
-
-		/**
-		 * Enqueue Customizer admin styles
-		 */
-		function enqueue_admin_customizer_styles() {
-			wp_enqueue_style( 'customify_style' );
-			wp_enqueue_style( 'customify_colors_css' );
 		}
 
 		function enqueue_style_manager_scripts() {

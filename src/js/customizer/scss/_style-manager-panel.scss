@@ -1,0 +1,53 @@
+$sm-colors-id: unquote( '#accordion-section-sm_color_palettes_section' );
+$sm-fonts-id: unquote( '#accordion-section-sm_font_palettes_section' );
+
+// Add spacing and borders between section toggle buttons
+#customize-theme-controls {
+
+  #{$sm-colors-id} > .accordion-section-title {
+    border-bottom: 1px solid $border-color;
+  }
+
+  #{$sm-colors-id} + #{$sm-fonts-id} > .accordion-section-title {
+    margin-top: $fields-spacing / 4;
+    border-top-width: 1px;
+  }
+}
+
+// Make icons stand out
+#customize-theme-controls {
+
+  #{$sm-colors-id},
+  #{$sm-fonts-id} {
+
+    > .accordion-section-title {
+      @include section-title-with-icon;
+      justify-content: flex-start;
+
+      &:before {
+        width: 2em;
+        height: 2em;
+        margin-right: 15px;
+        padding-left: 0.1em;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+
+        background-color: $blue-light;
+        color: $blue-white;
+
+        border-radius: 50%;
+      }
+    }
+  }
+
+  #{$sm-colors-id} > .accordion-section-title:before {
+    content: "\f100";
+  }
+
+  #{$sm-fonts-id} > .accordion-section-title:before {
+    content: "\f122";
+  }
+}

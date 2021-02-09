@@ -1,0 +1,50 @@
+.customify-color-select {
+
+  &__option-list {
+    display: flex;
+    margin-left: -5px;
+
+    > * {
+      border-radius: 50%;
+      overflow: hidden;
+      background-color: currentColor;
+      text-indent: -999em;
+      flex: 0 0 auto;
+      width: 30px;
+      margin-left: 5px;
+      border: 2px solid transparent;
+      box-shadow: #FFF 0 0 1px 2px inset;
+      background-clip: content-box;
+
+      &:before {
+        content: "";
+        padding-top: 100%;
+        display: block;
+      }
+    }
+  }
+
+  &__option-label {
+    display: none;
+  }
+
+  &__option--text {
+    color: #333;
+  }
+
+  &__option--titles {
+    color: #222;
+  }
+
+  &__option--accent {
+    color: #A22;
+  }
+
+  &__option--background {
+    color: #EEE;
+  }
+
+  &__option--selected {
+    border-color: #28A;
+  }
+}

@@ -1,0 +1,19 @@
+@import 'scss/variables';
+@import 'scss/mixins';
+@import 'scss/controls';
+@import 'scss/search';
+@import 'scss/select2';
+
+@import 'fields/color-select/style';
+@import 'fields/range/style';
+
+// theme
+@import 'scss/style-manager-panel';
+
+.wp-full-overlay-sidebar {
+  &, *, *:before, *:after {
+    box-sizing: border-box;
+  }
+}
+
+@import 'scss/theme';

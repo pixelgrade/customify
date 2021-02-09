@@ -37,8 +37,10 @@ class globalServiceClass {
     return this.callbacks;
   }
 
-  deleteCallbacks() {
-    this.callbacks = {};
+  deleteCallbacks( settingIDs ) {
+    settingIDs.forEach( settingID => {
+      delete this.callbacks.settingID;
+    } );
   }
 }
 

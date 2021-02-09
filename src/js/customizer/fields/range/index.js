@@ -2,7 +2,7 @@ import $ from 'jquery';
 
 export const handleRangeFields = () => {
 
-  const rangeControlSelector = `.accordion-section-content[id*="${ customify.config.options_name }"], #sub-accordion-section-style_manager_section`;
+  const rangeControlSelector = `.accordion-section-content[id*="${ customify.config.options_name }"], #sub-accordion-section-sm_color_palettes_section`;
 
   $( rangeControlSelector ).each( function ( i, container ) {
     const $rangeFields = $( container ).find( 'input[type="range"]' );

@@ -1,5 +1,7 @@
+import $ from 'jquery';
+import './style.scss';
+
 import { handleColorSelectFields } from './fields/color-select';
-import { handleAceEditors } from './fields/ace-editor';
 import { handleRangeFields } from './fields/range';
 
 import { handleFoldingFields } from './folding-fields';
@@ -15,6 +17,12 @@ wp.customize.bind( 'ready', () => {
   setTimeout( function () {
     handleFoldingFields();
   }, 1000 );
+
+  // Initialize simple select2 fields.
+  $( '.customify_select2' ).select2();
+
+  // Initialize font fields.
+  customify.fontFields.init();
 
   scalePreview();
 
