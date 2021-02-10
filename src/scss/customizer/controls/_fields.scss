@@ -1,0 +1,124 @@
+.customize-control {
+
+  input[type="text"],
+  input[type="password"],
+  input[type="date"],
+  input[type="datetime"],
+  input[type="datetime-local"],
+  input[type="email"],
+  input[type="month"],
+  input[type="number"],
+  input[type="tel"],
+  input[type="time"],
+  input[type="url"],
+  input[type="week"],
+  input[type="search"] {
+    @include input;
+  }
+
+  // Textarea
+  textarea {
+    @include field;
+  }
+
+  // Select
+  select,
+  &.customize-control-select select {
+    @include field;
+
+    max-width: 100%;
+
+    /* for Firefox */
+    -moz-appearance: none;
+    /* for Chrome */
+    -webkit-appearance: none;
+
+    &:not([multiple]) {
+      @include field-select;
+    }
+
+    /* For IE10 */
+    &::-ms-expand {
+      display: none;
+    }
+  }
+
+  input[type="range"] {
+    --thumb-height: 22px;
+    --thumb-border-width: 2px;
+    --track-height: 6px;
+
+    position: relative;
+    height: var(--thumb-height);
+    overflow: hidden;
+    outline: none;
+    background: none;
+
+    -webkit-appearance: none;
+    -moz-appearange: none;
+
+    @include range-track-style {
+      width: 100%;
+      height: var(--track-height);
+
+      background: var(--sm-customizer-color-4);
+      border-radius: 999em;
+    }
+
+    @include range-thumb-style {
+      position: relative;
+      z-index: 3;
+
+      box-sizing: border-box;
+
+      width: var(--thumb-height);
+      height: var(--thumb-height);
+      margin-top: calc( var(--track-height) * 0.5 - var(--thumb-height) * 0.5 );
+      border: var(--thumb-border-width) solid var(--customizer-border-color);
+      border-radius: var(--customizer-field-border-radius);
+      background: var(--sm-customizer-color-1);
+
+      cursor: move; /* fallback if grab cursor is unsupported */
+      cursor: grab;
+    }
+
+    @include range-active-thumb-style {
+      cursor: grabbing;
+    }
+  }
+}
+
+.customize-control-checkbox,
+.customize-control-radio {
+
+  .customize-inside-control-row {
+    margin-left: 0;
+  }
+}
+
+.customize-control-checkbox input[type="checkbox"],
+.customize-control-radio input[type="radio"] {
+  @include checkbox;
+}
+
+// Checkbox
+.customize-control-checkbox {
+
+  input[type="checkbox"] + label:before {
+    border-radius: var(--customizer-field-border-radius);
+  }
+}
+
+// Radios
+.customize-control-radio {
+
+  input[type="radio"] + label:before {
+    border-radius: 50%;
+  }
+
+  // New WP 4.9 Changesets options
+  &#customize-control-changeset_status .customize-inside-control-row {
+    margin-top: 0;
+    text-indent: 0;
+  }
+}

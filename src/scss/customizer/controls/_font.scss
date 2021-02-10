@@ -1,0 +1,130 @@
+
+//------------------------------------*\
+//    Font Selector
+//------------------------------------*/
+
+.customize-control-font {
+
+  // Add extra bottom spacing to better view the modal
+  &:last-child {
+    margin-bottom: 150px;
+  }
+}
+
+.font-options__wrapper {
+  position: relative;
+
+  &:after {
+    content: "";
+
+    position: absolute;
+    top: 90%;
+    left: 0;
+    right: 0;
+    z-index: 0;
+
+    display: block;
+    height: 30px;
+  }
+
+  .customize-control-range {
+
+    > label:first-child {
+      flex-basis: 100%;
+    }
+  }
+}
+
+.font-options__head {
+  @include select;
+
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  -webkit-appearance: none;
+
+  &:hover {
+    @include select-focus;
+  }
+
+  .font-options__option-title {
+    margin-right: 10px;
+  }
+
+  .font-options__checkbox:checked ~ & {
+    @include select-opened;
+  }
+
+  .font-options__checkbox:not(:checked) ~ &:not(:hover) {
+
+    .font-options__font-title {
+      color: var(--sm-customizer-color-4);
+    }
+  }
+}
+
+.font-options__font-title {
+  font-size: 12px;
+  line-height: 20px;
+  font-weight: 300;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.font-options__option {
+
+  &[class] {
+    margin-bottom: 0;
+  }
+
+  & + & {
+    margin-top: calc( 0.5 * var(--container-spacing) );
+  }
+
+  label {
+    display: block;
+    margin-bottom: 6px;
+  }
+}
+
+input.font-options__checkbox {
+  display: none;
+}
+
+.font-options__options-list {
+  position: absolute;
+  top: 100%;
+  left: calc( -0.5 * var(--customizer-spacing) );
+  right: calc( -0.5 * var(--customizer-spacing) );
+  z-index: 10;
+
+  display: block;
+  margin-top: 5px;
+
+  border: 1px solid var(--sm-customizer-color-3);
+  border-radius: var(--customizer-field-border-radius);
+  box-shadow: $select-dropdown-box-shadow;
+
+  background-color: var(--sm-customizer-color-1);
+
+  @include dropdown-arrow;
+
+  label {
+    font-size: 13px;
+  }
+
+  .font-options__checkbox:not(:checked) ~ & {
+    display: none;
+  }
+
+  .customize-control {
+    --customize-control-spacing-x: calc( 0.5 * var(--customizer-spacing) );
+    --customize-control-spacing-y: calc( 0.75 * var(--customizer-spacing) );
+  }
+}

@@ -1,0 +1,67 @@
+.customize-control {
+  --customize-control-spacing-x: var(--customizer-spacing);
+  --customize-control-spacing-y: var(--customizer-spacing);
+
+  margin: 0;
+  padding: var(--customize-control-spacing-y) var(--customize-control-spacing-x);
+  float: none;
+
+  &:not(:last-child) {
+    padding-bottom: 0;
+  }
+}
+
+.customize-section-description-container {
+  margin-bottom: 0;
+}
+
+.customize-control-title {
+  margin-bottom: calc( 0.5 * var(--customizer-spacing) );
+}
+
+.customize-control-description {
+  margin-bottom: calc( 0.5 * var(--customizer-spacing) );
+  font-style: normal;
+  opacity: 0.75;
+  clear: both;
+}
+
+#customize-theme-controls {
+
+  // adjustments for weird jetpack markup
+  li.customize-control-title {
+    margin-bottom: 0;
+
+    + .customize-control-checkbox,
+    + .customize-control-radio {
+      margin-top: 0;
+    }
+  }
+
+  .customize-control-textarea .customize-control-description {
+    margin-top: initial;
+  }
+
+  .control-section.open {
+    border-bottom: 0;
+    min-height: 100%;
+  }
+}
+
+.customize-control-checkbox {
+
+  > .customize-control-notifications-container + .customize-inside-control-row:last-child {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+}
+
+@import 'controls/color-select';
+@import 'controls/fields';
+@import 'controls/font';
+@import 'controls/font-palette';
+@import 'controls/radio-group';
+@import 'controls/radio-html';
+@import 'controls/range';
+@import 'controls/switch';
+@import 'controls/tabs';

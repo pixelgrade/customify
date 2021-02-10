@@ -51,7 +51,7 @@ class Pix_Customize_Preset_Control extends Pix_Customize_Control {
 						<span class="description customize-control-description"><?php echo $this->description; ?></span>
 					<?php } ?>
 
-					<div class="js-customify-preset radio customize-control customize-control-radio">
+					<div class="js-customify-preset radio customize-control-radio">
 						<?php
 						foreach ( $this->choices as $choice_value => $choice_config ){
 							if ( ! isset( $choice_config['options']) || ! isset( $choice_config['label'] ) ) {
@@ -123,7 +123,7 @@ class Pix_Customize_Preset_Control extends Pix_Customize_Control {
                     <span class="description customize-control-description"><?php echo $this->description; ?></span>
                 <?php } ?>
 
-                <div class="js-customify-preset js-color-palette customize-control customize-control-color-palette">
+                <div class="js-customify-preset js-color-palette customize-control-color-palette">
                     <?php
                     foreach ( $this->choices as $choice_value => $choice_config ){
                         if ( empty( $choice_config['options'] ) ) {
@@ -221,7 +221,7 @@ class Pix_Customize_Preset_Control extends Pix_Customize_Control {
 					<span class="description customize-control-description"><?php echo $this->description; ?></span>
 				<?php } ?>
 
-				<div class="js-customify-preset js-font-palette customize-control customize-control-font-palette">
+				<div class="js-customify-preset js-font-palette customize-control-font-palette">
 					<?php
 					$choices = Customify_Font_Palettes::instance()->preprocess_config( $this->choices );
 					foreach ( $choices as $choice_value => $choice_config ){

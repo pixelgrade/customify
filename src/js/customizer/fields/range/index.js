@@ -15,7 +15,7 @@ export const handleRangeFields = () => {
       if ( ! $number.length ) {
         $number = $range.clone();
 
-        $number.attr( 'type', 'number' ).attr( 'class', 'range-value' ).removeAttr( 'data-value_entry' );
+        $number.attr( 'type', 'text' ).attr( 'class', 'range-value' ).removeAttr( 'data-value_entry' );
         $number.data( 'source', $range );
 
         if ( $range.first().attr( 'id' ) ) {

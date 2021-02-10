@@ -1,0 +1,69 @@
+.sm-tabs {
+  display: flex;
+  justify-content: space-between;
+  padding-left: calc( 0.5 * var(--customizer-spacing) );
+  padding-right: var(--customizer-spacing);
+  border-bottom: 1px solid var(--customizer-border-color);
+
+  text-align: center;
+
+  &__item {
+    position: relative;
+    flex: 1 1 0;
+
+    padding: 1em 0;
+    margin-left: calc( 0.5 * var(--customizer-spacing) );
+    margin-bottom: -1px;
+
+    color: var(--sm-customizer-text-color-1);
+
+    transition: all 0.2s ease;
+    transition-property: opacity, color;
+    cursor: pointer;
+
+    &:after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 0;
+
+      width: 100%;
+      height: 3px;
+      background-color: var(--sm-customizer-color-5);
+
+      transform-origin: 50% 100%;
+      transition: all 0.2s ease;
+      transition-property: transform;
+    }
+
+    &:not(&--active) {
+      opacity: 0.4;
+    }
+
+    &:not(&--active):not(:hover):after {
+      transform: scaleY(0);
+    }
+  }
+}
+
+
+[id="sub-accordion-section-sm_font_palettes_section"] {
+  display: flex !important;
+  flex-direction: column !important;
+
+  &:after {
+    content: "";
+    flex: 1 0 auto;
+    background-color: var(--sm-customizer-color-1);
+    height: var(--customizer-spacing);
+  }
+}
+
+[id="customize-control-sm_current_font_palette_control"] {
+  padding-left: 0;
+  padding-right: 0;
+
+  & ~ .customize-control {
+    background-color: var(--sm-customizer-color-1);
+  }
+}

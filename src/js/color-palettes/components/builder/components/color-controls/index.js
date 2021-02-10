@@ -26,7 +26,7 @@ const ColorControls = ( props ) => {
                   };
                   setColors( newColors );
                 }}/>
-                <button className="c-palette-builder__source-item-delete" onClick={(e) => {
+                <button className="c-palette-builder__source-item-delete button" onClick={(e) => {
                   e.preventDefault();
                   const newColors = colors.slice();
                   newColors.splice( index, 1 );
@@ -38,7 +38,7 @@ const ColorControls = ( props ) => {
           } )
         }
       </div>
-      <button className="c-palette-builder__add" onClick={(e) => {
+      <button className="c-palette-builder__add button" onClick={(e) => {
         e.preventDefault();
         setColors( [ ...colors, {
           label: 'Dark',

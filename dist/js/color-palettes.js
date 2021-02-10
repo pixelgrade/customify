@@ -1,104 +1,8 @@
-/******/ (function(modules) { // webpackBootstrap
-/******/ 	// The module cache
-/******/ 	var installedModules = {};
-/******/
-/******/ 	// The require function
-/******/ 	function __webpack_require__(moduleId) {
-/******/
-/******/ 		// Check if module is in cache
-/******/ 		if(installedModules[moduleId]) {
-/******/ 			return installedModules[moduleId].exports;
-/******/ 		}
-/******/ 		// Create a new module (and put it into the cache)
-/******/ 		var module = installedModules[moduleId] = {
-/******/ 			i: moduleId,
-/******/ 			l: false,
-/******/ 			exports: {}
-/******/ 		};
-/******/
-/******/ 		// Execute the module function
-/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
-/******/
-/******/ 		// Flag the module as loaded
-/******/ 		module.l = true;
-/******/
-/******/ 		// Return the exports of the module
-/******/ 		return module.exports;
-/******/ 	}
-/******/
-/******/
-/******/ 	// expose the modules object (__webpack_modules__)
-/******/ 	__webpack_require__.m = modules;
-/******/
-/******/ 	// expose the module cache
-/******/ 	__webpack_require__.c = installedModules;
-/******/
-/******/ 	// define getter function for harmony exports
-/******/ 	__webpack_require__.d = function(exports, name, getter) {
-/******/ 		if(!__webpack_require__.o(exports, name)) {
-/******/ 			Object.defineProperty(exports, name, { enumerable: true, get: getter });
-/******/ 		}
-/******/ 	};
-/******/
-/******/ 	// define __esModule on exports
-/******/ 	__webpack_require__.r = function(exports) {
-/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
-/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
-/******/ 		}
-/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
-/******/ 	};
-/******/
-/******/ 	// create a fake namespace object
-/******/ 	// mode & 1: value is a module id, require it
-/******/ 	// mode & 2: merge all properties of value into the ns
-/******/ 	// mode & 4: return value when already ns object
-/******/ 	// mode & 8|1: behave like require
-/******/ 	__webpack_require__.t = function(value, mode) {
-/******/ 		if(mode & 1) value = __webpack_require__(value);
-/******/ 		if(mode & 8) return value;
-/******/ 		if((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
-/******/ 		var ns = Object.create(null);
-/******/ 		__webpack_require__.r(ns);
-/******/ 		Object.defineProperty(ns, 'default', { enumerable: true, value: value });
-/******/ 		if(mode & 2 && typeof value != 'string') for(var key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
-/******/ 		return ns;
-/******/ 	};
-/******/
-/******/ 	// getDefaultExport function for compatibility with non-harmony modules
-/******/ 	__webpack_require__.n = function(module) {
-/******/ 		var getter = module && module.__esModule ?
-/******/ 			function getDefault() { return module['default']; } :
-/******/ 			function getModuleExports() { return module; };
-/******/ 		__webpack_require__.d(getter, 'a', getter);
-/******/ 		return getter;
-/******/ 	};
-/******/
-/******/ 	// Object.prototype.hasOwnProperty.call
-/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
-/******/
-/******/ 	// __webpack_public_path__
-/******/ 	__webpack_require__.p = "";
-/******/
-/******/
-/******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 8);
-/******/ })
-/************************************************************************/
-/******/ ([
-/* 0 */
-/***/ (function(module, exports) {
+/******/ (function() { // webpackBootstrap
+/******/ 	var __webpack_modules__ = ({
 
-module.exports = jQuery;
-
-/***/ }),
-/* 1 */
-/***/ (function(module, exports) {
-
-module.exports = lodash;
-
-/***/ }),
-/* 2 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ 792:
+/***/ (function(module) {
 
 /**
  * chroma.js - JavaScript library for color conversions
@@ -159,7 +63,7 @@ module.exports = lodash;
 
 (function (global, factory) {
      true ? module.exports = factory() :
-    undefined;
+    0;
 }(this, (function () { 'use strict';
 
     var limit = function (x, min, max) {
@@ -3327,24 +3231,99 @@ module.exports = lodash;
 
 
 /***/ }),
-/* 3 */
+
+/***/ 432:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6);
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(645);
 /* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0__);
 // Imports
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.i, ".c-palette-builder>*+*{margin-top:15px}.c-palette-builder__source-list+.c-palette-builder__source-list{margin-top:10px}[class][class] .c-palette-builder__source-item{display:flex}[class][class] .c-palette-builder__source-item>*+*{margin-left:5px}", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, ".c-palette-builder>*+*{margin-top:15px}.c-palette-builder__source-list+.c-palette-builder__source-list{margin-top:10px}[class][class] .c-palette-builder__source-item{display:flex;align-items:center;margin-bottom:5px}[class][class] .c-palette-builder__source-item>*+*{margin-left:5px}", ""]);
 // Exports
-/* harmony default export */ __webpack_exports__["a"] = (___CSS_LOADER_EXPORT___);
+/* harmony default export */ __webpack_exports__["Z"] = (___CSS_LOADER_EXPORT___);
 
 
 /***/ }),
-/* 4 */
-/***/ (function(module, exports) {
+
+/***/ 645:
+/***/ (function(module) {
+
+"use strict";
+
+
+/*
+  MIT License http://www.opensource.org/licenses/mit-license.php
+  Author Tobias Koppers @sokra
+*/
+// css base code, injected by the css-loader
+// eslint-disable-next-line func-names
+module.exports = function (cssWithMappingToString) {
+  var list = []; // return the list of modules as css string
+
+  list.toString = function toString() {
+    return this.map(function (item) {
+      var content = cssWithMappingToString(item);
+
+      if (item[2]) {
+        return "@media ".concat(item[2], " {").concat(content, "}");
+      }
+
+      return content;
+    }).join('');
+  }; // import a list of modules into the list
+  // eslint-disable-next-line func-names
+
+
+  list.i = function (modules, mediaQuery, dedupe) {
+    if (typeof modules === 'string') {
+      // eslint-disable-next-line no-param-reassign
+      modules = [[null, modules, '']];
+    }
+
+    var alreadyImportedModules = {};
+
+    if (dedupe) {
+      for (var i = 0; i < this.length; i++) {
+        // eslint-disable-next-line prefer-destructuring
+        var id = this[i][0];
+
+        if (id != null) {
+          alreadyImportedModules[id] = true;
+        }
+      }
+    }
+
+    for (var _i = 0; _i < modules.length; _i++) {
+      var item = [].concat(modules[_i]);
+
+      if (dedupe && alreadyImportedModules[item[0]]) {
+        // eslint-disable-next-line no-continue
+        continue;
+      }
+
+      if (mediaQuery) {
+        if (!item[2]) {
+          item[2] = mediaQuery;
+        } else {
+          item[2] = "".concat(mediaQuery, " and ").concat(item[2]);
+        }
+      }
+
+      list.push(item);
+    }
+  };
+
+  return list;
+};
+
+/***/ }),
+
+/***/ 119:
+/***/ (function(module) {
 
 // Generated by Haxe 3.4.4
 var hsluv = hsluv || {};
@@ -3678,8 +3657,9 @@ module.exports = root;
 
 
 /***/ }),
-/* 5 */
-/***/ (function(module, exports, __webpack_require__) {
+
+/***/ 379:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
 
@@ -3778,7 +3758,7 @@ function insertStyleElement(options) {
   var attributes = options.attributes || {};
 
   if (typeof attributes.nonce === 'undefined') {
-    var nonce =  true ? __webpack_require__.nc : undefined;
+    var nonce =  true ? __webpack_require__.nc : 0;
 
     if (nonce) {
       attributes.nonce = nonce;
@@ -3952,95 +3932,74 @@ module.exports = function (list, options) {
   };
 };
 
-/***/ }),
-/* 6 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ })
 
+/******/ 	});
+/************************************************************************/
+/******/ 	// The module cache
+/******/ 	var __webpack_module_cache__ = {};
+/******/ 	
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/ 		// Check if module is in cache
+/******/ 		if(__webpack_module_cache__[moduleId]) {
+/******/ 			return __webpack_module_cache__[moduleId].exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = __webpack_module_cache__[moduleId] = {
+/******/ 			id: moduleId,
+/******/ 			// no module.loaded needed
+/******/ 			exports: {}
+/******/ 		};
+/******/ 	
+/******/ 		// Execute the module function
+/******/ 		__webpack_modules__[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/ 	
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/ 	
+/************************************************************************/
+/******/ 	/* webpack/runtime/compat get default export */
+/******/ 	!function() {
+/******/ 		// getDefaultExport function for compatibility with non-harmony modules
+/******/ 		__webpack_require__.n = function(module) {
+/******/ 			var getter = module && module.__esModule ?
+/******/ 				function() { return module['default']; } :
+/******/ 				function() { return module; };
+/******/ 			__webpack_require__.d(getter, { a: getter });
+/******/ 			return getter;
+/******/ 		};
+/******/ 	}();
+/******/ 	
+/******/ 	/* webpack/runtime/define property getters */
+/******/ 	!function() {
+/******/ 		// define getter functions for harmony exports
+/******/ 		__webpack_require__.d = function(exports, definition) {
+/******/ 			for(var key in definition) {
+/******/ 				if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
+/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 				}
+/******/ 			}
+/******/ 		};
+/******/ 	}();
+/******/ 	
+/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
+/******/ 	!function() {
+/******/ 		__webpack_require__.o = function(obj, prop) { return Object.prototype.hasOwnProperty.call(obj, prop); }
+/******/ 	}();
+/******/ 	
+/************************************************************************/
+!function() {
 "use strict";
 
-
-/*
-  MIT License http://www.opensource.org/licenses/mit-license.php
-  Author Tobias Koppers @sokra
-*/
-// css base code, injected by the css-loader
-// eslint-disable-next-line func-names
-module.exports = function (cssWithMappingToString) {
-  var list = []; // return the list of modules as css string
-
-  list.toString = function toString() {
-    return this.map(function (item) {
-      var content = cssWithMappingToString(item);
-
-      if (item[2]) {
-        return "@media ".concat(item[2], " {").concat(content, "}");
-      }
-
-      return content;
-    }).join('');
-  }; // import a list of modules into the list
-  // eslint-disable-next-line func-names
-
-
-  list.i = function (modules, mediaQuery, dedupe) {
-    if (typeof modules === 'string') {
-      // eslint-disable-next-line no-param-reassign
-      modules = [[null, modules, '']];
-    }
-
-    var alreadyImportedModules = {};
-
-    if (dedupe) {
-      for (var i = 0; i < this.length; i++) {
-        // eslint-disable-next-line prefer-destructuring
-        var id = this[i][0];
-
-        if (id != null) {
-          alreadyImportedModules[id] = true;
-        }
-      }
-    }
-
-    for (var _i = 0; _i < modules.length; _i++) {
-      var item = [].concat(modules[_i]);
-
-      if (dedupe && alreadyImportedModules[item[0]]) {
-        // eslint-disable-next-line no-continue
-        continue;
-      }
-
-      if (mediaQuery) {
-        if (!item[2]) {
-          item[2] = mediaQuery;
-        } else {
-          item[2] = "".concat(mediaQuery, " and ").concat(item[2]);
-        }
-      }
-
-      list.push(item);
-    }
-  };
-
-  return list;
-};
-
-/***/ }),
-/* 7 */,
-/* 8 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-
-// EXTERNAL MODULE: external "lodash"
-var external_lodash_ = __webpack_require__(1);
-var external_lodash_default = /*#__PURE__*/__webpack_require__.n(external_lodash_);
-
-// EXTERNAL MODULE: external "jQuery"
-var external_jQuery_ = __webpack_require__(0);
-var external_jQuery_default = /*#__PURE__*/__webpack_require__.n(external_jQuery_);
-
-// CONCATENATED MODULE: ./src/js/color-palettes/global-service.js
+;// CONCATENATED MODULE: external "lodash"
+var external_lodash_namespaceObject = lodash;
+var external_lodash_default = /*#__PURE__*/__webpack_require__.n(external_lodash_namespaceObject);
+;// CONCATENATED MODULE: external "jQuery"
+var external_jQuery_namespaceObject = jQuery;
+var external_jQuery_default = /*#__PURE__*/__webpack_require__.n(external_jQuery_namespaceObject);
+;// CONCATENATED MODULE: ./src/js/color-palettes/global-service.js
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
@@ -4111,17 +4070,17 @@ var globalServiceClass = /*#__PURE__*/function () {
 
 var globalService = new globalServiceClass();
 
-// CONCATENATED MODULE: ./src/js/color-palettes/utils/connected-fields/move-connected-fields.js
+;// CONCATENATED MODULE: ./src/js/color-palettes/utils/connected-fields/move-connected-fields.js
 
-var move_connected_fields_moveConnectedFields = function moveConnectedFields(oldSettings, from, to, ratio) {
-  var settings = external_lodash_default.a.clone(oldSettings);
+var moveConnectedFields = function moveConnectedFields(oldSettings, from, to, ratio) {
+  var settings = external_lodash_default().clone(oldSettings);
 
-  if (!external_lodash_default.a.isUndefined(settings[to]) && !external_lodash_default.a.isUndefined(settings[from])) {
-    if (external_lodash_default.a.isUndefined(settings[from]['connected_fields'])) {
+  if (!external_lodash_default().isUndefined(settings[to]) && !external_lodash_default().isUndefined(settings[from])) {
+    if (external_lodash_default().isUndefined(settings[from]['connected_fields'])) {
       settings[from]['connected_fields'] = [];
     }
 
-    if (external_lodash_default.a.isUndefined(settings[to]['connected_fields'])) {
+    if (external_lodash_default().isUndefined(settings[to]['connected_fields'])) {
       settings[to]['connected_fields'] = [];
     }
 
@@ -4143,22 +4102,22 @@ var move_connected_fields_moveConnectedFields = function moveConnectedFields(old
 
   return settings;
 };
-// CONCATENATED MODULE: ./src/js/color-palettes/utils/connected-fields/swap-connected-fields.js
+;// CONCATENATED MODULE: ./src/js/color-palettes/utils/connected-fields/swap-connected-fields.js
 
-var swap_connected_fields_swapConnectedFields = function swapConnectedFields(settings, swapMap) {
+var swapConnectedFields = function swapConnectedFields(settings, swapMap) {
   // @todo This is weird. We should be able to have the settings in the proper form.
   var newSettings = JSON.parse(JSON.stringify(settings));
   var oldSettings = JSON.parse(JSON.stringify(settings));
 
-  external_lodash_default.a.each(swapMap, function (fromArray, to) {
+  _.each(swapMap, function (fromArray, to) {
     if (typeof newSettings[to] !== 'undefined') {
       var newConnectedFields = [];
 
       if (fromArray instanceof Array) {
-        external_lodash_default.a.each(fromArray, function (from) {
+        _.each(fromArray, function (from) {
           var oldConnectedFields;
 
-          if (external_lodash_default.a.isUndefined(oldSettings[from]['connected_fields'])) {
+          if (_.isUndefined(oldSettings[from]['connected_fields'])) {
             oldSettings[from]['connected_fields'] = [];
           }
 
@@ -4173,23 +4132,23 @@ var swap_connected_fields_swapConnectedFields = function swapConnectedFields(set
     }
   });
 
-  return external_lodash_default.a.clone(newSettings);
+  return _.clone(newSettings);
 };
-// CONCATENATED MODULE: ./src/js/color-palettes/utils/connected-fields/update-connected-fields-value.js
+;// CONCATENATED MODULE: ./src/js/color-palettes/utils/connected-fields/update-connected-fields-value.js
 
 
 
-var update_connected_fields_value_updateConnectedFieldsValue = function updateConnectedFieldsValue(settingID, value) {
+var updateConnectedFieldsValue = function updateConnectedFieldsValue(settingID, value) {
   var parentSettingData = globalService.getSetting(settingID);
 
-  external_lodash_default.a.each(parentSettingData.connected_fields, function (connectedFieldData) {
-    if (external_lodash_default.a.isUndefined(connectedFieldData) || external_lodash_default.a.isUndefined(connectedFieldData.setting_id) || !external_lodash_default.a.isString(connectedFieldData.setting_id)) {
+  external_lodash_default().each(parentSettingData.connected_fields, function (connectedFieldData) {
+    if (external_lodash_default().isUndefined(connectedFieldData) || external_lodash_default().isUndefined(connectedFieldData.setting_id) || !external_lodash_default().isString(connectedFieldData.setting_id)) {
       return;
     }
 
     var connectedSetting = wp.customize(connectedFieldData.setting_id);
 
-    if (external_lodash_default.a.isUndefined(connectedSetting)) {
+    if (external_lodash_default().isUndefined(connectedSetting)) {
       return;
     }
 
@@ -4198,12 +4157,12 @@ var update_connected_fields_value_updateConnectedFieldsValue = function updateCo
 };
 
 
-// CONCATENATED MODULE: ./src/js/color-palettes/utils/connected-fields/index.js
+;// CONCATENATED MODULE: ./src/js/color-palettes/utils/connected-fields/index.js
 
 
 
 
-var connected_fields_bindConnectedFields = function bindConnectedFields(settingIDs) {
+var bindConnectedFields = function bindConnectedFields(settingIDs) {
   _.each(settingIDs, function (settingID) {
     var parentSettingData = globalService.getSetting(settingID);
 
@@ -4219,7 +4178,7 @@ var connected_fields_bindConnectedFields = function bindConnectedFields(settingI
     }
   });
 };
-var connected_fields_unbindConnectedFields = function unbindConnectedFields(settingIDs) {
+var unbindConnectedFields = function unbindConnectedFields(settingIDs) {
   var globalCallbacks = _.pick(globalService.getCallbacks(), settingIDs);
 
   _.each(globalCallbacks, function (callback, settingID) {
@@ -4229,7 +4188,7 @@ var connected_fields_unbindConnectedFields = function unbindConnectedFields(sett
 
   globalService.deleteCallbacks(settingIDs);
 };
-// CONCATENATED MODULE: ./src/js/color-palettes/utils/apply-connected-fields-alterations.js
+;// CONCATENATED MODULE: ./src/js/color-palettes/utils/apply-connected-fields-alterations.js
 
 
 
@@ -4238,37 +4197,35 @@ var isDefaultColorationSet = function isDefaultColorationSet() {
   return false;
 };
 
-var apply_connected_fields_alterations_applyColorationLevel = function applyColorationLevel(tempSettings) {
+var applyColorationLevel = function applyColorationLevel(tempSettings) {
   var switchColorSelector = '#_customize-input-sm_dark_color_switch_slider_control';
   var selectColorSelector = '#_customize-input-sm_dark_color_select_slider_control';
 
   if (!isDefaultColorationSet()) {
     var switchRatio = external_jQuery_default()(switchColorSelector).val() / 100;
     var selectRatio = external_jQuery_default()(selectColorSelector).val() / 100;
-    tempSettings = move_connected_fields_moveConnectedFields(tempSettings, 'sm_text_color_switch_master', 'sm_accent_color_switch_master', switchRatio);
-    tempSettings = move_connected_fields_moveConnectedFields(tempSettings, 'sm_text_color_select_master', 'sm_accent_color_select_master', selectRatio);
+    tempSettings = moveConnectedFields(tempSettings, 'sm_text_color_switch_master', 'sm_accent_color_switch_master', switchRatio);
+    tempSettings = moveConnectedFields(tempSettings, 'sm_text_color_select_master', 'sm_accent_color_select_master', selectRatio);
   }
 
   return tempSettings;
 };
 
 var applyConnectedFieldsAlterations = function applyConnectedFieldsAlterations(tempSettings) {
-  tempSettings = apply_connected_fields_alterations_applyColorationLevel(tempSettings);
+  tempSettings = applyColorationLevel(tempSettings);
   return tempSettings;
 };
-// CONCATENATED MODULE: ./src/js/color-palettes/utils/index.js
+;// CONCATENATED MODULE: ./src/js/color-palettes/utils/index.js
 
 
 
 
 // EXTERNAL MODULE: ./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js
-var injectStylesIntoStyleTag = __webpack_require__(5);
+var injectStylesIntoStyleTag = __webpack_require__(379);
 var injectStylesIntoStyleTag_default = /*#__PURE__*/__webpack_require__.n(injectStylesIntoStyleTag);
-
 // EXTERNAL MODULE: ./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/js/color-palettes/components/builder/components/color-controls/style.scss
-var style = __webpack_require__(3);
-
-// CONCATENATED MODULE: ./src/js/color-palettes/components/builder/components/color-controls/style.scss
+var style = __webpack_require__(432);
+;// CONCATENATED MODULE: ./src/js/color-palettes/components/builder/components/color-controls/style.scss
 
             
 
@@ -4277,12 +4234,12 @@ var options = {};
 options.insert = "head";
 options.singleton = false;
 
-var update = injectStylesIntoStyleTag_default()(style["a" /* default */], options);
+var update = injectStylesIntoStyleTag_default()(style/* default */.Z, options);
 
 
 
-/* harmony default export */ var color_controls_style = (style["a" /* default */].locals || {});
-// CONCATENATED MODULE: ./src/js/color-palettes/components/builder/components/color-controls/index.js
+/* harmony default export */ var color_controls_style = (style/* default.locals */.Z.locals || {});
+;// CONCATENATED MODULE: ./src/js/color-palettes/components/builder/components/color-controls/index.js
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
 
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
@@ -4332,7 +4289,7 @@ var ColorControls = function ColorControls(props) {
         setColors(newColors);
       }
     }), /*#__PURE__*/React.createElement("button", {
-      className: "c-palette-builder__source-item-delete",
+      className: "c-palette-builder__source-item-delete button",
       onClick: function onClick(e) {
         e.preventDefault();
         var newColors = colors.slice();
@@ -4341,7 +4298,7 @@ var ColorControls = function ColorControls(props) {
       }
     }, "Delete"));
   })), /*#__PURE__*/React.createElement("button", {
-    className: "c-palette-builder__add",
+    className: "c-palette-builder__add button",
     onClick: function onClick(e) {
       e.preventDefault();
       setColors([].concat(_toConsumableArray(colors), [{
@@ -4354,13 +4311,11 @@ var ColorControls = function ColorControls(props) {
 
 /* harmony default export */ var color_controls = (ColorControls);
 // EXTERNAL MODULE: ./node_modules/hsluv/hsluv.js
-var hsluv = __webpack_require__(4);
-
+var hsluv = __webpack_require__(119);
 // EXTERNAL MODULE: ./node_modules/chroma-js/chroma.js
-var chroma = __webpack_require__(2);
-var chroma_default = /*#__PURE__*/__webpack_require__.n(chroma);
-
-// CONCATENATED MODULE: ./src/js/color-palettes/components/builder/contrast-array.js
+var chroma_js_chroma = __webpack_require__(792);
+var chroma_default = /*#__PURE__*/__webpack_require__.n(chroma_js_chroma);
+;// CONCATENATED MODULE: ./src/js/color-palettes/components/builder/contrast-array.js
 var optimalContrastArray = Array.from(Array(12)).map(function (x, i) {
   return Math.pow(21, i / 11);
 }); //	https://medium.com/envoy-design/designing-an-accessible-color-scheme-again-fd35cfa9d796
@@ -4380,7 +4335,7 @@ var maxContrastArray = contrastRangesArray.map(function (x) {
   return x[1];
 });
 /* harmony default export */ var contrast_array = (myOptimalContrastArray);
-// CONCATENATED MODULE: ./src/js/color-palettes/components/builder/utils.js
+;// CONCATENATED MODULE: ./src/js/color-palettes/components/builder/utils.js
 function utils_toConsumableArray(arr) { return utils_arrayWithoutHoles(arr) || utils_iterableToArray(arr) || utils_unsupportedIterableToArray(arr) || utils_nonIterableSpread(); }
 
 function utils_nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
@@ -4404,9 +4359,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 var getPalettesFromColors = function getPalettesFromColors(colors) {
   var attributes = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-  var functionalColors = utils_getFunctionalColors(colors);
-  var palettes = colors.map(utils_mapColorToPalette(attributes));
-  var functionalPalettes = functionalColors.map(utils_mapColorToPalette(attributes));
+  var functionalColors = getFunctionalColors(colors);
+  var palettes = colors.map(mapColorToPalette(attributes));
+  var functionalPalettes = functionalColors.map(mapColorToPalette(attributes));
   palettes = addAutoPalettes(palettes, attributes);
   return mapSanitizePalettes(palettes.concat(functionalPalettes), attributes);
 };
@@ -4418,41 +4373,41 @@ var addAutoPalettes = function addAutoPalettes(palettes, attributes) {
   var newPalettes = JSON.parse(JSON.stringify(palettes));
 
   if (newPalettes.length > 1) {
-    var index0 = utils_getBestPositionInPaletteByLuminance(newPalettes[0].source, newPalettes[0].colors, attributes);
-    var index1 = utils_getBestPositionInPaletteByLuminance(newPalettes[1].source, newPalettes[1].colors, attributes);
+    var index0 = getBestPositionInPaletteByLuminance(newPalettes[0].source, newPalettes[0].colors, attributes);
+    var index1 = getBestPositionInPaletteByLuminance(newPalettes[1].source, newPalettes[1].colors, attributes);
     var distance0 = Math.abs(index0 - index1);
     var distance1 = 0;
     var distance2 = 0;
 
     if (newPalettes.length > 2) {
-      var index2 = utils_getBestPositionInPaletteByLuminance(newPalettes[2].source, newPalettes[2].colors, attributes);
+      var index2 = getBestPositionInPaletteByLuminance(newPalettes[2].source, newPalettes[2].colors, attributes);
       distance1 = Math.abs(index1 - index2);
       distance2 = Math.abs(index0 - index2);
       var distance = Math.min(distance0, distance1, distance2);
 
       if (distance > 2) {
-        var newPalette = utils_createAutoPalette(newPalettes.slice(0, 3), attributes);
+        var newPalette = createAutoPalette(newPalettes.slice(0, 3), attributes);
         newPalettes.splice(0, 3, newPalette);
         return newPalettes;
       }
     }
 
     if (distance0 > 2) {
-      var _newPalette = utils_createAutoPalette([newPalettes[0], newPalettes[1]], attributes);
+      var _newPalette = createAutoPalette([newPalettes[0], newPalettes[1]], attributes);
 
       newPalettes.splice(0, 2, _newPalette);
       return newPalettes;
     }
 
     if (distance2 > 2) {
-      var _newPalette2 = utils_createAutoPalette([newPalettes[0], newPalettes[2]], attributes);
+      var _newPalette2 = createAutoPalette([newPalettes[0], newPalettes[2]], attributes);
 
       newPalettes.splice(0, 3, _newPalette2, newPalettes[1]);
       return newPalettes;
     }
 
     if (distance1 > 2) {
-      var _newPalette3 = utils_createAutoPalette([newPalettes[1], newPalettes[2]], attributes);
+      var _newPalette3 = createAutoPalette([newPalettes[1], newPalettes[2]], attributes);
 
       newPalettes.splice(0, 3, newPalettes[0], _newPalette3);
       return newPalettes;
@@ -4463,9 +4418,9 @@ var addAutoPalettes = function addAutoPalettes(palettes, attributes) {
 };
 var mapSanitizePalettes = function mapSanitizePalettes(colors) {
   var attributes = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-  return colors.map(utils_mapCorrectLightness(attributes)).map(mapUpdateProps).map(mapUseSource(attributes)).map(mapAddSourceIndex(attributes)).map(mapAddTextColors);
+  return colors.map(mapCorrectLightness(attributes)).map(mapUpdateProps).map(mapUseSource(attributes)).map(mapAddSourceIndex(attributes)).map(mapAddTextColors);
 };
-var utils_getFunctionalColors = function getFunctionalColors(colors) {
+var getFunctionalColors = function getFunctionalColors(colors) {
   if (!colors || !colors.length) {
     return [];
   }
@@ -4501,7 +4456,7 @@ var getSourceIndex = function getSourceIndex(palette) {
 var mapAddTextColors = function mapAddTextColors(palette) {
   palette.textColors = palette.colors.slice(9, 11).map(function (color, index) {
     return _objectSpread({
-      value: utils_getTextColor(palette.source, index)
+      value: getTextColor(palette.source, index)
     }, color);
   });
   return palette;
@@ -4513,7 +4468,7 @@ var mapAddSourceIndex = function mapAddSourceIndex(attributes) {
     var sourceIndex = getSourceIndex(palette); // falback sourceIndex when the source isn't used in the palette
 
     if (!sourceIndex > -1) {
-      sourceIndex = utils_getBestPositionInPaletteByLuminance(source, colors.map(function (color) {
+      sourceIndex = getBestPositionInPaletteByLuminance(source, colors.map(function (color) {
         return color.value;
       }), attributes);
     }
@@ -4533,7 +4488,7 @@ var mapShiftColors = function mapShiftColors(palette) {
   palette.colors = getShiftedArray(palette.colors);
   return palette;
 };
-var utils_mapColorToPalette = function mapColorToPalette(attributes) {
+var mapColorToPalette = function mapColorToPalette(attributes) {
   var mode = attributes.mode;
   return function (colorObj, index) {
     var label = colorObj.label,
@@ -4555,7 +4510,7 @@ var mapInterpolateSource = function mapInterpolateSource(attributes) {
   var mode = attributes.mode;
   return function (palette) {
     var source = palette.source;
-    var position = utils_getBestPositionInPaletteByLuminance(source, palette.colors, attributes);
+    var position = getBestPositionInPaletteByLuminance(source, palette.colors, attributes);
 
     if (mode !== 'none') {
       var stops = [{
@@ -4568,19 +4523,19 @@ var mapInterpolateSource = function mapInterpolateSource(attributes) {
         value: '#000000',
         position: 11
       }];
-      palette.colors = utils_getColorsFromStops(stops, attributes);
+      palette.colors = getColorsFromStops(stops, attributes);
     }
 
     return palette;
   };
 };
 
-var utils_getColorsFromStops = function getColorsFromStops(stops, attributes) {
+var getColorsFromStops = function getColorsFromStops(stops, attributes) {
   var mode = attributes.mode;
   var colors = [stops[0].value];
 
   for (var i = 0; i < stops.length - 1; i++) {
-    var scale = chroma_default.a.scale([stops[i].value, stops[i + 1].value]).mode(mode);
+    var scale = chroma.scale([stops[i].value, stops[i + 1].value]).mode(mode);
     var scaleColors = scale.colors(stops[i + 1].position - stops[i].position + 1);
     colors.push.apply(colors, utils_toConsumableArray(scaleColors.slice(1)));
   }
@@ -4588,7 +4543,7 @@ var utils_getColorsFromStops = function getColorsFromStops(stops, attributes) {
   return colors;
 };
 
-var utils_mapCorrectLightness = function mapCorrectLightness(_ref) {
+var mapCorrectLightness = function mapCorrectLightness(_ref) {
   var correctLightness = _ref.correctLightness,
       mode = _ref.mode;
 
@@ -4625,7 +4580,7 @@ var mapUseSource = function mapUseSource(attributes) {
 
   return function (palette) {
     var source = palette.source;
-    var position = utils_getBestPositionInPaletteByLuminance(source, palette.colors.map(function (color) {
+    var position = getBestPositionInPaletteByLuminance(source, palette.colors.map(function (color) {
       return color.value;
     }), attributes);
     palette.colors.splice(position, 1, {
@@ -4635,7 +4590,7 @@ var mapUseSource = function mapUseSource(attributes) {
     return palette;
   };
 };
-var utils_getBestPositionInPaletteByLuminance = function getBestPositionInPaletteByLuminance(color, colors, attributes, byColorDistance) {
+var getBestPositionInPaletteByLuminance = function getBestPositionInPaletteByLuminance(color, colors, attributes, byColorDistance) {
   var min = Number.MAX_SAFE_INTEGER;
   var pos = -1;
 
@@ -4643,7 +4598,7 @@ var utils_getBestPositionInPaletteByLuminance = function getBestPositionInPalett
     var distance = void 0;
 
     if (!!byColorDistance) {
-      distance = chroma_default.a.distance(colors[i], color, 'rgb');
+      distance = chroma_default().distance(colors[i], color, 'rgb');
     } else {
       distance = Math.abs(chroma_default()(colors[i]).luminance() - chroma_default()(color).luminance());
     }
@@ -4657,7 +4612,7 @@ var utils_getBestPositionInPaletteByLuminance = function getBestPositionInPalett
   var firstDarkPos = Math.ceil(colors.length / 2); // if we want to preserve contrast we should do this
 
   if (attributes !== null && attributes !== void 0 && attributes.correctLightness) {
-    if (chroma_default.a.contrast(color, 'white') > Math.sqrt(21)) {
+    if (chroma_default().contrast(color, 'white') > Math.sqrt(21)) {
       pos = Math.max(firstDarkPos, pos);
     } else {
       pos = Math.min(firstDarkPos - 1, pos);
@@ -4667,13 +4622,13 @@ var utils_getBestPositionInPaletteByLuminance = function getBestPositionInPalett
   return pos;
 };
 
-var utils_getTextColor = function getTextColor(source, position, mode) {
+var getTextColor = function getTextColor(source, position, mode) {
   var luminance = contrastToLuminance(contrast_array[position]);
-  var hpluv = Object(hsluv["hexToHpluv"])(source);
+  var hpluv = (0,hsluv.hexToHpluv)(source);
   var h = Math.min(Math.max(hpluv[0], 0), 360);
   var p = Math.min(Math.max(hpluv[1], 0), 100);
   var l = Math.min(Math.max(hpluv[2], 0), 100);
-  var rgb = Object(hsluv["hpluvToRgb"])([h, p, l]).map(function (x) {
+  var rgb = (0,hsluv.hpluvToRgb)([h, p, l]).map(function (x) {
     return Math.max(0, Math.min(x * 255, 255));
   });
   return chroma_default()(rgb).luminance(luminance, mode).hex();
@@ -4756,7 +4711,7 @@ var getCSSFromPalettes = function getCSSFromPalettes(palettes) {
   }, '');
 };
 
-var utils_createAutoPalette = function createAutoPalette(palettes) {
+var createAutoPalette = function createAutoPalette(palettes) {
   var attributes = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
   var mode = attributes.mode,
       bezierInterpolation = attributes.bezierInterpolation;
@@ -4772,9 +4727,9 @@ var utils_createAutoPalette = function createAutoPalette(palettes) {
   });
 
   if (!!bezierInterpolation) {
-    autoPalette = chroma_default.a.bezier(autoPalette).scale().mode(mode).correctLightness().colors(12);
+    autoPalette = chroma_default().bezier(autoPalette).scale().mode(mode).correctLightness().colors(12);
   } else {
-    autoPalette = chroma_default.a.scale(autoPalette).mode(mode).correctLightness().colors(12);
+    autoPalette = chroma_default().scale(autoPalette).mode(mode).correctLightness().colors(12);
   }
 
   autoPalette = _objectSpread(_objectSpread({}, palettesCopy[0]), {}, {
@@ -4786,7 +4741,7 @@ var utils_createAutoPalette = function createAutoPalette(palettes) {
 var noop = function noop(palette) {
   return palette;
 };
-// CONCATENATED MODULE: ./src/js/color-palettes/components/builder/index.js
+;// CONCATENATED MODULE: ./src/js/color-palettes/components/builder/index.js
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || builder_unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
@@ -4822,7 +4777,7 @@ var getValueFromColors = function getValueFromColors(colors) {
   return JSON.stringify(colors);
 };
 
-var builder_Builder = function Builder(props) {
+var Builder = function Builder(props) {
   var _window, _window$myApi;
 
   var sourceSettingID = props.sourceSettingID,
@@ -4999,14 +4954,14 @@ var initializePaletteBuilder = function initializePaletteBuilder(sourceSettingID
     child.style.display = 'none';
   });
   container.insertBefore(target, container.firstChild);
-  wp.element.render( /*#__PURE__*/React.createElement(builder_Builder, {
+  wp.element.render( /*#__PURE__*/React.createElement(Builder, {
     sourceSettingID: sourceSettingID,
     outputSettingID: outputSettingID
   }), target);
 };
 
 
-// CONCATENATED MODULE: ./src/js/color-palettes/index.js
+;// CONCATENATED MODULE: ./src/js/color-palettes/index.js
 
 
 
@@ -5028,18 +4983,18 @@ if (typeof customify.api === 'undefined') {
 }
 
 customify.api = Object.assign({}, customify.api, function () {
-  var reloadConnectedFields = external_lodash_default.a.debounce(function () {
+  var reloadConnectedFields = external_lodash_default().debounce(function () {
     globalService.loadSettings();
     var settings = applyConnectedFieldsAlterations(globalService.getSettings());
     globalService.setSettings(settings);
-    connected_fields_unbindConnectedFields(masterSettingIDs);
-    connected_fields_bindConnectedFields(masterSettingIDs);
+    unbindConnectedFields(masterSettingIDs);
+    bindConnectedFields(masterSettingIDs);
     masterSettingIDs.forEach(function (settingID) {
       globalService.setSetting(settingID, settings[settingID]);
       var setting = wp.customize(settingID);
 
       if (typeof setting !== "undefined") {
-        update_connected_fields_value_updateConnectedFieldsValue(settingID, setting());
+        updateConnectedFieldsValue(settingID, setting());
       }
     });
   }, 30);
@@ -5073,6 +5028,6 @@ customify.api = Object.assign({}, customify.api, function () {
     getCSSFromPalettes: getCSSFromPalettes
   };
 }());
-
-/***/ })
-/******/ ]);
+}();
+/******/ })()
+;

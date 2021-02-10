@@ -179,6 +179,13 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 					PixCustomifyPlugin()->get_slug() . '-fontfields',
 				),
 				PixCustomifyPlugin()->get_version() );
+
+			wp_register_style(
+				PixCustomifyPlugin()->get_slug() . '-customizer',
+				plugins_url( 'dist/css/customizer.css', PixCustomifyPlugin()->get_file() ),
+				array(),
+				PixCustomifyPlugin()->get_version()
+			);
 		}
 
 		/**
@@ -187,6 +194,8 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 		function enqueue_admin_customizer_scripts() {
 			wp_enqueue_script( 'jquery-react' );
 			wp_enqueue_script( PixCustomifyPlugin()->get_slug() . '-customizer-scripts' );
+
+			wp_enqueue_style( PixCustomifyPlugin()->get_slug() . '-customizer' );
 
 			wp_add_inline_script( PixCustomifyPlugin()->get_slug() . '-customizer-scripts',
 				self::getlocalizeToWindowScript( 'customify',

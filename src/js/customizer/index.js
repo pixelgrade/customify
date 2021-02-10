@@ -1,5 +1,4 @@
 import $ from 'jquery';
-import './style.scss';
 
 import { handleColorSelectFields } from './fields/color-select';
 import { handleRangeFields } from './fields/range';

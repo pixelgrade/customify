@@ -1,0 +1,64 @@
+#customize-theme-controls {
+
+  .separator {
+
+    &.label {
+      display: block;
+      font-size: 14px;
+      line-height: 24px;
+      font-weight: 500;
+    }
+
+    &.large {
+      margin-top: calc( 0.5 * var(--customizer-spacing) );
+      font-size: 16px;
+    }
+
+    &.section,
+    &.sub-section {
+
+      &:before {
+        content: "";
+
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: calc( -1 * var(--customizer-spacing) );
+        right: calc( -1 * var(--customizer-spacing) );
+        z-index: -1;
+
+        border-width: 1px 0;
+        border-style: solid;
+        border-color: var(--customizer-border-color);
+
+        background-color: var(--customizer-background-color);
+      }
+
+      + .customize-control-description {
+        margin-top: var(--customizer-spacing);
+      }
+    }
+
+    &.section {
+      position: relative;
+      padding: 14px 0;
+      margin-bottom: 0;
+      background: none;
+      border: none;
+
+      &:before {
+        border-width: 1px 0;
+      }
+    }
+
+    &.sub-section {
+      position: relative;
+      padding: 12px 0;
+
+      &:before {
+        border-width: 1px 0;
+        background-color: var(--sm-customizer-color-1);
+      }
+    }
+  }
+}

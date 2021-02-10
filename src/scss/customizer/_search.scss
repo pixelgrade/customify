@@ -1,0 +1,201 @@
+$container-placeholder-color: #999;
+
+#accordion-section-customify-customizer-search {
+  margin-bottom: 0;
+  color: #555d66;
+  background: #fff;
+  border-top: 1px solid #ddd;
+
+  .accordion-section-title:after {
+    content: none;
+  }
+
+  .search-field-wrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+
+    .search-field-button-wrapper {
+      display: flex;
+      align-items: stretch;
+    }
+
+    .clear-search {
+      margin-left: 6px;
+      height: 36px;
+      font-weight: 500;
+
+      &.has-next-sibling {
+        border-radius: 3px 0 0 3px;
+      }
+    }
+
+    .close-search {
+      text-indent: 0;
+      border-radius: 0 3px 3px 0;
+      padding-left: 0;
+      padding-right: 0;
+      font-size: 19px;
+      height: 36px;
+      width: 38px;
+      float: left;
+      transform: none;
+      margin-top: 0;
+      line-height: 2;
+    }
+
+    .button-primary.has-next-sibling {
+      border-right: 1px solid #98c6dd
+    }
+  }
+
+  .customizer-search-input {
+    @include input;
+    width: 83%;
+    height: 38px;
+    padding: 8px 8px;
+  }
+
+  input::-webkit-input-placeholder {
+    font-size: 14px;
+    color: $container-placeholder-color;
+    opacity: 1;
+    line-height: 1.5;
+  }
+
+  input:-moz-placeholder { /* Firefox 18- */
+    font-size: 14px;
+    color: $container-placeholder-color;
+    opacity: 1;
+    line-height: 1.5;
+  }
+
+  input::-moz-placeholder { /* Firefox 19+ */
+    font-size: 14px;
+    color: $container-placeholder-color;
+    opacity: 1;
+    line-height: 1.5;
+  }
+
+  input:-ms-input-placeholder {
+    font-size: 14px;
+    color: $container-placeholder-color;
+    opacity: 1;
+    line-height: 1.5;
+  }
+
+  .search-input-label {
+    display: block;
+    margin-bottom: 8px;
+  }
+}
+
+#customize-controls .customize-info .customize-search-toggle {
+  padding: 20px;
+
+  position: absolute;
+  bottom: 4px;
+  right: 1px;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  box-shadow: none;
+  background: transparent;
+  color: #555d66;
+  border: none;
+
+  &:focus {
+    outline: none;
+  }
+
+  &:before {
+    padding: 4px;
+
+    position: absolute;
+    top: 5px;
+    left: 6px;
+  }
+
+  &:focus:before {
+    border-radius: 100%;
+    box-shadow:
+      0 0 0 1px #5b9dd9,
+      0 0 2px 1px rgba(30, 140, 190, 0.8);
+  }
+}
+
+// This is put on the #customize-theme-controls wrapper, so it is used to hide the regular panels.
+.search-found {
+  height: 0;
+  visibility: hidden;
+  opacity: 0;
+  display: none;
+}
+
+#customify-search-results .accordion-section {
+  border-left: none;
+  border-right: none;
+  padding: 10px 10px 11px 14px;
+  background: #fff;
+  color: #416b7e;
+  position: relative;
+
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 21px;
+
+  border-top: 1px solid var(--customizer-border-color);
+  border-bottom: none;
+
+  &:last-of-type {
+    border-bottom: 1px solid var(--customizer-border-color);
+  }
+
+  &:hover {
+    background: #f7fbff;
+    cursor: pointer;
+
+    h3.accordion-section-title {
+      background: #f7fbff;
+    }
+  }
+
+  &:after {
+    font: normal 20px/1 dashicons;
+    speak: none;
+    display: block;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-decoration: none !important;
+
+    content: "\f345";
+    color: #a0a5aa;
+    position: absolute;
+    top: calc(50% - 10px);
+    right: 10px;
+    z-index: 1;
+  }
+
+  h3.accordion-section-title {
+    padding: 0;
+    margin: 0;
+
+    &:after {
+      content: none;
+      background: inherit;
+    }
+
+    &:hover {
+      background: #f7fbff;
+      cursor: pointer;
+    }
+  }
+}
+
+.search-setting-path {
+  cursor: pointer;
+}
+
+#customize-controls .hl {
+  background: #ffcd1724;
+}

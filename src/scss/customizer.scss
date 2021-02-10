@@ -1,0 +1,18 @@
+@import 'customizer/variables';
+@import 'customizer/mixins';
+@import 'customizer/controls';
+@import 'customizer/search';
+@import 'customizer/select2';
+
+// theme
+@import 'customizer/feedback-modal';
+@import 'customizer/style-manager-panel';
+
+.wp-full-overlay-sidebar {
+
+  &, *, *:before, *:after {
+    box-sizing: border-box;
+  }
+}
+
+@import 'customizer/theme';

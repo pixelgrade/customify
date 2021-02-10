@@ -1,0 +1,93 @@
+$close-button-width: 45px;
+
+// Publish button
+#customize-save-button-wrapper {
+  display: flex;
+  align-items: stretch;
+  margin-top: 6px;
+}
+
+// Temporary Fix to Make "Close" button align with the "Back"
+.customize-controls-close {
+  width: $close-button-width;
+  height: $close-button-width;
+  padding: 0;
+  border-top: 0;
+
+  color: var(--sm-customizer-color-3);
+  background: var(--sm-customizer-color-1);
+  border-color: var(--customizer-border-color);
+
+  &:focus,
+  &:hover {
+    background: var(--sm-customizer-color-2);
+  }
+
+  &:before {
+    top: 0;
+  }
+}
+
+// Back Buttons
+#customize-controls #customize-theme-controls {
+
+  .customize-info,
+  .customize-section-title {
+    display: flex;
+    flex-wrap: wrap;
+    flex-grow: 1;
+
+    > .customize-control-notifications-container {
+      flex-basis: 100%;
+    }
+  }
+
+  .customize-info > .accordion-section-title,
+  .customize-section-title > h3 {
+    flex-grow: 1;
+    margin-left: 0;
+  }
+
+  .customize-panel-back,
+  .customize-section-back {
+    position: relative;
+    width: $close-button-width;
+    height: auto;
+    padding: 0;
+
+    color: var(--sm-customizer-color-3);
+    border-color: var(--customizer-border-color);
+    border-left: 0;
+
+    &:before {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-40%, -50%);
+      line-height: 1;
+    }
+
+    &:focus {
+      background: var(--sm-customizer-color-1);
+    }
+
+    &:hover {
+      background: var(--sm-customizer-color-2);
+      color: var(--sm-customizer-color-6);
+    }
+  }
+}
+
+// Small screens
+.customize-controls-preview-toggle {
+  background-color: var(--customizer-background-color);
+  border-color: var(--customizer-border-color);
+}
+
+.in-sub-panel .wp-full-overlay-sidebar .wp-full-overlay-header {
+  padding-left: $close-button-width;
+}
+
+.wp-full-overlay-sidebar .wp-full-overlay-header {
+  height: $close-button-width + 1px;
+}
