@@ -1,13 +1,16 @@
+import $ from 'jquery';
+
 import {
+  getFontFieldCSSValue,
   getFontFieldCSSCode,
   maybeLoadFontFamily
 } from './utils';
 
-export const handleFontTypeControl = ( key, settingConfig ) => {
+export const handleFontTypeControl = function( settingID, settingConfig ) {
   const wp = wp || parent.wp;
+  const propertiesPrefix = typeof settingConfig.properties_prefix === 'undefined' ? '' : settingConfig.properties_prefix
 
-  wp.customize( key, ( setting ) => {
-
+  wp.customize( settingID, ( setting ) => {
     setting.bind( ( newValue ) => {
 
       if ( typeof newValue === 'undefined' ) {
@@ -15,7 +18,7 @@ export const handleFontTypeControl = ( key, settingConfig ) => {
       }
 
       if ( typeof newValue.font_family !== 'undefined' ) {
-        maybeLoadFontFamily( newValue, this.id )
+        maybeLoadFontFamily( newValue, settingID )
       }
 
       const $styleElement = $( '#customify_font_output_for_' + settingConfig.html_safe_option_id );
@@ -24,7 +27,7 @@ export const handleFontTypeControl = ( key, settingConfig ) => {
         return
       }
 
-      const cssValue = getFontFieldCSSValue( this.id, newValue )
+      const cssValue = getFontFieldCSSValue( settingID, newValue )
 
       if ( _.isEmpty( cssValue ) ) {
         // Empty the style element.
@@ -32,7 +35,10 @@ export const handleFontTypeControl = ( key, settingConfig ) => {
         return
       }
 
-      $styleElement.html( getFontFieldCSSCode( this.id, cssValue, propertiesPrefix, newValue ) );
+      console.log( settingID, cssValue, propertiesPrefix, newValue );
+      console.log( getFontFieldCSSCode( settingID, cssValue, propertiesPrefix, newValue ) );
+
+      $styleElement.html( getFontFieldCSSCode( settingID, cssValue, propertiesPrefix, newValue ) );
     } );
   } );
 }

@@ -32,7 +32,7 @@ import { handleFontTypeControl } from './handle-font-type-control';
     }
   }
 
-  const fontsCache = [];
+  window.fontsCache = [];
 
   const wp = wp || parent.wp;
   const customify = customify || parent.customify;
@@ -45,19 +45,20 @@ import { handleFontTypeControl } from './handle-font-type-control';
     const apiSettings = api.settings.settings
     const regexForMultipleReplace = new RegExp('-', 'g')
 
-    $.each(customify.config.settings, function (key, settingConfig) {
+    $.each(customify.config.settings, function (settingID, settingConfig) {
       const propertiesPrefix = typeof settingConfig.properties_prefix === 'undefined' ? '' : settingConfig.properties_prefix
+      console.log( 'aici', settingID, settingConfig.type );
       if ( settingConfig.type === 'font' ) {
-        handleFontTypeControl( key, settingConfig );
+        handleFontTypeControl( settingID, settingConfig );
 
       } else {
         if ( typeof apiSettings !== 'undefined'
-            && typeof apiSettings[key] !== 'undefined'
+            && typeof apiSettings[settingID] !== 'undefined'
             && typeof settingConfig.css !== 'undefined'
             && typeof settingConfig.live !== 'undefined'
             && settingConfig.live === true) {
 
-          api(key, function (setting) {
+          api(settingID, function (setting) {
             setting.bind(function (newValue) {
 
               $.each(settingConfig.css, function (idx, propertyConfig) {
@@ -100,7 +101,7 @@ import { handleFontTypeControl } from './handle-font-type-control';
 
           // if this field is allowed to modify text then we'll edit this live
           if ($.inArray(settingConfig.type, ['text', 'textarea', 'ace_editor']) > -1) {
-            api(key, function (value) {
+            api(settingID, function (value) {
               value.bind(function (text) {
                 let sanitizer = document.createElement('div')
 

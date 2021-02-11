@@ -1,3 +1,5 @@
+import $ from 'jquery';
+
 // Mirror logic of server-side Customify_Fonts_Global::getCSSValue()
 export const getFontFieldCSSValue = ( settingID, value ) => {
 
@@ -330,7 +332,7 @@ const extractAllowedCSSPropertiesFromFontFields = function (subfields) {
   return allowedProperties
 }
 
-const maybeLoadFontFamily = function (font, settingID) {
+export const maybeLoadFontFamily = function (font, settingID) {
   if (typeof font.font_family === 'undefined') {
     return
   }

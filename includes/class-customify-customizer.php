@@ -218,7 +218,7 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 				PixCustomifyPlugin()->get_version(), true );
 
 			wp_register_script( PixCustomifyPlugin()->get_slug() . '-previewer-scripts',
-				plugins_url( 'js/customizer_preview' . $suffix . '.js', PixCustomifyPlugin()->get_file() ),
+				plugins_url( 'dist/js/customizer-preview' . $suffix . '.js', PixCustomifyPlugin()->get_file() ),
 				array(
 					'jquery',
 					'customize-preview',

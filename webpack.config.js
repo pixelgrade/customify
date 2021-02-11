@@ -2,11 +2,14 @@ const UglifyJsPlugin = require( 'uglifyjs-webpack-plugin' );
 const path = require( 'path' );
 
 module.exports = {
+  mode: 'production',
   entry: {
     './dist/js/color-palettes': './src/js/color-palettes/index.js',
     './dist/js/color-palettes.min': './src/js/color-palettes/index.js',
     './dist/js/customizer': './src/js/customizer/index.js',
     './dist/js/customizer.min': './src/js/customizer/index.js',
+    './dist/js/customizer-preview': './src/js/customizer-preview/index.js',
+    './dist/js/customizer-preview.min': './src/js/customizer-preview/index.js',
     './dist/js/dark-mode': './src/js/dark-mode/index.js',
     './dist/js/dark-mode.min': './src/js/dark-mode/index.js',
   },

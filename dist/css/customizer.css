@@ -1487,6 +1487,21 @@ body.feedback-modal-open #style-manager-user-feedback-modal .modal {
 .customize-control.menu-item .menu-item-settings {
   background-color: var(--customizer-background-color); }
 
+.customize-section-description-container + #customize-control-custom_css:last-child {
+  margin: 0;
+  padding: 0;
+  width: auto; }
+
+.customize-section-title {
+  margin: 0;
+  background: var(--sm-customizer-color-1);
+  border-color: var(--customizer-border-color); }
+
+.customize-section-description[class] {
+  margin-top: 0;
+  padding: var(--customizer-spacing);
+  background: var(--sm-customizer-color-1); }
+
 #customize-controls[id] {
   color: var(--sm-customizer-text-color-1);
   background: var(--customizer-background-color);
@@ -1517,8 +1532,4 @@ body.feedback-modal-open #style-manager-user-feedback-modal .modal {
 #customize-header-actions,
 #customize-footer-actions {
   background: var(--sm-customizer-color-1);
-  border-color: var(--customizer-border-color); }
-
-.customize-section-title {
-  margin: 0;
   border-color: var(--customizer-border-color); }
