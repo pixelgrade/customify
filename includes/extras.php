@@ -572,33 +572,8 @@ function sm_color_select_dark_cb_customizer_preview() {
 
 	$js .= "
 function sm_color_select_dark_cb(value, selector, property) {
-    var css = '',
-        string = selector + property,
-        id = string.hashCode(),
-        idAttr = 'rosa2_color_select' + id;
-        style = document.getElementById( idAttr ),
-        head = document.head || document.getElementsByTagName('head')[0];
-
-    css += selector + ' {' +
-        property + ': var(--sm-current-' + value + '-color);' +
-        '}';
-    
-    if ( style !== null ) {
-        style.innerHTML = css;
-    } else {
-        style = document.createElement('style');
-        style.setAttribute( 'id', idAttr );
-
-        style.type = 'text/css';
-        if ( style.styleSheet ) {
-            style.styleSheet.cssText = css;
-        } else {
-            style.appendChild(document.createTextNode(css));
-        }
-
-        head.appendChild(style);
-    }" . PHP_EOL .
-		   "}" . PHP_EOL;
+    return selector + ' {' + property + ': var(--sm-current-' + value + '-color);' + '}';
+}" . PHP_EOL;
 
 	wp_add_inline_script( 'customify-previewer-scripts', $js );
 }
@@ -612,34 +587,9 @@ function sm_color_select_darker_cb_customizer_preview() {
 	$js = "";
 
 	$js .= "
-function sm_color_select_darker_cb(value, selector, property) {
-    var css = '',
-        string = selector + property,
-        id = string.hashCode(),
-        idAttr = 'rosa2_color_select' + id;
-        style = document.getElementById( idAttr ),
-        head = document.head || document.getElementsByTagName('head')[0];
-
-    css += selector + ' {' +
-        property + ': var(--sm-current-' + value + '-color);' +
-        '}';
-    
-    if ( style !== null ) {
-        style.innerHTML = css;
-    } else {
-        style = document.createElement('style');
-        style.setAttribute( 'id', idAttr );
-
-        style.type = 'text/css';
-        if ( style.styleSheet ) {
-            style.styleSheet.cssText = css;
-        } else {
-            style.appendChild(document.createTextNode(css));
-        }
-
-        head.appendChild(style);
-    }" . PHP_EOL .
-		   "}" . PHP_EOL;
+function sm_color_select_dark_cb(value, selector, property) {
+    return selector + ' {' + property + ': var(--sm-current-' + value + '-color);' + '}';
+}" . PHP_EOL;
 
 	wp_add_inline_script( 'customify-previewer-scripts', $js );
 }
@@ -701,36 +651,9 @@ function sm_color_switch_dark_cb_customizer_preview() {
 
 	$js .= "
 function sm_color_switch_dark_cb(value, selector, property) {
-    var css = '',
-        string = selector + property,
-        id = string.hashCode(),
-        idAttr = 'rosa2_color_source' + id;
-        style = document.getElementById( idAttr ),
-        color = 'dark',
-        head = document.head || document.getElementsByTagName('head')[0];
-        
-        if ( value === 'on' ) {
-            color = 'accent';
-        }
-        
-    css += selector + ' { ' + property + ': var(--sm-current-' + color + '-color); }';
-
-    if ( style !== null ) {
-        style.innerHTML = css;
-    } else {
-        style = document.createElement('style');
-        style.setAttribute( 'id', idAttr );
-
-        style.type = 'text/css';
-        if ( style.styleSheet ) {
-            style.styleSheet.cssText = css;
-        } else {
-            style.appendChild(document.createTextNode(css));
-        }
-
-        head.appendChild(style);
-    }" . PHP_EOL .
-		   "}" . PHP_EOL;
+    var color = value === 'on' ? 'accent' : 'dark';
+    return selector + ' { ' + property + ': var(--sm-current-' + color + '-color); }';
+}" . PHP_EOL;
 
 	wp_add_inline_script( 'customify-previewer-scripts', $js );
 }
@@ -754,37 +677,10 @@ function sm_color_switch_darker_cb_customizer_preview() {
 	$js = "";
 
 	$js .= "
-function sm_color_switch_darker_cb(value, selector, property) {
-    var css = '',
-        string = selector + property,
-        id = string.hashCode(),
-        idAttr = 'rosa2_color_source' + id;
-        style = document.getElementById( idAttr ),
-        color = 'darker',
-        head = document.head || document.getElementsByTagName('head')[0];
-        
-        if ( value === 'on' ) {
-            color = 'accent';
-        }
-        
-    css += selector + ' { ' + property + ': var(--sm-current-' + color + '-color); }';
-
-    if ( style !== null ) {
-        style.innerHTML = css;
-    } else {
-        style = document.createElement('style');
-        style.setAttribute( 'id', idAttr );
-
-        style.type = 'text/css';
-        if ( style.styleSheet ) {
-            style.styleSheet.cssText = css;
-        } else {
-            style.appendChild(document.createTextNode(css));
-        }
-
-        head.appendChild(style);
-    }" . PHP_EOL .
-		   "}" . PHP_EOL;
+function sm_color_switch_dark_cb(value, selector, property) {
+	var color = value === 'on' ? 'accent' : 'darker';
+	return selector + ' { ' + property + ': var(--sm-current-' + color + '-color); }';
+}" . PHP_EOL;
 
 	wp_add_inline_script( 'customify-previewer-scripts', $js );
 }

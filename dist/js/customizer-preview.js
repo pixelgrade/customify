@@ -174,8 +174,10 @@ var getFontFieldCSSValue = function getFontFieldCSSValue(settingID, value) {
   return CSSValue;
 }; // Mirror logic of server-side Customify_Fonts_Global::getFontStyle()
 
-var getFontFieldCSSCode = function getFontFieldCSSCode(settingID, cssValue, prefix, value) {
+var getFontFieldCSSCode = function getFontFieldCSSCode(settingID, cssValue, value) {
   var fontConfig = customify.config.settings[settingID];
+  var prefix = typeof fontConfig.properties_prefix === 'undefined' ? '' : fontConfig.properties_prefix;
+  console.log(fontConfig);
   var output = '';
 
   if (typeof window !== 'undefined' && typeof fontConfig.callback !== 'undefined' && typeof window[fontConfig.callback] === 'function') {
@@ -648,155 +650,73 @@ var implode = function implode(glue, pieces) {
 
   return pieces;
 };
-;// CONCATENATED MODULE: ./src/js/customizer-preview/handle-font-type-control.js
-
-
-var handleFontTypeControl = function handleFontTypeControl(settingID, settingConfig) {
-  var wp = wp || parent.wp;
-  var propertiesPrefix = typeof settingConfig.properties_prefix === 'undefined' ? '' : settingConfig.properties_prefix;
-  wp.customize(settingID, function (setting) {
-    setting.bind(function (newValue) {
-      if (typeof newValue === 'undefined') {
-        return;
-      }
-
-      if (typeof newValue.font_family !== 'undefined') {
-        maybeLoadFontFamily(newValue, settingID);
-      }
-
-      var $styleElement = external_jQuery_default()('#customify_font_output_for_' + settingConfig.html_safe_option_id);
-
-      if (!$styleElement.length) {
-        return;
-      }
-
-      var cssValue = getFontFieldCSSValue(settingID, newValue);
-
-      if (_.isEmpty(cssValue)) {
-        // Empty the style element.
-        $styleElement.html('');
-        return;
-      }
-
-      console.log(settingID, cssValue, propertiesPrefix, newValue);
-      console.log(getFontFieldCSSCode(settingID, cssValue, propertiesPrefix, newValue));
-      $styleElement.html(getFontFieldCSSCode(settingID, cssValue, propertiesPrefix, newValue));
-    });
-  });
-};
 ;// CONCATENATED MODULE: ./src/js/customizer-preview/index.js
-function customizer_preview_typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { customizer_preview_typeof = function _typeof(obj) { return typeof obj; }; } else { customizer_preview_typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return customizer_preview_typeof(obj); }
-
 
 ;
 
 (function ($, window, document) {
-  /* global customify.config */
+  var _parent, _parent2;
 
-  /* global WebFont */
-  Object.defineProperty(String.prototype, 'hashCode', {
-    value: function value() {
-      var hash = 0,
-          i,
-          chr;
-
-      for (i = 0; i < this.length; i++) {
-        chr = this.charCodeAt(i);
-        hash = (hash << 5) - hash + chr;
-        hash |= 0; // Convert to 32bit integer
-      }
-
-      return hash;
-    }
-  });
   $(window).on('load', function () {
     // We need to do this on window.load because on document.ready might be too early.
     maybeLoadWebfontloaderScript();
   });
-
-  var maybeLoadWebfontloaderScript = function maybeLoadWebfontloaderScript() {
-    if (typeof WebFont === 'undefined') {
-      var tk = document.createElement('script');
-      tk.src = parent.customify.config.webfontloader_url;
-      tk.type = 'text/javascript';
-      var s = document.getElementsByTagName('script')[0];
-      s.parentNode.insertBefore(tk, s);
-    }
-  };
-
   window.fontsCache = [];
-  var wp = wp || parent.wp;
-  var customify = customify || parent.customify; // Do everything at document.ready
-
+  window.wp = (window === null || window === void 0 ? void 0 : window.wp) || ((_parent = parent) === null || _parent === void 0 ? void 0 : _parent.wp);
+  window.customify = (window === null || window === void 0 ? void 0 : window.customify) || ((_parent2 = parent) === null || _parent2 === void 0 ? void 0 : _parent2.customify);
   $(function () {
-    var api = parent.wp.customize;
-    var customify = parent.customify;
-    var apiSettings = api.settings.settings;
-    var regexForMultipleReplace = new RegExp('-', 'g');
     $.each(customify.config.settings, function (settingID, settingConfig) {
-      var propertiesPrefix = typeof settingConfig.properties_prefix === 'undefined' ? '' : settingConfig.properties_prefix;
-      console.log('aici', settingID, settingConfig.type);
-
-      if (settingConfig.type === 'font') {
-        handleFontTypeControl(settingID, settingConfig);
-      } else {
-        if (typeof apiSettings !== 'undefined' && typeof apiSettings[settingID] !== 'undefined' && typeof settingConfig.css !== 'undefined' && typeof settingConfig.live !== 'undefined' && settingConfig.live === true) {
-          api(settingID, function (setting) {
-            setting.bind(function (newValue) {
-              $.each(settingConfig.css, function (idx, propertyConfig) {
-                // Replace all dashes with underscores thus making the CSS property safe to us in a HTML ID.
-                var $styleElement = $('.dynamic_setting_' + settingConfig.html_safe_option_id + '_property_' + propertyConfig.property.replace(regexForMultipleReplace, '_') + '_' + idx);
-
-                if (!$styleElement.length) {
-                  return;
-                }
-
-                var properties = {};
-
-                if (typeof propertyConfig.property !== 'undefined' && typeof propertyConfig.selector !== 'undefined') {
-                  properties[propertyConfig.property] = propertyConfig.selector;
-                }
-
-                if (typeof propertyConfig.callback_filter !== 'undefined') {
-                  properties['callback'] = propertyConfig.callback_filter;
-                }
-
-                if (_.isEmpty(properties)) {
-                  return;
-                }
-
-                var cssUpdateArgs = {
-                  properties: properties,
-                  propertyValue: newValue,
-                  negative_value: propertyConfig.hasOwnProperty('negative_value') ? propertyConfig['negative_value'] : false
-                };
-
-                if (typeof this.unit !== 'undefined') {
-                  cssUpdateArgs.unit = this.unit;
-                }
-
-                $styleElement.cssUpdate(cssUpdateArgs);
-              });
-            });
-          });
-        } else if (customizer_preview_typeof(settingConfig.live) === 'object' && settingConfig.live.length > 0) {
-          // If the live parameter is an object it means that this is a list of css classes.
-          // These classes should be affected by the change of the text fields.
-          var fieldClass = settingConfig.live.join(); // if this field is allowed to modify text then we'll edit this live
-
-          if ($.inArray(settingConfig.type, ['text', 'textarea', 'ace_editor']) > -1) {
-            api(settingID, function (value) {
-              value.bind(function (text) {
-                var sanitizer = document.createElement('div');
-                sanitizer.innerHTML = text;
-                $(fieldClass).html(text);
-              });
-            });
-          }
-        }
-      }
+      wp.customize(settingID, function (setting) {
+        var style = document.createElement('style');
+        var idAttr = "dynamic_style_".concat(settingID.replace(/\\W/g, '_'));
+        style.setAttribute('id', idAttr);
+        document.body.appendChild(style);
+        setting.bind(function (newValue) {
+          style.innerHTML = getSettingCSS(settingID, newValue, settingConfig);
+        });
+      });
     });
   });
 })(jQuery, window, document);
+
+var maybeLoadWebfontloaderScript = function maybeLoadWebfontloaderScript() {
+  if (typeof WebFont === 'undefined') {
+    var tk = document.createElement('script');
+    tk.src = parent.customify.config.webfontloader_url;
+    tk.type = 'text/javascript';
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(tk, s);
+  }
+};
+
+var defaultCallbackFilter = function defaultCallbackFilter(value, selector, property) {
+  var unit = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : '';
+  return "".concat(selector, " { ").concat(property, ": ").concat(value).concat(unit, "; }");
+};
+
+var getSettingCSS = function getSettingCSS(settingID, newValue, settingConfig) {
+  if (settingConfig.type === 'font') {
+    var cssValue = getFontFieldCSSValue(settingID, newValue);
+    return getFontFieldCSSCode(settingID, cssValue, newValue);
+  }
+
+  if (!Array.isArray(settingConfig.css)) {
+    return '';
+  }
+
+  return settingConfig.css.reduce(function (acc, propertyConfig, index) {
+    var callback_filter = propertyConfig.callback_filter,
+        selector = propertyConfig.selector,
+        property = propertyConfig.property,
+        unit = propertyConfig.unit;
+    var settingCallback = callback_filter && typeof window[callback_filter] === "function" ? window[callback_filter] : defaultCallbackFilter;
+
+    if (!selector || !property) {
+      return acc;
+    }
+
+    return "".concat(acc, "\n      ").concat(settingCallback(newValue, selector, property, unit));
+  }, '');
+};
 /******/ })()
 ;

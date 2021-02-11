@@ -611,38 +611,16 @@ class Customify_Color_Palettes {
 
 		$js .= "
 function sm_palette_output_cb( value, selector, property ) {
-    var css = '',
-        palettes = JSON.parse( value ),
-        string = selector + property,
-        id = string.hashCode(),
-        idAttr = 'rosa2_color_select' + id,
+    var palettes = JSON.parse( value ),
         variation = ' . $variation . ',
-        style = document.getElementById( idAttr ),
-        head = document.head || document.getElementsByTagName('head')[0],
         fallbackPalettes = JSON.parse('" . json_encode( $palettes ) . "');
         
     if ( ! palettes.length ) {
         palettes = fallbackPalettes;
     }
         
-    css = customify.api.getCSSFromPalettes( palettes, variation );
-    
-    if ( style !== null ) {
-        style.innerHTML = css;
-    } else {
-        style = document.createElement('style');
-        style.setAttribute( 'id', idAttr );
-
-        style.type = 'text/css';
-        if ( style.styleSheet ) {
-            style.styleSheet.cssText = css;
-        } else {
-            style.appendChild(document.createTextNode(css));
-        }
-
-        head.appendChild(style);
-    }" . PHP_EOL .
-"}" . PHP_EOL;
+    return customify.api.getCSSFromPalettes( palettes, variation );
+}" . PHP_EOL;
 
 		wp_add_inline_script( 'customify-previewer-scripts', $js );
 	}
@@ -669,38 +647,16 @@ function sm_palette_output_cb( value, selector, property ) {
 
 		$js .= "
 function sm_variation_range_cb(value, selector, property) {
-    var css = '',
-        paletteOutputSetting = wp.customize( 'sm_advanced_palette_output' ),
+    var paletteOutputSetting = wp.customize( 'sm_advanced_palette_output' ),
         palettes = !! paletteOutputSetting ? JSON.parse( paletteOutputSetting() ) : [],
-        string = selector + property,
-        id = string.hashCode(),
-        idAttr = 'rosa2_color_select' + id,
-        style = document.getElementById( idAttr ),
-        head = document.head || document.getElementsByTagName('head')[0],
         fallbackPalettes = JSON.parse('" . json_encode( $palettes ) . "');
         
     if ( ! palettes.length ) {
         palettes = fallbackPalettes;
     }
         
-    css = customify.api.getCSSFromPalettes( palettes, value );
-    
-    if ( style !== null ) {
-        style.innerHTML = css;
-    } else {
-        style = document.createElement('style');
-        style.setAttribute( 'id', idAttr );
-
-        style.type = 'text/css';
-        if ( style.styleSheet ) {
-            style.styleSheet.cssText = css;
-        } else {
-            style.appendChild(document.createTextNode(css));
-        }
-
-        head.appendChild(style);
-    }" . PHP_EOL .
-"}" . PHP_EOL;
+    return customify.api.getCSSFromPalettes( palettes, value );
+}" . PHP_EOL;
 
 		wp_add_inline_script( 'customify-previewer-scripts', $js );
 	}

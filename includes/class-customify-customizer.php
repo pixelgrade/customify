@@ -222,9 +222,7 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 				array(
 					'jquery',
 					'customize-preview',
-					'underscore',
-					PixCustomifyPlugin()->get_slug() . '-CSSOM',
-					PixCustomifyPlugin()->get_slug() . '-cssUpdate'
+					'underscore'
 				),
 				PixCustomifyPlugin()->get_version(), true );
 		}
@@ -303,38 +301,6 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 						} ?>
 					</style>
 				<?php }
-
-				if ( ! isset( $option_details['live'] ) || $option_details['live'] !== true ) {
-					continue;
-				}
-
-				if ( ! empty( $option_details['css'] ) ) {
-					foreach ( $option_details['css'] as $key => $properties_set ) {
-						// We need to use a class because we may have multiple <style>s with the same "ID" for example
-						// when targeting the same property but with different selectors.
-						$unique_class = 'dynamic_setting_' .  $option_id . '_property_' . str_replace( '-', '_', $properties_set['property'] ) . '_' . $key;
-
-						$inline_style = '<style class="' . sanitize_html_class( $unique_class ) . '" type="text/css">';
-
-						if ( isset( $properties_set['media'] ) && ! empty( $properties_set['media'] ) ) {
-							$inline_style .= '@media '. $properties_set['media'] . ' {';
-						}
-
-						if ( isset( $properties_set['selector'] ) && isset( $properties_set['property'] ) ) {
-							$css_output = $this->process_css_property($properties_set, $option_details['value']);
-							if ( ! empty( $css_output ) ) {
-								$inline_style .= $css_output;
-							}
-						}
-
-						if ( isset( $properties_set['media'] ) && ! empty( $properties_set['media'] ) ) {
-							$inline_style .= '}';
-						}
-						$inline_style .= '</style>';
-
-						echo $inline_style;
-					}
-				}
 			}
 		}
 

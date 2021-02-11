@@ -134,8 +134,11 @@ export const getFontFieldCSSValue = ( settingID, value ) => {
 
 
 // Mirror logic of server-side Customify_Fonts_Global::getFontStyle()
-export const getFontFieldCSSCode = ( settingID, cssValue, prefix, value ) => {
-  const fontConfig = customify.config.settings[settingID]
+export const getFontFieldCSSCode = ( settingID, cssValue, value ) => {
+  const fontConfig = customify.config.settings[settingID];
+  const prefix = typeof fontConfig.properties_prefix === 'undefined' ? '' : fontConfig.properties_prefix
+
+  console.log( fontConfig );
   let output = ''
 
   if (typeof window !== 'undefined' && typeof fontConfig.callback !== 'undefined' && typeof window[fontConfig.callback] === 'function') {
