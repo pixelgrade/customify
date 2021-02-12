@@ -275,7 +275,50 @@ class Customify_Color_Palettes {
 		          'choices'          => array(
 		              'accent' => esc_html__( 'Accent', '__theme_txtd' ),
 		          ),
-		      )
+		      ),
+		      'sm_coloration_level'            => array(
+			      'type'         => 'sm_radio',
+			      'setting_type' => 'option',
+			      'setting_id'   => 'sm_coloration_level',
+			      'label'        => esc_html__( 'Coloration Level', 'customify' ),
+			      'default'      => 0,
+			      'live'         => true,
+			      'choices'      => array(
+			      	'0' => 'Low',
+			      	'0.5' => 'Medium',
+			      	'1' => 'High',
+			      ),
+		      ),
+		      'sm_dark_color_switch_slider'    => array(
+			      'setting_id'  => 'sm_dark_color_switch_slider',
+			      'type'        => 'range',
+			      'label'       => esc_html__( 'Dark to Color (switch)', 'customify' ),
+			      'desc'        => '',
+			      'live'        => true,
+			      'default'     => 0,
+			      'input_attrs' => array(
+				      'min'          => 0,
+				      'max'          => 100,
+				      'step'         => 1,
+				      'data-preview' => true,
+			      ),
+			      'css'         => array(),
+		      ),
+		      'sm_dark_color_select_slider'    => array(
+			      'setting_id'  => 'sm_dark_color_select_slider',
+			      'type'        => 'range',
+			      'label'       => esc_html__( 'Dark to Color (select)', 'customify' ),
+			      'desc'        => '',
+			      'live'        => true,
+			      'default'     => 0,
+			      'input_attrs' => array(
+				      'min'          => 0,
+				      'max'          => 100,
+				      'step'         => 1,
+				      'data-preview' => true,
+			      ),
+			      'css'         => array(),
+		      ),
 		  ) + $config['sections']['style_manager_section']['options'];
 
 		return $config;
@@ -619,7 +662,7 @@ function sm_palette_output_cb( value, selector, property ) {
         palettes = fallbackPalettes;
     }
         
-    return customify.api.getCSSFromPalettes( palettes, variation );
+    return sm.customizer.getCSSFromPalettes( palettes, variation );
 }" . PHP_EOL;
 
 		wp_add_inline_script( 'customify-previewer-scripts', $js );
@@ -655,7 +698,7 @@ function sm_variation_range_cb(value, selector, property) {
         palettes = fallbackPalettes;
     }
         
-    return customify.api.getCSSFromPalettes( palettes, value );
+    return sm.customizer.getCSSFromPalettes( palettes, value );
 }" . PHP_EOL;
 
 		wp_add_inline_script( 'customify-previewer-scripts', $js );

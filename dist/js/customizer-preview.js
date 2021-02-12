@@ -1,43 +1,17 @@
+(this.sm = this.sm || {}).customizerPreview =
 /******/ (function() { // webpackBootstrap
-/******/ 	"use strict";
-/******/ 	// The require scope
-/******/ 	var __webpack_require__ = {};
-/******/ 	
-/************************************************************************/
-/******/ 	/* webpack/runtime/compat get default export */
-/******/ 	!function() {
-/******/ 		// getDefaultExport function for compatibility with non-harmony modules
-/******/ 		__webpack_require__.n = function(module) {
-/******/ 			var getter = module && module.__esModule ?
-/******/ 				function() { return module['default']; } :
-/******/ 				function() { return module; };
-/******/ 			__webpack_require__.d(getter, { a: getter });
-/******/ 			return getter;
-/******/ 		};
-/******/ 	}();
-/******/ 	
-/******/ 	/* webpack/runtime/define property getters */
-/******/ 	!function() {
-/******/ 		// define getter functions for harmony exports
-/******/ 		__webpack_require__.d = function(exports, definition) {
-/******/ 			for(var key in definition) {
-/******/ 				if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
-/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
-/******/ 				}
-/******/ 			}
-/******/ 		};
-/******/ 	}();
-/******/ 	
-/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
-/******/ 	!function() {
-/******/ 		__webpack_require__.o = function(obj, prop) { return Object.prototype.hasOwnProperty.call(obj, prop); }
-/******/ 	}();
-/******/ 	
-/************************************************************************/
+/******/ 	var __webpack_modules__ = ({
 
-;// CONCATENATED MODULE: external "jQuery"
-var external_jQuery_namespaceObject = jQuery;
-var external_jQuery_default = /*#__PURE__*/__webpack_require__.n(external_jQuery_namespaceObject);
+/***/ 831:
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+// ESM COMPAT FLAG
+__webpack_require__.r(__webpack_exports__);
+
+// EXTERNAL MODULE: external "jQuery"
+var external_jQuery_ = __webpack_require__(609);
+var external_jQuery_default = /*#__PURE__*/__webpack_require__.n(external_jQuery_);
 ;// CONCATENATED MODULE: ./src/js/customizer-preview/utils.js
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
@@ -364,14 +338,14 @@ var maybeLoadFontFamily = function maybeLoadFontFamily(font, settingID) {
   var fontConfig = customify.config.settings[settingID];
   var family = font.font_family; // The font family may be a comma separated list like "Roboto, sans"
 
-  var fontType = customify.fontFields.determineFontType(family);
+  var fontType = sm.fontFields.determineFontType(family);
 
   if ('system_font' === fontType) {
     // Nothing to do for standard fonts
     return;
   }
 
-  var fontDetails = customify.fontFields.getFontDetails(family, fontType); // Handle theme defined fonts and cloud fonts together since they are very similar.
+  var fontDetails = sm.fontFields.getFontDetails(family, fontType); // Handle theme defined fonts and cloud fonts together since they are very similar.
 
   if (fontType === 'theme_font' || fontType === 'cloud_font') {
     // Bail if we have no src.
@@ -391,7 +365,7 @@ var maybeLoadFontFamily = function maybeLoadFontFamily(font, settingID) {
 
       if (!_.isEmpty(variants)) {
         family = family + ':' + variants.map(function (variant) {
-          return customify.fontFields.convertFontVariantToFVD(variant);
+          return sm.fontFields.convertFontVariantToFVD(variant);
         }).join(',');
       }
     }
@@ -441,8 +415,9 @@ var maybeLoadFontFamily = function maybeLoadFontFamily(font, settingID) {
 }; // This is a mirror logic of the server-side Customify_Fonts_Global::getFontFamilyFallbackStack()
 
 var getFontFamilyFallbackStack = function getFontFamilyFallbackStack(fontFamily) {
+  var sm = sm || parent.sm;
   var fallbackStack = '';
-  var fontDetails = customify.fontFields.getFontDetails(fontFamily);
+  var fontDetails = sm.customizer.getFontDetails(fontFamily);
 
   if (typeof fontDetails.fallback_stack !== 'undefined' && !_.isEmpty(fontDetails.fallback_stack)) {
     fallbackStack = fontDetails.fallback_stack;
@@ -718,5 +693,86 @@ var getSettingCSS = function getSettingCSS(settingID, newValue, settingConfig) {
     return "".concat(acc, "\n      ").concat(settingCallback(newValue, selector, property, unit));
   }, '');
 };
+
+/***/ }),
+
+/***/ 609:
+/***/ (function(module) {
+
+module.exports = (function() { return this["jQuery"]; }());
+
+/***/ })
+
+/******/ 	});
+/************************************************************************/
+/******/ 	// The module cache
+/******/ 	var __webpack_module_cache__ = {};
+/******/ 	
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/ 		// Check if module is in cache
+/******/ 		if(__webpack_module_cache__[moduleId]) {
+/******/ 			return __webpack_module_cache__[moduleId].exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = __webpack_module_cache__[moduleId] = {
+/******/ 			// no module.id needed
+/******/ 			// no module.loaded needed
+/******/ 			exports: {}
+/******/ 		};
+/******/ 	
+/******/ 		// Execute the module function
+/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
+/******/ 	
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/ 	
+/************************************************************************/
+/******/ 	/* webpack/runtime/compat get default export */
+/******/ 	!function() {
+/******/ 		// getDefaultExport function for compatibility with non-harmony modules
+/******/ 		__webpack_require__.n = function(module) {
+/******/ 			var getter = module && module.__esModule ?
+/******/ 				function() { return module['default']; } :
+/******/ 				function() { return module; };
+/******/ 			__webpack_require__.d(getter, { a: getter });
+/******/ 			return getter;
+/******/ 		};
+/******/ 	}();
+/******/ 	
+/******/ 	/* webpack/runtime/define property getters */
+/******/ 	!function() {
+/******/ 		// define getter functions for harmony exports
+/******/ 		__webpack_require__.d = function(exports, definition) {
+/******/ 			for(var key in definition) {
+/******/ 				if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
+/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 				}
+/******/ 			}
+/******/ 		};
+/******/ 	}();
+/******/ 	
+/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
+/******/ 	!function() {
+/******/ 		__webpack_require__.o = function(obj, prop) { return Object.prototype.hasOwnProperty.call(obj, prop); }
+/******/ 	}();
+/******/ 	
+/******/ 	/* webpack/runtime/make namespace object */
+/******/ 	!function() {
+/******/ 		// define __esModule on exports
+/******/ 		__webpack_require__.r = function(exports) {
+/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 			}
+/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 		};
+/******/ 	}();
+/******/ 	
+/************************************************************************/
+/******/ 	// module exports must be returned from runtime so entry inlining is disabled
+/******/ 	// startup
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(831);
 /******/ })()
 ;

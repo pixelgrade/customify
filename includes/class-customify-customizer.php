@@ -166,7 +166,7 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 				plugins_url( 'js/vendor/jquery-react' . $suffix . '.js', PixCustomifyPlugin()->get_file() ),
 				array( 'jquery' ), PixCustomifyPlugin()->get_version() );
 			wp_register_script( PixCustomifyPlugin()->get_slug() . '-fontfields',
-				plugins_url( 'js/customizer/font-fields' . $suffix . '.js', PixCustomifyPlugin()->get_file() ),
+				plugins_url( 'dist/js/font-fields' . $suffix . '.js', PixCustomifyPlugin()->get_file() ),
 				array( 'jquery', 'underscore' ), PixCustomifyPlugin()->get_version() );
 
 			wp_register_script( PixCustomifyPlugin()->get_slug() . '-customizer-scripts',

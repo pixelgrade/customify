@@ -1,21 +1,41 @@
 const UglifyJsPlugin = require( 'uglifyjs-webpack-plugin' );
 const path = require( 'path' );
 
+const files = [
+  'customizer',
+  'customizer-preview',
+  'dark-mode',
+];
+
+function camelize( str ) {
+  const arr = str.split( '-' );
+
+  return arr.slice(1).reduce( ( acc, curr ) => {
+    return acc + curr.charAt(0).toUpperCase() + curr.slice(1).toLowerCase();
+  }, arr[0] );
+}
+
+function kebabize( str ) {
+  return str.replace( /([a-z0-9]|(?=[A-Z]))([A-Z])/g, '$1-$2' ).toLowerCase();
+}
+
+const entries = files.reduce( ( acc, curr ) => {
+  const src = `./src/js/${ curr }/index.js`;
+  acc[ camelize( curr ) ] = src;
+  acc[ `${ camelize( curr ) }.min` ] = src;
+  return acc;
+}, {} );
+
 module.exports = {
   mode: 'production',
-  entry: {
-    './dist/js/color-palettes': './src/js/color-palettes/index.js',
-    './dist/js/color-palettes.min': './src/js/color-palettes/index.js',
-    './dist/js/customizer': './src/js/customizer/index.js',
-    './dist/js/customizer.min': './src/js/customizer/index.js',
-    './dist/js/customizer-preview': './src/js/customizer-preview/index.js',
-    './dist/js/customizer-preview.min': './src/js/customizer-preview/index.js',
-    './dist/js/dark-mode': './src/js/dark-mode/index.js',
-    './dist/js/dark-mode.min': './src/js/dark-mode/index.js',
-  },
+  entry: entries,
   output: {
-    path: path.resolve( __dirname ),
-    filename: '[name].js'
+    path: path.join( __dirname, "dist/js" ),
+    filename: pathData => {
+      return `${ kebabize( pathData.chunk.name ) }.js`;
+    },
+    library: [ 'sm', '[name]' ],
+    libraryTarget: 'this',
   },
   module: {
     rules: [
