@@ -3,7 +3,7 @@ import _ from "lodash";
 import * as globalService from "../global-service";
 
 import {
-  callbackFilter,
+  getCallbackFilter,
   getFontDetails,
   getSettingID,
   handleFontPopupToggle,
@@ -14,6 +14,7 @@ import {
   updateVariantField,
   fontsService,
 } from './utils'
+import {getCallback, getSetting, setCallback} from "../global-service";
 
 const wrapperSelector = '.font-options__wrapper';
 const fontVariantSelector = '.customify_font_weight';
@@ -131,6 +132,27 @@ const reloadConnectedFields = _.debounce( () => {
   const settingIDs = customify.fontPalettes.masterSettingIds;
 
   globalService.unbindConnectedFields( settingIDs );
-  globalService.bindConnectedFields( settingIDs, callbackFilter );
+
+  settingIDs.forEach( settingID => {
+    wp.customize( settingID, parentSetting => {
+
+      setCallback( settingID, newValue => {
+        const settingConfig = getSetting( settingID );
+        const connectedFields = settingConfig.connected_fields || {};
+
+        Object.keys( connectedFields ).forEach( key => {
+          const connectedSettingID = connectedFields[key].setting_id;
+          const connectedFieldData = customify.config.settings[connectedSettingID];
+
+          const callbackFilter = getCallbackFilter( connectedFieldData );
+          wp.customize( connectedSettingID, connectedSetting => {
+            connectedSetting.set( callbackFilter( newValue ) );
+          } );
+        } );
+      } );
+
+      parentSetting.bind( getCallback( settingID ) );
+    } );
+  } );
 
 }, 30 );

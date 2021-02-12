@@ -8,6 +8,7 @@ import * as globalService from "./global-service";
 
 import { handleColorSelectFields } from './fields/color-select';
 import { handleRangeFields } from './fields/range';
+import { handleTabs } from './fields/tabs';
 
 import { handleFoldingFields } from './folding-fields';
 import { scalePreview } from './scale-preview';
@@ -19,24 +20,12 @@ wp.customize.bind( 'ready', () => {
   const settings = globalService.getSettings();
   const settingIDs = Object.keys( settings );
 
-  settingIDs.forEach( settingID => {
-    wp.customize( settingID, setting => {
-      setting.bind( newValue => {
-        const settingConfig = globalService.getSetting( settingID );
-        const connectedFields = settingConfig.connected_fields || {};
-
-        Object.keys( connectedFields ).map( key => connectedFields[key].setting_id ).forEach( connectedSettingID => {
-          wp.customize( connectedSettingID, connectedSetting => {
-            connectedSetting.set( newValue );
-          } );
-        } );
-      } );
-    } );
-  } );
+  globalService.bindConnectedFields( settingIDs );
 
   createResetButtons();
   handleRangeFields();
   handleColorSelectFields();
+  handleTabs();
 
   // @todo check reason for this timeout
   setTimeout( function () {

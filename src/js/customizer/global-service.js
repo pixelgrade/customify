@@ -48,10 +48,9 @@ export const bindConnectedFields = function( settingIDs, filter = noop ) {
 
       setCallback( settingID, newValue => {
         const settingConfig = getSetting( settingID );
-        const connectedFields = settingConfig.connected_fields || [];
+        const connectedFields = settingConfig.connected_fields || {};
 
-        connectedFields.forEach( connectedFieldData => {
-          const connectedSettingID = connectedFieldData.setting_id;
+        Object.keys( connectedFields ).map( key => connectedFields[key].setting_id ).forEach( connectedSettingID => {
           wp.customize( connectedSettingID, connectedSetting => {
             connectedSetting.set( filter( newValue ) );
           } );

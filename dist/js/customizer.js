@@ -2,7 +2,7 @@
 /******/ (function() { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 455:
+/***/ 815:
 /***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -776,9 +776,10 @@ var bindConnectedFields = function bindConnectedFields(settingIDs) {
     wp.customize(settingID, function (parentSetting) {
       setCallback(settingID, function (newValue) {
         var settingConfig = getSetting(settingID);
-        var connectedFields = settingConfig.connected_fields || [];
-        connectedFields.forEach(function (connectedFieldData) {
-          var connectedSettingID = connectedFieldData.setting_id;
+        var connectedFields = settingConfig.connected_fields || {};
+        Object.keys(connectedFields).map(function (key) {
+          return connectedFields[key].setting_id;
+        }).forEach(function (connectedSettingID) {
           wp.customize(connectedSettingID, function (connectedSetting) {
             connectedSetting.set(filter(newValue));
           });
@@ -873,114 +874,116 @@ var applyColorsConnectedFieldsAlterations = function applyColorsConnectedFieldsA
   return tempSettings;
 };
 ;// CONCATENATED MODULE: ./src/js/customizer/fonts/utils/callback-filter.js
-var callbackFilter = function callbackFilter(newValue, oldValue) {
-  /* ======================
-   * Process the font logic to get the value that should be applied to the connected (font) fields.
-   *
-   * The font logic is already in the new value - @see setFieldFontsLogicConfig()
-   */
-  var newFontData = {};
-  var fontsLogic = newValue;
+var getCallbackFilter = function getCallbackFilter(connectedFieldData) {
+  return function (newValue, oldValue) {
+    /* ======================
+     * Process the font logic to get the value that should be applied to the connected (font) fields.
+     *
+     * The font logic is already in the new value - @see setFieldFontsLogicConfig()
+     */
+    var newFontData = {};
+    var fontsLogic = newValue;
 
-  if (typeof fontsLogic.reset !== 'undefined') {
-    var settingID = connectedFieldData.setting_id;
-    var defaultValue = customify.config.settings[settingID].default;
+    if (typeof fontsLogic.reset !== 'undefined') {
+      var settingID = connectedFieldData.setting_id;
+      var defaultValue = customify.config.settings[settingID].default;
 
-    if (!_.isUndefined(setting) && !_.isEmpty(defaultValue)) {
-      newFontData['font_family'] = defaultValue['font_family'];
-      newFontData['font_size'] = defaultValue['font_size'];
-      newFontData['line_height'] = defaultValue['line_height'];
-      newFontData['letter_spacing'] = defaultValue['letter_spacing'];
-      newFontData['text_transform'] = defaultValue['text_transform'];
-      newFontData['font_variant'] = defaultValue['font_variant'];
+      if (!_.isUndefined(setting) && !_.isEmpty(defaultValue)) {
+        newFontData['font_family'] = defaultValue['font_family'];
+        newFontData['font_size'] = defaultValue['font_size'];
+        newFontData['line_height'] = defaultValue['line_height'];
+        newFontData['letter_spacing'] = defaultValue['letter_spacing'];
+        newFontData['text_transform'] = defaultValue['text_transform'];
+        newFontData['font_variant'] = defaultValue['font_variant'];
+      }
     }
-  }
-  /* ===========
-   * We need to determine the 6 subfields values to be able to determine the value of the font field.
-   */
-  // The font family is straight forward as it comes directly from the parent field font logic configuration.
+    /* ===========
+     * We need to determine the 6 subfields values to be able to determine the value of the font field.
+     */
+    // The font family is straight forward as it comes directly from the parent field font logic configuration.
 
 
-  if (typeof fontsLogic.font_family !== 'undefined') {
-    newFontData['font_family'] = fontsLogic.font_family;
-  }
+    if (typeof fontsLogic.font_family !== 'undefined') {
+      newFontData['font_family'] = fontsLogic.font_family;
+    }
 
-  if (_.isEmpty(newFontData['font_family'])) {
-    // If we don't have a font family, we really can't do much.
-    return;
-  }
+    if (_.isEmpty(newFontData['font_family'])) {
+      // If we don't have a font family, we really can't do much.
+      return;
+    }
 
-  if (typeof connectedFieldData.font_size !== 'undefined' && false !== connectedFieldData.font_size) {
-    newFontData['font_size'] = sm.fontFields.standardizeNumericalValue(connectedFieldData.font_size); // Next, we what to apply the overall font size multiplier.
-
-    if (!isNaN(newFontData['font_size'].value)) {
-      // By default we use 1.
-      var overallFontSizeMultiplier = 1.0;
-
-      if (typeof fontsLogic.font_size_multiplier !== 'undefined') {
-        // Make sure it is a positive float.
-        overallFontSizeMultiplier = parseFloat(fontsLogic.font_size_multiplier); // We reject negative or 0 values.
-
-        if (overallFontSizeMultiplier <= 0) {
-          overallFontSizeMultiplier = 1.0;
-        }
-      }
-
-      newFontData['font_size'].value = round(parseFloat(newFontData['font_size'].value) * overallFontSizeMultiplier, customify.fonts.floatPrecision);
-    } // The font variant, letter spacing and text transform all come together from the font styles (intervals).
-    // We just need to find the one that best matches the connected field given font size (if given).
-    // Please bear in mind that we expect the font logic styles to be preprocessed, without any overlapping and using numerical keys.
-
-
-    if (typeof fontsLogic.font_styles_intervals !== 'undefined' && _.isArray(fontsLogic.font_styles_intervals) && fontsLogic.font_styles_intervals.length > 0) {
-      var idx = 0;
-
-      while (idx < fontsLogic.font_styles_intervals.length - 1 && typeof fontsLogic.font_styles_intervals[idx].end !== 'undefined' && fontsLogic.font_styles_intervals[idx].end <= connectedFieldData.font_size.value) {
-        idx++;
-      } // We will apply what we've got.
-
-
-      if (!_.isEmpty(fontsLogic.font_styles_intervals[idx].font_variant)) {
-        newFontData['font_variant'] = fontsLogic.font_styles_intervals[idx].font_variant;
-      }
-
-      if (!_.isEmpty(fontsLogic.font_styles_intervals[idx].letter_spacing)) {
-        newFontData['letter_spacing'] = sm.fontFields.standardizeNumericalValue(fontsLogic.font_styles_intervals[idx].letter_spacing);
-      }
-
-      if (!_.isEmpty(fontsLogic.font_styles_intervals[idx].text_transform)) {
-        newFontData['text_transform'] = fontsLogic.font_styles_intervals[idx].text_transform;
-      } // Next, we what to apply the interval font size multiplier.
-
+    if (typeof connectedFieldData.font_size !== 'undefined' && false !== connectedFieldData.font_size) {
+      newFontData['font_size'] = sm.fontFields.standardizeNumericalValue(connectedFieldData.font_size); // Next, we what to apply the overall font size multiplier.
 
       if (!isNaN(newFontData['font_size'].value)) {
         // By default we use 1.
-        var fontSizeMultiplier = 1.0;
+        var overallFontSizeMultiplier = 1.0;
 
-        if (typeof fontsLogic.font_styles_intervals[idx].font_size_multiplier !== 'undefined') {
+        if (typeof fontsLogic.font_size_multiplier !== 'undefined') {
           // Make sure it is a positive float.
-          fontSizeMultiplier = parseFloat(fontsLogic.font_styles_intervals[idx].font_size_multiplier); // We reject negative or 0 values.
+          overallFontSizeMultiplier = parseFloat(fontsLogic.font_size_multiplier); // We reject negative or 0 values.
 
-          if (fontSizeMultiplier <= 0) {
-            fontSizeMultiplier = 1.0;
+          if (overallFontSizeMultiplier <= 0) {
+            overallFontSizeMultiplier = 1.0;
           }
         }
 
-        newFontData['font_size'].value = round(parseFloat(newFontData['font_size'].value) * fontSizeMultiplier, customify.fonts.floatPrecision);
+        newFontData['font_size'].value = round(parseFloat(newFontData['font_size'].value) * overallFontSizeMultiplier, customify.fonts.floatPrecision);
+      } // The font variant, letter spacing and text transform all come together from the font styles (intervals).
+      // We just need to find the one that best matches the connected field given font size (if given).
+      // Please bear in mind that we expect the font logic styles to be preprocessed, without any overlapping and using numerical keys.
+
+
+      if (typeof fontsLogic.font_styles_intervals !== 'undefined' && _.isArray(fontsLogic.font_styles_intervals) && fontsLogic.font_styles_intervals.length > 0) {
+        var idx = 0;
+
+        while (idx < fontsLogic.font_styles_intervals.length - 1 && typeof fontsLogic.font_styles_intervals[idx].end !== 'undefined' && fontsLogic.font_styles_intervals[idx].end <= connectedFieldData.font_size.value) {
+          idx++;
+        } // We will apply what we've got.
+
+
+        if (!_.isEmpty(fontsLogic.font_styles_intervals[idx].font_variant)) {
+          newFontData['font_variant'] = fontsLogic.font_styles_intervals[idx].font_variant;
+        }
+
+        if (!_.isEmpty(fontsLogic.font_styles_intervals[idx].letter_spacing)) {
+          newFontData['letter_spacing'] = sm.fontFields.standardizeNumericalValue(fontsLogic.font_styles_intervals[idx].letter_spacing);
+        }
+
+        if (!_.isEmpty(fontsLogic.font_styles_intervals[idx].text_transform)) {
+          newFontData['text_transform'] = fontsLogic.font_styles_intervals[idx].text_transform;
+        } // Next, we what to apply the interval font size multiplier.
+
+
+        if (!isNaN(newFontData['font_size'].value)) {
+          // By default we use 1.
+          var fontSizeMultiplier = 1.0;
+
+          if (typeof fontsLogic.font_styles_intervals[idx].font_size_multiplier !== 'undefined') {
+            // Make sure it is a positive float.
+            fontSizeMultiplier = parseFloat(fontsLogic.font_styles_intervals[idx].font_size_multiplier); // We reject negative or 0 values.
+
+            if (fontSizeMultiplier <= 0) {
+              fontSizeMultiplier = 1.0;
+            }
+          }
+
+          newFontData['font_size'].value = round(parseFloat(newFontData['font_size'].value) * fontSizeMultiplier, customify.fonts.floatPrecision);
+        }
+      } // The line height is determined by getting the value of the polynomial function determined by points.
+
+
+      if (typeof fontsLogic.font_size_to_line_height_points !== 'undefined' && _.isArray(fontsLogic.font_size_to_line_height_points)) {
+        var result = regression.logarithmic(fontsLogic.font_size_to_line_height_points, {
+          precision: customify.fonts.floatPrecision
+        });
+        var lineHeight = result.predict(newFontData['font_size'].value)[1];
+        newFontData['line_height'] = sm.fontFields.standardizeNumericalValue(lineHeight);
       }
-    } // The line height is determined by getting the value of the polynomial function determined by points.
-
-
-    if (typeof fontsLogic.font_size_to_line_height_points !== 'undefined' && _.isArray(fontsLogic.font_size_to_line_height_points)) {
-      var result = regression.logarithmic(fontsLogic.font_size_to_line_height_points, {
-        precision: customify.fonts.floatPrecision
-      });
-      var lineHeight = result.predict(newFontData['font_size'].value)[1];
-      newFontData['line_height'] = sm.fontFields.standardizeNumericalValue(lineHeight);
     }
-  }
 
-  return newFontData;
+    return newFontData;
+  };
 };
 ;// CONCATENATED MODULE: ./src/js/customizer/fonts/utils/determine-font-type.js
 var determineFontType = function determineFontType(fontFamily) {
@@ -1439,6 +1442,7 @@ var getWrapper = function getWrapper($element) {
 
 
 
+
 var fonts_wrapperSelector = '.font-options__wrapper';
 var fonts_fontVariantSelector = '.customify_font_weight';
 wp.customize.bind('ready', function () {
@@ -1532,7 +1536,23 @@ var bindFontFamilySettingChange = function bindFontFamilySettingChange($fontFami
 var fonts_reloadConnectedFields = external_lodash_default().debounce(function () {
   var settingIDs = customify.fontPalettes.masterSettingIds;
   unbindConnectedFields(settingIDs);
-  bindConnectedFields(settingIDs, callbackFilter);
+  settingIDs.forEach(function (settingID) {
+    wp.customize(settingID, function (parentSetting) {
+      setCallback(settingID, function (newValue) {
+        var settingConfig = getSetting(settingID);
+        var connectedFields = settingConfig.connected_fields || {};
+        Object.keys(connectedFields).forEach(function (key) {
+          var connectedSettingID = connectedFields[key].setting_id;
+          var connectedFieldData = customify.config.settings[connectedSettingID];
+          var callbackFilter = getCallbackFilter(connectedFieldData);
+          wp.customize(connectedSettingID, function (connectedSetting) {
+            connectedSetting.set(callbackFilter(newValue));
+          });
+        });
+      });
+      parentSetting.bind(getCallback(settingID));
+    });
+  });
 }, 30);
 ;// CONCATENATED MODULE: ./src/js/customizer/font-palettes/index.js
 
@@ -1711,6 +1731,33 @@ function shake($field) {
     $field.removeClass('input-shake input-error');
   });
 }
+;// CONCATENATED MODULE: ./src/js/customizer/fields/tabs/index.js
+
+var handleTabs = function handleTabs() {
+  external_jQuery_default()('.sm-tabs').each(function (i, obj) {
+    var $wrapper = external_jQuery_default()(obj);
+    var $section = $wrapper.closest('.control-section');
+    var $tabs = $wrapper.children('.sm-tabs__item');
+    var targets = $tabs.map(function (i, el) {
+      var target = external_jQuery_default()(el).data('target');
+      return "sm-view-".concat(target);
+    });
+    var targetClassnames = targets.toArray().join(" ");
+
+    function setActiveTab($active) {
+      var target = $active.data('target');
+      $tabs.removeClass('sm-tabs__item--active');
+      $active.addClass('sm-tabs__item--active');
+      $section.removeClass(targetClassnames).addClass("sm-view-".concat(target));
+    }
+
+    $wrapper.on('click', '.sm-tabs__item', function (e) {
+      e.preventDefault();
+      setActiveTab(external_jQuery_default()(this));
+    });
+    setActiveTab($tabs.first());
+  });
+};
 ;// CONCATENATED MODULE: ./src/js/customizer/folding-fields.js
 
 /**
@@ -2100,28 +2147,16 @@ function onResetSection(e) {
 
 
 
+
 wp.customize.bind('ready', function () {
   loadSettings();
   var settings = getSettings();
   var settingIDs = Object.keys(settings);
-  settingIDs.forEach(function (settingID) {
-    wp.customize(settingID, function (setting) {
-      setting.bind(function (newValue) {
-        var settingConfig = getSetting(settingID);
-        var connectedFields = settingConfig.connected_fields || {};
-        Object.keys(connectedFields).map(function (key) {
-          return connectedFields[key].setting_id;
-        }).forEach(function (connectedSettingID) {
-          wp.customize(connectedSettingID, function (connectedSetting) {
-            connectedSetting.set(newValue);
-          });
-        });
-      });
-    });
-  });
+  bindConnectedFields(settingIDs);
   createResetButtons();
   handleRangeFields();
-  handleColorSelectFields(); // @todo check reason for this timeout
+  handleColorSelectFields();
+  handleTabs(); // @todo check reason for this timeout
 
   setTimeout(function () {
     handleFoldingFields();
@@ -6152,6 +6187,6 @@ module.exports = (function() { return this["lodash"]; }());
 /******/ 	// module exports must be returned from runtime so entry inlining is disabled
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(455);
+/******/ 	return __webpack_require__(815);
 /******/ })()
 ;

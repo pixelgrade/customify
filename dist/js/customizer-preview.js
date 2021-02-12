@@ -151,7 +151,6 @@ var getFontFieldCSSValue = function getFontFieldCSSValue(settingID, value) {
 var getFontFieldCSSCode = function getFontFieldCSSCode(settingID, cssValue, value) {
   var fontConfig = customify.config.settings[settingID];
   var prefix = typeof fontConfig.properties_prefix === 'undefined' ? '' : fontConfig.properties_prefix;
-  console.log(fontConfig);
   var output = '';
 
   if (typeof window !== 'undefined' && typeof fontConfig.callback !== 'undefined' && typeof window[fontConfig.callback] === 'function') {
