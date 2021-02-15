@@ -12,15 +12,19 @@ __webpack_require__.r(__webpack_exports__);
 // EXTERNAL MODULE: external "jQuery"
 var external_jQuery_ = __webpack_require__(609);
 var external_jQuery_default = /*#__PURE__*/__webpack_require__.n(external_jQuery_);
+// EXTERNAL MODULE: external "lodash"
+var external_lodash_ = __webpack_require__(804);
+var external_lodash_default = /*#__PURE__*/__webpack_require__.n(external_lodash_);
 ;// CONCATENATED MODULE: ./src/js/customizer-preview/utils.js
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
 
  // Mirror logic of server-side Customify_Fonts_Global::getCSSValue()
 
 var getFontFieldCSSValue = function getFontFieldCSSValue(settingID, value) {
   var CSSValue = {};
 
-  if (typeof value.font_family !== 'undefined' && !_.includes(['', 'false', false], value.font_family)) {
+  if (typeof value.font_family !== 'undefined' && !external_lodash_default().includes(['', 'false', false], value.font_family)) {
     CSSValue['font-family'] = value.font_family; // "Expand" the font family by appending the fallback stack, if any is available.
     // But only do this, if the value is not already a font stack!
 
@@ -35,10 +39,10 @@ var getFontFieldCSSValue = function getFontFieldCSSValue(settingID, value) {
     CSSValue['font-family'] = sanitizeFontFamilyCSSValue(CSSValue['font-family']);
   }
 
-  if (typeof value.font_variant !== 'undefined' && !_.includes(['', 'false', false], value.font_variant)) {
+  if (typeof value.font_variant !== 'undefined' && !external_lodash_default().includes(['', 'false', false], value.font_variant)) {
     var variant = value.font_variant;
 
-    if (_.isString(variant)) {
+    if (external_lodash_default().isString(variant)) {
       // We may have a style in the variant; attempt to split.
       if (variant.indexOf('italic') !== -1) {
         CSSValue['font-style'] = 'italic';
@@ -56,12 +60,12 @@ var getFontFieldCSSValue = function getFontFieldCSSValue(settingID, value) {
 
         CSSValue['font-weight'] = variant;
       }
-    } else if (_.isNumeric(variant)) {
+    } else if (external_lodash_default().isNumber(variant)) {
       CSSValue['font-weight'] = String(variant);
     }
   }
 
-  if (typeof value.font_size !== 'undefined' && !_.includes(['', 'false', false], value.font_size)) {
+  if (typeof value.font_size !== 'undefined' && !external_lodash_default().includes(['', 'false', false], value.font_size)) {
     var fontSizeUnit = false;
     CSSValue['font-size'] = value.font_size; // If the value already contains a unit (is not numeric), go with that.
 
@@ -85,7 +89,7 @@ var getFontFieldCSSValue = function getFontFieldCSSValue(settingID, value) {
     }
   }
 
-  if (typeof value.letter_spacing !== 'undefined' && !_.includes(['', 'false', false], value.letter_spacing)) {
+  if (typeof value.letter_spacing !== 'undefined' && !external_lodash_default().includes(['', 'false', false], value.letter_spacing)) {
     var letterSpacingUnit = false;
     CSSValue['letter-spacing'] = value.letter_spacing; // If the value already contains a unit (is not numeric), go with that.
 
@@ -109,7 +113,7 @@ var getFontFieldCSSValue = function getFontFieldCSSValue(settingID, value) {
     }
   }
 
-  if (typeof value.line_height !== 'undefined' && !_.includes(['', 'false', false], value.line_height)) {
+  if (typeof value.line_height !== 'undefined' && !external_lodash_default().includes(['', 'false', false], value.line_height)) {
     var lineHeightUnit = false;
     CSSValue['line-height'] = value.line_height; // If the value already contains a unit (is not numeric), go with that.
 
@@ -133,15 +137,15 @@ var getFontFieldCSSValue = function getFontFieldCSSValue(settingID, value) {
     }
   }
 
-  if (typeof value.text_align !== 'undefined' && !_.includes(['', 'false', false], value.text_align)) {
+  if (typeof value.text_align !== 'undefined' && !external_lodash_default().includes(['', 'false', false], value.text_align)) {
     CSSValue['text-align'] = value.text_align;
   }
 
-  if (typeof value.text_transform !== 'undefined' && !_.includes(['', 'false', false], value.text_transform)) {
+  if (typeof value.text_transform !== 'undefined' && !external_lodash_default().includes(['', 'false', false], value.text_transform)) {
     CSSValue['text-transform'] = value.text_transform;
   }
 
-  if (typeof value.text_decoration !== 'undefined' && !_.includes(['', 'false', false], value.text_decoration)) {
+  if (typeof value.text_decoration !== 'undefined' && !external_lodash_default().includes(['', 'false', false], value.text_decoration)) {
     CSSValue['text-decoration'] = value.text_decoration;
   }
 
@@ -158,7 +162,7 @@ var getFontFieldCSSCode = function getFontFieldCSSCode(settingID, cssValue, valu
     // @todo Maybe migrate all callbacks to the new standardized data and remove all this.
     var plainSelectors = [];
 
-    _.each(fontConfig.selector, function (details, selector) {
+    external_lodash_default().each(fontConfig.selector, function (details, selector) {
       plainSelectors.push(selector);
     });
 
@@ -166,7 +170,7 @@ var getFontFieldCSSCode = function getFontFieldCSSCode(settingID, cssValue, valu
     adjustedFontConfig.selector = plainSelectors.join(', '); // Also, "kill" all fields unit since we pass final CSS values.
     // @todo For some reason, the client-side Typeline cbs are not consistent and expect the font-size value with unit.
 
-    _.each(adjustedFontConfig['fields'], function (fieldValue, fieldKey) {
+    external_lodash_default().each(adjustedFontConfig['fields'], function (fieldValue, fieldKey) {
       if (typeof fieldValue.unit !== 'undefined') {
         adjustedFontConfig['fields'][fieldKey]['unit'] = false;
       }
@@ -174,7 +178,7 @@ var getFontFieldCSSCode = function getFontFieldCSSCode(settingID, cssValue, valu
     // We will provide them in both versions for a smoother transition.
 
 
-    _.each(cssValue, function (propertyValue, property) {
+    external_lodash_default().each(cssValue, function (propertyValue, property) {
       var newKey = property.replace(regexForMultipleReplace, '_');
       cssValue[newKey] = propertyValue;
     });
@@ -182,7 +186,7 @@ var getFontFieldCSSCode = function getFontFieldCSSCode(settingID, cssValue, valu
     return window[fontConfig.callback](cssValue, adjustedFontConfig);
   }
 
-  if (typeof fontConfig.selector === 'undefined' || _.isEmpty(fontConfig.selector) || _.isEmpty(cssValue)) {
+  if (typeof fontConfig.selector === 'undefined' || external_lodash_default().isEmpty(fontConfig.selector) || external_lodash_default().isEmpty(cssValue)) {
     return output;
   } // The general CSS allowed properties.
 
@@ -197,8 +201,8 @@ var getFontFieldCSSCode = function getFontFieldCSSCode(settingID, cssValue, valu
   var simpleCSSSelectors = [];
   var complexCSSSelectors = {};
 
-  _.each(fontConfig.selector, function (details, selector) {
-    if (_.isEmpty(details.properties)) {
+  external_lodash_default().each(fontConfig.selector, function (details, selector) {
+    if (external_lodash_default().isEmpty(details.properties)) {
       // This is a simple selector.
       simpleCSSSelectors.push(selector);
     } else {
@@ -206,14 +210,14 @@ var getFontFieldCSSCode = function getFontFieldCSSCode(settingID, cssValue, valu
     }
   });
 
-  if (!_.isEmpty(simpleCSSSelectors)) {
+  if (!external_lodash_default().isEmpty(simpleCSSSelectors)) {
     output += '\n' + simpleCSSSelectors.join(', ') + ' {\n';
     output += getFontFieldCSSProperties(cssValue, subFieldsCSSAllowedProperties, prefix);
     output += '}\n';
   }
 
-  if (!_.isEmpty(complexCSSSelectors)) {
-    _.each(complexCSSSelectors, function (details, selector) {
+  if (!external_lodash_default().isEmpty(complexCSSSelectors)) {
+    external_lodash_default().each(complexCSSSelectors, function (details, selector) {
       output += '\n' + selector + ' {\n';
       output += getFontFieldCSSProperties(cssValue, details.properties, prefix);
       output += '}\n';
@@ -226,7 +230,7 @@ var getFontFieldCSSCode = function getFontFieldCSSCode(settingID, cssValue, valu
 var getFieldUnit = function getFieldUnit(settingID, field) {
   if (typeof customify.config.settings[settingID] === 'undefined' || typeof customify.config.settings[settingID].fields[field] === 'undefined') {
     // These fields don't have an unit, by default.
-    if (_.includes(['font-family', 'font-weight', 'font-style', 'line-height', 'text-align', 'text-transform', 'text-decoration'], field)) {
+    if (external_lodash_default().includes(['font-family', 'font-weight', 'font-style', 'line-height', 'text-align', 'text-transform', 'text-decoration'], field)) {
       return false;
     } // The rest of the subfields have pixels as default units.
 
@@ -236,12 +240,12 @@ var getFieldUnit = function getFieldUnit(settingID, field) {
 
   if (typeof customify.config.settings[settingID].fields[field].unit !== 'undefined') {
     // Make sure that we convert all falsy unit values to the boolean false.
-    return _.includes(['', 'false', false], customify.config.settings[settingID].fields[field].unit) ? false : customify.config.settings[settingID].fields[field].unit;
+    return external_lodash_default().includes(['', 'false', false], customify.config.settings[settingID].fields[field].unit) ? false : customify.config.settings[settingID].fields[field].unit;
   }
 
   if (typeof customify.config.settings[settingID].fields[field][3] !== 'undefined') {
     // Make sure that we convert all falsy unit values to the boolean false.
-    return _.includes(['', 'false', false], customify.config.settings[settingID].fields[field][3]) ? false : customify.config.settings[settingID].fields[field][3];
+    return external_lodash_default().includes(['', 'false', false], customify.config.settings[settingID].fields[field][3]) ? false : customify.config.settings[settingID].fields[field][3];
   }
 
   return 'px';
@@ -272,22 +276,22 @@ var isCSSPropertyAllowed = function isCSSPropertyAllowed(property) {
   var allowedProperties = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
 
   // Empty properties are not allowed.
-  if (_.isEmpty(property)) {
+  if (external_lodash_default().isEmpty(property)) {
     return false;
   } // Everything is allowed if nothing is specified.
 
 
-  if (_.isEmpty(allowedProperties)) {
+  if (external_lodash_default().isEmpty(allowedProperties)) {
     return true;
   } // For arrays
 
 
-  if (_.includes(allowedProperties, property)) {
+  if (external_lodash_default().includes(allowedProperties, property)) {
     return true;
   } // For objects
 
 
-  if (_.has(allowedProperties, property) && allowedProperties[property]) {
+  if (external_lodash_default().has(allowedProperties, property) && allowedProperties[property]) {
     return true;
   }
 
@@ -308,13 +312,13 @@ var extractAllowedCSSPropertiesFromFontFields = function extractAllowedCSSProper
     'text-decoration': false
   };
 
-  if (_.isEmpty(subfields)) {
+  if (external_lodash_default().isEmpty(subfields)) {
     return allowedProperties;
   } // We will match the subfield keys with the CSS properties, but only those that properties that are allowed.
   // Maybe at some point some more complex matching would be needed here.
 
 
-  _.each(subfields, function (value, key) {
+  external_lodash_default().each(subfields, function (value, key) {
     if (typeof allowedProperties[key] !== 'undefined') {
       // Convert values to boolean.
       allowedProperties[key] = !!value; // For font-weight we want font-style to go the same way,
@@ -418,9 +422,9 @@ var getFontFamilyFallbackStack = function getFontFamilyFallbackStack(fontFamily)
   var fallbackStack = '';
   var fontDetails = sm.customizer.getFontDetails(fontFamily);
 
-  if (typeof fontDetails.fallback_stack !== 'undefined' && !_.isEmpty(fontDetails.fallback_stack)) {
+  if (typeof fontDetails.fallback_stack !== 'undefined' && !external_lodash_default().isEmpty(fontDetails.fallback_stack)) {
     fallbackStack = fontDetails.fallback_stack;
-  } else if (typeof fontDetails.category !== 'undefined' && !_.isEmpty(fontDetails.category)) {
+  } else if (typeof fontDetails.category !== 'undefined' && !external_lodash_default().isEmpty(fontDetails.category)) {
     var category = fontDetails.category; // Search in the available categories for a match.
 
     if (typeof customify.fonts.categories[category] !== 'undefined') {
@@ -428,7 +432,7 @@ var getFontFamilyFallbackStack = function getFontFamilyFallbackStack(fontFamily)
       fallbackStack = typeof customify.fonts.categories[category].fallback_stack !== 'undefined' ? customify.fonts.categories[category].fallback_stack : '';
     } else {
       // We need to search for aliases.
-      _.find(customify.fonts.categories, function (categoryDetails) {
+      external_lodash_default().find(customify.fonts.categories, function (categoryDetails) {
         if (typeof categoryDetails.aliases !== 'undefined') {
           var aliases = maybeImplodeList(categoryDetails.aliases);
 
@@ -456,7 +460,7 @@ var sanitizeFontFamilyCSSValue = function sanitizeFontFamilyCSSValue(value) {
     return '';
   }
 
-  _.each(fontFamilies, function (fontFamily, key) {
+  external_lodash_default().each(fontFamilies, function (fontFamily, key) {
     // Make sure that the font family is free from " or ' or whitespace, at the front.
     fontFamily = fontFamily.replace(new RegExp(/^\s*["'‘’“”]*\s*/), ''); // Make sure that the font family is free from " or ' or whitespace, at the back.
 
@@ -639,14 +643,44 @@ var implode = function implode(glue, pieces) {
   window.wp = (window === null || window === void 0 ? void 0 : window.wp) || ((_parent = parent) === null || _parent === void 0 ? void 0 : _parent.wp);
   window.customify = (window === null || window === void 0 ? void 0 : window.customify) || ((_parent2 = parent) === null || _parent2 === void 0 ? void 0 : _parent2.customify);
   $(function () {
-    $.each(customify.config.settings, function (settingID, settingConfig) {
+    var settings = customify.config.settings;
+
+    var getStyleTagID = function getStyleTagID(settingID) {
+      return "dynamic_style_".concat(settingID.replace(/\\W/g, '_'));
+    };
+
+    var properKeys = Object.keys(settings).filter(function (settingID) {
+      var setting = settings[settingID];
+      return setting.type === 'font' || Array.isArray(setting.css) && setting.css.length;
+    });
+    properKeys.forEach(function (settingID) {
+      var style = document.createElement('style');
+      var idAttr = getStyleTagID(settingID);
+      style.setAttribute('id', idAttr);
+      document.body.appendChild(style);
+    }); // we create a queue of settingID => newValue pairs
+
+    var updateQueue = {}; // so we can update their respective style tags in only one pass
+    // and avoid multiple "recalculate styles" and all changes will appear
+    // at the same time in the customizer preview
+
+    var onChange = _.debounce(function () {
+      var queue = Object.assign({}, updateQueue);
+      updateQueue = {};
+      Object.keys(queue).forEach(function (settingID) {
+        var idAttr = getStyleTagID(settingID);
+        var style = document.getElementById(idAttr);
+        var newValue = queue[settingID];
+        var settingConfig = settings[settingID];
+        style.innerHTML = getSettingCSS(settingID, newValue, settingConfig);
+      });
+    }, 100);
+
+    properKeys.forEach(function (settingID) {
       wp.customize(settingID, function (setting) {
-        var style = document.createElement('style');
-        var idAttr = "dynamic_style_".concat(settingID.replace(/\\W/g, '_'));
-        style.setAttribute('id', idAttr);
-        document.body.appendChild(style);
         setting.bind(function (newValue) {
-          style.innerHTML = getSettingCSS(settingID, newValue, settingConfig);
+          updateQueue[settingID] = newValue;
+          onChange();
         });
       });
     });
@@ -699,6 +733,13 @@ var getSettingCSS = function getSettingCSS(settingID, newValue, settingConfig) {
 /***/ (function(module) {
 
 module.exports = (function() { return this["jQuery"]; }());
+
+/***/ }),
+
+/***/ 804:
+/***/ (function(module) {
+
+module.exports = (function() { return this["lodash"]; }());
 
 /***/ })
 

@@ -121,11 +121,9 @@ const bindFontFamilySettingChange = ( $fontFamilyField ) => {
   wp.customize( settingID, setting => {
     setting.bind( function( newValue, oldValue ) {
       // this is a costly operation
-      requestIdleCallback( () => {
-        if ( ! fontsService.isUpdating( settingID ) ) {
-          loadFontValue( $wrapper, newValue, settingID )
-        }
-      } );
+      if ( ! fontsService.isUpdating( settingID ) ) {
+        loadFontValue( $wrapper, newValue, settingID )
+      }
     } );
   } );
 }
@@ -149,9 +147,7 @@ const reloadConnectedFields = _.debounce( () => {
           const callbackFilter = getCallbackFilter( connectedFieldData );
 
           wp.customize( connectedSettingID, connectedSetting => {
-            requestIdleCallback( () => {
-              connectedSetting.set( callbackFilter( newValue ) );
-            } );
+            connectedSetting.set( callbackFilter( newValue ) );
           } );
         } );
       } );

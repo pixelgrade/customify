@@ -11,6 +11,7 @@ __webpack_require__.r(__webpack_exports__);
 
 // EXPORTS
 __webpack_require__.d(__webpack_exports__, {
+  "getCSSFromPalettes": function() { return /* reexport */ getCSSFromPalettes; },
   "getFontDetails": function() { return /* reexport */ getFontDetails; }
 });
 
@@ -1389,16 +1390,19 @@ var updateVariantField = function updateVariantField(newFontDetails, wrapper) {
     }
 
     newVariants.push(newVariant);
-  }); // Only reinitialize the select2.
-  // No need to rebind on change or on input since those are still bound to the original HTML element.
+  }); // This is a costly operation especially when font palettes are changed and multiple font fields are updated
 
-  fontVariantInput.select2({
-    data: newVariants
+  requestIdleCallback(function () {
+    // Only reinitialize the select2.
+    // No need to rebind on change or on input since those are still bound to the original HTML element.
+    fontVariantInput.select2({
+      data: newVariants
+    });
+    fontVariantInput.parent().show();
+    fontVariantInput.parent().prev('label').show(); // Mark this input as enabled.
+
+    fontVariantInput.data('disabled', false);
   });
-  fontVariantInput.parent().show();
-  fontVariantInput.parent().prev('label').show(); // Mark this input as enabled.
-
-  fontVariantInput.data('disabled', false);
 };
 ;// CONCATENATED MODULE: ./src/js/customizer/fonts/utils/fonts-service.js
 var updating = {};
@@ -1527,11 +1531,9 @@ var bindFontFamilySettingChange = function bindFontFamilySettingChange($fontFami
   wp.customize(settingID, function (setting) {
     setting.bind(function (newValue, oldValue) {
       // this is a costly operation
-      requestIdleCallback(function () {
-        if (!isUpdating(settingID)) {
-          loadFontValue($wrapper, newValue, settingID);
-        }
-      });
+      if (!isUpdating(settingID)) {
+        loadFontValue($wrapper, newValue, settingID);
+      }
     });
   });
 };
@@ -1549,9 +1551,7 @@ var fonts_reloadConnectedFields = external_lodash_default().debounce(function ()
           var connectedFieldData = customify.config.settings[connectedSettingID];
           var callbackFilter = getCallbackFilter(connectedFieldData);
           wp.customize(connectedSettingID, function (connectedSetting) {
-            requestIdleCallback(function () {
-              connectedSetting.set(callbackFilter(newValue));
-            });
+            connectedSetting.set(callbackFilter(newValue));
           });
         });
       });
@@ -2169,6 +2169,7 @@ wp.customize.bind('ready', function () {
   external_jQuery_default()('.customify_select2').select2();
   scalePreview();
 }); // expose API on sm.customizer global object
+
 
 
 

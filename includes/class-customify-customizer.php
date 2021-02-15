@@ -207,20 +207,11 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 		function customizer_live_preview_register_scripts() {
 			$suffix = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min';
 
-			wp_register_script( PixCustomifyPlugin()->get_slug() . '-CSSOM',
-				plugins_url( 'js/vendor/CSSOM' . $suffix . '.js', PixCustomifyPlugin()->get_file() ),
-				array(),
-				PixCustomifyPlugin()->get_version(), true );
-
-			wp_register_script( PixCustomifyPlugin()->get_slug() . '-cssUpdate',
-				plugins_url( 'js/jquery.cssUpdate' . $suffix . '.js', PixCustomifyPlugin()->get_file() ),
-				array( 'jquery' ),
-				PixCustomifyPlugin()->get_version(), true );
-
 			wp_register_script( PixCustomifyPlugin()->get_slug() . '-previewer-scripts',
 				plugins_url( 'dist/js/customizer-preview' . $suffix . '.js', PixCustomifyPlugin()->get_file() ),
 				array(
 					'jquery',
+					'lodash',
 					'customize-preview',
 					'underscore'
 				),

@@ -661,8 +661,8 @@ function sm_palette_output_cb( value, selector, property ) {
     if ( ! palettes.length ) {
         palettes = fallbackPalettes;
     }
-        
-    return sm.customizer.getCSSFromPalettes( palettes, variation );
+    
+    return window.parent.sm.customizer.getCSSFromPalettes( palettes, variation );
 }" . PHP_EOL;
 
 		wp_add_inline_script( 'customify-previewer-scripts', $js );
@@ -698,7 +698,7 @@ function sm_variation_range_cb(value, selector, property) {
         palettes = fallbackPalettes;
     }
         
-    return sm.customizer.getCSSFromPalettes( palettes, value );
+    return window.parent.sm.customizer.getCSSFromPalettes( palettes, value );
 }" . PHP_EOL;
 
 		wp_add_inline_script( 'customify-previewer-scripts', $js );

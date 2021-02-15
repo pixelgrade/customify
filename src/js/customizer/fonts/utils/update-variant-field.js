@@ -53,14 +53,17 @@ export const updateVariantField = function( newFontDetails, wrapper ) {
     newVariants.push( newVariant )
   } )
 
-  // Only reinitialize the select2.
-  // No need to rebind on change or on input since those are still bound to the original HTML element.
-  fontVariantInput.select2( {
-    data: newVariants
-  } )
+  // This is a costly operation especially when font palettes are changed and multiple font fields are updated
+  requestIdleCallback( () => {
+    // Only reinitialize the select2.
+    // No need to rebind on change or on input since those are still bound to the original HTML element.
+    fontVariantInput.select2( {
+      data: newVariants
+    } )
 
-  fontVariantInput.parent().show()
-  fontVariantInput.parent().prev( 'label' ).show()
-  // Mark this input as enabled.
-  fontVariantInput.data( 'disabled', false )
+    fontVariantInput.parent().show()
+    fontVariantInput.parent().prev( 'label' ).show()
+    // Mark this input as enabled.
+    fontVariantInput.data( 'disabled', false )
+  } );
 }

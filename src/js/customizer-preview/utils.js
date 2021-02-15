@@ -1,4 +1,5 @@
 import $ from 'jquery';
+import _ from 'lodash';
 
 // Mirror logic of server-side Customify_Fonts_Global::getCSSValue()
 export const getFontFieldCSSValue = ( settingID, value ) => {
@@ -40,7 +41,7 @@ export const getFontFieldCSSValue = ( settingID, value ) => {
 
         CSSValue['font-weight'] = variant
       }
-    } else if ( _.isNumeric( variant ) ) {
+    } else if ( _.isNumber( variant ) ) {
       CSSValue['font-weight'] = String( variant );
     }
   }
