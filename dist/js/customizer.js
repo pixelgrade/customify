@@ -1526,9 +1526,12 @@ var bindFontFamilySettingChange = function bindFontFamilySettingChange($fontFami
   var settingID = getSettingID($fontFamilyField);
   wp.customize(settingID, function (setting) {
     setting.bind(function (newValue, oldValue) {
-      if (!isUpdating(settingID)) {
-        loadFontValue($wrapper, newValue, settingID);
-      }
+      // this is a costly operation
+      requestIdleCallback(function () {
+        if (!isUpdating(settingID)) {
+          loadFontValue($wrapper, newValue, settingID);
+        }
+      });
     });
   });
 };
@@ -1546,7 +1549,9 @@ var fonts_reloadConnectedFields = external_lodash_default().debounce(function ()
           var connectedFieldData = customify.config.settings[connectedSettingID];
           var callbackFilter = getCallbackFilter(connectedFieldData);
           wp.customize(connectedSettingID, function (connectedSetting) {
-            connectedSetting.set(callbackFilter(newValue));
+            requestIdleCallback(function () {
+              connectedSetting.set(callbackFilter(newValue));
+            });
           });
         });
       });
@@ -1561,14 +1566,17 @@ wp.customize.bind('ready', function () {
 });
 
 var initializeFontPalettes = function initializeFontPalettes() {
-  // Handle the palette change logic.
-  external_jQuery_default()('.js-font-palette input[name="sm_font_palette"]').on('change', onPaletteChange); // Handle the case where one clicks on the already selected palette - force a reset.
-
-  external_jQuery_default()('.js-font-palette .customize-inside-control-row').on('click', function (event) {
-    // Find the input
-    var $target = external_jQuery_default()(event.target);
-    var $input = $target.find('input[name="sm_font_palette"]');
-    $input.trigger('change');
+  external_jQuery_default()('.js-font-palette').each(function (i, obj) {
+    var $paletteSet = external_jQuery_default()(obj);
+    var $labels = $paletteSet.find('label');
+    $labels.on('click', function (event) {
+      var $label = external_jQuery_default()(event.target);
+      var forID = $label.attr('for');
+      var $input = external_jQuery_default()("#".concat(forID));
+      var fontsLogic = $input.data('fonts_logic');
+      showAdvancedFontPaletteControls();
+      applyFontPalette(fontsLogic);
+    });
   }); // Handle the case when there is no selected font palette (like on a fresh installation without any demo data import).
   // In this case we want to hide the advanced tab.
 
@@ -1576,6 +1584,14 @@ var initializeFontPalettes = function initializeFontPalettes() {
     if (!setting()) {
       hideAdvancedFontPaletteControls();
     }
+  });
+};
+
+var applyFontPalette = function applyFontPalette(fontsLogic) {
+  external_jQuery_default().each(fontsLogic, function (settingID, config) {
+    wp.customize(settingID, function (setting) {
+      setting.set(config);
+    });
   });
 };
 
@@ -1587,18 +1603,6 @@ var hideAdvancedFontPaletteControls = function hideAdvancedFontPaletteControls()
 
 var showAdvancedFontPaletteControls = function showAdvancedFontPaletteControls() {
   external_jQuery_default()(advancedTabSelector).css('visibility', 'visible');
-};
-
-var onPaletteChange = function onPaletteChange() {
-  // Make sure that the advanced tab is visible.
-  showAdvancedFontPaletteControls(); // Take the fonts config for each setting and distribute it to each (master) setting.
-
-  var fontsLogic = external_jQuery_default()(this).data('fonts_logic');
-  external_jQuery_default().each(fontsLogic, function (settingID, config) {
-    wp.customize(settingID, function (setting) {
-      setting.set(config);
-    });
-  });
 };
 ;// CONCATENATED MODULE: ./src/js/customizer/fields/color-select/index.js
 

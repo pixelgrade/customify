@@ -6,17 +6,20 @@ wp.customize.bind( 'ready', () => {
 
 const initializeFontPalettes = () => {
 
-  // Handle the palette change logic.
-  $( '.js-font-palette input[name="sm_font_palette"]' ).on( 'change', onPaletteChange )
+  $( '.js-font-palette' ).each( function( i, obj ) {
+    const $paletteSet = $( obj );
+    const $labels = $paletteSet.find( 'label' );
 
-  // Handle the case where one clicks on the already selected palette - force a reset.
-  $( '.js-font-palette .customize-inside-control-row' ).on( 'click', event => {
-    // Find the input
-    const $target = $( event.target );
-    const $input = $target.find( 'input[name="sm_font_palette"]' );
+    $labels.on( 'click', function( event ) {
+      const $label = $( event.target );
+      const forID = $label.attr( 'for' );
+      const $input = $( `#${ forID }` );
+      const fontsLogic = $input.data( 'fonts_logic' );
 
-    $input.trigger( 'change' );
-  } )
+      showAdvancedFontPaletteControls();
+      applyFontPalette( fontsLogic );
+    } );
+  } );
 
   // Handle the case when there is no selected font palette (like on a fresh installation without any demo data import).
   // In this case we want to hide the advanced tab.
@@ -24,6 +27,14 @@ const initializeFontPalettes = () => {
     if ( ! setting() ) {
       hideAdvancedFontPaletteControls();
     }
+  } );
+}
+
+const applyFontPalette = ( fontsLogic ) => {
+  $.each( fontsLogic, ( settingID, config ) => {
+    wp.customize( settingID, setting => {
+      setting.set( config );
+    } );
   } );
 }
 
@@ -35,18 +46,4 @@ const hideAdvancedFontPaletteControls = () => {
 
 const showAdvancedFontPaletteControls = () => {
   $( advancedTabSelector ).css( 'visibility', 'visible' );
-}
-
-const onPaletteChange = function () {
-  // Make sure that the advanced tab is visible.
-  showAdvancedFontPaletteControls();
-
-  // Take the fonts config for each setting and distribute it to each (master) setting.
-  const fontsLogic = $( this ).data( 'fonts_logic' );
-
-  $.each( fontsLogic, ( settingID, config ) => {
-    wp.customize( settingID, setting => {
-      setting.set( config );
-    } );
-  } );
 }
