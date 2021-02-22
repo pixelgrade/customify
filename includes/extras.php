@@ -634,7 +634,7 @@ function sm_get_color_switch_dark_config( $label, $selector, $default, $properti
 }
 function sm_color_switch_dark_cb( $value, $selector, $property ) {
 	$output = '';
-	$color = '';
+	$color = 'fg1';
 
 	if ( $value === 'on' ) {
 		$color = 'accent';
@@ -651,7 +651,7 @@ function sm_color_switch_dark_cb_customizer_preview() {
 
 	$js .= "
 function sm_color_switch_dark_cb(value, selector, property) {
-    var color = value === 'on' ? 'accent' : 'dark';
+    var color = value === 'on' ? 'accent' : 'fg1';
     return selector + ' { ' + property + ': var(--sm-current-' + color + '-color); }';
 }" . PHP_EOL;
 
@@ -661,7 +661,7 @@ add_action( 'customize_preview_init', 'sm_color_switch_dark_cb_customizer_previe
 
 function sm_color_switch_darker_cb( $value, $selector, $property ) {
 	$output = '';
-	$color = 'darker';
+	$color = 'fg2';
 
 	if ( $value === 'on' ) {
 		$color = 'accent';
@@ -678,7 +678,7 @@ function sm_color_switch_darker_cb_customizer_preview() {
 
 	$js .= "
 function sm_color_switch_dark_cb(value, selector, property) {
-	var color = value === 'on' ? 'accent' : 'darker';
+	var color = value === 'on' ? 'accent' : 'fg2';
 	return selector + ' { ' + property + ': var(--sm-current-' + color + '-color); }';
 }" . PHP_EOL;
 

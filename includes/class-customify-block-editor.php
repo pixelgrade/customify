@@ -251,9 +251,6 @@ if ( ! class_exists( 'Customify_Block_Editor' ) ) {
 			add_filter( 'customify_css_selector', array( $this, 'gutenbergify_css_selectors' ), 10, 2 );
 			wp_add_inline_style( $enqueue_parent_handle, PixCustomifyPlugin()->customizer->get_dynamic_style() );
 			remove_filter( 'customify_css_selector', array( $this, 'gutenbergify_css_selectors' ), 10 );
-
-			// Add color palettes classes.
-			wp_add_inline_style( $enqueue_parent_handle, $this->editor_color_palettes_css_classes() );
 		}
 
 		/**

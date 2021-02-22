@@ -471,11 +471,30 @@ class Customify_Color_Palettes {
 			'sm_color_tertiary',
 		);
 
-		$dark = PixCustomifyPlugin()->get_option( 'sm_dark_primary_final' );
-		$darker = PixCustomifyPlugin()->get_option( 'sm_dark_tertiary_final' );
-		$text_color = PixCustomifyPlugin()->get_option( 'sm_dark_secondary_final' );
 		$lighter = PixCustomifyPlugin()->get_option( 'sm_light_primary_final' );
+		if ( empty( $lighter ) ) {
+			$lighter = PixCustomifyPlugin()->get_option( 'sm_light_primary' );
+		}
+
 		$light = PixCustomifyPlugin()->get_option( 'sm_light_tertiary_final' );
+		if ( empty( $light ) ) {
+			$light = PixCustomifyPlugin()->get_option( 'sm_light_tertiary' );
+		}
+
+		$text_color = PixCustomifyPlugin()->get_option( 'sm_dark_secondary_final' );
+		if ( empty( $text_color ) ) {
+			$text_color = PixCustomifyPlugin()->get_option( 'sm_dark_secondary' );
+		}
+
+		$dark = PixCustomifyPlugin()->get_option( 'sm_dark_primary_final' );
+		if ( empty( $dark ) ) {
+			$dark = PixCustomifyPlugin()->get_option( 'sm_dark_primary' );
+		}
+
+		$darker = PixCustomifyPlugin()->get_option( 'sm_dark_tertiary_final' );
+		if ( empty( $darker ) ) {
+			$darker = PixCustomifyPlugin()->get_option( 'sm_dark_tertiary' );
+		}
 
 		$palettes = array();
 
