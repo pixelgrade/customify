@@ -14,8 +14,6 @@ export const getCallbackFilter = ( connectedFieldData ) => {
 
     const fontsLogic = newValue;
 
-    console.log( 'aici' );
-
     if ( typeof fontsLogic.reset !== 'undefined' ) {
       const settingID = connectedFieldData.setting_id;
       const defaultValue = customify.config.settings[settingID].default

@@ -976,7 +976,6 @@ var getCallbackFilter = function getCallbackFilter(connectedFieldData) {
      */
     var newFontData = {};
     var fontsLogic = newValue;
-    console.log('aici');
 
     if (typeof fontsLogic.reset !== 'undefined') {
       var settingID = connectedFieldData.setting_id;
@@ -1341,7 +1340,6 @@ var selfUpdateValue = function selfUpdateValue(wrapper, settingID) {
   var optionsList = wrapper.find('.font-options__options-list');
   var inputs = optionsList.find('[data-value_entry]');
   var newFontData = {};
-  console.log(settingID);
   wp.customize(settingID, function (setting) {
     newFontData = external_jQuery_default().extend(true, {}, setting());
     inputs.each(function (key, input) {
@@ -1394,9 +1392,8 @@ var selfUpdateValue = function selfUpdateValue(wrapper, settingID) {
     } else {
       // The new font has no variants. Nor should the value.
       delete newFontData['font_variant'];
-    }
+    } // Update the Customizer setting value.
 
-    console.log(settingID, newFontData); // Update the Customizer setting value.
 
     setting.set(newFontData);
   }); // Finished with the field value self-updating.

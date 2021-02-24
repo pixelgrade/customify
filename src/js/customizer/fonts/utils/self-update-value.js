@@ -26,8 +26,6 @@ export const selfUpdateValue = function( wrapper, settingID ) {
   const inputs = optionsList.find( '[data-value_entry]' );
   let newFontData = {};
 
-  console.log( settingID );
-
   wp.customize( settingID, setting => {
     newFontData = $.extend( true, {}, setting() );
 
@@ -87,8 +85,6 @@ export const selfUpdateValue = function( wrapper, settingID ) {
       // The new font has no variants. Nor should the value.
       delete newFontData['font_variant']
     }
-
-  console.log( settingID, newFontData );
 
     // Update the Customizer setting value.
     setting.set( newFontData );

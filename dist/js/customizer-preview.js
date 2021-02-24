@@ -636,7 +636,6 @@ var implode = function implode(glue, pieces) {
 
   $(window).on('load', function () {
     // We need to do this on window.load because on document.ready might be too early.
-    console.log('aici 123');
     maybeLoadWebfontloaderScript();
   });
   window.fontsCache = [];
@@ -704,7 +703,6 @@ var defaultCallbackFilter = function defaultCallbackFilter(value, selector, prop
 
 var getSettingCSS = function getSettingCSS(settingID, newValue, settingConfig) {
   if (settingConfig.type === 'font') {
-    console.log(newValue);
     maybeLoadFontFamily(newValue, settingID);
     var cssValue = getFontFieldCSSValue(settingID, newValue);
     return getFontFieldCSSCode(settingID, cssValue, newValue);
