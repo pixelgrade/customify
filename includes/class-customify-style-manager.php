@@ -197,7 +197,7 @@ if ( ! class_exists( 'Customify_Style_Manager' ) ) {
 			}
 
 			// Enqueue the needed scripts, already registered.
-			wp_enqueue_script( PixCustomifyPlugin()->get_slug() . '-style-manager' );
+//			wp_enqueue_script( PixCustomifyPlugin()->get_slug() . '-style-manager' );
 		}
 
 		/**

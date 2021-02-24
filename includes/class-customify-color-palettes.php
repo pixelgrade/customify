@@ -77,13 +77,6 @@ class Customify_Color_Palettes {
 		$suffix = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min';
 
 		wp_register_script(
-			PixCustomifyPlugin()->get_slug() . '-color-palettes',
-			plugins_url( 'dist/js/color-palettes' . $suffix . '.js', PixCustomifyPlugin()->get_file() ),
-			array( 'jquery', 'lodash', 'wp-element' ),
-			PixCustomifyPlugin()->get_version()
-		);
-
-		wp_register_script(
 			PixCustomifyPlugin()->get_slug() . '-dark-mode',
 			plugins_url( 'dist/js/dark-mode' . $suffix . '.js', PixCustomifyPlugin()->get_file() ),
 			array( 'jquery' ),
@@ -102,7 +95,6 @@ class Customify_Color_Palettes {
 		}
 
 		wp_enqueue_script( PixCustomifyPlugin()->get_slug() . '-dark-mode' );
-		wp_enqueue_script( PixCustomifyPlugin()->get_slug() . '-color-palettes' );
 	}
 
 	/**

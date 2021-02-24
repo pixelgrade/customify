@@ -341,14 +341,14 @@ var maybeLoadFontFamily = function maybeLoadFontFamily(font, settingID) {
   var fontConfig = customify.config.settings[settingID];
   var family = font.font_family; // The font family may be a comma separated list like "Roboto, sans"
 
-  var fontType = sm.fontFields.determineFontType(family);
+  var fontType = parent.sm.customizer.determineFontType(family);
 
   if ('system_font' === fontType) {
     // Nothing to do for standard fonts
     return;
   }
 
-  var fontDetails = sm.fontFields.getFontDetails(family, fontType); // Handle theme defined fonts and cloud fonts together since they are very similar.
+  var fontDetails = parent.sm.customizer.getFontDetails(family, fontType); // Handle theme defined fonts and cloud fonts together since they are very similar.
 
   if (fontType === 'theme_font' || fontType === 'cloud_font') {
     // Bail if we have no src.
@@ -360,15 +360,15 @@ var maybeLoadFontFamily = function maybeLoadFontFamily(font, settingID) {
 
 
     var variants = typeof font.font_variant !== 'undefined' && (typeof fontConfig['fields']['font-weight']['loadAllVariants'] === 'undefined' || !fontConfig['fields']['font-weight']['loadAllVariants']) && typeof fontDetails.variants !== 'undefined' // If the font has no variants, any variant value we may have received should be ignored.
-    && _.includes(fontDetails.variants, font.font_variant) // If the value variant is not amongst the available ones, load all available variants.
+    && external_lodash_default().includes(fontDetails.variants, font.font_variant) // If the value variant is not amongst the available ones, load all available variants.
     ? font.font_variant : typeof fontDetails.variants !== 'undefined' ? fontDetails.variants : [];
 
-    if (!_.isEmpty(variants)) {
+    if (!external_lodash_default().isEmpty(variants)) {
       variants = standardizeToArray(variants);
 
-      if (!_.isEmpty(variants)) {
+      if (!external_lodash_default().isEmpty(variants)) {
         family = family + ':' + variants.map(function (variant) {
-          return sm.fontFields.convertFontVariantToFVD(variant);
+          return parent.sm.customizer.convertFontVariantToFVD(variant);
         }).join(',');
       }
     }
@@ -391,13 +391,13 @@ var maybeLoadFontFamily = function maybeLoadFontFamily(font, settingID) {
       // If there is a selected font variant and we haven't been instructed to load all, load only that,
       // otherwise load all the available variants.
       var _variants = typeof font.font_variant !== 'undefined' && (typeof fontConfig['fields']['font-weight']['loadAllVariants'] === 'undefined' || !fontConfig['fields']['font-weight']['loadAllVariants']) && typeof fontDetails.variants !== 'undefined' // If the font has no variants, any variant value we may have received should be ignored.
-      && _.includes(fontDetails.variants, font.font_variant) // If the value variant is not amongst the available ones, load all available variants.
+      && external_lodash_default().includes(fontDetails.variants, font.font_variant) // If the value variant is not amongst the available ones, load all available variants.
       ? font.font_variant : typeof fontDetails.variants !== 'undefined' ? fontDetails.variants : [];
 
-      if (!_.isEmpty(_variants)) {
+      if (!external_lodash_default().isEmpty(_variants)) {
         _variants = standardizeToArray(_variants);
 
-        if (!_.isEmpty(_variants)) {
+        if (!external_lodash_default().isEmpty(_variants)) {
           family = family + ':' + _variants.join(',');
         }
       }
@@ -418,9 +418,8 @@ var maybeLoadFontFamily = function maybeLoadFontFamily(font, settingID) {
 }; // This is a mirror logic of the server-side Customify_Fonts_Global::getFontFamilyFallbackStack()
 
 var getFontFamilyFallbackStack = function getFontFamilyFallbackStack(fontFamily) {
-  var sm = sm || parent.sm;
   var fallbackStack = '';
-  var fontDetails = sm.customizer.getFontDetails(fontFamily);
+  var fontDetails = parent.sm.customizer.getFontDetails(fontFamily);
 
   if (typeof fontDetails.fallback_stack !== 'undefined' && !external_lodash_default().isEmpty(fontDetails.fallback_stack)) {
     fallbackStack = fontDetails.fallback_stack;
@@ -637,6 +636,7 @@ var implode = function implode(glue, pieces) {
 
   $(window).on('load', function () {
     // We need to do this on window.load because on document.ready might be too early.
+    console.log('aici 123');
     maybeLoadWebfontloaderScript();
   });
   window.fontsCache = [];
@@ -704,6 +704,8 @@ var defaultCallbackFilter = function defaultCallbackFilter(value, selector, prop
 
 var getSettingCSS = function getSettingCSS(settingID, newValue, settingConfig) {
   if (settingConfig.type === 'font') {
+    console.log(newValue);
+    maybeLoadFontFamily(newValue, settingID);
     var cssValue = getFontFieldCSSValue(settingID, newValue);
     return getFontFieldCSSCode(settingID, cssValue, newValue);
   }

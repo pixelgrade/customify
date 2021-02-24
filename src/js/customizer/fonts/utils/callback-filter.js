@@ -1,3 +1,6 @@
+import { standardizeNumericalValue } from './standardize-numerical-value';
+import { round } from './round';
+
 export const getCallbackFilter = ( connectedFieldData ) => {
 
   return ( newValue, oldValue ) => {
@@ -7,12 +10,14 @@ export const getCallbackFilter = ( connectedFieldData ) => {
      *
      * The font logic is already in the new value - @see setFieldFontsLogicConfig()
      */
-    const newFontData = {}
+    const newFontData = {};
 
-    const fontsLogic = newValue
+    const fontsLogic = newValue;
+
+    console.log( 'aici' );
 
     if ( typeof fontsLogic.reset !== 'undefined' ) {
-      const settingID = connectedFieldData.setting_id
+      const settingID = connectedFieldData.setting_id;
       const defaultValue = customify.config.settings[settingID].default
 
       if ( !_.isUndefined( setting ) && !_.isEmpty( defaultValue ) ) {
@@ -40,7 +45,7 @@ export const getCallbackFilter = ( connectedFieldData ) => {
     }
 
     if ( typeof connectedFieldData.font_size !== 'undefined' && false !== connectedFieldData.font_size ) {
-      newFontData['font_size'] = sm.fontFields.standardizeNumericalValue( connectedFieldData.font_size )
+      newFontData['font_size'] = standardizeNumericalValue( connectedFieldData.font_size )
 
       // Next, we what to apply the overall font size multiplier.
       if ( !isNaN( newFontData['font_size'].value ) ) {
@@ -75,7 +80,7 @@ export const getCallbackFilter = ( connectedFieldData ) => {
           newFontData['font_variant'] = fontsLogic.font_styles_intervals[idx].font_variant
         }
         if ( !_.isEmpty( fontsLogic.font_styles_intervals[idx].letter_spacing ) ) {
-          newFontData['letter_spacing'] = sm.fontFields.standardizeNumericalValue( fontsLogic.font_styles_intervals[idx].letter_spacing )
+          newFontData['letter_spacing'] = standardizeNumericalValue( fontsLogic.font_styles_intervals[idx].letter_spacing )
         }
         if ( !_.isEmpty( fontsLogic.font_styles_intervals[idx].text_transform ) ) {
           newFontData['text_transform'] = fontsLogic.font_styles_intervals[idx].text_transform
@@ -103,7 +108,7 @@ export const getCallbackFilter = ( connectedFieldData ) => {
       if ( typeof fontsLogic.font_size_to_line_height_points !== 'undefined' && _.isArray( fontsLogic.font_size_to_line_height_points ) ) {
         const result = regression.logarithmic( fontsLogic.font_size_to_line_height_points, {precision: customify.fonts.floatPrecision} )
         const lineHeight = result.predict( newFontData['font_size'].value )[1]
-        newFontData['line_height'] = sm.fontFields.standardizeNumericalValue( lineHeight )
+        newFontData['line_height'] = standardizeNumericalValue( lineHeight )
       }
     }
 

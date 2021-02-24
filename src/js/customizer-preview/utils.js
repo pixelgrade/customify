@@ -344,14 +344,14 @@ export const maybeLoadFontFamily = function (font, settingID) {
 
   let family = font.font_family
   // The font family may be a comma separated list like "Roboto, sans"
-  const fontType = sm.fontFields.determineFontType(family)
+  const fontType = parent.sm.customizer.determineFontType(family)
 
   if ('system_font' === fontType) {
     // Nothing to do for standard fonts
     return
   }
 
-  const fontDetails = sm.fontFields.getFontDetails(family, fontType)
+  const fontDetails = parent.sm.customizer.getFontDetails(family, fontType)
 
   // Handle theme defined fonts and cloud fonts together since they are very similar.
   if (fontType === 'theme_font' || fontType === 'cloud_font') {
@@ -377,7 +377,7 @@ export const maybeLoadFontFamily = function (font, settingID) {
 
       if (!_.isEmpty(variants)) {
         family = family + ':' + variants.map(function (variant) {
-          return sm.fontFields.convertFontVariantToFVD(variant)
+          return parent.sm.customizer.convertFontVariantToFVD(variant)
         }).join(',')
       }
     }
@@ -436,10 +436,9 @@ export const maybeLoadFontFamily = function (font, settingID) {
 
 // This is a mirror logic of the server-side Customify_Fonts_Global::getFontFamilyFallbackStack()
 const getFontFamilyFallbackStack = function (fontFamily) {
-  const sm = sm || parent.sm;
   let fallbackStack = '';
 
-  const fontDetails = sm.customizer.getFontDetails(fontFamily)
+  const fontDetails = parent.sm.customizer.getFontDetails(fontFamily)
   if (typeof fontDetails.fallback_stack !== 'undefined' && !_.isEmpty(fontDetails.fallback_stack)) {
     fallbackStack = fontDetails.fallback_stack
   } else if (typeof fontDetails.category !== 'undefined' && !_.isEmpty(fontDetails.category)) {

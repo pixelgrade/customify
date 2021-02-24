@@ -14,7 +14,8 @@ import {
   updateVariantField,
   fontsService,
 } from './utils'
-import {getCallback, getSetting, setCallback} from "../global-service";
+
+import { getCallback, getSetting, setCallback } from "../global-service";
 
 const wrapperSelector = '.font-options__wrapper';
 const fontVariantSelector = '.customify_font_weight';
@@ -110,7 +111,7 @@ const onFontFamilyChange = ( event ) => {
     $( event.target ).data( 'touched', true )
 
     // Serialize subfield values and refresh the fonts in the preview window.
-    selfUpdateValue( $wrapper );
+    selfUpdateValue( $wrapper, getSettingID( $target ) );
   }
 }
 
@@ -135,6 +136,7 @@ const reloadConnectedFields = _.debounce( () => {
   globalService.unbindConnectedFields( settingIDs );
 
   settingIDs.forEach( settingID => {
+
     wp.customize( settingID, parentSetting => {
 
       setCallback( settingID, newValue => {
@@ -142,8 +144,8 @@ const reloadConnectedFields = _.debounce( () => {
         const connectedFields = settingConfig.connected_fields || {};
 
         Object.keys( connectedFields ).forEach( key => {
-          const connectedSettingID = connectedFields[key].setting_id;
-          const connectedFieldData = customify.config.settings[connectedSettingID];
+          const connectedFieldData = connectedFields[key];
+          const connectedSettingID = connectedFieldData.setting_id;
           const callbackFilter = getCallbackFilter( connectedFieldData );
 
           wp.customize( connectedSettingID, connectedSetting => {

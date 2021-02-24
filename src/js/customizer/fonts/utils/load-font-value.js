@@ -1,5 +1,7 @@
 import $ from "jquery";
 import { fontsService } from './index';
+import { round } from './round';
+import { standardizeNumericalValue } from './standardize-numerical-value';
 
 /**
  * This function is a reverse of selfUpdateValue(), initializing the entire font field controls

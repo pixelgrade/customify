@@ -95,7 +95,7 @@ class Customify_Font_Palettes {
 			array(
 				PixCustomifyPlugin()->get_slug() . '-regression',
 				'jquery',
-				PixCustomifyPlugin()->get_slug() . '-fontfields',
+//				PixCustomifyPlugin()->get_slug() . '-fontfields',
 			),
 			PixCustomifyPlugin()->get_version() );
 	}
@@ -109,7 +109,7 @@ class Customify_Font_Palettes {
 			return;
 		}
 
-		wp_enqueue_script( PixCustomifyPlugin()->get_slug() . '-font-palettes' );
+//		wp_enqueue_script( PixCustomifyPlugin()->get_slug() . '-font-palettes' );
 	}
 
 	/**

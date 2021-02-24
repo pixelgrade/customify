@@ -1,12 +1,14 @@
 import {
   getFontFieldCSSValue,
-  getFontFieldCSSCode
+  getFontFieldCSSCode,
+  maybeLoadFontFamily
 } from './utils';
 
 ;(function ($, window, document) {
 
   $( window ).on( 'load', function() {
     // We need to do this on window.load because on document.ready might be too early.
+    console.log( 'aici 123' );
     maybeLoadWebfontloaderScript();
   } );
 
@@ -65,6 +67,7 @@ import {
 })(jQuery, window, document);
 
 const maybeLoadWebfontloaderScript = function() {
+
   if ( typeof WebFont === 'undefined' ) {
     let tk = document.createElement( 'script' );
     tk.src = parent.customify.config.webfontloader_url;
@@ -81,6 +84,8 @@ const defaultCallbackFilter = ( value, selector, property, unit = '' ) => {
 const getSettingCSS = ( settingID, newValue, settingConfig ) => {
 
   if ( settingConfig.type === 'font' ) {
+    console.log( newValue );
+    maybeLoadFontFamily( newValue, settingID )
     const cssValue = getFontFieldCSSValue( settingID, newValue )
     return getFontFieldCSSCode( settingID, cssValue, newValue );
   }

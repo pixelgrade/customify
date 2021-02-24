@@ -1,4 +1,4 @@
-import { determineFontType } from './index';
+import { determineFontType } from './determine-font-type';
 
 export const getFontDetails = function( fontFamily, fontType = false ) {
   if ( false === fontType ) {

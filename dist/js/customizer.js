@@ -2,7 +2,7 @@
 /******/ (function() { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 815:
+/***/ 668:
 /***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -11,6 +11,8 @@ __webpack_require__.r(__webpack_exports__);
 
 // EXPORTS
 __webpack_require__.d(__webpack_exports__, {
+  "convertFontVariantToFVD": function() { return /* reexport */ convertFontVariantToFVD; },
+  "determineFontType": function() { return /* reexport */ determineFontType; },
   "getCSSFromPalettes": function() { return /* reexport */ getCSSFromPalettes; },
   "getFontDetails": function() { return /* reexport */ getFontDetails; }
 });
@@ -874,7 +876,97 @@ var applyColorsConnectedFieldsAlterations = function applyColorsConnectedFieldsA
   tempSettings = applyColorationLevel(tempSettings);
   return tempSettings;
 };
+;// CONCATENATED MODULE: ./src/js/customizer/fonts/utils/standardize-numerical-value.js
+
+/**
+ * Given a value we will standardize it to an array with 'value' and 'unit'.
+ *
+ * This is a mirror logic of the server-side one from Customify_Fonts_Global::standardizeNumericalValue()
+ *
+ * @param value
+ * @param input Optional. The input this value was extracted from
+ * @param valueFirst Optional. Whether to give higher priority to value related data, or to input related one.
+ */
+
+var standardizeNumericalValue = function standardizeNumericalValue(value) {
+  var input = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+  var valueFirst = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
+  var standardValue = {
+    value: false,
+    unit: false
+  };
+
+  if (_.includes(['', 'false', false], value)) {
+    return standardValue;
+  }
+
+  if (!isNaN(value)) {
+    standardValue.value = value;
+  } else if (typeof value.value !== 'undefined') {
+    standardValue.value = value.value;
+
+    if (typeof value.unit !== 'undefined') {
+      standardValue.unit = value.unit;
+    }
+  } else if (typeof value[0] !== 'undefined') {
+    standardValue.value = value[0];
+
+    if (typeof value[1] !== 'undefined') {
+      standardValue.unit = value[1];
+    }
+  } else if (typeof value === 'string') {
+    // We will get everything in front that is a valid part of a number (float including).
+    var matches = value.match(/^([\d.\-+]+)(.+)/i);
+
+    if (matches !== null && typeof matches[1] !== 'undefined') {
+      standardValue.value = matches[1];
+
+      if (!_.isEmpty(matches[2])) {
+        standardValue.unit = matches[2];
+      }
+    } else {
+      // If we could not extract anything useful we will trust the developer and leave it like that.
+      standardValue.value = value;
+    }
+  }
+
+  if (false !== input && (false === standardValue.unit || _.isEmpty(standardValue.unit))) {
+    // If we are given an input, we will attempt to extract the unit from its attributes.
+    var fallbackInputUnit = '';
+    var $input = external_jQuery_default()(input);
+
+    if (valueFirst) {
+      if (!_.isEmpty($input.data('value_unit'))) {
+        fallbackInputUnit = $input.data('value_unit');
+      } else if (!_.isEmpty($input.attr('unit'))) {
+        fallbackInputUnit = $input.attr('unit');
+      }
+    } else {
+      if (!_.isEmpty($input.attr('unit'))) {
+        fallbackInputUnit = $input.attr('unit');
+      } else if (!_.isEmpty($input.data('value_unit'))) {
+        fallbackInputUnit = $input.data('value_unit');
+      }
+    }
+
+    standardValue.unit = fallbackInputUnit;
+  } // Make sure that if we have a numerical value, it is a float.
+
+
+  if (!isNaN(standardValue.value)) {
+    standardValue.value = parseFloat(standardValue.value);
+  }
+
+  return standardValue;
+};
+;// CONCATENATED MODULE: ./src/js/customizer/fonts/utils/round.js
+var round = function round(number, precision) {
+  var factor = Math.pow(10, precision);
+  return Math.round(number * factor) / factor;
+};
 ;// CONCATENATED MODULE: ./src/js/customizer/fonts/utils/callback-filter.js
+
+
 var getCallbackFilter = function getCallbackFilter(connectedFieldData) {
   return function (newValue, oldValue) {
     /* ======================
@@ -884,6 +976,7 @@ var getCallbackFilter = function getCallbackFilter(connectedFieldData) {
      */
     var newFontData = {};
     var fontsLogic = newValue;
+    console.log('aici');
 
     if (typeof fontsLogic.reset !== 'undefined') {
       var settingID = connectedFieldData.setting_id;
@@ -914,7 +1007,7 @@ var getCallbackFilter = function getCallbackFilter(connectedFieldData) {
     }
 
     if (typeof connectedFieldData.font_size !== 'undefined' && false !== connectedFieldData.font_size) {
-      newFontData['font_size'] = sm.fontFields.standardizeNumericalValue(connectedFieldData.font_size); // Next, we what to apply the overall font size multiplier.
+      newFontData['font_size'] = standardizeNumericalValue(connectedFieldData.font_size); // Next, we what to apply the overall font size multiplier.
 
       if (!isNaN(newFontData['font_size'].value)) {
         // By default we use 1.
@@ -948,7 +1041,7 @@ var getCallbackFilter = function getCallbackFilter(connectedFieldData) {
         }
 
         if (!_.isEmpty(fontsLogic.font_styles_intervals[idx].letter_spacing)) {
-          newFontData['letter_spacing'] = sm.fontFields.standardizeNumericalValue(fontsLogic.font_styles_intervals[idx].letter_spacing);
+          newFontData['letter_spacing'] = standardizeNumericalValue(fontsLogic.font_styles_intervals[idx].letter_spacing);
         }
 
         if (!_.isEmpty(fontsLogic.font_styles_intervals[idx].text_transform)) {
@@ -979,12 +1072,82 @@ var getCallbackFilter = function getCallbackFilter(connectedFieldData) {
           precision: customify.fonts.floatPrecision
         });
         var lineHeight = result.predict(newFontData['font_size'].value)[1];
-        newFontData['line_height'] = sm.fontFields.standardizeNumericalValue(lineHeight);
+        newFontData['line_height'] = standardizeNumericalValue(lineHeight);
       }
     }
 
     return newFontData;
   };
+};
+;// CONCATENATED MODULE: ./src/js/customizer/fonts/utils/convert-font-variant.js
+/**
+ * Will convert an array of CSS like variants into their FVD equivalents. Web Font Loader expects this format.
+ * @link https://github.com/typekit/fvd
+ */
+var convertFontVariantToFVD = function convertFontVariantToFVD(variant) {
+  variant = String(variant);
+  var fontStyle = 'n'; // normal
+
+  if (-1 !== variant.indexOf('italic')) {
+    fontStyle = 'i';
+    variant = variant.replace('italic', '');
+  } else if (-1 !== variant.indexOf('oblique')) {
+    fontStyle = 'o';
+    variant = variant.replace('oblique', '');
+  }
+
+  var fontWeight; //  The equivalence:
+  //
+  //			1: 100
+  //			2: 200
+  //			3: 300
+  //			4: 400 (default, also recognized as 'normal')
+  //			5: 500
+  //			6: 600
+  //			7: 700 (also recognized as 'bold')
+  //			8: 800
+  //			9: 900
+
+  switch (variant) {
+    case '100':
+      fontWeight = '1';
+      break;
+
+    case '200':
+      fontWeight = '2';
+      break;
+
+    case '300':
+      fontWeight = '3';
+      break;
+
+    case '500':
+      fontWeight = '5';
+      break;
+
+    case '600':
+      fontWeight = '6';
+      break;
+
+    case '700':
+    case 'bold':
+      fontWeight = '7';
+      break;
+
+    case '800':
+      fontWeight = '8';
+      break;
+
+    case '900':
+      fontWeight = '9';
+      break;
+
+    default:
+      fontWeight = '4';
+      break;
+  }
+
+  return fontStyle + fontWeight;
 };
 ;// CONCATENATED MODULE: ./src/js/customizer/fonts/utils/determine-font-type.js
 var determineFontType = function determineFontType(fontFamily) {
@@ -1082,6 +1245,8 @@ var onSubfieldChange = function onSubfieldChange(event, who) {
 ;// CONCATENATED MODULE: ./src/js/customizer/fonts/utils/load-font-value.js
 
 
+
+
 /**
  * This function is a reverse of selfUpdateValue(), initializing the entire font field controls
  * based on the setting value.
@@ -1176,6 +1341,7 @@ var selfUpdateValue = function selfUpdateValue(wrapper, settingID) {
   var optionsList = wrapper.find('.font-options__options-list');
   var inputs = optionsList.find('[data-value_entry]');
   var newFontData = {};
+  console.log(settingID);
   wp.customize(settingID, function (setting) {
     newFontData = external_jQuery_default().extend(true, {}, setting());
     inputs.each(function (key, input) {
@@ -1201,7 +1367,7 @@ var selfUpdateValue = function selfUpdateValue(wrapper, settingID) {
       if (!_.isUndefined(value) && !_.isNull(value) && value !== '') {
         if (_.includes(['letter_spacing', 'line_height', 'font_size'], valueEntry)) {
           // Standardize the value.
-          value = standardize_numerical_value_standardizeNumericalValue(value, input, false);
+          value = standardizeNumericalValue(value, input, false);
         }
 
         newFontData[valueEntry] = value;
@@ -1228,96 +1394,14 @@ var selfUpdateValue = function selfUpdateValue(wrapper, settingID) {
     } else {
       // The new font has no variants. Nor should the value.
       delete newFontData['font_variant'];
-    } // Update the Customizer setting value.
+    }
 
+    console.log(settingID, newFontData); // Update the Customizer setting value.
 
     setting.set(newFontData);
   }); // Finished with the field value self-updating.
 
   setUpdating(settingID, false);
-};
-;// CONCATENATED MODULE: ./src/js/customizer/fonts/utils/standardize-numerical-value.js
-
-/**
- * Given a value we will standardize it to an array with 'value' and 'unit'.
- *
- * This is a mirror logic of the server-side one from Customify_Fonts_Global::standardizeNumericalValue()
- *
- * @param value
- * @param input Optional. The input this value was extracted from
- * @param valueFirst Optional. Whether to give higher priority to value related data, or to input related one.
- */
-
-var standardize_numerical_value_standardizeNumericalValue = function standardizeNumericalValue(value) {
-  var input = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-  var valueFirst = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
-  var standardValue = {
-    value: false,
-    unit: false
-  };
-
-  if (_.includes(['', 'false', false], value)) {
-    return standardValue;
-  }
-
-  if (!isNaN(value)) {
-    standardValue.value = value;
-  } else if (typeof value.value !== 'undefined') {
-    standardValue.value = value.value;
-
-    if (typeof value.unit !== 'undefined') {
-      standardValue.unit = value.unit;
-    }
-  } else if (typeof value[0] !== 'undefined') {
-    standardValue.value = value[0];
-
-    if (typeof value[1] !== 'undefined') {
-      standardValue.unit = value[1];
-    }
-  } else if (typeof value === 'string') {
-    // We will get everything in front that is a valid part of a number (float including).
-    var matches = value.match(/^([\d.\-+]+)(.+)/i);
-
-    if (matches !== null && typeof matches[1] !== 'undefined') {
-      standardValue.value = matches[1];
-
-      if (!_.isEmpty(matches[2])) {
-        standardValue.unit = matches[2];
-      }
-    } else {
-      // If we could not extract anything useful we will trust the developer and leave it like that.
-      standardValue.value = value;
-    }
-  }
-
-  if (false !== input && (false === standardValue.unit || _.isEmpty(standardValue.unit))) {
-    // If we are given an input, we will attempt to extract the unit from its attributes.
-    var fallbackInputUnit = '';
-    var $input = external_jQuery_default()(input);
-
-    if (valueFirst) {
-      if (!_.isEmpty($input.data('value_unit'))) {
-        fallbackInputUnit = $input.data('value_unit');
-      } else if (!_.isEmpty($input.attr('unit'))) {
-        fallbackInputUnit = $input.attr('unit');
-      }
-    } else {
-      if (!_.isEmpty($input.attr('unit'))) {
-        fallbackInputUnit = $input.attr('unit');
-      } else if (!_.isEmpty($input.data('value_unit'))) {
-        fallbackInputUnit = $input.data('value_unit');
-      }
-    }
-
-    standardValue.unit = fallbackInputUnit;
-  } // Make sure that if we have a numerical value, it is a float.
-
-
-  if (!isNaN(standardValue.value)) {
-    standardValue.value = parseFloat(standardValue.value);
-  }
-
-  return standardValue;
 };
 ;// CONCATENATED MODULE: ./src/js/customizer/fonts/utils/update-font-head-title.js
 
@@ -1521,7 +1605,7 @@ var onFontFamilyChange = function onFontFamilyChange(event) {
     // Mark this input as touched by the user.
     external_jQuery_default()(event.target).data('touched', true); // Serialize subfield values and refresh the fonts in the preview window.
 
-    selfUpdateValue($wrapper);
+    selfUpdateValue($wrapper, getSettingID($target));
   }
 };
 
@@ -1547,8 +1631,8 @@ var fonts_reloadConnectedFields = external_lodash_default().debounce(function ()
         var settingConfig = getSetting(settingID);
         var connectedFields = settingConfig.connected_fields || {};
         Object.keys(connectedFields).forEach(function (key) {
-          var connectedSettingID = connectedFields[key].setting_id;
-          var connectedFieldData = customify.config.settings[connectedSettingID];
+          var connectedFieldData = connectedFields[key];
+          var connectedSettingID = connectedFieldData.setting_id;
           var callbackFilter = getCallbackFilter(connectedFieldData);
           wp.customize(connectedSettingID, function (connectedSetting) {
             connectedSetting.set(callbackFilter(newValue));
@@ -6474,6 +6558,6 @@ module.exports = (function() { return this["lodash"]; }());
 /******/ 	// module exports must be returned from runtime so entry inlining is disabled
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(815);
+/******/ 	return __webpack_require__(668);
 /******/ })()
 ;
