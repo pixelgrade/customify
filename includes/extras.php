@@ -523,17 +523,13 @@ function sm_get_color_select_darker_config( $label, $selector, $default, $proper
 }
 function sm_get_color_select_dark_config( $label, $selector, $default, $properties = [ 'color' ], $isDarker = false ) {
 
-	$css = array();
 	$callback = 'sm_color_select_dark_cb';
+
 	$choices = array(
 		'background' => esc_html__( 'Background', '__theme_txtd' ),
 		'dark'       => esc_html__( 'Dark', '__theme_txtd' ),
 		'accent'     => esc_html__( 'Accent', '__theme_txtd' ),
 	);
-
-	if ( ! is_array( $properties ) ) {
-		$properties = [ $properties ];
-	}
 
 	if ( $isDarker ) {
 		$callback = 'sm_color_select_darker_cb';
@@ -543,6 +539,12 @@ function sm_get_color_select_dark_config( $label, $selector, $default, $properti
 			'darker'     => esc_html__( 'Dark', '__theme_txtd' ),
 			'accent'     => esc_html__( 'Accent', '__theme_txtd' ),
 		);
+	}
+
+	$css = array();
+
+	if ( ! is_array( $properties ) ) {
+		$properties = [ $properties ];
 	}
 
 	foreach ( $properties as $property ) {
@@ -587,7 +589,7 @@ function sm_color_select_darker_cb_customizer_preview() {
 	$js = "";
 
 	$js .= "
-function sm_color_select_dark_cb(value, selector, property) {
+function sm_color_select_darker_cb(value, selector, property) {
     return selector + ' {' + property + ': var(--sm-current-' + value + '-color);' + '}';
 }" . PHP_EOL;
 
@@ -677,7 +679,7 @@ function sm_color_switch_darker_cb_customizer_preview() {
 	$js = "";
 
 	$js .= "
-function sm_color_switch_dark_cb(value, selector, property) {
+function sm_color_switch_darker_cb(value, selector, property) {
 	var color = value === 'on' ? 'accent' : 'fg2';
 	return selector + ' { ' + property + ': var(--sm-current-' + color + '-color); }';
 }" . PHP_EOL;

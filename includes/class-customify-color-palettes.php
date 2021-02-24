@@ -682,17 +682,7 @@ function sm_palette_output_cb( value, selector, property ) {
 	add_action( 'customize_preview_init', 'sm_palette_output_cb_customizer_preview', 20 );
 
 	function sm_variation_range_cb( $value, $selector, $property ) {
-		$output = '';
-		$palette_output = get_option( 'sm_advanced_palette_output', '[]' );
-		$palettes = json_decode( $palette_output );
-
-		if ( empty( $palettes ) ) {
-			$palettes = get_fallback_palettes();
-		}
-
-		$output .= palettes_output( $palettes );
-
-		return $output;
+		return '';
 	}
 
 	function sm_variation_range_cb_customizer_preview() {
