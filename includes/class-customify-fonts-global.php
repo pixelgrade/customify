@@ -713,6 +713,9 @@ class Customify_Fonts_Global {
 		}
 
 		if ( ! empty( $google_fonts ) ) {
+			// Avoid duplicate entries.
+			$google_fonts = array_unique( $google_fonts );
+
 			$google_url = 'https://fonts.googleapis.com/css2';
 			// Add `family=` to each font family.
 			$google_fonts = array_map( function( $font_family ) {
