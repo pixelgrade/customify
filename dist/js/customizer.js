@@ -816,28 +816,46 @@ wp.customize.bind('ready', function () {
   initializeColors();
   reloadConnectedFields();
 });
+var darkToColorSliderControls = ['sm_dark_color_switch_slider', 'sm_dark_color_select_slider'];
+var masterSettingIDs = ['sm_text_color_switch_master', 'sm_accent_color_switch_master', 'sm_text_color_select_master', 'sm_accent_color_select_master'];
 
 var initializeColors = function initializeColors() {
   initializePaletteBuilder('sm_advanced_palette_source', 'sm_advanced_palette_output');
   wp.customize('sm_coloration_level', function (setting) {
     setting.bind(applyColorationValueToFields);
   });
+  darkToColorSliderControls.forEach(function (settingID) {
+    wp.customize(settingID, function (setting) {
+      setting.bind(external_lodash_default().debounce(function (newValue) {
+        reloadConnectedFields();
+        applyMasterSettingsValues();
+      }, 30));
+    });
+  });
 };
 
-var reloadConnectedFields = external_lodash_default().debounce(function () {
+var applyMasterSettingsValues = function applyMasterSettingsValues() {
+  masterSettingIDs.forEach(function (masterSettingID) {
+    wp.customize(masterSettingID, function (setting) {
+      setting.callbacks.fireWith(setting, [setting._value, '']);
+    });
+  });
+};
+
+var reloadConnectedFields = function reloadConnectedFields() {
   var settings = getSettings();
   var settingIDs = Object.keys(settings);
+  var alteredSettings = applyColorsConnectedFieldsAlterations(settings);
   unbindConnectedFields(settingIDs);
-  setSettings(applyColorsConnectedFieldsAlterations(settings));
+  setSettings(alteredSettings);
   bindConnectedFields(settingIDs);
-}, 30);
+};
 
 var applyColorationValueToFields = function applyColorationValueToFields() {
   wp.customize('sm_coloration_level', function (colorationLevelSetting) {
     var colorationLevel = colorationLevelSetting();
     var defaultColorationLevel = getSetting('sm_coloration_level').default;
     var isDefaultColoration = colorationLevel === defaultColorationLevel;
-    var darkToColorSliderControls = ['sm_dark_color_switch_slider', 'sm_dark_color_select_slider'];
     darkToColorSliderControls.forEach(function (sliderSettingID) {
       wp.customize(sliderSettingID, function (sliderSetting) {
         var defaultValue = getSetting(sliderSettingID).default;
@@ -851,23 +869,13 @@ var applyColorationValueToFields = function applyColorationValueToFields() {
 var applyColorationLevel = function applyColorationLevel(tempSettings) {
   var switchSliderID = 'sm_dark_color_switch_slider';
   var selectSliderID = 'sm_dark_color_select_slider';
-  wp.customize('sm_coloration_level', function (colorationLevelSetting) {
-    var colorationLevel = colorationLevelSetting();
-    var defaultColorationLevel = getSetting('sm_coloration_level').default;
-    var isDefaultColoration = colorationLevel === defaultColorationLevel;
-
-    if (isDefaultColoration) {
-      return;
-    }
-
-    wp.customize(switchSliderID, function (switchSetting) {
-      var switchRatio = switchSetting() / 100;
-      tempSettings = moveConnectedFields(tempSettings, 'sm_text_color_switch_master', 'sm_accent_color_switch_master', switchRatio);
-    });
-    wp.customize(selectSliderID, function (selectSetting) {
-      var selectRatio = selectSetting() / 100;
-      tempSettings = moveConnectedFields(tempSettings, 'sm_text_color_select_master', 'sm_accent_color_select_master', selectRatio);
-    });
+  wp.customize(switchSliderID, function (switchSetting) {
+    var switchRatio = switchSetting() / 100;
+    tempSettings = moveConnectedFields(tempSettings, 'sm_text_color_switch_master', 'sm_accent_color_switch_master', switchRatio);
+  });
+  wp.customize(selectSliderID, function (selectSetting) {
+    var selectRatio = selectSetting() / 100;
+    tempSettings = moveConnectedFields(tempSettings, 'sm_text_color_select_master', 'sm_accent_color_select_master', selectRatio);
   });
   return tempSettings;
 };
@@ -1745,28 +1753,20 @@ var handleRangeFields = function handleRangeFields() {
 
     $rangeFields.each(function (i, obj) {
       var $range = external_jQuery_default()(obj);
-      var $number = $range.siblings('.range-value');
+      var settingID = $range.data('customize-setting-link');
+      var $number = $range.clone();
+      $number.attr('type', 'text').attr('class', 'range-value').removeAttr('data-value_entry');
+      $number.data('source', $range);
 
-      if (!$number.length) {
-        $number = $range.clone();
-        $number.attr('type', 'text').attr('class', 'range-value').removeAttr('data-value_entry');
-        $number.data('source', $range);
+      if ($range.first().attr('id')) {
+        $number.attr('id', $range.first().attr('id') + '_number');
+      }
 
-        if ($range.first().attr('id')) {
-          $number.attr('id', $range.first().attr('id') + '_number');
-        }
-
-        $number.insertAfter($range);
-      } // Put the value into the number field.
-
-
-      $range.on('input change', function (event) {
-        if (event.target.value === $number.val()) {
-          // Nothing to do if the values are identical.
-          return;
-        }
-
-        $number.val(event.target.value);
+      $number.insertAfter($range);
+      wp.customize(settingID, function (setting) {
+        setting.bind(function (newValue) {
+          $number.val(newValue);
+        });
       }); // When clicking outside the number field or on Enter.
 
       $number.on('blur keyup', onRangePreviewBlur);

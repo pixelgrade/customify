@@ -8,6 +8,18 @@ wp.customize.bind( 'ready', () => {
   reloadConnectedFields();
 } );
 
+const darkToColorSliderControls = [
+  'sm_dark_color_switch_slider',
+  'sm_dark_color_select_slider',
+];
+
+const masterSettingIDs = [
+  'sm_text_color_switch_master',
+  'sm_accent_color_switch_master',
+  'sm_text_color_select_master',
+  'sm_accent_color_select_master',
+];
+
 const initializeColors = () => {
 
   initializePaletteBuilder( 'sm_advanced_palette_source', 'sm_advanced_palette_output' );
@@ -16,17 +28,34 @@ const initializeColors = () => {
     setting.bind( applyColorationValueToFields );
   } );
 
+  darkToColorSliderControls.forEach( settingID => {
+    wp.customize( settingID, setting => {
+      setting.bind( _.debounce( newValue => {
+        reloadConnectedFields();
+        applyMasterSettingsValues();
+      }, 30 ) )
+    } )
+  } )
+
 }
 
-const reloadConnectedFields = _.debounce( () => {
+const applyMasterSettingsValues = () => {
+  masterSettingIDs.forEach( masterSettingID => {
+    wp.customize( masterSettingID, setting => {
+      setting.callbacks.fireWith( setting, [ setting._value, '' ] );
+    } );
+  } );
+}
+
+const reloadConnectedFields = () => {
   const settings = globalService.getSettings();
   const settingIDs = Object.keys( settings );
+  const alteredSettings = applyColorsConnectedFieldsAlterations( settings );
 
   globalService.unbindConnectedFields( settingIDs );
-  globalService.setSettings( applyColorsConnectedFieldsAlterations( settings ) );
+  globalService.setSettings( alteredSettings );
   globalService.bindConnectedFields( settingIDs );
-
-}, 30 );
+}
 
 const applyColorationValueToFields = () => {
 
@@ -34,11 +63,6 @@ const applyColorationValueToFields = () => {
     const colorationLevel = colorationLevelSetting();
     const defaultColorationLevel = globalService.getSetting( 'sm_coloration_level' ).default
     const isDefaultColoration = colorationLevel === defaultColorationLevel;
-
-    const darkToColorSliderControls = [
-      'sm_dark_color_switch_slider',
-      'sm_dark_color_select_slider',
-    ];
 
     darkToColorSliderControls.forEach( sliderSettingID => {
       wp.customize( sliderSettingID, sliderSetting => {
@@ -58,24 +82,14 @@ const applyColorationLevel = ( tempSettings ) => {
   const switchSliderID = 'sm_dark_color_switch_slider';
   const selectSliderID = 'sm_dark_color_select_slider';
 
-  wp.customize( 'sm_coloration_level', colorationLevelSetting => {
-    const colorationLevel = colorationLevelSetting();
-    const defaultColorationLevel = globalService.getSetting( 'sm_coloration_level' ).default
-    const isDefaultColoration = colorationLevel === defaultColorationLevel;
+  wp.customize( switchSliderID, switchSetting => {
+    const switchRatio = switchSetting() / 100;
+    tempSettings = moveConnectedFields( tempSettings, 'sm_text_color_switch_master', 'sm_accent_color_switch_master', switchRatio );
+  } );
 
-    if ( isDefaultColoration ) {
-      return;
-    }
-
-    wp.customize( switchSliderID, switchSetting => {
-      const switchRatio = switchSetting() / 100;
-      tempSettings = moveConnectedFields( tempSettings, 'sm_text_color_switch_master', 'sm_accent_color_switch_master', switchRatio );
-    } );
-
-    wp.customize( selectSliderID, selectSetting => {
-      const selectRatio = selectSetting() / 100;
-      tempSettings = moveConnectedFields( tempSettings, 'sm_text_color_select_master', 'sm_accent_color_select_master', selectRatio );
-    } );
+  wp.customize( selectSliderID, selectSetting => {
+    const selectRatio = selectSetting() / 100;
+    tempSettings = moveConnectedFields( tempSettings, 'sm_text_color_select_master', 'sm_accent_color_select_master', selectRatio );
   } );
 
   return tempSettings;

@@ -277,8 +277,9 @@ class Customify_Color_Palettes {
 			      'live'         => true,
 			      'choices'      => array(
 			      	'0' => 'Low',
-			      	'0.5' => 'Medium',
-			      	'1' => 'High',
+			      	'50' => 'Medium',
+			      	'75' => 'High',
+			      	'100' => 'Striking',
 			      ),
 		      ),
 		      'sm_dark_color_switch_slider'    => array(

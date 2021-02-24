@@ -10,30 +10,23 @@ export const handleRangeFields = () => {
     // For each range input add a number field (for preview mainly - but it can also be used for input)
     $rangeFields.each( function( i, obj ) {
       const $range = $( obj )
-      let $number = $range.siblings( '.range-value' )
+      const settingID = $range.data( 'customize-setting-link' );
+      const $number = $range.clone();
 
-      if ( ! $number.length ) {
-        $number = $range.clone();
+      $number.attr( 'type', 'text' ).attr( 'class', 'range-value' ).removeAttr( 'data-value_entry' );
+      $number.data( 'source', $range );
 
-        $number.attr( 'type', 'text' ).attr( 'class', 'range-value' ).removeAttr( 'data-value_entry' );
-        $number.data( 'source', $range );
-
-        if ( $range.first().attr( 'id' ) ) {
-          $number.attr( 'id', $range.first().attr( 'id' ) + '_number' )
-        }
-
-        $number.insertAfter( $range )
+      if ( $range.first().attr( 'id' ) ) {
+        $number.attr( 'id', $range.first().attr( 'id' ) + '_number' );
       }
 
-      // Put the value into the number field.
-      $range.on( 'input change', function( event ) {
-        if ( event.target.value === $number.val() ) {
-          // Nothing to do if the values are identical.
-          return;
-        }
+      $number.insertAfter( $range );
 
-        $number.val( event.target.value );
-      } )
+      wp.customize( settingID, setting => {
+        setting.bind( newValue => {
+          $number.val( newValue );
+        } );
+      } );
 
       // When clicking outside the number field or on Enter.
       $number.on( 'blur keyup', onRangePreviewBlur );
