@@ -548,8 +548,8 @@ class Customify_Color_Palettes {
 				'textColors'  => $textColor_objects,
 				'source'      => $value,
 				'sourceIndex' => 6,
-				'label'       => 'Color ' . $alphabet[ $index ],
-				'id'          => $index
+				'label'       => 'Color ' . $alphabet[ $index + 1 ],
+				'id'          => $index + 1
 			);
 		}
 

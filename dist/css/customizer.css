@@ -542,8 +542,8 @@ input.font-options__checkbox {
   margin-left: calc( -0.5 * var(--customizer-spacing)); }
   .customify_radio_html label {
     display: block;
-    padding-top: var(--customizer-spacing);
-    padding-left: var(--customizer-spacing);
+    padding-top: calc( 0.5 * var(--customizer-spacing));
+    padding-left: calc( 0.5 * var(--customizer-spacing));
     flex: 0 0 50%; }
     .customify_radio_html label > input + div {
       border-color: var(--customizer-field-border-color);
