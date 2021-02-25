@@ -1,0 +1,22 @@
+.palette-preview-set {
+  margin-top: 10px;
+}
+
+.palette-preview {
+  display: flex;
+
+  & + & > *:before {
+    padding-top: 50%;
+  }
+
+  > * {
+    flex: 1 1 0;
+
+    &:before {
+      padding-top: 100%;
+      display: block;
+      content: "";
+      background: currentColor;
+    }
+  }
+}

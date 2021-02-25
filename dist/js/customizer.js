@@ -2,7 +2,7 @@
 /******/ (function() { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 668:
+/***/ 22:
 /***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -23,9 +23,9 @@ var external_jQuery_default = /*#__PURE__*/__webpack_require__.n(external_jQuery
 // EXTERNAL MODULE: ./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js
 var injectStylesIntoStyleTag = __webpack_require__(379);
 var injectStylesIntoStyleTag_default = /*#__PURE__*/__webpack_require__.n(injectStylesIntoStyleTag);
-// EXTERNAL MODULE: ./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/js/customizer/colors/color-palette-builder/components/builder/components/color-controls/style.scss
-var style = __webpack_require__(451);
-;// CONCATENATED MODULE: ./src/js/customizer/colors/color-palette-builder/components/builder/components/color-controls/style.scss
+// EXTERNAL MODULE: ./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/js/customizer/colors/color-palette-builder/components/builder/style.scss
+var style = __webpack_require__(140);
+;// CONCATENATED MODULE: ./src/js/customizer/colors/color-palette-builder/components/builder/style.scss
 
             
 
@@ -38,7 +38,23 @@ var update = injectStylesIntoStyleTag_default()(style/* default */.Z, options);
 
 
 
-/* harmony default export */ var color_controls_style = (style/* default.locals */.Z.locals || {});
+/* harmony default export */ var builder_style = (style/* default.locals */.Z.locals || {});
+// EXTERNAL MODULE: ./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/js/customizer/colors/color-palette-builder/components/builder/components/color-controls/style.scss
+var color_controls_style = __webpack_require__(451);
+;// CONCATENATED MODULE: ./src/js/customizer/colors/color-palette-builder/components/builder/components/color-controls/style.scss
+
+            
+
+var style_options = {};
+
+style_options.insert = "head";
+style_options.singleton = false;
+
+var style_update = injectStylesIntoStyleTag_default()(color_controls_style/* default */.Z, style_options);
+
+
+
+/* harmony default export */ var components_color_controls_style = (color_controls_style/* default.locals */.Z.locals || {});
 ;// CONCATENATED MODULE: ./src/js/customizer/colors/color-palette-builder/components/builder/components/color-controls/index.js
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
 
@@ -567,6 +583,7 @@ function builder_arrayLikeToArray(arr, len) { if (len == null || len > arr.lengt
 function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
 
 
 
@@ -5786,6 +5803,23 @@ ___CSS_LOADER_EXPORT___.push([module.id, ".c-palette-builder>*+*{margin-top:15px
 
 /***/ }),
 
+/***/ 140:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(645);
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0__);
+// Imports
+
+var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
+// Module
+___CSS_LOADER_EXPORT___.push([module.id, ".palette-preview-set{margin-top:10px}.palette-preview{display:flex}.palette-preview+.palette-preview>*:before{padding-top:50%}.palette-preview>*{flex:1 1 0}.palette-preview>*:before{padding-top:100%;display:block;content:\"\";background:currentColor}", ""]);
+// Exports
+/* harmony default export */ __webpack_exports__["Z"] = (___CSS_LOADER_EXPORT___);
+
+
+/***/ }),
+
 /***/ 645:
 /***/ (function(module) {
 
@@ -6555,6 +6589,6 @@ module.exports = (function() { return this["lodash"]; }());
 /******/ 	// module exports must be returned from runtime so entry inlining is disabled
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(668);
+/******/ 	return __webpack_require__(22);
 /******/ })()
 ;

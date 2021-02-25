@@ -1,3 +1,4 @@
+import './style.scss';
 import ColorControls from "./components/color-controls";
 
 import {
