@@ -85,23 +85,47 @@ const Builder = ( props ) => {
       <style>
         { getCSSFromPalettes( palettes ) }
       </style>
-      { palettes.map( ( palette, index ) => {
-        const { colors, id } = palette;
-
-        return (
-          <div className={ `palette-preview-set` }>
-            <div className={ "palette-preview" }>
-              { colors.map( ( color, colorIndex ) => <div className={ `sm-variation-${ colorIndex } `} style={ { color: `var(--sm-color-palette-${ id }-bg-color-${ colorIndex + 1 })` } }></div> ) }
-            </div>
-            <div className={ "palette-preview" }>
-              { colors.map( ( color, colorIndex ) => <div className={ `sm-variation-${ colorIndex } `} style={ { color: `var(--sm-color-palette-${ id }-fg1-color-${ colorIndex + 1 })` } }></div> ) }
-            </div>
-            <div className={ "palette-preview" }>
-              { colors.map( ( color, colorIndex ) => <div className={ `sm-variation-${ colorIndex } `} style={ { color: `var(--sm-color-palette-${ id }-accent-color-${ colorIndex + 1 })` } }></div> ) }
-            </div>
-          </div>
-        )
-      } ) }
+      <Preview palettes={ palettes } />
     </div>
   );
+}
+
+const Preview = ( props ) => {
+  return (
+      <div className="palette-preview">
+        <div>Color Palette preview</div>
+        <PalettesPreview { ...props } />
+      </div>
+  );
+}
+const PalettesPreview = ( props ) => {
+  const {
+    palettes
+  } = props;
+
+  return palettes.map( ( palette, index ) => {
+    const { colors, id } = palette;
+
+    return (
+      <div className={ `palette-preview-set` }>
+        <div className="palette-preview-set-header">
+          <div className="palette-preview-source">
+            { palette.source.map( source => {
+              return <div className="palette-preview-source-color" style={ { color: source } }></div>
+            } ) }
+          </div>
+          <div className="palette-preview-label">{ `${ palette.label } color palette` }</div>
+        </div>
+        <div className={ "palette-preview-swatches" }>
+          { colors.map( ( color, colorIndex ) => <div className={ `sm-variation-${ colorIndex } `} style={ { color: `var(--sm-color-palette-${ id }-bg-color-${ colorIndex + 1 })` } }></div> ) }
+        </div>
+        <div className={ "palette-preview-swatches" }>
+          { colors.map( ( color, colorIndex ) => <div className={ `sm-variation-${ colorIndex } `} style={ { color: `var(--sm-color-palette-${ id }-fg1-color-${ colorIndex + 1 })` } }></div> ) }
+        </div>
+        <div className={ "palette-preview-swatches" }>
+          { colors.map( ( color, colorIndex ) => <div className={ `sm-variation-${ colorIndex } `} style={ { color: `var(--sm-color-palette-${ id }-accent-color-${ colorIndex + 1 })` } }></div> ) }
+        </div>
+      </div>
+    )
+  } )
 }

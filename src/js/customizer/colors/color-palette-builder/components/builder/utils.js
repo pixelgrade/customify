@@ -10,7 +10,8 @@ export const getPalettesFromColors = ( colors, attributes = {} ) => {
 
   palettes = addAutoPalettes( palettes, attributes );
 
-  return mapSanitizePalettes( palettes.concat( functionalPalettes ), attributes );
+//  return mapSanitizePalettes( palettes.concat( functionalPalettes ), attributes );
+  return mapSanitizePalettes( palettes, attributes );
 }
 
 export const addAutoPalettes = ( palettes, attributes ) => {
@@ -22,14 +23,14 @@ export const addAutoPalettes = ( palettes, attributes ) => {
   const newPalettes = JSON.parse( JSON.stringify( palettes ) );
 
   if ( newPalettes.length > 1 ) {
-    const index0 = getBestPositionInPaletteByLuminance( newPalettes[0].source, newPalettes[0].colors, attributes );
-    const index1 = getBestPositionInPaletteByLuminance( newPalettes[1].source, newPalettes[1].colors, attributes );
+    const index0 = getBestPositionInPaletteByLuminance( newPalettes[0].source[0], newPalettes[0].colors, attributes );
+    const index1 = getBestPositionInPaletteByLuminance( newPalettes[1].source[0], newPalettes[1].colors, attributes );
     let distance0 = Math.abs( index0 - index1 );
     let distance1 = 0;
     let distance2 = 0;
 
     if ( newPalettes.length > 2 ) {
-      const index2 = getBestPositionInPaletteByLuminance( newPalettes[2].source, newPalettes[2].colors, attributes );
+      const index2 = getBestPositionInPaletteByLuminance( newPalettes[2].source[0], newPalettes[2].colors, attributes );
       distance1 = Math.abs( index1 - index2 );
       distance2 = Math.abs( index0 - index2 );
       const distance = Math.min( distance0, distance1, distance2 );
@@ -102,7 +103,7 @@ export const getSourceIndex = ( palette ) => {
 export const mapAddTextColors = ( palette ) => {
   palette.textColors = palette.colors.slice( 9, 11 ).map( ( color, index ) => {
     return {
-      value: getTextColor( palette.source, index ),
+      value: getTextColor( palette.source[0], index ),
       ...color
     }
   } );
@@ -117,7 +118,7 @@ export const mapAddSourceIndex = ( attributes ) => {
 
     // falback sourceIndex when the source isn't used in the palette
     if ( ! sourceIndex > -1 ) {
-      sourceIndex = getBestPositionInPaletteByLuminance( source, colors.map( color => color.value ), attributes );
+      sourceIndex = getBestPositionInPaletteByLuminance( source[0], colors.map( color => color.value ), attributes );
     }
 
     return {
@@ -153,7 +154,7 @@ export const mapColorToPalette = ( ( attributes ) => {
     return {
       id: id || ( index + 1 ),
       label: label,
-      source: value,
+      source: [ value ],
       colors: colors,
     };
   }
@@ -164,13 +165,13 @@ export const mapInterpolateSource = ( attributes ) => {
 
   return ( palette ) => {
     const { source } = palette;
-    const position = getBestPositionInPaletteByLuminance( source, palette.colors, attributes );
+    const position = getBestPositionInPaletteByLuminance( source[0], palette.colors, attributes );
 
     if ( mode !== 'none' ) {
 
       const stops = [
         { value: '#FFFFFF', position: 0 },
-        { value: source, position: position },
+        { value: source[0], position: position },
         { value: '#000000', position: 11 }
       ];
 
@@ -229,10 +230,10 @@ export const mapUseSource = ( attributes ) => {
 
   return ( palette ) => {
     const { source } = palette;
-    const position = getBestPositionInPaletteByLuminance( source, palette.colors.map( color => color.value ), attributes );
+    const position = getBestPositionInPaletteByLuminance( source[0], palette.colors.map( color => color.value ), attributes );
 
     palette.colors.splice( position, 1, {
-      value: source,
+      value: source[0],
       isSource: true
     } );
 
@@ -421,7 +422,7 @@ export const getValueFromColors = ( colors ) => {
 const createAutoPalette = ( palettes, attributes = {} ) => {
   const { mode, bezierInterpolation } = attributes;
   const palettesCopy = palettes.slice();
-  const colors = palettesCopy.map( palette => palette.source );
+  const colors = palettesCopy.map( palette => palette.source[0] );
   let autoPalette = colors.slice();
 
   autoPalette.splice( 0, 0, '#FFFFFF' );
@@ -438,6 +439,7 @@ const createAutoPalette = ( palettes, attributes = {} ) => {
 
   autoPalette = {
     ...palettesCopy[0],
+    source: colors,
     colors: autoPalette
   };
 

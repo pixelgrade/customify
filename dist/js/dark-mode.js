@@ -2,7 +2,7 @@
 /******/ (function() { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 521:
+/***/ 6521:
 /***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -10,7 +10,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": function() { return /* binding */ DarkMode; }
 /* harmony export */ });
-/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(609);
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3609);
 /* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_0__);
 var _window, _window$wp;
 
@@ -138,7 +138,7 @@ window.myApi.isDark = Dark.isCompiledDark.bind(Dark);
 
 /***/ }),
 
-/***/ 609:
+/***/ 3609:
 /***/ (function(module) {
 
 module.exports = (function() { return this["jQuery"]; }());
@@ -215,6 +215,6 @@ module.exports = (function() { return this["jQuery"]; }());
 /******/ 	// module exports must be returned from runtime so entry inlining is disabled
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(521);
+/******/ 	return __webpack_require__(6521);
 /******/ })()
 ;

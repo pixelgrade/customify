@@ -1,8 +1,16 @@
-.palette-preview-set {
-  margin-top: 10px;
+.palette-preview {
+  margin-top: calc( 3 * var(--customizer-spacing) );
 }
 
-.palette-preview {
+.palette-preview-set {
+  margin-top: var(--customizer-spacing);
+}
+
+.palette-preview-set-header + .palette-preview-swatches{
+  margin-top: calc( 0.5 * var(--customizer-spacing) );
+}
+
+.palette-preview-swatches {
   display: flex;
 
   & + & > *:before {
@@ -18,5 +26,35 @@
       content: "";
       background: currentColor;
     }
+  }
+}
+
+.palette-preview-set-header {
+  display: flex;
+  align-items: center;
+  margin-left: -1em;
+
+  > * {
+    margin-left: 1em;
+  }
+}
+
+.palette-preview-source {
+  display: flex;
+}
+
+.palette-preview-source-color {
+  width: 1em;
+  height: 1em;
+  background: currentColor;
+
+  &:first-child {
+    border-top-left-radius: 999em;
+    border-bottom-left-radius: 999em;
+  }
+
+  &:last-child {
+    border-top-right-radius: 999em;
+    border-bottom-right-radius: 999em;
   }
 }
