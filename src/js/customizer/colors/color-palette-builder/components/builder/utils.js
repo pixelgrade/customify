@@ -3,12 +3,10 @@ import chroma from 'chroma-js';
 
 import contrastArray from './contrast-array';
 
-export const getPalettesFromColors = ( colors, attributes = {} ) => {
-  const functionalColors = getFunctionalColors( colors );
-  let palettes = colors.map( mapColorToPalette( attributes ) );
-  let functionalPalettes = functionalColors.map( mapColorToPalette( attributes ) );
-
-  palettes = addAutoPalettes( palettes, attributes );
+export const getPalettesFromColors = ( colorGroups, attributes = {} ) => {
+//  const functionalColors = getFunctionalColors( colorGroups );
+  let palettes = colorGroups.map( mapColorToPalette( attributes ) );
+//  let functionalPalettes = functionalColors.map( mapColorToPalette( attributes ) );
 
 //  return mapSanitizePalettes( palettes.concat( functionalPalettes ), attributes );
   return mapSanitizePalettes( palettes, attributes );
@@ -23,14 +21,14 @@ export const addAutoPalettes = ( palettes, attributes ) => {
   const newPalettes = JSON.parse( JSON.stringify( palettes ) );
 
   if ( newPalettes.length > 1 ) {
-    const index0 = getBestPositionInPaletteByLuminance( newPalettes[0].source[0], newPalettes[0].colors, attributes );
-    const index1 = getBestPositionInPaletteByLuminance( newPalettes[1].source[0], newPalettes[1].colors, attributes );
+    const index0 = getBestPositionInPalette( newPalettes[0].source[0], newPalettes[0].colors, attributes );
+    const index1 = getBestPositionInPalette( newPalettes[1].source[0], newPalettes[1].colors, attributes );
     let distance0 = Math.abs( index0 - index1 );
     let distance1 = 0;
     let distance2 = 0;
 
     if ( newPalettes.length > 2 ) {
-      const index2 = getBestPositionInPaletteByLuminance( newPalettes[2].source[0], newPalettes[2].colors, attributes );
+      const index2 = getBestPositionInPalette( newPalettes[2].source[0], newPalettes[2].colors, attributes );
       distance1 = Math.abs( index1 - index2 );
       distance2 = Math.abs( index0 - index2 );
       const distance = Math.min( distance0, distance1, distance2 );
@@ -118,7 +116,7 @@ export const mapAddSourceIndex = ( attributes ) => {
 
     // falback sourceIndex when the source isn't used in the palette
     if ( ! sourceIndex > -1 ) {
-      sourceIndex = getBestPositionInPaletteByLuminance( source[0], colors.map( color => color.value ), attributes );
+      sourceIndex = getBestPositionInPalette( source[0], colors.map( color => color.value ), attributes );
     }
 
     return {
@@ -142,19 +140,18 @@ export const mapShiftColors = ( palette ) => {
 }
 
 export const mapColorToPalette = ( ( attributes ) => {
-  const { mode } = attributes;
-  return ( colorObj, index ) => {
-    const { label, id, value } = colorObj;
 
-    const colors = contrastArray.map( contrast => {
-      const luminance = contrastToLuminance( contrast );
-      return chroma( value ).luminance( luminance, mode ).hex();
-    } );
+  return ( colorObjects, index ) => {
+
+    const sources = colorObjects.map( colorObj => colorObj.value );
+    const colors = createAutoPalette( sources, attributes );
+
+    const { label, id } = colorObjects[0];
 
     return {
       id: id || ( index + 1 ),
       label: label,
-      source: [ value ],
+      source: sources,
       colors: colors,
     };
   }
@@ -165,7 +162,7 @@ export const mapInterpolateSource = ( attributes ) => {
 
   return ( palette ) => {
     const { source } = palette;
-    const position = getBestPositionInPaletteByLuminance( source[0], palette.colors, attributes );
+    const position = getBestPositionInPalette( source[0], palette.colors, attributes );
 
     if ( mode !== 'none' ) {
 
@@ -222,7 +219,7 @@ const mapUpdateProps = ( palette ) => {
 }
 
 export const mapUseSource = ( attributes ) => {
-  const { useSources, colorInterpolation, bezierInterpolation } = attributes;
+  const { useSources } = attributes;
 
   if ( ! useSources ) {
     return noop;
@@ -230,7 +227,7 @@ export const mapUseSource = ( attributes ) => {
 
   return ( palette ) => {
     const { source } = palette;
-    const position = getBestPositionInPaletteByLuminance( source[0], palette.colors.map( color => color.value ), attributes );
+    const position = getBestPositionInPalette( source[0], palette.colors.map( color => color.value ), attributes, true );
 
     palette.colors.splice( position, 1, {
       value: source[0],
@@ -241,7 +238,7 @@ export const mapUseSource = ( attributes ) => {
   }
 }
 
-export const getBestPositionInPaletteByLuminance = ( color, colors, attributes, byColorDistance ) => {
+export const getBestPositionInPalette = ( color, colors, attributes, byColorDistance ) => {
   let min = Number.MAX_SAFE_INTEGER;
   let pos = -1;
 
@@ -366,7 +363,9 @@ export const getColorVariables = ( palette, newColorIndex, oldColorIndex, isShif
   `;
 }
 
-export const getCSSFromPalettes = ( palettes ) => {
+export const getCSSFromPalettes = ( palettesArray ) => {
+
+  const palettes = palettesArray.slice();
 
   if ( ! palettes.length ) {
     return '';
@@ -419,31 +418,21 @@ export const getValueFromColors = ( colors ) => {
   return JSON.stringify( colors );
 }
 
-const createAutoPalette = ( palettes, attributes = {} ) => {
+const createAutoPalette = ( colors, attributes = {} ) => {
   const { mode, bezierInterpolation } = attributes;
-  const palettesCopy = palettes.slice();
-  const colors = palettesCopy.map( palette => palette.source[0] );
-  let autoPalette = colors.slice();
+  const newColors = colors.slice();
 
-  autoPalette.splice( 0, 0, '#FFFFFF' );
-  autoPalette.push( '#000000' );
-  autoPalette.sort( ( c1, c2 ) => {
+  newColors.splice( 0, 0, '#FFFFFF' );
+  newColors.push( '#000000' );
+  newColors.sort( ( c1, c2 ) => {
     return chroma( c1 ).luminance() > chroma( c2 ).luminance() ? -1 : 1;
   } );
 
   if ( !! bezierInterpolation ) {
-    autoPalette = chroma.bezier( autoPalette ).scale().mode( mode ).correctLightness().colors( 12 );
+    return chroma.bezier( newColors ).scale().mode( mode ).correctLightness().colors( 12 );
   } else {
-    autoPalette = chroma.scale( autoPalette ).mode( mode ).correctLightness().colors( 12 );
+    return chroma.scale( newColors ).mode( mode ).correctLightness().colors( 12 );
   }
-
-  autoPalette = {
-    ...palettesCopy[0],
-    source: colors,
-    colors: autoPalette
-  };
-
-  return autoPalette;
 }
 
 const noop = palette => palette;

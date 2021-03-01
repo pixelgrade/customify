@@ -15,21 +15,17 @@ const { useEffect, useState } = wp.element;
 
 const Builder = ( props ) => {
   const { sourceSettingID, outputSettingID } = props;
+
   const sourceSetting = wp.customize( sourceSettingID );
-
-  const colorSpaceSetting = wp.customize( 'sm_color_space' );
-  const colorInterpolationSetting = wp.customize( 'sm_color_interpolation' );
-  const bezierInterpolationSetting = wp.customize( 'sm_bezier_interpolation' );
-  const useSourcesSetting = wp.customize( 'sm_use_color_sources' );
-
   const outputSetting = wp.customize( outputSettingID );
+  const variationSetting = wp.customize( 'sm_site_color_variation' );
+
   const [ colors, setColors ] = useState( getColorsFromInputValue( sourceSetting() ) );
   const [ attributes, updateAttributes ] = useState( {
     correctLightness: true,
-    useSources: useSourcesSetting(),
-    mode: colorSpaceSetting(),
-    colorInterpolation: colorInterpolationSetting(),
-    bezierInterpolation: bezierInterpolationSetting(),
+    useSources: true,
+    mode: 'lch',
+    bezierInterpolation: false,
   } );
 
   const setAttributes = ( newAttributes ) => {
@@ -38,31 +34,20 @@ const Builder = ( props ) => {
 
   const changeListener = () => {
     setColors( getColorsFromInputValue( sourceSetting() ) );
-    setAttributes( {
-      useSources: useSourcesSetting(),
-      mode: colorSpaceSetting(),
-      colorInterpolation: colorInterpolationSetting(),
-      bezierInterpolation: bezierInterpolationSetting(),
-    } );
   };
 
   useEffect(() => {
     // Attach the listeners on component mount.
     sourceSetting.bind( changeListener );
-    useSourcesSetting.bind( changeListener );
-    colorSpaceSetting.bind( changeListener );
-    colorInterpolationSetting.bind( changeListener );
-    bezierInterpolationSetting.bind( changeListener );
+    variationSetting.bind( changeListener );
 
     // Detach the listeners on component unmount.
     return () => {
       sourceSetting.unbind( changeListener );
-      useSourcesSetting.unbind( changeListener );
-      colorSpaceSetting.unbind( changeListener );
-      colorInterpolationSetting.unbind( changeListener );
-      bezierInterpolationSetting.unbind( changeListener );
+      variationSetting.unbind( changeListener );
     }
-  }, []);
+
+  }, [] );
 
   useEffect( () => {
     sourceSetting.set( getValueFromColors( colors ) );
@@ -93,12 +78,13 @@ const Builder = ( props ) => {
 const Preview = ( props ) => {
   return (
       <div className="palette-preview">
-        <div>Color Palette preview</div>
+        <div className="sm-label">Color Palette preview</div>
         <PalettesPreview { ...props } />
       </div>
   );
 }
 const PalettesPreview = ( props ) => {
+
   const {
     palettes
   } = props;

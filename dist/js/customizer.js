@@ -10077,25 +10077,18 @@ function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArra
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
 function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
-function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
-
-function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-
-function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter); }
-
-function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
-
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
-
 
 
 var _wp$element = wp.element,
+    color_controls_useEffect = _wp$element.useEffect,
     useState = _wp$element.useState,
     useRef = _wp$element.useRef;
 
@@ -10104,57 +10097,149 @@ var _wp$element = wp.element,
 var ColorControls = function ColorControls(props) {
   var colors = props.colors,
       setColors = props.setColors;
+  color_controls_useEffect(function () {
+    if (!colors.length) {
+      addNewColorGroup();
+    }
+  }, [colors]);
+
+  var addNewColorGroup = function addNewColorGroup() {
+    var groupIndex = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+    var newColors = colors.slice();
+    var newColor = {
+      label: 'Dark',
+      value: '#111111'
+    };
+    newColors.splice(groupIndex + 1, 0, [newColor]);
+    setColors(newColors);
+  };
+
+  var addNewColorToGroup = function addNewColorToGroup(groupIndex) {
+    var newColors = colors.slice();
+    var newColor = {
+      label: 'Interpolated Color',
+      value: '#111111'
+    };
+    newColors[groupIndex].push(newColor);
+    setColors(newColors);
+  };
+
+  var deleteColor = function deleteColor(groupIndex, index) {
+    var newColors = colors.slice();
+    newColors[groupIndex].splice(index, 1);
+
+    if (!newColors[groupIndex].length) {
+      newColors.splice(groupIndex, 1);
+    }
+
+    setColors(newColors);
+  };
+
+  var updateColor = function updateColor(groupIndex, index, newValue) {
+    var newColors = colors.slice();
+    newColors[groupIndex][index] = Object.assign({}, newColors[groupIndex][index], newValue);
+    setColors(newColors);
+  };
+
   return /*#__PURE__*/react.createElement("div", {
     className: "c-palette-builder"
   }, /*#__PURE__*/react.createElement("div", {
-    className: "c-palette-builder__header"
-  }, /*#__PURE__*/react.createElement("div", {
-    className: "c-palette-builder__label"
-  }, "Brand Colors"), /*#__PURE__*/react.createElement("button", {
-    className: "c-palette-builder__button c-palette-builder__add",
+    className: "sm-label"
+  }, "Brand Colors"), /*#__PURE__*/react.createElement("div", {
+    className: "c-palette-builder__source-list"
+  }, colors.map(function (colorGroup, groupIndex) {
+    return /*#__PURE__*/react.createElement("div", {
+      className: "c-palette-builder__source-group"
+    }, colorGroup.map(function (color, index) {
+      var actions = [{
+        label: 'Interpolate Color',
+        callback: function callback() {
+          addNewColorToGroup(groupIndex);
+        }
+      }, {
+        label: 'Add Color',
+        callback: function callback() {
+          addNewColorGroup(groupIndex);
+        }
+      }, //                      { label: 'Rename Color', callback: () => {} },
+      {
+        label: 'Remove Color',
+        callback: function callback() {
+          deleteColor(groupIndex, index);
+        }
+      }];
+      return /*#__PURE__*/react.createElement(PaletteSourceItem, {
+        actions: actions,
+        color: color,
+        onChange: function onChange(newValue) {
+          updateColor(groupIndex, index, newValue);
+        }
+      });
+    }));
+  })));
+};
+
+var PaletteSourceItem = function PaletteSourceItem(props) {
+  var color = props.color,
+      _onChange = props.onChange,
+      actions = props.actions;
+  return /*#__PURE__*/react.createElement("div", {
+    className: "c-palette-builder__source-item"
+  }, /*#__PURE__*/react.createElement(ColorPicker, {
+    hex: color.value,
+    onChange: function onChange(hex) {
+      _onChange({
+        value: hex
+      });
+    }
+  }), /*#__PURE__*/react.createElement("input", {
+    className: "c-palette-builder__source-item-label",
+    type: "text",
+    value: color.label,
+    onChange: function onChange(e) {
+      _onChange({
+        label: e.target.value
+      });
+    }
+  }), /*#__PURE__*/react.createElement(ContextualMenu, {
+    actions: actions
+  }));
+};
+
+var ContextualMenu = function ContextualMenu(props) {
+  var actions = props.actions;
+
+  var _useState = useState(false),
+      _useState2 = _slicedToArray(_useState, 2),
+      showMenu = _useState2[0],
+      setShowMenu = _useState2[1];
+
+  var ref = useRef(null);
+  use_outside_click(ref, function () {
+    setShowMenu(false);
+  });
+  return /*#__PURE__*/react.createElement("div", {
+    ref: ref,
+    className: "c-contextual-menu c-contextual-menu--".concat(showMenu ? 'visible' : 'hidden')
+  }, /*#__PURE__*/react.createElement("button", {
+    className: "c-contextual-menu__toggle",
     onClick: function onClick(e) {
       e.preventDefault();
-      setColors([].concat(_toConsumableArray(colors), [{
-        label: 'Dark',
-        value: '#111111'
-      }]));
+      setShowMenu(!showMenu);
     }
-  }, "New Color")), /*#__PURE__*/react.createElement("div", {
-    className: "c-palette-builder__source-list"
-  }, colors.map(function (color, index) {
+  }, /*#__PURE__*/react.createElement("span", null, "Toggle Menu")), /*#__PURE__*/react.createElement("div", {
+    className: "c-contextual-menu__list"
+  }, actions.map(function (_ref) {
+    var label = _ref.label,
+        callback = _ref.callback;
     return /*#__PURE__*/react.createElement("div", {
-      className: "c-palette-builder__source-item"
-    }, /*#__PURE__*/react.createElement(ColorPicker, {
-      hex: color.value,
-      onChange: function onChange(hex) {
-        var newColors = colors.slice();
-        newColors[index] = {
-          label: color.label,
-          value: hex
-        };
-        setColors(newColors);
-      }
-    }), /*#__PURE__*/react.createElement("input", {
-      className: "c-palette-builder__source-item-label",
-      type: "text",
-      value: color.label,
-      onChange: function onChange(e) {
-        var newColors = colors.slice();
-        newColors[index] = {
-          label: e.target.value,
-          value: color.value
-        };
-        setColors(newColors);
-      }
-    }), /*#__PURE__*/react.createElement("button", {
-      className: "c-palette-builder__source-item-delete",
+      className: "c-contextual-menu__list-item",
       onClick: function onClick(e) {
         e.preventDefault();
-        var newColors = colors.slice();
-        newColors.splice(index, 1);
-        setColors(newColors);
+        setShowMenu(false);
+        callback();
       }
-    }, "Delete"));
+    }, label);
   })));
 };
 
@@ -10162,15 +10247,15 @@ var ColorPicker = function ColorPicker(props) {
   var hex = props.hex,
       onChange = props.onChange;
 
-  var _useState = useState(hex),
-      _useState2 = _slicedToArray(_useState, 2),
-      color = _useState2[0],
-      setColor = _useState2[1];
-
-  var _useState3 = useState(false),
+  var _useState3 = useState(hex),
       _useState4 = _slicedToArray(_useState3, 2),
-      showPicker = _useState4[0],
-      setShowPicker = _useState4[1];
+      color = _useState4[0],
+      setColor = _useState4[1];
+
+  var _useState5 = useState(false),
+      _useState6 = _slicedToArray(_useState5, 2),
+      showPicker = _useState6[0],
+      setShowPicker = _useState6[1];
 
   var pickerRef = useRef(null);
   use_outside_click(pickerRef, function () {
@@ -10244,15 +10329,15 @@ var maxContrastArray = contrastRangesArray.map(function (x) {
 });
 /* harmony default export */ var contrast_array = (myOptimalContrastArray);
 ;// CONCATENATED MODULE: ./src/js/customizer/colors/color-palette-builder/components/builder/utils.js
-function utils_toConsumableArray(arr) { return utils_arrayWithoutHoles(arr) || utils_iterableToArray(arr) || utils_unsupportedIterableToArray(arr) || utils_nonIterableSpread(); }
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || utils_unsupportedIterableToArray(arr) || _nonIterableSpread(); }
 
-function utils_nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 
 function utils_unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return utils_arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return utils_arrayLikeToArray(o, minLen); }
 
-function utils_iterableToArray(iter) { if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter); }
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter); }
 
-function utils_arrayWithoutHoles(arr) { if (Array.isArray(arr)) return utils_arrayLikeToArray(arr); }
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return utils_arrayLikeToArray(arr); }
 
 function utils_arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
@@ -10265,12 +10350,11 @@ function utils_defineProperty(obj, key, value) { if (key in obj) { Object.define
 
 
 
-var getPalettesFromColors = function getPalettesFromColors(colors) {
+var getPalettesFromColors = function getPalettesFromColors(colorGroups) {
   var attributes = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-  var functionalColors = getFunctionalColors(colors);
-  var palettes = colors.map(mapColorToPalette(attributes));
-  var functionalPalettes = functionalColors.map(mapColorToPalette(attributes));
-  palettes = addAutoPalettes(palettes, attributes); //  return mapSanitizePalettes( palettes.concat( functionalPalettes ), attributes );
+  //  const functionalColors = getFunctionalColors( colorGroups );
+  var palettes = colorGroups.map(mapColorToPalette(attributes)); //  let functionalPalettes = functionalColors.map( mapColorToPalette( attributes ) );
+  //  return mapSanitizePalettes( palettes.concat( functionalPalettes ), attributes );
 
   return mapSanitizePalettes(palettes, attributes);
 };
@@ -10282,14 +10366,14 @@ var addAutoPalettes = function addAutoPalettes(palettes, attributes) {
   var newPalettes = JSON.parse(JSON.stringify(palettes));
 
   if (newPalettes.length > 1) {
-    var index0 = getBestPositionInPaletteByLuminance(newPalettes[0].source[0], newPalettes[0].colors, attributes);
-    var index1 = getBestPositionInPaletteByLuminance(newPalettes[1].source[0], newPalettes[1].colors, attributes);
+    var index0 = getBestPositionInPalette(newPalettes[0].source[0], newPalettes[0].colors, attributes);
+    var index1 = getBestPositionInPalette(newPalettes[1].source[0], newPalettes[1].colors, attributes);
     var distance0 = Math.abs(index0 - index1);
     var distance1 = 0;
     var distance2 = 0;
 
     if (newPalettes.length > 2) {
-      var index2 = getBestPositionInPaletteByLuminance(newPalettes[2].source[0], newPalettes[2].colors, attributes);
+      var index2 = getBestPositionInPalette(newPalettes[2].source[0], newPalettes[2].colors, attributes);
       distance1 = Math.abs(index1 - index2);
       distance2 = Math.abs(index0 - index2);
       var distance = Math.min(distance0, distance1, distance2);
@@ -10335,10 +10419,10 @@ var getFunctionalColors = function getFunctionalColors(colors) {
   }
 
   var color = colors[0].value;
-  var red = chroma_default()(color).set('hsl.h', 0).hex();
-  var blue = chroma_default()(color).set('hsl.h', 180).hex();
-  var yellow = chroma_default()(color).set('hsl.h', 60).hex();
-  var green = chroma_default()(color).set('hsl.h', 120).hex();
+  var red = chroma(color).set('hsl.h', 0).hex();
+  var blue = chroma(color).set('hsl.h', 180).hex();
+  var yellow = chroma(color).set('hsl.h', 60).hex();
+  var green = chroma(color).set('hsl.h', 120).hex();
   return [{
     label: '_info',
     value: blue,
@@ -10377,7 +10461,7 @@ var mapAddSourceIndex = function mapAddSourceIndex(attributes) {
     var sourceIndex = getSourceIndex(palette); // falback sourceIndex when the source isn't used in the palette
 
     if (!sourceIndex > -1) {
-      sourceIndex = getBestPositionInPaletteByLuminance(source[0], colors.map(function (color) {
+      sourceIndex = getBestPositionInPalette(source[0], colors.map(function (color) {
         return color.value;
       }), attributes);
     }
@@ -10390,7 +10474,7 @@ var mapAddSourceIndex = function mapAddSourceIndex(attributes) {
 var getShiftedArray = function getShiftedArray(array, positions) {
   var arrayClone = array.slice();
   var chunk = arrayClone.splice(0, positions);
-  arrayClone.push.apply(arrayClone, utils_toConsumableArray(chunk));
+  arrayClone.push.apply(arrayClone, _toConsumableArray(chunk));
   return arrayClone;
 };
 var mapShiftColors = function mapShiftColors(palette) {
@@ -10398,19 +10482,18 @@ var mapShiftColors = function mapShiftColors(palette) {
   return palette;
 };
 var mapColorToPalette = function mapColorToPalette(attributes) {
-  var mode = attributes.mode;
-  return function (colorObj, index) {
-    var label = colorObj.label,
-        id = colorObj.id,
-        value = colorObj.value;
-    var colors = contrast_array.map(function (contrast) {
-      var luminance = contrastToLuminance(contrast);
-      return chroma_default()(value).luminance(luminance, mode).hex();
+  return function (colorObjects, index) {
+    var sources = colorObjects.map(function (colorObj) {
+      return colorObj.value;
     });
+    var colors = createAutoPalette(sources, attributes);
+    var _colorObjects$ = colorObjects[0],
+        label = _colorObjects$.label,
+        id = _colorObjects$.id;
     return {
       id: id || index + 1,
       label: label,
-      source: [value],
+      source: sources,
       colors: colors
     };
   };
@@ -10419,7 +10502,7 @@ var mapInterpolateSource = function mapInterpolateSource(attributes) {
   var mode = attributes.mode;
   return function (palette) {
     var source = palette.source;
-    var position = getBestPositionInPaletteByLuminance(source[0], palette.colors, attributes);
+    var position = getBestPositionInPalette(source[0], palette.colors, attributes);
 
     if (mode !== 'none') {
       var stops = [{
@@ -10446,7 +10529,7 @@ var getColorsFromStops = function getColorsFromStops(stops, attributes) {
   for (var i = 0; i < stops.length - 1; i++) {
     var scale = chroma.scale([stops[i].value, stops[i + 1].value]).mode(mode);
     var scaleColors = scale.colors(stops[i + 1].position - stops[i].position + 1);
-    colors.push.apply(colors, utils_toConsumableArray(scaleColors.slice(1)));
+    colors.push.apply(colors, _toConsumableArray(scaleColors.slice(1)));
   }
 
   return colors;
@@ -10479,9 +10562,7 @@ var mapUpdateProps = function mapUpdateProps(palette) {
 };
 
 var mapUseSource = function mapUseSource(attributes) {
-  var useSources = attributes.useSources,
-      colorInterpolation = attributes.colorInterpolation,
-      bezierInterpolation = attributes.bezierInterpolation;
+  var useSources = attributes.useSources;
 
   if (!useSources) {
     return noop;
@@ -10489,9 +10570,9 @@ var mapUseSource = function mapUseSource(attributes) {
 
   return function (palette) {
     var source = palette.source;
-    var position = getBestPositionInPaletteByLuminance(source[0], palette.colors.map(function (color) {
+    var position = getBestPositionInPalette(source[0], palette.colors.map(function (color) {
       return color.value;
-    }), attributes);
+    }), attributes, true);
     palette.colors.splice(position, 1, {
       value: source[0],
       isSource: true
@@ -10499,7 +10580,7 @@ var mapUseSource = function mapUseSource(attributes) {
     return palette;
   };
 };
-var getBestPositionInPaletteByLuminance = function getBestPositionInPaletteByLuminance(color, colors, attributes, byColorDistance) {
+var getBestPositionInPalette = function getBestPositionInPalette(color, colors, attributes, byColorDistance) {
   var min = Number.MAX_SAFE_INTEGER;
   var pos = -1;
 
@@ -10599,7 +10680,9 @@ var getColorVariables = function getColorVariables(palette, newColorIndex, oldCo
 
   return "\n    ".concat(accentColors, "\n    ").concat(darkColors, "\n  ");
 };
-var getCSSFromPalettes = function getCSSFromPalettes(palettes) {
+var getCSSFromPalettes = function getCSSFromPalettes(palettesArray) {
+  var palettes = palettesArray.slice();
+
   if (!palettes.length) {
     return '';
   } // the old implementation generates 3 fallback palettes and
@@ -10634,32 +10717,22 @@ var getValueFromColors = function getValueFromColors(colors) {
   return JSON.stringify(colors);
 };
 
-var createAutoPalette = function createAutoPalette(palettes) {
+var createAutoPalette = function createAutoPalette(colors) {
   var attributes = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
   var mode = attributes.mode,
       bezierInterpolation = attributes.bezierInterpolation;
-  var palettesCopy = palettes.slice();
-  var colors = palettesCopy.map(function (palette) {
-    return palette.source[0];
-  });
-  var autoPalette = colors.slice();
-  autoPalette.splice(0, 0, '#FFFFFF');
-  autoPalette.push('#000000');
-  autoPalette.sort(function (c1, c2) {
+  var newColors = colors.slice();
+  newColors.splice(0, 0, '#FFFFFF');
+  newColors.push('#000000');
+  newColors.sort(function (c1, c2) {
     return chroma_default()(c1).luminance() > chroma_default()(c2).luminance() ? -1 : 1;
   });
 
   if (!!bezierInterpolation) {
-    autoPalette = chroma_default().bezier(autoPalette).scale().mode(mode).correctLightness().colors(12);
+    return chroma_default().bezier(newColors).scale().mode(mode).correctLightness().colors(12);
   } else {
-    autoPalette = chroma_default().scale(autoPalette).mode(mode).correctLightness().colors(12);
+    return chroma_default().scale(newColors).mode(mode).correctLightness().colors(12);
   }
-
-  autoPalette = _objectSpread(_objectSpread({}, palettesCopy[0]), {}, {
-    source: colors,
-    colors: autoPalette
-  });
-  return autoPalette;
 };
 
 var noop = function noop(palette) {
@@ -10693,11 +10766,8 @@ var Builder = function Builder(props) {
   var sourceSettingID = props.sourceSettingID,
       outputSettingID = props.outputSettingID;
   var sourceSetting = wp.customize(sourceSettingID);
-  var colorSpaceSetting = wp.customize('sm_color_space');
-  var colorInterpolationSetting = wp.customize('sm_color_interpolation');
-  var bezierInterpolationSetting = wp.customize('sm_bezier_interpolation');
-  var useSourcesSetting = wp.customize('sm_use_color_sources');
   var outputSetting = wp.customize(outputSettingID);
+  var variationSetting = wp.customize('sm_site_color_variation');
 
   var _useState = builder_useState(getColorsFromInputValue(sourceSetting())),
       _useState2 = builder_slicedToArray(_useState, 2),
@@ -10706,10 +10776,9 @@ var Builder = function Builder(props) {
 
   var _useState3 = builder_useState({
     correctLightness: true,
-    useSources: useSourcesSetting(),
-    mode: colorSpaceSetting(),
-    colorInterpolation: colorInterpolationSetting(),
-    bezierInterpolation: bezierInterpolationSetting()
+    useSources: true,
+    mode: 'lch',
+    bezierInterpolation: false
   }),
       _useState4 = builder_slicedToArray(_useState3, 2),
       attributes = _useState4[0],
@@ -10721,28 +10790,16 @@ var Builder = function Builder(props) {
 
   var changeListener = function changeListener() {
     setColors(getColorsFromInputValue(sourceSetting()));
-    setAttributes({
-      useSources: useSourcesSetting(),
-      mode: colorSpaceSetting(),
-      colorInterpolation: colorInterpolationSetting(),
-      bezierInterpolation: bezierInterpolationSetting()
-    });
   };
 
   builder_useEffect(function () {
     // Attach the listeners on component mount.
     sourceSetting.bind(changeListener);
-    useSourcesSetting.bind(changeListener);
-    colorSpaceSetting.bind(changeListener);
-    colorInterpolationSetting.bind(changeListener);
-    bezierInterpolationSetting.bind(changeListener); // Detach the listeners on component unmount.
+    variationSetting.bind(changeListener); // Detach the listeners on component unmount.
 
     return function () {
       sourceSetting.unbind(changeListener);
-      useSourcesSetting.unbind(changeListener);
-      colorSpaceSetting.unbind(changeListener);
-      colorInterpolationSetting.unbind(changeListener);
-      bezierInterpolationSetting.unbind(changeListener);
+      variationSetting.unbind(changeListener);
     };
   }, []);
   builder_useEffect(function () {
@@ -10770,7 +10827,9 @@ var Builder = function Builder(props) {
 var Preview = function Preview(props) {
   return /*#__PURE__*/React.createElement("div", {
     className: "palette-preview"
-  }, /*#__PURE__*/React.createElement("div", null, "Color Palette preview"), /*#__PURE__*/React.createElement(PalettesPreview, props));
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "sm-label"
+  }, "Color Palette preview"), /*#__PURE__*/React.createElement(PalettesPreview, props));
 };
 
 var PalettesPreview = function PalettesPreview(props) {
@@ -15916,7 +15975,7 @@ window.customify = window.customify || parent.customify || {};
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "[id=customize-control-sm_advanced_palette_source_control]{padding-bottom:var(--customize-control-spacing-y);border-bottom:var(--customizer-border-color);background-color:var(--sm-customizer-color-1)}.c-palette-builder>*+*{margin-top:15px}.c-palette-builder__header{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;margin-top:-10px;margin-left:-10px}.c-palette-builder__header>*{flex:0 0 auto;margin-top:10px;margin-left:10px}.c-palette-builder__label{font-size:18px;font-weight:700}.c-palette-builder__button{font-size:15px;padding:.66em 1em;background:var(--sm-customizer-color-1);border:2px solid var(--sm-customizer-color-3);border-radius:999em}.c-palette-builder__add{display:flex}.c-palette-builder__add:before{content:\"\";width:1.33em;height:1.33em;background:var(--sm-customizer-color-3);border-radius:50%;margin-left:-0.16em;margin-right:.66em}.c-palette-builder__source-list+.c-palette-builder__source-list{margin-top:10px}.c-palette-builder__source-item-label[class][class]{padding:0;border:0;background:none}.c-palette-builder__source-item-picker{position:relative}.c-palette-builder__source-item-picker .sketch-picker{position:absolute;top:100%;left:0;z-index:100;margin-top:.66em}.c-palette-builder__source-item-picker.active .c-palette-builder__source-item-preview{box-shadow:var(--sm-customizer-color-6) 0 0 0 var(--customizer-field-border-width)}.c-palette-builder__source-item-preview{width:2.615em;height:2.615em;margin:-0.115em;margin-right:.5em;background-color:currentColor;border-radius:50%;flex:0 0 auto;border:var(--customizer-field-border-width) solid var(--sm-customizer-color-2)}[class][class] .c-palette-builder__source-item{background:var(--sm-customizer-color-2);border-radius:999em;padding:1em;display:flex;align-items:center;margin-bottom:5px}[class][class] .c-palette-builder__source-item>*+*{margin-left:5px}", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "[id][id=customize-control-sm_advanced_palette_source_control]{padding-top:calc( 2 * var(--customize-control-spacing-y) );padding-bottom:calc( 2 * var(--customize-control-spacing-y) );border-bottom:var(--customizer-border-color);background-color:var(--sm-customizer-color-1)}.c-palette-builder>*+*{margin-top:var(--sm-customizer-spacing)}.c-palette-builder__source-list+.c-palette-builder__source-list{margin-top:10px}.c-palette-builder__source-item-label[class][class]{font-size:inherit;line-height:inherit;padding:0;border:0;background:none}.c-palette-builder__source-item-picker{position:relative}.c-palette-builder__source-item-picker .sketch-picker{position:absolute;top:100%;left:0;z-index:100;margin-top:.66em}.c-palette-builder__source-item-picker.active .c-palette-builder__source-item-preview{box-shadow:var(--sm-customizer-color-6) 0 0 0 var(--customizer-field-border-width)}.c-palette-builder__source-item-preview{width:2.4em;height:2.4em;margin-right:.4em;background-color:currentColor;border-radius:50%;flex:0 0 auto;border:var(--customizer-field-border-width) solid var(--sm-customizer-color-2)}[class][class] .c-palette-builder__source-item{display:flex;align-items:center;font-size:15px;line-height:1.5;padding:.6em;margin-bottom:.6em;background:var(--sm-customizer-color-2);transition:var(--sm-transition);transition-property:box-shadow}[class][class] .c-palette-builder__source-item:not(:last-child){padding-bottom:.4em;margin-bottom:.2em}[class][class] .c-palette-builder__source-item:not(:first-child){padding-top:.4em}[class][class] .c-palette-builder__source-item:first-child{border-top-left-radius:1.75em;border-top-right-radius:1.75em}[class][class] .c-palette-builder__source-item:last-child{border-bottom-left-radius:1.75em;border-bottom-right-radius:1.75em}[class][class] .c-palette-builder__source-item:hover{box-shadow:var(--sm-customizer-box-shadow-1)}[class][class] .c-palette-builder__source-item>*+*{margin-left:5px}.c-contextual-menu{position:relative}.c-contextual-menu__toggle{width:2.4em;height:2.4em;border-radius:999em;color:var(--sm-customizer-text-color-1);transition:var(--sm-transition);transition-property:background-color}.c-contextual-menu__toggle:before{content:\"\";position:absolute;top:50%;left:50%;width:.2em;height:.2em;border-radius:999em;background-color:currentColor;box-shadow:currentColor .4em 0 0 0,currentColor -0.4em 0 0 0;transform:translate(-50%, -50%)}.c-contextual-menu__toggle span{display:block;text-indent:-999em}.c-contextual-menu--visible .c-contextual-menu__toggle,.c-contextual-menu:hover .c-contextual-menu__toggle{background-color:var(--sm-customizer-color-4)}.c-contextual-menu__list{position:absolute;top:100%;right:0;z-index:100;width:15em;padding:.75em 0;background:var(--sm-customizer-color-1);box-shadow:var(--sm-customizer-box-shadow-2);transition:var(--sm-transition);transition-property:opacity,transform,box-shadow}.c-contextual-menu--hidden .c-contextual-menu__list{box-shadow:var(--sm-customizer-box-shadow-0);transform:translateY(1em);opacity:0;pointer-events:none}.c-contextual-menu__list-item{padding:.75em 1.25em;cursor:pointer}.c-contextual-menu__list-item:hover{background:var(--sm-customizer-color-2)}.customize-control[id*=sm_advanced_palette_output],.customize-control[id*=sm_text_color_switch_master],.customize-control[id*=sm_accent_color_switch_master],.customize-control[id*=sm_text_color_select_master],.customize-control[id*=sm_accent_color_select_master]{display:none}.customize-control[id*=sm_dark_color_switch_slider],.customize-control[id*=sm_dark_color_select_slider]{display:none}", ""]);
 // Exports
 /* harmony default export */ __webpack_exports__["Z"] = (___CSS_LOADER_EXPORT___);
 
@@ -15933,7 +15992,7 @@ ___CSS_LOADER_EXPORT___.push([module.id, "[id=customize-control-sm_advanced_pale
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, ".palette-preview{margin-top:calc( 3 * var(--customizer-spacing) )}.palette-preview-set{margin-top:var(--customizer-spacing)}.palette-preview-set-header+.palette-preview-swatches{margin-top:calc( 0.5 * var(--customizer-spacing) )}.palette-preview-swatches{display:flex}.palette-preview-swatches+.palette-preview-swatches>*:before{padding-top:50%}.palette-preview-swatches>*{flex:1 1 0}.palette-preview-swatches>*:before{padding-top:100%;display:block;content:\"\";background:currentColor}.palette-preview-set-header{display:flex;align-items:center;margin-left:-1em}.palette-preview-set-header>*{margin-left:1em}.palette-preview-source{display:flex}.palette-preview-source-color{width:1em;height:1em;background:currentColor}.palette-preview-source-color:first-child{border-top-left-radius:999em;border-bottom-left-radius:999em}.palette-preview-source-color:last-child{border-top-right-radius:999em;border-bottom-right-radius:999em}", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, ".palette-preview{margin-top:calc( 2 * var(--customizer-spacing) )}.palette-preview-set{margin-top:var(--customizer-spacing)}.palette-preview-set-header+.palette-preview-swatches{margin-top:calc( 0.5 * var(--customizer-spacing) )}.palette-preview-swatches{display:flex}.palette-preview-swatches+.palette-preview-swatches>*:before{padding-top:50%}.palette-preview-swatches>*{flex:1 1 0}.palette-preview-swatches>*:before{padding-top:100%;display:block;content:\"\";background:currentColor}.palette-preview-set-header{display:flex;align-items:center;margin-left:-1em}.palette-preview-set-header>*{margin-left:1em}.palette-preview-source{display:flex}.palette-preview-source-color{width:1em;height:1em;background:currentColor}.palette-preview-source-color:first-child{border-top-left-radius:999em;border-bottom-left-radius:999em}.palette-preview-source-color:last-child{border-top-right-radius:999em;border-bottom-right-radius:999em}", ""]);
 // Exports
 /* harmony default export */ __webpack_exports__["Z"] = (___CSS_LOADER_EXPORT___);
 

@@ -12,6 +12,7 @@ export default class DarkMode {
   constructor( element ) {
 
     this.$element = $( element );
+    this.$html = $( 'html' );
 
     this.$colorSchemeButtons = $( COLOR_SCHEME_BUTTON );
     this.$colorSchemeButtonsLink = this.$colorSchemeButtons.children( 'a' );
@@ -59,6 +60,15 @@ export default class DarkMode {
         this.darkModeSetting = newValue;
         this.update();
       } );
+
+      const previewer = wp?.customize?.previewer;
+
+      if ( previewer ) {
+        previewer.bind( 'ready', () => {
+          const targetWindow = previewer.preview.targetWindow();
+          this.$html = this.$html.add( targetWindow.document.documentElement );
+        } );
+      }
     } );
   }
 
@@ -97,7 +107,8 @@ export default class DarkMode {
   }
 
   update() {
-    $html.toggleClass( 'is-dark', this.isCompiledDark() );
+    console.log( 'aici' );
+    this.$html.toggleClass( 'is-dark', this.isCompiledDark() );
   }
 }
 

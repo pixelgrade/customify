@@ -33,6 +33,7 @@ var DarkMode = /*#__PURE__*/function () {
     _classCallCheck(this, DarkMode);
 
     this.$element = jquery__WEBPACK_IMPORTED_MODULE_0___default()(element);
+    this.$html = jquery__WEBPACK_IMPORTED_MODULE_0___default()('html');
     this.$colorSchemeButtons = jquery__WEBPACK_IMPORTED_MODULE_0___default()(COLOR_SCHEME_BUTTON);
     this.$colorSchemeButtonsLink = this.$colorSchemeButtons.children('a');
     this.matchMedia = window.matchMedia('(prefers-color-scheme: dark)');
@@ -71,6 +72,8 @@ var DarkMode = /*#__PURE__*/function () {
       }
 
       api.bind('ready', function () {
+        var _wp, _wp$customize;
+
         var setting = api('sm_dark_mode_advanced');
         localStorage.removeItem(TEMP_STORAGE_ITEM);
         _this2.darkModeSetting = setting();
@@ -83,6 +86,14 @@ var DarkMode = /*#__PURE__*/function () {
 
           _this2.update();
         });
+        var previewer = (_wp = wp) === null || _wp === void 0 ? void 0 : (_wp$customize = _wp.customize) === null || _wp$customize === void 0 ? void 0 : _wp$customize.previewer;
+
+        if (previewer) {
+          previewer.bind('ready', function () {
+            var targetWindow = previewer.preview.targetWindow();
+            _this2.$html = _this2.$html.add(targetWindow.document.documentElement);
+          });
+        }
       });
     }
   }, {
@@ -124,7 +135,8 @@ var DarkMode = /*#__PURE__*/function () {
   }, {
     key: "update",
     value: function update() {
-      $html.toggleClass('is-dark', this.isCompiledDark());
+      console.log('aici');
+      this.$html.toggleClass('is-dark', this.isCompiledDark());
     }
   }]);
 
