@@ -10175,6 +10175,16 @@ var createContext = wp.element.createContext;
 var ConfigContext = createContext();
 /* harmony default export */ var context = (ConfigContext);
 ;// CONCATENATED MODULE: ./src/js/customizer/colors/color-palette-builder/components/source-colors/utils.js
+function _objectWithoutProperties(source, excluded) { if (source == null) return {}; var target = _objectWithoutPropertiesLoose(source, excluded); var key, i; if (Object.getOwnPropertySymbols) { var sourceSymbolKeys = Object.getOwnPropertySymbols(source); for (i = 0; i < sourceSymbolKeys.length; i++) { key = sourceSymbolKeys[i]; if (excluded.indexOf(key) >= 0) continue; if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue; target[key] = source[key]; } } return target; }
+
+function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
+
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { utils_defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function utils_defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 var deepCopy = function deepCopy(object) {
   return JSON.parse(JSON.stringify(object));
 };
@@ -10199,7 +10209,16 @@ var getNewColorGroup = function getNewColorGroup() {
 };
 var addNewColorGroup = function addNewColorGroup(config) {
   var groupIndex = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
-  var newConfig = deepCopy(config);
+  var newConfig = deepCopy(config).map(function (group) {
+    return _objectSpread(_objectSpread({}, group), {}, {
+      sources: group.sources.map(function (color) {
+        var showPicker = color.showPicker,
+            otherProps = _objectWithoutProperties(color, ["showPicker"]);
+
+        return otherProps;
+      })
+    });
+  });
   newConfig.splice(groupIndex + 1, 0, getNewColorGroup());
   return newConfig;
 };
@@ -10561,11 +10580,11 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return utils_arrayLik
 
 function utils_arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+function utils_ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { utils_defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function utils_objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { utils_ownKeys(Object(source), true).forEach(function (key) { builder_utils_defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { utils_ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
-function utils_defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+function builder_utils_defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 
 
@@ -10668,7 +10687,7 @@ var getSourceIndex = function getSourceIndex(palette) {
 };
 var mapAddTextColors = function mapAddTextColors(palette) {
   palette.textColors = palette.colors.slice(9, 11).map(function (color, index) {
-    return _objectSpread({
+    return utils_objectSpread({
       value: getTextColor(palette.source[0], index)
     }, color);
   });
@@ -10686,7 +10705,7 @@ var mapAddSourceIndex = function mapAddSourceIndex(attributes) {
       }), attributes);
     }
 
-    return _objectSpread({
+    return utils_objectSpread({
       sourceIndex: sourceIndex
     }, palette);
   };
@@ -11040,13 +11059,27 @@ var Builder = function Builder(props) {
       config: config,
       setConfig: setConfig
     }
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "sm-label"
-  }, "Brand Colors"), /*#__PURE__*/React.createElement(SourceColors, null), /*#__PURE__*/React.createElement("div", {
-    className: "sm-label"
-  }, "Color Palette preview"), /*#__PURE__*/React.createElement(Preview, {
+  }, /*#__PURE__*/React.createElement(Control, {
+    label: 'Brand Colors'
+  }, /*#__PURE__*/React.createElement(SourceColors, null)), /*#__PURE__*/React.createElement(Control, {
+    label: 'Color Palette preview'
+  }, /*#__PURE__*/React.createElement(Preview, {
     palettes: palettes
-  }), /*#__PURE__*/React.createElement("style", null, CSSOutput));
+  })), /*#__PURE__*/React.createElement("style", null, CSSOutput));
+};
+
+var Control = function Control(props) {
+  var label = props.label,
+      children = props.children;
+  return /*#__PURE__*/React.createElement("div", {
+    className: "sm-control"
+  }, label && /*#__PURE__*/React.createElement("div", {
+    className: "sm-control__header"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "sm-control__label"
+  }, label)), children && /*#__PURE__*/React.createElement("div", {
+    className: "sm-control__body"
+  }, children));
 };
 ;// CONCATENATED MODULE: ./src/js/customizer/colors/color-palette-builder/index.js
 
@@ -16175,7 +16208,7 @@ ___CSS_LOADER_EXPORT___.push([module.id, ".palette-preview{margin-top:calc( 2 * 
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "[id][id=customize-control-sm_advanced_palette_source_control]{padding-top:calc( 2 * var(--customize-control-spacing-y) );padding-bottom:calc( 2 * var(--customize-control-spacing-y) );border-bottom:var(--customizer-border-color);background-color:var(--sm-customizer-color-1)}.c-palette-builder>*+*{margin-top:var(--sm-customizer-spacing)}.c-palette-builder__source-list+.c-palette-builder__source-list{margin-top:10px}.c-palette-builder__source-item-label[class][class]{display:block;flex:1 1 auto;padding:0;border:0;font-size:inherit;line-height:inherit;background:none}.c-palette-builder__source-item-picker{position:relative}.c-palette-builder__source-item-picker .sketch-picker{position:absolute;top:100%;left:0;z-index:100;margin-top:.66em}.c-palette-builder__source-item-picker.active .c-palette-builder__source-item-preview{box-shadow:var(--sm-customizer-color-6) 0 0 0 var(--customizer-field-border-width)}.c-palette-builder__source-item-preview{width:2.4em;height:2.4em;margin-right:.4em;background-color:currentColor;border-radius:50%;flex:0 0 auto;border:var(--customizer-field-border-width) solid var(--sm-customizer-color-2)}[class][class] .c-palette-builder__source-item{display:flex;align-items:center;font-size:15px;line-height:1.5;padding:.6em;margin-bottom:.6em;background:var(--sm-customizer-color-2);transition:var(--sm-transition);transition-property:box-shadow}[class][class] .c-palette-builder__source-item:not(:last-child){padding-bottom:.4em;margin-bottom:.2em}[class][class] .c-palette-builder__source-item:not(:first-child){padding-top:.4em}[class][class] .c-palette-builder__source-item:first-child{border-top-left-radius:1.75em;border-top-right-radius:1.75em}[class][class] .c-palette-builder__source-item:last-child{border-bottom-left-radius:1.75em;border-bottom-right-radius:1.75em}[class][class] .c-palette-builder__source-item:hover{box-shadow:var(--sm-customizer-box-shadow-1)}[class][class] .c-palette-builder__source-item .c-contextual-menu{transition:var(--sm-transition);transition-property:opacity}[class][class] .c-palette-builder__source-item:not(.c-palette-builder__source-item--active) .c-contextual-menu{opacity:0}[class][class] .c-palette-builder__source-item>*+*{margin-left:5px}", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "[id][id=customize-control-sm_advanced_palette_source_control]{padding-top:calc( 2 * var(--customize-control-spacing-y) );padding-bottom:calc( 2 * var(--customize-control-spacing-y) );border-bottom:var(--customizer-border-color);background-color:var(--sm-customizer-color-1)}.c-palette-builder>*+*{margin-top:var(--sm-customizer-spacing)}.c-palette-builder__source-list+.c-palette-builder__source-list{margin-top:10px}.c-palette-builder__source-item-label[class][class]{display:block;flex:1 1 auto;padding:0;border:0;font-size:inherit;line-height:inherit;background:none}.c-palette-builder__source-item-picker{position:relative}.c-palette-builder__source-item-picker .sketch-picker{position:absolute;top:100%;left:0;z-index:100;margin-top:.66em}.c-palette-builder__source-item-picker.active .c-palette-builder__source-item-preview{box-shadow:var(--sm-customizer-color-6) 0 0 0 var(--customizer-field-border-width)}.c-palette-builder__source-item-preview{width:2.4em;height:2.4em;margin-right:.4em;background-color:currentColor;border-radius:50%;flex:0 0 auto;border:var(--customizer-field-border-width) solid var(--sm-customizer-color-2)}[class][class] .c-palette-builder__source-item{display:flex;align-items:center;font-size:15px;line-height:1.5;padding:.6em;margin-bottom:.6em;background:var(--sm-customizer-color-2);transition:var(--sm-transition);transition-property:box-shadow;cursor:pointer}[class][class] .c-palette-builder__source-item:not(:last-child){padding-bottom:.4em;margin-bottom:.2em}[class][class] .c-palette-builder__source-item:not(:first-child){padding-top:.4em}[class][class] .c-palette-builder__source-item:first-child{border-top-left-radius:1.75em;border-top-right-radius:1.75em}[class][class] .c-palette-builder__source-item:last-child{border-bottom-left-radius:1.75em;border-bottom-right-radius:1.75em}[class][class] .c-palette-builder__source-item:hover{box-shadow:var(--sm-customizer-box-shadow-1)}[class][class] .c-palette-builder__source-item .c-contextual-menu{transition:var(--sm-transition);transition-property:opacity}[class][class] .c-palette-builder__source-item:not(.c-palette-builder__source-item--active) .c-contextual-menu{opacity:0}[class][class] .c-palette-builder__source-item>*+*{margin-left:5px}", ""]);
 // Exports
 /* harmony default export */ __webpack_exports__["Z"] = (___CSS_LOADER_EXPORT___);
 

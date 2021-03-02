@@ -21,7 +21,15 @@ export const getNewColorGroup = () => {
 }
 
 export const addNewColorGroup = ( config, groupIndex = 0 ) => {
-  const newConfig = deepCopy( config );
+  const newConfig = deepCopy( config ).map( group => {
+    return {
+      ...group,
+      sources: group.sources.map( color => {
+        const { showPicker, ...otherProps } = color;
+        return otherProps;
+      } )
+    }
+  } );
   newConfig.splice( groupIndex + 1, 0, getNewColorGroup() );
   return newConfig;
 };

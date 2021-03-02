@@ -75,6 +75,7 @@
     background: var(--sm-customizer-color-2);
     transition: var(--sm-transition);
     transition-property: box-shadow;
+    cursor: pointer;
 
     &:not(:last-child) {
       padding-bottom: 0.4em;

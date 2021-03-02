@@ -72,11 +72,28 @@ const Builder = ( props ) => {
 
   return (
       <ConfigContext.Provider value={ { config, setConfig } }>
-        <div className="sm-label">Brand Colors</div>
-        <SourceColors />
-        <div className="sm-label">Color Palette preview</div>
-        <Preview palettes={ palettes } />
+        <Control label={ 'Brand Colors' }>
+          <SourceColors />
+        </Control>
+        <Control label={ 'Color Palette preview' }>
+          <Preview palettes={ palettes } />
+        </Control>
         <style>{ CSSOutput }</style>
       </ConfigContext.Provider>
   );
+}
+
+const Control = ( props ) => {
+  const { label, children } = props;
+
+  return (
+    <div className="sm-control">
+      { label &&
+        <div className="sm-control__header">
+          <div className="sm-control__label">{ label }</div>
+        </div>
+      }
+      { children && <div className="sm-control__body">{ children }</div> }
+    </div>
+  )
 }

@@ -149,10 +149,11 @@ class Customify_Color_Palettes {
 		      ),
 		      'sm_site_color_variation' => array(
 			      'type'         => 'range',
+			      'desc'         => wp_kses( __( 'Shift the <strong>start position</strong> of the color palette. Use 0 for white, 1-2 for subtle shades, 3-6 for colorful, above 7 for darker shades.', 'customify' ), array( 'strong' => array() ) ),
 			      'live'         => true,
 			      'setting_type' => 'option',
 			      'setting_id'   => 'sm_site_color_variation',
-			      'label'        => esc_html__( 'Variation', '__theme_txtd' ),
+			      'label'        => esc_html__( 'Palette Basis Offset', '__theme_txtd' ),
 			      'default'      => 1,
 			      'input_attrs'  => array(
 				      'min'  => 1,
@@ -232,16 +233,17 @@ class Customify_Color_Palettes {
 		      ),
 		      'sm_coloration_level'            => array(
 			      'type'         => 'sm_radio',
+			      'desc'         => wp_kses( __( 'Adjust <strong>how much color</strong> you want to add to your site. For more control over elements, you can edit them individually.', 'customify' ), array( 'strong' => array() ) ),
 			      'setting_type' => 'option',
 			      'setting_id'   => 'sm_coloration_level',
 			      'label'        => esc_html__( 'Coloration Level', 'customify' ),
 			      'default'      => 0,
 			      'live'         => true,
 			      'choices'      => array(
-			      	'0' => 'Low',
-			      	'50' => 'Medium',
-			      	'75' => 'High',
-			      	'100' => 'Striking',
+				      '0'   => 'Low',
+				      '50'  => 'Medium',
+				      '75'  => 'High',
+				      '100' => 'Striking',
 			      ),
 		      ),
 		      'sm_dark_color_switch_slider'    => array(
