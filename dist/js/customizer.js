@@ -10275,6 +10275,16 @@ var SourceColors = function SourceColors() {
     if (!config.length) {
       setConfig(addNewColorGroup(config));
     }
+
+    console.log(config.filter(function (group) {
+      return !!group.sources.length;
+    }).length);
+
+    if (!config.filter(function (group) {
+      return !!group.sources.length;
+    }).length) {
+      setConfig([]);
+    }
   }, [config]);
   return /*#__PURE__*/React.createElement("div", {
     className: "c-palette-builder__source-list"

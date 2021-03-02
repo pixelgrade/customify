@@ -18,9 +18,17 @@ const SourceColors = () => {
   const { config, setConfig } = useContext( ConfigContext );
 
   useEffect( () => {
+
     if ( ! config.length ) {
       setConfig( addNewColorGroup( config ) );
     }
+
+    console.log( config.filter( group => { return !! group.sources.length } ).length );
+
+    if ( ! config.filter( group => { return !! group.sources.length } ).length ) {
+      setConfig( [] );
+    }
+
   }, [ config ] );
 
   return (
