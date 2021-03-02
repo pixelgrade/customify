@@ -107,12 +107,8 @@ export default class DarkMode {
   }
 
   update() {
-    console.log( 'aici' );
     this.$html.toggleClass( 'is-dark', this.isCompiledDark() );
   }
 }
 
 const Dark = new DarkMode();
-
-window.myApi = {};
-window.myApi.isDark = Dark.isCompiledDark.bind( Dark );

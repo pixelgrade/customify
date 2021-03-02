@@ -20,11 +20,15 @@
 }
 
 .c-palette-builder__source-item-label[class][class] {
-  font-size: inherit;
-  line-height: inherit;
+  display: block;
+  flex: 1 1 auto;
 
   padding: 0;
   border: 0;
+
+  font-size: inherit;
+  line-height: inherit;
+
   background: none;
 }
 

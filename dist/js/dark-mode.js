@@ -135,7 +135,6 @@ var DarkMode = /*#__PURE__*/function () {
   }, {
     key: "update",
     value: function update() {
-      console.log('aici');
       this.$html.toggleClass('is-dark', this.isCompiledDark());
     }
   }]);
@@ -145,8 +144,6 @@ var DarkMode = /*#__PURE__*/function () {
 
 
 var Dark = new DarkMode();
-window.myApi = {};
-window.myApi.isDark = Dark.isCompiledDark.bind(Dark);
 
 /***/ }),
 

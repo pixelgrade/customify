@@ -12,6 +12,7 @@ const ContextualMenu = ( props ) => {
   const [ isOpen, setIsOpen ] = useState( false );
 
   const onToggle = typeof props.onToggle === 'function' ? props.onToggle : ( isOpen ) => {};
+  const onClick = typeof props.onClick === 'function' ? props.onClick : ( event ) => { event.stopPropagation() };
 
   useEffect( () => {
     onToggle( isOpen );
@@ -24,14 +25,14 @@ const ContextualMenu = ( props ) => {
   } );
 
   return (
-    <div ref={ ref } className={ `c-contextual-menu c-contextual-menu--${ isOpen ? 'visible' : 'hidden' }`}>
+    <div onClick={ onClick } ref={ ref } className={ `c-contextual-menu c-contextual-menu--${ isOpen ? 'visible' : 'hidden' }`}>
       <button className="c-contextual-menu__toggle" onClick={ (e) => {
         e.preventDefault();
         setIsOpen( ! isOpen ) } }>
         <span>Toggle Menu</span>
       </button>
       <div className="c-contextual-menu__list">
-        { actions.map( ( { label, callback }, index ) => {
+        { actions.map( ( { label, callback, className }, index ) => {
 
           const onClick = ( e ) => {
             e.preventDefault();
@@ -40,7 +41,7 @@ const ContextualMenu = ( props ) => {
           };
 
           return (
-            <div key={ index } className="c-contextual-menu__list-item" onClick={ onClick }>
+            <div key={ index } className={ `c-contextual-menu__list-item ${ className }` } onClick={ onClick }>
               { label }
             </div>
           )

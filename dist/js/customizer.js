@@ -94,7 +94,7 @@ exports.Z = function (_ref) {
 
 /***/ }),
 
-/***/ 214:
+/***/ 794:
 /***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -112,25 +112,6 @@ __webpack_require__.d(__webpack_exports__, {
 // EXTERNAL MODULE: external "jQuery"
 var external_jQuery_ = __webpack_require__(3609);
 var external_jQuery_default = /*#__PURE__*/__webpack_require__.n(external_jQuery_);
-// EXTERNAL MODULE: ./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js
-var injectStylesIntoStyleTag = __webpack_require__(3379);
-var injectStylesIntoStyleTag_default = /*#__PURE__*/__webpack_require__.n(injectStylesIntoStyleTag);
-// EXTERNAL MODULE: ./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/js/customizer/colors/color-palette-builder/components/builder/style.scss
-var style = __webpack_require__(2140);
-;// CONCATENATED MODULE: ./src/js/customizer/colors/color-palette-builder/components/builder/style.scss
-
-            
-
-var options = {};
-
-options.insert = "head";
-options.singleton = false;
-
-var update = injectStylesIntoStyleTag_default()(style/* default */.Z, options);
-
-
-
-/* harmony default export */ var builder_style = (style/* default.locals */.Z.locals || {});
 // EXTERNAL MODULE: ./node_modules/react/index.js
 var react = __webpack_require__(7294);
 // EXTERNAL MODULE: ./node_modules/reactcss/lib/index.js
@@ -10029,22 +10010,68 @@ Google.defaultProps = {
 
 
 
+;// CONCATENATED MODULE: ./src/js/customizer/colors/color-palette-builder/components/source-colors/color-picker.js
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+
+
+var useState = wp.element.useState;
+var ColorPicker = function ColorPicker(props) {
+  var hex = props.hex,
+      onChange = props.onChange,
+      isOpen = props.isOpen;
+
+  var _useState = useState(hex),
+      _useState2 = _slicedToArray(_useState, 2),
+      color = _useState2[0],
+      setColor = _useState2[1];
+
+  return /*#__PURE__*/react.createElement("div", {
+    className: "c-palette-builder__source-item-picker ".concat(isOpen ? 'active' : '')
+  }, /*#__PURE__*/react.createElement("div", {
+    className: "c-palette-builder__source-item-preview",
+    style: {
+      color: color
+    }
+  }), isOpen && /*#__PURE__*/react.createElement(sketch_Sketch, {
+    color: color,
+    onChange: function onChange(newColor) {
+      setColor(newColor.hex);
+    },
+    onChangeComplete: function onChangeComplete(newColor) {
+      onChange(newColor.hex);
+    }
+  }));
+};
+// EXTERNAL MODULE: ./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js
+var injectStylesIntoStyleTag = __webpack_require__(3379);
+var injectStylesIntoStyleTag_default = /*#__PURE__*/__webpack_require__.n(injectStylesIntoStyleTag);
 // EXTERNAL MODULE: ./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/js/customizer/colors/color-palette-builder/components/contextual-menu/style.scss
-var contextual_menu_style = __webpack_require__(502);
+var style = __webpack_require__(502);
 ;// CONCATENATED MODULE: ./src/js/customizer/colors/color-palette-builder/components/contextual-menu/style.scss
 
             
 
-var style_options = {};
+var options = {};
 
-style_options.insert = "head";
-style_options.singleton = false;
+options.insert = "head";
+options.singleton = false;
 
-var style_update = injectStylesIntoStyleTag_default()(contextual_menu_style/* default */.Z, style_options);
+var update = injectStylesIntoStyleTag_default()(style/* default */.Z, options);
 
 
 
-/* harmony default export */ var components_contextual_menu_style = (contextual_menu_style/* default.locals */.Z.locals || {});
+/* harmony default export */ var contextual_menu_style = (style/* default.locals */.Z.locals || {});
 ;// CONCATENATED MODULE: ./src/js/customizer/utils/use-outside-click.js
 var useEffect = wp.element.useEffect;
 /**
@@ -10073,34 +10100,37 @@ function useOutsideClick(ref, callback) {
 
 /* harmony default export */ var use_outside_click = (useOutsideClick);
 ;// CONCATENATED MODULE: ./src/js/customizer/colors/color-palette-builder/components/contextual-menu/index.js
-function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
+function contextual_menu_slicedToArray(arr, i) { return contextual_menu_arrayWithHoles(arr) || contextual_menu_iterableToArrayLimit(arr, i) || contextual_menu_unsupportedIterableToArray(arr, i) || contextual_menu_nonIterableRest(); }
 
-function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function contextual_menu_nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+function contextual_menu_unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return contextual_menu_arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return contextual_menu_arrayLikeToArray(o, minLen); }
 
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+function contextual_menu_arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
-function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+function contextual_menu_iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
-function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+function contextual_menu_arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 
 
 var _wp$element = wp.element,
     contextual_menu_useEffect = _wp$element.useEffect,
-    useState = _wp$element.useState,
+    contextual_menu_useState = _wp$element.useState,
     useRef = _wp$element.useRef;
 
 var ContextualMenu = function ContextualMenu(props) {
   var actions = props.actions;
 
-  var _useState = useState(false),
-      _useState2 = _slicedToArray(_useState, 2),
+  var _useState = contextual_menu_useState(false),
+      _useState2 = contextual_menu_slicedToArray(_useState, 2),
       isOpen = _useState2[0],
       setIsOpen = _useState2[1];
 
   var onToggle = typeof props.onToggle === 'function' ? props.onToggle : function (isOpen) {};
+  var onClick = typeof props.onClick === 'function' ? props.onClick : function (event) {
+    event.stopPropagation();
+  };
   contextual_menu_useEffect(function () {
     onToggle(isOpen);
   }, [isOpen]);
@@ -10109,6 +10139,7 @@ var ContextualMenu = function ContextualMenu(props) {
     setIsOpen(false);
   });
   return /*#__PURE__*/React.createElement("div", {
+    onClick: onClick,
     ref: ref,
     className: "c-contextual-menu c-contextual-menu--".concat(isOpen ? 'visible' : 'hidden')
   }, /*#__PURE__*/React.createElement("button", {
@@ -10121,7 +10152,8 @@ var ContextualMenu = function ContextualMenu(props) {
     className: "c-contextual-menu__list"
   }, actions.map(function (_ref, index) {
     var label = _ref.label,
-        callback = _ref.callback;
+        callback = _ref.callback,
+        className = _ref.className;
 
     var onClick = function onClick(e) {
       e.preventDefault();
@@ -10131,181 +10163,237 @@ var ContextualMenu = function ContextualMenu(props) {
 
     return /*#__PURE__*/React.createElement("div", {
       key: index,
-      className: "c-contextual-menu__list-item",
+      className: "c-contextual-menu__list-item ".concat(className),
       onClick: onClick
     }, label);
   })));
 };
 
 
-// EXTERNAL MODULE: ./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/js/customizer/colors/color-palette-builder/components/builder/components/color-controls/style.scss
-var color_controls_style = __webpack_require__(8451);
-;// CONCATENATED MODULE: ./src/js/customizer/colors/color-palette-builder/components/builder/components/color-controls/style.scss
+;// CONCATENATED MODULE: ./src/js/customizer/colors/color-palette-builder/context.js
+var createContext = wp.element.createContext;
+var ConfigContext = createContext();
+/* harmony default export */ var context = (ConfigContext);
+;// CONCATENATED MODULE: ./src/js/customizer/colors/color-palette-builder/components/source-colors/utils.js
+var deepCopy = function deepCopy(object) {
+  return JSON.parse(JSON.stringify(object));
+};
+
+var getNewColorHex = function getNewColorHex() {
+  return '#111111';
+};
+var getNewColor = function getNewColor() {
+  var label = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'Color';
+  return {
+    uid: "color_".concat(new Date().getTime()),
+    showPicker: true,
+    label: label,
+    value: getNewColorHex()
+  };
+};
+var getNewColorGroup = function getNewColorGroup() {
+  return {
+    uid: "color_group_".concat(new Date().getTime()),
+    sources: [getNewColor()]
+  };
+};
+var addNewColorGroup = function addNewColorGroup(config) {
+  var groupIndex = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+  var newConfig = deepCopy(config);
+  newConfig.splice(groupIndex + 1, 0, getNewColorGroup());
+  return newConfig;
+};
+var addNewColorToGroup = function addNewColorToGroup(config, groupIndex, index) {
+  var newConfig = deepCopy(config);
+  newConfig[groupIndex].sources.splice(index + 1, 0, getNewColor('Interpolated Color'));
+  return newConfig;
+};
+var deleteColor = function deleteColor(config, groupIndex, index) {
+  var newConfig = deepCopy(config);
+  newConfig[groupIndex].sources.splice(index, 1);
+
+  if (!newConfig[groupIndex].sources.length) {
+    newConfig.splice(groupIndex, 1);
+  }
+
+  return newConfig;
+};
+var updateColor = function updateColor(config, groupIndex, index, newValue) {
+  var newConfig = deepCopy(config);
+  newConfig[groupIndex].sources[index] = Object.assign({}, newConfig[groupIndex].sources[index], newValue);
+  return newConfig;
+};
+// EXTERNAL MODULE: ./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/js/customizer/colors/color-palette-builder/components/source-colors/style.scss
+var source_colors_style = __webpack_require__(998);
+;// CONCATENATED MODULE: ./src/js/customizer/colors/color-palette-builder/components/source-colors/style.scss
 
             
 
-var color_controls_style_options = {};
+var style_options = {};
 
-color_controls_style_options.insert = "head";
-color_controls_style_options.singleton = false;
+style_options.insert = "head";
+style_options.singleton = false;
 
-var color_controls_style_update = injectStylesIntoStyleTag_default()(color_controls_style/* default */.Z, color_controls_style_options);
-
-
-
-/* harmony default export */ var components_color_controls_style = (color_controls_style/* default.locals */.Z.locals || {});
-;// CONCATENATED MODULE: ./src/js/customizer/colors/color-palette-builder/components/builder/components/color-controls/index.js
-function color_controls_slicedToArray(arr, i) { return color_controls_arrayWithHoles(arr) || color_controls_iterableToArrayLimit(arr, i) || color_controls_unsupportedIterableToArray(arr, i) || color_controls_nonIterableRest(); }
-
-function color_controls_nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-
-function color_controls_unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return color_controls_arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return color_controls_arrayLikeToArray(o, minLen); }
-
-function color_controls_arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
-
-function color_controls_iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
-
-function color_controls_arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+var style_update = injectStylesIntoStyleTag_default()(source_colors_style/* default */.Z, style_options);
 
 
 
+/* harmony default export */ var components_source_colors_style = (source_colors_style/* default.locals */.Z.locals || {});
+;// CONCATENATED MODULE: ./src/js/customizer/colors/color-palette-builder/components/source-colors/index.js
+function source_colors_slicedToArray(arr, i) { return source_colors_arrayWithHoles(arr) || source_colors_iterableToArrayLimit(arr, i) || source_colors_unsupportedIterableToArray(arr, i) || source_colors_nonIterableRest(); }
+
+function source_colors_nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function source_colors_unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return source_colors_arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return source_colors_arrayLikeToArray(o, minLen); }
+
+function source_colors_arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function source_colors_iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function source_colors_arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+function source_colors_extends() { source_colors_extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return source_colors_extends.apply(this, arguments); }
 
 
-var color_controls_wp$element = wp.element,
-    color_controls_useEffect = color_controls_wp$element.useEffect,
-    color_controls_useState = color_controls_wp$element.useState,
-    color_controls_useRef = color_controls_wp$element.useRef;
 
 
-var ColorControls = function ColorControls(props) {
-  var colors = props.colors,
-      setColors = props.setColors;
-  color_controls_useEffect(function () {
-    if (!colors.length) {
-      addNewColorGroup();
+
+
+var source_colors_wp$element = wp.element,
+    useContext = source_colors_wp$element.useContext,
+    source_colors_useEffect = source_colors_wp$element.useEffect,
+    source_colors_useState = source_colors_wp$element.useState,
+    source_colors_useRef = source_colors_wp$element.useRef;
+
+
+var SourceColors = function SourceColors() {
+  var _useContext = useContext(context),
+      config = _useContext.config,
+      setConfig = _useContext.setConfig;
+
+  source_colors_useEffect(function () {
+    if (!config.length) {
+      setConfig(addNewColorGroup(config));
     }
-  }, [colors]);
-
-  var addNewColorGroup = function addNewColorGroup() {
-    var groupIndex = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
-    var newColors = colors.slice();
-    var newGroup = {
-      uid: "color_group_".concat(new Date().getTime()),
-      sources: [{
-        uid: "color_".concat(new Date().getTime()),
-        showPicker: true,
-        label: 'Dark',
-        value: '#111111'
-      }]
-    };
-    newColors.splice(groupIndex + 1, 0, newGroup);
-    setColors(newColors);
-  };
-
-  var addNewColorToGroup = function addNewColorToGroup(groupIndex) {
-    var newColors = colors.slice();
-    var newColor = {
-      uid: "color_".concat(new Date().getTime()),
-      showPicker: true,
-      label: 'Interpolated Color',
-      value: '#111111'
-    };
-    newColors[groupIndex].sources.push(newColor);
-    setColors(newColors);
-  };
-
-  var deleteColor = function deleteColor(groupIndex, index) {
-    var newColors = colors.slice();
-    newColors[groupIndex].sources.splice(index, 1);
-
-    if (!newColors[groupIndex].sources.length) {
-      newColors.splice(groupIndex, 1);
-    }
-
-    setColors(newColors);
-  };
-
-  var updateColor = function updateColor(groupIndex, index, newValue) {
-    var newColors = colors.slice();
-    newColors[groupIndex].sources[index] = Object.assign({}, newColors[groupIndex].sources[index], newValue);
-    setColors(newColors);
-  };
-
-  return /*#__PURE__*/react.createElement("div", {
-    className: "c-palette-builder"
-  }, /*#__PURE__*/react.createElement("div", {
-    className: "sm-label"
-  }, "Brand Colors"), /*#__PURE__*/react.createElement("div", {
+  }, [config]);
+  return /*#__PURE__*/React.createElement("div", {
     className: "c-palette-builder__source-list"
-  }, colors.map(function (colorGroup, groupIndex) {
-    var colors = colorGroup.sources || colorGroup;
-    return /*#__PURE__*/react.createElement("div", {
-      key: colorGroup.uid,
-      className: "c-palette-builder__source-group"
-    }, colors.map(function (color, index) {
-      var actions = [{
-        label: 'Interpolate Color',
-        callback: function callback() {
-          addNewColorToGroup(groupIndex);
-        }
-      }, {
-        label: 'Add Color',
-        callback: function callback() {
-          addNewColorGroup(groupIndex);
-        }
-      }, //                      { label: 'Rename Color', callback: () => {} },
-      {
-        label: 'Remove Color',
-        callback: function callback() {
-          deleteColor(groupIndex, index);
-        }
-      }];
-      return /*#__PURE__*/react.createElement(PaletteSourceItem, {
-        key: color.uid,
-        actions: actions,
-        color: color,
-        showPicker: color.showPicker,
-        onChange: function onChange(newValue) {
-          updateColor(groupIndex, index, newValue);
-        }
-      });
+  }, config.map(function (group, groupIndex) {
+    return /*#__PURE__*/React.createElement(SourceColorsGroup, source_colors_extends({}, group, {
+      index: groupIndex
     }));
-  })));
+  }));
 };
 
-var PaletteSourceItem = function PaletteSourceItem(props) {
-  var color = props.color,
-      _onChange = props.onChange,
-      actions = props.actions,
-      showPicker = props.showPicker;
+var SourceColorsGroup = function SourceColorsGroup(props) {
+  var uid = props.uid,
+      sources = props.sources;
+  var groupIndex = props.index;
+  return /*#__PURE__*/React.createElement("div", {
+    key: uid,
+    className: "c-palette-builder__source-group"
+  }, sources.map(function (color, index) {
+    return /*#__PURE__*/React.createElement(SourceColorControl, {
+      key: color.uid,
+      groupIndex: groupIndex,
+      index: index,
+      color: color,
+      showPicker: color.showPicker
+    });
+  }));
+};
 
-  var _useState = color_controls_useState(false),
-      _useState2 = color_controls_slicedToArray(_useState, 2),
+var SourceColorControl = function SourceColorControl(props) {
+  var color = props.color,
+      index = props.index,
+      groupIndex = props.groupIndex;
+
+  var _useState = source_colors_useState(false),
+      _useState2 = source_colors_slicedToArray(_useState, 2),
       active = _useState2[0],
       setActive = _useState2[1];
 
-  var _useState3 = color_controls_useState(false),
-      _useState4 = color_controls_slicedToArray(_useState3, 2),
+  var _useState3 = source_colors_useState(false),
+      _useState4 = source_colors_slicedToArray(_useState3, 2),
       hover = _useState4[0],
       setHover = _useState4[1];
 
-  var _useState5 = color_controls_useState(false),
-      _useState6 = color_controls_slicedToArray(_useState5, 2),
+  var _useState5 = source_colors_useState(false),
+      _useState6 = source_colors_slicedToArray(_useState5, 2),
       menuIsOpen = _useState6[0],
       setMenuIsOpen = _useState6[1];
 
-  color_controls_useEffect(function () {
+  var _useState7 = source_colors_useState(false),
+      _useState8 = source_colors_slicedToArray(_useState7, 2),
+      editable = _useState8[0],
+      setEditable = _useState8[1];
+
+  var _useState9 = source_colors_useState(props.showPicker),
+      _useState10 = source_colors_slicedToArray(_useState9, 2),
+      showPicker = _useState10[0],
+      setShowPicker = _useState10[1];
+
+  var _useContext2 = useContext(context),
+      config = _useContext2.config,
+      setConfig = _useContext2.setConfig;
+
+  var _onChange = function onChange(newValue) {
+    setConfig(updateColor(config, groupIndex, index, newValue));
+  };
+
+  var actions = [{
+    label: 'Interpolate Color',
+    callback: function callback() {
+      setConfig(addNewColorToGroup(config, groupIndex, index));
+    }
+  }, {
+    label: 'Add Color',
+    callback: function callback() {
+      setConfig(addNewColorGroup(config, groupIndex));
+    }
+  }, {
+    label: 'Rename Color',
+    callback: function callback() {
+      setEditable(true);
+    }
+  }, {
+    label: 'Remove Color',
+    callback: function callback() {
+      setConfig(deleteColor(config, groupIndex, index));
+    },
+    className: 'c-contextual-menu__list-item--danger'
+  }];
+  var inputRef = source_colors_useRef(null);
+  var pickerRef = source_colors_useRef(null);
+  use_outside_click(pickerRef, function () {
+    setShowPicker(false);
+  });
+  source_colors_useEffect(function () {
     setActive(hover || menuIsOpen);
   }, [hover, menuIsOpen]);
-  return /*#__PURE__*/react.createElement("div", {
+  source_colors_useEffect(function () {
+    if (editable) {
+      inputRef.current.focus();
+    }
+  }, [editable]);
+
+  var onLabelBlur = function onLabelBlur(e) {
+    setEditable(false);
+  };
+
+  return /*#__PURE__*/React.createElement("div", {
     onMouseEnter: function onMouseEnter() {
       setHover(true);
     },
     onMouseLeave: function onMouseLeave() {
       setHover(false);
     },
+    onClick: function onClick() {
+      setShowPicker(!showPicker);
+    },
+    ref: pickerRef,
     className: "c-palette-builder__source-item ".concat(active ? 'c-palette-builder__source-item--active' : '')
-  }, /*#__PURE__*/react.createElement(ColorPicker, {
+  }, /*#__PURE__*/React.createElement(ColorPicker, {
     hex: color.value,
     onChange: function onChange(hex) {
       _onChange({
@@ -10313,63 +10401,102 @@ var PaletteSourceItem = function PaletteSourceItem(props) {
       });
     },
     isOpen: showPicker
-  }), /*#__PURE__*/react.createElement("input", {
-    className: "c-palette-builder__source-item-label",
+  }), !editable && /*#__PURE__*/React.createElement("div", {
+    className: "c-palette-builder__source-item-label"
+  }, color.label), editable && /*#__PURE__*/React.createElement("input", {
     type: "text",
+    ref: inputRef,
     value: color.label,
+    className: "c-palette-builder__source-item-label",
     onChange: function onChange(e) {
       _onChange({
         label: e.target.value
       });
-    }
-  }), /*#__PURE__*/react.createElement(ContextualMenu, {
+    },
+    onBlur: onLabelBlur
+  }), /*#__PURE__*/React.createElement(ContextualMenu, {
     actions: actions,
-    onToggle: setMenuIsOpen
+    onToggle: setMenuIsOpen,
+    onClick: function onClick(event) {
+      event.stopPropagation();
+      setShowPicker(false);
+    }
   }));
 };
 
-var ColorPicker = function ColorPicker(props) {
-  var hex = props.hex,
-      onChange = props.onChange,
-      isOpen = props.isOpen;
 
-  var _useState7 = color_controls_useState(hex),
-      _useState8 = color_controls_slicedToArray(_useState7, 2),
-      color = _useState8[0],
-      setColor = _useState8[1];
+// EXTERNAL MODULE: ./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/js/customizer/colors/color-palette-builder/components/preview/style.scss
+var preview_style = __webpack_require__(770);
+;// CONCATENATED MODULE: ./src/js/customizer/colors/color-palette-builder/components/preview/style.scss
 
-  var _useState9 = color_controls_useState(isOpen),
-      _useState10 = color_controls_slicedToArray(_useState9, 2),
-      showPicker = _useState10[0],
-      setShowPicker = _useState10[1];
+            
 
-  var pickerRef = color_controls_useRef(null);
-  use_outside_click(pickerRef, function () {
-    setShowPicker(false);
+var preview_style_options = {};
+
+preview_style_options.insert = "head";
+preview_style_options.singleton = false;
+
+var preview_style_update = injectStylesIntoStyleTag_default()(preview_style/* default */.Z, preview_style_options);
+
+
+
+/* harmony default export */ var components_preview_style = (preview_style/* default.locals */.Z.locals || {});
+;// CONCATENATED MODULE: ./src/js/customizer/colors/color-palette-builder/components/preview/index.js
+
+var Preview = function Preview(props) {
+  var palettes = props.palettes;
+  return palettes.map(function (palette, index) {
+    var colors = palette.colors,
+        id = palette.id;
+    return /*#__PURE__*/React.createElement("div", {
+      className: "palette-preview-set"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "palette-preview-set-header"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "palette-preview-source"
+    }, palette.source.map(function (source, index) {
+      return /*#__PURE__*/React.createElement("div", {
+        key: index,
+        className: "palette-preview-source-color",
+        style: {
+          color: source
+        }
+      });
+    })), /*#__PURE__*/React.createElement("div", {
+      className: "palette-preview-label"
+    }, "".concat(palette.label, " color palette"))), /*#__PURE__*/React.createElement("div", {
+      className: "palette-preview-swatches"
+    }, colors.map(function (color, colorIndex) {
+      return /*#__PURE__*/React.createElement("div", {
+        key: colorIndex,
+        className: "sm-variation-".concat(colorIndex, " "),
+        style: {
+          color: "var(--sm-color-palette-".concat(id, "-bg-color-").concat(colorIndex + 1, ")")
+        }
+      });
+    })), /*#__PURE__*/React.createElement("div", {
+      className: "palette-preview-swatches"
+    }, colors.map(function (color, colorIndex) {
+      return /*#__PURE__*/React.createElement("div", {
+        key: colorIndex,
+        className: "sm-variation-".concat(colorIndex, " "),
+        style: {
+          color: "var(--sm-color-palette-".concat(id, "-fg1-color-").concat(colorIndex + 1, ")")
+        }
+      });
+    })), /*#__PURE__*/React.createElement("div", {
+      className: "palette-preview-swatches"
+    }, colors.map(function (color, colorIndex) {
+      return /*#__PURE__*/React.createElement("div", {
+        key: colorIndex,
+        className: "sm-variation-".concat(colorIndex, " "),
+        style: {
+          color: "var(--sm-color-palette-".concat(id, "-accent-color-").concat(colorIndex + 1, ")")
+        }
+      });
+    })));
   });
-  return /*#__PURE__*/react.createElement("div", {
-    className: "c-palette-builder__source-item-picker ".concat(showPicker ? 'active' : ''),
-    ref: pickerRef
-  }, /*#__PURE__*/react.createElement("div", {
-    className: "c-palette-builder__source-item-preview",
-    style: {
-      color: color
-    },
-    onClick: function onClick() {
-      setShowPicker(!showPicker);
-    }
-  }), showPicker && /*#__PURE__*/react.createElement(sketch_Sketch, {
-    color: color,
-    onChange: function onChange(newColor) {
-      setColor(newColor.hex);
-    },
-    onChangeComplete: function onChangeComplete(newColor) {
-      onChange(newColor.hex);
-    }
-  }));
 };
-
-/* harmony default export */ var color_controls = (ColorControls);
 // EXTERNAL MODULE: ./node_modules/hsluv/hsluv.js
 var hsluv = __webpack_require__(119);
 // EXTERNAL MODULE: ./node_modules/chroma-js/chroma.js
@@ -10557,19 +10684,9 @@ var mapAddSourceIndex = function mapAddSourceIndex(attributes) {
     }, palette);
   };
 };
-var getShiftedArray = function getShiftedArray(array, positions) {
-  var arrayClone = array.slice();
-  var chunk = arrayClone.splice(0, positions);
-  arrayClone.push.apply(arrayClone, _toConsumableArray(chunk));
-  return arrayClone;
-};
-var mapShiftColors = function mapShiftColors(palette) {
-  palette.colors = getShiftedArray(palette.colors);
-  return palette;
-};
 var mapColorToPalette = function mapColorToPalette(attributes) {
   return function (groupObject, index) {
-    var colorObjects = groupObject.sources || groupObject;
+    var colorObjects = groupObject.sources;
     var sources = colorObjects.map(function (colorObj) {
       return colorObj.value;
     });
@@ -10843,40 +10960,48 @@ function builder_arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 
 
+
 var builder_wp$element = wp.element,
     builder_useEffect = builder_wp$element.useEffect,
     builder_useState = builder_wp$element.useState;
 
 var Builder = function Builder(props) {
-  var _window, _window$myApi;
-
   var sourceSettingID = props.sourceSettingID,
       outputSettingID = props.outputSettingID;
   var sourceSetting = wp.customize(sourceSettingID);
-  var outputSetting = wp.customize(outputSettingID);
   var variationSetting = wp.customize('sm_site_color_variation');
 
   var _useState = builder_useState(getColorsFromInputValue(sourceSetting())),
       _useState2 = builder_slicedToArray(_useState, 2),
-      colors = _useState2[0],
-      setColors = _useState2[1];
+      config = _useState2[0],
+      setConfig = _useState2[1];
 
-  var _useState3 = builder_useState({
+  var _useState3 = builder_useState([]),
+      _useState4 = builder_slicedToArray(_useState3, 2),
+      palettes = _useState4[0],
+      setPalettes = _useState4[1];
+
+  var _useState5 = builder_useState(''),
+      _useState6 = builder_slicedToArray(_useState5, 2),
+      CSSOutput = _useState6[0],
+      setCSSOutput = _useState6[1];
+
+  var _useState7 = builder_useState({
     correctLightness: true,
     useSources: true,
     mode: 'lch',
     bezierInterpolation: false
   }),
-      _useState4 = builder_slicedToArray(_useState3, 2),
-      attributes = _useState4[0],
-      updateAttributes = _useState4[1];
+      _useState8 = builder_slicedToArray(_useState7, 2),
+      attributes = _useState8[0],
+      updateAttributes = _useState8[1];
 
   var setAttributes = function setAttributes(newAttributes) {
     updateAttributes(Object.assign({}, attributes, newAttributes));
   };
 
   var changeListener = function changeListener() {
-    setColors(getColorsFromInputValue(sourceSetting()));
+    setConfig(getColorsFromInputValue(sourceSetting()));
   };
 
   builder_useEffect(function () {
@@ -10890,88 +11015,31 @@ var Builder = function Builder(props) {
     };
   }, []);
   builder_useEffect(function () {
-    sourceSetting.set(getValueFromColors(colors));
-  }, [colors]);
+    sourceSetting.set(getValueFromColors(config));
+  }, [config]);
   builder_useEffect(function () {
-    var palettes = getPalettesFromColors(colors, attributes);
-
-    if (typeof outputSetting !== "undefined") {
-      outputSetting.set(JSON.stringify(palettes));
+    setPalettes(getPalettesFromColors(config, attributes));
+  }, [config, attributes]);
+  builder_useEffect(function () {
+    wp.customize(outputSettingID, function (setting) {
+      setting.set(JSON.stringify(palettes));
+    });
+  }, [palettes]);
+  builder_useEffect(function () {
+    setCSSOutput(getCSSFromPalettes(palettes));
+  }, [palettes]);
+  return /*#__PURE__*/React.createElement(context.Provider, {
+    value: {
+      config: config,
+      setConfig: setConfig
     }
-  }, [colors, attributes]);
-  var palettes = getPalettesFromColors(colors, attributes);
-  var isDark = (_window = window) !== null && _window !== void 0 && (_window$myApi = _window.myApi) !== null && _window$myApi !== void 0 && _window$myApi.isDark ? window.myApi.isDark() : false;
-  return /*#__PURE__*/React.createElement("div", {
-    className: isDark ? 'is-dark' : ''
-  }, /*#__PURE__*/React.createElement(color_controls, {
-    colors: colors,
-    setColors: setColors
-  }), /*#__PURE__*/React.createElement("style", null, getCSSFromPalettes(palettes)), /*#__PURE__*/React.createElement(Preview, {
-    palettes: palettes
-  }));
-};
-
-var Preview = function Preview(props) {
-  return /*#__PURE__*/React.createElement("div", {
-    className: "palette-preview"
   }, /*#__PURE__*/React.createElement("div", {
     className: "sm-label"
-  }, "Color Palette preview"), /*#__PURE__*/React.createElement(PalettesPreview, props));
-};
-
-var PalettesPreview = function PalettesPreview(props) {
-  var palettes = props.palettes;
-  return palettes.map(function (palette, index) {
-    var colors = palette.colors,
-        id = palette.id;
-    return /*#__PURE__*/React.createElement("div", {
-      className: "palette-preview-set"
-    }, /*#__PURE__*/React.createElement("div", {
-      className: "palette-preview-set-header"
-    }, /*#__PURE__*/React.createElement("div", {
-      className: "palette-preview-source"
-    }, palette.source.map(function (source, index) {
-      return /*#__PURE__*/React.createElement("div", {
-        key: index,
-        className: "palette-preview-source-color",
-        style: {
-          color: source
-        }
-      });
-    })), /*#__PURE__*/React.createElement("div", {
-      className: "palette-preview-label"
-    }, "".concat(palette.label, " color palette"))), /*#__PURE__*/React.createElement("div", {
-      className: "palette-preview-swatches"
-    }, colors.map(function (color, colorIndex) {
-      return /*#__PURE__*/React.createElement("div", {
-        key: colorIndex,
-        className: "sm-variation-".concat(colorIndex, " "),
-        style: {
-          color: "var(--sm-color-palette-".concat(id, "-bg-color-").concat(colorIndex + 1, ")")
-        }
-      });
-    })), /*#__PURE__*/React.createElement("div", {
-      className: "palette-preview-swatches"
-    }, colors.map(function (color, colorIndex) {
-      return /*#__PURE__*/React.createElement("div", {
-        key: colorIndex,
-        className: "sm-variation-".concat(colorIndex, " "),
-        style: {
-          color: "var(--sm-color-palette-".concat(id, "-fg1-color-").concat(colorIndex + 1, ")")
-        }
-      });
-    })), /*#__PURE__*/React.createElement("div", {
-      className: "palette-preview-swatches"
-    }, colors.map(function (color, colorIndex) {
-      return /*#__PURE__*/React.createElement("div", {
-        key: colorIndex,
-        className: "sm-variation-".concat(colorIndex, " "),
-        style: {
-          color: "var(--sm-color-palette-".concat(id, "-accent-color-").concat(colorIndex + 1, ")")
-        }
-      });
-    })));
-  });
+  }, "Brand Colors"), /*#__PURE__*/React.createElement(SourceColors, null), /*#__PURE__*/React.createElement("div", {
+    className: "sm-label"
+  }, "Color Palette preview"), /*#__PURE__*/React.createElement(Preview, {
+    palettes: palettes
+  }), /*#__PURE__*/React.createElement("style", null, CSSOutput));
 };
 ;// CONCATENATED MODULE: ./src/js/customizer/colors/color-palette-builder/index.js
 
@@ -16056,7 +16124,7 @@ window.customify = window.customify || parent.customify || {};
 
 /***/ }),
 
-/***/ 8451:
+/***/ 502:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -16066,14 +16134,14 @@ window.customify = window.customify || parent.customify || {};
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "[id][id=customize-control-sm_advanced_palette_source_control]{padding-top:calc( 2 * var(--customize-control-spacing-y) );padding-bottom:calc( 2 * var(--customize-control-spacing-y) );border-bottom:var(--customizer-border-color);background-color:var(--sm-customizer-color-1)}.c-palette-builder>*+*{margin-top:var(--sm-customizer-spacing)}.c-palette-builder__source-list+.c-palette-builder__source-list{margin-top:10px}.c-palette-builder__source-item-label[class][class]{font-size:inherit;line-height:inherit;padding:0;border:0;background:none}.c-palette-builder__source-item-picker{position:relative}.c-palette-builder__source-item-picker .sketch-picker{position:absolute;top:100%;left:0;z-index:100;margin-top:.66em}.c-palette-builder__source-item-picker.active .c-palette-builder__source-item-preview{box-shadow:var(--sm-customizer-color-6) 0 0 0 var(--customizer-field-border-width)}.c-palette-builder__source-item-preview{width:2.4em;height:2.4em;margin-right:.4em;background-color:currentColor;border-radius:50%;flex:0 0 auto;border:var(--customizer-field-border-width) solid var(--sm-customizer-color-2)}[class][class] .c-palette-builder__source-item{display:flex;align-items:center;font-size:15px;line-height:1.5;padding:.6em;margin-bottom:.6em;background:var(--sm-customizer-color-2);transition:var(--sm-transition);transition-property:box-shadow}[class][class] .c-palette-builder__source-item:not(:last-child){padding-bottom:.4em;margin-bottom:.2em}[class][class] .c-palette-builder__source-item:not(:first-child){padding-top:.4em}[class][class] .c-palette-builder__source-item:first-child{border-top-left-radius:1.75em;border-top-right-radius:1.75em}[class][class] .c-palette-builder__source-item:last-child{border-bottom-left-radius:1.75em;border-bottom-right-radius:1.75em}[class][class] .c-palette-builder__source-item:hover{box-shadow:var(--sm-customizer-box-shadow-1)}[class][class] .c-palette-builder__source-item .c-contextual-menu{transition:var(--sm-transition);transition-property:opacity}[class][class] .c-palette-builder__source-item:not(.c-palette-builder__source-item--active) .c-contextual-menu{opacity:0}[class][class] .c-palette-builder__source-item>*+*{margin-left:5px}.customize-control[id*=sm_advanced_palette_output],.customize-control[id*=sm_text_color_switch_master],.customize-control[id*=sm_accent_color_switch_master],.customize-control[id*=sm_text_color_select_master],.customize-control[id*=sm_accent_color_select_master]{display:none}.customize-control[id*=sm_dark_color_switch_slider],.customize-control[id*=sm_dark_color_select_slider]{display:none}", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, ".c-contextual-menu{position:relative}.c-contextual-menu__toggle{width:2.4em;height:2.4em;border-radius:999em;color:var(--sm-customizer-text-color-1);outline:0;transition:var(--sm-transition);transition-property:background-color}.c-contextual-menu__toggle:before{content:\"\";position:absolute;top:50%;left:50%;width:.2em;height:.2em;border-radius:999em;background-color:currentColor;box-shadow:currentColor .4em 0 0 0,currentColor -0.4em 0 0 0;transform:translate(-50%, -50%)}.c-contextual-menu__toggle span{display:block;text-indent:-999em}.c-contextual-menu--visible .c-contextual-menu__toggle,.c-contextual-menu:hover .c-contextual-menu__toggle{background-color:var(--sm-customizer-color-3)}.c-contextual-menu__list{position:absolute;top:100%;right:0;z-index:100;width:15em;padding:.75em 0;background:var(--sm-customizer-color-1);box-shadow:var(--sm-customizer-box-shadow-2);transition:var(--sm-transition);transition-property:opacity,transform,box-shadow}.c-contextual-menu--hidden .c-contextual-menu__list{box-shadow:var(--sm-customizer-box-shadow-0);transform:translateY(-1em);opacity:0;pointer-events:none}.c-contextual-menu__list-item{padding:.75em 1.25em;cursor:pointer}.c-contextual-menu__list-item:hover{background:var(--sm-customizer-color-2)}.c-contextual-menu__list-item--danger{color:red}", ""]);
 // Exports
 /* harmony default export */ __webpack_exports__["Z"] = (___CSS_LOADER_EXPORT___);
 
 
 /***/ }),
 
-/***/ 2140:
+/***/ 770:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -16090,7 +16158,7 @@ ___CSS_LOADER_EXPORT___.push([module.id, ".palette-preview{margin-top:calc( 2 * 
 
 /***/ }),
 
-/***/ 502:
+/***/ 998:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -16100,7 +16168,7 @@ ___CSS_LOADER_EXPORT___.push([module.id, ".palette-preview{margin-top:calc( 2 * 
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, ".c-contextual-menu{position:relative}.c-contextual-menu__toggle{width:2.4em;height:2.4em;border-radius:999em;color:var(--sm-customizer-text-color-1);outline:0;transition:var(--sm-transition);transition-property:background-color}.c-contextual-menu__toggle:before{content:\"\";position:absolute;top:50%;left:50%;width:.2em;height:.2em;border-radius:999em;background-color:currentColor;box-shadow:currentColor .4em 0 0 0,currentColor -0.4em 0 0 0;transform:translate(-50%, -50%)}.c-contextual-menu__toggle span{display:block;text-indent:-999em}.c-contextual-menu--visible .c-contextual-menu__toggle,.c-contextual-menu:hover .c-contextual-menu__toggle{background-color:var(--sm-customizer-color-3)}.c-contextual-menu__list{position:absolute;top:100%;right:0;z-index:100;width:15em;padding:.75em 0;background:var(--sm-customizer-color-1);box-shadow:var(--sm-customizer-box-shadow-2);transition:var(--sm-transition);transition-property:opacity,transform,box-shadow}.c-contextual-menu--hidden .c-contextual-menu__list{box-shadow:var(--sm-customizer-box-shadow-0);transform:translateY(-1em);opacity:0;pointer-events:none}.c-contextual-menu__list-item{padding:.75em 1.25em;cursor:pointer}.c-contextual-menu__list-item:hover{background:var(--sm-customizer-color-2)}", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "[id][id=customize-control-sm_advanced_palette_source_control]{padding-top:calc( 2 * var(--customize-control-spacing-y) );padding-bottom:calc( 2 * var(--customize-control-spacing-y) );border-bottom:var(--customizer-border-color);background-color:var(--sm-customizer-color-1)}.c-palette-builder>*+*{margin-top:var(--sm-customizer-spacing)}.c-palette-builder__source-list+.c-palette-builder__source-list{margin-top:10px}.c-palette-builder__source-item-label[class][class]{display:block;flex:1 1 auto;padding:0;border:0;font-size:inherit;line-height:inherit;background:none}.c-palette-builder__source-item-picker{position:relative}.c-palette-builder__source-item-picker .sketch-picker{position:absolute;top:100%;left:0;z-index:100;margin-top:.66em}.c-palette-builder__source-item-picker.active .c-palette-builder__source-item-preview{box-shadow:var(--sm-customizer-color-6) 0 0 0 var(--customizer-field-border-width)}.c-palette-builder__source-item-preview{width:2.4em;height:2.4em;margin-right:.4em;background-color:currentColor;border-radius:50%;flex:0 0 auto;border:var(--customizer-field-border-width) solid var(--sm-customizer-color-2)}[class][class] .c-palette-builder__source-item{display:flex;align-items:center;font-size:15px;line-height:1.5;padding:.6em;margin-bottom:.6em;background:var(--sm-customizer-color-2);transition:var(--sm-transition);transition-property:box-shadow}[class][class] .c-palette-builder__source-item:not(:last-child){padding-bottom:.4em;margin-bottom:.2em}[class][class] .c-palette-builder__source-item:not(:first-child){padding-top:.4em}[class][class] .c-palette-builder__source-item:first-child{border-top-left-radius:1.75em;border-top-right-radius:1.75em}[class][class] .c-palette-builder__source-item:last-child{border-bottom-left-radius:1.75em;border-bottom-right-radius:1.75em}[class][class] .c-palette-builder__source-item:hover{box-shadow:var(--sm-customizer-box-shadow-1)}[class][class] .c-palette-builder__source-item .c-contextual-menu{transition:var(--sm-transition);transition-property:opacity}[class][class] .c-palette-builder__source-item:not(.c-palette-builder__source-item--active) .c-contextual-menu{opacity:0}[class][class] .c-palette-builder__source-item>*+*{margin-left:5px}.customize-control[id*=sm_advanced_palette_output],.customize-control[id*=sm_text_color_switch_master],.customize-control[id*=sm_accent_color_switch_master],.customize-control[id*=sm_text_color_select_master],.customize-control[id*=sm_accent_color_select_master]{display:none}.customize-control[id*=sm_dark_color_switch_slider],.customize-control[id*=sm_dark_color_select_slider]{display:none}", ""]);
 // Exports
 /* harmony default export */ __webpack_exports__["Z"] = (___CSS_LOADER_EXPORT___);
 
@@ -24131,6 +24199,6 @@ module.exports = (function() { return this["lodash"]; }());
 /******/ 	// module exports must be returned from runtime so entry inlining is disabled
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(214);
+/******/ 	return __webpack_require__(794);
 /******/ })()
 ;

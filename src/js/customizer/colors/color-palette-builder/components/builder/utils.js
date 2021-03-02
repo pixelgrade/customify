@@ -126,24 +126,11 @@ export const mapAddSourceIndex = ( attributes ) => {
   }
 }
 
-export const getShiftedArray = ( array, positions ) => {
-  const arrayClone = array.slice();
-  const chunk = arrayClone.splice( 0, positions );
-  arrayClone.push( ...chunk );
-  return arrayClone;
-}
-
-export const mapShiftColors = ( palette ) => {
-  palette.colors = getShiftedArray( palette.colors );
-
-  return palette;
-}
-
 export const mapColorToPalette = ( ( attributes ) => {
 
   return ( groupObject, index ) => {
 
-    const colorObjects = groupObject.sources || groupObject;
+    const colorObjects = groupObject.sources;
     const sources = colorObjects.map( colorObj => colorObj.value );
     const colors = createAutoPalette( sources, attributes );
 
