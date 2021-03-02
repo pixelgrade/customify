@@ -141,8 +141,9 @@ export const mapShiftColors = ( palette ) => {
 
 export const mapColorToPalette = ( ( attributes ) => {
 
-  return ( colorObjects, index ) => {
+  return ( groupObject, index ) => {
 
+    const colorObjects = groupObject.sources || groupObject;
     const sources = colorObjects.map( colorObj => colorObj.value );
     const colors = createAutoPalette( sources, attributes );
 
@@ -227,7 +228,7 @@ export const mapUseSource = ( attributes ) => {
 
   return ( palette ) => {
     const { source } = palette;
-    const position = getBestPositionInPalette( source[0], palette.colors.map( color => color.value ), attributes, true );
+    const position = getBestPositionInPalette( source[0], palette.colors.map( color => color.value ), attributes );
 
     palette.colors.splice( position, 1, {
       value: source[0],

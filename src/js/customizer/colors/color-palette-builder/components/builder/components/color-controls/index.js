@@ -1,7 +1,9 @@
 import React from 'react';
 import { SketchPicker } from 'react-color';
-const { useEffect, useState, useRef } = wp.element;
+import { ContextualMenu } from "../../../contextual-menu";
 import useOutsideClick from '../../../../../../utils/use-outside-click'
+
+const { useEffect, useState, useRef } = wp.element;
 
 import './style.scss';
 
@@ -17,29 +19,34 @@ const ColorControls = ( props ) => {
 
   const addNewColorGroup = ( groupIndex = 0 ) => {
     const newColors = colors.slice();
-    const newColor = {
-      label: 'Dark',
-      value: '#111111'
-    };
-    newColors.splice( groupIndex + 1, 0, [ newColor ] );
+    const newGroup = {
+      uid: `color_group_${ new Date().getTime() }`,
+      sources: [ {
+        uid: `color_${ new Date().getTime() }`,
+        label: 'Dark',
+        value: '#111111'
+      } ]
+    }
+    newColors.splice( groupIndex + 1, 0, newGroup );
     setColors( newColors );
   };
 
   const addNewColorToGroup = ( groupIndex ) => {
     const newColors = colors.slice();
     const newColor = {
+      uid: `color_${ new Date().getTime() }`,
       label: 'Interpolated Color',
       value: '#111111'
     };
-    newColors[groupIndex].push( newColor );
+    newColors[groupIndex].sources.push( newColor );
     setColors( newColors );
   }
 
   const deleteColor = ( groupIndex, index ) => {
     const newColors = colors.slice();
-    newColors[groupIndex].splice( index, 1 );
+    newColors[groupIndex].sources.splice( index, 1 );
 
-    if ( ! newColors[groupIndex].length ) {
+    if ( ! newColors[groupIndex].sources.length ) {
       newColors.splice( groupIndex, 1 );
     }
 
@@ -48,7 +55,7 @@ const ColorControls = ( props ) => {
 
   const updateColor = ( groupIndex, index, newValue ) => {
     const newColors = colors.slice();
-    newColors[groupIndex][index] = Object.assign( {}, newColors[groupIndex][index], newValue );
+    newColors[groupIndex].sources[index] = Object.assign( {}, newColors[groupIndex].sources[index], newValue );
     setColors( newColors );
   }
 
@@ -58,10 +65,11 @@ const ColorControls = ( props ) => {
       <div className="c-palette-builder__source-list">
         {
           colors.map( ( colorGroup, groupIndex ) => {
+            const colors = colorGroup.sources || colorGroup;
             return (
-              <div className="c-palette-builder__source-group">
+              <div key={ colorGroup.uid } className="c-palette-builder__source-group">
                 {
-                  colorGroup.map( ( color, index ) => {
+                  colors.map( ( color, index ) => {
 
                     const actions = [
                       { label: 'Interpolate Color', callback: () => { addNewColorToGroup( groupIndex ) } },
@@ -72,6 +80,7 @@ const ColorControls = ( props ) => {
 
                     return (
                       <PaletteSourceItem
+                        key={ color.uid }
                         actions={ actions }
                         color={ color }
                         onChange={ ( newValue ) => { updateColor( groupIndex, index, newValue ) } }
@@ -108,37 +117,6 @@ const PaletteSourceItem = ( props ) => {
   );
 }
 
-const ContextualMenu = ( props ) => {
-
-  const { actions } = props;
-  const [ showMenu, setShowMenu ] = useState( false );
-
-  const ref = useRef( null );
-
-  useOutsideClick( ref, () => {
-    setShowMenu( false );
-  } );
-
-  return (
-    <div ref={ ref } className={ `c-contextual-menu c-contextual-menu--${ showMenu ? 'visible' : 'hidden' }`}>
-      <button className="c-contextual-menu__toggle" onClick={ (e) => {
-        e.preventDefault();
-        setShowMenu( ! showMenu ) } }>
-        <span>Toggle Menu</span>
-      </button>
-      <div className="c-contextual-menu__list">
-        { actions.map( ( { label, callback } ) => {
-          return <div className="c-contextual-menu__list-item" onClick={ (e) => {
-            e.preventDefault();
-            setShowMenu(false);
-            callback();
-          } }>{ label }</div>;
-        } ) }
-      </div>
-    </div>
-  )
-}
-
 const ColorPicker = ( props ) => {
 
   const {
@@ -156,7 +134,7 @@ const ColorPicker = ( props ) => {
 
   return (
     <div className={ `c-palette-builder__source-item-picker ${ showPicker ? 'active' : '' }` } ref={ pickerRef }>
-      <div className="c-palette-builder__source-item-preview" style={ { color: hex } } onClick={ () => { setShowPicker( ! showPicker ) } }></div>
+      <div className="c-palette-builder__source-item-preview" style={ { color: color } } onClick={ () => { setShowPicker( ! showPicker ) } }></div>
       { showPicker && <SketchPicker
         color={ color }
         onChange={ newColor => {

@@ -1,0 +1,72 @@
+
+.c-contextual-menu {
+  position: relative;
+}
+
+.c-contextual-menu__toggle {
+  width: 2.4em;
+  height: 2.4em;
+  border-radius: 999em;
+  color: var(--sm-customizer-text-color-1);
+  outline: 0;
+
+  transition: var(--sm-transition);
+  transition-property: background-color;
+
+  // ellipsis
+  &:before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0.2em;
+    height: 0.2em;
+    border-radius: 999em;
+    background-color: currentColor;
+    box-shadow: currentColor 0.4em 0 0 0, currentColor -0.4em 0 0 0;
+    transform: translate(-50%, -50%);
+  }
+
+  span {
+    display: block;
+    text-indent: -999em;
+  }
+
+  .c-contextual-menu--visible &,
+  .c-contextual-menu:hover & {
+    background-color: var(--sm-customizer-color-4);
+  }
+}
+
+.c-contextual-menu__list {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  z-index: 100;
+
+  width: 15em;
+
+  padding: 0.75em 0;
+
+  background: var(--sm-customizer-color-1);
+  box-shadow: var(--sm-customizer-box-shadow-2);
+
+  transition: var(--sm-transition);
+  transition-property: opacity, transform, box-shadow;
+
+  .c-contextual-menu--hidden & {
+    box-shadow: var(--sm-customizer-box-shadow-0);
+    transform: translateY(-1em);
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+
+.c-contextual-menu__list-item {
+  padding: 0.75em 1.25em;
+  cursor: pointer;
+
+  &:hover {
+    background: var(--sm-customizer-color-2);
+  }
+}
