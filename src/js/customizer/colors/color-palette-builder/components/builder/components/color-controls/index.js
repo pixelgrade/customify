@@ -23,6 +23,7 @@ const ColorControls = ( props ) => {
       uid: `color_group_${ new Date().getTime() }`,
       sources: [ {
         uid: `color_${ new Date().getTime() }`,
+        showPicker: true,
         label: 'Dark',
         value: '#111111'
       } ]
@@ -35,6 +36,7 @@ const ColorControls = ( props ) => {
     const newColors = colors.slice();
     const newColor = {
       uid: `color_${ new Date().getTime() }`,
+      showPicker: true,
       label: 'Interpolated Color',
       value: '#111111'
     };
@@ -83,6 +85,7 @@ const ColorControls = ( props ) => {
                         key={ color.uid }
                         actions={ actions }
                         color={ color }
+                        showPicker={ color.showPicker }
                         onChange={ ( newValue ) => { updateColor( groupIndex, index, newValue ) } }
                       />
                     );
@@ -104,15 +107,27 @@ const PaletteSourceItem = ( props ) => {
     color,
     onChange,
     actions,
+    showPicker
   } = props;
 
+  const [ active, setActive ] = useState( false );
+  const [ hover, setHover ] = useState( false );
+  const [ menuIsOpen, setMenuIsOpen ] = useState( false );
+
+  useEffect( () => {
+    setActive( hover || menuIsOpen );
+  }, [ hover, menuIsOpen ] )
+
   return (
-    <div className="c-palette-builder__source-item">
-      <ColorPicker hex={ color.value } onChange={ hex => { onChange( { value: hex } ) } } />
+    <div
+      onMouseEnter={ () => { setHover( true ) } }
+      onMouseLeave={ () => { setHover( false ) } }
+      className={ `c-palette-builder__source-item ${ active ? 'c-palette-builder__source-item--active' : '' }` }>
+      <ColorPicker hex={ color.value } onChange={ hex => { onChange( { value: hex } ) } } isOpen={ showPicker } />
       <input className="c-palette-builder__source-item-label" type="text" value={ color.label } onChange={ e => {
         onChange( { label: e.target.value } ) }
       } />
-      <ContextualMenu actions={ actions } />
+      <ContextualMenu actions={ actions } onToggle={ setMenuIsOpen } />
     </div>
   );
 }
@@ -121,11 +136,12 @@ const ColorPicker = ( props ) => {
 
   const {
     hex,
-    onChange
+    onChange,
+    isOpen
   } = props;
 
   const [ color, setColor ] = useState( hex );
-  const [ showPicker, setShowPicker ] = useState( false );
+  const [ showPicker, setShowPicker ] = useState( isOpen );
   const pickerRef = useRef( null );
 
   useOutsideClick( pickerRef, () => {

@@ -1,24 +1,33 @@
 import "./style.scss"
 import useOutsideClick from "../../../../utils/use-outside-click";
 
-const { useState, useRef } = wp.element;
+const { useEffect, useState, useRef } = wp.element;
 
 const ContextualMenu = ( props ) => {
 
-  const { actions } = props;
-  const [ showMenu, setShowMenu ] = useState( false );
+  const {
+    actions,
+  } = props;
+
+  const [ isOpen, setIsOpen ] = useState( false );
+
+  const onToggle = typeof props.onToggle === 'function' ? props.onToggle : ( isOpen ) => {};
+
+  useEffect( () => {
+    onToggle( isOpen );
+  }, [ isOpen ] )
 
   const ref = useRef( null );
 
   useOutsideClick( ref, () => {
-    setShowMenu( false );
+    setIsOpen( false );
   } );
 
   return (
-    <div ref={ ref } className={ `c-contextual-menu c-contextual-menu--${ showMenu ? 'visible' : 'hidden' }`}>
+    <div ref={ ref } className={ `c-contextual-menu c-contextual-menu--${ isOpen ? 'visible' : 'hidden' }`}>
       <button className="c-contextual-menu__toggle" onClick={ (e) => {
         e.preventDefault();
-        setShowMenu( ! showMenu ) } }>
+        setIsOpen( ! isOpen ) } }>
         <span>Toggle Menu</span>
       </button>
       <div className="c-contextual-menu__list">
@@ -26,7 +35,7 @@ const ContextualMenu = ( props ) => {
 
           const onClick = ( e ) => {
             e.preventDefault();
-            setShowMenu( false );
+            setIsOpen( false );
             callback();
           };
 

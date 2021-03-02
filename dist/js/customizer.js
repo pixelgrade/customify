@@ -10088,6 +10088,7 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 
 var _wp$element = wp.element,
+    contextual_menu_useEffect = _wp$element.useEffect,
     useState = _wp$element.useState,
     useRef = _wp$element.useRef;
 
@@ -10096,21 +10097,25 @@ var ContextualMenu = function ContextualMenu(props) {
 
   var _useState = useState(false),
       _useState2 = _slicedToArray(_useState, 2),
-      showMenu = _useState2[0],
-      setShowMenu = _useState2[1];
+      isOpen = _useState2[0],
+      setIsOpen = _useState2[1];
 
+  var onToggle = typeof props.onToggle === 'function' ? props.onToggle : function (isOpen) {};
+  contextual_menu_useEffect(function () {
+    onToggle(isOpen);
+  }, [isOpen]);
   var ref = useRef(null);
   use_outside_click(ref, function () {
-    setShowMenu(false);
+    setIsOpen(false);
   });
   return /*#__PURE__*/React.createElement("div", {
     ref: ref,
-    className: "c-contextual-menu c-contextual-menu--".concat(showMenu ? 'visible' : 'hidden')
+    className: "c-contextual-menu c-contextual-menu--".concat(isOpen ? 'visible' : 'hidden')
   }, /*#__PURE__*/React.createElement("button", {
     className: "c-contextual-menu__toggle",
     onClick: function onClick(e) {
       e.preventDefault();
-      setShowMenu(!showMenu);
+      setIsOpen(!isOpen);
     }
   }, /*#__PURE__*/React.createElement("span", null, "Toggle Menu")), /*#__PURE__*/React.createElement("div", {
     className: "c-contextual-menu__list"
@@ -10120,7 +10125,7 @@ var ContextualMenu = function ContextualMenu(props) {
 
     var onClick = function onClick(e) {
       e.preventDefault();
-      setShowMenu(false);
+      setIsOpen(false);
       callback();
     };
 
@@ -10188,6 +10193,7 @@ var ColorControls = function ColorControls(props) {
       uid: "color_group_".concat(new Date().getTime()),
       sources: [{
         uid: "color_".concat(new Date().getTime()),
+        showPicker: true,
         label: 'Dark',
         value: '#111111'
       }]
@@ -10200,6 +10206,7 @@ var ColorControls = function ColorControls(props) {
     var newColors = colors.slice();
     var newColor = {
       uid: "color_".concat(new Date().getTime()),
+      showPicker: true,
       label: 'Interpolated Color',
       value: '#111111'
     };
@@ -10257,6 +10264,7 @@ var ColorControls = function ColorControls(props) {
         key: color.uid,
         actions: actions,
         color: color,
+        showPicker: color.showPicker,
         onChange: function onChange(newValue) {
           updateColor(groupIndex, index, newValue);
         }
@@ -10268,16 +10276,43 @@ var ColorControls = function ColorControls(props) {
 var PaletteSourceItem = function PaletteSourceItem(props) {
   var color = props.color,
       _onChange = props.onChange,
-      actions = props.actions;
+      actions = props.actions,
+      showPicker = props.showPicker;
+
+  var _useState = color_controls_useState(false),
+      _useState2 = color_controls_slicedToArray(_useState, 2),
+      active = _useState2[0],
+      setActive = _useState2[1];
+
+  var _useState3 = color_controls_useState(false),
+      _useState4 = color_controls_slicedToArray(_useState3, 2),
+      hover = _useState4[0],
+      setHover = _useState4[1];
+
+  var _useState5 = color_controls_useState(false),
+      _useState6 = color_controls_slicedToArray(_useState5, 2),
+      menuIsOpen = _useState6[0],
+      setMenuIsOpen = _useState6[1];
+
+  color_controls_useEffect(function () {
+    setActive(hover || menuIsOpen);
+  }, [hover, menuIsOpen]);
   return /*#__PURE__*/react.createElement("div", {
-    className: "c-palette-builder__source-item"
+    onMouseEnter: function onMouseEnter() {
+      setHover(true);
+    },
+    onMouseLeave: function onMouseLeave() {
+      setHover(false);
+    },
+    className: "c-palette-builder__source-item ".concat(active ? 'c-palette-builder__source-item--active' : '')
   }, /*#__PURE__*/react.createElement(ColorPicker, {
     hex: color.value,
     onChange: function onChange(hex) {
       _onChange({
         value: hex
       });
-    }
+    },
+    isOpen: showPicker
   }), /*#__PURE__*/react.createElement("input", {
     className: "c-palette-builder__source-item-label",
     type: "text",
@@ -10288,23 +10323,25 @@ var PaletteSourceItem = function PaletteSourceItem(props) {
       });
     }
   }), /*#__PURE__*/react.createElement(ContextualMenu, {
-    actions: actions
+    actions: actions,
+    onToggle: setMenuIsOpen
   }));
 };
 
 var ColorPicker = function ColorPicker(props) {
   var hex = props.hex,
-      onChange = props.onChange;
+      onChange = props.onChange,
+      isOpen = props.isOpen;
 
-  var _useState = color_controls_useState(hex),
-      _useState2 = color_controls_slicedToArray(_useState, 2),
-      color = _useState2[0],
-      setColor = _useState2[1];
+  var _useState7 = color_controls_useState(hex),
+      _useState8 = color_controls_slicedToArray(_useState7, 2),
+      color = _useState8[0],
+      setColor = _useState8[1];
 
-  var _useState3 = color_controls_useState(false),
-      _useState4 = color_controls_slicedToArray(_useState3, 2),
-      showPicker = _useState4[0],
-      setShowPicker = _useState4[1];
+  var _useState9 = color_controls_useState(isOpen),
+      _useState10 = color_controls_slicedToArray(_useState9, 2),
+      showPicker = _useState10[0],
+      setShowPicker = _useState10[1];
 
   var pickerRef = color_controls_useRef(null);
   use_outside_click(pickerRef, function () {
@@ -10893,8 +10930,9 @@ var PalettesPreview = function PalettesPreview(props) {
       className: "palette-preview-set-header"
     }, /*#__PURE__*/React.createElement("div", {
       className: "palette-preview-source"
-    }, palette.source.map(function (source) {
+    }, palette.source.map(function (source, index) {
       return /*#__PURE__*/React.createElement("div", {
+        key: index,
         className: "palette-preview-source-color",
         style: {
           color: source
@@ -10906,6 +10944,7 @@ var PalettesPreview = function PalettesPreview(props) {
       className: "palette-preview-swatches"
     }, colors.map(function (color, colorIndex) {
       return /*#__PURE__*/React.createElement("div", {
+        key: colorIndex,
         className: "sm-variation-".concat(colorIndex, " "),
         style: {
           color: "var(--sm-color-palette-".concat(id, "-bg-color-").concat(colorIndex + 1, ")")
@@ -10915,6 +10954,7 @@ var PalettesPreview = function PalettesPreview(props) {
       className: "palette-preview-swatches"
     }, colors.map(function (color, colorIndex) {
       return /*#__PURE__*/React.createElement("div", {
+        key: colorIndex,
         className: "sm-variation-".concat(colorIndex, " "),
         style: {
           color: "var(--sm-color-palette-".concat(id, "-fg1-color-").concat(colorIndex + 1, ")")
@@ -10924,6 +10964,7 @@ var PalettesPreview = function PalettesPreview(props) {
       className: "palette-preview-swatches"
     }, colors.map(function (color, colorIndex) {
       return /*#__PURE__*/React.createElement("div", {
+        key: colorIndex,
         className: "sm-variation-".concat(colorIndex, " "),
         style: {
           color: "var(--sm-color-palette-".concat(id, "-accent-color-").concat(colorIndex + 1, ")")
@@ -16025,7 +16066,7 @@ window.customify = window.customify || parent.customify || {};
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "[id][id=customize-control-sm_advanced_palette_source_control]{padding-top:calc( 2 * var(--customize-control-spacing-y) );padding-bottom:calc( 2 * var(--customize-control-spacing-y) );border-bottom:var(--customizer-border-color);background-color:var(--sm-customizer-color-1)}.c-palette-builder>*+*{margin-top:var(--sm-customizer-spacing)}.c-palette-builder__source-list+.c-palette-builder__source-list{margin-top:10px}.c-palette-builder__source-item-label[class][class]{font-size:inherit;line-height:inherit;padding:0;border:0;background:none}.c-palette-builder__source-item-picker{position:relative}.c-palette-builder__source-item-picker .sketch-picker{position:absolute;top:100%;left:0;z-index:100;margin-top:.66em}.c-palette-builder__source-item-picker.active .c-palette-builder__source-item-preview{box-shadow:var(--sm-customizer-color-6) 0 0 0 var(--customizer-field-border-width)}.c-palette-builder__source-item-preview{width:2.4em;height:2.4em;margin-right:.4em;background-color:currentColor;border-radius:50%;flex:0 0 auto;border:var(--customizer-field-border-width) solid var(--sm-customizer-color-2)}[class][class] .c-palette-builder__source-item{display:flex;align-items:center;font-size:15px;line-height:1.5;padding:.6em;margin-bottom:.6em;background:var(--sm-customizer-color-2);transition:var(--sm-transition);transition-property:box-shadow}[class][class] .c-palette-builder__source-item:not(:last-child){padding-bottom:.4em;margin-bottom:.2em}[class][class] .c-palette-builder__source-item:not(:first-child){padding-top:.4em}[class][class] .c-palette-builder__source-item:first-child{border-top-left-radius:1.75em;border-top-right-radius:1.75em}[class][class] .c-palette-builder__source-item:last-child{border-bottom-left-radius:1.75em;border-bottom-right-radius:1.75em}[class][class] .c-palette-builder__source-item:hover{box-shadow:var(--sm-customizer-box-shadow-1)}[class][class] .c-palette-builder__source-item .c-contextual-menu{transition:var(--sm-transition);transition-property:opacity}[class][class] .c-palette-builder__source-item:not(:hover) .c-contextual-menu{opacity:0}[class][class] .c-palette-builder__source-item>*+*{margin-left:5px}.customize-control[id*=sm_advanced_palette_output],.customize-control[id*=sm_text_color_switch_master],.customize-control[id*=sm_accent_color_switch_master],.customize-control[id*=sm_text_color_select_master],.customize-control[id*=sm_accent_color_select_master]{display:none}.customize-control[id*=sm_dark_color_switch_slider],.customize-control[id*=sm_dark_color_select_slider]{display:none}", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "[id][id=customize-control-sm_advanced_palette_source_control]{padding-top:calc( 2 * var(--customize-control-spacing-y) );padding-bottom:calc( 2 * var(--customize-control-spacing-y) );border-bottom:var(--customizer-border-color);background-color:var(--sm-customizer-color-1)}.c-palette-builder>*+*{margin-top:var(--sm-customizer-spacing)}.c-palette-builder__source-list+.c-palette-builder__source-list{margin-top:10px}.c-palette-builder__source-item-label[class][class]{font-size:inherit;line-height:inherit;padding:0;border:0;background:none}.c-palette-builder__source-item-picker{position:relative}.c-palette-builder__source-item-picker .sketch-picker{position:absolute;top:100%;left:0;z-index:100;margin-top:.66em}.c-palette-builder__source-item-picker.active .c-palette-builder__source-item-preview{box-shadow:var(--sm-customizer-color-6) 0 0 0 var(--customizer-field-border-width)}.c-palette-builder__source-item-preview{width:2.4em;height:2.4em;margin-right:.4em;background-color:currentColor;border-radius:50%;flex:0 0 auto;border:var(--customizer-field-border-width) solid var(--sm-customizer-color-2)}[class][class] .c-palette-builder__source-item{display:flex;align-items:center;font-size:15px;line-height:1.5;padding:.6em;margin-bottom:.6em;background:var(--sm-customizer-color-2);transition:var(--sm-transition);transition-property:box-shadow}[class][class] .c-palette-builder__source-item:not(:last-child){padding-bottom:.4em;margin-bottom:.2em}[class][class] .c-palette-builder__source-item:not(:first-child){padding-top:.4em}[class][class] .c-palette-builder__source-item:first-child{border-top-left-radius:1.75em;border-top-right-radius:1.75em}[class][class] .c-palette-builder__source-item:last-child{border-bottom-left-radius:1.75em;border-bottom-right-radius:1.75em}[class][class] .c-palette-builder__source-item:hover{box-shadow:var(--sm-customizer-box-shadow-1)}[class][class] .c-palette-builder__source-item .c-contextual-menu{transition:var(--sm-transition);transition-property:opacity}[class][class] .c-palette-builder__source-item:not(.c-palette-builder__source-item--active) .c-contextual-menu{opacity:0}[class][class] .c-palette-builder__source-item>*+*{margin-left:5px}.customize-control[id*=sm_advanced_palette_output],.customize-control[id*=sm_text_color_switch_master],.customize-control[id*=sm_accent_color_switch_master],.customize-control[id*=sm_text_color_select_master],.customize-control[id*=sm_accent_color_select_master]{display:none}.customize-control[id*=sm_dark_color_switch_slider],.customize-control[id*=sm_dark_color_select_slider]{display:none}", ""]);
 // Exports
 /* harmony default export */ __webpack_exports__["Z"] = (___CSS_LOADER_EXPORT___);
 
@@ -16059,7 +16100,7 @@ ___CSS_LOADER_EXPORT___.push([module.id, ".palette-preview{margin-top:calc( 2 * 
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, ".c-contextual-menu{position:relative}.c-contextual-menu__toggle{width:2.4em;height:2.4em;border-radius:999em;color:var(--sm-customizer-text-color-1);outline:0;transition:var(--sm-transition);transition-property:background-color}.c-contextual-menu__toggle:before{content:\"\";position:absolute;top:50%;left:50%;width:.2em;height:.2em;border-radius:999em;background-color:currentColor;box-shadow:currentColor .4em 0 0 0,currentColor -0.4em 0 0 0;transform:translate(-50%, -50%)}.c-contextual-menu__toggle span{display:block;text-indent:-999em}.c-contextual-menu--visible .c-contextual-menu__toggle,.c-contextual-menu:hover .c-contextual-menu__toggle{background-color:var(--sm-customizer-color-4)}.c-contextual-menu__list{position:absolute;top:100%;right:0;z-index:100;width:15em;padding:.75em 0;background:var(--sm-customizer-color-1);box-shadow:var(--sm-customizer-box-shadow-2);transition:var(--sm-transition);transition-property:opacity,transform,box-shadow}.c-contextual-menu--hidden .c-contextual-menu__list{box-shadow:var(--sm-customizer-box-shadow-0);transform:translateY(-1em);opacity:0;pointer-events:none}.c-contextual-menu__list-item{padding:.75em 1.25em;cursor:pointer}.c-contextual-menu__list-item:hover{background:var(--sm-customizer-color-2)}", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, ".c-contextual-menu{position:relative}.c-contextual-menu__toggle{width:2.4em;height:2.4em;border-radius:999em;color:var(--sm-customizer-text-color-1);outline:0;transition:var(--sm-transition);transition-property:background-color}.c-contextual-menu__toggle:before{content:\"\";position:absolute;top:50%;left:50%;width:.2em;height:.2em;border-radius:999em;background-color:currentColor;box-shadow:currentColor .4em 0 0 0,currentColor -0.4em 0 0 0;transform:translate(-50%, -50%)}.c-contextual-menu__toggle span{display:block;text-indent:-999em}.c-contextual-menu--visible .c-contextual-menu__toggle,.c-contextual-menu:hover .c-contextual-menu__toggle{background-color:var(--sm-customizer-color-3)}.c-contextual-menu__list{position:absolute;top:100%;right:0;z-index:100;width:15em;padding:.75em 0;background:var(--sm-customizer-color-1);box-shadow:var(--sm-customizer-box-shadow-2);transition:var(--sm-transition);transition-property:opacity,transform,box-shadow}.c-contextual-menu--hidden .c-contextual-menu__list{box-shadow:var(--sm-customizer-box-shadow-0);transform:translateY(-1em);opacity:0;pointer-events:none}.c-contextual-menu__list-item{padding:.75em 1.25em;cursor:pointer}.c-contextual-menu__list-item:hover{background:var(--sm-customizer-color-2)}", ""]);
 // Exports
 /* harmony default export */ __webpack_exports__["Z"] = (___CSS_LOADER_EXPORT___);
 

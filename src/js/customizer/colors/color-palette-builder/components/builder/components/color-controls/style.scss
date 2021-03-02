@@ -100,7 +100,7 @@
       transition-property: opacity;
     }
 
-    &:not(:hover) .c-contextual-menu {
+    &:not(.c-palette-builder__source-item--active) .c-contextual-menu {
       opacity: 0;
     }
 
