@@ -1343,6 +1343,9 @@ body.feedback-modal-open #style-manager-user-feedback-modal .modal {
   font-weight: 500;
   letter-spacing: -0.01em; }
 
+.customize-control[id*="sm_advanced_palette_output"], .customize-control[id*="sm_text_color_switch_master"], .customize-control[id*="sm_accent_color_switch_master"], .customize-control[id*="sm_text_color_select_master"], .customize-control[id*="sm_accent_color_select_master"] {
+  display: none; }
+
 #customize-theme-controls .control-section[class] .accordion-section-title {
   font-weight: normal;
   padding: calc( 0.5 * var(--customizer-spacing)) var(--customizer-spacing);
