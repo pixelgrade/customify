@@ -10274,11 +10274,8 @@ var SourceColors = function SourceColors() {
   source_colors_useEffect(function () {
     if (!config.length) {
       setConfig(addNewColorGroup(config));
+      return;
     }
-
-    console.log(config.filter(function (group) {
-      return !!group.sources.length;
-    }).length);
 
     if (!config.filter(function (group) {
       return !!group.sources.length;

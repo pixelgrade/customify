@@ -21,9 +21,8 @@ const SourceColors = () => {
 
     if ( ! config.length ) {
       setConfig( addNewColorGroup( config ) );
+      return;
     }
-
-    console.log( config.filter( group => { return !! group.sources.length } ).length );
 
     if ( ! config.filter( group => { return !! group.sources.length } ).length ) {
       setConfig( [] );
