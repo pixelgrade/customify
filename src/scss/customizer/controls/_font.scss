@@ -62,7 +62,7 @@
   .font-options__checkbox:not(:checked) ~ &:not(:hover) {
 
     .font-options__font-title {
-      color: var(--sm-customizer-color-4);
+      color: var(--sm-color-palette-neutral-color-4);
     }
   }
 }
@@ -107,11 +107,11 @@ input.font-options__checkbox {
   display: block;
   margin-top: 5px;
 
-  border: 1px solid var(--sm-customizer-color-3);
+  border: 1px solid var(--sm-color-palette-neutral-color-3);
   border-radius: var(--customizer-field-border-radius);
   box-shadow: $select-dropdown-box-shadow;
 
-  background-color: var(--sm-customizer-color-1);
+  background-color: var(--sm-color-palette-neutral-color-1);
 
   @include dropdown-arrow;
 

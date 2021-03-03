@@ -61,7 +61,7 @@
       width: 100%;
       height: var(--track-height);
 
-      background: var(--sm-customizer-color-4);
+      background: var(--sm-color-palette-neutral-color-4);
       border-radius: 999em;
     }
 
@@ -76,7 +76,7 @@
       margin-top: calc( var(--track-height) * 0.5 - var(--thumb-height) * 0.5 );
       border: var(--thumb-border-width) solid var(--customizer-border-color);
       border-radius: var(--customizer-field-border-radius);
-      background: var(--sm-customizer-color-1);
+      background: var(--sm-color-palette-neutral-color-1);
 
       cursor: move; /* fallback if grab cursor is unsupported */
       cursor: grab;

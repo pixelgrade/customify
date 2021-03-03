@@ -3,20 +3,37 @@
 //------------------------------------*/
 
 :root {
-  --sm-customizer-color-1: #ffffff;
-  --sm-customizer-color-2: #f2f8fc;
-  --sm-customizer-color-3: #d2eaf5;
-  --sm-customizer-color-4: #8ec9e6;
-  --sm-customizer-color-5: #49aad7;
-  --sm-customizer-color-6: #3b87ac;
-  --sm-customizer-color-7: #317392;
-  --sm-customizer-color-8: #2a5f79;
-  --sm-customizer-color-9: #214d62;
-  --sm-customizer-color-10: #193a4a;
-  --sm-customizer-color-11: #10242e;
-  --sm-customizer-color-12: #071216;
-  --sm-customizer-text-color-1: #193a4a;
-  --sm-customizer-text-color-2: #10242e;
+  --sm-color-palette-neutral-color-1: #ffffff;
+  --sm-color-palette-neutral-color-2: #f7f7f9;
+  --sm-color-palette-neutral-color-3: #e4e6ec;
+  --sm-color-palette-neutral-color-4: #c4c7d5;
+  --sm-color-palette-neutral-color-5: #9c9fac;
+  --sm-color-palette-neutral-color-6: #7c7f8c;
+  --sm-color-palette-neutral-color-7: #696c78;
+  --sm-color-palette-neutral-color-8: #565965;
+  --sm-color-palette-neutral-color-9: #454853;
+  --sm-color-palette-neutral-color-10: #333640;
+  --sm-color-palette-neutral-color-11: #1f222b;
+  --sm-color-palette-neutral-color-12: #101010;
+  --sm-color-palette-neutral-text-color-1: #333640;
+  --sm-color-palette-neutral-text-color-2: #1f222b;
+}
+
+:root {
+  --sm-color-palette-accent-color-1: #ffffff;
+  --sm-color-palette-accent-color-2: #f2f8fc;
+  --sm-color-palette-accent-color-3: #d2eaf5;
+  --sm-color-palette-accent-color-4: #8ec9e6;
+  --sm-color-palette-accent-color-5: #49aad7;
+  --sm-color-palette-accent-color-6: #3b87ac;
+  --sm-color-palette-accent-color-7: #317392;
+  --sm-color-palette-accent-color-8: #2a5f79;
+  --sm-color-palette-accent-color-9: #214d62;
+  --sm-color-palette-accent-color-10: #193a4a;
+  --sm-color-palette-accent-color-11: #10242e;
+  --sm-color-palette-accent-color-12: #071216;
+  --sm-color-palette-accent-text-color-1: #193a4a;
+  --sm-color-palette-accent-text-color-2: #10242e;
 
   --sm-customizer-box-shadow-0:
     none;
@@ -50,25 +67,25 @@ $iris-box-shadow: 0 7px 8px 0 rgba(0, 0, 0, 0.100);
 
 :root {
   --customizer-spacing: 20px;
-  --customizer-border-color: var(--sm-customizer-color-3);
-  --customizer-background-color: var(--sm-customizer-color-2);
-  --customizer-text-color: var(--sm-customizer-text-color-1);
+  --customizer-border-color: var(--sm-color-palette-neutral-color-3);
+  --customizer-background-color: var(--sm-color-palette-neutral-color-2);
+  --customizer-text-color: var(--sm-color-palette-neutral-text-color-1);
 
   --customizer-field-padding-x: 1em;
   --customizer-field-padding-y: 0.75em;
   --customizer-field-border-width: 2px;
   --customizer-field-border-color: var(--customizer-border-color);
-  --customizer-field-focus-border-color: var(--sm-customizer-color-6);
+  --customizer-field-focus-border-color: var(--sm-color-palette-neutral-color-6);
   --customizer-field-border-radius: 4px;
-  --customizer-field-background-color: var(--sm-customizer-color-1);
-  --customizer-field-text-color: var(--sm-customizer-text-color-1);
+  --customizer-field-background-color: var(--sm-color-palette-neutral-color-1);
+  --customizer-field-text-color: var(--sm-color-palette-neutral-text-color-1);
 
   --customizer-field-font-size: 14px;
   --customizer-field-font-weight: normal;
   --customizer-field-line-height: 1.5;
 
-  --customizer-select-focus-background-color: var(--sm-customizer-color-5);
-  --customizer-select-focus-text-color: var(--sm-customizer-color-1);
+  --customizer-select-focus-background-color: var(--sm-color-palette-neutral-color-5);
+  --customizer-select-focus-text-color: var(--sm-color-palette-neutral-color-1);
 
   --customizer-field-height: 44px;
   --customizer-checkbox-size: 22px;

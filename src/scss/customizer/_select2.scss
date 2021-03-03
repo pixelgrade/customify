@@ -81,7 +81,7 @@
 
   border: 1px solid var(--customizer-border-color);
   border-radius: 4px;
-  background-color: var(--sm-customizer-color-1);
+  background-color: var(--sm-color-palette-neutral-color-1);
 
   .select2-container--open & {
     left: 0;
@@ -114,7 +114,7 @@
   border-width: 1px 0;
   border-style: solid;
   border-color: var(--customizer-border-color);
-  background: var(--sm-customizer-color-2);
+  background: var(--sm-color-palette-neutral-color-2);
 }
 
 .select2-results__options {
@@ -136,8 +136,8 @@
   }
 
   &--highlighted {
-    background-color: var(--sm-customizer-color-5);
-    color: var(--sm-customizer-color-1);
+    background-color: var(--sm-color-palette-neutral-color-5);
+    color: var(--sm-color-palette-neutral-color-1);
   }
 }
 

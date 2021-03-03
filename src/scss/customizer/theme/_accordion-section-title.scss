@@ -13,12 +13,12 @@
       padding-right: calc( 2 * var(--customizer-spacing) );
 
       color: var(--customizer-text-color);
-      background: var(--sm-customizer-color-1);
+      background: var(--sm-color-palette-neutral-color-1);
       border: 0 solid var(--customizer-border-color);
       border-top-width: 1px;
 
       &:after {
-        color: var(--sm-customizer-color-3);
+        color: var(--sm-color-palette-neutral-color-3);
       }
     }
 
@@ -27,8 +27,8 @@
     }
 
     &:hover > .accordion-section-title {
-      background: var(--sm-customizer-color-2);
-      color: var(--sm-customizer-color-6);
+      background: var(--sm-color-palette-neutral-color-2);
+      color: var(--sm-color-palette-neutral-color-6);
 
       &:after {
         color: currentColor;
@@ -62,7 +62,7 @@
       @include section-title-with-icon;
 
       &:before {
-        color: var(--sm-customizer-color-3);
+        color: var(--sm-color-palette-neutral-color-3);
         order: 2;
       }
     }
@@ -72,7 +72,7 @@
 
     &:before {
       content: "\f110";
-      color: var(--sm-customizer-color-4);
+      color: var(--sm-color-palette-neutral-color-4);
     }
 
     img {

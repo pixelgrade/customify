@@ -120,7 +120,7 @@
 
   &:checked + label:before {
     border-color: var(--customizer-field-focus-border-color);
-    background-color: var(--sm-customizer-color-5);
+    background-color: var(--sm-color-palette-neutral-color-5);
     background-image: url($checkmark-svg-white);
   }
 }

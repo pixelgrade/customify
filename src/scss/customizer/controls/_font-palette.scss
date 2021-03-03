@@ -11,7 +11,7 @@
     margin-left: 0;
     overflow: hidden;
 
-    background-color: var(--sm-customizer-color-1);
+    background-color: var(--sm-color-palette-neutral-color-1);
     background-size: contain;
     background-repeat: no-repeat;
     background-position: right center;
@@ -37,11 +37,11 @@
     }
 
     &:hover input + label {
-      border-color: var(--sm-customizer-color-3);
+      border-color: var(--sm-color-palette-neutral-color-3);
     }
 
     input:checked + label {
-      border-color: var(--sm-customizer-color-5);
+      border-color: var(--sm-color-palette-neutral-color-5);
     }
   }
 }

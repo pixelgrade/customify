@@ -17,18 +17,18 @@
 
 .customize-section-title {
   margin: 0;
-  background: var(--sm-customizer-color-1);
+  background: var(--sm-color-palette-neutral-color-1);
   border-color: var(--customizer-border-color);
 }
 
 .customize-section-description[class] {
   margin-top: 0;
   padding: var(--customizer-spacing);
-  background: var(--sm-customizer-color-1);
+  background: var(--sm-color-palette-neutral-color-1);
 }
 
 #customize-controls[id] {
-  color: var(--sm-customizer-text-color-1);
+  color: var(--sm-color-palette-neutral-text-color-1);
   background: var(--customizer-background-color);
   border-color: var(--customizer-border-color);
 
@@ -61,7 +61,7 @@
     .customize-section-description {
       padding: var(--customizer-spacing);
       border-color: var(--customizer-border-color);
-      background: var(--sm-customizer-color-1);
+      background: var(--sm-color-palette-neutral-color-1);
       color: var(--customizer-text-color);
     }
   }
@@ -69,6 +69,6 @@
 
 #customize-header-actions,
 #customize-footer-actions {
-  background: var(--sm-customizer-color-1);
+  background: var(--sm-color-palette-neutral-color-1);
   border-color: var(--customizer-border-color);
 }

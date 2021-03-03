@@ -11,7 +11,7 @@
       flex: 0 0 auto;
       width: 30px;
       margin-left: 5px;
-      border: var(--customizer-field-border-width) solid var(--sm-customizer-color-2);
+      border: var(--customizer-field-border-width) solid var(--sm-color-palette-neutral-color-2);
 
       &:before {
         content: "";
@@ -43,6 +43,6 @@
   }
 
   &__option--selected {
-    box-shadow: var(--sm-customizer-color-6) 0 0 0 var(--customizer-field-border-width);
+    box-shadow: var(--sm-color-palette-neutral-color-6) 0 0 0 var(--customizer-field-border-width);
   }
 }

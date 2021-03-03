@@ -2,7 +2,7 @@
   padding-top: calc( 2 * var(--customize-control-spacing-y) );
   padding-bottom: calc( 2 * var(--customize-control-spacing-y) );
   border-bottom: var(--customizer-border-color);
-  background-color: var(--sm-customizer-color-1);
+  background-color: var(--sm-color-palette-neutral-color-1);
 }
 
 .c-palette-builder {
@@ -32,21 +32,29 @@
   background: none;
 }
 
-.c-palette-builder__source-item-picker {
+.c-palette-builder__source-item-color {
   position: relative;
 
-  .sketch-picker {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    z-index: 100;
-
-    margin-top: 0.66em;
+  &--active .c-palette-builder__source-item-preview {
+    box-shadow: var(--sm-color-palette-neutral-color-6) 0 0 0 var(--customizer-field-border-width);
   }
 
-  &.active .c-palette-builder__source-item-preview {
-    box-shadow: var(--sm-customizer-color-6) 0 0 0 var(--customizer-field-border-width);
+  &:not(&--active) .c-palette-builder__source-item-picker {
+    transform: translateY(-1em);
+    opacity: 0;
+    pointer-events: none;
   }
+}
+
+.c-palette-builder__source-item-picker {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 100;
+
+  margin-top: 0.66em;
+  transition: var(--sm-transition);
+  transition-property: opacity, transform;
 }
 
 .c-palette-builder__source-item-preview {
@@ -57,7 +65,7 @@
   border-radius: 50%;
   flex: 0 0 auto;
 
-  border: var(--customizer-field-border-width) solid var(--sm-customizer-color-2);
+  border: var(--customizer-field-border-width) solid var(--sm-color-palette-neutral-color-2);
 }
 
 [class][class] {
@@ -72,7 +80,7 @@
     padding: 0.6em;
     margin-bottom: 0.6em;
 
-    background: var(--sm-customizer-color-2);
+    background: var(--sm-color-palette-neutral-color-2);
     transition: var(--sm-transition);
     transition-property: box-shadow;
     cursor: pointer;

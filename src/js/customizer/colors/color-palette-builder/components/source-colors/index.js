@@ -32,7 +32,13 @@ const SourceColors = () => {
 
   return (
     <div className="c-palette-builder__source-list">
-      { config.map( ( group, groupIndex ) => <SourceColorsGroup { ...group } index={ groupIndex } /> ) }
+      { config.map( ( group, groupIndex ) => (
+        <SourceColorsGroup
+          key={ group.uid }
+          sources={ group.sources }
+          index={ groupIndex }
+        />
+      ) ) }
     </div>
   )
 }
@@ -68,7 +74,7 @@ const SourceColorControl = ( props ) => {
   const [ hover, setHover ] = useState( false );
   const [ menuIsOpen, setMenuIsOpen ] = useState( false );
   const [ editable, setEditable ] = useState( false );
-  const [ showPicker, setShowPicker ] = useState( props.showPicker );
+  const [ showPicker, setShowPicker ] = useState();
 
   const { config, setConfig } = useContext( ConfigContext );
 
@@ -89,6 +95,13 @@ const SourceColorControl = ( props ) => {
   useOutsideClick( pickerRef, () => {
     setShowPicker( false );
   } );
+
+  // delay setting showPicker with one render cycle in order to show fadein animation
+  useEffect( () => {
+    if ( typeof showPicker === "undefined" && typeof props.showPicker !== "undefined" ) {
+      setShowPicker( props.showPicker );
+    }
+  }, [ showPicker ] );
 
   useEffect( () => {
     setActive( hover || menuIsOpen );

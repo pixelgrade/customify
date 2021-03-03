@@ -14,13 +14,13 @@ $close-button-width: 45px;
   padding: 0;
   border-top: 0;
 
-  color: var(--sm-customizer-color-3);
-  background: var(--sm-customizer-color-1);
+  color: var(--sm-color-palette-neutral-color-3);
+  background: var(--sm-color-palette-neutral-color-1);
   border-color: var(--customizer-border-color);
 
   &:focus,
   &:hover {
-    background: var(--sm-customizer-color-2);
+    background: var(--sm-color-palette-neutral-color-2);
   }
 
   &:before {
@@ -55,7 +55,7 @@ $close-button-width: 45px;
     height: auto;
     padding: 0;
 
-    color: var(--sm-customizer-color-3);
+    color: var(--sm-color-palette-neutral-color-3);
     border-color: var(--customizer-border-color);
     border-left: 0;
 
@@ -68,12 +68,12 @@ $close-button-width: 45px;
     }
 
     &:focus {
-      background: var(--sm-customizer-color-1);
+      background: var(--sm-color-palette-neutral-color-1);
     }
 
     &:hover {
-      background: var(--sm-customizer-color-2);
-      color: var(--sm-customizer-color-6);
+      background: var(--sm-color-palette-neutral-color-2);
+      color: var(--sm-color-palette-neutral-color-6);
     }
   }
 }

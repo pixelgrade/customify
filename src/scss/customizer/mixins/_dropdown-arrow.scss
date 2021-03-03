@@ -12,13 +12,13 @@
 
   &:before {
     z-index: 100;
-    border-bottom-color: var(--sm-customizer-color-3);
+    border-bottom-color: var(--sm-color-palette-neutral-color-3);
     border-width: 11px;
   }
 
   &:after {
     z-index: 101;
-    border-bottom-color: var(--sm-customizer-color-1);
+    border-bottom-color: var(--sm-color-palette-neutral-color-1);
     margin-right: 1px;
   }
 }
