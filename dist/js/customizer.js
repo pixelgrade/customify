@@ -94,7 +94,7 @@ exports.Z = function (_ref) {
 
 /***/ }),
 
-/***/ 794:
+/***/ 4551:
 /***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -10010,7 +10010,7 @@ Google.defaultProps = {
 
 
 
-;// CONCATENATED MODULE: ./src/js/customizer/colors/color-palette-builder/components/source-colors/color-picker.js
+;// CONCATENATED MODULE: ./src/js/customizer/colors/components/source-colors/color-picker.js
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
@@ -10061,9 +10061,9 @@ var ColorPicker = function ColorPicker(props) {
 // EXTERNAL MODULE: ./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js
 var injectStylesIntoStyleTag = __webpack_require__(3379);
 var injectStylesIntoStyleTag_default = /*#__PURE__*/__webpack_require__.n(injectStylesIntoStyleTag);
-// EXTERNAL MODULE: ./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/js/customizer/colors/color-palette-builder/components/contextual-menu/style.scss
-var style = __webpack_require__(502);
-;// CONCATENATED MODULE: ./src/js/customizer/colors/color-palette-builder/components/contextual-menu/style.scss
+// EXTERNAL MODULE: ./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/js/customizer/colors/components/contextual-menu/style.scss
+var style = __webpack_require__(6545);
+;// CONCATENATED MODULE: ./src/js/customizer/colors/components/contextual-menu/style.scss
 
             
 
@@ -10104,7 +10104,7 @@ function useOutsideClick(ref, callback) {
 }
 
 /* harmony default export */ var use_outside_click = (useOutsideClick);
-;// CONCATENATED MODULE: ./src/js/customizer/colors/color-palette-builder/components/contextual-menu/index.js
+;// CONCATENATED MODULE: ./src/js/customizer/colors/components/contextual-menu/index.js
 function contextual_menu_slicedToArray(arr, i) { return contextual_menu_arrayWithHoles(arr) || contextual_menu_iterableToArrayLimit(arr, i) || contextual_menu_unsupportedIterableToArray(arr, i) || contextual_menu_nonIterableRest(); }
 
 function contextual_menu_nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
@@ -10175,11 +10175,11 @@ var ContextualMenu = function ContextualMenu(props) {
 };
 
 
-;// CONCATENATED MODULE: ./src/js/customizer/colors/color-palette-builder/context.js
+;// CONCATENATED MODULE: ./src/js/customizer/colors/context.js
 var createContext = wp.element.createContext;
 var ConfigContext = createContext();
 /* harmony default export */ var context = (ConfigContext);
-;// CONCATENATED MODULE: ./src/js/customizer/colors/color-palette-builder/components/source-colors/utils.js
+;// CONCATENATED MODULE: ./src/js/customizer/colors/components/source-colors/utils.js
 function _objectWithoutProperties(source, excluded) { if (source == null) return {}; var target = _objectWithoutPropertiesLoose(source, excluded); var key, i; if (Object.getOwnPropertySymbols) { var sourceSymbolKeys = Object.getOwnPropertySymbols(source); for (i = 0; i < sourceSymbolKeys.length; i++) { key = sourceSymbolKeys[i]; if (excluded.indexOf(key) >= 0) continue; if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue; target[key] = source[key]; } } return target; }
 
 function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
@@ -10247,9 +10247,9 @@ var updateColor = function updateColor(config, groupIndex, index, newValue) {
   newConfig[groupIndex].sources[index] = Object.assign({}, newConfig[groupIndex].sources[index], newValue);
   return newConfig;
 };
-// EXTERNAL MODULE: ./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/js/customizer/colors/color-palette-builder/components/source-colors/style.scss
-var source_colors_style = __webpack_require__(998);
-;// CONCATENATED MODULE: ./src/js/customizer/colors/color-palette-builder/components/source-colors/style.scss
+// EXTERNAL MODULE: ./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/js/customizer/colors/components/source-colors/style.scss
+var source_colors_style = __webpack_require__(7478);
+;// CONCATENATED MODULE: ./src/js/customizer/colors/components/source-colors/style.scss
 
             
 
@@ -10263,7 +10263,7 @@ var style_update = injectStylesIntoStyleTag_default()(source_colors_style/* defa
 
 
 /* harmony default export */ var components_source_colors_style = (source_colors_style/* default.locals */.Z.locals || {});
-;// CONCATENATED MODULE: ./src/js/customizer/colors/color-palette-builder/components/source-colors/index.js
+;// CONCATENATED MODULE: ./src/js/customizer/colors/components/source-colors/index.js
 function source_colors_slicedToArray(arr, i) { return source_colors_arrayWithHoles(arr) || source_colors_iterableToArrayLimit(arr, i) || source_colors_unsupportedIterableToArray(arr, i) || source_colors_nonIterableRest(); }
 
 function source_colors_nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
@@ -10462,84 +10462,12 @@ var SourceColorControl = function SourceColorControl(props) {
 };
 
 
-// EXTERNAL MODULE: ./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/js/customizer/colors/color-palette-builder/components/preview/style.scss
-var preview_style = __webpack_require__(770);
-;// CONCATENATED MODULE: ./src/js/customizer/colors/color-palette-builder/components/preview/style.scss
-
-            
-
-var preview_style_options = {};
-
-preview_style_options.insert = "head";
-preview_style_options.singleton = false;
-
-var preview_style_update = injectStylesIntoStyleTag_default()(preview_style/* default */.Z, preview_style_options);
-
-
-
-/* harmony default export */ var components_preview_style = (preview_style/* default.locals */.Z.locals || {});
-;// CONCATENATED MODULE: ./src/js/customizer/colors/color-palette-builder/components/preview/index.js
-
-var Preview = function Preview(props) {
-  var palettes = props.palettes;
-  return palettes.map(function (palette, index) {
-    var colors = palette.colors,
-        id = palette.id;
-    return /*#__PURE__*/React.createElement("div", {
-      className: "palette-preview-set"
-    }, /*#__PURE__*/React.createElement("div", {
-      className: "palette-preview-set-header"
-    }, /*#__PURE__*/React.createElement("div", {
-      className: "palette-preview-source"
-    }, palette.source.map(function (source, index) {
-      return /*#__PURE__*/React.createElement("div", {
-        key: index,
-        className: "palette-preview-source-color",
-        style: {
-          color: source
-        }
-      });
-    })), /*#__PURE__*/React.createElement("div", {
-      className: "palette-preview-label"
-    }, "".concat(palette.label, " color palette"))), /*#__PURE__*/React.createElement("div", {
-      className: "palette-preview-swatches"
-    }, colors.map(function (color, colorIndex) {
-      return /*#__PURE__*/React.createElement("div", {
-        key: colorIndex,
-        className: "sm-variation-".concat(colorIndex, " "),
-        style: {
-          color: "var(--sm-color-palette-".concat(id, "-bg-color-").concat(colorIndex + 1, ")")
-        }
-      });
-    })), /*#__PURE__*/React.createElement("div", {
-      className: "palette-preview-swatches"
-    }, colors.map(function (color, colorIndex) {
-      return /*#__PURE__*/React.createElement("div", {
-        key: colorIndex,
-        className: "sm-variation-".concat(colorIndex, " "),
-        style: {
-          color: "var(--sm-color-palette-".concat(id, "-fg1-color-").concat(colorIndex + 1, ")")
-        }
-      });
-    })), /*#__PURE__*/React.createElement("div", {
-      className: "palette-preview-swatches"
-    }, colors.map(function (color, colorIndex) {
-      return /*#__PURE__*/React.createElement("div", {
-        key: colorIndex,
-        className: "sm-variation-".concat(colorIndex, " "),
-        style: {
-          color: "var(--sm-color-palette-".concat(id, "-accent-color-").concat(colorIndex + 1, ")")
-        }
-      });
-    })));
-  });
-};
 // EXTERNAL MODULE: ./node_modules/hsluv/hsluv.js
 var hsluv = __webpack_require__(119);
 // EXTERNAL MODULE: ./node_modules/chroma-js/chroma.js
 var chroma_js_chroma = __webpack_require__(5792);
 var chroma_default = /*#__PURE__*/__webpack_require__.n(chroma_js_chroma);
-;// CONCATENATED MODULE: ./src/js/customizer/colors/color-palette-builder/components/builder/contrast-array.js
+;// CONCATENATED MODULE: ./src/js/customizer/colors/components/builder/contrast-array.js
 var optimalContrastArray = Array.from(Array(12)).map(function (x, i) {
   return Math.pow(21, i / 11);
 }); //	https://medium.com/envoy-design/designing-an-accessible-color-scheme-again-fd35cfa9d796
@@ -10578,7 +10506,7 @@ var maxContrastArray = contrastRangesArray.map(function (x) {
   return x[1];
 });
 /* harmony default export */ var contrast_array = (myOptimalContrastArray);
-;// CONCATENATED MODULE: ./src/js/customizer/colors/color-palette-builder/components/builder/utils.js
+;// CONCATENATED MODULE: ./src/js/customizer/colors/components/builder/utils.js
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || utils_unsupportedIterableToArray(arr) || _nonIterableSpread(); }
 
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
@@ -10979,7 +10907,7 @@ var createAutoPalette = function createAutoPalette(colors) {
 var noop = function noop(palette) {
   return palette;
 };
-;// CONCATENATED MODULE: ./src/js/customizer/colors/color-palette-builder/components/builder/index.js
+;// CONCATENATED MODULE: ./src/js/customizer/colors/components/builder/index.js
 function builder_slicedToArray(arr, i) { return builder_arrayWithHoles(arr) || builder_iterableToArrayLimit(arr, i) || builder_unsupportedIterableToArray(arr, i) || builder_nonIterableRest(); }
 
 function builder_nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
@@ -10991,7 +10919,6 @@ function builder_arrayLikeToArray(arr, len) { if (len == null || len > arr.lengt
 function builder_iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
 function builder_arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
-
 
 
 
@@ -11072,11 +10999,7 @@ var Builder = function Builder(props) {
     }
   }, /*#__PURE__*/React.createElement(Control, {
     label: 'Brand Colors'
-  }, /*#__PURE__*/React.createElement(SourceColors, null)), /*#__PURE__*/React.createElement(Control, {
-    label: 'Color Palette preview'
-  }, /*#__PURE__*/React.createElement(Preview, {
-    palettes: palettes
-  })), /*#__PURE__*/React.createElement("style", null, CSSOutput));
+  }, /*#__PURE__*/React.createElement(SourceColors, null)), /*#__PURE__*/React.createElement("style", null, CSSOutput));
 };
 
 var Control = function Control(props) {
@@ -11143,6 +11066,161 @@ var moveConnectedFields = function moveConnectedFields(oldSettings, from, to, ra
 
   return settings;
 };
+;// CONCATENATED MODULE: ./src/js/customizer/colors/components/preview/index.js
+function preview_ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function preview_objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { preview_ownKeys(Object(source), true).forEach(function (key) { preview_defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { preview_ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function preview_defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+var Preview = function Preview(props) {
+  var palettes = props.palettes;
+  return palettes.map(function (palette, index) {
+    var description = index === 0 ? 'Each column from the color palette below represent a state where a component could be. The first row is the main surface or background color, while the other two rows are for the content.' : '';
+    return /*#__PURE__*/React.createElement(PalettePreview, {
+      key: palette.id,
+      palette: preview_objectSpread({
+        description: description
+      }, palette)
+    });
+  });
+};
+
+var PalettePreview = function PalettePreview(props) {
+  var palette = props.palette;
+  var colors = palette.colors,
+      id = palette.id,
+      description = palette.description;
+  return /*#__PURE__*/React.createElement("div", {
+    className: "palette-preview"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "palette-preview-header"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "palette-preview-source"
+  }, palette.source.map(function (source, index) {
+    return /*#__PURE__*/React.createElement("div", {
+      key: index,
+      className: "palette-preview-source-color",
+      style: {
+        color: source
+      }
+    });
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "palette-preview-title"
+  }, /*#__PURE__*/React.createElement("h4", null, "".concat(palette.label, " color palette")))), description && /*#__PURE__*/React.createElement("div", {
+    className: "palette-preview-description"
+  }, /*#__PURE__*/React.createElement("p", null, description)), /*#__PURE__*/React.createElement("div", {
+    className: "palette-preview-set"
+  }, colors.map(function (color, colorIndex) {
+    return /*#__PURE__*/React.createElement("div", {
+      key: colorIndex,
+      className: "palette-preview-swatches sm-variation-".concat(colorIndex)
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        color: "var(--sm-color-palette-".concat(id, "-bg-color-").concat(colorIndex + 1, ")")
+      }
+    }), /*#__PURE__*/React.createElement("div", {
+      style: {
+        color: "var(--sm-color-palette-".concat(id, "-accent-color-").concat(colorIndex + 1, ")")
+      }
+    }), /*#__PURE__*/React.createElement("div", {
+      style: {
+        color: "var(--sm-color-palette-".concat(id, "-fg1-color-").concat(colorIndex + 1, ")")
+      }
+    }));
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "palette-preview-accent",
+    style: {
+      color: "var(--sm-color-palette-".concat(id, "-accent-color-11)")
+    }
+  })));
+};
+;// CONCATENATED MODULE: ./src/js/customizer/colors/color-palettes-preview/index.js
+function color_palettes_preview_slicedToArray(arr, i) { return color_palettes_preview_arrayWithHoles(arr) || color_palettes_preview_iterableToArrayLimit(arr, i) || color_palettes_preview_unsupportedIterableToArray(arr, i) || color_palettes_preview_nonIterableRest(); }
+
+function color_palettes_preview_nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function color_palettes_preview_unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return color_palettes_preview_arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return color_palettes_preview_arrayLikeToArray(o, minLen); }
+
+function color_palettes_preview_arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function color_palettes_preview_iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function color_palettes_preview_arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+
+var color_palettes_preview_wp$element = wp.element,
+    color_palettes_preview_useEffect = color_palettes_preview_wp$element.useEffect,
+    color_palettes_preview_useState = color_palettes_preview_wp$element.useState;
+var initialize = function initialize() {
+  wp.customize.bind('ready', function () {
+    wp.customize.section('sm_color_palettes_section', function (section) {
+      wp.customize.previewer.bind('ready', function () {
+        var targetWindow = wp.customize.previewer.preview.targetWindow();
+        var containerID = "sm-color-palettes-preview";
+        var container = targetWindow.document.getElementById(containerID);
+
+        if (typeof container === "undefined") {
+          return;
+        }
+
+        wp.customize('sm_advanced_palette_output', function (setting) {
+          wp.element.render( /*#__PURE__*/React.createElement(PalettesPreview, {
+            section: section,
+            setting: setting
+          }), container);
+        });
+      });
+    });
+  });
+};
+initialize();
+
+var Overlay = function Overlay(props) {
+  var show = props.show;
+  return /*#__PURE__*/React.createElement("div", {
+    className: "sm-overlay sm-overlay--".concat(show ? 'visible' : 'hidden')
+  }, props.children);
+};
+
+var PalettesPreview = function PalettesPreview(props) {
+  var section = props.section,
+      setting = props.setting;
+
+  var _useState = color_palettes_preview_useState(false),
+      _useState2 = color_palettes_preview_slicedToArray(_useState, 2),
+      show = _useState2[0],
+      setShow = _useState2[1];
+
+  var _useState3 = color_palettes_preview_useState(JSON.parse(setting())),
+      _useState4 = color_palettes_preview_slicedToArray(_useState3, 2),
+      palettes = _useState4[0],
+      setPalettes = _useState4[1];
+
+  var toggleSection = function toggleSection(isExpanded) {
+    setShow(isExpanded);
+  };
+
+  var changeListener = function changeListener(newValue) {
+    setPalettes(JSON.parse(newValue));
+  };
+
+  color_palettes_preview_useEffect(function () {
+    // Attach the listeners on component mount.
+    section.expanded.bind(toggleSection);
+    setting.bind(changeListener); // Detach the listeners on component unmount.
+
+    return function () {
+      section.expanded.unbind(toggleSection);
+      setting.unbind(changeListener);
+    };
+  }, []);
+  return /*#__PURE__*/React.createElement(Overlay, {
+    show: show
+  }, /*#__PURE__*/React.createElement(Preview, {
+    palettes: palettes
+  }));
+};
 // EXTERNAL MODULE: external "lodash"
 var external_lodash_ = __webpack_require__(3804);
 var external_lodash_default = /*#__PURE__*/__webpack_require__.n(external_lodash_);
@@ -11161,6 +11239,9 @@ var setSettings = function setSettings(newSettings) {
 };
 var getSetting = function getSetting(settingID) {
   return settings[settingID];
+};
+var getSettingConfig = function getSettingConfig(settingID) {
+  return customify.config.settings[settingID];
 };
 var setSetting = function setSetting(settingID, value) {
   settings[settingID] = value;
@@ -11218,6 +11299,7 @@ var global_service_noop = function noop(x) {
 
 
 
+
 wp.customize.bind('ready', function () {
   initializeColors();
   reloadConnectedFields();
@@ -11243,7 +11325,10 @@ var initializeColors = function initializeColors() {
 var applyMasterSettingsValues = function applyMasterSettingsValues() {
   masterSettingIDs.forEach(function (masterSettingID) {
     wp.customize(masterSettingID, function (setting) {
+      console.group("".concat(masterSettingID, " ").concat(setting._value));
+      console.log(getSetting(masterSettingID).connected_fields);
       setting.callbacks.fireWith(setting, [setting._value, '']);
+      console.groupEnd();
     });
   });
 };
@@ -11260,11 +11345,11 @@ var reloadConnectedFields = function reloadConnectedFields() {
 var applyColorationValueToFields = function applyColorationValueToFields() {
   wp.customize('sm_coloration_level', function (colorationLevelSetting) {
     var colorationLevel = colorationLevelSetting();
-    var defaultColorationLevel = getSetting('sm_coloration_level').default;
+    var defaultColorationLevel = getSettingConfig('sm_coloration_level').default;
     var isDefaultColoration = colorationLevel === defaultColorationLevel;
     darkToColorSliderControls.forEach(function (sliderSettingID) {
       wp.customize(sliderSettingID, function (sliderSetting) {
-        var defaultValue = getSetting(sliderSettingID).default;
+        var defaultValue = getSettingConfig(sliderSettingID).default;
         var value = isDefaultColoration ? defaultValue : parseFloat(colorationLevel);
         sliderSetting.set(value);
       });
@@ -12112,6 +12197,7 @@ var convertToColorSelect = function convertToColorSelect(element) {
   var $select = external_jQuery_default()(element);
   var $selectOptions = $select.find('option');
   var $colorSelect = external_jQuery_default()('<div class="customify-color-select">');
+  var settingID = $select.data('customize-setting-link');
   var $optionsList = external_jQuery_default()('<div class="customify-color-select__option-list">');
   $selectOptions.each(function (i, option) {
     var $option = external_jQuery_default()(option);
@@ -12135,10 +12221,9 @@ var convertToColorSelect = function convertToColorSelect(element) {
   $colorSelect.insertBefore($select);
   $select.hide();
 
-  function updateColorSelect() {
-    var value = $select.val();
+  function updateColorSelect(newValue) {
     var $colorSelectOption = $colorSelectOptions.filter(function (index, obj) {
-      return external_jQuery_default()(obj).data('value') === value;
+      return external_jQuery_default()(obj).data('value') === newValue;
     });
 
     if ($colorSelectOption.length) {
@@ -12147,8 +12232,10 @@ var convertToColorSelect = function convertToColorSelect(element) {
     }
   }
 
-  updateColorSelect();
-  $select.on('change', updateColorSelect);
+  wp.customize(settingID, function (setting) {
+    updateColorSelect(setting());
+    setting.bind(updateColorSelect);
+  });
 };
 ;// CONCATENATED MODULE: ./src/js/customizer/fields/range/index.js
 
@@ -16175,7 +16262,7 @@ window.customify = window.customify || parent.customify || {};
 
 /***/ }),
 
-/***/ 502:
+/***/ 6545:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -16192,24 +16279,7 @@ ___CSS_LOADER_EXPORT___.push([module.id, ".c-contextual-menu{position:relative}.
 
 /***/ }),
 
-/***/ 770:
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3645);
-/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0__);
-// Imports
-
-var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
-// Module
-___CSS_LOADER_EXPORT___.push([module.id, ".palette-preview{margin-top:calc( 2 * var(--customizer-spacing) )}.palette-preview-set{margin-top:var(--customizer-spacing)}.palette-preview-set-header+.palette-preview-swatches{margin-top:calc( 0.5 * var(--customizer-spacing) )}.palette-preview-swatches{display:flex}.palette-preview-swatches+.palette-preview-swatches>*:before{padding-top:50%}.palette-preview-swatches>*{flex:1 1 0}.palette-preview-swatches>*:before{padding-top:100%;display:block;content:\"\";background:currentColor}.palette-preview-set-header{display:flex;align-items:center;margin-left:-1em}.palette-preview-set-header>*{margin-left:1em}.palette-preview-source{display:flex}.palette-preview-source-color{width:1em;height:1em;background:currentColor}.palette-preview-source-color:first-child{border-top-left-radius:999em;border-bottom-left-radius:999em}.palette-preview-source-color:last-child{border-top-right-radius:999em;border-bottom-right-radius:999em}", ""]);
-// Exports
-/* harmony default export */ __webpack_exports__["Z"] = (___CSS_LOADER_EXPORT___);
-
-
-/***/ }),
-
-/***/ 998:
+/***/ 7478:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -24250,6 +24320,6 @@ module.exports = (function() { return this["lodash"]; }());
 /******/ 	// module exports must be returned from runtime so entry inlining is disabled
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(794);
+/******/ 	return __webpack_require__(4551);
 /******/ })()
 ;

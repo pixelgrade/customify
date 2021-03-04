@@ -1,5 +1,6 @@
 import { initializePaletteBuilder } from './color-palette-builder';
 import { moveConnectedFields } from './utils';
+import './color-palettes-preview';
 import * as globalService from "../global-service";
 import _ from "lodash";
 
@@ -42,7 +43,10 @@ const initializeColors = () => {
 const applyMasterSettingsValues = () => {
   masterSettingIDs.forEach( masterSettingID => {
     wp.customize( masterSettingID, setting => {
+      console.group( `${ masterSettingID } ${ setting._value }` );
+      console.log( globalService.getSetting( masterSettingID ).connected_fields );
       setting.callbacks.fireWith( setting, [ setting._value, '' ] );
+      console.groupEnd();
     } );
   } );
 }
@@ -61,13 +65,13 @@ const applyColorationValueToFields = () => {
 
   wp.customize( 'sm_coloration_level', colorationLevelSetting => {
     const colorationLevel = colorationLevelSetting();
-    const defaultColorationLevel = globalService.getSetting( 'sm_coloration_level' ).default
+    const defaultColorationLevel = globalService.getSettingConfig( 'sm_coloration_level' ).default;
     const isDefaultColoration = colorationLevel === defaultColorationLevel;
 
     darkToColorSliderControls.forEach( sliderSettingID => {
       wp.customize( sliderSettingID, sliderSetting => {
 
-        const defaultValue = globalService.getSetting( sliderSettingID ).default;
+        const defaultValue = globalService.getSettingConfig( sliderSettingID ).default;
         const value = isDefaultColoration ? defaultValue : parseFloat( colorationLevel );
 
         sliderSetting.set( value );

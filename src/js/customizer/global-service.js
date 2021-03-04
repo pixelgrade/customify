@@ -19,6 +19,10 @@ export const getSetting = ( settingID ) => {
   return settings[settingID];
 }
 
+export const getSettingConfig = ( settingID ) => {
+  return customify.config.settings[ settingID ];
+}
+
 export const setSetting = ( settingID, value ) => {
   settings[settingID] = value;
 }

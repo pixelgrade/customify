@@ -7,18 +7,19 @@ export const handleColorSelectFields = () => {
 }
 
 export const convertToColorSelect = ( element ) => {
-  var $select = $( element );
-  var $selectOptions = $select.find( 'option' );
-  var $colorSelect = $( '<div class="customify-color-select">' );
+  const $select = $( element );
+  const $selectOptions = $select.find( 'option' );
+  const $colorSelect = $( '<div class="customify-color-select">' );
+  const settingID = $select.data( 'customize-setting-link' );
 
-  var $optionsList = $( '<div class="customify-color-select__option-list">' );
+  const $optionsList = $( '<div class="customify-color-select__option-list">' );
 
   $selectOptions.each( function( i, option ) {
-    var $option = $( option );
-    var label = $option.text();
-    var value = $option.attr( 'value' );
-    var $colorSelectOptionLabel = $( '<div class="customify-color-select__option-label">' );
-    var $colorSelectOption = $( '<div class="customify-color-select__option">' );
+    const $option = $( option );
+    const label = $option.text();
+    const value = $option.attr( 'value' );
+    const $colorSelectOptionLabel = $( '<div class="customify-color-select__option-label">' );
+    const $colorSelectOption = $( '<div class="customify-color-select__option">' );
 
     $colorSelectOptionLabel.text( label ).appendTo( $colorSelectOption );
     $colorSelectOption.data( 'value', value ).appendTo( $optionsList );
@@ -27,11 +28,11 @@ export const convertToColorSelect = ( element ) => {
 
   $optionsList.appendTo( $colorSelect );
 
-  var $colorSelectOptions = $colorSelect.find( '.customify-color-select__option' );
+  const $colorSelectOptions = $colorSelect.find( '.customify-color-select__option' );
 
   $colorSelectOptions.each( function( i, option ) {
-    var $colorSelectOption = $( option );
-    var value = $colorSelectOption.data( 'value' );
+    const $colorSelectOption = $( option );
+    const value = $colorSelectOption.data( 'value' );
 
     $colorSelectOption.on( 'click', function() {
       $select.val( value ).change();
@@ -41,10 +42,10 @@ export const convertToColorSelect = ( element ) => {
   $colorSelect.insertBefore( $select );
   $select.hide();
 
-  function updateColorSelect() {
-    var value = $select.val();
-    var $colorSelectOption = $colorSelectOptions.filter( function( index, obj ) {
-      return $( obj ).data( 'value' ) === value;
+  function updateColorSelect( newValue ) {
+
+    const $colorSelectOption = $colorSelectOptions.filter( ( index, obj ) => {
+      return $( obj ).data( 'value' ) === newValue;
     } );
 
     if ( $colorSelectOption.length ) {
@@ -53,7 +54,9 @@ export const convertToColorSelect = ( element ) => {
     }
   }
 
-  updateColorSelect();
-
-  $select.on( 'change', updateColorSelect );
+  wp.customize( settingID, ( setting ) => {
+    updateColorSelect( setting() );
+    
+    setting.bind( updateColorSelect );
+  } );
 }

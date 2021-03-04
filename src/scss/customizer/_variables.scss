@@ -21,19 +21,19 @@
 
 :root {
   --sm-color-palette-accent-color-1: #ffffff;
-  --sm-color-palette-accent-color-2: #f2f8fc;
-  --sm-color-palette-accent-color-3: #d2eaf5;
-  --sm-color-palette-accent-color-4: #8ec9e6;
-  --sm-color-palette-accent-color-5: #49aad7;
-  --sm-color-palette-accent-color-6: #3b87ac;
-  --sm-color-palette-accent-color-7: #317392;
-  --sm-color-palette-accent-color-8: #2a5f79;
-  --sm-color-palette-accent-color-9: #214d62;
-  --sm-color-palette-accent-color-10: #193a4a;
-  --sm-color-palette-accent-color-11: #10242e;
-  --sm-color-palette-accent-color-12: #071216;
-  --sm-color-palette-accent-text-color-1: #193a4a;
-  --sm-color-palette-accent-text-color-2: #10242e;
+  --sm-color-palette-accent-color-2: #f5f7fc;
+  --sm-color-palette-accent-color-3: #dfe6f4;
+  --sm-color-palette-accent-color-4: #afc2e3;
+  --sm-color-palette-accent-color-5: #7fa1d4;
+  --sm-color-palette-accent-color-6: #4d82c1;
+  --sm-color-palette-accent-color-7: #006fbb;
+  --sm-color-palette-accent-color-8: #085ba2;
+  --sm-color-palette-accent-color-9: #0b4889;
+  --sm-color-palette-accent-color-10: #0e3470;
+  --sm-color-palette-accent-color-11: #0b1d55;
+  --sm-color-palette-accent-color-12: #101010;
+  --sm-color-palette-accent-text-color-1: #0e3470;
+  --sm-color-palette-accent-text-color-2: #0b1d55;
 
   --sm-customizer-box-shadow-0:
     none;
@@ -75,7 +75,7 @@ $iris-box-shadow: 0 7px 8px 0 rgba(0, 0, 0, 0.100);
   --customizer-field-padding-y: 0.75em;
   --customizer-field-border-width: 2px;
   --customizer-field-border-color: var(--customizer-border-color);
-  --customizer-field-focus-border-color: var(--sm-color-palette-neutral-color-6);
+  --customizer-field-focus-border-color: var(--sm-color-palette-accent-color-7);
   --customizer-field-border-radius: 4px;
   --customizer-field-background-color: var(--sm-color-palette-neutral-color-1);
   --customizer-field-text-color: var(--sm-color-palette-neutral-text-color-1);
@@ -84,7 +84,7 @@ $iris-box-shadow: 0 7px 8px 0 rgba(0, 0, 0, 0.100);
   --customizer-field-font-weight: normal;
   --customizer-field-line-height: 1.5;
 
-  --customizer-select-focus-background-color: var(--sm-color-palette-neutral-color-5);
+  --customizer-select-focus-background-color: var(--sm-color-palette-accent-color-7);
   --customizer-select-focus-text-color: var(--sm-color-palette-neutral-color-1);
 
   --customizer-field-height: 44px;

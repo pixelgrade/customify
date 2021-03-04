@@ -4,13 +4,14 @@ $sm-fonts-id: unquote( '#accordion-section-sm_font_palettes_section' );
 // Add spacing and borders between section toggle buttons
 #customize-theme-controls {
 
-  #{$sm-colors-id} > .accordion-section-title {
-    border-bottom: 1px solid var(--customizer-border-color);
+  #{$sm-colors-id} > .accordion-section-title,
+  #{$sm-fonts-id} > .accordion-section-title {
+    border-top-width: 1px;
+    border-bottom-width: 1px;
   }
 
   #{$sm-colors-id} + #{$sm-fonts-id} > .accordion-section-title {
     margin-top: calc( 0.25 * var(--customizer-spacing) );
-    border-top-width: 1px;
   }
 }
 
@@ -35,7 +36,7 @@ $sm-fonts-id: unquote( '#accordion-section-sm_font_palettes_section' );
         justify-content: center;
         text-align: center;
 
-        background-color: var(--sm-color-palette-neutral-color-4);
+        background-color: var(--sm-color-palette-accent-color-7);
         color: var(--sm-color-palette-neutral-color-2);
 
         border-radius: 50%;

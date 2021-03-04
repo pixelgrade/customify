@@ -1,6 +1,6 @@
 import { ColorPicker } from './color-picker';
 import { ContextualMenu } from "../contextual-menu";
-import useOutsideClick from '../../../../utils/use-outside-click';
+import useOutsideClick from '../../../utils/use-outside-click';
 import ConfigContext from "../../context";
 
 import {

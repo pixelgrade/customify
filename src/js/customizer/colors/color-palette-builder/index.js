@@ -1,4 +1,4 @@
-import { Builder } from './components/builder';
+import { Builder } from '../components/builder';
 
 export const initializePaletteBuilder = ( sourceSettingID, outputSettingID ) => {
   const containerID = `customize-control-${ sourceSettingID }_control`;

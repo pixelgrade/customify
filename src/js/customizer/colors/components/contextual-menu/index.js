@@ -1,5 +1,5 @@
 import "./style.scss"
-import useOutsideClick from "../../../../utils/use-outside-click";
+import useOutsideClick from "../../../utils/use-outside-click";
 
 const { useEffect, useState, useRef } = wp.element;
 

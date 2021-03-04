@@ -6,11 +6,15 @@
   margin-top: calc( -0.5 * var(--customizer-spacing) );
   margin-left: calc( -0.5 * var(--customizer-spacing) );
 
-  label {
-    display: block;
+  > * {
     padding-top: calc( 0.5 * var(--customizer-spacing) );
     padding-left: calc( 0.5 * var(--customizer-spacing) );
     flex: 0 0 50%;
+  }
+
+  label {
+    display: block;
+    height: 100%;
 
     > input + div {
       border-color: var(--customizer-field-border-color);
@@ -36,7 +40,9 @@
     }
 
     &:checked + div {
+      background-color: var(--customizer-field-background-color);
       border-color: var(--customizer-field-focus-border-color);
+      cursor: default;
     }
   }
 }

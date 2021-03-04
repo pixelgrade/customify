@@ -12,14 +12,14 @@ class Pix_Customize_Radio_HTML_Control extends Pix_Customize_Control {
 	 */
 	public function render_content() { ?>
 
-		<label>
-			<?php if ( ! empty( $this->label ) ) { ?>
-				<span class="customize-control-title"><?php echo esc_html( $this->label ); ?></span>
-			<?php } ?>
+		<?php if ( ! empty( $this->label ) ) { ?>
+			<span class="customize-control-title"><?php echo esc_html( $this->label ); ?></span>
+		<?php } ?>
 
-			<div class="customify_radio_html">
-				<?php
-				foreach ( $this->choices as $value => $html ) { ?>
+		<div class="customify_radio_html">
+			<?php
+			foreach ( $this->choices as $value => $html ) { ?>
+				<div>
 					<label>
 						<input
 							type="radio"
@@ -30,13 +30,13 @@ class Pix_Customize_Radio_HTML_Control extends Pix_Customize_Control {
 						/>
 						<div><?php echo $html; ?></div>
 					</label>
-				<?php } ?>
-			</div>
-
-			<?php if ( ! empty( $this->description ) ) { ?>
-				<span class="description customize-control-description"><?php echo $this->description; ?></span>
+				</div>
 			<?php } ?>
-		</label>
+		</div>
+
+		<?php if ( ! empty( $this->description ) ) { ?>
+			<span class="description customize-control-description"><?php echo $this->description; ?></span>
+		<?php } ?>
 
 	<?php }
 }

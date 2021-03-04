@@ -1,0 +1,22 @@
+.sm-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+
+  width: 100%;
+  height: 100%;
+
+  background: #FFFFFF;
+  transition: all .2s ease;
+  transition-property: opacity;
+
+  &:not(.sm-overlay--visible) {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  &, * {
+    font-family: system-ui;
+  }
+}

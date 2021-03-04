@@ -56,6 +56,8 @@ class Customify_Color_Palettes {
 		// This needs to come after the external theme config has been applied
 		add_filter( 'customify_filter_fields', array( $this, 'maybe_enhance_dark_mode_control' ), 120, 1 );
 
+		add_filter( 'customify_final_config', array( $this, 'alter_master_controls_connected_fields' ), 100, 1 );
+
 		/*
 		 * Scripts enqueued in the Customizer.
 		 */
@@ -107,6 +109,84 @@ class Customify_Color_Palettes {
 	public function is_supported() {
 		// For now we will only use the fact that Style Manager is supported.
 		return apply_filters( 'customify_color_palettes_are_supported', Customify_Style_Manager::instance()->is_supported() );
+	}
+
+	public function alter_master_controls_connected_fields( $config ) {
+
+		$switch_foreground_connected_fields = array();
+		$switch_accent_connected_fields = array();
+
+		$select_foreground_connected_fields = array();
+		$select_accent_connected_fields = array();
+
+		if ( ! isset( $config['panels']['theme_options_panel']['sections']['colors_section']['options'] ) ) {
+			return $config;
+		}
+
+		foreach ( $config['panels']['theme_options_panel']['sections']['colors_section']['options'] as $id => $option_config ) {
+
+			if ( $option_config['type'] === 'sm_switch' ) {
+				if ( $option_config['default'] === 'on' ) {
+					$switch_accent_connected_fields[] = $id;
+				} else {
+					$switch_foreground_connected_fields[] = $id;
+				}
+			}
+
+			if ( $option_config['type'] === 'select_color' ) {
+				if ( $option_config['default'] === 'accent' ) {
+					$select_accent_connected_fields[] = $id;
+				} else {
+					$select_foreground_connected_fields[] = $id;
+				}
+			}
+		}
+
+		if ( ! isset( $config['panels']['style_manager_panel']['sections']['sm_color_palettes_section']['options'] ) ) {
+			return $config;
+		}
+
+		$options = $config['panels']['style_manager_panel']['sections']['sm_color_palettes_section']['options'];
+
+		if ( isset( $options['sm_text_color_switch_master'] ) ) {
+			$options['sm_text_color_switch_master']['connected_fields'] = $switch_foreground_connected_fields;
+		}
+
+		if ( isset( $options['sm_accent_color_switch_master'] ) ) {
+			$options['sm_accent_color_switch_master']['connected_fields'] = $switch_accent_connected_fields;
+		}
+
+		if ( isset( $options['sm_text_color_select_master'] ) ) {
+			$options['sm_text_color_select_master']['connected_fields'] = $select_foreground_connected_fields;
+		}
+
+		if ( isset( $options['sm_accent_color_select_master'] ) ) {
+			$options['sm_accent_color_select_master']['connected_fields'] = $select_accent_connected_fields;
+		}
+
+		if ( isset( $options['sm_dark_color_switch_slider'] ) ) {
+			$switch_dark_count = count( $switch_foreground_connected_fields );
+			$switch_accent_count = count( $switch_accent_connected_fields );
+			$options['sm_dark_color_switch_slider']['default'] = round( $switch_accent_count * 100 / $switch_dark_count );
+		}
+
+		if ( isset( $options['sm_dark_color_select_slider'] ) ) {
+			$select_dark_count = count( $select_foreground_connected_fields );
+			$select_accent_count = count( $select_accent_connected_fields );
+			$options['sm_dark_color_select_slider']['default'] = round( $select_accent_count * 100 / $select_dark_count );
+		}
+
+		if ( isset( $options['sm_dark_color_switch_slider'] ) &&
+		     isset( $options['sm_dark_color_select_slider'] ) &&
+		     isset( $options['sm_coloration_level'] ) ) {
+			$average = ( $options['sm_dark_color_switch_slider']['default'] + $options['sm_dark_color_select_slider']['default'] ) * 0.5;
+			$default = $average > 87.5 ? '100' : $average > 62.5 ? '75' : $average > 25 ? '50' : '0';
+			$options['sm_coloration_level']['default'] = $default;
+		}
+
+		$config['panels']['style_manager_panel']['sections']['sm_color_palettes_section']['options'] = $options;
+
+		return $config;
 	}
 
 	public function add_style_manager_new_section_master_colors_config( $config ) {
@@ -193,7 +273,7 @@ class Customify_Color_Palettes {
 		          'setting_id'       => 'sm_text_color_select_master',
 		          'label'            => esc_html__( 'Text Select Master', '__theme_txtd' ),
 		          'live'             => true,
-		          'default'          => 'text',
+		          'default'          => 'dark',
 		          'connected_fields' => array(),
 		          'css'              => array(),
 		          'choices'          => array(

@@ -102,6 +102,8 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 
 			// Hook up.
 			$this->add_hooks();
+
+			$this->maybe_create_colors_page();
 		}
 
 		/**
@@ -145,12 +147,56 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 				// Add a JS to display a notification
 				add_action( 'customize_controls_print_footer_scripts', array( $this, 'prevent_changeset_save_in_devmode_notification' ), 100 );
 			}
+
+			add_filter( 'template_include', array( $this, 'wpse50455_template_include' ) );
+			add_action( 'wp_footer', array( $this, 'output_color_palettes_preview_overlay' ) );
 		}
 
 		function enqueue_style_manager_scripts() {
 			$suffix = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min';
 
 			wp_enqueue_script( 'sm-dark-mode', plugins_url( 'dist/js/dark-mode' . $suffix . '.js', PixCustomifyPlugin()->get_file() ), array( 'jquery' ), PixCustomifyPlugin()->get_version() );
+		}
+
+		function output_color_palettes_preview_overlay() {
+			if ( is_customize_preview() ) {
+				echo '<div id="sm-color-palettes-preview"></div>';
+			}
+		}
+
+		function maybe_create_colors_page() {
+
+			$args = array(
+				'post_type'   => 'sm_custom_page',
+				'post_status' => 'publish',
+//				'meta_query'  => array(
+//					array(
+//						'key'   => '_wp_page_template',
+//						'value' => 'sm-colors.php',
+//					)
+//				)
+			);
+
+			$posts = get_posts( $args );
+
+			if ( count( $posts ) < 1 ) {
+				$this->create_colors_page();
+			}
+		}
+
+		function create_colors_page() {
+			$post_details = array(
+				'post_title'   => 'Colors',
+				'post_content' => '',
+				'post_status'  => 'publish',
+				'post_author'  => 1,
+				'post_type'    => 'sm_custom_page',
+//				'meta_input'   => array(
+//					'_wp_page_template' => 'sm-colors.php',
+//				),
+			);
+
+			wp_insert_post( $post_details );
 		}
 
 		/**
@@ -178,12 +224,48 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 				),
 				PixCustomifyPlugin()->get_version() );
 
+			// we should get
+			$page = get_page_by_title( 'Colors', OBJECT, 'sm_custom_page' );
+
+			if ( ! empty( $page ) ) {
+//
+//				$permalink = 0 < $page->ID ? get_permalink( $page->ID ) : '';
+//
+//				wp_add_inline_script( PixCustomifyPlugin()->get_slug() . '-customizer-scripts', "
+//				console.log( " . $page->ID . ");
+//				wp.customize.bind( 'ready', function() {
+//					wp.customize.section( 'sm_color_palettes_section', function( section ) {
+//						section.expanded.bind( function( isExpanded ) {
+//							if ( isExpanded ) {
+//								wp.customize.previewer.previewUrl.set( '" . esc_js( $permalink ) . "' );
+//							}
+//						} );
+//					} );
+//				} );
+//				");
+			}
+
 			wp_register_style(
 				PixCustomifyPlugin()->get_slug() . '-customizer',
 				plugins_url( 'dist/css/customizer.css', PixCustomifyPlugin()->get_file() ),
 				array(),
 				PixCustomifyPlugin()->get_version()
 			);
+		}
+
+		function wpse50455_template_include( $template ) {
+
+			$post_type = get_post_type();
+
+			if ( $post_type === 'sm_custom_page' ) {
+				$path = trailingslashit( PixCustomifyPlugin()->get_base_path() ) . 'templates/sm-colors.php';
+
+				if ( file_exists( $path ) ) {
+					return $path;
+				}
+			}
+
+			return $template;
 		}
 
 		/**

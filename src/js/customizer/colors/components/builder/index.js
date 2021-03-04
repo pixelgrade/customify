@@ -1,6 +1,5 @@
 import { SourceColors } from "../source-colors";
 import ConfigContext from "../../context";
-import { Preview } from "../preview";
 
 import {
   getColorsFromInputValue,
@@ -74,9 +73,6 @@ const Builder = ( props ) => {
       <ConfigContext.Provider value={ { config, setConfig } }>
         <Control label={ 'Brand Colors' }>
           <SourceColors />
-        </Control>
-        <Control label={ 'Color Palette preview' }>
-          <Preview palettes={ palettes } />
         </Control>
         <style>{ CSSOutput }</style>
       </ConfigContext.Provider>
