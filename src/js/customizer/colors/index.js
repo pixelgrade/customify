@@ -43,10 +43,7 @@ const initializeColors = () => {
 const applyMasterSettingsValues = () => {
   masterSettingIDs.forEach( masterSettingID => {
     wp.customize( masterSettingID, setting => {
-      console.group( `${ masterSettingID } ${ setting._value }` );
-      console.log( globalService.getSetting( masterSettingID ).connected_fields );
       setting.callbacks.fireWith( setting, [ setting._value, '' ] );
-      console.groupEnd();
     } );
   } );
 }

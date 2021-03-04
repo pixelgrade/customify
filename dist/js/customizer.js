@@ -11325,10 +11325,7 @@ var initializeColors = function initializeColors() {
 var applyMasterSettingsValues = function applyMasterSettingsValues() {
   masterSettingIDs.forEach(function (masterSettingID) {
     wp.customize(masterSettingID, function (setting) {
-      console.group("".concat(masterSettingID, " ").concat(setting._value));
-      console.log(getSetting(masterSettingID).connected_fields);
       setting.callbacks.fireWith(setting, [setting._value, '']);
-      console.groupEnd();
     });
   });
 };
