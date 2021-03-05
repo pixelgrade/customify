@@ -34,10 +34,11 @@ const PalettePreview = ( props ) => {
       </div> }
       <div className={ `palette-preview-set` }>
         { colors.map( ( color, colorIndex ) => (
-          <div key={ colorIndex } className={ `palette-preview-swatches sm-variation-${ colorIndex }`}>
-            <div style={ { color: `var(--sm-color-palette-${ id }-bg-color-${ colorIndex + 1 })` } }></div>
-            <div style={ { color: `var(--sm-color-palette-${ id }-accent-color-${ colorIndex + 1 })` } }></div>
-            <div style={ { color: `var(--sm-color-palette-${ id }-fg1-color-${ colorIndex + 1 })` } }></div>
+          <div key={ colorIndex } className={ `palette-preview-swatches sm-palette-${ id } sm-variation-${ colorIndex + 1 }`}>
+            <div style={ { color: `var(--sm-current-bg-color)` } }></div>
+            <div style={ { color: `var(--sm-current-accent-color)` } }></div>
+            <div style={ { color: `var(--sm-current-fg1-color)` } }></div>
+            <div style={ { color: `var(--sm-current-fg2-color)` } }></div>
           </div>
         ) ) }
         <div className="palette-preview-accent" style={ { color: `var(--sm-color-palette-${ id }-accent-color-11)` } }></div>

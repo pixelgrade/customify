@@ -30,8 +30,8 @@ const myOptimalContrastArray = [
   5.26,
   6.94,
   9.15,
-  12.07,
-  15.92,
+  12.07, // fg1
+  15.92, // fg2
   19 // almost black (21)
 ];
 

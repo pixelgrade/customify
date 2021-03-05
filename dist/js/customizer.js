@@ -10478,7 +10478,9 @@ var myOptimalContrastArray = [1, 1.07, // 1.32
 1.25, // 1.74
 1.8, // 2.29
 2.63, // 3.03
-3.99, 5.26, 6.94, 9.15, 12.07, 15.92, 19 // almost black (21)
+3.99, 5.26, 6.94, 9.15, 12.07, // fg1
+15.92, // fg2
+19 // almost black (21)
 ];
 var myOptimalContrastArray2 = (/* unused pure expression or super */ null && ([1, // 21 ^ 0
 1.079, // 21 ^ 0.025
@@ -10661,6 +10663,7 @@ var mapColorToPalette = function mapColorToPalette(attributes) {
         id = _colorObjects$.id;
     return {
       id: id || index + 1,
+      lightColorsCount: 5,
       label: label,
       source: sources,
       colors: colors
@@ -10832,7 +10835,8 @@ var getInitialColorVaraibles = function getInitialColorVaraibles(palette) {
 };
 var getColorVariables = function getColorVariables(palette, newColorIndex, oldColorIndex, isShifted) {
   var colors = palette.colors,
-      id = palette.id;
+      id = palette.id,
+      lightColorsCount = palette.lightColorsCount;
   var count = colors.length;
   var accentColorIndex = (oldColorIndex + count / 2) % count;
   var prefix = '--sm-color-palette-';
@@ -10841,7 +10845,7 @@ var getColorVariables = function getColorVariables(palette, newColorIndex, oldCo
   var accentColors = "\n    ".concat(prefix).concat(id, "-bg-color-").concat(newIndex).concat(suffix, ": var(").concat(prefix).concat(id, "-color-").concat(oldColorIndex + 1, ");\n    ").concat(prefix).concat(id, "-accent-color-").concat(newIndex).concat(suffix, ": var(").concat(prefix).concat(id, "-color-").concat(accentColorIndex + 1, ");\n  ");
   var darkColors = '';
 
-  if (oldColorIndex < count / 2) {
+  if (oldColorIndex < lightColorsCount) {
     darkColors = "\n      ".concat(prefix).concat(id, "-fg1-color-").concat(newIndex).concat(suffix, ": var(").concat(prefix).concat(id, "-text-color-1);\n      ").concat(prefix).concat(id, "-fg2-color-").concat(newIndex).concat(suffix, ": var(").concat(prefix).concat(id, "-text-color-2);\n    ");
   } else {
     darkColors = "\n      ".concat(prefix).concat(id, "-fg1-color-").concat(newIndex).concat(suffix, ": var(").concat(prefix).concat(id, "-color-1);\n      ").concat(prefix).concat(id, "-fg2-color-").concat(newIndex).concat(suffix, ": var(").concat(prefix).concat(id, "-color-1);\n    ");
@@ -11114,18 +11118,22 @@ var PalettePreview = function PalettePreview(props) {
   }, colors.map(function (color, colorIndex) {
     return /*#__PURE__*/React.createElement("div", {
       key: colorIndex,
-      className: "palette-preview-swatches sm-variation-".concat(colorIndex)
+      className: "palette-preview-swatches sm-palette-".concat(id, " sm-variation-").concat(colorIndex + 1)
     }, /*#__PURE__*/React.createElement("div", {
       style: {
-        color: "var(--sm-color-palette-".concat(id, "-bg-color-").concat(colorIndex + 1, ")")
+        color: "var(--sm-current-bg-color)"
       }
     }), /*#__PURE__*/React.createElement("div", {
       style: {
-        color: "var(--sm-color-palette-".concat(id, "-accent-color-").concat(colorIndex + 1, ")")
+        color: "var(--sm-current-accent-color)"
       }
     }), /*#__PURE__*/React.createElement("div", {
       style: {
-        color: "var(--sm-color-palette-".concat(id, "-fg1-color-").concat(colorIndex + 1, ")")
+        color: "var(--sm-current-fg1-color)"
+      }
+    }), /*#__PURE__*/React.createElement("div", {
+      style: {
+        color: "var(--sm-current-fg2-color)"
       }
     }));
   }), /*#__PURE__*/React.createElement("div", {

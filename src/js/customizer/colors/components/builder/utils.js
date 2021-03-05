@@ -138,6 +138,7 @@ export const mapColorToPalette = ( ( attributes ) => {
 
     return {
       id: id || ( index + 1 ),
+      lightColorsCount: 5,
       label: label,
       source: sources,
       colors: colors,
@@ -319,7 +320,7 @@ export const getInitialColorVaraibles = ( palette ) => {
 }
 
 export const getColorVariables = ( palette, newColorIndex, oldColorIndex, isShifted ) => {
-  const { colors, id } = palette;
+  const { colors, id, lightColorsCount } = palette;
   const count = colors.length;
   const accentColorIndex = ( oldColorIndex + count / 2 ) % count;
   const prefix = '--sm-color-palette-';
@@ -333,7 +334,7 @@ export const getColorVariables = ( palette, newColorIndex, oldColorIndex, isShif
 
   let darkColors = '';
 
-  if ( oldColorIndex < count / 2 ) {
+  if ( oldColorIndex < lightColorsCount ) {
     darkColors = `
       ${ prefix }${ id }-fg1-color-${ newIndex }${ suffix }: var(${ prefix }${ id }-text-color-1);
       ${ prefix }${ id }-fg2-color-${ newIndex }${ suffix }: var(${ prefix }${ id }-text-color-2);

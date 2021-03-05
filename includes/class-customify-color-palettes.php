@@ -668,6 +668,8 @@ class Customify_Color_Palettes {
 		$colors = $palette->colors;
 		$id = $palette->id;
 		$count = count( $colors );
+		$lightColorsCount = isset( $palette->lightColorsCount ) ? $palette->lightColorsCount : $count / 2;
+
 		$accentColorIndex = ( $oldColorIndex + $count / 2 ) % $count;
 		$prefix = '--sm-color-palette-';
 		$suffix = $isShifted ? '-shifted' : '';
@@ -677,12 +679,12 @@ class Customify_Color_Palettes {
 		$output .= $prefix . $id . '-bg-color-' . ( $newColorIndex + 1 ) . $suffix . ': var(' . $prefix . $id . '-color-' . ( $oldColorIndex + 1 ) . ');' . PHP_EOL;
 		$output .= $prefix . $id . '-accent-color-' . ( $newColorIndex + 1 ) . $suffix . ': var(' . $prefix . $id . '-color-' . ( $accentColorIndex + 1 ) . ');' . PHP_EOL;
 
-		if ( $oldColorIndex < $count / 2 ) {
+		if ( $oldColorIndex < $lightColorsCount ) {
 			$output .= $prefix . $id . '-fg1-color-' . ( $newColorIndex + 1 ) . $suffix . ': var(' . $prefix . $id . '-text-color-1);' . PHP_EOL;
 			$output .= $prefix . $id . '-fg2-color-' . ( $newColorIndex + 1 ) . $suffix . ': var(' . $prefix . $id . '-text-color-2);' . PHP_EOL;
 		} else {
 			$output .= $prefix . $id . '-fg1-color-' . ( $newColorIndex + 1 ) . $suffix . ': var(' . $prefix . $id . '-color-1);' . PHP_EOL;
-			$output .= $prefix . $id . '-fg2-color-' . ( $newColorIndex + 1 ) . $suffix . ': var(' . $prefix . $id . '-color-2);' . PHP_EOL;
+			$output .= $prefix . $id . '-fg2-color-' . ( $newColorIndex + 1 ) . $suffix . ': var(' . $prefix . $id . '-color-1);' . PHP_EOL;
 		}
 
 		return $output;
