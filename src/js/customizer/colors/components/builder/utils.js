@@ -101,8 +101,8 @@ export const getSourceIndex = ( palette ) => {
 export const mapAddTextColors = ( palette ) => {
   palette.textColors = palette.colors.slice( 9, 11 ).map( ( color, index ) => {
     return {
-      value: getTextColor( palette.source[0], index ),
-      ...color
+      ...color,
+      value: getTextColor( color.value, 9 + index ),
     }
   } );
   return palette;
@@ -260,16 +260,15 @@ export const getBestPositionInPalette = ( color, colors, attributes, byColorDist
   return pos;
 }
 
-const getTextColor = ( source, position, mode ) => {
+const getTextColor = ( hex, position ) => {
   const luminance = contrastToLuminance( contrastArray[ position ] );
-  const hpluv = hexToHpluv( source );
-
+  const hpluv = hexToHpluv( hex );
   const h = Math.min( Math.max( hpluv[0], 0), 360 );
   const p = Math.min( Math.max( hpluv[1], 0), 100 );
   const l = Math.min( Math.max( hpluv[2], 0), 100 );
-  const rgb = hpluvToRgb( [h, p, l] ).map( x => Math.max(0, Math.min( x * 255, 255 ) ) )
+  const rgb = hpluvToRgb( [h, p, l] ).map( x => x * 255 );
 
-  return chroma( rgb ).luminance( luminance, mode ).hex();
+  return chroma( rgb ).luminance( luminance ).hex();
 }
 
 const contrastToLuminance = ( contrast ) => {

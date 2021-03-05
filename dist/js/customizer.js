@@ -10628,9 +10628,9 @@ var getSourceIndex = function getSourceIndex(palette) {
 };
 var mapAddTextColors = function mapAddTextColors(palette) {
   palette.textColors = palette.colors.slice(9, 11).map(function (color, index) {
-    return utils_objectSpread({
-      value: getTextColor(palette.source[0], index)
-    }, color);
+    return utils_objectSpread(utils_objectSpread({}, color), {}, {
+      value: getTextColor(color.value, 9 + index)
+    });
   });
   return palette;
 };
@@ -10784,16 +10784,16 @@ var getBestPositionInPalette = function getBestPositionInPalette(color, colors, 
   return pos;
 };
 
-var getTextColor = function getTextColor(source, position, mode) {
+var getTextColor = function getTextColor(hex, position) {
   var luminance = contrastToLuminance(contrast_array[position]);
-  var hpluv = (0,hsluv.hexToHpluv)(source);
+  var hpluv = (0,hsluv.hexToHpluv)(hex);
   var h = Math.min(Math.max(hpluv[0], 0), 360);
   var p = Math.min(Math.max(hpluv[1], 0), 100);
   var l = Math.min(Math.max(hpluv[2], 0), 100);
   var rgb = (0,hsluv.hpluvToRgb)([h, p, l]).map(function (x) {
-    return Math.max(0, Math.min(x * 255, 255));
+    return x * 255;
   });
-  return chroma_default()(rgb).luminance(luminance, mode).hex();
+  return chroma_default()(rgb).luminance(luminance).hex();
 };
 
 var contrastToLuminance = function contrastToLuminance(contrast) {
