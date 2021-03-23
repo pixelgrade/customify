@@ -43,7 +43,7 @@ gulp.task( 'build:copy-folder', copyFolder );
 // Remove unneeded files and folders from the build folder.
 // -----------------------------------------------------------------------------
 async function removeUnneededFiles() {
-  const files_to_remove = new Array();
+  const files_to_remove = [];
   const contents = fs.readFileSync( '.zipignore', 'utf8' );
 
   // Files that should not be present in build

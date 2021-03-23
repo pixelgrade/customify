@@ -12,6 +12,7 @@ if (fs.existsSync('./tasks/gulpconfig.json')) {
 var slug = gulpconfig.slug
 var packageName = gulpconfig.packagename
 var textdomain = gulpconfig.textdomain
+var bugReport = gulpconfig.bugreport
 
 // -----------------------------------------------------------------------------
 // Replace the plugin's text domain with the actual text domain.
@@ -36,7 +37,9 @@ function generatePotFile () {
   ])
     .pipe(plugins.wpPot({
       domain: textdomain,
-      package: packageName
+      package: packageName,
+      relativeTo: '../build/' + slug + '/languages/',
+      bugReport: bugReport
     }))
     .pipe(gulp.dest('../build/' + slug + '/languages/' + slug + '.pot'))
 }

@@ -16,8 +16,8 @@ var slug = gulpconfig.slug;
 // -----------------------------------------------------------------------------
 function makeZip() {
 	var versionString = '';
-	// get plugin version from the stylesheet
-	var contents = fs.readFileSync("./style.css", "utf8");
+  // get plugin version from the main plugin file
+  var contents = fs.readFileSync("./" + slug + ".php", "utf8");
 
 	// split it by lines
 	var lines = contents.split(/[\r\n]/);
