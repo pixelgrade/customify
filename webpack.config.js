@@ -1,4 +1,7 @@
-const UglifyJsPlugin = require( 'uglifyjs-webpack-plugin' );
+/**
+ * External dependencies
+ */
+const TerserPlugin = require('terser-webpack-plugin');
 const path = require( 'path' );
 
 const files = [
@@ -50,7 +53,8 @@ module.exports = {
               '@babel/preset-react',
             ],
           }
-        }
+        },
+        sideEffects: false
       },
       {
         test: /\.s[ac]ss$/i,
@@ -62,6 +66,7 @@ module.exports = {
           // Compiles Sass to CSS
           "sass-loader",
         ],
+        sideEffects: true
       },
     ],
   },
@@ -72,9 +77,16 @@ module.exports = {
   optimization: {
     minimize: true,
     minimizer: [
-      new UglifyJsPlugin( {
-        include: /\.min\.js$/
+      new TerserPlugin( {
+        include: /\.min\.js$/,
+        extractComments: {
+          condition: true,
+          filename: (fileData) => {
+            // The "fileData" argument contains object with "filename", "basename", "query" and "hash"
+            return `${fileData.filename}.LICENSE.txt${fileData.query}`;
+          },
+        },
       } )
-    ]
+    ],
   },
 };

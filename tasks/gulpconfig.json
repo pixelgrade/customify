@@ -1,3 +1,5 @@
 {
-  "slug": "style-manager"
+	"packagename": "Customify",
+	"slug": "customify",
+	"textdomain": "customify"
 }

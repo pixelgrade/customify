@@ -526,18 +526,18 @@ function sm_get_color_select_dark_config( $label, $selector, $default, $properti
 	$callback = 'sm_color_select_dark_cb';
 
 	$choices = array(
-		'background' => esc_html__( 'Background', '__theme_txtd' ),
-		'dark'       => esc_html__( 'Dark', '__theme_txtd' ),
-		'accent'     => esc_html__( 'Accent', '__theme_txtd' ),
+		'background' => esc_html__( 'Background', '__plugin_txtd' ),
+		'dark'       => esc_html__( 'Dark', '__plugin_txtd' ),
+		'accent'     => esc_html__( 'Accent', '__plugin_txtd' ),
 	);
 
 	if ( $isDarker ) {
 		$callback = 'sm_color_select_darker_cb';
 
 		$choices = array(
-			'background' => esc_html__( 'Background', '__theme_txtd' ),
-			'darker'     => esc_html__( 'Dark', '__theme_txtd' ),
-			'accent'     => esc_html__( 'Accent', '__theme_txtd' ),
+			'background' => esc_html__( 'Background', '__plugin_txtd' ),
+			'darker'     => esc_html__( 'Dark', '__plugin_txtd' ),
+			'accent'     => esc_html__( 'Accent', '__plugin_txtd' ),
 		);
 	}
 
@@ -557,7 +557,7 @@ function sm_get_color_select_dark_config( $label, $selector, $default, $properti
 
 	return array(
 		'type'    => 'select_color',
-		'label'   => esc_html__( $label, '__theme_txtd' ),
+		'label'   => esc_html__( $label, '__plugin_txtd' ),
 		'live'    => true,
 		'default' => $default,
 		'css'     => $css,
@@ -624,7 +624,7 @@ function sm_get_color_switch_dark_config( $label, $selector, $default, $properti
 
 	return array(
 		'type'    => 'sm_switch',
-		'label'   => esc_html__( $label, '__theme_txtd' ),
+		'label'   => esc_html__( $label, '__plugin_txtd' ),
 		'live'    => true,
 		'default' => $default,
 		'css'     => $css,

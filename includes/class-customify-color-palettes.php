@@ -208,7 +208,7 @@ class Customify_Color_Palettes {
 		          'setting_type' => 'option',
 		          // We will force this setting id preventing prefixing and other regular processing.
 		          'setting_id'   => 'sm_advanced_palette_source',
-		          'label'        => esc_html__( 'Palette Source', '__theme_txtd' ),
+		          'label'        => esc_html__( 'Palette Source', '__plugin_txtd' ),
 		      ),
 		      'sm_advanced_palette_output'    => array(
 		          'type'         => 'text',
@@ -218,7 +218,7 @@ class Customify_Color_Palettes {
 		          'setting_type' => 'option',
 		          // We will force this setting id preventing prefixing and other regular processing.
 		          'setting_id'   => 'sm_advanced_palette_output',
-		          'label'        => esc_html__( 'Palette Output', '__theme_txtd' ),
+		          'label'        => esc_html__( 'Palette Output', '__plugin_txtd' ),
 		          'css'          => array(
 		              array(
 		                  'selector'        => ':root',
@@ -233,7 +233,7 @@ class Customify_Color_Palettes {
 			      'live'         => true,
 			      'setting_type' => 'option',
 			      'setting_id'   => 'sm_site_color_variation',
-			      'label'        => esc_html__( 'Palette Basis Offset', '__theme_txtd' ),
+			      'label'        => esc_html__( 'Palette Basis Offset', '__plugin_txtd' ),
 			      'default'      => 1,
 			      'input_attrs'  => array(
 				      'min'  => 1,
@@ -255,7 +255,7 @@ class Customify_Color_Palettes {
 		          'setting_type'     => 'option',
 		          // We will force this setting id preventing prefixing and other regular processing.
 		          'setting_id'       => 'sm_text_color_switch_master',
-		          'label'            => esc_html__( 'Text Master', '__theme_txtd' ),
+		          'label'            => esc_html__( 'Text Master', '__plugin_txtd' ),
 		          'live'             => true,
 		          'default'          => 'off',
 		          'connected_fields' => array(),
@@ -271,13 +271,13 @@ class Customify_Color_Palettes {
 		          'setting_type'     => 'option',
 		          // We will force this setting id preventing prefixing and other regular processing.
 		          'setting_id'       => 'sm_text_color_select_master',
-		          'label'            => esc_html__( 'Text Select Master', '__theme_txtd' ),
+		          'label'            => esc_html__( 'Text Select Master', '__plugin_txtd' ),
 		          'live'             => true,
 		          'default'          => 'dark',
 		          'connected_fields' => array(),
 		          'css'              => array(),
 		          'choices'          => array(
-		              'text' => esc_html__( 'Text', '__theme_txtd' ),
+		              'text' => esc_html__( 'Text', '__plugin_txtd' ),
 		          ),
 		      ),
 		      'sm_accent_color_switch_master' => array(
@@ -286,7 +286,7 @@ class Customify_Color_Palettes {
 		          'setting_type'     => 'option',
 		          // We will force this setting id preventing prefixing and other regular processing.
 		          'setting_id'       => 'sm_accent_color_switch_master',
-		          'label'            => esc_html__( 'Accent Master', '__theme_txtd' ),
+		          'label'            => esc_html__( 'Accent Master', '__plugin_txtd' ),
 		          'live'             => true,
 		          'default'          => 'on',
 		          'connected_fields' => array(),
@@ -302,13 +302,13 @@ class Customify_Color_Palettes {
 		          'setting_type'     => 'option',
 		          // We will force this setting id preventing prefixing and other regular processing.
 		          'setting_id'       => 'sm_accent_color_select_master',
-		          'label'            => esc_html__( 'Accent Select Master', '__theme_txtd' ),
+		          'label'            => esc_html__( 'Accent Select Master', '__plugin_txtd' ),
 		          'live'             => true,
 		          'default'          => 'accent',
 		          'connected_fields' => array(),
 		          'css'              => array(),
 		          'choices'          => array(
-		              'accent' => esc_html__( 'Accent', '__theme_txtd' ),
+		              'accent' => esc_html__( 'Accent', '__plugin_txtd' ),
 		          ),
 		      ),
 		      'sm_coloration_level'            => array(

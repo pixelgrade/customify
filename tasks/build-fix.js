@@ -36,25 +36,8 @@ function maybeFixIncorrectLineEndings( done ) {
 maybeFixIncorrectLineEndings.description = 'Make sure that all line endings in the files in the build directory are UNIX line endings.';
 gulp.task( 'build:fix:line-endings', maybeFixIncorrectLineEndings );
 
-// -----------------------------------------------------------------------------
-// Replace the themes' text domain with the actual text domain (think variations)
-// -----------------------------------------------------------------------------
-function pluginTextdomainReplace() {
-  return gulp.src( [
-    '../build/' + slug + '/**/*.php',
-    '../build/' + slug + '/**/*.js',
-    '../build/' + slug + '/**/*.css',
-    '../build/' + slug + '/**/*.pot'
-  ] )
-             .pipe( plugins.replace( /__theme_txtd/g, slug ) )
-             .pipe( gulp.dest( '../build/' + slug ) );
-}
-
-gulp.task( 'build:fix:txtdomain', pluginTextdomainReplace );
-
 gulp.task( 'build:fix', gulp.series(
   'build:fix:dir-permissions',
   'build:fix:file-permissions',
   'build:fix:line-endings',
-  'build:fix:txtdomain'
 ) );
