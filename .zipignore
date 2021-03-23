@@ -45,6 +45,44 @@ webpack.config.js
 .zipignore
 phpcs.xml.dist
 phpunit.xml.dist
-src
 bin
 postcss.config.js
+
+# From src we will only exclude js and scss, since the rest of the files (PHP) are needed.
+src/js
+src/css
+src/scss
+
+# The php-scoper is only used during development.
+php-scoper
+# symfony is prefixed and located in vendor_prefixed folder.
+vendor/symfony
+# psr is prefixed and located in vendor_prefixed folder.
+vendor/psr
+
+# These are all dev or unit testing related.
+vendor/bin
+vendor/antecedent
+vendor/brain
+vendor/mockery
+vendor/myclabs
+vendor/dealerdirect
+vendor/doctrine
+vendor/graham-campbell
+vendor/hamcrest
+vendor/pclzip
+vendor/phar-io
+vendor/phpcompatibility
+vendor/phpdocumentor
+vendor/phpoption
+vendor/phpspec
+vendor/phpunit/phpunit
+vendor/sebastian
+vendor/roave/security-advisories
+vendor/squizlabs
+vendor/theseer
+vendor/vlucas
+vendor/webmozart
+vendor/instituteweb
+vendor/wordpress
+vendor/wp-coding-standards

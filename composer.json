@@ -1,0 +1,115 @@
+{
+    "name": "pixelgrade/customify",
+    "description": "Customify is a theme Customizer booster to easily customize Fonts, Colors, and other options for a certain WordPress theme.",
+    "type": "wordpress-plugin",
+	"license": "GPL-2.0-or-later",
+	"authors": [
+		{
+			"name": "Vlad Olaru",
+			"email": "vlad@pixelgrade.com",
+			"homepage": "https://pixelgrade.com/"
+		},
+		{
+			"name": "Razvan Onofrei",
+			"email": "razvan@pixelgrade.com",
+			"homepage": "https://pixelgrade.com/"
+		},
+		{
+			"name": "George Olaru",
+			"email": "george@pixelgrade.com",
+			"homepage": "https://pixelgrade.com/"
+		}
+	],
+	"support": {
+		"issues": "https://github.com/pixelgrade/customify/issues",
+		"source": "https://github.com/pixelgrade/customify"
+	},
+	"config": {
+		"optimize-autoloader": true,
+		"preferred-install": "dist",
+		"sort-packages": true
+	},
+	"prefer-stable": true,
+	"repositories": {
+		"wordpress": {
+			"type": "vcs",
+			"url": "https://github.com/WordPress/wordpress-develop",
+			"no-api": true
+		},
+		"wp-test-suite": {
+			"type": "vcs",
+			"url": "https://github.com/cedaro/wp-test-suite"
+		}
+	},
+    "require": {
+		"php": ">=5.6",
+        "pimple/pimple": "^3.2",
+        "cedaro/wp-plugin": "^0.4.0",
+        "htmlburger/carbon-fields": "^3.2",
+		"psr/container": "^1.1",
+		"psr/log": "^1.0",
+		"symfony/polyfill-mbstring": "1.19.0",
+		"symfony/polyfill-php72": "1.19.0"
+	},
+	"require-dev": {
+		"brain/monkey": "^2.2",
+		"dealerdirect/phpcodesniffer-composer-installer": "^0.7.1",
+		"instituteweb/composer-scripts": "^1.1",
+		"pclzip/pclzip": "^2.8",
+		"phpcompatibility/phpcompatibility-wp": "^2",
+		"phpunit/phpunit": "^7.5",
+		"roave/security-advisories": "dev-master",
+		"squizlabs/php_codesniffer": "^3.3",
+		"vlucas/phpdotenv": "^5.3",
+		"wordpress/wordpress": "^5.6",
+		"wp-coding-standards/wpcs": "^1"
+	},
+	"autoload": {
+		"psr-4": {
+			"Pixelgrade\\Customify\\": "src/"
+		},
+		"classmap": [
+			"vendor_prefixed"
+		],
+		"files": [
+			"src/functions.php",
+			"vendor_prefixed/symfony/polyfill-mbstring/bootstrap.php",
+			"vendor_prefixed/symfony/polyfill-php72/bootstrap.php"
+		]
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"Pixelgrade\\Customify\\Tests\\": "tests/phpunit/"
+		},
+		"files": [
+
+		]
+	},
+	"scripts": {
+		"install-codestandards": [
+			"Dealerdirect\\Composer\\Plugin\\Installers\\PHPCodeSniffer\\Plugin::run"
+		],
+		"phpcs": "./vendor/bin/phpcs",
+		"tests": "./vendor/bin/phpunit --colors=always",
+		"tests-unit": "./vendor/bin/phpunit --testsuite=Unit --colors=always",
+		"tests-integration": "./vendor/bin/phpunit --testsuite=Integration --colors=always",
+
+		"pre-install-cmd": "@create-vendor-prefix-folder",
+		"pre-update-cmd": "@create-vendor-prefix-folder",
+		"create-vendor-prefix-folder": "npm run gulp composer:create_vendor_prefixed_folder",
+		"prefix-dependencies": [
+			"\\InstituteWeb\\ComposerScripts\\ImprovedScriptExecution::apply",
+			"@composer --working-dir=php-scoper install",
+			"php-scoper/vendor/bin/php-scoper add-prefix --config=php-scoper/config.php --output-dir=./vendor_prefixed --force",
+			"npm run gulp composer:delete_prefixed_vendor_libraries",
+			"npm run gulp composer:prefix_outside_files",
+			"@composer dump-autoload"
+		],
+
+		"pre-build": [
+			"npm run gulp composer:delete_lock_and_vendor",
+			"composer update --root-reqs --no-dev --no-suggest",
+			"@prefix-dependencies"
+		]
+	}
+}

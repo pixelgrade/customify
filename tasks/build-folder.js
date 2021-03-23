@@ -50,7 +50,8 @@ async function removeUnneededFiles() {
   contents.split( /[\r\n]/ ).forEach( function( path ) {
     path = path.trim();
 
-    if ( path ) {
+    // We will skip line starting with # since those are comments (as per the .gitignore standard).
+    if ( path && !path.startsWith('#') ) {
       files_to_remove.push( '../build/' + slug + '/' + path );
     }
   } );

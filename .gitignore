@@ -11,3 +11,6 @@ node_modules
 build
 *-ck.js
 npm-debug.log
+
+/vendor/
+/php-scoper/vendor/

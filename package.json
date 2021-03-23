@@ -1,6 +1,21 @@
 {
     "name": "customify",
+    "description": "Customify is a theme Customizer booster to easily customize Fonts, Colors, and other options for a certain WordPress theme..",
+    "private": false,
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/pixelgrade/customify.git"
+    },
+    "license": "GPL-2.0+",
+    "bugs": {
+        "url": "https://github.com/pixelgrade/customify/issues"
+    },
+    "engines": {
+        "node": ">=14.15.3",
+        "npm": ">=6.14.9"
+    },
     "scripts": {
+        "gulp": "node ./node_modules/gulp/bin/gulp.js",
         "dev": "cross-env webpack --mode=development --watch & gulp dev",
         "compile:production": "cross-env NODE_ENV=production webpack --mode=production && gulp compile:styles",
         "build": "cross-env NODE_ENV=production webpack --mode=production && gulp compile:styles && gulp zip"
@@ -19,6 +34,7 @@
         "gulp": "^4.0.2",
         "gulp-autoprefixer": "^7.0.1",
         "gulp-beautify": "^3.0.0",
+        "gulp-clean": "^0.4.0",
         "gulp-clean-css": "^4.3.0",
         "gulp-concat": "^2.6.1",
         "gulp-exec": "^5.0.0",
@@ -36,6 +52,7 @@
         "jquery": "^3.6.0",
         "lodash": "^4.17.21",
         "map-stream": "0.0.7",
+        "merge-stream": "^2.0.0",
         "path": "^0.12.7",
         "react": "^17.0.2",
         "request": "^2.88.2",
