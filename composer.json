@@ -112,7 +112,7 @@
 			"@composer dump-autoload"
 		],
 
-		"dev-composer-install": [
+		"dev-install": [
 			"@create-vendor-prefix-folder",
 			"@composer install --prefer-dist --no-scripts",
 			"@prefix-dependencies",
