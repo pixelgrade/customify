@@ -8,6 +8,7 @@ const files = [
   'customizer',
   'customizer-preview',
   'dark-mode',
+  'settings',
 ];
 
 function camelize( str ) {

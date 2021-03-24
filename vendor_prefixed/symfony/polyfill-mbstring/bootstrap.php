@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-use WPMailSMTP\Vendor\Symfony\Polyfill\Mbstring as p;
+use Customify\Vendor\Symfony\Polyfill\Mbstring as p;
 
 if (!function_exists('mb_convert_encoding')) {
     function mb_convert_encoding($string, $to_encoding, $from_encoding = null) { return p\Mbstring::mb_convert_encoding($string, $to_encoding, $from_encoding); }

@@ -92,11 +92,11 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 				),
 				// For localizing strings.
 				'l10n' => array(
-					'panelResetButton' => esc_html__( 'Panel\'s defaults', 'customify' ),
-					'sectionResetButton' => esc_html__( 'Reset All Options for This Section', 'customify' ),
-					'resetGlobalConfirmMessage' => wp_kses_post( __( 'Do you really want to reset to defaults all the fields? Watch out, this will reset all your Customify options and will save them!', 'customify' ) ),
-					'resetPanelConfirmMessage' => wp_kses_post( __( 'Do you really want to reset the settings in this panel?', 'customify' ) ),
-					'resetSectionConfirmMessage' => wp_kses_post( __( 'Do you really want to reset the settings in this section?', 'customify' ) ),
+					'panelResetButton' => esc_html__( 'Panel\'s defaults', '__plugin_txtd' ),
+					'sectionResetButton' => esc_html__( 'Reset All Options for This Section', '__plugin_txtd' ),
+					'resetGlobalConfirmMessage' => wp_kses_post( __( 'Do you really want to reset to defaults all the fields? Watch out, this will reset all your Customify options and will save them!', '__plugin_txtd' ) ),
+					'resetPanelConfirmMessage' => wp_kses_post( __( 'Do you really want to reset the settings in this panel?', '__plugin_txtd' ) ),
+					'resetSectionConfirmMessage' => wp_kses_post( __( 'Do you really want to reset the settings in this section?', '__plugin_txtd' ) ),
 				)
 			);
 
@@ -335,7 +335,7 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
                     'customify_force_defaults',
                     {
                       type: 'warning',
-                      message: '<?php echo wp_kses_post( __( '<strong>Customify: Development Mode</strong><p>All options are switched to default. While they are changing in the live preview, they will not be kept when you hit publish.</p>', 'customify' ) ); ?>'
+                      message: '<?php echo wp_kses_post( __( '<strong>Customify: Development Mode</strong><p>All options are switched to default. While they are changing in the live preview, they will not be kept when you hit publish.</p>', '__plugin_txtd' ) ); ?>'
                     }
                   ) );
                 });
@@ -627,8 +627,8 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 						$panel_args = array(
 							'priority'                 => 10,
 							'capability'               => 'edit_theme_options',
-							'title'                    => esc_html__( 'Panel title is required', 'customify' ),
-							'description'              => esc_html__( 'Description of what this panel does.', 'customify' ),
+							'title'                    => esc_html__( 'Panel title is required', '__plugin_txtd' ),
+							'description'              => esc_html__( 'Description of what this panel does.', '__plugin_txtd' ),
 							'auto_expand_sole_section' => false,
 						);
 
@@ -679,13 +679,13 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 			if ( PixCustomifyPlugin()->settings->get_plugin_setting('enable_reset_buttons') ) {
 				// create a toolbar section which will be present all the time
 				$reset_section_settings = array(
-					'title'   => esc_html__( 'Customify Toolbox', 'customify' ),
+					'title'   => esc_html__( 'Customify Toolbox', '__plugin_txtd' ),
 					'capability' => 'manage_options',
 					'priority' => 999999999,
 					'options' => array(
 						'reset_all_button' => array(
 							'type'   => 'button',
-							'label'  => esc_html__( 'Reset Customify', 'customify' ),
+							'label'  => esc_html__( 'Reset Customify', '__plugin_txtd' ),
 							'action' => 'reset_customify',
 							'value'  => 'Reset',
 						),
@@ -705,7 +705,7 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 					$wp_customize,
 					'reset_customify',
 					array(
-						'label'    => esc_html__( 'Reset All Customify Options to Default', 'customify' ),
+						'label'    => esc_html__( 'Reset All Customify Options to Default', '__plugin_txtd' ),
 						'section'  => 'customify_toolbar',
 						'settings' => 'reset_customify',
 						'action'   => 'reset_customify',
@@ -740,7 +740,7 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 					'panel'      => $panel_id,
 					'capability' => 'edit_theme_options',
 					'theme_supports' => '',
-					'title'      => esc_html__( 'Title Section is required', 'customify' ),
+					'title'      => esc_html__( 'Title Section is required', '__plugin_txtd' ),
 					'description' => '',
 					'type' => 'default',
 					'description_hidden' => false,
@@ -1551,7 +1551,7 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 		 */
 		public function __clone() {
 
-			_doing_it_wrong( __FUNCTION__,esc_html__( 'You should not do that!', 'customify' ), null );
+			_doing_it_wrong( __FUNCTION__,esc_html__( 'You should not do that!', '__plugin_txtd' ), null );
 		}
 
 		/**
@@ -1561,7 +1561,7 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 		 */
 		public function __wakeup() {
 
-			_doing_it_wrong( __FUNCTION__, esc_html__( 'You should not do that!', 'customify' ),  null );
+			_doing_it_wrong( __FUNCTION__, esc_html__( 'You should not do that!', '__plugin_txtd' ),  null );
 		}
 	}
 

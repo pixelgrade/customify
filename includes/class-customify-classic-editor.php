@@ -236,7 +236,7 @@ if (typeof WebFont !== 'undefined') {
 		 */
 		public function __clone() {
 
-			_doing_it_wrong( __FUNCTION__, esc_html__( 'You should not do that!', 'customify' ), null );
+			_doing_it_wrong( __FUNCTION__, esc_html__( 'You should not do that!', '__plugin_txtd' ), null );
 		}
 
 		/**
@@ -246,7 +246,7 @@ if (typeof WebFont !== 'undefined') {
 		 */
 		public function __wakeup() {
 
-			_doing_it_wrong( __FUNCTION__, esc_html__( 'You should not do that!', 'customify' ), null );
+			_doing_it_wrong( __FUNCTION__, esc_html__( 'You should not do that!', '__plugin_txtd' ), null );
 		}
 	}
 }

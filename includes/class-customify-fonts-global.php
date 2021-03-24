@@ -276,22 +276,22 @@ class Customify_Fonts_Global {
 	public function get_valid_subfield_values( $subfield, $labels = false ) {
 		$valid_values = apply_filters( 'customify_fonts_valid_subfield_values', array(
 			'text_align'      => array(
-				'initial' => esc_html__( 'Initial', 'customify' ),
-				'center'  => esc_html__( 'Center', 'customify' ),
-				'left'    => esc_html__( 'Left', 'customify' ),
-				'right'   => esc_html__( 'Right', 'customify' ),
+				'initial' => esc_html__( 'Initial', '__plugin_txtd' ),
+				'center'  => esc_html__( 'Center', '__plugin_txtd' ),
+				'left'    => esc_html__( 'Left', '__plugin_txtd' ),
+				'right'   => esc_html__( 'Right', '__plugin_txtd' ),
 			),
 			'text_transform'  => array(
-				'none'       => esc_html__( 'None', 'customify' ),
-				'capitalize' => esc_html__( 'Capitalize', 'customify' ),
-				'uppercase'  => esc_html__( 'Uppercase', 'customify' ),
-				'lowercase'  => esc_html__( 'Lowercase', 'customify' ),
+				'none'       => esc_html__( 'None', '__plugin_txtd' ),
+				'capitalize' => esc_html__( 'Capitalize', '__plugin_txtd' ),
+				'uppercase'  => esc_html__( 'Uppercase', '__plugin_txtd' ),
+				'lowercase'  => esc_html__( 'Lowercase', '__plugin_txtd' ),
 			),
 			'text_decoration' => array(
-				'none'         => esc_html__( 'None', 'customify' ),
-				'underline'    => esc_html__( 'Underline', 'customify' ),
-				'overline'     => esc_html__( 'Overline', 'customify' ),
-				'line-through' => esc_html__( 'Line Through', 'customify' ),
+				'none'         => esc_html__( 'None', '__plugin_txtd' ),
+				'underline'    => esc_html__( 'Underline', '__plugin_txtd' ),
+				'overline'     => esc_html__( 'Overline', '__plugin_txtd' ),
+				'line-through' => esc_html__( 'Line Through', '__plugin_txtd' ),
 			),
 		) );
 
@@ -381,7 +381,7 @@ class Customify_Fonts_Global {
 		do_action( 'customify_font_family_before_cloud_fonts_options', $active_font_family, $current_value );
 
 		if ( ! empty( $this->cloud_fonts ) ) {
-			echo '<optgroup label="' . esc_html__( 'Cloud Fonts', 'customify' ) . '">';
+			echo '<optgroup label="' . esc_html__( 'Cloud Fonts', '__plugin_txtd' ) . '">';
 			foreach ( $this->get_cloud_fonts() as $font ) {
 				if ( ! empty( $font['family'] ) ) {
 					// Display the select option's HTML.
@@ -400,7 +400,7 @@ class Customify_Fonts_Global {
 		do_action( 'customify_font_family_before_theme_fonts_options', $active_font_family, $current_value );
 
 		if ( ! empty( $this->theme_fonts ) ) {
-			echo '<optgroup label="' . esc_html__( 'Theme Fonts', 'customify' ) . '">';
+			echo '<optgroup label="' . esc_html__( 'Theme Fonts', '__plugin_txtd' ) . '">';
 			foreach ( $this->get_theme_fonts() as $font ) {
 				if ( ! empty( $font['family'] ) ) {
 					// Display the select option's HTML.
@@ -420,7 +420,7 @@ class Customify_Fonts_Global {
 
 		if ( ! empty( $this->system_fonts ) ) {
 
-			echo '<optgroup label="' . esc_attr__( 'System fonts', 'customify' ) . '">';
+			echo '<optgroup label="' . esc_attr__( 'System fonts', '__plugin_txtd' ) . '">';
 			foreach ( $this->get_system_fonts() as $font ) {
 				if ( ! empty( $font['family'] ) ) {
 					// Display the select option's HTML.
@@ -441,7 +441,7 @@ class Customify_Fonts_Global {
 		if ( ! empty( $this->google_fonts ) ) {
 			// The actual options in this optiongroup will be injected via JS from the output of
 			// see@ Customify_Fonts_Global::customize_pane_settings_google_fonts_options()
-			echo '<optgroup class="google-fonts-opts-placeholder" label="' . esc_attr__( 'Google fonts', 'customify' ) . '"></optgroup>';
+			echo '<optgroup class="google-fonts-opts-placeholder" label="' . esc_attr__( 'Google fonts', '__plugin_txtd' ) . '"></optgroup>';
 		}
 
 		// Allow others to add options here
@@ -492,7 +492,7 @@ class Customify_Fonts_Global {
 
 			foreach ( $grouped_google_fonts as $group_name => $group_fonts ) {
 				/* translators: %s: The font category name */
-				echo '<optgroup label="' . sprintf( esc_attr__( 'Google fonts %s', 'customify' ), $group_name ) . '">';
+				echo '<optgroup label="' . sprintf( esc_attr__( 'Google fonts %s', '__plugin_txtd' ), $group_name ) . '">';
 				foreach ( $group_fonts as $font_details ) {
 					Pix_Customize_Font_Control::output_font_family_option( $font_details['family'] );
 				}
@@ -500,7 +500,7 @@ class Customify_Fonts_Global {
 			}
 
 		} else {
-			echo '<optgroup label="' . esc_attr__( 'Google fonts', 'customify' ) . '">';
+			echo '<optgroup label="' . esc_attr__( 'Google fonts', '__plugin_txtd' ) . '">';
 			foreach ( $this->get_google_fonts() as $font_details ) {
 				Pix_Customize_Font_Control::output_font_family_option( $font_details['family'] );
 			}
@@ -1336,8 +1336,8 @@ if (typeof WebFont !== 'undefined') {
 			$localized['l10n'] = [];
 		}
 		$localized['l10n']['fonts'] = array(
-			'familyPlaceholderText' => esc_html__( 'Select a font family', 'customify' ),
-			'variantAutoText' => esc_html__( 'Auto', 'customify' ),
+			'familyPlaceholderText' => esc_html__( 'Select a font family', '__plugin_txtd' ),
+			'variantAutoText' => esc_html__( 'Auto', '__plugin_txtd' ),
 		);
 
 		return $localized;
@@ -2271,7 +2271,7 @@ if (typeof WebFont !== 'undefined') {
 	 */
 	public function __clone() {
 
-		_doing_it_wrong( __FUNCTION__,esc_html__( 'You should not do that!', 'customify' ), '' );
+		_doing_it_wrong( __FUNCTION__,esc_html__( 'You should not do that!', '__plugin_txtd' ), '' );
 	}
 
 	/**
@@ -2279,6 +2279,6 @@ if (typeof WebFont !== 'undefined') {
 	 */
 	public function __wakeup() {
 
-		_doing_it_wrong( __FUNCTION__, esc_html__( 'You should not do that!', 'customify' ), '' );
+		_doing_it_wrong( __FUNCTION__, esc_html__( 'You should not do that!', '__plugin_txtd' ), '' );
 	}
 }

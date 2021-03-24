@@ -23,22 +23,22 @@ $errors    = $processor->errors(); ?>
 
 	<div id="icon-options-general" class="icon32"><br></div>
 
-	<h2><?php esc_html_e( 'Customify', 'customify' ); ?></h2>
+	<h2><?php esc_html_e( 'Customify', '__plugin_txtd' ); ?></h2>
 
 	<?php if ( $processor->ok() ): ?>
 
 		<?php if ( ! empty( $errors ) ): ?>
 			<br/>
 			<p class="update-nag">
-				<strong><?php esc_html_e( 'Unable to save settings.', 'customify' ); ?></strong>
-				<?php esc_html_e( 'Please check the fields for errors and typos.', 'customify' ); ?>
+				<strong><?php esc_html_e( 'Unable to save settings.', '__plugin_txtd' ); ?></strong>
+				<?php esc_html_e( 'Please check the fields for errors and typos.', '__plugin_txtd' ); ?>
 			</p>
 		<?php endif;
 
 		if ( $processor->performed_update() ): ?>
 			<br/>
 			<p class="update-nag">
-				<?php esc_html_e( 'Settings have been updated.', 'customify' ); ?>
+				<?php esc_html_e( 'Settings have been updated.', '__plugin_txtd' ); ?>
 			</p>
 		<?php endif;
 		$f = pixcustomify::form( $config, $processor );
@@ -50,14 +50,14 @@ $errors    = $processor->errors(); ?>
 		echo $f->field( 'typography' )->render();
 		echo $f->field( 'tools' )->render(); ?>
 		<button type="submit" class="button button-primary">
-			<?php esc_html_e( 'Save Changes', 'customify' ); ?>
+			<?php esc_html_e( 'Save Changes', '__plugin_txtd' ); ?>
 		</button>
 
 		<?php echo $f->endform();
 
 	elseif ( $status['state'] == 'error' ): ?>
 
-		<h3><?php esc_html_e( 'Critical Error', 'customify' ); ?></h3>
+		<h3><?php esc_html_e( 'Critical Error', '__plugin_txtd' ); ?></h3>
 
 		<p><?php echo $status['message'] ?></p>
 

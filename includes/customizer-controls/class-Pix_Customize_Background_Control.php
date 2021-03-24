@@ -71,7 +71,7 @@ class Pix_Customize_Background_Control extends Pix_Customize_Control {
 				$hide = '';
 			}
 
-			$placeholder = isset( $this->field['placeholder'] ) ? $this->field['placeholder'] : __( 'No media selected', 'customify' );
+			$placeholder = isset( $this->field['placeholder'] ) ? $this->field['placeholder'] : __( 'No media selected', '__plugin_txtd' );
 
 			echo '<input type="text" 
 				class="customify_background_input background-image ' . $hide . 'upload ' . $this->field['class'] . '" 
@@ -128,14 +128,14 @@ class Pix_Customize_Background_Control extends Pix_Customize_Control {
 			echo '<div class="upload_button_div">';
 
 			//If the user has WP3.5+ show upload/remove button
-			echo '<span class="button background_upload_button" id="' . esc_attr( $this->id ) . '-media" data-setting_id="' . esc_attr( $this->setting->id ) . '" >' . esc_html__( 'Upload', 'customify' ) . '</span>';
+			echo '<span class="button background_upload_button" id="' . esc_attr( $this->id ) . '-media" data-setting_id="' . esc_attr( $this->setting->id ) . '" >' . esc_html__( 'Upload', '__plugin_txtd' ) . '</span>';
 
 			$hide = '';
 			if ( empty( $this->value['background-image'] ) || $this->value['background-image'] == '' ) {
 				$hide = ' hide';
 			}
 
-			echo '<span class="button remove-image' . $hide . '" id="reset_' . esc_attr( $this->id ) . '" rel="' . esc_attr( $this->id ) . '">' . esc_html__( 'Remove', 'customify' ) . '</span>';
+			echo '<span class="button remove-image' . $hide . '" id="reset_' . esc_attr( $this->id ) . '" rel="' . esc_attr( $this->id ) . '">' . esc_html__( 'Remove', '__plugin_txtd' ) . '</span>';
 
 			echo '</div>';
 		}
@@ -158,7 +158,7 @@ class Pix_Customize_Background_Control extends Pix_Customize_Control {
 				class="customify_background_select ' . $this->field['class'] . ' ' . $hide . '" 
 				data-select_name="background-repeat" 
 				data-customize-setting-link="' . esc_attr( $this->setting->id ) . '[background-repeat]">';
-			echo '<option disabled ' . selected( $this->value['background-repeat'], '', false ) . '>' . esc_html__( 'Background repeat..', 'customify' ) . '</option>';
+			echo '<option disabled ' . selected( $this->value['background-repeat'], '', false ) . '>' . esc_html__( 'Background repeat..', '__plugin_txtd' ) . '</option>';
 			foreach ( $array as $k => $v ) {
 				echo '<option value="' . $k . '"' . selected( $this->value['background-repeat'], $k, false ) . '>' . $v . '</option>';
 			}
@@ -182,7 +182,7 @@ class Pix_Customize_Background_Control extends Pix_Customize_Control {
 				class="customify_background_select ' . $this->field['class'] . ' ' . $hide . '" 
 				data-select_name="background-clip" 
 				data-customize-setting-link="' . esc_attr( $this->setting->id ) . '[background-clip]">';
-			echo '<option disabled ' . selected( $this->value['background-clip'], '', false ) . '>' . esc_html__( 'Background clip..', 'customify' ) . '</option>';
+			echo '<option disabled ' . selected( $this->value['background-clip'], '', false ) . '>' . esc_html__( 'Background clip..', '__plugin_txtd' ) . '</option>';
 			foreach ( $array as $k => $v ) {
 				echo '<option value="' . $k . '"' . selected( $this->value['background-clip'], $k, false ) . '>' . $v . '</option>';
 			}
@@ -206,7 +206,7 @@ class Pix_Customize_Background_Control extends Pix_Customize_Control {
 				class="customify_background_select ' . $this->field['class'] . ' ' . $hide . '" 
 				data-select_name="background-origin" 
 				data-customize-setting-link="' . esc_attr( $this->setting->id ) . '[background-origin]">';
-			echo '<option disabled ' . selected( $this->value['background-origin'], '', false ) . '>' . esc_html__( 'Background origin..', 'customify' ) . '</option>';
+			echo '<option disabled ' . selected( $this->value['background-origin'], '', false ) . '>' . esc_html__( 'Background origin..', '__plugin_txtd' ) . '</option>';
 			foreach ( $array as $k => $v ) {
 				echo '<option value="' . $k . '"' . selected( $this->value['background-origin'], $k, false ) . '>' . $v . '</option>';
 			}
@@ -229,7 +229,7 @@ class Pix_Customize_Background_Control extends Pix_Customize_Control {
 				class="customify_background_select ' . $this->field['class'] . ' ' . $hide . '" 
 				data-select_name="background-size" 
 				data-customize-setting-link="' . esc_attr( $this->setting->id ) . '[background-size]">';
-			echo '<option disabled ' . selected( $this->value['background-size'], '', false ) . '>' . esc_html__( 'Background size..', 'customify' ) . '</option>';
+			echo '<option disabled ' . selected( $this->value['background-size'], '', false ) . '>' . esc_html__( 'Background size..', '__plugin_txtd' ) . '</option>';
 			foreach ( $array as $k => $v ) {
 				echo '<option value="' . $k . '"' . selected( $this->value['background-size'], $k, false ) . '>' . $v . '</option>';
 			}
@@ -248,7 +248,7 @@ class Pix_Customize_Background_Control extends Pix_Customize_Control {
 			}
 
 			echo '<select id="' . $this->id . '-attachment-select" name="_customize-input-' . esc_attr( $this->setting->id ) . '[background-attachment]" class="customify_background_select ' . $this->field['class'] . ' ' . $hide . '" data-select_name="background-attachment" data-customize-setting-link="' . esc_attr( $this->setting->id ) . '[background-attachment]">';
-			echo '<option disabled ' . selected( $this->value['background-attachment'], '', false ) . '>' . esc_html__( 'Background attachment..', 'customify' ) . '</option>';
+			echo '<option disabled ' . selected( $this->value['background-attachment'], '', false ) . '>' . esc_html__( 'Background attachment..', '__plugin_txtd' ) . '</option>';
 			foreach ( $array as $k => $v ) {
 				echo '<option value="' . $k . '"' . selected( $this->value['background-attachment'], $k, false ) . '>' . $v . '</option>';
 			}
@@ -278,7 +278,7 @@ class Pix_Customize_Background_Control extends Pix_Customize_Control {
 				placeholder="Background position?"
 				data-select_name="background-position" 
 				data-customize-setting-link="' . esc_attr( $this->setting->id ) . '[background-position]">';
-			echo '<option disabled ' . selected( $this->value['background-position'], '', false ) . '>' . esc_html__( 'Background position..', 'customify' ) . '</option>';
+			echo '<option disabled ' . selected( $this->value['background-position'], '', false ) . '>' . esc_html__( 'Background position..', '__plugin_txtd' ) . '</option>';
 			foreach ( $array as $k => $v ) {
 				echo '<option value="' . $k . '"' . selected( $this->value['background-position'], $k, false ) . '>' . $v . '</option>';
 			}

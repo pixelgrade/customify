@@ -18,6 +18,7 @@ gulp.task( 'composer:delete_lock_and_vendor', function () {
 gulp.task( 'composer:delete_prefixed_vendor_libraries', function () {
   return gulp.src(
     [
+      'vendor/cedaro/wp-plugin',
       'vendor/pimple/pimple',
       'vendor/psr/container',
       'vendor/psr/log',
@@ -54,15 +55,15 @@ gulp.task( 'composer:prefix_outside_files', function () {
   return merge(
 
     gulp.src( [ 'vendor_prefixed/symfony/polyfill-mbstring/bootstrap.php' ], { allowEmpty: true } )
-      .pipe( plugins.replace( /use Symfony\\Polyfill\\Mbstring/gm, 'use WPMailSMTP\\Vendor\\Symfony\\Polyfill\\Mbstring' ) )
+      .pipe( plugins.replace( /use Symfony\\Polyfill\\Mbstring/gm, 'use Customify\\Vendor\\Symfony\\Polyfill\\Mbstring' ) )
       .pipe( gulp.dest( 'vendor_prefixed/symfony/polyfill-mbstring/' ) ),
 
     gulp.src( [ 'vendor_prefixed/symfony/polyfill-mbstring/Resources/mb_convert_variables.php8' ], { allowEmpty: true } )
-      .pipe( plugins.replace( /use Symfony\\Polyfill\\Mbstring/gm, 'use WPMailSMTP\\Vendor\\Symfony\\Polyfill\\Mbstring' ) )
+      .pipe( plugins.replace( /use Symfony\\Polyfill\\Mbstring/gm, 'use Customify\\Vendor\\Symfony\\Polyfill\\Mbstring' ) )
       .pipe( gulp.dest( 'vendor_prefixed/symfony/polyfill-mbstring/Resources/' ) ),
 
     gulp.src( [ 'vendor_prefixed/symfony/polyfill-php72/bootstrap.php' ], { allowEmpty: true } )
-      .pipe( plugins.replace( /use Symfony\\Polyfill\\Php72/gm, 'use WPMailSMTP\\Vendor\\Symfony\\Polyfill\\Php72' ) )
+      .pipe( plugins.replace( /use Symfony\\Polyfill\\Php72/gm, 'use Customify\\Vendor\\Symfony\\Polyfill\\Php72' ) )
       .pipe( gulp.dest( 'vendor_prefixed/symfony/polyfill-php72/' ) )
   );
 } );

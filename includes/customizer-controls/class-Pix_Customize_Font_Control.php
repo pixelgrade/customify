@@ -123,7 +123,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 
 		if ( ! empty( $this->recommended ) ) {
 
-			echo '<optgroup label="' . esc_attr__( 'Recommended', 'customify' ) . '">';
+			echo '<optgroup label="' . esc_attr__( 'Recommended', '__plugin_txtd' ) . '">';
 
 			foreach ( $this->recommended as $font_family ) {
 				self::output_font_family_option( $font_family, $active_font_family );
@@ -185,13 +185,13 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 				<?php
 				$this->display_font_variant_field( $current_value, $current_font_details );
 
-				$this->display_range_field( 'font-size', $current_value, 'font_size', esc_html__( 'Font Size', 'customify' ) );
-				$this->display_range_field( 'line-height', $current_value, 'line_height', esc_html__( 'Line height', 'customify' ) );
-				$this->display_range_field( 'letter-spacing', $current_value, 'letter_spacing', esc_html__( 'Letter Spacing', 'customify' ) );
+				$this->display_range_field( 'font-size', $current_value, 'font_size', esc_html__( 'Font Size', '__plugin_txtd' ) );
+				$this->display_range_field( 'line-height', $current_value, 'line_height', esc_html__( 'Line height', '__plugin_txtd' ) );
+				$this->display_range_field( 'letter-spacing', $current_value, 'letter_spacing', esc_html__( 'Letter Spacing', '__plugin_txtd' ) );
 
-				$this->display_select_field( 'text-align', $current_value, 'text_align', esc_html__( 'Text Align', 'customify' ) );
-				$this->display_select_field( 'text-transform', $current_value, 'text_transform', esc_html__( 'Text Transform', 'customify' ) );
-				$this->display_select_field( 'text-decoration', $current_value, 'text_decoration', esc_html__( 'Text Decoration', 'customify' ) );
+				$this->display_select_field( 'text-align', $current_value, 'text_align', esc_html__( 'Text Align', '__plugin_txtd' ) );
+				$this->display_select_field( 'text-transform', $current_value, 'text_transform', esc_html__( 'Text Transform', '__plugin_txtd' ) );
+				$this->display_select_field( 'text-decoration', $current_value, 'text_decoration', esc_html__( 'Text Decoration', '__plugin_txtd' ) );
 				?>
 			</ul>
 		</div>
@@ -250,7 +250,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 		}
 		?>
 		<li class="customify_weights_wrapper customize-control font-options__option" style="display: <?php echo $display; ?>;">
-			<label><?php esc_html_e( 'Font Variant', 'customify' ); ?></label>
+			<label><?php esc_html_e( 'Font Variant', '__plugin_txtd' ); ?></label>
 			<select class="customify_font_weight" data-value_entry="font_variant" <?php echo ( 'none' === $display ) ?  'data-disabled="true"' : ''?>>
 				<?php
 				if ( ! empty( $current_font_details['variants'] ) ) {

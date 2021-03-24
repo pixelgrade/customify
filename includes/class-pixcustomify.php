@@ -944,9 +944,9 @@ class PixCustomifyPlugin {
 			'strong' => array(),
 		);
 		$html = '<div class="updated fade">' .
-		        sprintf( esc_html__( 'Error: plugin "%s" requires a newer version of PHP to be running.', 'customify' ), 'Customify' ) .
-		        '<br/>' . sprintf( esc_html__( 'Minimal version of PHP required: %s', 'customify' ), '<strong>' . $this->minimalRequiredPhpVersion . '</strong>' ) .
-		        '<br/>' . sprintf( esc_html__( 'Your server\'s PHP version: %s', 'customify' ), '<strong>' . phpversion() . '</strong>' ) .
+		        sprintf( esc_html__( 'Error: plugin "%s" requires a newer version of PHP to be running.', '__plugin_txtd' ), 'Customify' ) .
+		        '<br/>' . sprintf( esc_html__( 'Minimal version of PHP required: %s', '__plugin_txtd' ), '<strong>' . $this->minimalRequiredPhpVersion . '</strong>' ) .
+		        '<br/>' . sprintf( esc_html__( 'Your server\'s PHP version: %s', '__plugin_txtd' ), '<strong>' . phpversion() . '</strong>' ) .
 		        '</div>';
 		echo wp_kses( $html, $allowed );
 	}
@@ -1030,7 +1030,7 @@ class PixCustomifyPlugin {
 	 */
 	public function __clone() {
 
-		_doing_it_wrong( __FUNCTION__, esc_html__( 'You should not do that!', 'customify' ), null );
+		_doing_it_wrong( __FUNCTION__, esc_html__( 'You should not do that!', '__plugin_txtd' ), null );
 	}
 
 	/**
@@ -1040,6 +1040,6 @@ class PixCustomifyPlugin {
 	 */
 	public function __wakeup() {
 
-		_doing_it_wrong( __FUNCTION__, esc_html__( 'You should not do that!', 'customify' ), null );
+		_doing_it_wrong( __FUNCTION__, esc_html__( 'You should not do that!', '__plugin_txtd' ), null );
 	}
 }

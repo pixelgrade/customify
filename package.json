@@ -18,7 +18,7 @@
         "gulp": "node ./node_modules/gulp/bin/gulp.js",
         "dev": "cross-env webpack --mode=development --watch & gulp dev",
         "compile:production": "cross-env NODE_ENV=production webpack --mode=production && gulp compile:styles",
-        "build": "cross-env NODE_ENV=production webpack --mode=production && gulp compile:styles && gulp zip"
+        "zip": "cross-env NODE_ENV=production webpack --mode=production && gulp compile:styles && composer zip"
     },
     "devDependencies": {
         "@babel/core": "^7.13.10",

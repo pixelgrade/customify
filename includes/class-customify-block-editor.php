@@ -457,7 +457,7 @@ if ( ! class_exists( 'Customify_Block_Editor' ) ) {
 		 */
 		public function __clone() {
 
-			_doing_it_wrong( __FUNCTION__, esc_html__( 'You should not do that!', 'customify' ), null );
+			_doing_it_wrong( __FUNCTION__, esc_html__( 'You should not do that!', '__plugin_txtd' ), null );
 		}
 
 		/**
@@ -467,7 +467,7 @@ if ( ! class_exists( 'Customify_Block_Editor' ) ) {
 		 */
 		public function __wakeup() {
 
-			_doing_it_wrong( __FUNCTION__, esc_html__( 'You should not do that!', 'customify' ), null );
+			_doing_it_wrong( __FUNCTION__, esc_html__( 'You should not do that!', '__plugin_txtd' ), null );
 		}
 	}
 }

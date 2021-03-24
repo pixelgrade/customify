@@ -102,18 +102,18 @@ class Customify_Customizer_Search {
 		}
 		?>
 		<script type="text/html" id="tmpl-customify-search-button">
-			<button type="button" class="customize-search-toggle dashicons dashicons-search" aria-expanded="false"><span class="screen-reader-text"><?php esc_html_e( 'Search', 'customify' ); ?></span></button>
+			<button type="button" class="customize-search-toggle dashicons dashicons-search" aria-expanded="false"><span class="screen-reader-text"><?php esc_html_e( 'Search', '__plugin_txtd' ); ?></span></button>
 		</script>
 
 		<script type="text/html" id="tmpl-customify-search-form">
 			<div id="accordion-section-customify-customizer-search" style="display: none;">
 				<h4 class="customify-customizer-search-section accordion-section-title">
-					<span class="search-input-label"><?php esc_html_e( 'Search through all controls, menus, and widgets.', 'customify' ); ?></span>
+					<span class="search-input-label"><?php esc_html_e( 'Search through all controls, menus, and widgets.', '__plugin_txtd' ); ?></span>
 					<span class="search-field-wrapper">
-						<input type="text" placeholder="<?php esc_html_e( 'Start typing...', 'customify' ); ?>" name="customify-customizer-search-input" autofocus="autofocus" id="customify-customizer-search-input" class="customizer-search-input" />
+						<input type="text" placeholder="<?php esc_html_e( 'Start typing...', '__plugin_txtd' ); ?>" name="customify-customizer-search-input" autofocus="autofocus" id="customify-customizer-search-input" class="customizer-search-input" />
 						<span class="search-field-button-wrapper">
-							<button type="button" class="clear-search button button-primary has-next-sibling" tabindex="0" aria-label="<?php esc_html_e( 'Clear current search', 'customify' ); ?>"><?php esc_html_e( 'Clear', 'customify' ); ?></button>
-							<button type="button" class="close-search button-primary button dashicons dashicons-no" aria-label="<?php esc_html_e( 'Close search', 'customify' ); ?>"></button>
+							<button type="button" class="clear-search button button-primary has-next-sibling" tabindex="0" aria-label="<?php esc_html_e( 'Clear current search', '__plugin_txtd' ); ?>"><?php esc_html_e( 'Clear', '__plugin_txtd' ); ?></button>
+							<button type="button" class="close-search button-primary button dashicons dashicons-no" aria-label="<?php esc_html_e( 'Close search', '__plugin_txtd' ); ?>"></button>
 						</span>
 					</span>
 				</h4>
@@ -184,7 +184,7 @@ class Customify_Customizer_Search {
 			$localized['l10n'] = [];
 		}
 		$localized['l10n']['search'] = [
-			'resultsSectionScreenReaderText' => esc_html__( 'Press return or enter to open this section', 'customify' ),
+			'resultsSectionScreenReaderText' => esc_html__( 'Press return or enter to open this section', '__plugin_txtd' ),
 		];
 
 		return $localized;
@@ -227,7 +227,7 @@ class Customify_Customizer_Search {
 	 */
 	public function __clone() {
 
-		_doing_it_wrong( __FUNCTION__,esc_html__( 'You should not do that!', 'customify' ), null );
+		_doing_it_wrong( __FUNCTION__,esc_html__( 'You should not do that!', '__plugin_txtd' ), null );
 	}
 
 	/**
@@ -237,7 +237,7 @@ class Customify_Customizer_Search {
 	 */
 	public function __wakeup() {
 
-		_doing_it_wrong( __FUNCTION__, esc_html__( 'You should not do that!', 'customify' ),  null );
+		_doing_it_wrong( __FUNCTION__, esc_html__( 'You should not do that!', '__plugin_txtd' ),  null );
 	}
 }
 

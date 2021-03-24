@@ -76,7 +76,7 @@ $config['sections'] = [
 	 * Fonts - This section will handle all elements fonts (eg. links, headings)
 	 */
 	'fonts_section' => [
-		'title'    => esc_html__( 'Fonts', 'customify' ),
+		'title'    => esc_html__( 'Fonts', '__plugin_txtd' ),
 		'priority' => 3, // This will put this section right after Colors section that has a priority of 2.
 		'options'  => [
 			/**
@@ -84,11 +84,11 @@ $config['sections'] = [
 			 */
 			'header_section'                               => [
 				'type' => 'html',
-				'html' => '<span id="section-title-blog-fonts" class="separator section label large">' . esc_html__( 'Header', 'customify' ) . '</span>',
+				'html' => '<span id="section-title-blog-fonts" class="separator section label large">' . esc_html__( 'Header', '__plugin_txtd' ) . '</span>',
 			],
 			'header_site_title_font'         => array(
 				'type'        => 'font',
-				'label'       => esc_html__( 'Site Title Font', 'customify' ),
+				'label'       => esc_html__( 'Site Title Font', '__plugin_txtd' ),
 				'selector'    => '.page-template-template-homepage .entry-header h1',
 				'callback'    => 'typeline_font_cb',
 
@@ -118,7 +118,7 @@ $config['sections'] = [
 			),
 			'header_navigation_font'         => array(
 				'type'        => 'font',
-				'label'       => esc_html__( 'Navigation Text', 'customify' ),
+				'label'       => esc_html__( 'Navigation Text', '__plugin_txtd' ),
 				'selector'    => '.storefront-primary-navigation',
 				'callback'    => 'typeline_font_cb',
 
@@ -152,11 +152,11 @@ $config['sections'] = [
 			 */
 			'main_content'                               => [
 				'type' => 'html',
-				'html' => '<span id="section-title-blog-fonts" class="separator section label large">' . esc_html__( 'Main Content', 'customify' ) . '</span>',
+				'html' => '<span id="section-title-blog-fonts" class="separator section label large">' . esc_html__( 'Main Content', '__plugin_txtd' ) . '</span>',
 			],
 			'main_content_page_title_font'         => array(
 				'type'        => 'font',
-				'label'       => esc_html__( 'Page Title Font', 'customify' ),
+				'label'       => esc_html__( 'Page Title Font', '__plugin_txtd' ),
 				'selector'    => '.page-template-template-homepage .entry-header h1',
 				'callback'    => 'typeline_font_cb',
 
@@ -186,7 +186,7 @@ $config['sections'] = [
 			),
 			'main_content_body_text_font'          => array(
 				'type'        => 'font',
-				'label'       => esc_html__( 'Body Text Font', 'customify' ),
+				'label'       => esc_html__( 'Body Text Font', '__plugin_txtd' ),
 				'selector'    => 'body',
 				'callback'    => 'typeline_body_font_cb',
 
@@ -216,7 +216,7 @@ $config['sections'] = [
 			),
 			'main_content_quote_block_font'         => array(
 				'type'        => 'font',
-				'label'       => esc_html__( 'Quote Block Font', 'customify' ),
+				'label'       => esc_html__( 'Quote Block Font', '__plugin_txtd' ),
 				'selector'    => 'blockquote',
 				'callback'    => 'typeline_font_cb',
 				'default'  => array(
@@ -246,8 +246,8 @@ $config['sections'] = [
 
 			'main_content_heading_1_font' => [
 				'type'     			=> 'font',
-				'label'            => esc_html__( 'Heading 1', 'customify' ),
-				'desc'             => esc_html__( '', 'customify' ),
+				'label'            => esc_html__( 'Heading 1', '__plugin_txtd' ),
+				'desc'             => esc_html__( '', '__plugin_txtd' ),
 				'selector'         => '.alpha, h1',
 
 				'default' => array(
@@ -277,8 +277,8 @@ $config['sections'] = [
 
 			'main_content_heading_2_font' => [
 				'type'     			=> 'font',
-				'label'            => esc_html__( 'Heading 2', 'customify' ),
-				'desc'             => esc_html__( '', 'customify' ),
+				'label'            => esc_html__( 'Heading 2', '__plugin_txtd' ),
+				'desc'             => esc_html__( '', '__plugin_txtd' ),
 				'selector'         => '.beta, h2',
 
 				'default' => array(
@@ -308,8 +308,8 @@ $config['sections'] = [
 
 			'main_content_heading_4_font' => [
 				'type'     			=> 'font',
-				'label'            => esc_html__( 'Heading 4', 'customify' ),
-				'desc'             => esc_html__( '', 'customify' ),
+				'label'            => esc_html__( 'Heading 4', '__plugin_txtd' ),
+				'desc'             => esc_html__( '', '__plugin_txtd' ),
 				'selector'         => '.delta, h4',
 
 				'default' => array(
@@ -339,8 +339,8 @@ $config['sections'] = [
 
 			'main_content_heading_5_font' => [
 				'type'     			=> 'font',
-				'label'            => esc_html__( 'Heading 5', 'customify' ),
-				'desc'             => esc_html__( '', 'customify' ),
+				'label'            => esc_html__( 'Heading 5', '__plugin_txtd' ),
+				'desc'             => esc_html__( '', '__plugin_txtd' ),
 				'selector'         => 'h5',
 
 				'default' => array(
@@ -370,8 +370,8 @@ $config['sections'] = [
 
 			'main_content_heading_6_font' => [
 				'type'     			=> 'font',
-				'label'            => esc_html__( 'Heading 6', 'customify' ),
-				'desc'             => esc_html__( '', 'customify' ),
+				'label'            => esc_html__( 'Heading 6', '__plugin_txtd' ),
+				'desc'             => esc_html__( '', '__plugin_txtd' ),
 				'selector'         => 'h6',
 
 				'default' => array(
@@ -401,8 +401,8 @@ $config['sections'] = [
 
 			'main_content_heading_3_font' => [
 				'type'     			=> 'font',
-				'label'            => esc_html__( 'Heading 3', 'customify' ),
-				'desc'             => esc_html__( '', 'customify' ),
+				'label'            => esc_html__( 'Heading 3', '__plugin_txtd' ),
+				'desc'             => esc_html__( '', '__plugin_txtd' ),
 				'selector'         => '.gamma, h3',
 
 				'default' => array(
@@ -435,12 +435,12 @@ $config['sections'] = [
 			 */
 			'buttons_content'                               => [
 				'type' => 'html',
-				'html' => '<span id="section-title-blog-fonts" class="separator section label large">' . esc_html__( 'Buttons', 'customify' ) . '</span>',
+				'html' => '<span id="section-title-blog-fonts" class="separator section label large">' . esc_html__( 'Buttons', '__plugin_txtd' ) . '</span>',
 			],
 			'buttons_font' => [
 				'type'     			=> 'font',
-				'label'            => esc_html__( 'Buttons', 'customify' ),
-				'desc'             => esc_html__( '', 'customify' ),
+				'label'            => esc_html__( 'Buttons', '__plugin_txtd' ),
+				'desc'             => esc_html__( '', '__plugin_txtd' ),
 				'selector'         => '.added_to_cart, .button, button, input[type=button], input[type=reset], input[type=submit]',
 
 				'default' => array(
@@ -474,13 +474,13 @@ $config['sections'] = [
 			 */
 			'cards_content'                               => [
 				'type' => 'html',
-				'html' => '<span id="section-title-blog-fonts" class="separator section label large">' . esc_html__( 'Cards', 'customify' ) . '</span>',
+				'html' => '<span id="section-title-blog-fonts" class="separator section label large">' . esc_html__( 'Cards', '__plugin_txtd' ) . '</span>',
 			],
 
 			'cards_price_font' => [
 				'type'     			=> 'font',
-				'label'            => esc_html__( 'Price', 'customify' ),
-				'desc'             => esc_html__( '', 'customify' ),
+				'label'            => esc_html__( 'Price', '__plugin_txtd' ),
+				'desc'             => esc_html__( '', '__plugin_txtd' ),
 				'selector'         => 'ul.products li.product .price',
 
 				'default' => array(
@@ -515,7 +515,7 @@ $config['sections'] = [
 	 * COLORS - This section will handle all elements colors (eg. links, headings)
 	 */
 	'colors_section' => [
-		'title'    => esc_html__( 'Colors', 'customify' ),
+		'title'    => esc_html__( 'Colors', '__plugin_txtd' ),
 		'priority' => 3, // This will put this section right after Style Manager that has a priority of 1.
 		'options'  => [
 			/**
@@ -527,7 +527,7 @@ $config['sections'] = [
 			],
 			'header_navigation_text_color'                 => [
 				'type'    => 'color',
-				'label'   => esc_html__( 'Header Text Color', 'customify' ),
+				'label'   => esc_html__( 'Header Text Color', '__plugin_txtd' ),
 				'live'    => true,
 				'default' => '#404040',
 				'css'     => [
@@ -559,7 +559,7 @@ $config['sections'] = [
 			],
 			'header_navigation_links_color'                => [
 				'type'    => 'color',
-				'label'   => esc_html__( 'Navigation Links Color', 'customify' ),
+				'label'   => esc_html__( 'Navigation Links Color', '__plugin_txtd' ),
 				'live'    => true,
 				'default' => '#333333',
 				'css'     => [
@@ -593,7 +593,7 @@ $config['sections'] = [
 			],
 			'header_navigation_links_active_color'         => [
 				'type'    => 'color',
-				'label'   => esc_html__( 'Links Active Color', 'customify' ),
+				'label'   => esc_html__( 'Links Active Color', '__plugin_txtd' ),
 				'live'    => true,
 				'default' => '#282828',
 				'css'     => [
@@ -611,7 +611,7 @@ $config['sections'] = [
 			],
 			'header_background_color'                      => [
 				'type'    => 'color',
-				'label'   => esc_html__( 'Header Background', 'customify' ),
+				'label'   => esc_html__( 'Header Background', '__plugin_txtd' ),
 				'live'    => true,
 				'default' => '#ffffff',
 				'css'     => [
@@ -684,7 +684,7 @@ $config['sections'] = [
 			],
 			'page_title_color'                             => [
 				'type'    => 'color',
-				'label'   => esc_html__( 'Page Title Color', 'customify' ),
+				'label'   => esc_html__( 'Page Title Color', '__plugin_txtd' ),
 				'live'    => true,
 				'default' => '#282828',
 				'css'     => [
@@ -697,7 +697,7 @@ $config['sections'] = [
 			],
 			'body_text_color'                              => [
 				'type'    => 'color',
-				'label'   => esc_html__( 'Body Text Color', 'customify' ),
+				'label'   => esc_html__( 'Body Text Color', '__plugin_txtd' ),
 				'live'    => true,
 				'default' => '#6d6d6d',
 				'css'     => [
@@ -764,7 +764,7 @@ $config['sections'] = [
 			],
 			'body_link_color'                              => [
 				'type'    => 'color',
-				'label'   => esc_html__( 'Body Link Color', 'customify' ),
+				'label'   => esc_html__( 'Body Link Color', '__plugin_txtd' ),
 				'live'    => true,
 				'default' => '#96588A',
 				'css'     => [
@@ -804,7 +804,7 @@ $config['sections'] = [
 			],
 			'body_link_active_color'                       => [
 				'type'    => 'color',
-				'label'   => esc_html__( 'Body Link Active Color', 'customify' ),
+				'label'   => esc_html__( 'Body Link Active Color', '__plugin_txtd' ),
 				'live'    => true,
 				'default' => '#282828',
 				'css'     => [
@@ -1030,7 +1030,7 @@ $config['sections'] = [
 			],
 			'buttons_text_color'                    => [
 				'type'    => 'color',
-				'label'   => esc_html__( 'Text Color', 'customify' ),
+				'label'   => esc_html__( 'Text Color', '__plugin_txtd' ),
 				'live'    => true,
 				'default' => '#333333',
 				'css'     => [
@@ -1050,7 +1050,7 @@ $config['sections'] = [
 			],
 			'buttons_background_color'              => [
 				'type'    => 'color',
-				'label'   => esc_html__( 'Background Color', 'customify' ),
+				'label'   => esc_html__( 'Background Color', '__plugin_txtd' ),
 				'live'    => true,
 				'default' => '#eeeeee',
 				'css'     => [
@@ -1093,7 +1093,7 @@ $config['sections'] = [
 			],
 			'buttons_alt_text_color'                => [
 				'type'    => 'color',
-				'label'   => esc_html__( 'Alternate Text Color', 'customify' ),
+				'label'   => esc_html__( 'Alternate Text Color', '__plugin_txtd' ),
 				'live'    => true,
 				'default' => '#ffffff',
 				'css'     => [
@@ -1105,7 +1105,7 @@ $config['sections'] = [
 			],
 			'buttons_alt_background_color'          => [
 				'type'    => 'color',
-				'label'   => esc_html__( 'Alternate Background Color', 'customify' ),
+				'label'   => esc_html__( 'Alternate Background Color', '__plugin_txtd' ),
 				'live'    => true,
 				'default' => '#333333',
 				'css'     => [
@@ -1151,7 +1151,7 @@ $config['sections'] = [
 			],
 			'footer_text_color'                     => [
 				'type'    => 'color',
-				'label'   => esc_html__( 'Footer Text Color', 'customify' ),
+				'label'   => esc_html__( 'Footer Text Color', '__plugin_txtd' ),
 				'live'    => true,
 				'default' => '#6d6d6d',
 				'css'     => [
@@ -1163,7 +1163,7 @@ $config['sections'] = [
 			],
 			'footer_links_color'                    => [
 				'type'    => 'color',
-				'label'   => esc_html__( 'Footer Links Color', 'customify' ),
+				'label'   => esc_html__( 'Footer Links Color', '__plugin_txtd' ),
 				'live'    => true,
 				'default' => '#333333',
 				'css'     => [
@@ -1175,7 +1175,7 @@ $config['sections'] = [
 			],
 			'footer_heading_color'                  => [
 				'type'    => 'color',
-				'label'   => esc_html__( 'Footer Headings Color', 'customify' ),
+				'label'   => esc_html__( 'Footer Headings Color', '__plugin_txtd' ),
 				'live'    => true,
 				'default' => '#333333',
 				'css'     => [
@@ -1187,7 +1187,7 @@ $config['sections'] = [
 			],
 			'footer_background_color'               => [
 				'type'    => 'color',
-				'label'   => esc_html__( 'Footer Background', 'customify' ),
+				'label'   => esc_html__( 'Footer Background', '__plugin_txtd' ),
 				'live'    => true,
 				'default' => '#f0f0f0',
 				'css'     => [
@@ -1208,7 +1208,7 @@ $config['sections'] = [
 
 			'woocommerce_info_background_color' => [
 				'type'    => 'background-color',
-				'label'   => esc_html__( 'WooCommerce Info', 'customify' ),
+				'label'   => esc_html__( 'WooCommerce Info', '__plugin_txtd' ),
 				'live'    => true,
 				'default' => '#3d9cd2',
 				'css'     => [

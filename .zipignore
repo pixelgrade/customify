@@ -1,5 +1,6 @@
 **/codekit-config.json
 node_modules
+**/node_modules
 config.rb
 gulp-tasks
 tasks
@@ -28,10 +29,22 @@ __MACOSX
 **/__MACOSX
 README.md
 **/README.md
+palettes.md
 .csscomb
 .csscomb.json
 .codeclimate.yml
 tests
+**/tests
+Tests
+**/Tests
+example
+**/example
+examples
+**/examples
+doc
+**/doc
+docs
+**/docs
 circle.yml
 .circleci
 browserslist
@@ -52,6 +65,12 @@ postcss.config.js
 src/js
 src/css
 src/scss
+
+#
+# Composer related
+#
+composer.json
+composer.lock
 
 # The php-scoper is only used during development.
 php-scoper

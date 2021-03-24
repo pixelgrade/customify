@@ -237,7 +237,7 @@ if ( ! class_exists( 'Customify_Style_Manager' ) ) {
 
 			// The section might be already defined, thus we merge, not replace the entire section config.
 			$config['sections']['style_manager_section'] = Customify_Array::array_merge_recursive_distinct( $config['sections']['style_manager_section'], array(
-				'title'      => esc_html__( 'Style Manager', 'customify' ),
+				'title'      => esc_html__( 'Style Manager', '__plugin_txtd' ),
 				'section_id' => 'style_manager_section',
 				// We will force this section id preventing prefixing and other regular processing.
 				'priority'   => 1,
@@ -285,8 +285,8 @@ if ( ! class_exists( 'Customify_Style_Manager' ) ) {
 					'priority'                 => 22, // after the Site Identity panel
 					'capability'               => 'edit_theme_options',
 					'panel_id'                 => 'style_manager_panel',
-					'title'                    => esc_html__( 'Style Manager', 'customify' ),
-					'description'              => wp_kses_post( __( '<strong>Style Manager</strong> is an intuitive system to help you change the look of your website and make an excellent impression.', 'customify' ) ),
+					'title'                    => esc_html__( 'Style Manager', '__plugin_txtd' ),
+					'description'              => wp_kses_post( __( '<strong>Style Manager</strong> is an intuitive system to help you change the look of your website and make an excellent impression.', '__plugin_txtd' ) ),
 					'sections'                 => array(),
 					'auto_expand_sole_section' => true, // If there is only one section in the panel, auto-expand it.
 				);
@@ -366,7 +366,7 @@ if ( ! class_exists( 'Customify_Style_Manager' ) ) {
 				);
 
 				$color_palettes_section_config = array(
-					'title'      => esc_html__( 'Colors', 'customify' ),
+					'title'      => esc_html__( 'Colors', '__plugin_txtd' ),
 					'section_id' => 'sm_color_palettes_section',
 					'priority'   => 10,
 					'options'    => array(),
@@ -403,7 +403,7 @@ if ( ! class_exists( 'Customify_Style_Manager' ) ) {
 				);
 
 				$font_palettes_section_config = array(
-					'title'      => esc_html__( 'Fonts', 'customify' ),
+					'title'      => esc_html__( 'Fonts', '__plugin_txtd' ),
 					'section_id' => 'sm_font_palettes_section',
 					'priority'   => 20,
 					'options'    => array(),
@@ -434,8 +434,8 @@ if ( ! class_exists( 'Customify_Style_Manager' ) ) {
 				'priority'    => 24, // after the Style Manager panel.
 				'capability'  => 'edit_theme_options',
 				'panel_id'    => 'theme_options_panel',
-				'title'       => esc_html__( 'Theme Options', 'customify' ),
-				'description' => esc_html__( 'Advanced options to change your site look-and-feel on a detailed level.', 'customify' ),
+				'title'       => esc_html__( 'Theme Options', '__plugin_txtd' ),
+				'description' => esc_html__( 'Advanced options to change your site look-and-feel on a detailed level.', '__plugin_txtd' ),
 				'sections'    => array(),
 			);
 
@@ -508,7 +508,7 @@ if ( ! class_exists( 'Customify_Style_Manager' ) ) {
 			}
 
 			// Add a pretty icon to Site Identity
-			$wp_customize->get_section( 'title_tagline' )->title = esc_html__( 'Site Identity', 'customify' );
+			$wp_customize->get_section( 'title_tagline' )->title = esc_html__( 'Site Identity', '__plugin_txtd' );
 		}
 
 		/**
@@ -644,7 +644,7 @@ if ( ! class_exists( 'Customify_Style_Manager' ) ) {
 					if ( false === $general_section ) {
 						// We need to add a general section in the Theme Options panel.
 						$general_section = $wp_customize->add_section( 'theme_options[general]', array(
-							'title'    => esc_html__( 'General', 'customify' ),
+							'title'    => esc_html__( 'General', '__plugin_txtd' ),
 							'panel'    => $theme_options_panel->id,
 							'priority' => 2,
 						) );
@@ -779,7 +779,7 @@ if ( ! class_exists( 'Customify_Style_Manager' ) ) {
 													</div>
 												</div>
 												<button id="style-manager-user-feedback_btn" class="button"
-												        type="submit"><?php _e( 'Send us your insights', 'customify' ); ?></button>
+												        type="submit"><?php _e( 'Send us your insights', '__plugin_txtd' ); ?></button>
 											</div>
 											<div class="thanks-step hidden">
 												<h3 class="modal-title">Thank you so much for your feedback!</h3>
@@ -857,11 +857,11 @@ if ( ! class_exists( 'Customify_Style_Manager' ) ) {
 			check_ajax_referer( 'customify_style_manager_user_feedback', 'nonce' );
 
 			if ( empty( $_POST['type'] ) ) {
-				wp_send_json_error( esc_html__( 'No type provided', 'customify' ) );
+				wp_send_json_error( esc_html__( 'No type provided', '__plugin_txtd' ) );
 			}
 
 			if ( empty( $_POST['rating'] ) ) {
-				wp_send_json_error( esc_html__( 'No rating provided', 'customify' ) );
+				wp_send_json_error( esc_html__( 'No rating provided', '__plugin_txtd' ) );
 			}
 
 			$type    = sanitize_text_field( $_POST['type'] );
@@ -883,18 +883,18 @@ if ( ! class_exists( 'Customify_Style_Manager' ) ) {
 			// Send the feedback.
 			$response = $this->cloud_api->send_stats( $request_data, true );
 			if ( is_wp_error( $response ) ) {
-				wp_send_json_error( esc_html__( 'Sorry, something went wrong and we couldn\'t save your feedback.', 'customify' ) );
+				wp_send_json_error( esc_html__( 'Sorry, something went wrong and we couldn\'t save your feedback.', '__plugin_txtd' ) );
 			}
 			$response_data = json_decode( wp_remote_retrieve_body( $response ), true );
 			// Bail in case of decode error or failure to retrieve data
 			if ( null === $response_data || empty( $response_data['code'] ) || 'success' !== $response_data['code'] ) {
-				wp_send_json_error( esc_html__( 'Sorry, something went wrong and we couldn\'t save your feedback.', 'customify' ) );
+				wp_send_json_error( esc_html__( 'Sorry, something went wrong and we couldn\'t save your feedback.', '__plugin_txtd' ) );
 			}
 
 			// We need to remember that the user provided feedback (and at what timestamp).
 			update_option( 'style_manager_user_feedback_provided', time(), true );
 
-			wp_send_json_success( esc_html__( 'Thank you for your feedback.', 'customify' ) );
+			wp_send_json_success( esc_html__( 'Thank you for your feedback.', '__plugin_txtd' ) );
 		}
 
 		/**
@@ -923,7 +923,7 @@ if ( ! class_exists( 'Customify_Style_Manager' ) ) {
 		 */
 		public function __clone() {
 
-			_doing_it_wrong( __FUNCTION__, esc_html__( 'You should not do that!', 'customify' ), null );
+			_doing_it_wrong( __FUNCTION__, esc_html__( 'You should not do that!', '__plugin_txtd' ), null );
 		}
 
 		/**
@@ -933,7 +933,7 @@ if ( ! class_exists( 'Customify_Style_Manager' ) ) {
 		 */
 		public function __wakeup() {
 
-			_doing_it_wrong( __FUNCTION__, esc_html__( 'You should not do that!', 'customify' ), null );
+			_doing_it_wrong( __FUNCTION__, esc_html__( 'You should not do that!', '__plugin_txtd' ), null );
 		}
 	}
 }

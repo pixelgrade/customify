@@ -422,8 +422,8 @@ class Customify_Font_Palettes {
 					// We don't want to refresh the preview window, even though we have no direct effect on it through this field.
 					'live'         => true,
 					'priority'     => 5,
-					'label'        => esc_html__( 'Select a font palette:', 'customify' ),
-					'desc'         => esc_html__( 'Conveniently change the design of your site with font palettes. Easy as pie.', 'customify' ),
+					'label'        => esc_html__( 'Select a font palette:', '__plugin_txtd' ),
+					'desc'         => esc_html__( 'Conveniently change the design of your site with font palettes. Easy as pie.', '__plugin_txtd' ),
 					'default'      => 'julia',
 					'choices_type' => 'font_palette',
 					'choices'      => $this->get_palettes(),
@@ -437,7 +437,7 @@ class Customify_Font_Palettes {
 					// We don't want to refresh the preview window, even though we have no direct effect on it through this field.
 					'live'             => true,
 					'priority'         => 7,
-					'label'            => esc_html__( 'Font Primary', 'customify' ),
+					'label'            => esc_html__( 'Font Primary', '__plugin_txtd' ),
 					'default'  => array(
 						'font-family'    => 'Montserrat',
 						'font-weight'    => 'regular',
@@ -465,7 +465,7 @@ class Customify_Font_Palettes {
 					'setting_id'       => 'sm_font_secondary',
 					'live'             => true,
 					'priority'         => 7.1,
-					'label'            => esc_html__( 'Font Secondary', 'customify' ),
+					'label'            => esc_html__( 'Font Secondary', '__plugin_txtd' ),
 					'default'  => array(
 						'font-family'    => 'Montserrat',
 						'font-weight'    => '300',
@@ -493,7 +493,7 @@ class Customify_Font_Palettes {
 					'setting_id'       => 'sm_font_body',
 					'live'             => true,
 					'priority'         => 7.2,
-					'label'            => esc_html__( 'Font Body', 'customify' ),
+					'label'            => esc_html__( 'Font Body', '__plugin_txtd' ),
 					'default'  => array(
 						'font-family'    => 'Montserrat',
 						'font-weight'    => '300',
@@ -524,7 +524,7 @@ class Customify_Font_Palettes {
 					// We don't want to refresh the preview window, even though we have no direct effect on it through this field.
 					'live'             => true,
 					'priority'         => 7,
-					'label'            => esc_html__( 'Font Accent', 'customify' ),
+					'label'            => esc_html__( 'Font Accent', '__plugin_txtd' ),
 					'default'  => array(
 						'font-family'    => 'Montserrat',
 						'font-weight'    => 'regular',
@@ -585,8 +585,8 @@ class Customify_Font_Palettes {
 				'priority'   => 3,
 				'html'       =>
 					'<div class="sm-tabs">' . "\n" .
-						'<div class="sm-tabs__item" data-target="palettes">' . esc_html__( 'Palettes', 'customify' ) . '</div>' . "\n" .
-						'<div class="sm-tabs__item" data-target="advanced">' . esc_html__( 'Advanced', 'customify' ) . '</div>' . "\n" .
+						'<div class="sm-tabs__item" data-target="palettes">' . esc_html__( 'Palettes', '__plugin_txtd' ) . '</div>' . "\n" .
+						'<div class="sm-tabs__item" data-target="advanced">' . esc_html__( 'Advanced', '__plugin_txtd' ) . '</div>' . "\n" .
 					'</div>',
 				)
             ) + $config['sections']['style_manager_section']['options'];
@@ -705,11 +705,11 @@ class Customify_Font_Palettes {
 	protected function get_default_config() {
 		$default_config = array(
 			'gema' => array(
-				'label'   => esc_html__( 'Gema', 'customify' ),
+				'label'   => esc_html__( 'Gema', '__plugin_txtd' ),
 				'preview' => array(
 					// Font Palette Name
-					'title'            => esc_html__( 'Gema', 'customify' ),
-					'description'      => esc_html__( 'A graceful nature, truly tasteful and polished.', 'customify' ),
+					'title'            => esc_html__( 'Gema', '__plugin_txtd' ),
+					'description'      => esc_html__( 'A graceful nature, truly tasteful and polished.', '__plugin_txtd' ),
 					'background_image_url' => 'https://cloud.pixelgrade.com/wp-content/uploads/2018/09/font-palette-thin.png',
 
 					// Use the following options to style the preview card fonts
@@ -805,11 +805,11 @@ class Customify_Font_Palettes {
 				),
 			),
 			'julia' => array(
-				'label'   => esc_html__( 'Julia', 'customify' ),
+				'label'   => esc_html__( 'Julia', '__plugin_txtd' ),
 				'preview' => array(
 					// Font Palette Name
-					'title'            => esc_html__( 'Julia', 'customify' ),
-					'description'      => esc_html__( 'A graceful nature, truly tasteful and polished.', 'customify' ),
+					'title'            => esc_html__( 'Julia', '__plugin_txtd' ),
+					'description'      => esc_html__( 'A graceful nature, truly tasteful and polished.', '__plugin_txtd' ),
 					'background_image_url' => 'https://cloud.pixelgrade.com/wp-content/uploads/2018/09/font-palette-serif.png',
 
 					// Use the following options to style the preview card fonts
@@ -912,11 +912,11 @@ class Customify_Font_Palettes {
 				),
 			),
 			'patch' => array(
-				'label'   => esc_html__( 'Patch', 'customify' ),
+				'label'   => esc_html__( 'Patch', '__plugin_txtd' ),
 				'preview' => array(
 					// Font Palette Name
-					'title'            => esc_html__( 'Patch', 'customify' ),
-					'description'      => esc_html__( 'A graceful nature, truly tasteful and polished.', 'customify' ),
+					'title'            => esc_html__( 'Patch', '__plugin_txtd' ),
+					'description'      => esc_html__( 'A graceful nature, truly tasteful and polished.', '__plugin_txtd' ),
 					'background_image_url' => 'https://cloud.pixelgrade.com/wp-content/uploads/2018/09/font-palette-lofty.png',
 
 					// Use the following options to style the preview card fonts
@@ -1039,11 +1039,11 @@ class Customify_Font_Palettes {
 				),
 			),
 			'hive' => array(
-				'label'   => esc_html__( 'Hive', 'customify' ),
+				'label'   => esc_html__( 'Hive', '__plugin_txtd' ),
 				'preview' => array(
 					// Font Palette Name
-					'title'            => esc_html__( 'Hive', 'customify' ),
-					'description'      => esc_html__( 'A graceful nature, truly tasteful and polished.', 'customify' ),
+					'title'            => esc_html__( 'Hive', '__plugin_txtd' ),
+					'description'      => esc_html__( 'A graceful nature, truly tasteful and polished.', '__plugin_txtd' ),
 					'background_image_url' => 'https://cloud.pixelgrade.com/wp-content/uploads/2018/09/font-palette-classic.png',
 
 					// Use the following options to style the preview card fonts
@@ -1310,7 +1310,7 @@ class Customify_Font_Palettes {
 	 */
 	public function __clone() {
 
-		_doing_it_wrong( __FUNCTION__,esc_html__( 'You should not do that!', 'customify' ), null );
+		_doing_it_wrong( __FUNCTION__,esc_html__( 'You should not do that!', '__plugin_txtd' ), null );
 	}
 
 	/**
@@ -1320,7 +1320,7 @@ class Customify_Font_Palettes {
 	 */
 	public function __wakeup() {
 
-		_doing_it_wrong( __FUNCTION__, esc_html__( 'You should not do that!', 'customify' ),  null );
+		_doing_it_wrong( __FUNCTION__, esc_html__( 'You should not do that!', '__plugin_txtd' ),  null );
 	}
 }
 

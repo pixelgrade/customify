@@ -58,6 +58,10 @@ $config = [
 			)
 			->name( [ '*.php', 'LICENSE', 'composer.json' ] ),
 		Finder::create()
+		      ->files()
+		      ->in( 'vendor/cedaro/wp-plugin' )
+		      ->name( [ '*.php', 'LICENSE', 'composer.json' ] ),
+		Finder::create()
 			->files()
 			->in( 'vendor/symfony/polyfill-mbstring' )
 			->name( [ '*.php', '*.php8', 'LICENSE', 'composer.json' ] ),

@@ -21,17 +21,17 @@ if ( ! function_exists('add_customify_base_options') ) {
 			 * Presets - This section will handle other options
 			 */
 			'presets_section' => array(
-				'title'    => esc_html__( 'Style Presets', 'customify' ),
+				'title'    => esc_html__( 'Style Presets', '__plugin_txtd' ),
 				'options' => array(
 					'theme_style'   => array(
 						'type'      => 'preset',
-						'label'     => esc_html__( 'Select a style:', 'customify' ),
-						'desc' => esc_html__( 'Conveniently change the design of your site with built-in style presets. Easy as pie.', 'customify' ),
+						'label'     => esc_html__( 'Select a style:', '__plugin_txtd' ),
+						'desc' => esc_html__( 'Conveniently change the design of your site with built-in style presets. Easy as pie.', '__plugin_txtd' ),
 						'default'   => 'royal',
 						'choices_type' => 'awesome',
 						'choices'  => array(
 							'royal' => array(
-								'label' => esc_html__( 'Royal', 'customify' ),
+								'label' => esc_html__( 'Royal', '__plugin_txtd' ),
 								'preview' => array(
 									'color-text' => '#ffffff',
 									'background-card' => '#615375',
@@ -49,7 +49,7 @@ if ( ! function_exists('add_customify_base_options') ) {
 								)
 							),
 							'lovely' => array(
-								'label' => esc_html__( 'Lovely', 'customify' ),
+								'label' => esc_html__( 'Lovely', '__plugin_txtd' ),
 								'preview' => array(
 									'color-text' => '#ffffff',
 									'background-card' => '#d15c57',
@@ -67,7 +67,7 @@ if ( ! function_exists('add_customify_base_options') ) {
 								)
 							),
 							'queen' => array(
-								'label' => esc_html__( 'Queen', 'customify' ),
+								'label' => esc_html__( 'Queen', '__plugin_txtd' ),
 								'preview' => array(
 									'color-text' => '#fbedec',
 									'background-card' => '#773347',
@@ -85,7 +85,7 @@ if ( ! function_exists('add_customify_base_options') ) {
 								)
 							),
 							'carrot' => array(
-								'label' => esc_html__( 'Carrot', 'customify' ),
+								'label' => esc_html__( 'Carrot', '__plugin_txtd' ),
 								'preview' => array(
 									'color-text' => '#ffffff',
 									'background-card' => '#df421d',
@@ -106,7 +106,7 @@ if ( ! function_exists('add_customify_base_options') ) {
 
 
 							'adler' => array(
-								'label' => esc_html__( 'Adler', 'customify' ),
+								'label' => esc_html__( 'Adler', '__plugin_txtd' ),
 								'preview' => array(
 									'color-text' => '#fff',
 									'background-card' => '#0e364f',
@@ -124,7 +124,7 @@ if ( ! function_exists('add_customify_base_options') ) {
 								)
 							),
 							'velvet' => array(
-								'label' => esc_html__( 'Velvet', 'customify' ),
+								'label' => esc_html__( 'Velvet', '__plugin_txtd' ),
 								'preview' => array(
 									'color-text' => '#ffffff',
 									'background-card' => '#282828',
@@ -151,11 +151,11 @@ if ( ! function_exists('add_customify_base_options') ) {
 			 * COLORS - This section will handle different elements colors (eg. links, headings)
 			 */
 			'colors_section' => array(
-				'title'    => esc_html__( 'Colors', 'customify' ),
+				'title'    => esc_html__( 'Colors', '__plugin_txtd' ),
 				'options' => array(
 					'links_color'   => array(
 						'type'      => 'color',
-						'label'     => esc_html__( 'Links Color', 'customify' ),
+						'label'     => esc_html__( 'Links Color', '__plugin_txtd' ),
 						'live' => true,
 						'default'   => '#6c6e70',
 						'css'  => array(
@@ -167,7 +167,7 @@ if ( ! function_exists('add_customify_base_options') ) {
 					),
 					'headings_color' => array(
 						'type'      => 'color',
-						'label'     => esc_html__( 'Headings Color', 'customify' ),
+						'label'     => esc_html__( 'Headings Color', '__plugin_txtd' ),
 						'live' => true,
 						'default'   => '#0aa0d9',
 						'css'  => array(
@@ -182,7 +182,7 @@ if ( ! function_exists('add_customify_base_options') ) {
 					),
 					'body_color'     => array(
 						'type'      => 'color',
-						'label'     => esc_html__( 'Body Color', 'customify' ),
+						'label'     => esc_html__( 'Body Color', '__plugin_txtd' ),
 						'live' => true,
 						'default'   => '#2d3033',
 						'css'  => array(
@@ -199,11 +199,11 @@ if ( ! function_exists('add_customify_base_options') ) {
 			 * FONTS - This section will handle different elements fonts (eg. headings, body)
 			 */
 			'typography_section' => array(
-				'title'    => esc_html__( 'Fonts', 'customify' ),
+				'title'    => esc_html__( 'Fonts', '__plugin_txtd' ),
 				'options' => array(
 					'headings_font' => array(
 						'type'     => 'font',
-						'label'    => esc_html__( 'Headings', 'customify' ),
+						'label'    => esc_html__( 'Headings', '__plugin_txtd' ),
 						'default'  => 'Playfair Display',
 						'selector' => '.site-title a, h1, h2, h3, h4, h5, h6,
 										h1 a, h2 a, h3 a, h4 a, h5 a, h6 a,
@@ -233,7 +233,7 @@ if ( ! function_exists('add_customify_base_options') ) {
 					),
 					'body_font'     => array(
 						'type'    => 'font',
-						'label'   => esc_html__( 'Body Text', 'customify' ),
+						'label'   => esc_html__( 'Body Text', '__plugin_txtd' ),
 						'default' => 'Lato',
 						'selector' => 'html body',
 						'recommended' => array(
@@ -253,11 +253,11 @@ if ( ! function_exists('add_customify_base_options') ) {
 			 * BACKGROUNDS - This section will handle different elements colors (eg. links, headings)
 			 */
 			'backgrounds_section' => array(
-				'title'    => esc_html__( 'Backgrounds', 'customify' ),
+				'title'    => esc_html__( 'Backgrounds', '__plugin_txtd' ),
 				'options' => array(
 					'page_background'   => array(
 						'type'      => 'color',
-						'label'     => esc_html__( 'Page Background', 'customify' ),
+						'label'     => esc_html__( 'Page Background', '__plugin_txtd' ),
 						'live' => true,
 						'default'   => '#ffffff',
 						'css'  => array(
@@ -273,11 +273,11 @@ if ( ! function_exists('add_customify_base_options') ) {
 			 * LAYOUTS - This section will handle different elements colors (eg. links, headings)
 			 */
 			'layout_options' => array(
-				'title'    => esc_html__( 'Layout', 'customify' ),
+				'title'    => esc_html__( 'Layout', '__plugin_txtd' ),
 				'options' => array(
 					'site_title_size' => array(
 						'type'  => 'range',
-						'label' => esc_html__( 'Site Title Size', 'customify' ),
+						'label' => esc_html__( 'Site Title Size', '__plugin_txtd' ),
 						'live' => true,
 						'input_attrs' => array(
 							'min'   => 24,
@@ -355,24 +355,24 @@ function customify_child_theme_migrate_theme_mods_notice() {
 
 	ob_start(); ?>
 	<div class="customify-notice__container updated notice fade is-dismissible">
-		<h3><?php echo sprintf( __( 'You have activated a child theme for "%s". Good for you!', 'customify' ), $parent_theme->get('Name') ); ?></h3>
+		<h3><?php echo sprintf( __( 'You have activated a child theme for "%s". Good for you!', '__plugin_txtd' ), $parent_theme->get('Name') ); ?></h3>
 		<p>
-			<?php echo wp_kses_post( __( 'If you have already <strong>set up things in the Customizer,</strong> you may want to <strong>keep those customizations</strong> so you don\'t start over.', 'customify' ) ); ?>
+			<?php echo wp_kses_post( __( 'If you have already <strong>set up things in the Customizer,</strong> you may want to <strong>keep those customizations</strong> so you don\'t start over.', '__plugin_txtd' ) ); ?>
 		</p>
 		<p>
-			<?php echo wp_kses_post( __( 'So, the question is simple: <strong>would you like to migrate all theme-specific options (theme mods) from the parent theme to the child one?</strong>', 'customify' ) ); ?>
+			<?php echo wp_kses_post( __( 'So, the question is simple: <strong>would you like to migrate all theme-specific options (theme mods) from the parent theme to the child one?</strong>', '__plugin_txtd' ) ); ?>
 		</p>
 		<p>
-			<?php echo wp_kses_post( __( 'All parent theme customizations will remain in place, while those of the active child theme will be overwritten, if any.', 'customify' ) ); ?>
+			<?php echo wp_kses_post( __( 'All parent theme customizations will remain in place, while those of the active child theme will be overwritten, if any.', '__plugin_txtd' ) ); ?>
 		</p>
 		<form class="customify-notice-form" method="post">
 			<noscript><input type="hidden" name="customify-notice-no-js" value="1"/></noscript>
 
 			<p>
 				<button class="customify-notice-button button button-primary js-handle-customify">
-					<span class="customify-notice-button__text"><?php esc_html_e( 'Yes, migrate customizations', 'customify' ); ?></span>
+					<span class="customify-notice-button__text"><?php esc_html_e( 'Yes, migrate customizations', '__plugin_txtd' ); ?></span>
 				</button>
-				<button type="submit" class="customify-dismiss-button button button-secondary js-dismiss-customify"><?php esc_html_e( 'No, thank you', 'customify' ); ?></button>
+				<button type="submit" class="customify-dismiss-button button button-secondary js-dismiss-customify"><?php esc_html_e( 'No, thank you', '__plugin_txtd' ); ?></button>
 				&nbsp;<span class="message js-plugin-message" style="font-style:italic"></span>
 			</p>
 
@@ -391,7 +391,7 @@ function customify_child_theme_migrate_theme_mods_notice() {
 				$button.on('click', function (e) {
 					e.preventDefault();
 
-					$buttonText.html("<?php esc_html_e( 'Migrating customizations..' ,'customify'); ?>")
+					$buttonText.html("<?php esc_html_e( 'Migrating customizations..' ,'__plugin_txtd'); ?>")
 					$button.attr('disabled', true)
 					$dismissButton.hide()
 
@@ -406,16 +406,16 @@ function customify_child_theme_migrate_theme_mods_notice() {
 					})
 					.done(function(response) {
 						if (typeof response.success !== 'undefined' && response.success) {
-							$statusMessage.html("<?php esc_html_e( 'Successfully migrated the parent customizations! Enjoy crafting your site!', 'customify' ); ?>")
-							$buttonText.html("<?php esc_html_e( 'Finished migration', 'customify' ); ?>")
+							$statusMessage.html("<?php esc_html_e( 'Successfully migrated the parent customizations! Enjoy crafting your site!', '__plugin_txtd' ); ?>")
+							$buttonText.html("<?php esc_html_e( 'Finished migration', '__plugin_txtd' ); ?>")
 						} else {
-							$statusMessage.html("<?php esc_html_e( 'Something went wrong and we couldn\'t migrate the customizations.' ,'customify'); ?>")
-							$buttonText.html("<?php esc_html_e( 'Migration error' ,'customify'); ?>")
+							$statusMessage.html("<?php esc_html_e( 'Something went wrong and we couldn\'t migrate the customizations.' ,'__plugin_txtd'); ?>")
+							$buttonText.html("<?php esc_html_e( 'Migration error' ,'__plugin_txtd'); ?>")
 						}
 					})
 					.fail(function() {
-						$statusMessage.html("<?php esc_html_e( 'Something went wrong and we couldn\'t migrate the customizations.' ,'customify'); ?>")
-						$buttonText.html("<?php esc_html_e( 'Migration error' ,'customify'); ?>")
+						$statusMessage.html("<?php esc_html_e( 'Something went wrong and we couldn\'t migrate the customizations.' ,'__plugin_txtd'); ?>")
+						$buttonText.html("<?php esc_html_e( 'Migration error' ,'__plugin_txtd'); ?>")
 					})
 				})
 
@@ -457,7 +457,7 @@ function customify_migrate_customizations_from_parent_to_child_theme() {
 	}
 	// Finally, write the new theme mods for the active child theme.
 	if ( ! update_option( "theme_mods_" . get_option( 'stylesheet' ), $parent_theme_mods ) ) {
-		wp_send_json_error( esc_html__( 'Could not update the child theme theme_mods.', 'customify' ) );
+		wp_send_json_error( esc_html__( 'Could not update the child theme theme_mods.', '__plugin_txtd' ) );
 	}
 
 	// Redirect if this is not an ajax request.
@@ -629,8 +629,8 @@ function sm_get_color_switch_dark_config( $label, $selector, $default, $properti
 		'default' => $default,
 		'css'     => $css,
 		'choices' => array(
-			'off' => esc_html__( 'Off', 'customify' ),
-			'on'  => esc_html__( 'On', 'customify' ),
+			'off' => esc_html__( 'Off', '__plugin_txtd' ),
+			'on'  => esc_html__( 'On', '__plugin_txtd' ),
 		),
 	);
 }

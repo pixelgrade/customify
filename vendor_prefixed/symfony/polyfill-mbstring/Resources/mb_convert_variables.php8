@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-use WPMailSMTP\Vendor\Symfony\Polyfill\Mbstring as p;
+use Customify\Vendor\Symfony\Polyfill\Mbstring as p;
 
 if (!function_exists('mb_convert_variables')) {
     /**

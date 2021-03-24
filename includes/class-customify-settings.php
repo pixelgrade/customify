@@ -79,8 +79,8 @@ class Customify_Settings {
 	 */
 	function add_plugin_admin_menu() {
 		$this->plugin_screen_hook_suffix = add_options_page(
-			esc_html__( 'Customify', 'customify' ),
-			esc_html__( 'Customify', 'customify' ),
+			esc_html__( 'Customify', '__plugin_txtd' ),
+			esc_html__( 'Customify', '__plugin_txtd' ),
 			'manage_options',
 			$this->slug,
 			array( $this, 'display_plugin_admin_page' )
@@ -106,7 +106,7 @@ class Customify_Settings {
 		$screen = get_current_screen();
 		if ( $screen->id === $this->plugin_screen_hook_suffix ) {
 			$rtl_suffix = is_rtl() ? '-rtl' : '';
-			wp_enqueue_style( $this->slug . '-admin-styles', plugins_url( 'css/admin' . $rtl_suffix . '.css', $this->file ), array(), $this->version );
+			wp_enqueue_style( $this->slug . '-admin-styles', plugins_url( 'dist/css/admin' . $rtl_suffix . '.css', $this->file ), array(), $this->version );
 		}
 	}
 
@@ -124,7 +124,7 @@ class Customify_Settings {
 			$suffix = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min';
 
 			wp_enqueue_script( $this->slug . '-settings-page-script',
-				plugins_url( 'js/settings-page' . $suffix . '.js', $this->file ),
+				plugins_url( 'dist/js/settings' . $suffix . '.js', $this->file ),
 				array( 'jquery' ), $this->version );
 
 			wp_add_inline_script( $this->slug . '-settings-page-script',
@@ -152,7 +152,7 @@ class Customify_Settings {
 	 * Add settings action link to the plugins page.
 	 */
 	public function add_action_links( $links ) {
-		return array_merge( array( 'settings' => '<a href="' . esc_url( menu_page_url( $this->slug, false ) ) . '">' . esc_html__( 'Settings', 'customify' ) . '</a>' ), $links );
+		return array_merge( array( 'settings' => '<a href="' . esc_url( menu_page_url( $this->slug, false ) ) . '">' . esc_html__( 'Settings', '__plugin_txtd' ) . '</a>' ), $links );
 	}
 
 	public function add_rest_routes_api() {
@@ -165,7 +165,7 @@ class Customify_Settings {
 
 	public function delete_theme_mod() {
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_send_json_error( esc_html__('You don\'t have admin privileges.', 'customify' ) );
+			wp_send_json_error( esc_html__('You don\'t have admin privileges.', '__plugin_txtd' ) );
 		}
 
 		$key = PixCustomifyPlugin()->get_options_key();
@@ -207,7 +207,7 @@ class Customify_Settings {
 		return array(
 			'plugin-name'    => 'pixcustomify',
 			'settings-key'   => 'pixcustomify_settings',
-			'textdomain'     => 'customify',
+			'textdomain'     => '__plugin_txtd',
 			'template-paths' => array(
 				plugin_dir_path( __FILE__ ) . 'admin-settings/core/views/form-partials/',
 				plugin_dir_path( __FILE__ ) . 'admin-settings/views/form-partials/',
@@ -225,48 +225,48 @@ class Customify_Settings {
 				),
 				'general'    => array(
 					'type'    => 'postbox',
-					'label'   => esc_html__( 'General Settings', 'customify' ),
+					'label'   => esc_html__( 'General Settings', '__plugin_txtd' ),
 					'options' => array(
 						'values_store_mod' => array(
 							'name'    => 'values_store_mod',
-							'label'   => esc_html__( 'Store values as:', 'customify' ),
-							'desc'    => esc_html__( 'You can store the values globally so you can use them with other themes or store them as a "theme_mod" which will make an individual set of options only for the current theme', 'customify' ),
+							'label'   => esc_html__( 'Store values as:', '__plugin_txtd' ),
+							'desc'    => esc_html__( 'You can store the values globally so you can use them with other themes or store them as a "theme_mod" which will make an individual set of options only for the current theme', '__plugin_txtd' ),
 							'default' => 'theme_mod',
 							'type'    => 'select',
 							'options' => array(
-								'option'    => esc_html__( 'Option (global options)', 'customify' ),
-								'theme_mod' => esc_html__( 'Theme Mod (per theme options)', 'customify' ),
+								'option'    => esc_html__( 'Option (global options)', '__plugin_txtd' ),
+								'theme_mod' => esc_html__( 'Theme Mod (per theme options)', '__plugin_txtd' ),
 							),
 						),
 
 						'disable_default_sections' => array(
 							'name'    => 'disable_default_sections',
-							'label'   => esc_html__( 'Disable default sections', 'customify' ),
-							'desc'    => esc_html__( 'You can disable default sections', 'customify' ),
+							'label'   => esc_html__( 'Disable default sections', '__plugin_txtd' ),
+							'desc'    => esc_html__( 'You can disable default sections', '__plugin_txtd' ),
 							'type'    => 'multicheckbox',
 							'options' => array(
-								'nav'               => esc_html__( 'Navigation', 'customify' ),
-								'static_front_page' => esc_html__( 'Front Page', 'customify' ),
-								'title_tagline'     => esc_html__( 'Title', 'customify' ),
-								'colors'            => esc_html__( 'Colors', 'customify' ),
-								'background_image'  => esc_html__( 'Background', 'customify' ),
-								'header_image'      => esc_html__( 'Header', 'customify' ),
-								'widgets'           => esc_html__( 'Widgets', 'customify' ),
+								'nav'               => esc_html__( 'Navigation', '__plugin_txtd' ),
+								'static_front_page' => esc_html__( 'Front Page', '__plugin_txtd' ),
+								'title_tagline'     => esc_html__( 'Title', '__plugin_txtd' ),
+								'colors'            => esc_html__( 'Colors', '__plugin_txtd' ),
+								'background_image'  => esc_html__( 'Background', '__plugin_txtd' ),
+								'header_image'      => esc_html__( 'Header', '__plugin_txtd' ),
+								'widgets'           => esc_html__( 'Widgets', '__plugin_txtd' ),
 							),
 						),
 
 						'enable_reset_buttons' => array(
 							'name'    => 'enable_reset_buttons',
-							'label'   => esc_html__( 'Enable Reset Buttons', 'customify' ),
-							'desc'    => esc_html__( 'You can enable "Reset to defaults" buttons for panels / sections or all settings. We have disabled this feature by default to avoid accidental resets. If you are sure that you need it please enable this.', 'customify' ),
+							'label'   => esc_html__( 'Enable Reset Buttons', '__plugin_txtd' ),
+							'desc'    => esc_html__( 'You can enable "Reset to defaults" buttons for panels / sections or all settings. We have disabled this feature by default to avoid accidental resets. If you are sure that you need it please enable this.', '__plugin_txtd' ),
 							'default' => false,
 							'type'    => 'switch',
 						),
 
 						'enable_editor_style' => array(
 							'name'    => 'enable_editor_style',
-							'label'   => esc_html__( 'Enable Editor Style', 'customify' ),
-							'desc'    => esc_html__( 'The styling added by Customify in front-end can be added in the WordPress editor too by enabling this option', 'customify' ),
+							'label'   => esc_html__( 'Enable Editor Style', '__plugin_txtd' ),
+							'desc'    => esc_html__( 'The styling added by Customify in front-end can be added in the WordPress editor too by enabling this option', '__plugin_txtd' ),
 							'default' => true,
 							'type'    => 'switch',
 						),
@@ -274,27 +274,27 @@ class Customify_Settings {
 				),
 				'output'     => array(
 					'type'    => 'postbox',
-					'label'   => esc_html__( 'Output Settings', 'customify' ),
+					'label'   => esc_html__( 'Output Settings', '__plugin_txtd' ),
 					'options' => array(
 						'style_resources_location' => array(
 							'name'    => 'style_resources_location',
-							'label'   => esc_html__( 'Styles location:', 'customify' ),
-							'desc'    => esc_html__( 'Here you can decide where to put your style output, in header or footer', 'customify' ),
+							'label'   => esc_html__( 'Styles location:', '__plugin_txtd' ),
+							'desc'    => esc_html__( 'Here you can decide where to put your style output, in header or footer', '__plugin_txtd' ),
 							'default' => 'wp_footer',
 							'type'    => 'select',
 							'options' => array(
-								'wp_head'   => esc_html__( 'In header (just before the head tag)', 'customify' ),
-								'wp_footer' => esc_html__( 'Footer (just before the end of the body tag)', 'customify' ),
+								'wp_head'   => esc_html__( 'In header (just before the head tag)', '__plugin_txtd' ),
+								'wp_footer' => esc_html__( 'Footer (just before the end of the body tag)', '__plugin_txtd' ),
 							),
 						),
 					),
 				),
 				'typography' => array(
 					'type'    => 'postbox',
-					'label'   => esc_html__( 'Typography Settings', 'customify' ),
+					'label'   => esc_html__( 'Typography Settings', '__plugin_txtd' ),
 					'options' => array(
 						'typography' => array(
-							'label'          => esc_html__( 'Enable Typography Options', 'customify' ),
+							'label'          => esc_html__( 'Enable Typography Options', '__plugin_txtd' ),
 							'default'        => true,
 							'type'           => 'switch',
 							'show_group'     => 'typography_group',
@@ -306,15 +306,15 @@ class Customify_Settings {
 							'options' => array(
 								'typography_system_fonts'     => array(
 									'name'    => 'typography_system_fonts',
-									'label'   => esc_html__( 'Use system fonts', 'customify' ),
-									'desc'    => esc_html__( 'Would you like to have system fonts available in the font controls?', 'customify' ),
+									'label'   => esc_html__( 'Use system fonts', '__plugin_txtd' ),
+									'desc'    => esc_html__( 'Would you like to have system fonts available in the font controls?', '__plugin_txtd' ),
 									'default' => true,
 									'type'    => 'switch',
 								),
 								'typography_google_fonts'       => array(
 									'name'           => 'typography_google_fonts',
-									'label'          => esc_html__( 'Use Google fonts:', 'customify' ),
-									'desc'           => esc_html__( 'Would you like to have Google fonts available in the font controls?', 'customify' ),
+									'label'          => esc_html__( 'Use Google fonts:', '__plugin_txtd' ),
+									'desc'           => esc_html__( 'Would you like to have Google fonts available in the font controls?', '__plugin_txtd' ),
 									'default'        => true,
 									'type'           => 'switch',
 									'show_group'     => 'typography_google_fonts_group',
@@ -325,8 +325,8 @@ class Customify_Settings {
 									'options' => array(
 										'typography_group_google_fonts' => array(
 											'name'    => 'typography_group_google_fonts',
-											'label'   => esc_html__( 'Group Google fonts:', 'customify' ),
-											'desc'    => esc_html__( 'You can chose to see the Google fonts in groups', 'customify' ),
+											'label'   => esc_html__( 'Group Google fonts:', '__plugin_txtd' ),
+											'desc'    => esc_html__( 'You can chose to see the Google fonts in groups', '__plugin_txtd' ),
 											'default' => true,
 											'type'    => 'switch',
 										),
@@ -334,8 +334,8 @@ class Customify_Settings {
 								),
 								'typography_cloud_fonts'       => array(
 									'name'           => 'typography_cloud_fonts',
-									'label'          => esc_html__( 'Use cloud fonts', 'customify' ),
-									'desc'           => esc_html__( 'Would you to have Cloud fonts available in the font controls?', 'customify' ),
+									'label'          => esc_html__( 'Use cloud fonts', '__plugin_txtd' ),
+									'desc'           => esc_html__( 'Would you to have Cloud fonts available in the font controls?', '__plugin_txtd' ),
 									'default'        => true,
 									'type'           => 'switch',
 									'display_option' => true,
@@ -346,11 +346,11 @@ class Customify_Settings {
 				),
 				'tools'      => array(
 					'type'    => 'postbox',
-					'label'   => esc_html__( 'Tools', 'customify' ),
+					'label'   => esc_html__( 'Tools', '__plugin_txtd' ),
 					'options' => array(
 						'reset_theme_mod' => array(
 							'name'  => 'reset_theme_mod',
-							'label' => esc_html__( 'Reset', 'customify' ),
+							'label' => esc_html__( 'Reset', '__plugin_txtd' ),
 							'type'  => 'reset_theme_mod',
 						),
 					),
@@ -376,7 +376,7 @@ class Customify_Settings {
 				'counter' => array( 'is_numeric', 'not_empty' ),
 			),
 			'errors'         => array(
-				'not_empty' => __( 'Invalid Value.', 'customify' ),
+				'not_empty' => __( 'Invalid Value.', '__plugin_txtd' ),
 			),
 			// shows exception traces on error
 			'debug'          => $debug,
@@ -443,7 +443,7 @@ class Customify_Settings {
 	 */
 	public function __clone() {
 
-		_doing_it_wrong( __FUNCTION__, esc_html__( 'You should not do that!', 'customify' ), null );
+		_doing_it_wrong( __FUNCTION__, esc_html__( 'You should not do that!', '__plugin_txtd' ), null );
 	}
 
 	/**
@@ -453,6 +453,6 @@ class Customify_Settings {
 	 */
 	public function __wakeup() {
 
-		_doing_it_wrong( __FUNCTION__, esc_html__( 'You should not do that!', 'customify' ), null );
+		_doing_it_wrong( __FUNCTION__, esc_html__( 'You should not do that!', '__plugin_txtd' ), null );
 	}
 }

@@ -229,7 +229,7 @@ class Customify_Color_Palettes {
 		      ),
 		      'sm_site_color_variation' => array(
 			      'type'         => 'range',
-			      'desc'         => wp_kses( __( 'Shift the <strong>start position</strong> of the color palette. Use 0 for white, 1-2 for subtle shades, 3-6 for colorful, above 7 for darker shades.', 'customify' ), array( 'strong' => array() ) ),
+			      'desc'         => wp_kses( __( 'Shift the <strong>start position</strong> of the color palette. Use 0 for white, 1-2 for subtle shades, 3-6 for colorful, above 7 for darker shades.', '__plugin_txtd' ), array( 'strong' => array() ) ),
 			      'live'         => true,
 			      'setting_type' => 'option',
 			      'setting_id'   => 'sm_site_color_variation',
@@ -261,8 +261,8 @@ class Customify_Color_Palettes {
 		          'connected_fields' => array(),
 		          'css'              => array(),
 		          'choices'          => array(
-		              'off' => esc_html__( 'Off', 'customify' ),
-		              'on'  => esc_html__( 'On', 'customify' ),
+		              'off' => esc_html__( 'Off', '__plugin_txtd' ),
+		              'on'  => esc_html__( 'On', '__plugin_txtd' ),
 		          ),
 		      ),
 		      'sm_text_color_select_master'   => array(
@@ -292,8 +292,8 @@ class Customify_Color_Palettes {
 		          'connected_fields' => array(),
 		          'css'              => array(),
 		          'choices'          => array(
-		              'off' => esc_html__( 'Off', 'customify' ),
-		              'on'  => esc_html__( 'On', 'customify' ),
+		              'off' => esc_html__( 'Off', '__plugin_txtd' ),
+		              'on'  => esc_html__( 'On', '__plugin_txtd' ),
 		          ),
 		      ),
 		      'sm_accent_color_select_master' => array(
@@ -313,10 +313,10 @@ class Customify_Color_Palettes {
 		      ),
 		      'sm_coloration_level'            => array(
 			      'type'         => 'sm_radio',
-			      'desc'         => wp_kses( __( 'Adjust <strong>how much color</strong> you want to add to your site. For more control over elements, you can edit them individually.', 'customify' ), array( 'strong' => array() ) ),
+			      'desc'         => wp_kses( __( 'Adjust <strong>how much color</strong> you want to add to your site. For more control over elements, you can edit them individually.', '__plugin_txtd' ), array( 'strong' => array() ) ),
 			      'setting_type' => 'option',
 			      'setting_id'   => 'sm_coloration_level',
-			      'label'        => esc_html__( 'Coloration Level', 'customify' ),
+			      'label'        => esc_html__( 'Coloration Level', '__plugin_txtd' ),
 			      'default'      => 0,
 			      'live'         => true,
 			      'choices'      => array(
@@ -329,7 +329,7 @@ class Customify_Color_Palettes {
 		      'sm_dark_color_switch_slider'    => array(
 			      'setting_id'  => 'sm_dark_color_switch_slider',
 			      'type'        => 'range',
-			      'label'       => esc_html__( 'Dark to Color (switch)', 'customify' ),
+			      'label'       => esc_html__( 'Dark to Color (switch)', '__plugin_txtd' ),
 			      'desc'        => '',
 			      'live'        => true,
 			      'default'     => 0,
@@ -344,7 +344,7 @@ class Customify_Color_Palettes {
 		      'sm_dark_color_select_slider'    => array(
 			      'setting_id'  => 'sm_dark_color_select_slider',
 			      'type'        => 'range',
-			      'label'       => esc_html__( 'Dark to Color (select)', 'customify' ),
+			      'label'       => esc_html__( 'Dark to Color (select)', '__plugin_txtd' ),
 			      'desc'        => '',
 			      'live'        => true,
 			      'default'     => 0,
@@ -376,14 +376,14 @@ class Customify_Color_Palettes {
 					'type'         => 'sm_radio',
 					'setting_id'   => 'sm_dark_mode_advanced',
 					'setting_type' => 'option',
-					'label'        => esc_html__( 'Appearance', 'customify' ),
+					'label'        => esc_html__( 'Appearance', '__plugin_txtd' ),
 					'live'         => true,
 					'default'      => 'off',
 					'desc'         => wp_kses( __( "<strong>Auto</strong> activates dark mode automatically, according to the visitor's system-wide setting", '__plugin_txtd' ), array( 'strong' => array() ) ),
 					'choices'      => array(
-						'off'  => esc_html__( 'Light', 'customify' ),
-						'on'   => esc_html__( 'Dark', 'customify' ),
-						'auto' => esc_html__( 'Auto', 'customify' ),
+						'off'  => esc_html__( 'Light', '__plugin_txtd' ),
+						'on'   => esc_html__( 'Dark', '__plugin_txtd' ),
+						'auto' => esc_html__( 'Auto', '__plugin_txtd' ),
 					),
 				),
 			),
@@ -484,7 +484,7 @@ class Customify_Color_Palettes {
 	 * @since 1.7.4
 	 */
 	public function __clone() {
-		_doing_it_wrong( __FUNCTION__, esc_html__( 'You should not do that!', 'customify' ), null );
+		_doing_it_wrong( __FUNCTION__, esc_html__( 'You should not do that!', '__plugin_txtd' ), null );
 	}
 
 	/**
@@ -493,7 +493,7 @@ class Customify_Color_Palettes {
 	 * @since 1.7.4
 	 */
 	public function __wakeup() {
-		_doing_it_wrong( __FUNCTION__, esc_html__( 'You should not do that!', 'customify' ), null );
+		_doing_it_wrong( __FUNCTION__, esc_html__( 'You should not do that!', '__plugin_txtd' ), null );
 	}
 
 }
