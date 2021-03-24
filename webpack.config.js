@@ -7,6 +7,7 @@ const path = require( 'path' );
 const files = [
   'customizer',
   'customizer-preview',
+  'customizer-search',
   'dark-mode',
   'settings',
 ];

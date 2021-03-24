@@ -3,7 +3,6 @@ import $ from 'jquery';
 import './colors';
 import './fonts';
 import './font-palettes';
-import './search';
 
 import * as globalService from "./global-service";
 

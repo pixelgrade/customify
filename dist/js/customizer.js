@@ -4809,7 +4809,6 @@ var utils_noop = function noop(palette) {
 
 
 
-
 wp.customize.bind('ready', function () {
   loadSettings();
   var settings = getSettings();

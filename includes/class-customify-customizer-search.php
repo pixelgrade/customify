@@ -77,7 +77,7 @@ class Customify_Customizer_Search {
 			[], null );
 
 		wp_register_script( PixCustomifyPlugin()->get_slug() . '-customizer-search',
-			plugins_url( 'js/customizer/search' . $suffix . '.js', PixCustomifyPlugin()->get_file() ),
+			plugins_url( 'dist/js/customizer-search' . $suffix . '.js', PixCustomifyPlugin()->get_file() ),
 			[ 'jquery', PixCustomifyPlugin()->get_slug() . '-fuse', ], PixCustomifyPlugin()->get_version() );
 	}
 
