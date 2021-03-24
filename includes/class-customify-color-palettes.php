@@ -166,12 +166,20 @@ class Customify_Color_Palettes {
 
 		if ( isset( $options['sm_dark_color_switch_slider'] ) ) {
 			$switch_dark_count = count( $switch_foreground_connected_fields );
+			// Avoid division by zero.
+			if ( empty( $switch_dark_count ) ) {
+				$switch_dark_count = 1;
+			}
 			$switch_accent_count = count( $switch_accent_connected_fields );
 			$options['sm_dark_color_switch_slider']['default'] = round( $switch_accent_count * 100 / $switch_dark_count );
 		}
 
 		if ( isset( $options['sm_dark_color_select_slider'] ) ) {
 			$select_dark_count = count( $select_foreground_connected_fields );
+			// Avoid division by zero.
+			if ( empty( $select_dark_count ) ) {
+				$select_dark_count = 1;
+			}
 			$select_accent_count = count( $select_accent_connected_fields );
 			$options['sm_dark_color_select_slider']['default'] = round( $select_accent_count * 100 / $select_dark_count );
 		}
