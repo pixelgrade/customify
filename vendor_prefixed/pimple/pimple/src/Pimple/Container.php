@@ -23,12 +23,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-namespace Customify\Vendor\Pimple;
+namespace Pixelgrade\Customify\Vendor\Pimple;
 
-use Customify\Vendor\Pimple\Exception\ExpectedInvokableException;
-use Customify\Vendor\Pimple\Exception\FrozenServiceException;
-use Customify\Vendor\Pimple\Exception\InvalidServiceIdentifierException;
-use Customify\Vendor\Pimple\Exception\UnknownIdentifierException;
+use Pixelgrade\Customify\Vendor\Pimple\Exception\ExpectedInvokableException;
+use Pixelgrade\Customify\Vendor\Pimple\Exception\FrozenServiceException;
+use Pixelgrade\Customify\Vendor\Pimple\Exception\InvalidServiceIdentifierException;
+use Pixelgrade\Customify\Vendor\Pimple\Exception\UnknownIdentifierException;
 /**
  * Container main class.
  *
@@ -74,7 +74,7 @@ class Container implements \ArrayAccess
     public function offsetSet($id, $value)
     {
         if (isset($this->frozen[$id])) {
-            throw new \Customify\Vendor\Pimple\Exception\FrozenServiceException($id);
+            throw new \Pixelgrade\Customify\Vendor\Pimple\Exception\FrozenServiceException($id);
         }
         $this->values[$id] = $value;
         $this->keys[$id] = \true;
@@ -91,7 +91,7 @@ class Container implements \ArrayAccess
     public function offsetGet($id)
     {
         if (!isset($this->keys[$id])) {
-            throw new \Customify\Vendor\Pimple\Exception\UnknownIdentifierException($id);
+            throw new \Pixelgrade\Customify\Vendor\Pimple\Exception\UnknownIdentifierException($id);
         }
         if (isset($this->raw[$id]) || !\is_object($this->values[$id]) || isset($this->protected[$this->values[$id]]) || !\method_exists($this->values[$id], '__invoke')) {
             return $this->values[$id];
@@ -142,7 +142,7 @@ class Container implements \ArrayAccess
     public function factory($callable)
     {
         if (!\is_object($callable) || !\method_exists($callable, '__invoke')) {
-            throw new \Customify\Vendor\Pimple\Exception\ExpectedInvokableException('Service definition is not a Closure or invokable object.');
+            throw new \Pixelgrade\Customify\Vendor\Pimple\Exception\ExpectedInvokableException('Service definition is not a Closure or invokable object.');
         }
         $this->factories->attach($callable);
         return $callable;
@@ -161,7 +161,7 @@ class Container implements \ArrayAccess
     public function protect($callable)
     {
         if (!\is_object($callable) || !\method_exists($callable, '__invoke')) {
-            throw new \Customify\Vendor\Pimple\Exception\ExpectedInvokableException('Callable is not a Closure or invokable object.');
+            throw new \Pixelgrade\Customify\Vendor\Pimple\Exception\ExpectedInvokableException('Callable is not a Closure or invokable object.');
         }
         $this->protected->attach($callable);
         return $callable;
@@ -178,7 +178,7 @@ class Container implements \ArrayAccess
     public function raw($id)
     {
         if (!isset($this->keys[$id])) {
-            throw new \Customify\Vendor\Pimple\Exception\UnknownIdentifierException($id);
+            throw new \Pixelgrade\Customify\Vendor\Pimple\Exception\UnknownIdentifierException($id);
         }
         if (isset($this->raw[$id])) {
             return $this->raw[$id];
@@ -204,19 +204,19 @@ class Container implements \ArrayAccess
     public function extend($id, $callable)
     {
         if (!isset($this->keys[$id])) {
-            throw new \Customify\Vendor\Pimple\Exception\UnknownIdentifierException($id);
+            throw new \Pixelgrade\Customify\Vendor\Pimple\Exception\UnknownIdentifierException($id);
         }
         if (isset($this->frozen[$id])) {
-            throw new \Customify\Vendor\Pimple\Exception\FrozenServiceException($id);
+            throw new \Pixelgrade\Customify\Vendor\Pimple\Exception\FrozenServiceException($id);
         }
         if (!\is_object($this->values[$id]) || !\method_exists($this->values[$id], '__invoke')) {
-            throw new \Customify\Vendor\Pimple\Exception\InvalidServiceIdentifierException($id);
+            throw new \Pixelgrade\Customify\Vendor\Pimple\Exception\InvalidServiceIdentifierException($id);
         }
         if (isset($this->protected[$this->values[$id]])) {
             @\trigger_error(\sprintf('How Pimple behaves when extending protected closures will be fixed in Pimple 4. Are you sure "%s" should be protected?', $id), \E_USER_DEPRECATED);
         }
         if (!\is_object($callable) || !\method_exists($callable, '__invoke')) {
-            throw new \Customify\Vendor\Pimple\Exception\ExpectedInvokableException('Extension service definition is not a Closure or invokable object.');
+            throw new \Pixelgrade\Customify\Vendor\Pimple\Exception\ExpectedInvokableException('Extension service definition is not a Closure or invokable object.');
         }
         $factory = $this->values[$id];
         $extended = function ($c) use($callable, $factory) {
@@ -245,7 +245,7 @@ class Container implements \ArrayAccess
      *
      * @return static
      */
-    public function register(\Customify\Vendor\Pimple\ServiceProviderInterface $provider, array $values = [])
+    public function register(\Pixelgrade\Customify\Vendor\Pimple\ServiceProviderInterface $provider, array $values = [])
     {
         $provider->register($this);
         foreach ($values as $key => $value) {

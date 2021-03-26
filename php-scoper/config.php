@@ -32,7 +32,7 @@ function customify_php_scoper_get_list_of_files( $path ) {
 }
 
 $config = [
-	'prefix'                     => 'Customify\Vendor',
+	'prefix'                     => 'Pixelgrade\Customify\Vendor',
 	'whitelist-global-constants' => false,
 	'whitelist-global-classes'   => false,
 	'whitelist-global-functions' => false,
@@ -47,28 +47,43 @@ $config = [
 		Finder::create()
 		      ->files()
 		      ->in( 'vendor/pimple/pimple' )
+		      ->exclude(
+			      [
+				      'Tests',
+			      ]
+		      )
 		      ->name( [ '*.php', 'LICENSE', 'composer.json' ] ),
 		Finder::create()
-			->files()
-			->in(
-				[
-					'vendor/psr/container',
-					'vendor/psr/log',
-				]
-			)
-			->name( [ '*.php', 'LICENSE', 'composer.json' ] ),
+		      ->files()
+		      ->in(
+			      [
+				      'vendor/psr/container',
+				      'vendor/psr/log',
+			      ]
+		      )
+		      ->exclude(
+			      [
+				      'Test',
+			      ]
+		      )
+		      ->name( [ '*.php', 'LICENSE', 'composer.json' ] ),
 		Finder::create()
 		      ->files()
 		      ->in( 'vendor/cedaro/wp-plugin' )
+		      ->exclude(
+			      [
+				      'tests',
+			      ]
+		      )
 		      ->name( [ '*.php', 'LICENSE', 'composer.json' ] ),
 		Finder::create()
-			->files()
-			->in( 'vendor/symfony/polyfill-mbstring' )
-			->name( [ '*.php', '*.php8', 'LICENSE', 'composer.json' ] ),
+		      ->files()
+		      ->in( 'vendor/symfony/polyfill-mbstring' )
+		      ->name( [ '*.php', '*.php8', 'LICENSE', 'composer.json' ] ),
 		Finder::create()
-			->files()
-			->in( 'vendor/symfony/polyfill-php72' )
-			->name( [ '*.php', 'LICENSE', 'composer.json' ] ),
+		      ->files()
+		      ->in( 'vendor/symfony/polyfill-php72' )
+		      ->name( [ '*.php', 'LICENSE', 'composer.json' ] ),
 	],
 
 	/*

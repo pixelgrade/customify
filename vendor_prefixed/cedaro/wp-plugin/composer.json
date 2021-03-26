@@ -23,12 +23,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Customify\\Vendor\\Cedaro\\WP\\Plugin\\": "src\/"
+            "Pixelgrade\\Customify\\Vendor\\Cedaro\\WP\\Plugin\\": "src\/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Customify\\Vendor\\Cedaro\\WP\\Plugin\\Test\\": "tests\/"
+            "Pixelgrade\\Customify\\Vendor\\Cedaro\\WP\\Plugin\\Test\\": "tests\/"
         }
     },
     "scripts": {

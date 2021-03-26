@@ -1,10 +1,10 @@
 <?php
 
-namespace Customify\Vendor\Psr\Container;
+namespace Pixelgrade\Customify\Vendor\Psr\Container;
 
 /**
  * No entry was found in the container.
  */
-interface NotFoundExceptionInterface extends \Customify\Vendor\Psr\Container\ContainerExceptionInterface
+interface NotFoundExceptionInterface extends \Pixelgrade\Customify\Vendor\Psr\Container\ContainerExceptionInterface
 {
 }

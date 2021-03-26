@@ -23,19 +23,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-namespace Customify\Vendor\Pimple\Psr11;
+namespace Pixelgrade\Customify\Vendor\Pimple\Psr11;
 
-use Customify\Vendor\Pimple\Container as PimpleContainer;
-use Customify\Vendor\Psr\Container\ContainerInterface;
+use Pixelgrade\Customify\Vendor\Pimple\Container as PimpleContainer;
+use Pixelgrade\Customify\Vendor\Psr\Container\ContainerInterface;
 /**
  * PSR-11 compliant wrapper.
  *
  * @author Pascal Luna <skalpa@zetareticuli.org>
  */
-final class Container implements \Customify\Vendor\Psr\Container\ContainerInterface
+final class Container implements \Pixelgrade\Customify\Vendor\Psr\Container\ContainerInterface
 {
     private $pimple;
-    public function __construct(\Customify\Vendor\Pimple\Container $pimple)
+    public function __construct(\Pixelgrade\Customify\Vendor\Pimple\Container $pimple)
     {
         $this->pimple = $pimple;
     }

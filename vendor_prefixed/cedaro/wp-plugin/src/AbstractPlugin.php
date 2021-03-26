@@ -10,14 +10,14 @@
  * @copyright Copyright (c) 2015 Cedaro, LLC
  * @license   MIT
  */
-namespace Customify\Vendor\Cedaro\WP\Plugin;
+namespace Pixelgrade\Customify\Vendor\Cedaro\WP\Plugin;
 
 /**
  * Base plugin class.
  *
  * @package Cedaro\WP\Plugin
  */
-abstract class AbstractPlugin implements \Customify\Vendor\Cedaro\WP\Plugin\PluginInterface
+abstract class AbstractPlugin implements \Pixelgrade\Customify\Vendor\Cedaro\WP\Plugin\PluginInterface
 {
     /**
      * Plugin basename.
@@ -168,9 +168,9 @@ abstract class AbstractPlugin implements \Customify\Vendor\Cedaro\WP\Plugin\Plug
      * @param  HookProviderInterface $provider Hook provider.
      * @return $this
      */
-    public function register_hooks(\Customify\Vendor\Cedaro\WP\Plugin\HookProviderInterface $provider)
+    public function register_hooks(\Pixelgrade\Customify\Vendor\Cedaro\WP\Plugin\HookProviderInterface $provider)
     {
-        if ($provider instanceof \Customify\Vendor\Cedaro\WP\Plugin\PluginAwareInterface) {
+        if ($provider instanceof \Pixelgrade\Customify\Vendor\Cedaro\WP\Plugin\PluginAwareInterface) {
             $provider->set_plugin($this);
         }
         $provider->register_hooks();

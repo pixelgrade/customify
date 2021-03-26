@@ -60,6 +60,8 @@ phpcs.xml.dist
 phpunit.xml.dist
 bin
 postcss.config.js
+.npmrc
+.phpcs.xml.dist
 
 # From src we will only exclude js and scss, since the rest of the files (PHP) are needed.
 src/js
@@ -95,7 +97,9 @@ vendor/phpcompatibility
 vendor/phpdocumentor
 vendor/phpoption
 vendor/phpspec
-vendor/phpunit/phpunit
+vendor/phpstan
+vendor/phpunit
+vendor/rector
 vendor/sebastian
 vendor/roave/security-advisories
 vendor/squizlabs

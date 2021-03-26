@@ -1,6 +1,6 @@
 <?php
 
-namespace Customify\Vendor\Psr\Log;
+namespace Pixelgrade\Customify\Vendor\Psr\Log;
 
 /**
  * Describes log levels.

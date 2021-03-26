@@ -23,15 +23,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-namespace Customify\Vendor\Pimple\Exception;
+namespace Pixelgrade\Customify\Vendor\Pimple\Exception;
 
-use Customify\Vendor\Psr\Container\NotFoundExceptionInterface;
+use Pixelgrade\Customify\Vendor\Psr\Container\NotFoundExceptionInterface;
 /**
  * The identifier of a valid service or parameter was expected.
  *
  * @author Pascal Luna <skalpa@zetareticuli.org>
  */
-class UnknownIdentifierException extends \InvalidArgumentException implements \Customify\Vendor\Psr\Container\NotFoundExceptionInterface
+class UnknownIdentifierException extends \InvalidArgumentException implements \Pixelgrade\Customify\Vendor\Psr\Container\NotFoundExceptionInterface
 {
     /**
      * @param string $id The unknown identifier

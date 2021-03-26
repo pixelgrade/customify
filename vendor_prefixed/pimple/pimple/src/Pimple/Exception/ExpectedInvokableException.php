@@ -23,14 +23,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-namespace Customify\Vendor\Pimple\Exception;
+namespace Pixelgrade\Customify\Vendor\Pimple\Exception;
 
-use Customify\Vendor\Psr\Container\ContainerExceptionInterface;
+use Pixelgrade\Customify\Vendor\Psr\Container\ContainerExceptionInterface;
 /**
  * A closure or invokable object was expected.
  *
  * @author Pascal Luna <skalpa@zetareticuli.org>
  */
-class ExpectedInvokableException extends \InvalidArgumentException implements \Customify\Vendor\Psr\Container\ContainerExceptionInterface
+class ExpectedInvokableException extends \InvalidArgumentException implements \Pixelgrade\Customify\Vendor\Psr\Container\ContainerExceptionInterface
 {
 }

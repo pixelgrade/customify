@@ -19,7 +19,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Customify\\Vendor\\Psr\\Log\\": "Psr\/Log\/"
+            "Pixelgrade\\Customify\\Vendor\\Psr\\Log\\": "Psr\/Log\/"
         }
     },
     "extra": {

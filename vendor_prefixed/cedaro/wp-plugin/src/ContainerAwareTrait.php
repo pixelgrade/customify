@@ -10,9 +10,9 @@
  * @copyright Copyright (c) 2015 Cedaro, LLC
  * @license   MIT
  */
-namespace Customify\Vendor\Cedaro\WP\Plugin;
+namespace Pixelgrade\Customify\Vendor\Cedaro\WP\Plugin;
 
-use Customify\Vendor\Psr\Container\ContainerInterface;
+use Pixelgrade\Customify\Vendor\Psr\Container\ContainerInterface;
 /**
  * Container aware trait.
  *
@@ -81,7 +81,7 @@ trait ContainerAwareTrait
      */
     public function set_container($container)
     {
-        if (!$container instanceof \Customify\Vendor\Psr\Container\ContainerInterface) {
+        if (!$container instanceof \Pixelgrade\Customify\Vendor\Psr\Container\ContainerInterface) {
             throw new \InvalidArgumentException('Expected a ContainerInterface.');
         }
         $this->container = $container;

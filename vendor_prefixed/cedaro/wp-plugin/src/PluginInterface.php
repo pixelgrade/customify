@@ -10,7 +10,7 @@
  * @copyright Copyright (c) 2015 Cedaro, LLC
  * @license   MIT
  */
-namespace Customify\Vendor\Cedaro\WP\Plugin;
+namespace Pixelgrade\Customify\Vendor\Cedaro\WP\Plugin;
 
 /**
  * Plugin interface.
@@ -98,5 +98,5 @@ interface PluginInterface
      *
      * @param HookProviderInterface $provider Hook provider.
      */
-    public function register_hooks(\Customify\Vendor\Cedaro\WP\Plugin\HookProviderInterface $provider);
+    public function register_hooks(\Pixelgrade\Customify\Vendor\Cedaro\WP\Plugin\HookProviderInterface $provider);
 }

@@ -7,7 +7,7 @@
  * @copyright Copyright (c) 2017 Cedaro, LLC
  * @license   MIT
  */
-namespace Customify\Vendor\Cedaro\WP\Plugin;
+namespace Pixelgrade\Customify\Vendor\Cedaro\WP\Plugin;
 
 /**
  * Plugin factory class.
@@ -32,6 +32,6 @@ class PluginFactory
             $backtrace = \debug_backtrace(\DEBUG_BACKTRACE_PROVIDE_OBJECT, 1);
             $filename = $backtrace[0]['file'];
         }
-        return (new \Customify\Vendor\Cedaro\WP\Plugin\Plugin())->set_basename(plugin_basename($filename))->set_directory(plugin_dir_path($filename))->set_file($filename)->set_slug($slug)->set_url(plugin_dir_url($filename));
+        return (new \Pixelgrade\Customify\Vendor\Cedaro\WP\Plugin\Plugin())->set_basename(plugin_basename($filename))->set_directory(plugin_dir_path($filename))->set_file($filename)->set_slug($slug)->set_url(plugin_dir_url($filename));
     }
 }

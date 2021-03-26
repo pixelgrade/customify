@@ -23,7 +23,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Customify\\Vendor\\Pimple\\": "src\/Pimple\/"
+            "Pixelgrade\\Customify\\Vendor\\Pimple\\": "src\/Pimple\/"
         }
     },
     "extra": {

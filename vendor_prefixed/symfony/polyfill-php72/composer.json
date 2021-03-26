@@ -21,11 +21,11 @@
         }
     ],
     "require": {
-        "php": ">=5.3.3"
+        "php": ">=7.1"
     },
     "autoload": {
         "psr-4": {
-            "Customify\\Vendor\\Symfony\\Polyfill\\Php72\\": ""
+            "Pixelgrade\\Customify\\Vendor\\Symfony\\Polyfill\\Php72\\": ""
         },
         "files": [
             "bootstrap.php"
@@ -34,7 +34,7 @@
     "minimum-stability": "dev",
     "extra": {
         "branch-alias": {
-            "dev-main": "1.19-dev"
+            "dev-main": "1.22-dev"
         },
         "thanks": {
             "name": "symfony\/polyfill",

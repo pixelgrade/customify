@@ -1,6 +1,6 @@
 <?php
 
-namespace Customify\Vendor\Psr\Log;
+namespace Pixelgrade\Customify\Vendor\Psr\Log;
 
 /**
  * Describes a logger-aware instance.
@@ -14,5 +14,5 @@ interface LoggerAwareInterface
      *
      * @return void
      */
-    public function setLogger(\Customify\Vendor\Psr\Log\LoggerInterface $logger);
+    public function setLogger(\Pixelgrade\Customify\Vendor\Psr\Log\LoggerInterface $logger);
 }

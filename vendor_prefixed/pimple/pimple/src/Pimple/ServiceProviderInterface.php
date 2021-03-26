@@ -23,7 +23,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-namespace Customify\Vendor\Pimple;
+namespace Pixelgrade\Customify\Vendor\Pimple;
 
 /**
  * Pimple service provider interface.
@@ -41,5 +41,5 @@ interface ServiceProviderInterface
      *
      * @param Container $pimple A container instance
      */
-    public function register(\Customify\Vendor\Pimple\Container $pimple);
+    public function register(\Pixelgrade\Customify\Vendor\Pimple\Container $pimple);
 }

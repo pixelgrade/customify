@@ -7,18 +7,18 @@
  * @copyright Copyright (c) 2015 Cedaro, LLC
  * @license   MIT
  */
-namespace Customify\Vendor\Cedaro\WP\Plugin\Provider;
+namespace Pixelgrade\Customify\Vendor\Cedaro\WP\Plugin\Provider;
 
-use Customify\Vendor\Cedaro\WP\Plugin\HookProviderInterface;
-use Customify\Vendor\Cedaro\WP\Plugin\HooksTrait;
-use Customify\Vendor\Cedaro\WP\Plugin\PluginAwareInterface;
-use Customify\Vendor\Cedaro\WP\Plugin\PluginAwareTrait;
+use Pixelgrade\Customify\Vendor\Cedaro\WP\Plugin\HookProviderInterface;
+use Pixelgrade\Customify\Vendor\Cedaro\WP\Plugin\HooksTrait;
+use Pixelgrade\Customify\Vendor\Cedaro\WP\Plugin\PluginAwareInterface;
+use Pixelgrade\Customify\Vendor\Cedaro\WP\Plugin\PluginAwareTrait;
 /**
  * Internationalization class.
  *
  * @package Cedaro\WP\Plugin
  */
-class I18n implements \Customify\Vendor\Cedaro\WP\Plugin\PluginAwareInterface, \Customify\Vendor\Cedaro\WP\Plugin\HookProviderInterface
+class I18n implements \Pixelgrade\Customify\Vendor\Cedaro\WP\Plugin\PluginAwareInterface, \Pixelgrade\Customify\Vendor\Cedaro\WP\Plugin\HookProviderInterface
 {
     use HooksTrait, PluginAwareTrait;
     /**

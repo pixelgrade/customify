@@ -7,7 +7,7 @@
  * @copyright Copyright (c) 2015 Cedaro, LLC
  * @license   MIT
  */
-namespace Customify\Vendor\Cedaro\WP\Plugin;
+namespace Pixelgrade\Customify\Vendor\Cedaro\WP\Plugin;
 
 /**
  * Hook provider interface.
