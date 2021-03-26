@@ -51,7 +51,9 @@ You will set up all node_modules, composer packages, and compile the scripts and
 
 Since Customify is intended for distribution on WordPress.org you will need to build the plugin files and generate a cleaned-up zip.
 
-After you have updated the version, added the changelog, blessed everything, you can run this from the command line:
+After you have updated the version, added the changelog, blessed everything, **you need to clone the repo in a temporary directory** since **the build process is destructive.**
+
+**From the temporary directory,** run this from the command line:
 
 ```shell
 composer run zip
