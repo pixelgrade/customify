@@ -80,6 +80,10 @@ php-scoper
 vendor/symfony
 # psr is prefixed and located in vendor_prefixed folder.
 vendor/psr
+# pimple/pimple is prefixed and located in vendor_prefixed folder.
+vendor/pimple
+# cedaro/wp-plugin is prefixed and located in vendor_prefixed folder.
+vendor/cedaro
 
 # These are all dev or unit testing related.
 vendor/bin

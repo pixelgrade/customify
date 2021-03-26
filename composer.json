@@ -112,6 +112,10 @@
 			"npm run gulp composer:prefix_outside_files",
 			"@composer dump-autoload"
 		],
+		"downgrade-to-php-56": [
+			"\\InstituteWeb\\ComposerScripts\\ImprovedScriptExecution::apply",
+			"vendor/bin/rector process"
+		],
 
 		"dev-install": [
 			"@create-vendor-prefix-folder",
@@ -122,8 +126,9 @@
 
 		"pre-build": [
 			"npm run gulp composer:delete_lock_and_vendor",
-			"composer update --no-dev",
-			"@prefix-dependencies"
+			"@composer install --prefer-dist --no-scripts",
+			"@prefix-dependencies",
+			"@downgrade-to-php-56"
 		],
 		"zip": [
 			"@pre-build",
