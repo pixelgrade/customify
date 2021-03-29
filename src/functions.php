@@ -9,7 +9,7 @@
 
 declare ( strict_types = 1 );
 
-namespace PixelgradeLT\Records;
+namespace Pixelgrade\Customify;
 
 /**
  * Retrieve the main plugin instance.
@@ -61,73 +61,6 @@ function generate_random_string( int $length = 12 ): string {
 	}
 
 	return $str;
-}
-
-/**
- * Retrieve the authorization header.
- *
- * On certain systems and configurations, the Authorization header will be
- * stripped out by the server or PHP. Typically this is then used to
- * generate `PHP_AUTH_USER`/`PHP_AUTH_PASS` but not passed on. We use
- * `getallheaders` here to try and grab it out instead.
- *
- * From https://github.com/WP-API/OAuth1
- *
- * @return string|null Authorization header if set, null otherwise
- */
-function get_authorization_header(): ?string {
-	if ( ! empty( $_SERVER['HTTP_AUTHORIZATION'] ) ) {
-		return stripslashes( $_SERVER['HTTP_AUTHORIZATION'] );
-	}
-
-	if ( \function_exists( 'getallheaders' ) ) {
-		// Check for the authorization header case-insensitively.
-		foreach ( getallheaders() as $key => $value ) {
-			if ( 'authorization' === strtolower( $key ) ) {
-				return $value;
-			}
-		}
-	}
-
-	return null;
-}
-
-/**
- * Retrieve the permalink for packages.json.
- *
- * @since 0.1.0
- *
- * @param array|null $args Optional. Query string parameters. Default is an empty array.
- *
- * @return string
- */
-function get_packages_permalink( array $args = null ): string {
-	if ( null === $args ) {
-		$args = [];
-	}
-
-	$permalink = get_option( 'permalink_structure' );
-	if ( empty( $permalink ) ) {
-		$url = add_query_arg( 'pixelgradelt_records_route', 'composer', home_url( '/' ) );
-	} else {
-		// Leave off the packages.json if 'base' arg is true.
-		$suffix = isset( $args['base'] ) && $args['base'] ? '' : 'packages.json';
-		$url    = sprintf( network_home_url( '/ltpackagist/%s' ), $suffix );
-	}
-
-	return $url;
-}
-
-/**
- * Retrieve ID for the user being edited.
- *
- * @since 0.1.0
- *
- * @return int
- */
-function get_edited_user_id(): int {
-	// phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
-	return empty( $_GET['user_id'] ) ? get_current_user_id() : (int) $_GET['user_id'];
 }
 
 /**

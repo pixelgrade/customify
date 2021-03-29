@@ -49,7 +49,7 @@ You will set up all node_modules, composer packages, and compile the scripts and
 
 ## Building The Release .zip 
 
-Since Customify is intended for distribution on WordPress.org you will need to build the plugin files and generate a cleaned-up zip.
+Since Customify is intended for distribution on WordPress.org you will need to build the plugin files, transpile them to the appropriate PHP version (5.6), and generate a cleaned-up zip.
 
 After you have updated the version, added the changelog, blessed everything, **you need to clone the repo in a temporary directory** since **the build process is destructive.**
 

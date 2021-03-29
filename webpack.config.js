@@ -25,7 +25,7 @@ function kebabize( str ) {
 }
 
 const entries = files.reduce( ( acc, curr ) => {
-  const src = `./src/js/${ curr }/index.js`;
+  const src = `./src/_js/${ curr }/index.js`;
   acc[ camelize( curr ) ] = src;
   acc[ `${ camelize( curr ) }.min` ] = src;
   return acc;

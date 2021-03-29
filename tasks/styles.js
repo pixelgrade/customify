@@ -16,7 +16,7 @@ function stylesBase( src, dest, cb ) {
 }
 
 function compileStyles( cb ) {
-	return stylesBase( './src/scss/**/*.scss', './dist/css/', cb );
+	return stylesBase( './src/_scss/**/*.scss', './dist/css/', cb );
 }
 
 function stylesRTL( cb ) {
@@ -29,7 +29,7 @@ function stylesRTL( cb ) {
 stylesRTL.description = 'Generate style-rtl.css file based on style.css';
 
 function watch( cb ) {
-	gulp.watch( [ './src/scss/**/*.scss' ], compile );
+	gulp.watch( [ './src/_scss/**/*.scss' ], compile );
 }
 
 const compile = gulp.series( compileStyles, stylesRTL );
