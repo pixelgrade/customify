@@ -24,11 +24,32 @@ use Pixelgrade\Customify\Vendor\Cedaro\WP\Plugin\AbstractHookProvider;
  */
 class Options extends AbstractHookProvider {
 
+	/**
+	 * The cached options with just the minimal details.
+	 *
+	 * @var array
+	 */
 	protected array $options_minimal_details = [];
+
+	/**
+	 * The cached full options details.
+	 *
+	 * @var array
+	 */
 	protected array $options_details = [];
 
+	/**
+	 * The current option name as defined by the theme.
+	 *
+	 * @var string
+	 */
 	protected string $opt_name = '';
 
+	/**
+	 * The cached Customizer config.
+	 *
+	 * @var array
+	 */
 	private array $customizer_config = [];
 
 	/**
@@ -54,8 +75,8 @@ class Options extends AbstractHookProvider {
 	 *
 	 * @param string $option_id
 	 * @param bool   $minimal_details Optional. Whether to return only the minimum amount of details (mainly what is needed on the frontend).
-	 *                              The advantage is that these details are cached, thus skipping the customizer_config!
-	 * @param bool   $skip_cache Optional.
+	 *                                The advantage is that these details are cached, thus skipping the customizer_config!
+	 * @param bool   $skip_cache      Optional.
 	 *
 	 * @return array|false The option config or false on failure.
 	 */
@@ -70,18 +91,6 @@ class Options extends AbstractHookProvider {
 		}
 
 		return false;
-	}
-
-	/**
-	 * This is just a wrapper for get_options_details() for backwards compatibility.
-	 *
-	 * @param bool $only_minimal_details
-	 * @param bool $skip_cache
-	 *
-	 * @return array|mixed|void
-	 */
-	public function get_options_configs( $only_minimal_details = false, $skip_cache = false ) {
-		return $this->get_options_details( $only_minimal_details, $skip_cache );
 	}
 
 	/**
@@ -100,7 +109,7 @@ class Options extends AbstractHookProvider {
 		}
 
 		if ( ! empty( $wp_customize ) && method_exists( $wp_customize, 'get_setting' ) ) {
-			$setting    = $wp_customize->get_setting( $setting_id );
+			$setting = $wp_customize->get_setting( $setting_id );
 			if ( ! empty( $setting ) ) {
 				return $setting->value();
 			}
@@ -131,7 +140,7 @@ class Options extends AbstractHookProvider {
 		}
 
 		if ( ! empty( $wp_customize ) && method_exists( $wp_customize, 'get_setting' ) ) {
-			$setting    = $wp_customize->get_setting( $setting_id );
+			$setting = $wp_customize->get_setting( $setting_id );
 			if ( ! empty( $setting ) ) {
 				return $setting->value();
 			} elseif ( $wp_customize->is_preview() ) {
@@ -163,8 +172,8 @@ class Options extends AbstractHookProvider {
 	 * Otherwise try to get the default parameter or the default from config.
 	 *
 	 * @param string $option_id
-	 * @param mixed $default        Optional.
-	 * @param array $option_details Optional.
+	 * @param mixed  $default        Optional.
+	 * @param array  $option_details Optional.
 	 *
 	 * @return bool|null|string
 	 */
@@ -315,7 +324,7 @@ class Options extends AbstractHookProvider {
 		$this->customizer_config = [];
 
 		$this->options_minimal_details = [];
-		$this->options_details = [];
+		$this->options_details         = [];
 	}
 
 	public function get_options_key( $skip_cache = false ) {
@@ -328,7 +337,7 @@ class Options extends AbstractHookProvider {
 		}
 
 		// First try and get the cached data
-		$data = get_option( $this->get_customizer_opt_name_cache_key() );
+		$data             = get_option( $this->get_customizer_opt_name_cache_key() );
 		$expire_timestamp = false;
 
 		// Only try to get the expire timestamp if we really need to.
@@ -350,6 +359,7 @@ class Options extends AbstractHookProvider {
 		}
 
 		$this->opt_name = $data;
+
 		return $data;
 	}
 
@@ -358,7 +368,7 @@ class Options extends AbstractHookProvider {
 	}
 
 	public function invalidate_customizer_opt_name_cache() {
-		update_option( $this->get_customizer_opt_name_cache_key() . '_timestamp' , time() - 24 * HOUR_IN_SECONDS, true );
+		update_option( $this->get_customizer_opt_name_cache_key() . '_timestamp', time() - 24 * HOUR_IN_SECONDS, true );
 
 		$this->clear_locally_cached_data();
 	}
@@ -414,7 +424,7 @@ class Options extends AbstractHookProvider {
 		// The data isn't set, is expired or we were instructed to skip the cache; we need to regenerate the config.
 		if ( true === $skip_cache || false === $data || false === $expire_timestamp || $expire_timestamp < time() ) {
 			$options_minimal_details = array();
-			$options_extra_details = array();
+			$options_extra_details   = array();
 
 			$minimal_detail_keys = array(
 				'type',
@@ -482,7 +492,7 @@ class Options extends AbstractHookProvider {
 				update_option( $this->get_options_details_cache_timestamp_key(), time() + 24 * HOUR_IN_SECONDS, true );
 			}
 
-			$data = $this->options_minimal_details = $options_minimal_details;
+			$data                  = $this->options_minimal_details = $options_minimal_details;
 			$this->options_details = ArrayHelpers::array_merge_recursive_distinct( $options_minimal_details, $options_extra_details );
 			if ( false === $only_minimal_details ) {
 				$data = $this->options_details;
@@ -496,7 +506,7 @@ class Options extends AbstractHookProvider {
 		// If our development constant is defined and true, we will always skip the cache, except for AJAX calls.
 		// Other, more specific cases may impose skipping the cache also on AJAX calls.
 		if ( ! wp_doing_ajax()
-		     && defined('CUSTOMIFY_ALWAYS_GENERATE_CUSTOMIZER_CONFIG' )
+		     && defined( 'CUSTOMIFY_ALWAYS_GENERATE_CUSTOMIZER_CONFIG' )
 		     && true === CUSTOMIFY_ALWAYS_GENERATE_CUSTOMIZER_CONFIG ) {
 			return true;
 		}
@@ -551,15 +561,13 @@ class Options extends AbstractHookProvider {
 
 	public function has_option( $option ): bool {
 
-		$options_details  = $this->get_options_details(true);
+		$options_details = $this->get_options_details( true );
 		if ( isset( $options_details[ $option ] ) ) {
 			return true;
 		}
 
 		return false;
 	}
-
-
 
 
 	public function get_customizer_config( $key = false ) {
@@ -582,6 +590,7 @@ class Options extends AbstractHookProvider {
 	 * @since 2.2.1
 	 *
 	 * @param bool $skip_cache Optional. Whether to use the cached config or generate a new one.
+	 *
 	 * @return array
 	 */
 	protected function load_customizer_config( $skip_cache = false ): array {
@@ -600,6 +609,7 @@ class Options extends AbstractHookProvider {
 		// when a user is not logged in or a user without administrative capabilities is logged in.
 		if ( false !== $data && false === $skip_cache && ! current_user_can( 'manage_options' ) ) {
 			$this->customizer_config = $data;
+
 			return $data;
 		}
 
@@ -635,7 +645,7 @@ class Options extends AbstractHookProvider {
 	}
 
 	public function invalidate_customizer_config_cache() {
-		update_option( $this->get_customizer_config_cache_key() . '_timestamp' , time() - 24 * HOUR_IN_SECONDS, true );
+		update_option( $this->get_customizer_config_cache_key() . '_timestamp', time() - 24 * HOUR_IN_SECONDS, true );
 
 		$this->clear_locally_cached_data();
 	}
@@ -646,6 +656,7 @@ class Options extends AbstractHookProvider {
 	 * @since 2.4.0
 	 *
 	 * @param mixed $value
+	 *
 	 * @return mixed
 	 */
 	public function filter_invalidate_customizer_config_cache( $value ) {

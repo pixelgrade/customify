@@ -129,11 +129,6 @@ if ( ! function_exists( __NAMESPACE__ . '\autoloader_classmap' ) ) {
 // Autoload mapped classes.
 spl_autoload_register( __NAMESPACE__ . '\autoloader_classmap' );
 
-// Load the environment variables.
-// We use immutable since we don't want to overwrite variables already set.
-$dotenv = \Dotenv\Dotenv::createImmutable(__DIR__);
-$dotenv->load();
-
 // Load the WordPress plugin administration API.
 require_once ABSPATH . 'wp-admin/includes/plugin.php';
 

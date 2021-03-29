@@ -42,20 +42,13 @@ class Plugin extends BasePlugin implements Composable {
 		$this
 			->register_hooks( $container->get( 'hooks.i18n' ) )
 			->register_hooks( $container->get( 'hooks.capabilities' ) )
-			->register_hooks( $container->get( 'hooks.rewrite_rules' ) )
-			->register_hooks( $container->get( 'hooks.health_check' ) )
-			->register_hooks( $container->get( 'hooks.request_handler' ) )
-
-			->register_hooks( $container->get( 'screen.edit_package' ) )
-			->register_hooks( $container->get( 'screen.list_packages' ) );
+			->register_hooks( $container->get( 'hooks.rewrite_rules' ) );
 
 
 		if ( is_admin() ) {
 			$this
 				->register_hooks( $container->get( 'hooks.upgrade' ) )
 				->register_hooks( $container->get( 'hooks.admin_assets' ) )
-				->register_hooks( $container->get( 'screen.edit_user' ) )
-				->register_hooks( $container->get( 'screen.manage_plugins' ) )
 				->register_hooks( $container->get( 'screen.settings' ) );
 		}
 
@@ -65,6 +58,26 @@ class Plugin extends BasePlugin implements Composable {
 
 		if ( \function_exists( 'PixelgradeAssistant' ) ) {
 			$this->register_hooks( $container->get( 'integration.pixelgrade_assistant' ) );
+		}
+
+		if ( \function_exists( 'PixelgradeCare' ) ) {
+			$this->register_hooks( $container->get( 'integration.pixelgrade_care' ) );
+		}
+
+		if ( \defined( 'TRIBE_EVENTS_FILE' ) ) {
+			$this->register_hooks( $container->get( 'integration.the_events_calendar' ) );
+		}
+
+		if ( \class_exists( 'W3TC\Root_Loader' ) ) {
+			$this->register_hooks( $container->get( 'integration.w3_total_cache' ) );
+		}
+
+		if ( \class_exists( 'WpFastestCache' ) ) {
+			$this->register_hooks( $container->get( 'integration.wp_fastest_cache' ) );
+		}
+
+		if ( \defined( 'WP_ROCKET_VERSION' ) ) {
+			$this->register_hooks( $container->get( 'integration.wp_rocket' ) );
 		}
 
 		/**

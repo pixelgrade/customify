@@ -52,12 +52,6 @@ class ServiceProvider implements ServiceProviderInterface {
 			);
 		};
 
-		$container['hooks.health_check'] = function( $container ) {
-			return new Provider\HealthCheck(
-				$container['http.request']
-			);
-		};
-
 		$container['hooks.i18n'] = function() {
 			return new I18n();
 		};
@@ -122,69 +116,8 @@ class ServiceProvider implements ServiceProviderInterface {
 			return new Options();
 		};
 
-		$container['screen.edit_package'] = function( $container ) {
-			return new Screen\EditPackage(
-				$container['package.manager'],
-				$container['repository.managed'],
-				$container['hooks.package_post_type'],
-				$container['transformer.composer_package']
-			);
-		};
-
-		$container['screen.list_packages'] = function( $container ) {
-			return new Screen\ListPackages(
-				$container['package.manager']
-			);
-		};
-
-		$container['screen.edit_user'] = function( $container ) {
-			return new Screen\EditUser(
-				$container['api_key.repository']
-			);
-		};
-
-		$container['screen.manage_plugins'] = function( $container ) {
-			return new Screen\ManagePlugins( $container['repository.installed.managed'] );
-		};
-
 		$container['screen.settings'] = function( $container ) {
-			return new Screen\Settings(
-				$container['repository.managed'],
-				$container['api_key.repository'],
-				$container['transformer.composer_package']
-			);
-		};
-
-		$container['storage.packages'] = function( $container ) {
-			$path = path_join( $container['storage.working_directory'], 'packages/' );
-			return new Storage\Local( $path );
-		};
-
-		$container['storage.working_directory'] = function( $container ) {
-			if ( \defined( 'PIXELGRADELT_RECORDS_WORKING_DIRECTORY' ) ) {
-				return PIXELGRADELT_RECORDS_WORKING_DIRECTORY;
-			}
-
-			$upload_config = wp_upload_dir();
-			$path          = path_join( $upload_config['basedir'], $container['storage.working_directory_name'] );
-
-			return (string) trailingslashit( apply_filters( 'pixelgradelt_records_working_directory', $path ) );
-		};
-
-		$container['storage.working_directory_name'] = function() {
-			$directory = get_option( 'pixelgradelt_records_working_directory' );
-
-			if ( ! empty( $directory ) ) {
-				return $directory;
-			}
-
-			// Append a random string to help hide it from nosey visitors.
-			$directory = sprintf( 'pixelgradelt_records-%s', generate_random_string() );
-
-			// Save the working directory so we will always use the same directory.
-			update_option( 'pixelgradelt_records_working_directory', $directory );
-
-			return $directory;
+			return new Screen\Settings();
 		};
 	}
 }
