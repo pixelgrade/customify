@@ -2,16 +2,15 @@
 /**
  * Plugin activation routines.
  *
- * @package PixelgradeLT
+ * @since   3.0.0
  * @license GPL-2.0-or-later
- * @since 3.0.0
+ * @package PixelgradeLT
  */
 
-declare ( strict_types = 1 );
+declare ( strict_types=1 );
 
 namespace Pixelgrade\Customify\Provider;
 
-use Pixelgrade\Customify\Options;
 use Pixelgrade\Customify\Vendor\Cedaro\WP\Plugin\AbstractHookProvider;
 use Pixelgrade\Customify\Capabilities;
 use Pixelgrade\Customify\Vendor\Psr\Log\LoggerInterface;
@@ -31,6 +30,13 @@ class Activation extends AbstractHookProvider {
 	protected Options $options;
 
 	/**
+	 * Plugin settings.
+	 *
+	 * @var PluginSettings
+	 */
+	protected PluginSettings $plugin_settings;
+
+	/**
 	 * Logger.
 	 *
 	 * @var LoggerInterface
@@ -43,14 +49,17 @@ class Activation extends AbstractHookProvider {
 	 * @since 3.0.0
 	 *
 	 * @param Options         $options Options.
+	 * @param PluginSettings  $plugin_settings
 	 * @param LoggerInterface $logger  Logger.
 	 */
 	public function __construct(
 		Options $options,
+		PluginSettings $plugin_settings,
 		LoggerInterface $logger
 	) {
-		$this->options          = $options;
-		$this->logger          = $logger;
+		$this->options = $options;
+		$this->plugin_settings = $plugin_settings;
+		$this->logger  = $logger;
 	}
 
 	/**
@@ -69,9 +78,9 @@ class Activation extends AbstractHookProvider {
 	 *   registered.
 	 * - Registers capabilities for the admin role.
 	 *
-	 * @see \PixelgradeLT\Records\Provider\RewriteRules::maybe_flush_rewrite_rules()
-	 *
 	 * @since 3.0.0
+	 * @see   \Pixelgrade\Customify\Provider\RewriteRules::maybe_flush_rewrite_rules()
+	 *
 	 */
 	public function activate() {
 		$this->install();
@@ -84,37 +93,32 @@ class Activation extends AbstractHookProvider {
 	}
 
 	/*
-	 * Install everything needed
+	 * Install everything needed.
 	 */
 	private function install() {
-		$config = Customify_Settings::get_plugin_config();
 
-		$defaults = array(
-
-			# Hidden fields
-			'settings_saved_once'                   => '0',
-			# General
-			'values_store_mod'                => 'theme_mod',
-
-			'typography' => true,
-			'typography_system_fonts' => true,
-			'typography_google_fonts' => true,
+		$default_settings = [
+			'values_store_mod'              => 'theme_mod',
+			'disable_default_sections'      => [],
+			'enable_reset_buttons'          => false,
+			'enable_editor_style'           => true,
+			'style_resources_location'      => 'wp_head',
+			'enable_typography'             => true,
+			'typography_system_fonts'       => true,
+			'typography_google_fonts'       => true,
 			'typography_group_google_fonts' => true,
-			'typography_cloud_fonts' => true,
-			'disable_default_sections' => array(),
-			'disable_customify_sections' => array(),
-			'enable_reset_buttons' => false,
-			'enable_editor_style' => true,
-			'style_resources_location' => 'wp_head'
-		);
+			'typography_cloud_fonts'        => true,
+		];
 
-		$current_data = get_option( $config['settings-key'] );
+		$current_settings = $this->plugin_settings->get_all();
 
-		if ( $current_data === false ) {
-			add_option( $config['settings-key'], $defaults );
-		} elseif ( count( array_diff_key( $defaults, $current_data ) ) != 0)  {
-			$plugin_data = array_merge( $defaults, $current_data );
-			update_option( $config['settings-key'], $plugin_data );
+		if ( empty( $current_settings ) ) {
+			// If the settings are empty, set them to the default value.
+			$this->plugin_settings->set_all( $default_settings );
+		} elseif ( count( array_diff_key( $default_settings, $current_settings ) ) > 0 ) {
+			// If we have different keys (possibly new keys).
+			$plugin_settings = array_merge( $default_settings, $current_settings );
+			$this->plugin_settings->set_all( $plugin_settings );
 		}
 	}
 }

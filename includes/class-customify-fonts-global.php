@@ -149,7 +149,7 @@ class Customify_Fonts_Global {
 		$load_location = PixCustomifyPlugin()->settings->get_plugin_setting( 'style_resources_location', 'wp_head' );
 		// Add preconnect links as early as possible for faster external fonts loading.
 		add_action('wp_head', array( $this, 'add_preconnect_links' ), 0);
-		wp_register_script( PixCustomifyPlugin()->get_slug() . '-web-font-loader',
+		wp_register_script( 'pixelgrade_customify-web-font-loader',
 			plugins_url( 'js/vendor/webfontloader-1-6-28.min.js', PixCustomifyPlugin()->get_file() ), [], null, ( 'wp_head' === $load_location ) ? false : true );
 		add_action('wp_enqueue_scripts', array( $this, 'enqueue_frontend_scripts_styles' ), 0 );
 		add_action( $load_location, array( $this, 'outputFontsDynamicStyle' ), 100 );
@@ -1137,12 +1137,12 @@ class Customify_Fonts_Global {
 		// If we are in the Customizer preview, we will always use the WebFontLoader.
 		if ( is_customize_preview() ) {
 			// We always enqueue the WebFontLoader script.
-			wp_enqueue_script( PixCustomifyPlugin()->get_slug() . '-web-font-loader' );
+			wp_enqueue_script( 'pixelgrade_customify-web-font-loader' );
 
 			// Get the inline script to load all the needed fonts via WebFontLoader.
 			$script = $this->get_webfontloader_dynamic_script();
 			if ( ! empty( $script ) ) {
-				wp_add_inline_script( PixCustomifyPlugin()->get_slug() . '-web-font-loader', $script );
+				wp_add_inline_script( 'pixelgrade_customify-web-font-loader', $script );
 			} else {
 				$this->handleNoWebFontsEvents();
 			}
@@ -1351,7 +1351,7 @@ if (typeof WebFont !== 'undefined') {
 	protected function maybe_load_google_fonts() {
 
 		if ( empty( $this->google_fonts ) ) {
-			$fonts_path = PixCustomifyPlugin()->get_base_path() . 'includes/resources/google.fonts.php';
+			$fonts_path = PixCustomifyPlugin()->get_base_path() . 'resources/google.fonts.php';
 
 			if ( file_exists( $fonts_path ) ) {
 				$this->google_fonts = apply_filters( 'customify_filter_google_fonts_list', require( $fonts_path ) );

@@ -13,7 +13,7 @@ declare ( strict_types=1 );
 
 namespace Pixelgrade\Customify\Integration;
 
-use Pixelgrade\Customify\Options;
+use Pixelgrade\Customify\Provider\Options;
 use Pixelgrade\Customify\Vendor\Cedaro\WP\Plugin\AbstractHookProvider;
 
 /**

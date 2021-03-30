@@ -45,7 +45,7 @@ function updatePhpGoogleFontsList(done) {
     php.push( '// Returns an associative array with fonts.' );
     php.push( 'return json_decode( \'' + JSON.stringify( fontsList ) + '\', true );' );
 
-    fs.writeFileSync('includes/resources/google.fonts.php', php.join( '\r\n' ));
+    fs.writeFileSync('resources/google.fonts.php', php.join( '\r\n' ));
 
     return done();
   })

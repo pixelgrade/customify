@@ -13,9 +13,7 @@ namespace Pixelgrade\Customify;
 
 use Pixelgrade\Customify\Vendor\Cedaro\WP\Plugin\Provider\I18n;
 use Pixelgrade\Customify\Vendor\Pimple\Container as PimpleContainer;
-use Pixelgrade\Customify\Vendor\Pimple\ServiceIterator;
 use Pixelgrade\Customify\Vendor\Pimple\ServiceProviderInterface;
-use Pixelgrade\Customify\Vendor\Pimple\Psr11\ServiceLocator;
 use Pixelgrade\Customify\Vendor\Psr\Log\LogLevel;
 
 /**
@@ -45,6 +43,10 @@ class ServiceProvider implements ServiceProviderInterface {
 			return new Provider\Capabilities();
 		};
 
+		$container['hooks.customizer_assets'] = function() {
+			return new Provider\CustomizerAssets();
+		};
+
 		$container['hooks.deactivation'] = function( $container ) {
 			return new Provider\Deactivation(
 				$container['options'],
@@ -63,6 +65,7 @@ class ServiceProvider implements ServiceProviderInterface {
 		$container['hooks.upgrade'] = function( $container ) {
 			return new Provider\Upgrade(
 				$container['options'],
+				$container['plugin.settings'],
 				$container['logger']
 			);
 		};
@@ -71,7 +74,7 @@ class ServiceProvider implements ServiceProviderInterface {
 			return new Logger( $container['logger.level'] );
 		};
 
-		$container['logger.level'] = function( $container ) {
+		$container['logger.level'] = function() {
 			// Log warnings and above when WP_DEBUG is enabled.
 			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
 				$level = LogLevel::WARNING;
@@ -112,12 +115,40 @@ class ServiceProvider implements ServiceProviderInterface {
 			return new Integration\WPRocket();
 		};
 
-		$container['options'] = function( $container ) {
-			return new Options();
+		$container['options'] = function() {
+			return new Provider\Options();
+		};
+
+		$container['plugin.settings'] = function() {
+			return new Provider\PluginSettings();
+		};
+
+		$container['plugin.settings.cfdatastore'] = function() {
+			return new Provider\PluginSettingsCFDatastore();
+		};
+
+		$container['screen.edit_with_blocks'] = function( $container ) {
+			return new Screen\EditWithBlocks(
+				$container['options'],
+				$container['plugin.settings'],
+				$container['logger']
+			);
+		};
+
+		$container['screen.edit_with_classic_editor'] = function( $container ) {
+			return new Screen\EditWithClassicEditor(
+				$container['options'],
+				$container['plugin.settings'],
+				$container['logger']
+			);
 		};
 
 		$container['screen.settings'] = function( $container ) {
-			return new Screen\Settings();
+			return new Screen\Settings(
+				$container['options'],
+				$container['plugin.settings.cfdatastore'],
+				$container['logger']
+			);
 		};
 	}
 }

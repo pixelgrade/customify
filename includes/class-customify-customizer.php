@@ -205,48 +205,9 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 		function register_admin_customizer_scripts() {
 			$suffix = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min';
 
-			wp_register_script( PixCustomifyPlugin()->get_slug() . '-select2',
-				plugins_url( 'js/vendor/select2-4.0.13/dist/js/select2.full' . $suffix . '.js', PixCustomifyPlugin()->get_file() ),
-				array( 'jquery' ), PixCustomifyPlugin()->get_version() );
-			wp_register_script( 'jquery-react',
-				plugins_url( 'js/vendor/jquery-react' . $suffix . '.js', PixCustomifyPlugin()->get_file() ),
-				array( 'jquery' ), PixCustomifyPlugin()->get_version() );
-
-			wp_register_script( PixCustomifyPlugin()->get_slug() . '-customizer-scripts',
-				plugins_url( 'dist/js/customizer' . $suffix . '.js', PixCustomifyPlugin()->get_file() ),
-				array(
-					'jquery',
-					PixCustomifyPlugin()->get_slug() . '-select2',
-					PixCustomifyPlugin()->get_slug() . '-regression',
-					'wp-element',
-					'underscore',
-					'customize-controls',
-				),
-				PixCustomifyPlugin()->get_version() );
-
-			// we should get
-			$page = get_page_by_title( 'Colors', OBJECT, 'sm_custom_page' );
-
-			if ( ! empty( $page ) ) {
-//
-//				$permalink = 0 < $page->ID ? get_permalink( $page->ID ) : '';
-//
-//				wp_add_inline_script( PixCustomifyPlugin()->get_slug() . '-customizer-scripts', "
-//				console.log( " . $page->ID . ");
-//				wp.customize.bind( 'ready', function() {
-//					wp.customize.section( 'sm_color_palettes_section', function( section ) {
-//						section.expanded.bind( function( isExpanded ) {
-//							if ( isExpanded ) {
-//								wp.customize.previewer.previewUrl.set( '" . esc_js( $permalink ) . "' );
-//							}
-//						} );
-//					} );
-//				} );
-//				");
-			}
 
 			wp_register_style(
-				PixCustomifyPlugin()->get_slug() . '-customizer',
+				'pixelgrade_customify-customizer',
 				plugins_url( 'dist/css/customizer.css', PixCustomifyPlugin()->get_file() ),
 				array(),
 				PixCustomifyPlugin()->get_version()
@@ -273,11 +234,11 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 		 */
 		function enqueue_admin_customizer_scripts() {
 			wp_enqueue_script( 'jquery-react' );
-			wp_enqueue_script( PixCustomifyPlugin()->get_slug() . '-customizer-scripts' );
+			wp_enqueue_script( 'pixelgrade_customify-customizer-scripts' );
 
-			wp_enqueue_style( PixCustomifyPlugin()->get_slug() . '-customizer' );
+			wp_enqueue_style( 'pixelgrade_customify-customizer' );
 
-			wp_add_inline_script( PixCustomifyPlugin()->get_slug() . '-customizer-scripts',
+			wp_add_inline_script( 'pixelgrade_customify-customizer-scripts',
 				self::getlocalizeToWindowScript( 'customify',
 					apply_filters( 'customify_localized_js_settings', $this->localized )
 				), 'before' );
@@ -287,20 +248,12 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 		function customizer_live_preview_register_scripts() {
 			$suffix = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min';
 
-			wp_register_script( PixCustomifyPlugin()->get_slug() . '-previewer-scripts',
-				plugins_url( 'dist/js/customizer-preview' . $suffix . '.js', PixCustomifyPlugin()->get_file() ),
-				array(
-					'jquery',
-					'lodash',
-					'customize-preview',
-					'underscore'
-				),
-				PixCustomifyPlugin()->get_version(), true );
+
 		}
 
 		/** Enqueue Customizer scripts loaded only on previewer page */
 		function customizer_live_preview_enqueue_scripts() {
-			wp_enqueue_script( PixCustomifyPlugin()->get_slug() . '-previewer-scripts' );
+			wp_enqueue_script( 'pixelgrade_customify-previewer-scripts' );
 		}
 
 		/**

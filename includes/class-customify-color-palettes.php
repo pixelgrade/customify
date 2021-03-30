@@ -78,12 +78,7 @@ class Customify_Color_Palettes {
 	public function register_admin_customizer_scripts() {
 		$suffix = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min';
 
-		wp_register_script(
-			PixCustomifyPlugin()->get_slug() . '-dark-mode',
-			plugins_url( 'dist/js/dark-mode' . $suffix . '.js', PixCustomifyPlugin()->get_file() ),
-			array( 'jquery' ),
-			PixCustomifyPlugin()->get_version()
-		);
+
 	}
 
 	/**
@@ -96,7 +91,7 @@ class Customify_Color_Palettes {
 			return;
 		}
 
-		wp_enqueue_script( PixCustomifyPlugin()->get_slug() . '-dark-mode' );
+		wp_enqueue_script( 'pixelgrade_customify-dark-mode' );
 	}
 
 	/**

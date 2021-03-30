@@ -72,13 +72,7 @@ class Customify_Customizer_Search {
 	public function register_admin_customizer_scripts() {
 		$suffix = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min';
 
-		wp_register_script( PixCustomifyPlugin()->get_slug() . '-fuse',
-			plugins_url( 'js/vendor/fuse-6.0.0/fuse.basic' . $suffix . '.js', PixCustomifyPlugin()->get_file() ),
-			[], null );
 
-		wp_register_script( PixCustomifyPlugin()->get_slug() . '-customizer-search',
-			plugins_url( 'dist/js/customizer-search' . $suffix . '.js', PixCustomifyPlugin()->get_file() ),
-			[ 'jquery', PixCustomifyPlugin()->get_slug() . '-fuse', ], PixCustomifyPlugin()->get_version() );
 	}
 
 	/**
@@ -92,7 +86,7 @@ class Customify_Customizer_Search {
 			return;
 		}
 
-		wp_enqueue_script( PixCustomifyPlugin()->get_slug() . '-customizer-search' );
+		wp_enqueue_script( 'pixelgrade_customify-customizer-search' );
 	}
 
 	public function print_js_template() {

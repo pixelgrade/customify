@@ -9,7 +9,7 @@
 
 declare ( strict_types=1 );
 
-namespace Pixelgrade\Customify;
+namespace Pixelgrade\Customify\Provider;
 
 use Pixelgrade\Customify\Utils\ArrayHelpers;
 use Pixelgrade\Customify\Vendor\Cedaro\WP\Plugin\AbstractHookProvider;
@@ -24,22 +24,36 @@ use Pixelgrade\Customify\Vendor\Cedaro\WP\Plugin\AbstractHookProvider;
  */
 class Options extends AbstractHookProvider {
 
+	const MINIMAL_DETAILS_CACHE_KEY = 'pixelgrade_customify_options_minimal_details';
+	const EXTRA_DETAILS_CACHE_KEY = 'pixelgrade_customify_options_extra_details';
+	const DETAILS_CACHE_TIMESTAMP_KEY = 'pixelgrade_customify_options_details_timestamp';
+	const CUSTOMIZER_CONFIG_CACHE_KEY = 'pixelgrade_customify_customizer_config';
+	const CUSTOMIZER_CONFIG_CACHE_TIMESTAMP_KEY = 'pixelgrade_customify_customizer_config_timestamp';
+	const CUSTOMIZER_OPT_NAME_CACHE_KEY = 'pixelgrade_customify_customizer_opt_name';
+	const CUSTOMIZER_OPT_NAME_CACHE_TIMESTAMP_KEY = 'pixelgrade_customify_customizer_opt_name_timestamp';
+
 	/**
 	 * The cached options with just the minimal details.
 	 *
+	 * @since 3.0.0
+	 *
 	 * @var array
 	 */
-	protected array $options_minimal_details = [];
+	protected array $minimal_details = [];
 
 	/**
 	 * The cached full options details.
 	 *
+	 * @since 3.0.0
+	 *
 	 * @var array
 	 */
-	protected array $options_details = [];
+	protected array $details = [];
 
 	/**
 	 * The current option name as defined by the theme.
+	 *
+	 * @since 3.0.0
 	 *
 	 * @var string
 	 */
@@ -47,6 +61,8 @@ class Options extends AbstractHookProvider {
 
 	/**
 	 * The cached Customizer config.
+	 *
+	 * @since 3.0.0
 	 *
 	 * @var array
 	 */
@@ -67,121 +83,26 @@ class Options extends AbstractHookProvider {
 
 		// Whenever we update data from the Customizer, we will invalidate the options details (that include the value).
 		// Customize save (publish) used the same changeset save logic, so this filter is fired then also.
-		$this->add_filter( 'customize_changeset_save_data', 'filter_invalidate_options_details_cache', 50, 1 );
+		$this->add_filter( 'customize_changeset_save_data', 'filter_invalidate_details_cache', 50, 1 );
 	}
 
 	/**
-	 * Get the Customify configuration (and value, hence "details") of a certain option.
+	 * Get an option's value, if there is a value, and return it.
+	 * Otherwise, try to get the default parameter or the default from config.
 	 *
-	 * @param string $option_id
-	 * @param bool   $minimal_details Optional. Whether to return only the minimum amount of details (mainly what is needed on the frontend).
-	 *                                The advantage is that these details are cached, thus skipping the customizer_config!
-	 * @param bool   $skip_cache      Optional.
+	 * @since 3.0.0
 	 *
-	 * @return array|false The option config or false on failure.
+	 * @param string     $option_id
+	 * @param mixed|null $default        Optional.
+	 * @param array|null $option_details Optional.
+	 *
+	 * @return mixed
 	 */
-	public function get_option_details( string $option_id, $minimal_details = false, $skip_cache = false ) {
-		if ( empty( $option_id ) ) {
-			return false;
-		}
-
-		$options_details = $this->get_options_details( $minimal_details, $skip_cache );
-		if ( ! empty( $options_details ) && is_array( $options_details ) && isset( $options_details[ $option_id ] ) ) {
-			return $options_details[ $option_id ];
-		}
-
-		return false;
-	}
-
-	/**
-	 * Get the value of a setting ID saved in a wp_options array entry.
-	 *
-	 * @param string $option_id  This is only the option ID, that may differ from setting ID ( like in `body_font` vs `rosa_opt[body_font]`)
-	 * @param string $setting_id We will use this to get the Customizer value, when in that context.
-	 *
-	 * @return mixed|null
-	 */
-	protected function get_option_mod_value( string $option_id, string $setting_id ) {
-		global $wp_customize;
-
-		if ( empty( $option_id ) || empty( $setting_id ) ) {
-			return null;
-		}
-
-		if ( ! empty( $wp_customize ) && method_exists( $wp_customize, 'get_setting' ) ) {
-			$setting = $wp_customize->get_setting( $setting_id );
-			if ( ! empty( $setting ) ) {
-				return $setting->value();
-			}
-		}
-
-		$values = get_option( $this->get_options_key() );
-
-		if ( ! empty( $values ) && is_array( $values ) && isset( $values[ $option_id ] ) ) {
-			return $values[ $option_id ];
-		}
-
-		return null;
-	}
-
-	/**
-	 * Get the value of a certain setting ID saved in the theme mod array.
-	 *
-	 * @param string $option_id  This is only the option ID, that may differ from setting ID ( like in `body_font` vs `rosa_opt[body_font]`)
-	 * @param string $setting_id We will use this to get the Customizer value, when in that context.
-	 *
-	 * @return mixed|null
-	 */
-	protected function get_theme_mod_value( string $option_id, string $setting_id ) {
-		global $wp_customize;
-
-		if ( empty( $option_id ) || empty( $setting_id ) ) {
-			return null;
-		}
-
-		if ( ! empty( $wp_customize ) && method_exists( $wp_customize, 'get_setting' ) ) {
-			$setting = $wp_customize->get_setting( $setting_id );
-			if ( ! empty( $setting ) ) {
-				return $setting->value();
-			} elseif ( $wp_customize->is_preview() ) {
-				// If the setting is not registered (like in asking for the value before wp_loaded), we will read directly from the posted values via the changeset.
-				// Not really the best way, but ok.
-				$post_values = $wp_customize->unsanitized_post_values();
-				if ( array_key_exists( $setting_id, $post_values ) ) {
-					$value = $post_values[ $setting_id ];
-					// Skip validation and sanitization since it is too early.
-					if ( ! is_null( $value ) && ! is_wp_error( $value ) ) {
-						return $value;
-					}
-				}
-			}
-		}
-
-		$values = get_theme_mod( $this->get_options_key() );
-
-		if ( ! empty( $values ) && is_array( $values ) && isset( $values[ $option_id ] ) ) {
-			return $values[ $option_id ];
-		}
-
-		return null;
-	}
-
-	/**
-	 * A public function to get an option's value.
-	 * If there is a value and return it.
-	 * Otherwise try to get the default parameter or the default from config.
-	 *
-	 * @param string $option_id
-	 * @param mixed  $default        Optional.
-	 * @param array  $option_details Optional.
-	 *
-	 * @return bool|null|string
-	 */
-	public function get_option( string $option_id, $default = null, $option_details = null ) {
+	public function get( string $option_id, $default = null, $option_details = null ) {
 
 		if ( null === $option_details ) {
 			// Get the field config.
-			$option_details = $this->get_option_details( $option_id, true );
+			$option_details = $this->get_details( $option_id, true );
 		}
 
 		// If the development constant CUSTOMIFY_DEV_FORCE_DEFAULTS has been defined we will not retrieve anything from the database
@@ -227,10 +148,10 @@ class Options extends AbstractHookProvider {
 				if ( null === $value ) {
 					if ( ! empty( PixCustomifyPlugin()->settings ) && PixCustomifyPlugin()->settings->get_plugin_setting( 'values_store_mod' ) === 'option' ) {
 						// Get the value stored in a option.
-						$value = $this->get_option_mod_value( $option_id, $setting_id );
+						$value = $this->get_wpoptions_value( $option_id, $setting_id );
 					} else {
 						// Get the value stored in theme_mods.
-						$value = $this->get_theme_mod_value( $option_id, $setting_id );
+						$value = $this->get_thememod_value( $option_id, $setting_id );
 					}
 				}
 			}
@@ -255,14 +176,140 @@ class Options extends AbstractHookProvider {
 	}
 
 	/**
-	 * Determine if we should NOT enforce the CUSTOMIFY_DEV_FORCE_DEFAULTS behavior on a certain option.
+	 * Determine if a certain option exists.
 	 *
-	 * @param string $option_id
-	 * @param array  $option_config Optional.
+	 * @since 3.0.0
+	 *
+	 * @param string $key The option key.
 	 *
 	 * @return bool
 	 */
-	public function skip_dev_mode_force_defaults( string $option_id, $option_config = null ) {
+	public function has_option( string $key ): bool {
+		$options_details = $this->get_details_all( true );
+		if ( isset( $options_details[ $key ] ) ) {
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Get the Customify configuration (and value, hence "details") of a certain option.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @param string $option_id
+	 * @param bool   $minimal_details Optional. Whether to return only the minimum amount of details (mainly what is needed on the frontend).
+	 *                                The advantage is that these details are cached, thus skipping the customizer_config!
+	 * @param bool   $skip_cache      Optional.
+	 *
+	 * @return array|false The option config or false on failure.
+	 */
+	public function get_details( string $option_id, $minimal_details = false, $skip_cache = false ) {
+		if ( empty( $option_id ) ) {
+			return false;
+		}
+
+		$options_details = $this->get_details_all( $minimal_details, $skip_cache );
+		if ( ! empty( $options_details ) && is_array( $options_details ) && isset( $options_details[ $option_id ] ) ) {
+			return $options_details[ $option_id ];
+		}
+
+		return false;
+	}
+
+	/**
+	 * Get the value of a setting ID saved in a wp_options array entry.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @param string                 $option_id  This is only the option ID, that may differ from setting ID ( like in `body_font` vs `rosa_opt[body_font]`)
+	 * @param string                 $setting_id We will use this to get the Customizer value, when in that context.
+	 *
+	 * @return mixed|null
+	 * @global \WP_Customize_Manager $wp_customize
+	 *
+	 */
+	protected function get_wpoptions_value( string $option_id, string $setting_id ) {
+		global $wp_customize;
+
+		if ( empty( $option_id ) || empty( $setting_id ) ) {
+			return null;
+		}
+
+		if ( ! empty( $wp_customize ) && method_exists( $wp_customize, 'get_setting' ) ) {
+			$setting = $wp_customize->get_setting( $setting_id );
+			if ( ! empty( $setting ) ) {
+				return $setting->value();
+			}
+		}
+
+		$values = get_option( $this->get_options_key() );
+
+		if ( ! empty( $values ) && is_array( $values ) && isset( $values[ $option_id ] ) ) {
+			return $values[ $option_id ];
+		}
+
+		return null;
+	}
+
+	/**
+	 * Get the value of a certain setting ID saved in the theme mod array.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @param string                 $option_id  This is only the option ID, that may differ from setting ID ( like in `body_font` vs `rosa_opt[body_font]`)
+	 * @param string                 $setting_id We will use this to get the Customizer value, when in that context.
+	 *
+	 * @return mixed|null
+	 * @global \WP_Customize_Manager $wp_customize
+	 *
+	 */
+	protected function get_thememod_value( string $option_id, string $setting_id ) {
+		global $wp_customize;
+
+		if ( empty( $option_id ) || empty( $setting_id ) ) {
+			return null;
+		}
+
+		if ( ! empty( $wp_customize ) && method_exists( $wp_customize, 'get_setting' ) ) {
+			$setting = $wp_customize->get_setting( $setting_id );
+			if ( ! empty( $setting ) ) {
+				return $setting->value();
+			} elseif ( $wp_customize->is_preview() ) {
+				// If the setting is not registered (like in asking for the value before wp_loaded), we will read directly from the posted values via the changeset.
+				// Not really the best way, but ok.
+				$post_values = $wp_customize->unsanitized_post_values();
+				if ( array_key_exists( $setting_id, $post_values ) ) {
+					$value = $post_values[ $setting_id ];
+					// Skip validation and sanitization since it is too early.
+					if ( ! is_null( $value ) && ! is_wp_error( $value ) ) {
+						return $value;
+					}
+				}
+			}
+		}
+
+		$values = get_theme_mod( $this->get_options_key() );
+
+		if ( ! empty( $values ) && is_array( $values ) && isset( $values[ $option_id ] ) ) {
+			return $values[ $option_id ];
+		}
+
+		return null;
+	}
+
+	/**
+	 * Determine if we should NOT enforce the CUSTOMIFY_DEV_FORCE_DEFAULTS behavior on a certain option.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @param string     $option_id
+	 * @param array|null $option_config Optional.
+	 *
+	 * @return bool
+	 */
+	public function skip_dev_mode_force_defaults( string $option_id, $option_config = null ): bool {
 		// Preprocess the $option_id.
 		if ( false !== strpos( $option_id, '::' ) ) {
 			$option_id = substr( $option_id, strpos( $option_id, '::' ) + 2 );
@@ -273,7 +320,7 @@ class Options extends AbstractHookProvider {
 		}
 
 		if ( null === $option_config ) {
-			$option_config = $this->get_option_details( $option_id, true );
+			$option_config = $this->get_details( $option_id, true );
 		}
 		if ( empty( $option_config ) || ! is_array( $option_config ) ) {
 			return false;
@@ -301,13 +348,13 @@ class Options extends AbstractHookProvider {
 	/**
 	 * Invalidate all caches.
 	 *
-	 * @since 2.6.0
+	 * @since 3.0.0
 	 */
 	public function invalidate_all_caches() {
 		$this->invalidate_customizer_config_cache();
-		$this->invalidate_options_details_cache();
+		$this->invalidate_details_cache();
 		$this->invalidate_customizer_opt_name_cache();
-		$this->invalidate_options_details_cache();
+		$this->invalidate_details_cache();
 
 		do_action( 'customify_invalidate_all_caches' );
 	}
@@ -317,17 +364,29 @@ class Options extends AbstractHookProvider {
 	 * fetching the data from DB on each method call.
 	 *
 	 * This may be called during a request when something happens that (potentially) invalidates our data mid-request.
+	 *
+	 * @since 3.0.0
 	 */
-	public function clear_locally_cached_data() {
+	protected function clear_locally_cached_data() {
 		$this->opt_name = '';
 
 		$this->customizer_config = [];
 
-		$this->options_minimal_details = [];
-		$this->options_details         = [];
+		$this->minimal_details = [];
+		$this->details         = [];
 	}
 
-	public function get_options_key( $skip_cache = false ) {
+	/**
+	 * Get the key under which all options are saved.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @param bool $skip_cache Optional. Whether to skip the options cache and regenerate.
+	 *                         Defaults to using the cache.
+	 *
+	 * @return string
+	 */
+	public function get_options_key( bool $skip_cache = false ): string {
 		if ( ! empty( $this->opt_name ) ) {
 			return $this->opt_name;
 		}
@@ -337,24 +396,24 @@ class Options extends AbstractHookProvider {
 		}
 
 		// First try and get the cached data
-		$data             = get_option( $this->get_customizer_opt_name_cache_key() );
+		$data             = get_option( self::CUSTOMIZER_OPT_NAME_CACHE_KEY );
 		$expire_timestamp = false;
 
 		// Only try to get the expire timestamp if we really need to.
 		if ( true !== $skip_cache && false !== $data ) {
 			// Get the cache data expiration timestamp.
-			$expire_timestamp = get_option( $this->get_customizer_opt_name_cache_key() . '_timestamp' );
+			$expire_timestamp = get_option( self::CUSTOMIZER_OPT_NAME_CACHE_TIMESTAMP_KEY );
 		}
 
 		// The data isn't set, is expired or we were instructed to skip the cache; we need to regenerate the config.
 		if ( true === $skip_cache || false === $data || false === $expire_timestamp || $expire_timestamp < time() ) {
 
-			$data = $this->get_customizer_config( 'opt-name' );
+			$data = (string) $this->get_customizer_config( 'opt-name' );
 
 			if ( true !== $skip_cache ) {
 				// Cache the data in an option for 24 hours, but only if we are not supposed to skip the cache entirely.
-				update_option( $this->get_customizer_opt_name_cache_key(), $data, true );
-				update_option( $this->get_customizer_opt_name_cache_key() . '_timestamp', time() + 24 * HOUR_IN_SECONDS, true );
+				update_option( self::CUSTOMIZER_OPT_NAME_CACHE_KEY, $data, true );
+				update_option( self::CUSTOMIZER_OPT_NAME_CACHE_TIMESTAMP_KEY, time() + 24 * HOUR_IN_SECONDS, true );
 			}
 		}
 
@@ -363,31 +422,52 @@ class Options extends AbstractHookProvider {
 		return $data;
 	}
 
-	private function get_customizer_opt_name_cache_key() {
-		return 'customify_customizer_opt_name';
-	}
-
+	/**
+	 * Invalidate the Customizer options name (opt-name) cache.
+	 *
+	 * @since 3.0.0
+	 */
 	public function invalidate_customizer_opt_name_cache() {
-		update_option( $this->get_customizer_opt_name_cache_key() . '_timestamp', time() - 24 * HOUR_IN_SECONDS, true );
+		update_option( self::CUSTOMIZER_OPT_NAME_CACHE_TIMESTAMP_KEY, time() - 24 * HOUR_IN_SECONDS, true );
 
 		$this->clear_locally_cached_data();
 	}
 
+	/**
+	 * Wrapper to invalidate_customizer_opt_name_cache() for hooking into filters.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @param mixed $value The value is just passed along, not modified.
+	 *
+	 * @return mixed
+	 */
 	public function filter_invalidate_customizer_opt_name_cache( $value ) {
 		$this->invalidate_customizer_opt_name_cache();
 
 		return $value;
 	}
 
-
-	public function get_options_details( $only_minimal_details = false, $skip_cache = false ) {
+	/**
+	 * Get all options' details.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @param bool $only_minimal_details Optional. Whether to return only the minimal details.
+	 *                                   Defaults to returning all details.
+	 * @param bool $skip_cache           Optional. Whether to skip the options cache and regenerate.
+	 *                                   Defaults to using the cache.
+	 *
+	 * @return array
+	 */
+	public function get_details_all( $only_minimal_details = false, $skip_cache = false ): array {
 
 		// If we already have the data, do as little as possible.
-		if ( true === $only_minimal_details && ! empty( $this->options_minimal_details ) ) {
-			return $this->options_minimal_details;
+		if ( true === $only_minimal_details && ! empty( $this->minimal_details ) ) {
+			return $this->minimal_details;
 		}
-		if ( ! empty( $this->options_details ) ) {
-			return $this->options_details;
+		if ( ! empty( $this->details ) ) {
+			return $this->details;
 		}
 
 		if ( $this->should_force_skip_cache() ) {
@@ -396,14 +476,14 @@ class Options extends AbstractHookProvider {
 
 		// We will first look for cached data
 
-		$data = $this->options_minimal_details = get_option( $this->get_options_minimal_details_cache_key() );
+		$data = $this->minimal_details = get_option( self::MINIMAL_DETAILS_CACHE_KEY );
 		if ( false !== $data && false === $only_minimal_details ) {
-			$extra_details_data = get_option( $this->get_options_extra_details_cache_key() );
+			$extra_details_data = get_option( self::EXTRA_DETAILS_CACHE_KEY );
 			if ( is_array( $extra_details_data ) ) {
-				$data = $this->options_details = ArrayHelpers::array_merge_recursive_distinct( $data, $extra_details_data );
+				$data = $this->details = ArrayHelpers::array_merge_recursive_distinct( $data, $extra_details_data );
 			} else {
 				// Something is wrong with the extra details and we need to regenerate.
-				$this->invalidate_options_details_cache();
+				$this->invalidate_details_cache();
 			}
 		}
 
@@ -418,7 +498,7 @@ class Options extends AbstractHookProvider {
 		// Only try to get the expire timestamp if we really need to.
 		if ( true !== $skip_cache && false !== $data ) {
 			// Get the cached data expiration timestamp.
-			$expire_timestamp = get_option( $this->get_options_details_cache_timestamp_key() );
+			$expire_timestamp = get_option( self::DETAILS_CACHE_TIMESTAMP_KEY );
 		}
 
 		// The data isn't set, is expired or we were instructed to skip the cache; we need to regenerate the config.
@@ -456,7 +536,7 @@ class Options extends AbstractHookProvider {
 											}
 										}
 
-										$options_minimal_details[ $option_id ]['value'] = $this->get_option( $option_id, null, $option_config );
+										$options_minimal_details[ $option_id ]['value'] = $this->get( $option_id, null, $option_config );
 									}
 								}
 							}
@@ -478,7 +558,7 @@ class Options extends AbstractHookProvider {
 									}
 								}
 
-								$options_minimal_details[ $option_id ]['value'] = $this->get_option( $option_id, null, $option_config );
+								$options_minimal_details[ $option_id ]['value'] = $this->get( $option_id, null, $option_config );
 							}
 						}
 					}
@@ -487,21 +567,24 @@ class Options extends AbstractHookProvider {
 
 			if ( true !== $skip_cache ) {
 				// Cache the data for 24 hours, but only if we are not supposed to skip the cache entirely.
-				update_option( $this->get_options_minimal_details_cache_key(), $options_minimal_details, true );
-				update_option( $this->get_options_extra_details_cache_key(), $options_extra_details, false ); // we will not autoload extra details for performance reasons.
-				update_option( $this->get_options_details_cache_timestamp_key(), time() + 24 * HOUR_IN_SECONDS, true );
+				update_option( self::MINIMAL_DETAILS_CACHE_KEY, $options_minimal_details, true );
+				update_option( self::EXTRA_DETAILS_CACHE_KEY, $options_extra_details, false ); // we will not autoload extra details for performance reasons.
+				update_option( self::DETAILS_CACHE_TIMESTAMP_KEY, time() + 24 * HOUR_IN_SECONDS, true );
 			}
 
-			$data                  = $this->options_minimal_details = $options_minimal_details;
-			$this->options_details = ArrayHelpers::array_merge_recursive_distinct( $options_minimal_details, $options_extra_details );
+			$data          = $this->minimal_details = $options_minimal_details;
+			$this->details = ArrayHelpers::array_merge_recursive_distinct( $options_minimal_details, $options_extra_details );
 			if ( false === $only_minimal_details ) {
-				$data = $this->options_details;
+				$data = $this->details;
 			}
 		}
 
 		return $data;
 	}
 
+	/**
+	 * @return bool
+	 */
 	private function should_force_skip_cache(): bool {
 		// If our development constant is defined and true, we will always skip the cache, except for AJAX calls.
 		// Other, more specific cases may impose skipping the cache also on AJAX calls.
@@ -518,7 +601,6 @@ class Options extends AbstractHookProvider {
 		}
 
 		// If we are currently previewing a theme without being actually active, we should not use cached data.
-
 		if ( ! empty( $_REQUEST['theme'] ) || ! empty( $_REQUEST['customize_theme'] ) ) {
 			return true;
 		}
@@ -535,41 +617,41 @@ class Options extends AbstractHookProvider {
 		return false;
 	}
 
-	private function get_options_minimal_details_cache_key(): string {
-		return 'customify_options_minimal_details';
-	}
-
-	private function get_options_extra_details_cache_key(): string {
-		return 'customify_options_extra_details';
-	}
-
-	private function get_options_details_cache_timestamp_key(): string {
-		return 'customify_options_details_timestamp';
-	}
-
-	public function invalidate_options_details_cache() {
-		update_option( $this->get_options_details_cache_timestamp_key(), time() - 24 * HOUR_IN_SECONDS, true );
+	/**
+	 * Invalidate the options details cache.
+	 *
+	 * @since 3.0.0
+	 */
+	protected function invalidate_details_cache() {
+		update_option( self::DETAILS_CACHE_TIMESTAMP_KEY, time() - 24 * HOUR_IN_SECONDS, true );
 
 		$this->clear_locally_cached_data();
 	}
 
-	public function filter_invalidate_options_details_cache( $value ) {
-		$this->invalidate_options_details_cache();
+	/**
+	 * Wrapper to invalidate_options_details_cache() for hooking into filters.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @param mixed $value The value is just passed along, not modified.
+	 *
+	 * @return mixed
+	 */
+	protected function filter_invalidate_details_cache( $value ) {
+		$this->invalidate_details_cache();
 
 		return $value;
 	}
 
-	public function has_option( $option ): bool {
-
-		$options_details = $this->get_options_details( true );
-		if ( isset( $options_details[ $option ] ) ) {
-			return true;
-		}
-
-		return false;
-	}
-
-
+	/**
+	 * Get the entire Customizer fields config or a certain entry key.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @param bool $key
+	 *
+	 * @return array|mixed|null
+	 */
 	public function get_customizer_config( $key = false ) {
 		$customizer_config = $this->load_customizer_config();
 
@@ -587,7 +669,7 @@ class Options extends AbstractHookProvider {
 	/**
 	 * Set the customizer configuration.
 	 *
-	 * @since 2.2.1
+	 * @since 3.0.0
 	 *
 	 * @param bool $skip_cache Optional. Whether to use the cached config or generate a new one.
 	 *
@@ -603,11 +685,11 @@ class Options extends AbstractHookProvider {
 		}
 
 		// First try and get the cached data
-		$data = get_option( $this->get_customizer_config_cache_key() );
+		$data = get_option( self::CUSTOMIZER_CONFIG_CACHE_KEY );
 
 		// For performance reasons, we will use the cached data (even if stale)
 		// when a user is not logged in or a user without administrative capabilities is logged in.
-		if ( false !== $data && false === $skip_cache && ! current_user_can( 'manage_options' ) ) {
+		if ( false !== $data && false === $skip_cache && ! current_user_can( \Pixelgrade\Customify\Capabilities::MANAGE_OPTIONS ) ) {
 			$this->customizer_config = $data;
 
 			return $data;
@@ -618,50 +700,49 @@ class Options extends AbstractHookProvider {
 		// Only try to get the expire timestamp if we really need to.
 		if ( true !== $skip_cache && false !== $data ) {
 			// Get the cache data expiration timestamp.
-			$expire_timestamp = get_option( $this->get_customizer_config_cache_key() . '_timestamp' );
+			$expire_timestamp = get_option( self::CUSTOMIZER_CONFIG_CACHE_TIMESTAMP_KEY );
 		}
 
 		// The data isn't set, is expired or we were instructed to skip the cache; we need to regenerate the config.
 		if ( true === $skip_cache || false === $data || false === $expire_timestamp || $expire_timestamp < time() ) {
 			// Allow themes or other plugins to filter the config.
-			$data = apply_filters( 'customify_filter_fields', array() );
-			// We apply a second filter for those that wish to work with the final config and not rely on a a huge priority number.
+			$data = apply_filters( 'customify_filter_fields', [] );
+			// Make sure that we have an array.
+			if ( ! is_array( $data ) ) {
+				_doing_it_wrong( __METHOD__, esc_html__( 'The Customify fields configuration should be an array. Please check the filters that are hooked into \'customify_filter_fields\'.', '__plugin_txtd' ), null );
+
+				$data = [];
+			}
+			// We apply a second filter for those that wish to work with the final config and not rely on a huge priority number.
 			$data = apply_filters( 'customify_final_config', $data );
+			// Make sure that we have an array.
+			if ( ! is_array( $data ) ) {
+				_doing_it_wrong( __METHOD__, esc_html__( 'The Customify fields configuration should be an array. Please check the filters that are hooked into \'customify_final_config\'.', '__plugin_txtd' ), null );
+
+				$data = [];
+			}
 
 			if ( true !== $skip_cache ) {
 				// Cache the data in an option for 24 hours, but only if we are not supposed to skip the cache entirely.
-				update_option( $this->get_customizer_config_cache_key(), $data, false );
-				update_option( $this->get_customizer_config_cache_key() . '_timestamp', time() + 24 * HOUR_IN_SECONDS, true );
+				update_option( self::CUSTOMIZER_CONFIG_CACHE_KEY, $data, false );
+				update_option( self::CUSTOMIZER_CONFIG_CACHE_TIMESTAMP_KEY, time() + 24 * HOUR_IN_SECONDS, true );
 			}
 		}
 
+		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
 		$this->customizer_config = $data;
 
 		return $data;
 	}
 
-	private function get_customizer_config_cache_key(): string {
-		return 'customify_customizer_config';
-	}
-
-	public function invalidate_customizer_config_cache() {
-		update_option( $this->get_customizer_config_cache_key() . '_timestamp', time() - 24 * HOUR_IN_SECONDS, true );
+	/**
+	 * Invalidate the Customizer fields config cache.
+	 *
+	 * @since 3.0.0
+	 */
+	protected function invalidate_customizer_config_cache() {
+		update_option( self::CUSTOMIZER_CONFIG_CACHE_TIMESTAMP_KEY, time() - 24 * HOUR_IN_SECONDS, true );
 
 		$this->clear_locally_cached_data();
-	}
-
-	/**
-	 * Invalidate the customizer config cache, when hooked via a filter (just pass through the value).
-	 *
-	 * @since 2.4.0
-	 *
-	 * @param mixed $value
-	 *
-	 * @return mixed
-	 */
-	public function filter_invalidate_customizer_config_cache( $value ) {
-		$this->invalidate_customizer_config_cache();
-
-		return $value;
 	}
 }

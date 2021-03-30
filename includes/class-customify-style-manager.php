@@ -182,9 +182,7 @@ if ( ! class_exists( 'Customify_Style_Manager' ) ) {
 		function register_admin_customizer_scripts() {
 			$suffix = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min';
 
-			wp_register_script( PixCustomifyPlugin()->get_slug() . '-style-manager',
-				plugins_url( 'js/customizer/style-manager' . $suffix . '.js', PixCustomifyPlugin()->get_file() ),
-				array( 'jquery' ), PixCustomifyPlugin()->get_version() );
+
 		}
 
 		/**
@@ -197,7 +195,7 @@ if ( ! class_exists( 'Customify_Style_Manager' ) ) {
 			}
 
 			// Enqueue the needed scripts, already registered.
-//			wp_enqueue_script( PixCustomifyPlugin()->get_slug() . '-style-manager' );
+//			wp_enqueue_script( 'pixelgrade_customify-style-manager' );
 		}
 
 		/**

@@ -107,3 +107,12 @@ function display_missing_dependencies_notice() {
 		)
 	);
 }
+
+/**
+ * Determine if we are looking at the Customize screen.
+ *
+ * @return bool
+ */
+function is_customizer(): bool {
+	return ( is_admin() && 'customize.php' === basename( $_SERVER['PHP_SELF'] ) );
+}

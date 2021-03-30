@@ -87,17 +87,8 @@ class Customify_Font_Palettes {
 	public function register_admin_customizer_scripts() {
 		$suffix = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min';
 
-		wp_register_script( PixCustomifyPlugin()->get_slug() . '-regression',
-			plugins_url( 'js/vendor/regression' . $suffix . '.js', PixCustomifyPlugin()->get_file() ),
-			array(), PixCustomifyPlugin()->get_version() );
-		wp_register_script( PixCustomifyPlugin()->get_slug() . '-font-palettes',
-			plugins_url( 'js/customizer/font-palettes' . $suffix . '.js', PixCustomifyPlugin()->get_file() ),
-			array(
-				PixCustomifyPlugin()->get_slug() . '-regression',
-				'jquery',
-//				PixCustomifyPlugin()->get_slug() . '-fontfields',
-			),
-			PixCustomifyPlugin()->get_version() );
+
+
 	}
 
 	/**
@@ -109,7 +100,7 @@ class Customify_Font_Palettes {
 			return;
 		}
 
-//		wp_enqueue_script( PixCustomifyPlugin()->get_slug() . '-font-palettes' );
+//		wp_enqueue_script( 'pixelgrade_customify-font-palettes' );
 	}
 
 	/**

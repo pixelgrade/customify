@@ -12,7 +12,7 @@ declare ( strict_types = 1 );
 namespace Pixelgrade\Customify\Provider;
 
 use Pixelgrade\Customify\Vendor\Cedaro\WP\Plugin\AbstractHookProvider;
-use PixelgradeLT\Records\Capabilities as Caps;
+use Pixelgrade\Customify\Capabilities as Caps;
 
 /**
  * Capabilities provider class.

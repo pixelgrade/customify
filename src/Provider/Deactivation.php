@@ -11,7 +11,6 @@ declare ( strict_types = 1 );
 
 namespace Pixelgrade\Customify\Provider;
 
-use Pixelgrade\Customify\Options;
 use Pixelgrade\Customify\Vendor\Cedaro\WP\Plugin\AbstractHookProvider;
 use Pixelgrade\Customify\Vendor\Psr\Log\LoggerInterface;
 
@@ -64,8 +63,7 @@ class Deactivation extends AbstractHookProvider {
 	/**
 	 * Deactivation routine.
 	 *
-	 * Deleting the rewrite rules option should force WordPress to regenerate
-	 * them next time they're needed.
+	 * Deleting the rewrite rules option should force WordPress to regenerate them next time they're needed.
 	 *
 	 * @since 3.0.0
 	 */
