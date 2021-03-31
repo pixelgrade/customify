@@ -132,7 +132,7 @@ class Customify_Cloud_Fonts {
 			return $config;
 		}
 
-		$new_config = array();
+		$new_config = [];
 		foreach ( $config as $font_id => $font_config ) {
 			if ( empty( $font_config['font_family'] ) ) {
 				continue;

@@ -31,6 +31,7 @@ class ServiceProvider implements ServiceProviderInterface {
 		$container['hooks.activation'] = function( $container ) {
 			return new Provider\Activation(
 				$container['options'],
+				$container['plugin.settings'],
 				$container['logger']
 			);
 		};
@@ -50,6 +51,14 @@ class ServiceProvider implements ServiceProviderInterface {
 		$container['hooks.deactivation'] = function( $container ) {
 			return new Provider\Deactivation(
 				$container['options'],
+				$container['logger']
+			);
+		};
+
+		$container['hooks.frontend_output'] = function( $container ) {
+			return new Provider\FrontendOutput(
+				$container['options'],
+				$container['plugin.settings'],
 				$container['logger']
 			);
 		};
@@ -161,6 +170,24 @@ class ServiceProvider implements ServiceProviderInterface {
 			return new Screen\Settings(
 				$container['options'],
 				$container['plugin.settings.cfdatastore'],
+				$container['logger']
+			);
+		};
+
+		$container['sm.color_palettes'] = function( $container ) {
+			return new StyleManager\ColorPalettes(
+				$container['logger']
+			);
+		};
+		$container['sm.font_palettes'] = function( $container ) {
+			return new StyleManager\FontPalettes(
+				$container['options'],
+				$container['logger']
+			);
+		};
+
+		$container['sm.theme_configs'] = function( $container ) {
+			return new StyleManager\ThemeConfigs(
 				$container['logger']
 			);
 		};

@@ -667,7 +667,7 @@ class Options extends AbstractHookProvider {
 	}
 
 	/**
-	 * Set the customizer configuration.
+	 * Load and set the customizer configuration.
 	 *
 	 * @since 3.0.0
 	 *

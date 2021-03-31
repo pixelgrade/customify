@@ -76,7 +76,7 @@ if ( ! class_exists( 'Customify_Style_Manager' ) ) {
 		 * @var array
 		 * @access protected
 		 */
-		protected static $wupdates_ids = array();
+		protected static $wupdates_ids = [];
 
 		/**
 		 * Constructor.
@@ -230,7 +230,7 @@ if ( ! class_exists( 'Customify_Style_Manager' ) ) {
 			}
 
 			if ( ! isset( $config['sections']['style_manager_section'] ) ) {
-				$config['sections']['style_manager_section'] = array();
+				$config['sections']['style_manager_section'] = [];
 			}
 
 			// The section might be already defined, thus we merge, not replace the entire section config.
@@ -239,7 +239,7 @@ if ( ! class_exists( 'Customify_Style_Manager' ) ) {
 				'section_id' => 'style_manager_section',
 				// We will force this section id preventing prefixing and other regular processing.
 				'priority'   => 1,
-				'options'    => array(),
+				'options'    => [],
 			) );
 
 			return $config;
@@ -285,7 +285,7 @@ if ( ! class_exists( 'Customify_Style_Manager' ) ) {
 					'panel_id'                 => 'style_manager_panel',
 					'title'                    => esc_html__( 'Style Manager', '__plugin_txtd' ),
 					'description'              => wp_kses_post( __( '<strong>Style Manager</strong> is an intuitive system to help you change the look of your website and make an excellent impression.', '__plugin_txtd' ) ),
-					'sections'                 => array(),
+					'sections'                 => [],
 					'auto_expand_sole_section' => true, // If there is only one section in the panel, auto-expand it.
 				);
 			} else {
@@ -367,7 +367,7 @@ if ( ! class_exists( 'Customify_Style_Manager' ) ) {
 					'title'      => esc_html__( 'Colors', '__plugin_txtd' ),
 					'section_id' => 'sm_color_palettes_section',
 					'priority'   => 10,
-					'options'    => array(),
+					'options'    => [],
 				);
 				foreach ( $color_palettes_fields as $field_id ) {
 					if ( ! isset( $style_manager_section_config['options'][ $field_id ] ) ) {
@@ -404,7 +404,7 @@ if ( ! class_exists( 'Customify_Style_Manager' ) ) {
 					'title'      => esc_html__( 'Fonts', '__plugin_txtd' ),
 					'section_id' => 'sm_font_palettes_section',
 					'priority'   => 20,
-					'options'    => array(),
+					'options'    => [],
 				);
 				foreach ( $font_palettes_fields as $field_id ) {
 					if ( ! isset( $style_manager_section_config['options'][ $field_id ] ) ) {
@@ -423,7 +423,7 @@ if ( ! class_exists( 'Customify_Style_Manager' ) ) {
 
 			// Start fresh and add the Style Manager panel config
 			if ( empty( $config['panels'] ) ) {
-				$config['panels'] = array();
+				$config['panels'] = [];
 			}
 			$config['panels']['style_manager_panel'] = $style_manager_panel_config;
 
@@ -434,13 +434,13 @@ if ( ! class_exists( 'Customify_Style_Manager' ) ) {
 				'panel_id'    => 'theme_options_panel',
 				'title'       => esc_html__( 'Theme Options', '__plugin_txtd' ),
 				'description' => esc_html__( 'Advanced options to change your site look-and-feel on a detailed level.', '__plugin_txtd' ),
-				'sections'    => array(),
+				'sections'    => [],
 			);
 
 			// If we have other panels we will make their sections parts of the Theme Options panel.
 			if ( ! empty( $other_panels_config ) ) {
 				// If we have another panel that is called Theme Options we will extract it's sections and put them directly in the Theme Options panel.
-				$second_theme_options_sections = array();
+				$second_theme_options_sections = [];
 				foreach ( $other_panels_config as $panel_id => $panel_config ) {
 					$found = false;
 					// First try the panel ID.
@@ -466,7 +466,7 @@ if ( ! class_exists( 'Customify_Style_Manager' ) ) {
 				}
 
 				// For the remaining panels, we will put their section into the Theme Options panel, but prefix their title with their respective panel title.
-				$prefixed_sections = array();
+				$prefixed_sections = [];
 				foreach ( $other_panels_config as $panel_id => $panel_config ) {
 					if ( ! empty( $panel_config['sections'] ) ) {
 						foreach ( $panel_config['sections'] as $section_id => $section_config ) {
@@ -599,7 +599,7 @@ if ( ! class_exists( 'Customify_Style_Manager' ) ) {
 
 		public static function get_all_wupdates_identification_data() {
 			if ( empty( self::$wupdates_ids ) ) {
-				self::$wupdates_ids = apply_filters( 'wupdates_gather_ids', array() );
+				self::$wupdates_ids = apply_filters( 'wupdates_gather_ids', [] );
 			}
 
 			return self::$wupdates_ids;
@@ -694,7 +694,7 @@ if ( ! class_exists( 'Customify_Style_Manager' ) ) {
 		 */
 		public function add_to_localized_data( $localized ) {
 			if ( empty( $localized['styleManager'] ) ) {
-				$localized['styleManager'] = array();
+				$localized['styleManager'] = [];
 			}
 
 			$localized['styleManager']['userFeedback'] = array(

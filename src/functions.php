@@ -116,3 +116,12 @@ function display_missing_dependencies_notice() {
 function is_customizer(): bool {
 	return ( is_admin() && 'customize.php' === basename( $_SERVER['PHP_SELF'] ) );
 }
+
+/**
+ * Determine if the Style Manager functionality is supported.
+ *
+ * @return bool
+ */
+function is_sm_supported(): bool {
+	return apply_filters( 'customify_style_manager_is_supported', current_theme_supports( 'customizer_style_manager' ) );
+}

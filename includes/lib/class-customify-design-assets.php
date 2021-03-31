@@ -189,7 +189,7 @@ class Customify_Design_Assets {
 
 		// Construct the pseudo-external theme config.
 		// Start with a clean slate.
-		$design_assets['theme_configs'] = array();
+		$design_assets['theme_configs'] = [];
 
 		$design_assets['theme_configs']['theme_root'] = array(
 			'id'            => 1,

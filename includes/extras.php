@@ -541,7 +541,7 @@ function sm_get_color_select_dark_config( $label, $selector, $default, $properti
 		);
 	}
 
-	$css = array();
+	$css = [];
 
 	if ( ! is_array( $properties ) ) {
 		$properties = [ $properties ];
@@ -603,7 +603,7 @@ function sm_get_color_switch_darker_config( $label, $selector, $default, $proper
 
 function sm_get_color_switch_dark_config( $label, $selector, $default, $properties = [ 'color' ], $isDarker = false ) {
 
-	$css = array();
+	$css = [];
 	$callback = 'sm_color_switch_dark_cb';
 
 	if ( ! is_array( $properties ) ) {

@@ -72,7 +72,7 @@ class Customify_Cloud_Api {
 			// We are only interested in data needed to identify the plugin version and eventually deliver design assets suitable for it.
 			'site_data' => $this->get_site_data(),
 			// Extra post statuses besides `publish`.
-			'post_status' => array(),
+			'post_status' => [],
 		);
 
 		// Handle development and testing constants.
@@ -121,7 +121,7 @@ class Customify_Cloud_Api {
 	 * @return array
 	 */
 	public function get_active_theme_data() {
-		$theme_data = array();
+		$theme_data = [];
 
 		$slug = basename( get_template_directory() );
 
@@ -137,7 +137,7 @@ class Customify_Cloud_Api {
 		}
 
 		// Maybe get the WUpdates theme info if it's a theme delivered from WUpdates.
-		$wupdates_ids = apply_filters( 'wupdates_gather_ids', array() );
+		$wupdates_ids = apply_filters( 'wupdates_gather_ids', [] );
 		if ( ! empty( $wupdates_ids[ $slug ] ) ) {
 			$theme_data['wupdates'] = $wupdates_ids[ $slug ];
 		}
@@ -179,7 +179,7 @@ class Customify_Cloud_Api {
 	 *
 	 * @return array|false
 	 */
-	public function send_stats( $request_data = array(), $blocking = false ) {
+	public function send_stats( $request_data = [], $blocking = false ) {
 		if ( empty( $request_data ) ) {
 			// This is what we send by default.
 			$request_data = array(

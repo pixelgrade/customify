@@ -39,10 +39,15 @@ class Plugin extends BasePlugin implements Composable {
 		do_action( 'pixelgrade_customify_compose', $this, $container );
 
 		// Register hook providers.
+
 		$this
 			->register_hooks( $container->get( 'hooks.i18n' ) )
 			->register_hooks( $container->get( 'hooks.capabilities' ) )
 			->register_hooks( $container->get( 'hooks.rewrite_rules' ) )
+			->register_hooks( $container->get( 'hooks.frontend_output' ) )
+			->register_hooks( $container->get( 'sm.color_palettes' ) )
+			->register_hooks( $container->get( 'sm.font_palettes' ) )
+			->register_hooks( $container->get( 'sm.theme_configs' ) )
 			->register_hooks( $container->get( 'screen.customizer' ) );
 
 
