@@ -1,15 +1,28 @@
 <?php
+/**
+ * Customizer background control.
+ *
+ * @since   3.0.0
+ * @license GPL-2.0-or-later
+ * @package PixelgradeLT
+ */
+
+declare ( strict_types=1 );
+
+namespace Pixelgrade\Customify\Screen\Customizer\Control;
 
 /**
- * Class Pix_Customize_Background_Control
+ * Customizer background control class.
+ *
+ * @since 3.0.0
  */
-class Pix_Customize_Background_Control extends Pix_Customize_Control {
+class Background extends BaseControl {
 	public $type = 'custom_background';
 
 	public $value = array();
 
 	public $field = array(
-		'class' => ''
+		'class' => '',
 	);
 
 	public $field_defaults = array(
@@ -47,12 +60,12 @@ class Pix_Customize_Background_Control extends Pix_Customize_Control {
 			}
 
 			if ( ! is_array( $this->value ) || ! isset( $this->value['media'] ) || empty( $this->value['media'] ) ) {
-				$this->value = array();
+				$this->value          = array();
 				$media_array          = array(
 					'id'        => '',
 					'height'    => '',
 					'width'     => '',
-					'thumbnail' => ''
+					'thumbnail' => '',
 				);
 				$this->value['media'] = $media_array;
 			}

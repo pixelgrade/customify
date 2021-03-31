@@ -2,7 +2,7 @@
 /**
  * This is a utility class that groups all our array related helper functions.
  *
- * @since   0.6.0
+ * @since   3.0.0
  * @license GPL-2.0-or-later
  * @package PixelgradeLT
  */
@@ -14,7 +14,7 @@ namespace Pixelgrade\Customify\Utils;
 /**
  * Array Helper class.
  *
- * @since   0.6.0
+ * @since   3.0.0
  * @package PixelgradeLT
  */
 class ArrayHelpers {

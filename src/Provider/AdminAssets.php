@@ -12,6 +12,7 @@ declare ( strict_types=1 );
 namespace Pixelgrade\Customify\Provider;
 
 use PixCustomify_Customizer;
+use Pixelgrade\Customify\Utils\ScriptsEnqueue;
 use Pixelgrade\Customify\Vendor\Cedaro\WP\Plugin\AbstractHookProvider;
 use const Pixelgrade\Customify\VERSION;
 
@@ -54,7 +55,7 @@ class AdminAssets extends AbstractHookProvider {
 		);
 
 		wp_add_inline_script( 'pixelgrade_customify-settings',
-			PixCustomify_Customizer::getlocalizeToWindowScript( 'customify',
+			ScriptsEnqueue::getlocalizeToWindowScript( 'customify',
 				array(
 					'config' => array(
 						'ajax_url' => admin_url( 'admin-ajax.php' ),

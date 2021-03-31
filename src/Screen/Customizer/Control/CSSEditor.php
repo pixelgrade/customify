@@ -1,6 +1,22 @@
 <?php
+/**
+ * Customizer CSS editor control.
+ *
+ * @since   3.0.0
+ * @license GPL-2.0-or-later
+ * @package PixelgradeLT
+ */
 
-class Pix_Customize_CSS_Editor_Control extends Pix_Customize_Control {
+declare ( strict_types=1 );
+
+namespace Pixelgrade\Customify\Screen\Customizer\Control;
+
+/**
+ * Customizer CSS editor control class.
+ *
+ * @since 3.0.0
+ */
+class CSSEditor extends BaseControl {
 	public $type = 'css_editor';
 
 	/**

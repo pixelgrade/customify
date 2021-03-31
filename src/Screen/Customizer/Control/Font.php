@@ -1,11 +1,22 @@
 <?php
+/**
+ * Customizer font control.
+ *
+ * @since   3.0.0
+ * @license GPL-2.0-or-later
+ * @package PixelgradeLT
+ */
+
+declare ( strict_types=1 );
+
+namespace Pixelgrade\Customify\Screen\Customizer\Control;
 
 /**
- * Class Pix_Customize_Font_Control
+ * Customizer font control class.
  *
- * A complex typography control.
+ * @since 3.0.0
  */
-class Pix_Customize_Font_Control extends Pix_Customize_Control {
+class Font extends BaseControl {
 
 	/**
 	 * The field type.
@@ -57,7 +68,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 	 * If $args['settings'] is not defined, use the $id as the setting ID.
 	 *
 	 *
-	 * @param WP_Customize_Manager $manager
+	 * @param \WP_Customize_Manager $manager
 	 * @param string $id
 	 * @param array $args
 	 */
@@ -97,7 +108,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 	 * Given a font value, standardize it (unencoded).
 	 *
 	 * @param mixed $value
-	 * @param WP_Customize_Setting $setting
+	 * @param \WP_Customize_Setting $setting
 	 *
 	 * @return array
 	 */
@@ -433,7 +444,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 	/**
 	 * Legacy: This method displays an <option> tag from the given params
 	 *
-	 * @deprecated Use Pix_Customize_Font_Control::output_font_family_option() instead.
+	 * @deprecated Use Font::output_font_family_option() instead.
 	 *
 	 * @param string|array $font
 	 * @param string|false $active_font_family Optional. The active font family to add the selected attribute to the appropriate opt.

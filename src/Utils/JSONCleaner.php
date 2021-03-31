@@ -2,7 +2,7 @@
 /**
  * JSON cleaner for json_encode().
  *
- * @since   0.5.0
+ * @since   3.0.0
  * @license GPL-2.0-or-later
  * @package PixelgradeLT
  */
@@ -14,7 +14,7 @@ namespace Pixelgrade\Customify\Utils;
 /**
  * JSON cleaner class.
  *
- * @since   0.5.0
+ * @since   3.0.0
  * @package PixelgradeLT
  */
 class JSONCleaner {

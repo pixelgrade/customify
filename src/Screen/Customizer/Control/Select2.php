@@ -1,9 +1,22 @@
 <?php
+/**
+ * Customizer select2 control.
+ *
+ * @since   3.0.0
+ * @license GPL-2.0-or-later
+ * @package PixelgradeLT
+ */
+
+declare ( strict_types=1 );
+
+namespace Pixelgrade\Customify\Screen\Customizer\Control;
 
 /**
- * Class Pix_Customize_Select2_Control
+ * Customizer select2 control class.
+ *
+ * @since 3.0.0
  */
-class Pix_Customize_Select2_Control extends Pix_Customize_Control {
+class Select2 extends BaseControl {
 	public $type = 'select2';
 
 	/**
@@ -18,8 +31,9 @@ class Pix_Customize_Select2_Control extends Pix_Customize_Control {
 
 			<select <?php $this->link(); ?> class="customify_select2">
 				<?php
-				foreach ( $this->choices as $value => $label )
+				foreach ( $this->choices as $value => $label ) {
 					echo '<option value="' . esc_attr( $value ) . '" ' . selected( $this->value(), $value, false ) . '>' . $label . '</option>';
+				}
 				?>
 			</select>
 

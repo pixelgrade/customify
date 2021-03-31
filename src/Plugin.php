@@ -42,7 +42,8 @@ class Plugin extends BasePlugin implements Composable {
 		$this
 			->register_hooks( $container->get( 'hooks.i18n' ) )
 			->register_hooks( $container->get( 'hooks.capabilities' ) )
-			->register_hooks( $container->get( 'hooks.rewrite_rules' ) );
+			->register_hooks( $container->get( 'hooks.rewrite_rules' ) )
+			->register_hooks( $container->get( 'screen.customizer' ) );
 
 
 		if ( is_admin() ) {
@@ -53,7 +54,9 @@ class Plugin extends BasePlugin implements Composable {
 
 			if ( is_customizer() ) {
 				$this
-					->register_hooks( $container->get( 'hooks.customizer_assets' ) );
+					->register_hooks( $container->get( 'hooks.customizer_assets' ) )
+					->register_hooks( $container->get( 'screen.customizer.search' ) )
+					->register_hooks( $container->get( 'screen.customizer.preview' ) );
 			}
 		}
 

@@ -127,6 +127,20 @@ class ServiceProvider implements ServiceProviderInterface {
 			return new Provider\PluginSettingsCFDatastore();
 		};
 
+		$container['screen.customizer'] = function( $container ) {
+			return new Screen\Customizer(
+				$container['options'],
+				$container['plugin.settings'],
+				$container['logger']
+			);
+		};
+		$container['screen.customizer.search'] = function() {
+			return new Screen\Customizer\Search();
+		};
+		$container['screen.customizer.preview'] = function() {
+			return new Screen\Customizer\Preview();
+		};
+
 		$container['screen.edit_with_blocks'] = function( $container ) {
 			return new Screen\EditWithBlocks(
 				$container['options'],

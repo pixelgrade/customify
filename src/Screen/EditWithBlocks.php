@@ -31,12 +31,20 @@ class EditWithBlocks extends AbstractHookProvider {
 	public static string $editor_namespace_selector = '.edit-post-visual-editor.editor-styles-wrapper';
 	public static string $title_namespace_selector = '.editor-styles-wrapper .editor-post-title__block';
 	public static string $title_input_namespace_selector = '.editor-styles-wrapper .editor-post-title__block .editor-post-title__input';
+
+	/**
+	 * Get the block namespace CSS selector according to the WP version in use.
+	 *
+	 * @global string $wp_version
+	 *
+	 * @return string
+	 */
 	public static function get_block_namespace_selector(): string {
 		global $wp_version;
 
-		$is_old_wp_version = version_compare($wp_version, '5.4', '<');
+		$is_old_wp_version = version_compare( $wp_version, '5.4', '<' );
 
-		if( $is_old_wp_version ) {
+		if ( $is_old_wp_version ) {
 			return '.edit-post-visual-editor.editor-styles-wrapper .editor-block-list__block';
 		}
 
@@ -56,7 +64,7 @@ class EditWithBlocks extends AbstractHookProvider {
 		'/^\s*\.button/',
 		'/^\s*input/',
 		'/^\s*select/',
-		'/^\s*#/', // ignore all ids
+		'/^\s*#/',    // ignore all ids
 		'/^\s*div#/', // ignore all ids
 
 		'/\.u-/',
@@ -150,9 +158,9 @@ class EditWithBlocks extends AbstractHookProvider {
 		PluginSettings $plugin_settings,
 		LoggerInterface $logger
 	) {
-		$this->options      = $options;
+		$this->options         = $options;
 		$this->plugin_settings = $plugin_settings;
-		$this->logger       = $logger;
+		$this->logger          = $logger;
 	}
 
 	/**
@@ -162,6 +170,7 @@ class EditWithBlocks extends AbstractHookProvider {
 	 */
 	public function register_hooks() {
 		// Styles and scripts when editing.
+		$this->add_action( 'enqueue_block_editor_assets', 'enqueue_style_manager_scripts', 10 );
 		$this->add_action( 'enqueue_block_editor_assets', 'dynamic_styles_scripts', 999 );
 
 		$this->add_action( 'admin_init', 'editor_color_palettes', 20 );
@@ -170,11 +179,11 @@ class EditWithBlocks extends AbstractHookProvider {
 	/**
 	 * Determine if Gutenberg is supported.
 	 *
-	 * @return bool
-	 * @since 2.2.0
+	 * @since 3.0.0
 	 *
+	 * @return bool
 	 */
-	public function is_supported() {
+	public function is_supported(): bool {
 		$gutenberg = false;
 
 		// Determine if the block editor is active for the frontend.
@@ -192,7 +201,14 @@ class EditWithBlocks extends AbstractHookProvider {
 		return apply_filters( 'customify_gutenberg_is_supported', $gutenberg );
 	}
 
-	public function get_editor_style_handle() {
+	/**
+	 * Retrieve the editor CSS file handle.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @return string
+	 */
+	public function get_editor_style_handle(): string {
 		global $wp_styles;
 		if ( ! ( $wp_styles instanceof \WP_Styles ) ) {
 			return '';
@@ -223,7 +239,14 @@ class EditWithBlocks extends AbstractHookProvider {
 		return $handle;
 	}
 
-	public function get_frontend_style_handle() {
+	/**
+	 * Return the frontend CSS file handle.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @return string
+	 */
+	public function get_frontend_style_handle(): string {
 		global $wp_styles;
 		if ( ! ( $wp_styles instanceof \WP_Styles ) ) {
 			return '';
@@ -255,10 +278,14 @@ class EditWithBlocks extends AbstractHookProvider {
 		return $handle;
 	}
 
+	protected function enqueue_style_manager_scripts() {
+		wp_enqueue_script( 'sm-dark-mode' );
+	}
+
 	/**
 	 * Output Customify's dynamic styles and scripts in the Gutenberg context.
 	 *
-	 * @since 2.2.0
+	 * @since 3.0.0
 	 */
 	public function dynamic_styles_scripts() {
 		if ( ! $this->plugin_settings->get( 'enable_editor_style', true ) ) {
@@ -283,12 +310,16 @@ class EditWithBlocks extends AbstractHookProvider {
 	}
 
 	/**
+	 * Transform a set of selectors to target the Gutenberg editor.
+	 *
+	 * @since 3.0.0
+	 *
 	 * @param string $selectors
-	 * @param array $css_property
+	 * @param array  $css_property
 	 *
 	 * @return string
 	 */
-	public function gutenbergify_css_selectors( $selectors, $css_property ) {
+	public function gutenbergify_css_selectors( $selectors, $css_property ): string {
 
 		// Treat the selector(s) as an array.
 		$selectors = $this->maybeExplodeSelectors( $selectors );
@@ -345,11 +376,15 @@ class EditWithBlocks extends AbstractHookProvider {
 	}
 
 	/**
+	 * Transform a set of font selectors to target the Gutenberg editor.
+	 *
+	 * @since 3.0.0
+	 *
 	 * @param array $selectors An array of standardized, cleaned selectors where the key is the selector and the value is possible details array.
 	 *
 	 * @return array
 	 */
-	public function gutenbergify_font_css_selectors( $selectors ) {
+	public function gutenbergify_font_css_selectors( $selectors ): array {
 
 		$new_selectors = array();
 		foreach ( $selectors as $selector => $selector_details ) {
@@ -372,9 +407,9 @@ class EditWithBlocks extends AbstractHookProvider {
 
 			// For root html elements, we will not prefix them, but replace them with the block and title namespace.
 			if ( preg_match( self::$root_regex, $selector ) ) {
-				$new_selector = preg_replace( '/^(html body|body|html|)/', self::get_block_namespace_selector(), $selector );
+				$new_selector                   = preg_replace( '/^(html body|body|html|)/', self::get_block_namespace_selector(), $selector );
 				$new_selectors[ $new_selector ] = $selector_details;
-				$new_selector = preg_replace( '/^(html body|body|html)/', self::$title_namespace_selector, $selector );
+				$new_selector                   = preg_replace( '/^(html body|body|html)/', self::$title_namespace_selector, $selector );
 				$new_selectors[ $new_selector ] = $selector_details;
 				continue;
 			}
@@ -382,11 +417,11 @@ class EditWithBlocks extends AbstractHookProvider {
 			// If we encounter selectors that seem that they could target the post title,
 			// we will add selectors for the Gutenberg title also.
 			if ( preg_match( self::$title_regex, $selector ) ) {
-				$new_selector = preg_replace( self::$title_regex, self::$title_input_namespace_selector, $selector );
+				$new_selector                   = preg_replace( self::$title_regex, self::$title_input_namespace_selector, $selector );
 				$new_selectors[ $new_selector ] = $selector_details;
 			}
 
-			$selector = self::get_block_namespace_selector() . ' ' . $selector;
+			$selector                   = self::get_block_namespace_selector() . ' ' . $selector;
 			$new_selectors[ $selector ] = $selector_details;
 		}
 
@@ -396,12 +431,14 @@ class EditWithBlocks extends AbstractHookProvider {
 	/**
 	 * Preg_match a series of regex against a subject.
 	 *
+	 * @since 3.0.0
+	 *
 	 * @param string|array $regexes
 	 * @param string       $subject
 	 *
 	 * @return bool Returns true if at least one of the regex matches, false otherwise.
 	 */
-	public function preg_match_any( $regexes, $subject ) {
+	public function preg_match_any( $regexes, $subject ): bool {
 		if ( is_string( $regexes ) ) {
 			$regexes = array( $regexes );
 		}
@@ -423,6 +460,8 @@ class EditWithBlocks extends AbstractHookProvider {
 	 * Attempt to split a string with selectors and return the parts as an array.
 	 * If not a string or no comma present, just returns the value.
 	 *
+	 * @since 3.0.0
+	 *
 	 * @param mixed $value
 	 *
 	 * @return array|false|string[]
@@ -437,6 +476,8 @@ class EditWithBlocks extends AbstractHookProvider {
 
 	/**
 	 * Add the SM Color Palettes to the editor sidebar.
+	 *
+	 * @since 3.0.0
 	 */
 	public function editor_color_palettes() {
 

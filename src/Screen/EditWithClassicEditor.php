@@ -184,12 +184,13 @@ class EditWithClassicEditor extends AbstractHookProvider {
 	}
 
 	/**
+	 * Get the fonts editor dynamic inline script.
 	 *
 	 * @since 3.0.0
 	 *
 	 * @return string
 	 */
-	protected function get_fonts_editor_dynamic_script() {
+	protected function get_fonts_editor_dynamic_script(): string {
 		// If typography has been deactivated from the settings, bail.
 		if ( ! $this->plugin_settings->get( 'enable_typography', 'yes' ) ) {
 			return '';

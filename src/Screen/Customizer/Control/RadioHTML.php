@@ -1,9 +1,22 @@
 <?php
+/**
+ * Customizer radio HTML control.
+ *
+ * @since   3.0.0
+ * @license GPL-2.0-or-later
+ * @package PixelgradeLT
+ */
+
+declare ( strict_types=1 );
+
+namespace Pixelgrade\Customify\Screen\Customizer\Control;
 
 /**
- * Class Pix_Customize_Radio_HTML_Control
+ * Customizer radio HTML control class.
+ *
+ * @since 3.0.0
  */
-class Pix_Customize_Radio_HTML_Control extends Pix_Customize_Control {
+class RadioHTML extends BaseControl {
 	public $type = 'radio_html';
 	public $description = null;
 

@@ -1,9 +1,22 @@
 <?php
+/**
+ * Customizer select color control.
+ *
+ * @since   3.0.0
+ * @license GPL-2.0-or-later
+ * @package PixelgradeLT
+ */
+
+declare ( strict_types=1 );
+
+namespace Pixelgrade\Customify\Screen\Customizer\Control;
 
 /**
- * Class Pix_Customize_Select_Color_Control
+ * Customizer select color control class.
+ *
+ * @since 3.0.0
  */
-class Pix_Customize_Select_Color_Control extends Pix_Customize_Control {
+class SelectColor extends BaseControl {
 	public $type = 'select_color';
 
 	/**
@@ -19,8 +32,9 @@ class Pix_Customize_Select_Color_Control extends Pix_Customize_Control {
 
 		<select <?php $this->link(); ?> class="js-color-select">
 			<?php
-			foreach ( $this->choices as $value => $label )
+			foreach ( $this->choices as $value => $label ) {
 				echo '<option value="' . esc_attr( $value ) . '" ' . selected( $this->value(), $value, false ) . '>' . esc_html( $label ) . '</option>';
+			}
 			?>
 		</select>
 

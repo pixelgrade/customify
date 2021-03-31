@@ -1,11 +1,24 @@
 <?php
+/**
+ * Customizer base control.
+ *
+ * @since   3.0.0
+ * @license GPL-2.0-or-later
+ * @package PixelgradeLT
+ */
+
+declare ( strict_types=1 );
+
+namespace Pixelgrade\Customify\Screen\Customizer\Control;
 
 /**
- * Class Pix_Customize_Control
+ * Customizer base control class.
  *
- * with this class we will overwrite the default markup which WordPress comes with
+ * With this class we will overwrite the default markup which WordPress comes with.
+ *
+ * @since 3.0.0
  */
-class Pix_Customize_Control extends WP_Customize_Control {
+class BaseControl extends \WP_Customize_Control {
 
 	/**
 	 * Renders the control wrapper and calls $this->render_content() for the internals.

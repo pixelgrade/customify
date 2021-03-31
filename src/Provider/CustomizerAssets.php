@@ -24,7 +24,7 @@ class CustomizerAssets extends AbstractHookProvider {
 	 * Register hooks.
 	 */
 	public function register_hooks() {
-		add_action( 'admin_enqueue_scripts', [ $this, 'register_assets' ], 1 );
+		add_action( 'customize_controls_init', [ $this, 'register_assets' ], 1 );
 	}
 
 	/**
@@ -51,10 +51,11 @@ class CustomizerAssets extends AbstractHookProvider {
 			$this->plugin->get_url( 'js/vendor/regression' . $scripts_suffix . '.js' ),
 			[],
 			VERSION );
-		wp_register_script( 'pixelgrade_customify-customizer-scripts',
+		wp_register_script( 'pixelgrade_customify-customizer',
 			$this->plugin->get_url( 'dist/js/customizer' . $scripts_suffix . '.js' ),
 			[
 				'jquery',
+				'jquery-react',
 				'pixelgrade_customify-select2',
 				'pixelgrade_customify-regression',
 				'wp-element',
@@ -62,9 +63,9 @@ class CustomizerAssets extends AbstractHookProvider {
 				'customize-controls',
 			],
 			VERSION );
-		wp_localize_script( 'pixelgrade_customify-customizer-scripts', 'WP_API_Settings', array(
+		wp_localize_script( 'pixelgrade_customify-customizer', 'WP_API_Settings', array(
 			'root'  => esc_url_raw( rest_url() ),
-			'nonce' => wp_create_nonce( 'wp_rest' )
+			'nonce' => wp_create_nonce( 'wp_rest' ),
 		) );
 
 		wp_register_style(
@@ -75,9 +76,18 @@ class CustomizerAssets extends AbstractHookProvider {
 		);
 
 		/**
+		 * CUSTOMIZER CONTROLS RELATED
+		 */
+		wp_register_script( 'pixelgrade_customify-ace-editor',
+			$this->plugin->get_url( '/js/vendor/ace/ace.js' ),
+			[ 'jquery' ],
+			VERSION,
+			true );
+
+		/**
 		 * CUSTOMIZER PREVIEW RELATED
 		 */
-		wp_register_script( 'pixelgrade_customify-previewer-scripts',
+		wp_register_script( 'pixelgrade_customify-previewer',
 			$this->plugin->get_url( 'dist/js/customizer-preview' . $scripts_suffix . '.js' ),
 			[
 				'jquery',
@@ -90,14 +100,6 @@ class CustomizerAssets extends AbstractHookProvider {
 		/**
 		 * STYLE MANAGER RELATED
 		 */
-		wp_register_script( 'pixelgrade_customify-style-manager',
-			$this->plugin->get_url( 'js/customizer/style-manager' . $scripts_suffix . '.js' ),
-			[ 'jquery' ],
-			VERSION );
-
-		/**
-		 * COLOR PALETTES RELATED
-		 */
 		wp_register_script(
 			'pixelgrade_customify-dark-mode',
 			$this->plugin->get_url( 'dist/js/dark-mode' . $scripts_suffix . '.js' ),
@@ -106,16 +108,21 @@ class CustomizerAssets extends AbstractHookProvider {
 		);
 
 		/**
+		 * COLOR PALETTES RELATED
+		 */
+
+
+		/**
 		 * FONT PALETTES RELATED
 		 */
-		wp_register_script( 'pixelgrade_customify-font-palettes',
-			$this->plugin->get_url( 'js/customizer/font-palettes' . $scripts_suffix . '.js' ),
-			[
-				'pixelgrade_customify-regression',
-				'jquery',
-				//'pixelgrade_customify-fontfields',
-			],
-			VERSION );
+		//		wp_register_script( 'pixelgrade_customify-font-palettes',
+		//			$this->plugin->get_url( 'js/customizer/font-palettes' . $scripts_suffix . '.js' ),
+		//			[
+		//				'pixelgrade_customify-regression',
+		//				'jquery',
+		//				//'pixelgrade_customify-fontfields',
+		//			],
+		//			VERSION );
 
 		/**
 		 * CONTROLS SEARCH FIELD RELATED
