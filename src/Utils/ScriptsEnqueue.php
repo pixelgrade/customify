@@ -4,7 +4,7 @@
  *
  * @since   3.0.0
  * @license GPL-2.0-or-later
- * @package PixelgradeLT
+ * @package Pixelgrade Customify
  */
 
 declare ( strict_types=1 );
@@ -15,7 +15,7 @@ namespace Pixelgrade\Customify\Utils;
  * Our scripts enqueue related helpers class.
  *
  * @since   3.0.0
- * @package PixelgradeLT
+ * @package Pixelgrade Customify
  */
 class ScriptsEnqueue {
 	/**
@@ -32,7 +32,7 @@ class ScriptsEnqueue {
 	 *
 	 * @return bool True on success, false on failure.
 	 */
-	public static function getlocalizeToWindowScript( $object_name, $l10n ) {
+	public static function getlocalizeToWindowScript( string $object_name, array $l10n ) {
 		$script = "window.$object_name = window.$object_name || parent.$object_name || {};\n";
 
 		foreach ( (array) $l10n as $key => $value ) {

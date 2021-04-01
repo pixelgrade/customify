@@ -4,15 +4,17 @@
  *
  * @since   3.0.0
  * @license GPL-2.0-or-later
- * @package PixelgradeLT
+ * @package Pixelgrade Customify
  */
 
 declare ( strict_types=1 );
 
 namespace Pixelgrade\Customify\Screen;
 
+use Pixelgrade\Customify\Provider\FrontendOutput;
 use Pixelgrade\Customify\Provider\Options;
 use Pixelgrade\Customify\Provider\PluginSettings;
+use Pixelgrade\Customify\StyleManager\Fonts;
 use Pixelgrade\Customify\Vendor\Cedaro\WP\Plugin\AbstractHookProvider;
 use Pixelgrade\Customify\Vendor\Psr\Log\LoggerInterface;
 
@@ -51,6 +53,20 @@ class EditWithClassicEditor extends AbstractHookProvider {
 	protected PluginSettings $plugin_settings;
 
 	/**
+	 * Style Manager Fonts.
+	 *
+	 * @var Fonts
+	 */
+	protected Fonts $sm_fonts;
+
+	/**
+	 * Frontend output provider.
+	 *
+	 * @var FrontendOutput
+	 */
+	protected FrontendOutput $frontend_output;
+
+	/**
 	 * Logger.
 	 *
 	 * @var LoggerInterface
@@ -64,15 +80,21 @@ class EditWithClassicEditor extends AbstractHookProvider {
 	 *
 	 * @param Options         $options         Options.
 	 * @param PluginSettings  $plugin_settings Plugin settings.
+	 * @param Fonts           $sm_fonts        Style Manager Fonts.
+	 * @param FrontendOutput  $frontend_output Frontend output.
 	 * @param LoggerInterface $logger          Logger.
 	 */
 	public function __construct(
 		Options $options,
 		PluginSettings $plugin_settings,
+		Fonts $sm_fonts,
+		FrontendOutput $frontend_output,
 		LoggerInterface $logger
 	) {
 		$this->options      = $options;
 		$this->plugin_settings = $plugin_settings;
+		$this->sm_fonts        = $sm_fonts;
+		$this->frontend_output = $frontend_output;
 		$this->logger       = $logger;
 	}
 
@@ -117,8 +139,8 @@ class EditWithClassicEditor extends AbstractHookProvider {
 
 		ob_start();
 
-		PixCustomify_Customizer::instance()->output_dynamic_style();
-		Customify_Fonts_Global::instance()->outputFontsDynamicStyle();
+		$this->frontend_output->output_dynamic_style();
+		$this->sm_fonts->outputFontsDynamicStyle();
 
 		$custom_output = ob_get_clean();
 
@@ -196,7 +218,7 @@ class EditWithClassicEditor extends AbstractHookProvider {
 			return '';
 		}
 
-		$args = Customify_Fonts_Global::instance()->getFontFamiliesDetailsForWebfontloader();
+		$args = $this->sm_fonts->getFontFamiliesDetailsForWebfontloader();
 
 		if ( empty ( $args['custom_families'] ) && empty ( $args['google_families'] ) ) {
 			return '';
@@ -224,8 +246,8 @@ const customifyIframeFontLoader = function(context) {
 		families: [<?php echo join( ',', $args['google_families'] ); ?>]
 	};
 		<?php }
-		$custom_families = array();
-		$custom_urls = array();
+		$custom_families = [];
+		$custom_urls = [];
 
 		if ( ! empty( $args['custom_families'] ) && ! empty( $args['custom_srcs'] ) ) {
 			$custom_families += $args['custom_families'];

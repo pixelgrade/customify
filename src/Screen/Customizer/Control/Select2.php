@@ -4,7 +4,7 @@
  *
  * @since   3.0.0
  * @license GPL-2.0-or-later
- * @package PixelgradeLT
+ * @package Pixelgrade Customify
  */
 
 declare ( strict_types=1 );
@@ -17,7 +17,7 @@ namespace Pixelgrade\Customify\Screen\Customizer\Control;
  * @since 3.0.0
  */
 class Select2 extends BaseControl {
-	public $type = 'select2';
+	public string $type = 'select2';
 
 	/**
 	 * Render the control's content.

@@ -2,7 +2,7 @@
 /**
  * File body handler.
  *
- * @package PixelgradeLT
+ * @package Pixelgrade Customify
  * @license GPL-2.0-or-later
  * @since 3.0.0
  */

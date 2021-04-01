@@ -4,7 +4,7 @@
  *
  * @since   3.0.0
  * @license GPL-2.0-or-later
- * @package PixelgradeLT
+ * @package Pixelgrade Customify
  */
 
 declare ( strict_types=1 );
@@ -116,7 +116,7 @@ class Settings extends AbstractHookProvider {
 			         ->set_page_file( self::MENU_SLUG )
 			         ->where( 'current_user_capability', '=', Capabilities::MANAGE_OPTIONS )
 			         ->set_datastore( $this->cf_datastore )
-			         ->add_tab( esc_html__( 'General', '__plugin_txtd' ), array(
+			         ->add_tab( esc_html__( 'General', '__plugin_txtd' ), [
 				         Field::make( 'select', 'values_store_mod', esc_html__( 'Store values as:', '__plugin_txtd' ) )
 				              ->set_help_text( esc_html__( 'You can store the values globally so you can use them with other themes or store them as a "theme_mod" which will make an individual set of options only for the current theme', '__plugin_txtd' ) )
 				              ->set_options( [
@@ -143,7 +143,7 @@ class Settings extends AbstractHookProvider {
 				              ->set_help_text( esc_html__( 'The styling added by Customify in front-end can be added in the WordPress editor too by enabling this option', '__plugin_txtd' ) )
 				              ->set_option_value( 'yes' )
 				              ->set_default_value( 'yes' ),
-			         ) )
+			         ] )
 			         ->add_tab( esc_html__( 'Output', '__plugin_txtd' ), [
 				         Field::make( 'select', 'style_resources_location', esc_html__( 'Styles location:', '__plugin_txtd' ) )
 				              ->set_help_text( esc_html__( 'Here you can decide where to put your style output, in header or footer', '__plugin_txtd' ) )
@@ -254,18 +254,18 @@ class Settings extends AbstractHookProvider {
 	 * @return array
 	 */
 	protected function add_action_links( array $links ): array {
-		return array_merge( array( 'settings' => '<a href="' . esc_url( menu_page_url( self::MENU_SLUG, false ) ) . '">' . esc_html__( 'Settings', '__plugin_txtd' ) . '</a>' ), $links );
+		return array_merge( [ 'settings' => '<a href="' . esc_url( menu_page_url( self::MENU_SLUG, false ) ) . '">' . esc_html__( 'Settings', '__plugin_txtd' ) . '</a>' ], $links );
 	}
 
 	/**
 	 * Register any REST-API routes we need.
 	 */
 	protected function add_rest_api_routes() {
-		register_rest_route( 'customify/v1', '/delete_customizer_settings', array(
+		register_rest_route( 'customify/v1', '/delete_customizer_settings', [
 			'methods'             => 'POST',
 			'callback'            => [ $this, 'delete_customizer_settings' ],
 			'permission_callback' => [ $this, 'permission_nonce_callback' ],
-		) );
+		] );
 	}
 
 	public function delete_customizer_settings() {

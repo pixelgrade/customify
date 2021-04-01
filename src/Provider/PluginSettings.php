@@ -4,7 +4,7 @@
  *
  * @since   3.0.0
  * @license GPL-2.0-or-later
- * @package PixelgradeLT
+ * @package Pixelgrade Customify
  */
 
 declare ( strict_types=1 );

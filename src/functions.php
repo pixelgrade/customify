@@ -2,7 +2,7 @@
 /**
  * Helper functions
  *
- * @package PixelgradeLT
+ * @package Pixelgrade Customify
  * @license GPL-2.0-or-later
  * @since 0.1.0
  */

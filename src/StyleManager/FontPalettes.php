@@ -4,13 +4,14 @@
  *
  * @since   3.0.0
  * @license GPL-2.0-or-later
- * @package PixelgradeLT
+ * @package Pixelgrade Customify
  */
 
 declare ( strict_types=1 );
 
 namespace Pixelgrade\Customify\StyleManager;
 
+use Pixelgrade\Customify\Utils\Fonts as FontsHelper;
 use Pixelgrade\Customify\Provider\Options;
 use Pixelgrade\Customify\Utils\ArrayHelpers;
 use Pixelgrade\Customify\Vendor\Cedaro\WP\Plugin\AbstractHookProvider;
@@ -23,12 +24,23 @@ use Pixelgrade\Customify\Vendor\Psr\Log\LoggerInterface;
  */
 class FontPalettes extends AbstractHookProvider {
 
+	const SM_FONT_PALETTE_OPTION_KEY = 'sm_font_palette';
+	const SM_FONT_PALETTE_VARIATION_OPTION_KEY = 'sm_font_palette_variation';
+	const SM_IS_CUSTOM_FONT_PALETTE_OPTION_KEY = 'sm_is_custom_font_palette';
+
 	/**
 	 * Options.
 	 *
 	 * @var Options
 	 */
 	protected Options $options;
+
+	/**
+	 * Design assets.
+	 *
+	 * @var DesignAssets
+	 */
+	protected DesignAssets $design_assets;
 
 	/**
 	 * Logger.
@@ -43,13 +55,16 @@ class FontPalettes extends AbstractHookProvider {
 	 * @since 3.0.0
 	 *
 	 * @param Options         $options Options.
+	 * @param DesignAssets    $design_assets Design assets.
 	 * @param LoggerInterface $logger  Logger.
 	 */
 	public function __construct(
 		Options $options,
+		DesignAssets $design_assets,
 		LoggerInterface $logger
 	) {
 		$this->options = $options;
+		$this->design_assets = $design_assets;
 		$this->logger  = $logger;
 	}
 
@@ -62,28 +77,30 @@ class FontPalettes extends AbstractHookProvider {
 		/*
 		 * Handle the font palettes preprocessing.
 		 */
-		add_filter( 'customify_get_font_palettes', array( $this, 'preprocess_config' ), 5, 1 );
+		add_filter( 'customify_get_font_palettes', [ $this, 'preprocess_config' ], 5, 1 );
 
 		/*
 		 * Handle the Customizer Style Manager section config.
 		 */
-		add_filter( 'customify_filter_fields', array( $this, 'add_style_manager_section_master_fonts_config' ), 12, 1 );
+		$this->add_filter( 'customify_filter_fields', 'add_style_manager_section_master_fonts_config', 12, 1 );
+		$this->add_filter( 'style_manager_panel_config', 'reorganize_customizer_controls', 20, 2 );
+
 		// This needs to come after the external theme config has been applied
-		add_filter( 'customify_filter_fields', array( $this, 'add_current_palette_control' ), 110, 1 );
-		add_filter( 'customify_final_config', array( $this, 'standardize_connected_fields' ), 10, 1 );
+		$this->add_filter( 'customify_filter_fields', 'add_current_palette_control', 110, 1 );
+		$this->add_filter( 'customify_final_config', 'standardize_connected_fields', 10, 1 );
 
 		/*
 		 * Handle the logic on settings update/save.
 		 */
-		add_action( 'customize_save_after', array( $this, 'update_custom_palette_in_use' ), 10, 1 );
+		$this->add_action( 'customize_save_after', 'update_custom_palette_in_use', 10, 1 );
 
 		/**
 		 * Add font palettes usage to site data.
 		 */
-		add_filter( 'customify_style_manager_get_site_data', array( $this, 'add_palettes_to_site_data' ), 10, 1 );
+		$this->add_filter( 'customify_style_manager_get_site_data', 'add_palettes_to_site_data', 10, 1 );
 
 		// Add data to be passed to JS.
-		add_filter( 'customify_localized_js_settings', array( $this, 'add_to_localized_data' ), 10, 1 );
+		$this->add_filter( 'customify_localized_js_settings', 'add_to_localized_data', 10, 1 );
 	}
 
 	/**
@@ -190,7 +207,7 @@ class FontPalettes extends AbstractHookProvider {
 			// Process the font_styles_intervals and make sure that they are in the right order and not overlapping.
 			if ( ! empty( $font_logic['font_styles_intervals'] ) && is_array( $font_logic['font_styles_intervals'] ) ) {
 				// Initialize the list with the first one found.
-				$font_styles_intervals = array( array_shift( $font_logic['font_styles_intervals'] ) );
+				$font_styles_intervals = [ array_shift( $font_logic['font_styles_intervals'] ) ];
 				// Make sure that this interval has a start
 				if ( ! isset( $font_styles_intervals[0]['start'] ) ) {
 					$font_styles_intervals[0]['start'] = 0;
@@ -218,7 +235,7 @@ class FontPalettes extends AbstractHookProvider {
 								} else {
 									// Adjust the old interval and insert in front of it.
 									$font_styles_intervals[ $i ]['end'] = $font_styles_interval['end'];
-									$font_styles_intervals              = array_slice( $font_styles_intervals, 0, $i ) + array( $font_styles_interval );
+									$font_styles_intervals              = array_slice( $font_styles_intervals, 0, $i ) + [ $font_styles_interval ];
 									break;
 								}
 							}
@@ -233,7 +250,7 @@ class FontPalettes extends AbstractHookProvider {
 
 							if ( ! isset( $font_styles_interval['end'] ) ) {
 								// Everything after the existing interval is gone and the new one takes precedence.
-								array_splice( $font_styles_intervals, $i + 1, count( $font_styles_intervals ), array( $font_styles_interval ) );
+								array_splice( $font_styles_intervals, $i + 1, count( $font_styles_intervals ), [ $font_styles_interval ] );
 								break;
 							} else {
 								// Now go forward and see where the end of the new interval fits in.
@@ -261,7 +278,7 @@ class FontPalettes extends AbstractHookProvider {
 								}
 
 								// Insert the new interval.
-								array_splice( $font_styles_intervals, $j, 0, array( $font_styles_interval ) );
+								array_splice( $font_styles_intervals, $j, 0, [ $font_styles_interval ] );
 								break;
 							}
 						}
@@ -300,7 +317,7 @@ class FontPalettes extends AbstractHookProvider {
 
 					// Standardize the font variant.
 					if ( isset( $font_styles_intervals[ $key ]['font_variant'] ) ) {
-						$font_styles_intervals[ $key ]['font_variant'] = Customify_Fonts_Global::standardizeFontVariant( $font_styles_intervals[ $key ]['font_variant'] );
+						$font_styles_intervals[ $key ]['font_variant'] = FontsHelper::standardizeFontVariant( $font_styles_intervals[ $key ]['font_variant'] );
 					}
 
 					if ( isset( $value['letter_spacing'] ) ) {
@@ -308,7 +325,7 @@ class FontPalettes extends AbstractHookProvider {
 						if ( 'normal' === $value['letter_spacing'] ) {
 							$value['letter_spacing'] = 0;
 						}
-						$font_styles_intervals[ $key ]['letter_spacing'] = Customify_Fonts_Global::standardizeNumericalValue( $value['letter_spacing'] );
+						$font_styles_intervals[ $key ]['letter_spacing'] = FontsHelper::standardizeNumericalValue( $value['letter_spacing'] );
 					}
 
 					// If we have been given a `font_size_multiplier` value, make sure it is a positive float.
@@ -347,15 +364,9 @@ class FontPalettes extends AbstractHookProvider {
 	 * @return array
 	 */
 	public function get_palettes( $skip_cache = false ): array {
-		// Make sure that the Design Assets class is loaded.
-		require_once 'lib/class-customify-design-assets.php';
-
-		// Get the design assets data.
-		$design_assets = Customify_Design_Assets::instance()->get( $skip_cache );
-		if ( false === $design_assets || empty( $design_assets['font_palettes'] ) ) {
+		$config = $this->design_assets->get_entry( 'font_palettes', $skip_cache );
+		if ( is_null( $config ) ) {
 			$config = $this->get_default_config();
-		} else {
-			$config = $design_assets['font_palettes'];
 		}
 
 		return apply_filters( 'customify_get_font_palettes', $config );
@@ -373,7 +384,7 @@ class FontPalettes extends AbstractHookProvider {
 	 *
 	 * @return array
 	 */
-	public function add_style_manager_section_master_fonts_config( array $config ): array {
+	protected function add_style_manager_section_master_fonts_config( array $config ): array {
 		// If there is no style manager support, bail early.
 		if ( ! $this->is_supported() ) {
 			return $config;
@@ -384,9 +395,9 @@ class FontPalettes extends AbstractHookProvider {
 		}
 
 		// The section might be already defined, thus we merge, not replace the entire section config.
-		$config['sections']['style_manager_section'] = ArrayHelpers::array_merge_recursive_distinct( $config['sections']['style_manager_section'], array(
-			'options' => array(
-				'sm_font_palette'                 => array(
+		$config['sections']['style_manager_section'] = ArrayHelpers::array_merge_recursive_distinct( $config['sections']['style_manager_section'], [
+			'options' => [
+				'sm_font_palette'                 => [
 					'type'         => 'preset',
 					// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
 					'setting_type' => 'option',
@@ -400,8 +411,8 @@ class FontPalettes extends AbstractHookProvider {
 					'default'      => 'julia',
 					'choices_type' => 'font_palette',
 					'choices'      => $this->get_palettes(),
-				),
-				'sm_font_primary'                 => array(
+				],
+				'sm_font_primary'                 => [
 					'type'             => 'font',
 					// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
 					'setting_type'     => 'option',
@@ -411,16 +422,16 @@ class FontPalettes extends AbstractHookProvider {
 					'live'             => true,
 					'priority'         => 7,
 					'label'            => esc_html__( 'Font Primary', '__plugin_txtd' ),
-					'default'          => array(
+					'default'          => [
 						'font-family'    => 'Montserrat',
 						'font-weight'    => 'regular',
 						'font-size'      => 20,
 						'line-height'    => 1.25,
 						'letter-spacing' => 0.029,
 						'text-transform' => 'uppercase',
-					),
+					],
 					// Sub Fields Configuration
-					'fields'           => array(
+					'fields'           => [
 						// These subfields are disabled because they are calculated through the font palette logic.
 						'font-size'       => false,
 						'font-weight'     => false,
@@ -429,26 +440,26 @@ class FontPalettes extends AbstractHookProvider {
 						'text-align'      => false,
 						'text-transform'  => false,
 						'text-decoration' => false,
-					),
+					],
 					'connected_fields' => [],
-				),
-				'sm_font_secondary'               => array(
+				],
+				'sm_font_secondary'               => [
 					'type'             => 'font',
 					'setting_type'     => 'option',
 					'setting_id'       => 'sm_font_secondary',
 					'live'             => true,
 					'priority'         => 7.1,
 					'label'            => esc_html__( 'Font Secondary', '__plugin_txtd' ),
-					'default'          => array(
+					'default'          => [
 						'font-family'    => 'Montserrat',
 						'font-weight'    => '300',
 						'font-size'      => 10,
 						'line-height'    => 1.625,
 						'letter-spacing' => 0.029,
 						'text-transform' => 'uppercase',
-					),
+					],
 					// Sub Fields Configuration
-					'fields'           => array(
+					'fields'           => [
 						// These subfields are disabled because they are calculated through the font palette logic.
 						'font-size'       => false,
 						'font-weight'     => false,
@@ -457,26 +468,26 @@ class FontPalettes extends AbstractHookProvider {
 						'text-align'      => false,
 						'text-transform'  => false,
 						'text-decoration' => false,
-					),
+					],
 					'connected_fields' => [],
-				),
-				'sm_font_body'                    => array(
+				],
+				'sm_font_body'                    => [
 					'type'             => 'font',
 					'setting_type'     => 'option',
 					'setting_id'       => 'sm_font_body',
 					'live'             => true,
 					'priority'         => 7.2,
 					'label'            => esc_html__( 'Font Body', '__plugin_txtd' ),
-					'default'          => array(
+					'default'          => [
 						'font-family'    => 'Montserrat',
 						'font-weight'    => '300',
 						'font-size'      => 14,
 						'line-height'    => 1.6,
 						'letter-spacing' => 0.029,
 						'text-transform' => 'uppercase',
-					),
+					],
 					// Sub Fields Configuration
-					'fields'           => array(
+					'fields'           => [
 						// These subfields are disabled because they are calculated through the font palette logic.
 						'font-size'       => false,
 						'font-weight'     => false,
@@ -485,10 +496,10 @@ class FontPalettes extends AbstractHookProvider {
 						'text-align'      => false,
 						'text-transform'  => false,
 						'text-decoration' => false,
-					),
+					],
 					'connected_fields' => [],
-				),
-				'sm_font_accent'                  => array(
+				],
+				'sm_font_accent'                  => [
 					'type'             => 'font',
 					// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
 					'setting_type'     => 'option',
@@ -498,16 +509,16 @@ class FontPalettes extends AbstractHookProvider {
 					'live'             => true,
 					'priority'         => 7,
 					'label'            => esc_html__( 'Font Accent', '__plugin_txtd' ),
-					'default'          => array(
+					'default'          => [
 						'font-family'    => 'Montserrat',
 						'font-weight'    => 'regular',
 						'font-size'      => 20,
 						'line-height'    => 1.25,
 						'letter-spacing' => 0.029,
 						'text-transform' => 'uppercase',
-					),
+					],
 					// Sub Fields Configuration
-					'fields'           => array(
+					'fields'           => [
 						// These subfields are disabled because they are calculated through the font palette logic.
 						'font-size'       => false,
 						'font-weight'     => false,
@@ -516,19 +527,66 @@ class FontPalettes extends AbstractHookProvider {
 						'text-align'      => false,
 						'text-transform'  => false,
 						'text-decoration' => false,
-					),
+					],
 					'connected_fields' => [],
-				),
-				'sm_font_palettes_spacing_bottom' => array(
+				],
+				'sm_font_palettes_spacing_bottom' => [
 					'type'       => 'html',
 					'html'       => '',
 					'setting_id' => 'sm_font_palettes_spacing_bottom',
 					'priority'   => 31,
-				),
-			),
-		) );
+				],
+			],
+		] );
 
 		return $config;
+	}
+
+	/**
+	 * Reorganize the Customizer controls.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @param array $sm_panel_config
+	 * @param array $sm_section_config
+	 *
+	 * @return array
+	 */
+	protected function reorganize_customizer_controls( array $sm_panel_config, array $sm_section_config ): array {
+		$font_palettes_fields = [
+			'sm_current_font_palette',
+			'sm_font_palette',
+			'sm_font_palette_variation',
+			'sm_font_primary',
+			'sm_font_secondary',
+			'sm_font_body',
+			'sm_font_accent',
+			'sm_swap_fonts',
+			'sm_swap_primary_secondary_fonts',
+			'sm_font_palettes_spacing_bottom',
+		];
+
+		$font_palettes_section_config = [
+			'title'      => esc_html__( 'Fonts', '__plugin_txtd' ),
+			'section_id' => 'sm_font_palettes_section',
+			'priority'   => 20,
+			'options'    => [],
+		];
+		foreach ( $font_palettes_fields as $field_id ) {
+			if ( ! isset( $sm_section_config['options'][ $field_id ] ) ) {
+				continue;
+			}
+
+			if ( empty( $font_palettes_section_config['options'] ) ) {
+				$font_palettes_section_config['options'] = [ $field_id => $sm_section_config['options'][ $field_id ] ];
+			} else {
+				$font_palettes_section_config['options'] = array_merge( $font_palettes_section_config['options'], [ $field_id => $sm_section_config['options'][ $field_id ] ] );
+			}
+		}
+
+		$sm_panel_config['sections']['sm_font_palettes_section'] = $font_palettes_section_config;
+
+		return $sm_panel_config;
 	}
 
 	/**
@@ -540,7 +598,7 @@ class FontPalettes extends AbstractHookProvider {
 	 *
 	 * @return array
 	 */
-	public function add_current_palette_control( $config ) {
+	protected function add_current_palette_control( array $config ): array {
 		// If there is no style manager support, bail early.
 		if ( ! $this->is_supported() ) {
 			return $config;
@@ -579,7 +637,7 @@ class FontPalettes extends AbstractHookProvider {
 	 *
 	 * @return array
 	 */
-	public function standardize_connected_fields( array $config ): array {
+	protected function standardize_connected_fields( array $config ): array {
 		// If there is no style manager support, bail early.
 		if ( ! $this->is_supported() ) {
 			return $config;
@@ -615,7 +673,7 @@ class FontPalettes extends AbstractHookProvider {
 						}
 					}
 					// Finally, standardize it.
-					$value['font_size'] = Customify_Fonts_Global::standardizeNumericalValue( $value['font_size'], 'font-size', $option_config );
+					$value['font_size'] = FontsHelper::standardizeNumericalValue( $value['font_size'], 'font-size', $option_config );
 
 					$connected_fields_config[ $key ] = $value;
 				}
@@ -678,10 +736,10 @@ class FontPalettes extends AbstractHookProvider {
 	 * @return array
 	 */
 	protected function get_default_config(): array {
-		$default_config = array(
-			'gema'  => array(
+		$default_config = [
+			'gema'  => [
 				'label'   => esc_html__( 'Gema', '__plugin_txtd' ),
-				'preview' => array(
+				'preview' => [
 					// Font Palette Name
 					'title'                => esc_html__( 'Gema', '__plugin_txtd' ),
 					'description'          => esc_html__( 'A graceful nature, truly tasteful and polished.', '__plugin_txtd' ),
@@ -689,99 +747,99 @@ class FontPalettes extends AbstractHookProvider {
 
 					// Use the following options to style the preview card fonts
 					// Including font-family, size, line-height, weight, letter-spacing and text transform
-					'title_font'           => array(
+					'title_font'           => [
 						'font' => 'font_primary',
 						'size' => 32,
-					),
-					'description_font'     => array(
+					],
+					'description_font'     => [
 						'font' => 'font_body',
 						'size' => 16,
-					),
-				),
+					],
+				],
 
-				'fonts_logic' => array(
+				'fonts_logic' => [
 					// Primary is used for main headings [Display, H1, H2, H3]
-					'sm_font_primary'   => array(
+					'sm_font_primary'   => [
 						// Font loaded when a palette is selected
 						'font_family'                     => 'Montserrat',
 						// Load all these fonts weights.
-						'font_weights'                    => array( 100, 300, 700 ),
+						'font_weights'                    => [ 100, 300, 700 ],
 						// "Generate" the graph to be used for font-size and line-height.
-						'font_size_to_line_height_points' => array(
-							array( 17, 1.7 ),
-							array( 48, 1.2 ),
-						),
+						'font_size_to_line_height_points' => [
+							[ 17, 1.7 ],
+							[ 48, 1.2 ],
+						],
 
 						// Define how fonts will look based on the font size.
-						'font_styles_intervals'           => array(
-							array(
+						'font_styles_intervals'           => [
+							[
 								'start'          => 10,
 								'font_weight'    => 300,
 								'letter_spacing' => '0.03em',
 								'text_transform' => 'uppercase',
-							),
-							array(
+							],
+							[
 								'start'          => 12,
 								'font_weight'    => 700,
 								'letter_spacing' => '0em',
 								'text_transform' => 'uppercase',
-							),
-							array(
+							],
+							[
 								'start'          => 18,
 								'font_weight'    => 100,
 								'letter_spacing' => '0.03em',
 								'text_transform' => 'uppercase',
-							),
-						),
-					),
+							],
+						],
+					],
 
 					// Secondary font is used for smaller headings [H4, H5, H6], including meta details
-					'sm_font_secondary' => array(
+					'sm_font_secondary' => [
 						'font_family'                     => 'Montserrat',
-						'font_weights'                    => array( 200, 400 ),
-						'font_size_to_line_height_points' => array(
-							array( 10, 1.6 ),
-							array( 18, 1.5 ),
-						),
-						'font_styles_intervals'           => array(
-							array(
+						'font_weights'                    => [ 200, 400 ],
+						'font_size_to_line_height_points' => [
+							[ 10, 1.6 ],
+							[ 18, 1.5 ],
+						],
+						'font_styles_intervals'           => [
+							[
 								'start'          => 0,
 								'font_weight'    => 200,
 								'letter_spacing' => '0.03em',
 								'text_transform' => 'uppercase',
-							),
-							array(
+							],
+							[
 								'start'          => 13,
 								'font_weight'    => 'regular',
 								'letter_spacing' => '0.015em',
 								'text_transform' => 'uppercase',
-							),
-						),
-					),
+							],
+						],
+					],
 
 					// Used for Body Font [eg. entry-content]
-					'sm_font_body'      => array(
+					'sm_font_body'      => [
 						'font_family'                     => 'Montserrat',
-						'font_weights'                    => array( 200, '200italic', 700, '700italic' ),
-						'font_size_to_line_height_points' => array(
-							array( 15, 1.8 ),
-							array( 18, 1.7 ),
-						),
+						'font_weights'                    => [ 200, '200italic', 700, '700italic' ],
+						'font_size_to_line_height_points' => [
+							[ 15, 1.8 ],
+							[ 18, 1.7 ],
+						],
 
 						// Define how fonts will look based on their size
-						'font_styles_intervals'           => array(
-							array(
+						'font_styles_intervals'           => [
+							[
 								'font_weight'    => 200,
 								'letter_spacing' => 0,
 								'text_transform' => 'none',
-							),
-						),
-					),
-				),
-			),
-			'julia' => array(
+							],
+						],
+					],
+				],
+			],
+			'julia' => [
 				'label'   => esc_html__( 'Julia', '__plugin_txtd' ),
-				'preview' => array(
+				'preview' => [
 					// Font Palette Name
 					'title'                => esc_html__( 'Julia', '__plugin_txtd' ),
 					'description'          => esc_html__( 'A graceful nature, truly tasteful and polished.', '__plugin_txtd' ),
@@ -789,106 +847,106 @@ class FontPalettes extends AbstractHookProvider {
 
 					// Use the following options to style the preview card fonts
 					// Including font-family, size, line-height, weight, letter-spacing and text transform
-					'title_font'           => array(
+					'title_font'           => [
 						'font' => 'font_primary',
 						'size' => 30,
-					),
-					'description_font'     => array(
+					],
+					'description_font'     => [
 						'font' => 'font_body',
 						'size' => 17,
-					),
-				),
+					],
+				],
 
-				'fonts_logic' => array(
+				'fonts_logic' => [
 					// Primary is used for main headings [Display, H1, H2, H3]
-					'sm_font_primary'   => array(
+					'sm_font_primary'   => [
 						// Font loaded when a palette is selected
 						'font_family'                     => 'Lora',
 						// Load all these fonts weights.
-						'font_weights'                    => array( 700 ),
+						'font_weights'                    => [ 700 ],
 						// "Generate" the graph to be used for font-size and line-height.
-						'font_size_to_line_height_points' => array(
-							array( 24, 1.25 ),
-							array( 66, 1.15 ),
-						),
+						'font_size_to_line_height_points' => [
+							[ 24, 1.25 ],
+							[ 66, 1.15 ],
+						],
 
 						// Define how fonts will look based on the font size.
-						'font_styles_intervals'           => array(
-							array(
+						'font_styles_intervals'           => [
+							[
 								'start'          => 0,
 								'font_weight'    => 700,
 								'letter_spacing' => '0em',
 								'text_transform' => 'none',
-							),
-						),
-					),
+							],
+						],
+					],
 
 					// Secondary font is used for smaller headings [H4, H5, H6], including meta details
-					'sm_font_secondary' => array(
+					'sm_font_secondary' => [
 						'font_family'                     => 'Montserrat',
-						'font_weights'                    => array( 'regular', 600 ),
-						'font_size_to_line_height_points' => array(
-							array( 14, 1.3 ),
-							array( 16, 1.2 ),
-						),
-						'font_styles_intervals'           => array(
-							array(
+						'font_weights'                    => [ 'regular', 600 ],
+						'font_size_to_line_height_points' => [
+							[ 14, 1.3 ],
+							[ 16, 1.2 ],
+						],
+						'font_styles_intervals'           => [
+							[
 								'start'          => 0,
 								'font_weight'    => 600,
 								'letter_spacing' => '0.154em',
 								'text_transform' => 'uppercase',
-							),
-							array(
+							],
+							[
 								'start'          => 13,
 								'font_weight'    => 600,
 								'letter_spacing' => '0em',
 								'text_transform' => 'uppercase',
-							),
-							array(
+							],
+							[
 								'start'          => 14,
 								'font_weight'    => 600,
 								'letter_spacing' => '0.1em',
 								'text_transform' => 'uppercase',
-							),
-							array(
+							],
+							[
 								'start'          => 16,
 								'font_weight'    => 600,
 								'letter_spacing' => '0em',
 								'text_transform' => 'uppercase',
-							),
-							array(
+							],
+							[
 								'start'          => 17,
 								'font_weight'    => 600,
 								'letter_spacing' => '0em',
 								'text_transform' => 'none',
-							),
-						),
-					),
+							],
+						],
+					],
 
 					// Used for Body Font [eg. entry-content]
-					'sm_font_body'      => array(
+					'sm_font_body'      => [
 						'font_family'                     => 'PT Serif',
-						'font_weights'                    => array( 400, '400italic', 700, '700italic' ),
-						'font_size_to_line_height_points' => array(
-							array( 15, 1.7 ),
-							array( 18, 1.5 ),
-						),
+						'font_weights'                    => [ 400, '400italic', 700, '700italic' ],
+						'font_size_to_line_height_points' => [
+							[ 15, 1.7 ],
+							[ 18, 1.5 ],
+						],
 
 						// Define how fonts will look based on their size
-						'font_styles_intervals'           => array(
-							array(
+						'font_styles_intervals'           => [
+							[
 								'start'          => 0,
 								'font_weight'    => 'regular',
 								'letter_spacing' => 0,
 								'text_transform' => 'none',
-							),
-						),
-					),
-				),
-			),
-			'patch' => array(
+							],
+						],
+					],
+				],
+			],
+			'patch' => [
 				'label'   => esc_html__( 'Patch', '__plugin_txtd' ),
-				'preview' => array(
+				'preview' => [
 					// Font Palette Name
 					'title'                => esc_html__( 'Patch', '__plugin_txtd' ),
 					'description'          => esc_html__( 'A graceful nature, truly tasteful and polished.', '__plugin_txtd' ),
@@ -896,133 +954,133 @@ class FontPalettes extends AbstractHookProvider {
 
 					// Use the following options to style the preview card fonts
 					// Including font-family, size, line-height, weight, letter-spacing and text transform
-					'title_font'           => array(
+					'title_font'           => [
 						'font' => 'font_primary',
 						'size' => 26,
-					),
-					'description_font'     => array(
+					],
+					'description_font'     => [
 						'font' => 'font_body',
 						'size' => 16,
-					),
-				),
+					],
+				],
 
-				'fonts_logic' => array(
+				'fonts_logic' => [
 					// Primary is used for main headings [Display, H1, H2, H3]
-					'sm_font_primary'   => array(
+					'sm_font_primary'   => [
 						// Font loaded when a palette is selected
 						'font_family'                     => 'Oswald',
 						// Load all these fonts weights.
-						'font_weights'                    => array( 300, 400, 500 ),
+						'font_weights'                    => [ 300, 400, 500 ],
 						// "Generate" the graph to be used for font-size and line-height.
-						'font_size_to_line_height_points' => array(
-							array( 20, 1.55 ),
-							array( 56, 1.25 ),
-						),
+						'font_size_to_line_height_points' => [
+							[ 20, 1.55 ],
+							[ 56, 1.25 ],
+						],
 
 						// Define how fonts will look based on the font size.
-						'font_styles_intervals'           => array(
-							array(
+						'font_styles_intervals'           => [
+							[
 								'start'          => 0,
 								'font_weight'    => 500,
 								'letter_spacing' => '0.04em',
 								'text_transform' => 'uppercase',
-							),
-							array(
+							],
+							[
 								'start'          => 24,
 								'font_weight'    => 300,
 								'letter_spacing' => '0.06em',
 								'text_transform' => 'uppercase',
-							),
-							array(
+							],
+							[
 								'start'          => 25,
 								'font_weight'    => 'regular',
 								'letter_spacing' => '0.04em',
 								'text_transform' => 'uppercase',
-							),
-							array(
+							],
+							[
 								'start'          => 26,
 								'font_weight'    => 500,
 								'letter_spacing' => '0.04em',
 								'text_transform' => 'uppercase',
-							),
-						),
-					),
+							],
+						],
+					],
 
 					// Secondary font is used for smaller headings [H4, H5, H6], including meta details
-					'sm_font_secondary' => array(
+					'sm_font_secondary' => [
 						'font_family'                     => 'Oswald',
-						'font_weights'                    => array( 200, '200italic', 500, '500italic' ),
-						'font_size_to_line_height_points' => array(
-							array( 14, 1.625 ),
-							array( 24, 1.5 ),
-						),
-						'font_styles_intervals'           => array(
-							array(
+						'font_weights'                    => [ 200, '200italic', 500, '500italic' ],
+						'font_size_to_line_height_points' => [
+							[ 14, 1.625 ],
+							[ 24, 1.5 ],
+						],
+						'font_styles_intervals'           => [
+							[
 								'start'          => 0,
 								'font_weight'    => 500,
 								'letter_spacing' => '0.01em',
 								'text_transform' => 'uppercase',
-							),
-							array(
+							],
+							[
 								'start'          => 20,
 								'font_weight'    => 500,
 								'letter_spacing' => '0em',
 								'text_transform' => 'uppercase',
-							),
-							array(
+							],
+							[
 								'start'          => 24,
 								'font_weight'    => 200,
 								'letter_spacing' => '0em',
 								'text_transform' => 'none',
-							),
-						),
-					),
+							],
+						],
+					],
 
 					// Used for Body Font [eg. entry-content]
-					'sm_font_body'      => array(
+					'sm_font_body'      => [
 						'font_family'                     => 'Roboto',
-						'font_weights'                    => array(
+						'font_weights'                    => [
 							300,
 							'300italic',
 							400,
 							'400italic',
 							500,
 							'500italic',
-						),
-						'font_size_to_line_height_points' => array(
-							array( 14, 1.5 ),
-							array( 24, 1.45 ),
-						),
+						],
+						'font_size_to_line_height_points' => [
+							[ 14, 1.5 ],
+							[ 24, 1.45 ],
+						],
 
 						// Define how fonts will look based on their size
-						'font_styles_intervals'           => array(
-							array(
+						'font_styles_intervals'           => [
+							[
 								'start'          => 0,
 								'end'            => 10.9,
 								'font_weight'    => 500,
 								'letter_spacing' => '0.03em',
 								'text_transform' => 'none',
-							),
-							array(
+							],
+							[
 								'start'          => 10.9,
 								'end'            => 12,
 								'font_weight'    => 500,
 								'letter_spacing' => '0.02em',
 								'text_transform' => 'uppercase',
-							),
-							array(
+							],
+							[
 								'start'          => 12,
 								'font_weight'    => 300,
 								'letter_spacing' => 0,
 								'text_transform' => 'none',
-							),
-						),
-					),
-				),
-			),
-			'hive'  => array(
+							],
+						],
+					],
+				],
+			],
+			'hive'  => [
 				'label'   => esc_html__( 'Hive', '__plugin_txtd' ),
-				'preview' => array(
+				'preview' => [
 					// Font Palette Name
 					'title'                => esc_html__( 'Hive', '__plugin_txtd' ),
 					'description'          => esc_html__( 'A graceful nature, truly tasteful and polished.', '__plugin_txtd' ),
@@ -1030,94 +1088,94 @@ class FontPalettes extends AbstractHookProvider {
 
 					// Use the following options to style the preview card fonts
 					// Including font-family, size, line-height, weight, letter-spacing and text transform
-					'title_font'           => array(
+					'title_font'           => [
 						'font' => 'font_primary',
 						'size' => 36,
-					),
-					'description_font'     => array(
+					],
+					'description_font'     => [
 						'font' => 'font_body',
 						'size' => 18,
-					),
-				),
+					],
+				],
 
-				'fonts_logic' => array(
+				'fonts_logic' => [
 					// Primary is used for main headings [Display, H1, H2, H3]
-					'sm_font_primary'   => array(
+					'sm_font_primary'   => [
 						// Font loaded when a palette is selected
 						'font_family'                     => 'Playfair Display',
 						// Load all these fonts weights.
-						'font_weights'                    => array(
+						'font_weights'                    => [
 							400,
 							'400italic',
 							700,
 							'700italic',
 							900,
 							'900italic',
-						),
+						],
 						// "Generate" the graph to be used for font-size and line-height.
-						'font_size_to_line_height_points' => array(
-							array( 20, 1.55 ),
-							array( 65, 1.15 ),
-						),
+						'font_size_to_line_height_points' => [
+							[ 20, 1.55 ],
+							[ 65, 1.15 ],
+						],
 
 						// Define how fonts will look based on the font size.
-						'font_styles_intervals'           => array(
-							array(
+						'font_styles_intervals'           => [
+							[
 								'start'          => 0,
 								'font_weight'    => 'regular',
 								'letter_spacing' => '0em',
 								'text_transform' => 'none',
-							),
-						),
-					),
+							],
+						],
+					],
 
 					// Secondary font is used for smaller headings [H4, H5, H6], including meta details
-					'sm_font_secondary' => array(
+					'sm_font_secondary' => [
 						'font_family'                     => 'Noto Serif',
-						'font_weights'                    => array( 400, '400italic', 700, '700italic' ),
-						'font_size_to_line_height_points' => array(
-							array( 13, 1.33 ),
-							array( 18, 1.5 ),
-						),
-						'font_styles_intervals'           => array(
-							array(
+						'font_weights'                    => [ 400, '400italic', 700, '700italic' ],
+						'font_size_to_line_height_points' => [
+							[ 13, 1.33 ],
+							[ 18, 1.5 ],
+						],
+						'font_styles_intervals'           => [
+							[
 								'start'          => 0,
 								'end'            => 15,
 								'font_weight'    => 'regular',
 								'letter_spacing' => '0em',
 								'text_transform' => 'none',
-							),
-							array(
+							],
+							[
 								'start'          => 15,
 								'font_weight'    => 700,
 								'letter_spacing' => '0em',
 								'text_transform' => 'none',
-							),
-						),
-					),
+							],
+						],
+					],
 
 					// Used for Body Font [eg. entry-content]
-					'sm_font_body'      => array(
+					'sm_font_body'      => [
 						'font_family'                     => 'Noto Serif',
-						'font_weights'                    => array( 400, '400italic', 700, '700italic' ),
-						'font_size_to_line_height_points' => array(
-							array( 13, 1.4 ),
-							array( 18, 1.5 ),
-						),
+						'font_weights'                    => [ 400, '400italic', 700, '700italic' ],
+						'font_size_to_line_height_points' => [
+							[ 13, 1.4 ],
+							[ 18, 1.5 ],
+						],
 
 						// Define how fonts will look based on their size
-						'font_styles_intervals'           => array(
-							array(
+						'font_styles_intervals'           => [
+							[
 								'start'          => 0,
 								'font_weight'    => 'regular',
 								'letter_spacing' => 0,
 								'text_transform' => 'none',
-							),
-						),
-					),
-				),
-			),
-		);
+							],
+						],
+					],
+				],
+			],
+		];
 
 		return apply_filters( 'customify_style_manager_default_font_palettes', $default_config );
 	}
@@ -1129,8 +1187,8 @@ class FontPalettes extends AbstractHookProvider {
 	 *
 	 * @return string|false
 	 */
-	public function get_current_palette() {
-		return get_option( 'sm_font_palette', false );
+	protected function get_current_palette() {
+		return get_option( self::SM_FONT_PALETTE_OPTION_KEY, false );
 	}
 
 	/**
@@ -1140,8 +1198,8 @@ class FontPalettes extends AbstractHookProvider {
 	 *
 	 * @return string|false
 	 */
-	public function get_current_palette_variation() {
-		return get_option( 'sm_font_palette_variation', false );
+	protected function get_current_palette_variation() {
+		return get_option( self::SM_FONT_PALETTE_VARIATION_OPTION_KEY, false );
 	}
 
 	/**
@@ -1151,7 +1209,7 @@ class FontPalettes extends AbstractHookProvider {
 	 *
 	 * @return bool
 	 */
-	public function update_custom_palette_in_use(): bool {
+	protected function update_custom_palette_in_use(): bool {
 		// If there is no style manager support, bail early.
 		if ( ! $this->is_supported() ) {
 			return false;
@@ -1178,7 +1236,7 @@ class FontPalettes extends AbstractHookProvider {
 			}
 		}
 
-		update_option( 'sm_is_custom_font_palette', $is_custom_palette, true );
+		update_option( self::SM_IS_CUSTOM_FONT_PALETTE_OPTION_KEY, $is_custom_palette, true );
 
 		do_action( 'customify_style_manager_updated_custom_palette_in_use', $is_custom_palette );
 
@@ -1192,8 +1250,8 @@ class FontPalettes extends AbstractHookProvider {
 	 *
 	 * @return bool
 	 */
-	public function is_using_custom_palette(): bool {
-		return (bool) get_option( 'sm_is_custom_font_palette', false );
+	protected function is_using_custom_palette(): bool {
+		return (bool) get_option( self::SM_IS_CUSTOM_FONT_PALETTE_OPTION_KEY, false );
 	}
 
 	/**
@@ -1234,7 +1292,7 @@ class FontPalettes extends AbstractHookProvider {
 	 *
 	 * @return array
 	 */
-	public function add_palettes_to_site_data( array $site_data ): array {
+	protected function add_palettes_to_site_data( array $site_data ): array {
 		if ( empty( $site_data['font_palettes'] ) ) {
 			$site_data['font_palettes'] = [];
 		}

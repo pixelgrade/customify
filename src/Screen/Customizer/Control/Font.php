@@ -4,12 +4,15 @@
  *
  * @since   3.0.0
  * @license GPL-2.0-or-later
- * @package PixelgradeLT
+ * @package Pixelgrade Customify
  */
 
 declare ( strict_types=1 );
 
 namespace Pixelgrade\Customify\Screen\Customizer\Control;
+
+use Pixelgrade\Customify\StyleManager\Fonts;
+use Pixelgrade\Customify\Utils\Fonts as FontsHelper;
 
 /**
  * Customizer font control class.
@@ -23,28 +26,28 @@ class Font extends BaseControl {
 	 *
 	 * @var string
 	 */
-	public $type = 'font';
+	public string $type = 'font';
 
 	/**
 	 * The list of recommended fonts to show at the top of the list.
 	 *
 	 * @var array
 	 */
-	public $recommended = array();
+	public array $recommended = [];
 
 	/**
 	 * The list of sub-fields.
 	 *
 	 * @var array
 	 */
-	public $fields;
+	public array $fields;
 
 	/**
 	 * The default value for each sub-field.
 	 *
 	 * @var array
 	 */
-	public $default;
+	public array $default;
 
 	/**
 	 * The current field value.
@@ -58,7 +61,14 @@ class Font extends BaseControl {
 	 *
 	 * @var string
 	 */
-	protected $CSSID;
+	protected string $CSSID;
+
+	/**
+	 * Style Manager Fonts.
+	 *
+	 * @var Fonts
+	 */
+	protected Fonts $sm_fonts;
 
 	/**
 	 * Constructor.
@@ -69,15 +79,17 @@ class Font extends BaseControl {
 	 *
 	 *
 	 * @param \WP_Customize_Manager $manager
-	 * @param string $id
-	 * @param array $args
+	 * @param string                $id
+	 * @param array                 $args
 	 */
-	public function __construct( $manager, $id, $args = array() ) {
+	public function __construct( $manager, $id, $args = [] ) {
 		global $wp_customize;
 
 		parent::__construct( $manager, $id, $args );
 
-		$this->CSSID    = $this->get_CSS_ID();
+		$this->sm_fonts = $args['sm_fonts_service'];
+
+		$this->CSSID = $this->get_CSS_ID();
 
 		$this->add_hooks();
 
@@ -86,8 +98,9 @@ class Font extends BaseControl {
 		if ( method_exists( $wp_customize, 'changeset_data' ) ) {
 			$changeset_data = $wp_customize->changeset_data();
 
-			if ( isset( $changeset_data[$this->setting->id] ) ) {
-				$this->current_value = $this->standardizeSettingValue( $changeset_data[$this->setting->id]['value'] );
+			if ( isset( $changeset_data[ $this->setting->id ] ) ) {
+				$this->current_value = $this->standardizeSettingValue( $changeset_data[ $this->setting->id ]['value'] );
+
 				return;
 			}
 		}
@@ -97,26 +110,24 @@ class Font extends BaseControl {
 
 	protected function add_hooks() {
 		if ( ! empty( $this->recommended ) ) {
-			add_action( 'customify_font_family_select_options', array( $this, 'output_recommended_options_group' ), 10, 3 );
+			add_action( 'customify_font_family_select_options', [ $this, 'output_recommended_options_group' ], 10, 3 );
 		}
 
 		// Standardize the setting value at a low level so it is consistent everywhere (including in JS).
-		add_filter( "customize_sanitize_js_{$this->setting->id}", array( $this, 'standardizeSettingValue'), 100, 1 );
+		add_filter( "customize_sanitize_js_{$this->setting->id}", [ $this, 'standardizeSettingValue' ], 100, 1 );
 	}
 
 	/**
 	 * Given a font value, standardize it (unencoded).
 	 *
 	 * @param mixed $value
-	 * @param \WP_Customize_Setting $setting
 	 *
 	 * @return array
 	 */
-	public function standardizeSettingValue( $value ) {
-		$value = Customify_Fonts_Global::maybeDecodeValue( $value );
-		$value = Customify_Fonts_Global::standardizeFontValue( $value );
+	public function standardizeSettingValue( $value ): array {
+		$value = FontsHelper::maybeDecodeValue( $value );
 
-		return $value;
+		return $this->sm_fonts->standardizeFontValue( $value );
 	}
 
 	public function output_recommended_options_group( $active_font_family, $current_value, $field_id ) {
@@ -137,7 +148,7 @@ class Font extends BaseControl {
 			echo '<optgroup label="' . esc_attr__( 'Recommended', '__plugin_txtd' ) . '">';
 
 			foreach ( $this->recommended as $font_family ) {
-				self::output_font_family_option( $font_family, $active_font_family );
+				$this->output_font_family_option( $font_family, $active_font_family );
 			}
 			echo "</optgroup>";
 		}
@@ -164,15 +175,16 @@ class Font extends BaseControl {
 			$current_font_family = $current_value->font_family;
 		}
 
-		$current_font_details = array();
+		$current_font_details = [];
 		if ( ! empty( $current_font_family ) ) {
-			$current_font_details = Customify_Fonts_Global::instance()->getFontDetails( $current_font_family );
+			$current_font_details = $this->sm_fonts->getFontDetails( $current_font_family );
 		}
 
 		$select_data = 'data-active_font_family="' . esc_attr( $current_font_family ) . '"'; ?>
 		<div class="font-options__wrapper">
 
-			<input type="checkbox" class="font-options__checkbox js-font-option-toggle" id="tooltip_toogle_<?php echo esc_attr( $this->CSSID ); ?>">
+			<input type="checkbox" class="font-options__checkbox js-font-option-toggle"
+			       id="tooltip_toogle_<?php echo esc_attr( $this->CSSID ); ?>">
 
 			<?php
 			$this->display_value_holder( $current_value );
@@ -180,7 +192,8 @@ class Font extends BaseControl {
 
 			<ul class="font-options__options-list">
 				<li class="font-options__option customize-control">
-					<select id="select_font_font_family_<?php echo esc_attr( $this->CSSID ); ?>" class="customify_font_family"<?php echo $select_data; ?> data-value_entry="font_family">
+					<select id="select_font_font_family_<?php echo esc_attr( $this->CSSID ); ?>"
+					        class="customify_font_family"<?php echo $select_data; ?> data-value_entry="font_family">
 
 						<?php
 						// Allow others to add options here. This is mostly for backwards compatibility purposes.
@@ -239,7 +252,8 @@ class Font extends BaseControl {
 			<?php if ( ! empty( $this->label ) ) : ?>
 				<span class="font-options__option-title"><?php echo esc_html( $this->label ); ?></span>
 			<?php endif; ?>
-			<span class="font-options__font-title" id="font_name_<?php echo esc_attr( $this->CSSID ); ?>"><?php echo $font_family_display; ?></span>
+			<span class="font-options__font-title"
+			      id="font_name_<?php echo esc_attr( $this->CSSID ); ?>"><?php echo $font_family_display; ?></span>
 		</label>
 	<?php }
 
@@ -250,8 +264,8 @@ class Font extends BaseControl {
 		}
 
 		// Display is for the initial state. Depending on the selected fonts, the JS logic will show or hide it.
-		$display       = 'none';
-		if ( ! empty( $current_font_details['variants'] ) && $current_font_details['variants'] !== ['regular'] ) {
+		$display = 'none';
+		if ( ! empty( $current_font_details['variants'] ) && $current_font_details['variants'] !== [ 'regular' ] ) {
 			$display = 'inline-block';
 		}
 
@@ -260,13 +274,15 @@ class Font extends BaseControl {
 			$selected = $current_value->font_variant;
 		}
 		?>
-		<li class="customify_weights_wrapper customize-control font-options__option" style="display: <?php echo $display; ?>;">
+		<li class="customify_weights_wrapper customize-control font-options__option"
+		    style="display: <?php echo $display; ?>;">
 			<label><?php esc_html_e( 'Font Variant', '__plugin_txtd' ); ?></label>
-			<select class="customify_font_weight" data-value_entry="font_variant" <?php echo ( 'none' === $display ) ?  'data-disabled="true"' : ''?>>
+			<select class="customify_font_weight"
+			        data-value_entry="font_variant" <?php echo ( 'none' === $display ) ? 'data-disabled="true"' : '' ?>>
 				<?php
 				if ( ! empty( $current_font_details['variants'] ) ) {
 					if ( is_string( $current_font_details['variants'] ) ) {
-						$current_font_details['variants'] = array( $current_font_details['variants'] );
+						$current_font_details['variants'] = [ $current_font_details['variants'] ];
 					}
 
 					// Output an option with an empty value. Selecting this will NOT force a certain variant in the output.
@@ -295,7 +311,7 @@ class Font extends BaseControl {
 
 		$value = empty( $currentFontValue->$valueEntry ) ? 0 : $currentFontValue->$valueEntry;
 		// Standardize the value.
-		$value = Customify_Fonts_Global::standardizeNumericalValue( $value, $field, array( 'fields' => $this->fields ) );
+		$value = FontsHelper::standardizeNumericalValue( $value, $field, [ 'fields' => $this->fields ] );
 
 		// We will remember the unit of the value, in case some other system pushed down a value (with an unit)
 		// that is different from the field config unit. This way we can retain the unit of the value until
@@ -304,10 +320,10 @@ class Font extends BaseControl {
 		<li class="customify_<?php echo $valueEntry ?>_wrapper customize-control customize-control-range font-options__option">
 			<label><?php echo $label ?></label>
 			<input type="range"
-			        data-value_entry="<?php echo esc_attr( $valueEntry ) ?>"
-					<?php $this->range_field_attributes( $this->fields[ $field ] ) ?>
-				    value="<?php echo esc_attr( $value['value'] ); ?>"
-				    data-value_unit="<?php echo esc_attr( $value['unit'] ); ?>">
+			       data-value_entry="<?php echo esc_attr( $valueEntry ) ?>"
+				<?php $this->range_field_attributes( $this->fields[ $field ] ) ?>
+				   value="<?php echo esc_attr( $value['value'] ); ?>"
+				   data-value_unit="<?php echo esc_attr( $value['unit'] ); ?>">
 		</li>
 		<?php
 	}
@@ -317,8 +333,8 @@ class Font extends BaseControl {
 	 *
 	 * @param array $attributes
 	 */
-	protected function range_field_attributes( $attributes ) {
-		$attributes = Customify_Fonts_Global::standardizeRangeFieldAttributes( $attributes );
+	protected function range_field_attributes( array $attributes ) {
+		$attributes = FontsHelper::standardizeRangeFieldAttributes( $attributes );
 
 		foreach ( $attributes as $attr => $value ) {
 			echo $attr . '="' . esc_attr( $value ) . '" ';
@@ -331,13 +347,13 @@ class Font extends BaseControl {
 			return;
 		}
 
-		$valid_values = Customify_Fonts_Global::instance()->get_valid_subfield_values( $valueEntry, false );
-		$value = isset( $currentFontValue->$valueEntry ) && ( empty( $valid_values ) || in_array( $currentFontValue->$valueEntry, $valid_values ) ) ? $currentFontValue->$valueEntry : reset( $valid_values ); ?>
+		$valid_values = FontsHelper::getValidSubfieldValues( $valueEntry, false );
+		$value        = isset( $currentFontValue->$valueEntry ) && ( empty( $valid_values ) || in_array( $currentFontValue->$valueEntry, $valid_values ) ) ? $currentFontValue->$valueEntry : reset( $valid_values ); ?>
 		<li class="customify_<?php echo $valueEntry ?>_wrapper customize-control font-options__option">
 			<label><?php echo $label ?></label>
 			<select data-value_entry="<?php echo esc_attr( $valueEntry ) ?>">
 				<?php
-				foreach ( Customify_Fonts_Global::instance()->get_valid_subfield_values( $valueEntry, true ) as $option_value => $option_label ) { ?>
+				foreach ( FontsHelper::getValidSubfieldValues( $valueEntry, true ) as $option_value => $option_label ) { ?>
 					<option <?php $this->display_option_value( $option_value, $value ); ?>><?php echo $option_label; ?></option>
 				<?php } ?>
 			</select>
@@ -363,7 +379,7 @@ class Font extends BaseControl {
 	 * @param string|false $active_font_family Optional. The active font family to add the selected attribute to the appropriate opt.
 	 *                                         False to not mark any opt as selected.
 	 */
-	public static function output_font_family_option( $font_family, $active_font_family = false ) {
+	protected function output_font_family_option( $font_family, $active_font_family = false ) {
 		echo self::get_font_family_option_markup( $font_family, $active_font_family );
 	}
 
@@ -373,9 +389,10 @@ class Font extends BaseControl {
 	 * @param string|array $font_family
 	 * @param string|false $active_font_family Optional. The active font family to add the selected attribute to the appropriate opt.
 	 *                                         False to not mark any opt as selected.
+	 *
 	 * @return string
 	 */
-	public static function get_font_family_option_markup( $font_family, $active_font_family = false ) {
+	protected function get_font_family_option_markup( $font_family, $active_font_family = false ): string {
 		$html = '';
 
 		// Bail if we don't have a font family value.
@@ -383,12 +400,12 @@ class Font extends BaseControl {
 			return apply_filters( 'customify_filter_font_option_markup_no_family', $html, $active_font_family );
 		}
 
-		$font_type = Customify_Fonts_Global::instance()->determineFontType( $font_family );
-		$font_details = Customify_Fonts_Global::instance()->getFontDetails( $font_family, $font_type );
+		$font_type    = $this->sm_fonts->determineFontType( $font_family );
+		$font_details = $this->sm_fonts->getFontDetails( $font_family, $font_type );
 
 		// Now determine if we have a "pretty" display for this font family.
 		$font_family_display = $font_family;
-		if ( is_array( $font_details ) && ! empty( $font_details['family_display'] ) ) {
+		if ( ! empty( $font_details['family_display'] ) ) {
 			$font_family_display = $font_details['family_display'];
 		}
 
@@ -405,9 +422,9 @@ class Font extends BaseControl {
 
 	/** ==== Helpers ==== */
 
-	protected function get_default_values() {
+	protected function get_default_values(): array {
 
-		$defaults = array();
+		$defaults = [];
 
 		if ( isset( $this->default ) && is_array( $this->default ) ) {
 
@@ -428,39 +445,14 @@ class Font extends BaseControl {
 			}
 		}
 
-		return Customify_Fonts_Global::standardizeFontValue( $defaults );
+		return $this->sm_fonts->standardizeFontValue( $defaults );
 	}
 
-	protected function get_CSS_ID() {
-		return str_replace( array( '[', ']' ), '_', $this->id );
+	protected function get_CSS_ID(): string {
+		return str_replace( [ '[', ']' ], '_', $this->id );
 	}
 
-	protected function isAssocArray( $array ) {
+	protected function isAssocArray( $array ): bool {
 		return ( $array !== array_values( $array ) );
-	}
-
-	/** ==== LEGACY ==== */
-
-	/**
-	 * Legacy: This method displays an <option> tag from the given params
-	 *
-	 * @deprecated Use Font::output_font_family_option() instead.
-	 *
-	 * @param string|array $font
-	 * @param string|false $active_font_family Optional. The active font family to add the selected attribute to the appropriate opt.
-	 *                                         False to not mark any opt as selected.
-	 * @param array $font_settings
-	 * @param string $type Optional.
-	 */
-	public static function output_font_option( $font, $active_font_family = false, $font_settings = array(), $type = 'google_font' ) {
-		$font_family = $font;
-		if ( is_array( $font_family ) ) {
-			if ( ! empty( $font_family['family'] ) ) {
-				$font_family = $font_family['family'];
-			} else {
-				return;
-			}
-		}
-		echo self::get_font_family_option_markup( $font_family, $active_font_family );
 	}
 }

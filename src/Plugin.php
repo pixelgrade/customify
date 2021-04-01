@@ -4,7 +4,7 @@
  *
  * @since   3.0.0
  * @license GPL-2.0-or-later
- * @package PixelgradeLT
+ * @package Pixelgrade Customify
  */
 
 declare ( strict_types=1 );
@@ -45,8 +45,13 @@ class Plugin extends BasePlugin implements Composable {
 			->register_hooks( $container->get( 'hooks.capabilities' ) )
 			->register_hooks( $container->get( 'hooks.rewrite_rules' ) )
 			->register_hooks( $container->get( 'hooks.frontend_output' ) )
+			// @todo We should investigate if we could register these only in the Customizer.
+			->register_hooks( $container->get( 'sm.cloud_fonts' ) )
 			->register_hooks( $container->get( 'sm.color_palettes' ) )
+			->register_hooks( $container->get( 'sm.design_assets' ) )
 			->register_hooks( $container->get( 'sm.font_palettes' ) )
+			->register_hooks( $container->get( 'sm.fonts' ) )
+			->register_hooks( $container->get( 'sm.general' ) )
 			->register_hooks( $container->get( 'sm.theme_configs' ) )
 			->register_hooks( $container->get( 'screen.customizer' ) );
 

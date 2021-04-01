@@ -4,7 +4,7 @@
  *
  * @since   3.0.0
  * @license GPL-2.0-or-later
- * @package PixelgradeLT
+ * @package Pixelgrade Customify
  */
 
 declare ( strict_types=1 );
@@ -17,9 +17,9 @@ namespace Pixelgrade\Customify\Screen\Customizer\Control;
  * @since 3.0.0
  */
 class HTML extends BaseControl {
-	public $type = 'html';
-	public $action = null;
-	public $html = null;
+	public string $type = 'html';
+	public string $action = '';
+	public string $html = '';
 
 	/**
 	 * Render the control's content.

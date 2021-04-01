@@ -5,7 +5,7 @@
  * Meta capabilities are mapped to primitive capabilities in
  * \Pixelgrade\Customify\Provider\Capabilities.
  *
- * @package PixelgradeLT
+ * @package Pixelgrade Customify
  * @license GPL-2.0-or-later
  * @since 3.0.0
  */

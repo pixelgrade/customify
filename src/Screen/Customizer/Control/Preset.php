@@ -4,7 +4,7 @@
  *
  * @since   3.0.0
  * @license GPL-2.0-or-later
- * @package PixelgradeLT
+ * @package Pixelgrade Customify
  */
 
 declare ( strict_types=1 );
@@ -17,9 +17,9 @@ namespace Pixelgrade\Customify\Screen\Customizer\Control;
  * @since 3.0.0
  */
 class Preset extends BaseControl {
-	public $type = 'preset';
-	public $choices_type = 'select';
-	public $description = null;
+	public string $type = 'preset';
+	public string $choices_type = 'select';
+	public string $description = '';
 
 	/**
 	 * Render the control's content.
@@ -150,16 +150,16 @@ class Preset extends BaseControl {
 						}
 
 						// Make sure that the defaults are in place
-						$choice_config = wp_parse_args( $choice_config, array(
+						$choice_config = wp_parse_args( $choice_config, [
 							'label'   => '',
-							'preview' => array(),
-						) );
+							'preview' => [],
+						] );
 
 						// Make sure that the preview defaults are in place
-						$choice_config['preview'] = wp_parse_args( $choice_config['preview'], array(
+						$choice_config['preview'] = wp_parse_args( $choice_config['preview'], [
 							'sample_letter'        => 'A',
 							'background_image_url' => plugins_url( 'images/color_palette_image.jpg', PixCustomifyPlugin()->get_file() ),
-						) );
+						] );
 
 						// Determine a (primary) color with fallback for missing options
 						$sm_color = '#777777';
@@ -256,27 +256,27 @@ class Preset extends BaseControl {
 						}
 
 						// Make sure that the defaults are in place
-						$choice_config = wp_parse_args( $choice_config, array(
+						$choice_config = wp_parse_args( $choice_config, [
 							'label'   => '',
-							'preview' => array(),
-						) );
+							'preview' => [],
+						] );
 
 						// Make sure that the preview defaults are in place
-						$choice_config['preview'] = wp_parse_args( $choice_config['preview'], array(
+						$choice_config['preview'] = wp_parse_args( $choice_config['preview'], [
 							'sample_letter'        => 'A',
 							'background_image_url' => plugins_url( 'images/color_palette_image.jpg', PixCustomifyPlugin()->get_file() ),
-						) );
+						] );
 
 						$label = $choice_config['label'];
 
 						if ( empty( $choice_config['options'] ) ) {
-							$choice_config['options'] = array();
+							$choice_config['options'] = [];
 						}
 						$options = $this->convertChoiceOptionsIdsToSettingIds( $choice_config['options'] );
 						$data    = ' data-options=\'' . json_encode( $options ) . '\'';
 
 						if ( empty( $choice_config['fonts_logic'] ) ) {
-							$choice_config['fonts_logic'] = array();
+							$choice_config['fonts_logic'] = [];
 						}
 						$fonts = $this->convertChoiceOptionsIdsToSettingIds( $choice_config['fonts_logic'] );
 						$data  .= ' data-fonts_logic=\'' . json_encode( $fonts ) . '\'';
@@ -307,7 +307,7 @@ class Preset extends BaseControl {
 					<div class="js-customify-preset awesome_presets">
 						<?php
 
-						$google_links = array();
+						$google_links = [];
 
 						foreach ( $this->choices as $choice_value => $choice_config ) {
 							if ( ! isset( $choice_config['options'] ) || ! isset( $choice_config['label'] ) ) {
@@ -457,7 +457,7 @@ class Preset extends BaseControl {
 	 * @return array
 	 */
 	protected function convertChoiceOptionsIdsToSettingIds( $options ) {
-		$settings = array();
+		$settings = [];
 
 		if ( empty( $options ) ) {
 			return $settings;
@@ -474,7 +474,7 @@ class Preset extends BaseControl {
 
 		// Coerce a single string into an array and treat it as a field ID.
 		if ( is_string( $options ) ) {
-			$options = array( $options );
+			$options = [ $options ];
 		}
 
 		foreach ( $options as $option_id => $option_value ) {

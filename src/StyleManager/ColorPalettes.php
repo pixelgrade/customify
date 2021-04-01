@@ -4,7 +4,7 @@
  *
  * @since   3.0.0
  * @license GPL-2.0-or-later
- * @package PixelgradeLT
+ * @package Pixelgrade Customify
  */
 
 declare ( strict_types=1 );
@@ -53,6 +53,7 @@ class ColorPalettes extends AbstractHookProvider {
 		 * Handle the Customizer Style Manager section config.
 		 */
 		$this->add_filter( 'customify_filter_fields', 'add_style_manager_new_section_master_colors_config', 13, 1 );
+		$this->add_filter( 'style_manager_panel_config', 'reorganize_customizer_controls', 10, 2 );
 
 		// This needs to come after the external theme config has been applied
 		$this->add_filter( 'customify_filter_fields', 'maybe_enhance_dark_mode_control', 120, 1 );
@@ -70,6 +71,8 @@ class ColorPalettes extends AbstractHookProvider {
 		$this->add_filter( 'customify_style_manager_get_site_data', 'add_palettes_to_site_data', 10, 1 );
 
 		$this->add_filter( 'language_attributes', 'add_dark_mode_data_attribute', 10, 2 );
+
+		$this->add_action( 'admin_init', 'editor_color_palettes', 20 );
 	}
 
 	/**
@@ -82,6 +85,33 @@ class ColorPalettes extends AbstractHookProvider {
 	public function is_supported(): bool {
 		// For now we will only use the fact that Style Manager is supported.
 		return apply_filters( 'customify_color_palettes_are_supported', is_sm_supported() );
+	}
+
+	/**
+	 * Add the SM Color Palettes to the editor sidebar.
+	 *
+	 * @since 3.0.0
+	 */
+	public function editor_color_palettes() {
+
+		// Bail if Color Palettes are not supported
+		if ( ! $this->is_supported() ) {
+			return;
+		}
+
+		$editor_color_palettes = [];
+
+		if ( ! empty( $editor_color_palettes ) ) {
+			/**
+			 * Custom colors for use in the editor.
+			 *
+			 * @link https://wordpress.org/gutenberg/handbook/reference/theme-support/
+			 */
+			add_theme_support(
+				'editor-color-palette',
+				$editor_color_palettes
+			);
+		}
 	}
 
 	/**
@@ -325,7 +355,7 @@ class ColorPalettes extends AbstractHookProvider {
 				],
 				'sm_coloration_level'           => [
 					'type'         => 'sm_radio',
-					'desc'         => wp_kses( __( 'Adjust <strong>how much color</strong> you want to add to your site. For more control over elements, you can edit them individually.', '__plugin_txtd' ), array( 'strong' => [] ) ),
+					'desc'         => wp_kses( __( 'Adjust <strong>how much color</strong> you want to add to your site. For more control over elements, you can edit them individually.', '__plugin_txtd' ), [ 'strong' => [] ] ),
 					'setting_type' => 'option',
 					'setting_id'   => 'sm_coloration_level',
 					'label'        => esc_html__( 'Coloration Level', '__plugin_txtd' ),
@@ -371,6 +401,101 @@ class ColorPalettes extends AbstractHookProvider {
 			] + $config['sections']['style_manager_section']['options'];
 
 		return $config;
+	}
+
+	/**
+	 * Reorganize the Customizer controls.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @param array $sm_panel_config
+	 * @param array $sm_section_config
+	 *
+	 * @return array
+	 */
+	protected function reorganize_customizer_controls( array $sm_panel_config, array $sm_section_config ): array {
+		// We need to split the fields in the Style Manager section into two: color palettes and fonts.
+		$color_palettes_fields = [
+			'sm_advanced_palette_source',
+
+			'sm_advanced_palette_output',
+			'sm_site_color_variation',
+
+			'sm_text_color_switch_master',
+			'sm_text_color_select_master',
+			'sm_accent_color_switch_master',
+			'sm_accent_color_select_master',
+
+			'sm_current_color_palette',
+			'sm_palettes_description',
+			'sm_filters_description',
+			'sm_customize_description',
+			'sm_color_matrix',
+			'sm_palette_filter',
+			'sm_coloration_level',
+			'sm_color_diversity',
+			'sm_shuffle_colors',
+			'sm_dark_mode',
+			'sm_dark_mode_advanced',
+			'sm_dark_color_switch_slider',
+			'sm_dark_color_select_slider',
+			'sm_dark_color_primary_slider',
+			'sm_dark_color_secondary_slider',
+			'sm_dark_color_tertiary_slider',
+			'sm_colors_dispersion',
+			'sm_colors_focus_point',
+			'sm_color_palette',
+			'sm_color_palette_variation',
+
+			'sm_titles_color_master',
+			'sm_background_color_master',
+			'sm_color_primary',
+			'sm_color_primary_final',
+			'sm_color_secondary',
+			'sm_color_secondary_final',
+			'sm_color_tertiary',
+			'sm_color_tertiary_final',
+			'sm_dark_primary',
+			'sm_dark_primary_final',
+			'sm_dark_secondary',
+			'sm_dark_secondary_final',
+			'sm_dark_tertiary',
+			'sm_dark_tertiary_final',
+			'sm_light_primary',
+			'sm_light_primary_final',
+			'sm_light_secondary',
+			'sm_light_secondary_final',
+			'sm_light_tertiary',
+			'sm_light_tertiary_final',
+			'sm_swap_colors',
+			'sm_swap_dark_light',
+			'sm_swap_colors_dark',
+			'sm_swap_secondary_colors_dark',
+			'sm_advanced_toggle',
+			'sm_color_palettes_spacing_bottom',
+		];
+
+		$color_palettes_section_config = [
+			'title'      => esc_html__( 'Colors', '__plugin_txtd' ),
+			'section_id' => 'sm_color_palettes_section',
+			'priority'   => 10,
+			'options'    => [],
+		];
+		foreach ( $color_palettes_fields as $field_id ) {
+			if ( ! isset( $sm_section_config['options'][ $field_id ] ) ) {
+				continue;
+			}
+
+			if ( empty( $color_palettes_section_config['options'] ) ) {
+				$color_palettes_section_config['options'] = [ $field_id => $sm_section_config['options'][ $field_id ] ];
+			} else {
+				$color_palettes_section_config['options'] = array_merge( $color_palettes_section_config['options'], [ $field_id => $sm_section_config['options'][ $field_id ] ] );
+			}
+		}
+
+		$sm_panel_config['sections']['sm_color_palettes_section'] = $color_palettes_section_config;
+
+		return $sm_panel_config;
 	}
 
 	/**

@@ -4,15 +4,17 @@
  *
  * @since   3.0.0
  * @license GPL-2.0-or-later
- * @package PixelgradeLT
+ * @package Pixelgrade Customify
  */
 
 declare ( strict_types=1 );
 
 namespace Pixelgrade\Customify\Screen;
 
+use Pixelgrade\Customify\Provider\FrontendOutput;
 use Pixelgrade\Customify\Provider\Options;
 use Pixelgrade\Customify\Provider\PluginSettings;
+use Pixelgrade\Customify\StyleManager\Fonts;
 use Pixelgrade\Customify\Vendor\Cedaro\WP\Plugin\AbstractHookProvider;
 use Pixelgrade\Customify\Vendor\Psr\Log\LoggerInterface;
 
@@ -35,9 +37,9 @@ class EditWithBlocks extends AbstractHookProvider {
 	/**
 	 * Get the block namespace CSS selector according to the WP version in use.
 	 *
+	 * @return string
 	 * @global string $wp_version
 	 *
-	 * @return string
 	 */
 	public static function get_block_namespace_selector(): string {
 		global $wp_version;
@@ -58,7 +60,7 @@ class EditWithBlocks extends AbstractHookProvider {
 	public static $root_regex = '/^(body|html).*$/';
 	public static $title_regex = '/^(h1|h1\s+.*|\.single\s*\.entry-title.*|\.entry-title.*|\.page-title.*|\.article__?title.*)$/';
 	/* Regexes based on which we will ignore selectors = do not include them in the selector list for a certain rule. */
-	public static array $excluded_selectors_regex = array(
+	public static array $excluded_selectors_regex = [
 		// We don't want to mess with buttons as we have a high likelihood of messing with the Gutenberg toolbar.
 		'/^\s*button/',
 		'/^\s*\.button/',
@@ -110,7 +112,7 @@ class EditWithBlocks extends AbstractHookProvider {
 		'/wpforms/',
 		'/contact-form/',
 		'/sharedaddy/',
-	);
+	];
 
 	/**
 	 * User messages to display in the WP admin.
@@ -138,6 +140,20 @@ class EditWithBlocks extends AbstractHookProvider {
 	protected PluginSettings $plugin_settings;
 
 	/**
+	 * Style Manager Fonts.
+	 *
+	 * @var Fonts
+	 */
+	protected Fonts $sm_fonts;
+
+	/**
+	 * Frontend output provider.
+	 *
+	 * @var FrontendOutput
+	 */
+	protected FrontendOutput $frontend_output;
+
+	/**
 	 * Logger.
 	 *
 	 * @var LoggerInterface
@@ -151,15 +167,21 @@ class EditWithBlocks extends AbstractHookProvider {
 	 *
 	 * @param Options         $options         Options.
 	 * @param PluginSettings  $plugin_settings Plugin settings.
+	 * @param Fonts           $sm_fonts        Style Manager Fonts.
+	 * @param FrontendOutput  $frontend_output Frontend output.
 	 * @param LoggerInterface $logger          Logger.
 	 */
 	public function __construct(
 		Options $options,
 		PluginSettings $plugin_settings,
+		Fonts $sm_fonts,
+		FrontendOutput $frontend_output,
 		LoggerInterface $logger
 	) {
 		$this->options         = $options;
 		$this->plugin_settings = $plugin_settings;
+		$this->sm_fonts        = $sm_fonts;
+		$this->frontend_output = $frontend_output;
 		$this->logger          = $logger;
 	}
 
@@ -172,8 +194,6 @@ class EditWithBlocks extends AbstractHookProvider {
 		// Styles and scripts when editing.
 		$this->add_action( 'enqueue_block_editor_assets', 'enqueue_style_manager_scripts', 10 );
 		$this->add_action( 'enqueue_block_editor_assets', 'dynamic_styles_scripts', 999 );
-
-		$this->add_action( 'admin_init', 'editor_color_palettes', 20 );
 	}
 
 	/**
@@ -292,21 +312,19 @@ class EditWithBlocks extends AbstractHookProvider {
 			return;
 		}
 
-		require_once( PixCustomifyPlugin()->get_base_path() . 'includes/class-customify-fonts-global.php' );
-
 		$enqueue_parent_handle = $this->get_editor_style_handle();
 		if ( empty( $enqueue_parent_handle ) ) {
 			return;
 		}
 
-		add_filter( 'customify_font_css_selector', array( $this, 'gutenbergify_font_css_selectors' ), 10, 2 );
-		Customify_Fonts_Global::instance()->enqueue_frontend_scripts_styles();
-		wp_add_inline_style( $enqueue_parent_handle, Customify_Fonts_Global::instance()->getFontsDynamicStyle() );
-		remove_filter( 'customify_font_css_selector', array( $this, 'gutenbergify_font_css_selectors' ), 10 );
+		add_filter( 'customify_font_css_selector', [ $this, 'gutenbergify_font_css_selectors' ], 10, 2 );
+		$this->sm_fonts->enqueue_frontend_scripts_styles();
+		wp_add_inline_style( $enqueue_parent_handle, $this->sm_fonts->getFontsDynamicStyle() );
+		remove_filter( 'customify_font_css_selector', [ $this, 'gutenbergify_font_css_selectors' ], 10 );
 
-		add_filter( 'customify_css_selector', array( $this, 'gutenbergify_css_selectors' ), 10, 2 );
-		wp_add_inline_style( $enqueue_parent_handle, PixCustomifyPlugin()->customizer->get_dynamic_style() );
-		remove_filter( 'customify_css_selector', array( $this, 'gutenbergify_css_selectors' ), 10 );
+		add_filter( 'customify_css_selector', [ $this, 'gutenbergify_css_selectors' ], 10, 2 );
+		wp_add_inline_style( $enqueue_parent_handle, $this->frontend_output->get_dynamic_style() );
+		remove_filter( 'customify_css_selector', [ $this, 'gutenbergify_css_selectors' ], 10 );
 	}
 
 	/**
@@ -319,12 +337,12 @@ class EditWithBlocks extends AbstractHookProvider {
 	 *
 	 * @return string
 	 */
-	public function gutenbergify_css_selectors( $selectors, $css_property ): string {
+	public function gutenbergify_css_selectors( string $selectors, array $css_property ): string {
 
 		// Treat the selector(s) as an array.
 		$selectors = $this->maybeExplodeSelectors( $selectors );
 
-		$new_selectors = array();
+		$new_selectors = [];
 		foreach ( $selectors as $selector ) {
 			// Clean up
 			$selector = trim( $selector );
@@ -384,9 +402,9 @@ class EditWithBlocks extends AbstractHookProvider {
 	 *
 	 * @return array
 	 */
-	public function gutenbergify_font_css_selectors( $selectors ): array {
+	public function gutenbergify_font_css_selectors( array $selectors ): array {
 
-		$new_selectors = array();
+		$new_selectors = [];
 		foreach ( $selectors as $selector => $selector_details ) {
 			// If the selector matches the excluded, skip it.
 			if ( $this->preg_match_any( self::$excluded_selectors_regex, $selector ) ) {
@@ -438,9 +456,9 @@ class EditWithBlocks extends AbstractHookProvider {
 	 *
 	 * @return bool Returns true if at least one of the regex matches, false otherwise.
 	 */
-	public function preg_match_any( $regexes, $subject ): bool {
+	public function preg_match_any( $regexes, string $subject ): bool {
 		if ( is_string( $regexes ) ) {
-			$regexes = array( $regexes );
+			$regexes = [ $regexes ];
 		}
 
 		if ( ! is_array( $regexes ) ) {
@@ -472,32 +490,5 @@ class EditWithBlocks extends AbstractHookProvider {
 		}
 
 		return preg_split( '#[\s]*,[\s]*#', $value, - 1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE );
-	}
-
-	/**
-	 * Add the SM Color Palettes to the editor sidebar.
-	 *
-	 * @since 3.0.0
-	 */
-	public function editor_color_palettes() {
-
-		// Bail if Color Palettes are not supported
-		if ( ! Customify_Color_Palettes::instance()->is_supported() ) {
-			return;
-		}
-
-		$editor_color_palettes = array();
-
-		if ( ! empty( $editor_color_palettes ) ) {
-			/**
-			 * Custom colors for use in the editor.
-			 *
-			 * @link https://wordpress.org/gutenberg/handbook/reference/theme-support/
-			 */
-			add_theme_support(
-				'editor-color-palette',
-				$editor_color_palettes
-			);
-		}
 	}
 }

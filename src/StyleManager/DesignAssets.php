@@ -2,75 +2,85 @@
 /**
  * This is the class that handles the overall logic for design assets.
  *
- * @see         https://pixelgrade.com
- * @author      Pixelgrade
- * @since       1.7.4
+ * @since   3.0.0
+ * @license GPL-2.0-or-later
+ * @package Pixelgrade Customify
  */
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
-}
+declare ( strict_types=1 );
 
-if ( ! class_exists( 'Customify_Design_Assets' ) ) {
+namespace Pixelgrade\Customify\StyleManager;
 
-class Customify_Design_Assets {
+use Pixelgrade\Customify\Client\CloudInterface;
+use Pixelgrade\Customify\Vendor\Cedaro\WP\Plugin\AbstractHookProvider;
+use Pixelgrade\Customify\Vendor\Psr\Log\LoggerInterface;
 
-	/**
-	 * Holds the only instance of this class.
-	 * @var null|Customify_Design_Assets
-	 * @access protected
-	 * @since 1.7.4
-	 */
-	protected static $_instance = null;
+/**
+ * Provides the design assets logic.
+ *
+ * @since 3.0.0
+ */
+class DesignAssets extends AbstractHookProvider {
+
+	const CACHE_KEY = 'customify_style_manager_design_assets';
+	const CACHE_TIMESTAMP_KEY = 'customify_style_manager_design_assets_timestamp';
 
 	/**
 	 * The current design assets config.
-	 * @var     array
-	 * @access  public
-	 * @since   1.7.4
+	 * @var     array|null
 	 */
-	protected $design_assets = null;
+	protected ?array $design_assets = null;
 
 	/**
-	 * The cloud API object used to communicate with the cloud.
-	 * @var     Customify_Cloud_Api
-	 * @access  public
-	 * @since   1.7.4
+	 * Cloud client.
+	 *
+	 * @var CloudInterface
 	 */
-	protected $cloud_api = null;
+	protected CloudInterface $cloud_client;
+
+	/**
+	 * Logger.
+	 *
+	 * @var LoggerInterface
+	 */
+	protected LoggerInterface $logger;
 
 	/**
 	 * Constructor.
 	 *
-	 * @since 1.7.4
+	 * @since 3.0.0
+	 *
+	 * @param CloudInterface  $cloud_client Cloud client.
+	 * @param LoggerInterface $logger       Logger.
 	 */
-	private function __construct() {
-		$this->init();
+	public function __construct(
+		CloudInterface $cloud_client,
+		LoggerInterface $logger
+	) {
+		$this->cloud_client = $cloud_client;
+		$this->logger = $logger;
 	}
 
 	/**
-	 * Initialize this module.
+	 * Register hooks.
 	 *
-	 * @since 1.7.4
+	 * @since 3.0.0
 	 */
-	public function init() {
-		/**
-		 * Initialize the Cloud API logic.
-		 */
-		require_once 'class-customify-cloud-api.php';
-		$this->cloud_api = new Customify_Cloud_Api();
+	public function register_hooks() {
+		// Handle various cache invalidations, in a proactive manner.
+		$this->add_action( 'customify_invalidate_all_caches', 'invalidate_cache', 1 );
 	}
 
 	/**
-	 * Get the design assets configuration.
+	 * Get the entire design assets data.
 	 *
-	 * @since 1.7.4
+	 * @since 3.0.0
 	 *
 	 * @param bool $skip_cache Optional. Whether to use the cached config or fetch a new one.
 	 *
 	 * @return array
 	 */
-	public function get( $skip_cache = false ) {
+	public function get( $skip_cache = false ): array {
 		if ( ! is_null( $this->design_assets ) && false === $skip_cache ) {
 			return $this->design_assets;
 		}
@@ -82,7 +92,32 @@ class Customify_Design_Assets {
 			$this->design_assets = $this->maybe_load_theme_config_from_theme_root( $this->design_assets );
 		}
 
-		return apply_filters( 'customify_style_manager_get_design_assets', $this->design_assets );
+		$this->design_assets = apply_filters( 'customify_style_manager_get_design_assets', $this->design_assets );
+		if ( ! is_array( $this->design_assets ) ) {
+			$this->design_assets = [];
+		}
+
+		return $this->design_assets;
+	}
+
+	/**
+	 * Get a certain design assets entry data.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @param string $entry The entry to return the design asset data.
+	 * @param bool $skip_cache Optional. Whether to use the cached config or fetch a new one.
+	 *
+	 * @return array|null The entry data. If the entry is not found, null will be returned.
+	 */
+	public function get_entry( string $entry, $skip_cache = false ): ?array {
+		$this->get( $skip_cache );
+
+		if ( isset( $this->design_assets[ $entry ] ) ) {
+			return $this->design_assets[ $entry ];
+		}
+
+		return null;
 	}
 
 	/**
@@ -90,7 +125,7 @@ class Customify_Design_Assets {
 	 *
 	 * Caches the data for 12 hours. Use local defaults if not available.
 	 *
-	 * @since 1.7.4
+	 * @since 3.0.0
 	 *
 	 * @param bool $skip_cache Optional. Whether to use the cached data or fetch a new one.
 	 *
@@ -98,7 +133,7 @@ class Customify_Design_Assets {
 	 */
 	protected function maybe_fetch( $skip_cache = false ) {
 		// First try and get the cached data
-		$data = get_option( self::get_cache_key() );
+		$data = get_option( self::CACHE_KEY );
 
 		// For performance reasons, we will ONLY fetch remotely when in the WP ADMIN area or via an ADMIN AJAX call, regardless of settings.
 		if ( ! is_admin() ) {
@@ -115,13 +150,13 @@ class Customify_Design_Assets {
 		// Only try to get the expire timestamp if we really need to.
 		if ( true !== $skip_cache && false !== $data ) {
 			// Get the cache data expiration timestamp.
-			$expire_timestamp = get_option( self::get_cache_key() . '_timestamp' );
+			$expire_timestamp = get_option( self::CACHE_TIMESTAMP_KEY );
 		}
 
 		// The data isn't set, is expired or we were instructed to skip the cache; we need to fetch fresh data.
 		if ( true === $skip_cache || false === $data || false === $expire_timestamp || $expire_timestamp < time() ) {
 			// Fetch the design assets from the cloud.
-			$fetched_data = $this->cloud_api->fetch_design_assets();
+			$fetched_data = $this->cloud_client->fetch_design_assets();
 			// Bail in case of failure to retrieve data.
 			// We will return the data already available.
 			if ( false === $fetched_data || null === $fetched_data ) {
@@ -131,38 +166,27 @@ class Customify_Design_Assets {
 			$data = $fetched_data;
 
 			// Cache the data in an option for 6 hours
-			update_option( self::get_cache_key(), $data, true );
-			update_option( self::get_cache_key() . '_timestamp', time() + 6 * HOUR_IN_SECONDS, true );
+			update_option( self::CACHE_KEY, $data, true );
+			update_option( self::CACHE_TIMESTAMP_KEY, time() + 6 * HOUR_IN_SECONDS, true );
 		}
 
 		return apply_filters( 'customify_style_manager_maybe_fetch_design_assets', $data );
 	}
 
-	/**
-	 * Get the design assets cache key.
-	 *
-	 * @since 1.7.4
-	 *
-	 * @return string
-	 */
-	private static function get_cache_key() {
-		return 'customify_style_manager_design_assets';
-	}
-
-	public static function invalidate_cache() {
-		update_option( self::get_cache_key() . '_timestamp' , time() - 24 * HOUR_IN_SECONDS, true );
+	protected static function invalidate_cache() {
+		update_option( self::CACHE_TIMESTAMP_KEY , time() - 24 * HOUR_IN_SECONDS, true );
 	}
 
 	/**
 	 * Include the customify "external" config file in the theme root and overwrite the existing theme configs.
 	 *
-	 * @since 1.7.4
+	 * @since 3.0.0
 	 *
 	 * @param array $design_assets
 	 *
 	 * @return array
 	 */
-	protected function maybe_load_theme_config_from_theme_root( $design_assets ) {
+	protected function maybe_load_theme_config_from_theme_root( array $design_assets ): array {
 		$file_name = 'customify_theme_root.php';
 
 		// First gather details about the current (parent) theme.
@@ -182,16 +206,17 @@ class Customify_Design_Assets {
 
 		if ( ! isset( $config ) || ! is_array( $config ) || empty( $config['sections'] ) ) {
 			// Alert the developers that things are not alright.
-			_doing_it_wrong( __METHOD__, 'The Customify theme root config is not good - the `sections` entry is missing. Please check it! We will not apply it.', null );
+			_doing_it_wrong( __METHOD__, 'The Customify theme root config is not good - the `sections` entry is missing. Please check it! For now, we will ignore it.', null );
 
 			return $design_assets;
 		}
 
 		// Construct the pseudo-external theme config.
+
 		// Start with a clean slate.
 		$design_assets['theme_configs'] = [];
 
-		$design_assets['theme_configs']['theme_root'] = array(
+		$design_assets['theme_configs']['theme_root'] = [
 			'id'            => 1,
 			'name'          => $theme->get( 'Name' ),
 			'slug'          => $theme->get_stylesheet(),
@@ -201,53 +226,8 @@ class Customify_Design_Assets {
 			'created'       => date('Y-m-d H:i:s'),
 			'last_modified' => date('Y-m-d H:i:s'),
 			'hashid'        => 'theme_root',
-		);
+		];
 
 		return $design_assets;
 	}
-
-	/**
-	 * Main Customify_Design_Assets Instance
-	 *
-	 * Ensures only one instance of Customify_Design_Assets is loaded or can be loaded.
-	 *
-	 * @since  1.7.4
-	 * @static
-	 *
-	 * @return Customify_Design_Assets Main Customify_Design_Assets instance
-	 */
-	public static function instance() {
-
-		if ( is_null( self::$_instance ) ) {
-			self::$_instance = new self();
-		}
-
-		return self::$_instance;
-	}
-
-	/**
-	 * Cloning is forbidden.
-	 *
-	 * @since 1.7.4
-	 */
-	public function __clone() {
-
-		_doing_it_wrong( __FUNCTION__,esc_html__( 'You should not do that!', '__plugin_txtd' ), null );
-	}
-
-	/**
-	 * Unserializing instances of this class is forbidden.
-	 *
-	 * @since 1.7.4
-	 */
-	public function __wakeup() {
-
-		_doing_it_wrong( __FUNCTION__, esc_html__( 'You should not do that!', '__plugin_txtd' ),  null );
-	}
-}
-
-// Handle various cache invalidations, in a proactive manner.
-// We need to do the hooking here because by the time the class might be instantiated it might be too late.
-add_action( 'customify_invalidate_all_caches', array( 'Customify_Design_Assets', 'invalidate_cache' ), 1 );
-
 }

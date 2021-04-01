@@ -4,7 +4,7 @@
  *
  * @since   3.0.0
  * @license GPL-2.0-or-later
- * @package PixelgradeLT
+ * @package Pixelgrade Customify
  */
 
 declare ( strict_types=1 );
@@ -15,7 +15,7 @@ namespace Pixelgrade\Customify\Utils;
  * Array Helper class.
  *
  * @since   3.0.0
- * @package PixelgradeLT
+ * @package Pixelgrade Customify
  */
 class ArrayHelpers {
 	/**
@@ -28,12 +28,12 @@ class ArrayHelpers {
 	 *
 	 * @return array
 	 */
-	public static function insertBeforeKey( $array, $key, $insert ) {
+	public static function insertBeforeKey( array $array, string $key, $insert ): array {
 		$keys  = array_keys( $array );
 		$index = array_search( $key, $keys );
 		$pos   = ( ( false === $index ) ? 0 : $index );
 		if ( ! is_array( $insert ) ) {
-			$insert = array( $insert );
+			$insert = [ $insert ];
 		}
 
 		return array_merge( array_slice( $array, 0, $pos ), $insert, array_slice( $array, $pos ) );
@@ -49,12 +49,12 @@ class ArrayHelpers {
 	 *
 	 * @return array
 	 */
-	public static function insertAfterKey( $array, $key, $insert ) {
+	public static function insertAfterKey( array $array, string $key, $insert ): array {
 		$keys  = array_keys( $array );
 		$index = array_search( $key, $keys );
 		$pos   = ( ( false === $index ) ? count( $array ) : $index + 1 );
 		if ( ! is_array( $insert ) ) {
-			$insert = array( $insert );
+			$insert = [ $insert ];
 		}
 
 		return array_merge( array_slice( $array, 0, $pos ), $insert, array_slice( $array, $pos ) );
@@ -73,7 +73,7 @@ class ArrayHelpers {
 	 *
 	 * @return mixed|false
 	 */
-	public static function findSubarrayByKeyValue( $array, $key, $value ) {
+	public static function findSubarrayByKeyValue( array $array, string $key, $value ) {
 		// Bail if it's not array
 		if ( ! is_array( $array ) ) {
 			return false;
@@ -97,7 +97,7 @@ class ArrayHelpers {
 	 *
 	 * @return int|string|false
 	 */
-	public static function objArraySearch( $array, $property, $value ) {
+	public static function objArraySearch( array $array, string $property, $value ) {
 		foreach ( $array as $key => $array_inf ) {
 			if ( property_exists( $array_inf, $property ) && $array_inf->{$property} == $value ) {
 				return $key;
@@ -117,7 +117,7 @@ class ArrayHelpers {
 	 *
 	 * @return bool|array
 	 */
-	public static function arrayDiffAssocRecursive( $array1, $array2 ) {
+	public static function arrayDiffAssocRecursive( array $array1, array $array2 ) {
 		foreach ( $array1 as $key => $value ) {
 			if ( is_array( $value ) ) {
 				if ( ! isset( $array2[ $key ] ) ) {
@@ -146,7 +146,7 @@ class ArrayHelpers {
 	 *
 	 * @return bool|int|string The first key whose value matched the partial needle. False on failure or invalid input.
 	 */
-	public static function strArraySearch( $needle, $haystack ) {
+	public static function strArraySearch( string $needle, array $haystack ) {
 		if ( empty( $haystack ) ) {
 			return false;
 		}
@@ -238,13 +238,13 @@ class ArrayHelpers {
 	/**
 	 * Moves an item from one position in an array to another position in the array.
 	 *
-	 * @param $array
-	 * @param $old_index
-	 * @param $new_index
+	 * @param array $array
+	 * @param       $old_index
+	 * @param       $new_index
 	 *
-	 * @return mixed
+	 * @return array
 	 */
-	public static function reorder( $array, $old_index, $new_index ) {
+	public static function reorder( array $array, $old_index, $new_index ): array {
 		array_splice(
 			$array,
 			$new_index,
@@ -278,15 +278,15 @@ class ArrayHelpers {
 	 *
 	 * @author Mark Roduner <mark.roduner@gmail.com>
 	 */
-	public static function array_merge_recursive_distinct() {
+	public static function array_merge_recursive_distinct(): array {
 		$arrays = func_get_args();
 		$base   = array_shift( $arrays );
 		if ( ! is_array( $base ) ) {
-			$base = empty( $base ) ? array() : array( $base );
+			$base = empty( $base ) ? [] : [ $base ];
 		}
 		foreach ( $arrays as $append ) {
 			if ( ! is_array( $append ) ) {
-				$append = array( $append );
+				$append = [ $append ];
 			}
 			foreach ( $append as $key => $value ) {
 				if ( ! array_key_exists( $key, $base ) && ! is_numeric( $key ) ) {
@@ -295,7 +295,7 @@ class ArrayHelpers {
 				}
 				if ( is_array( $value ) || ( array_key_exists( $key, $base ) && is_array( $base[ $key ] ) ) ) {
 					if ( ! isset( $base[ $key ] ) ) {
-						$base[ $key ] = array();
+						$base[ $key ] = [];
 					}
 					$base[ $key ] = self::array_merge_recursive_distinct( $base[ $key ], $append[ $key ] );
 				} else if ( is_numeric( $key ) ) {
@@ -320,12 +320,12 @@ class ArrayHelpers {
 	 *
 	 * @return array
 	 */
-	public static function array_orderby() {
+	public static function array_orderby(): array {
 		$args = func_get_args();
 		$data = array_shift( $args );
 		foreach ( $args as $n => $field ) {
 			if ( is_string( $field ) ) {
-				$tmp = array();
+				$tmp = [];
 				foreach ( $data as $key => $row ) {
 					$tmp[ $key ] = $row[ $field ];
 				}

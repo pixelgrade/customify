@@ -1,7 +1,7 @@
 import $ from 'jquery';
 import _ from 'lodash';
 
-// Mirror logic of server-side Customify_Fonts_Global::getCSSValue()
+// Mirror logic of server-side Utils\Fonts::getCSSValue()
 export const getFontFieldCSSValue = ( settingID, value ) => {
 
   const CSSValue = {}
@@ -134,7 +134,7 @@ export const getFontFieldCSSValue = ( settingID, value ) => {
 }
 
 
-// Mirror logic of server-side Customify_Fonts_Global::getFontStyle()
+// Mirror logic of server-side Utils\Fonts::getFontStyle()
 export const getFontFieldCSSCode = ( settingID, cssValue, value ) => {
   const fontConfig = customify.config.settings[settingID];
   const prefix = typeof fontConfig.properties_prefix === 'undefined' ? '' : fontConfig.properties_prefix
@@ -212,7 +212,7 @@ export const getFontFieldCSSCode = ( settingID, cssValue, value ) => {
   return output
 }
 
-// This is a mirror logic of the server-side Customify_Fonts_Global::getSubFieldUnit()
+// This is a mirror logic of the server-side Utils\Fonts::getSubFieldUnit()
 export const getFieldUnit = ( settingID, field ) => {
   if ( typeof customify.config.settings[settingID] === 'undefined' || typeof customify.config.settings[settingID].fields[field] === 'undefined' ) {
     // These fields don't have an unit, by default.
@@ -253,7 +253,7 @@ export const getFieldUnit = ( settingID, field ) => {
   return 'px'
 }
 
-// Mirror logic of server-side Customify_Fonts_Global::getCSSProperties()
+// Mirror logic of server-side Utils\Fonts::getCSSProperties()
 const getFontFieldCSSProperties = function (cssValue, allowedProperties = false, prefix = '') {
   let output = ''
 
@@ -274,7 +274,7 @@ const getFontFieldCSSProperties = function (cssValue, allowedProperties = false,
   return output
 }
 
-// Mirror logic of server-side Customify_Fonts_Global::isCSSPropertyAllowed()
+// Mirror logic of server-side Utils\Fonts::isCSSPropertyAllowed()
 const isCSSPropertyAllowed = function (property, allowedProperties = false) {
   // Empty properties are not allowed.
   if (_.isEmpty(property)) {
@@ -434,7 +434,7 @@ export const maybeLoadFontFamily = function (font, settingID) {
   }
 }
 
-// This is a mirror logic of the server-side Customify_Fonts_Global::getFontFamilyFallbackStack()
+// This is a mirror logic of the server-side Utils\Fonts::getFontFamilyFallbackStack()
 const getFontFamilyFallbackStack = function (fontFamily) {
   let fallbackStack = '';
 
@@ -467,7 +467,7 @@ const getFontFamilyFallbackStack = function (fontFamily) {
   return fallbackStack
 }
 
-// Mirror logic of server-side Customify_Fonts_Global::sanitizeFontFamilyCSSValue()
+// Mirror logic of server-side Utils\Fonts::sanitizeFontFamilyCSSValue()
 const sanitizeFontFamilyCSSValue = function (value) {
   // Since we might get a stack, attempt to treat is a comma-delimited list.
   let fontFamilies = maybeExplodeList(value)

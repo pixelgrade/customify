@@ -3,7 +3,7 @@ import $ from "jquery";
 /**
  * Given a value we will standardize it to an array with 'value' and 'unit'.
  *
- * This is a mirror logic of the server-side one from Customify_Fonts_Global::standardizeNumericalValue()
+ * This is a mirror logic of the server-side one from Utils\Fonts::standardizeNumericalValue()
  *
  * @param value
  * @param input Optional. The input this value was extracted from

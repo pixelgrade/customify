@@ -4,7 +4,7 @@
  *
  * @since   3.0.0
  * @license GPL-2.0-or-later
- * @package PixelgradeLT
+ * @package Pixelgrade Customify
  */
 
 declare ( strict_types=1 );
@@ -17,15 +17,15 @@ namespace Pixelgrade\Customify\Screen\Customizer\Control;
  * @since 3.0.0
  */
 class Background extends BaseControl {
-	public $type = 'custom_background';
+	public string $type = 'custom_background';
 
-	public $value = array();
+	public array $value = [];
 
-	public $field = array(
+	public array $field = [
 		'class' => '',
-	);
+	];
 
-	public $field_defaults = array(
+	public array $field_defaults = [
 		'background-color'      => true,
 		'background-repeat'     => true,
 		'background-attachment' => true,
@@ -39,7 +39,7 @@ class Background extends BaseControl {
 		'preview'               => true,
 		'preview_height'        => '200px',
 		'transparent'           => true,
-	);
+	];
 
 	/**
 	 * Render the control's content.
@@ -60,13 +60,13 @@ class Background extends BaseControl {
 			}
 
 			if ( ! is_array( $this->value ) || ! isset( $this->value['media'] ) || empty( $this->value['media'] ) ) {
-				$this->value          = array();
-				$media_array          = array(
+				$this->value          = [];
+				$media_array          = [
 					'id'        => '',
 					'height'    => '',
 					'width'     => '',
 					'thumbnail' => '',
-				);
+				];
 				$this->value['media'] = $media_array;
 			}
 
@@ -154,13 +154,13 @@ class Background extends BaseControl {
 		}
 
 		if ( $this->field['background-repeat'] === true ) {
-			$array = array(
+			$array = [
 				'no-repeat' => 'No Repeat',
 				'repeat'    => 'Repeat All',
 				'repeat-x'  => 'Repeat Horizontally',
 				'repeat-y'  => 'Repeat Vertically',
 				'inherit'   => 'Inherit',
-			);
+			];
 
 			if ( ! isset( $this->value['background-repeat'] ) ) {
 				$this->value['background-repeat'] = '';
@@ -179,12 +179,12 @@ class Background extends BaseControl {
 		}
 
 		if ( $this->field['background-clip'] === true ) {
-			$array = array(
+			$array = [
 				'inherit'     => 'Inherit',
 				'border-box'  => 'Border Box',
 				'content-box' => 'Content Box',
 				'padding-box' => 'Padding Box',
-			);
+			];
 
 			if ( ! isset( $this->value['background-clip'] ) ) {
 				$this->value['background-clip'] = '';
@@ -203,12 +203,12 @@ class Background extends BaseControl {
 		}
 
 		if ( $this->field['background-origin'] === true ) {
-			$array = array(
+			$array = [
 				'inherit'     => 'Inherit',
 				'border-box'  => 'Border Box',
 				'content-box' => 'Content Box',
 				'padding-box' => 'Padding Box',
-			);
+			];
 
 			if ( ! isset( $this->value['background-origin'] ) ) {
 				$this->value['background-origin'] = '';
@@ -227,11 +227,11 @@ class Background extends BaseControl {
 		}
 
 		if ( $this->field['background-size'] === true ) {
-			$array = array(
+			$array = [
 				'inherit' => 'Inherit',
 				'cover'   => 'Cover',
 				'contain' => 'Contain',
-			);
+			];
 
 			if ( ! isset( $this->value['background-size'] ) ) {
 				$this->value['background-size'] = '';
@@ -250,11 +250,11 @@ class Background extends BaseControl {
 		}
 
 		if ( $this->field['background-attachment'] === true ) {
-			$array = array(
+			$array = [
 				'fixed'   => 'Fixed',
 				'scroll'  => 'Scroll',
 				'inherit' => 'Inherit',
-			);
+			];
 
 			if ( ! isset( $this->value['background-attachment'] ) ) {
 				$this->value['background-attachment'] = '';
@@ -269,7 +269,7 @@ class Background extends BaseControl {
 		}
 
 		if ( $this->field['background-position'] === true ) {
-			$array = array(
+			$array = [
 				'left top'      => 'Left Top',
 				'left center'   => 'Left center',
 				'left bottom'   => 'Left Bottom',
@@ -279,7 +279,7 @@ class Background extends BaseControl {
 				'right top'     => 'Right Top',
 				'right center'  => 'Right center',
 				'right bottom'  => 'Right Bottom',
-			);
+			];
 
 			if ( ! isset( $this->value['background-position'] ) ) {
 				$this->value['background-position'] = '';

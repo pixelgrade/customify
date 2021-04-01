@@ -4,7 +4,7 @@
  *
  * @since   3.0.0
  * @license GPL-2.0-or-later
- * @package PixelgradeLT
+ * @package Pixelgrade Customify
  */
 
 declare ( strict_types=1 );
@@ -17,9 +17,9 @@ namespace Pixelgrade\Customify\Screen\Customizer\Control;
  * @since 3.0.0
  */
 class AceEditor extends BaseControl {
-	public $type = 'ace_editor';
+	public string $type = 'ace_editor';
 
-	public $editor_type = 'editor_type';
+	public string $editor_type = 'editor_type';
 
 	public function render_content() { ?>
 		<label>

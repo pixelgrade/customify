@@ -4,7 +4,7 @@
  *
  * @since   3.0.0
  * @license GPL-2.0-or-later
- * @package PixelgradeLT
+ * @package Pixelgrade Customify
  */
 
 declare ( strict_types=1 );
@@ -14,6 +14,7 @@ namespace Pixelgrade\Customify\Screen;
 use Pixelgrade\Customify\Provider\Options;
 use Pixelgrade\Customify\Provider\PluginSettings;
 use Pixelgrade\Customify\Screen\Customizer\Control\Button;
+use Pixelgrade\Customify\StyleManager\Fonts;
 use Pixelgrade\Customify\Utils\ScriptsEnqueue;
 use Pixelgrade\Customify\Vendor\Cedaro\WP\Plugin\AbstractHookProvider;
 use Pixelgrade\Customify\Vendor\Psr\Log\LoggerInterface;
@@ -42,6 +43,13 @@ class Customizer extends AbstractHookProvider {
 	protected PluginSettings $plugin_settings;
 
 	/**
+	 * Style Manager Fonts.
+	 *
+	 * @var Fonts
+	 */
+	protected Fonts $sm_fonts;
+
+	/**
 	 * Logger.
 	 *
 	 * @var LoggerInterface
@@ -55,15 +63,18 @@ class Customizer extends AbstractHookProvider {
 	 *
 	 * @param Options         $options         Options.
 	 * @param PluginSettings  $plugin_settings Plugin settings.
+	 * @param Fonts           $sm_fonts        Style Manager Fonts.
 	 * @param LoggerInterface $logger          Logger.
 	 */
 	public function __construct(
 		Options $options,
 		PluginSettings $plugin_settings,
+		Fonts $sm_fonts,
 		LoggerInterface $logger
 	) {
 		$this->options         = $options;
 		$this->plugin_settings = $plugin_settings;
+		$this->sm_fonts        = $sm_fonts;
 		$this->logger          = $logger;
 	}
 
@@ -74,7 +85,7 @@ class Customizer extends AbstractHookProvider {
 	 */
 	public function register_hooks() {
 		// We will initialize the Customizer logic after the plugin has finished with it's configuration (at priority 15).
-		add_action( 'init', array( $this, 'setup' ), 15 );
+		add_action( 'init', [ $this, 'setup' ], 15 );
 	}
 
 	/**
@@ -292,13 +303,13 @@ class Customizer extends AbstractHookProvider {
 						$panel_id = $options_name . '[' . $panel_id . ']';
 					}
 
-					$panel_args = array(
+					$panel_args = [
 						'priority'                 => 10,
 						'capability'               => 'edit_theme_options',
 						'title'                    => esc_html__( 'Panel title is required', '__plugin_txtd' ),
 						'description'              => esc_html__( 'Description of what this panel does.', '__plugin_txtd' ),
 						'auto_expand_sole_section' => false,
-					);
+					];
 
 					if ( ! empty( $panel_config['priority'] ) ) {
 						$panel_args['priority'] = $panel_config['priority'];
@@ -346,19 +357,19 @@ class Customizer extends AbstractHookProvider {
 		// Handle development helper buttons.
 		if ( $this->plugin_settings->get( 'enable_reset_buttons' ) ) {
 			// create a toolbar section which will be present all the time
-			$reset_section_settings = array(
+			$reset_section_settings = [
 				'title'      => esc_html__( 'Customify Toolbox', '__plugin_txtd' ),
 				'capability' => 'manage_options',
 				'priority'   => 999999999,
-				'options'    => array(
-					'reset_all_button' => array(
+				'options'    => [
+					'reset_all_button' => [
 						'type'   => 'button',
 						'label'  => esc_html__( 'Reset Customify', '__plugin_txtd' ),
 						'action' => 'reset_customify',
 						'value'  => 'Reset',
-					),
-				),
-			);
+					],
+				],
+			];
 
 			$wp_customize->add_section(
 				'customify_toolbar',
@@ -367,17 +378,17 @@ class Customizer extends AbstractHookProvider {
 
 			$wp_customize->add_setting(
 				'reset_customify',
-				array()
+				[]
 			);
 			$wp_customize->add_control( new Button(
 				$wp_customize,
 				'reset_customify',
-				array(
+				[
 					'label'    => esc_html__( 'Reset All Customify Options to Default', '__plugin_txtd' ),
 					'section'  => 'customify_toolbar',
 					'settings' => 'reset_customify',
 					'action'   => 'reset_customify',
-				)
+				]
 			) );
 		}
 
@@ -406,7 +417,7 @@ class Customizer extends AbstractHookProvider {
 		// Add the new section to the Customizer, but only if it is not already added.
 		if ( ! $wp_customize->get_section( $section_id ) ) {
 			// Merge the section settings with the defaults
-			$section_args = wp_parse_args( $section_config, array(
+			$section_args = wp_parse_args( $section_config, [
 				'priority'           => 10,
 				'panel'              => $panel_id,
 				'capability'         => 'edit_theme_options',
@@ -415,7 +426,7 @@ class Customizer extends AbstractHookProvider {
 				'description'        => '',
 				'type'               => 'default',
 				'description_hidden' => false,
-			) );
+			] );
 
 			// Only add the section if it is not of type `hidden`
 			if ( 'hidden' !== $section_args['type'] ) {
@@ -443,10 +454,10 @@ class Customizer extends AbstractHookProvider {
 			// @todo Maybe we should ensure that the connected_fields configs passed here follow the same format and logic as the ones in ::customize_pane_settings_additional_data() thus maybe having the data in the same place.
 
 			// Filter some settings that have purely visual purpose.
-			if ( ! empty( $option_config['type'] ) && ! in_array( $option_config['type'], array(
+			if ( ! empty( $option_config['type'] ) && ! in_array( $option_config['type'], [
 					'html',
 					'button',
-				) ) ) {
+				] ) ) {
 				$this->localized['config']['settings'][ $setting_id ] = $option_config;
 			}
 
@@ -477,18 +488,18 @@ class Customizer extends AbstractHookProvider {
 
 		$add_control = true;
 		// defaults
-		$setting_args = array(
+		$setting_args = [
 			'type'       => 'theme_mod',
 			'default'    => '',
 			'capability' => 'edit_theme_options',
 			'transport'  => 'refresh',
-		);
-		$control_args = array(
+		];
+		$control_args = [
 			'priority' => 10,
 			'label'    => '',
 			'section'  => $section_id,
 			'settings' => $setting_id,
-		);
+		];
 
 		// sanitize settings
 		if ( ! empty( $field_config['live'] ) || $field_config['type'] === 'font' ) {
@@ -516,7 +527,7 @@ class Customizer extends AbstractHookProvider {
 		if ( ! empty( $field_config['sanitize_callback'] ) && is_callable( $field_config['sanitize_callback'] ) ) {
 			$setting_args['sanitize_callback'] = $field_config['sanitize_callback'];
 		} elseif ( 'checkbox' === $field_config['type'] ) {
-			$setting_args['sanitize_callback'] = array( $this, 'setting_sanitize_checkbox' );
+			$setting_args['sanitize_callback'] = [ $this, 'setting_sanitize_checkbox' ];
 		}
 
 		// Add the setting.
@@ -550,7 +561,7 @@ class Customizer extends AbstractHookProvider {
 		$control_class_name = __NAMESPACE__ . '\Customizer\Control\Text';
 
 		// If is a standard wp field type call it here and skip the rest.
-		if ( in_array( $field_config['type'], array(
+		if ( in_array( $field_config['type'], [
 			'checkbox',
 			'dropdown-pages',
 			'url',
@@ -559,20 +570,20 @@ class Customizer extends AbstractHookProvider {
 			'datetime',
 			'week',
 			'search',
-		) ) ) {
+		] ) ) {
 			$wp_customize->add_control( $setting_id . '_control', $control_args );
 
 			return;
-		} elseif ( in_array( $field_config['type'], array(
+		} elseif ( in_array( $field_config['type'], [
 				'radio',
 				'select',
-			) ) && ! empty( $field_config['choices'] )
+			] ) && ! empty( $field_config['choices'] )
 		) {
 			$control_args['choices'] = $field_config['choices'];
 			$wp_customize->add_control( $setting_id . '_control', $control_args );
 
 			return;
-		} elseif ( in_array( $field_config['type'], array( 'range' ) ) && ! empty( $field_config['input_attrs'] ) ) {
+		} elseif ( in_array( $field_config['type'], [ 'range' ] ) && ! empty( $field_config['input_attrs'] ) ) {
 
 			$control_args['input_attrs'] = $field_config['input_attrs'];
 
@@ -688,8 +699,11 @@ class Customizer extends AbstractHookProvider {
 				if ( isset( $field_config['fields'] ) ) {
 					$control_args['fields'] = $field_config['fields'];
 				} else {
-					$control_args['fields'] = array();
+					$control_args['fields'] = [];
 				}
+
+				// We need to pass the Style Manager Fonts service to the control so it can fetch font details.
+				$control_args['sm_fonts_service'] = $this->sm_fonts;
 
 				break;
 
@@ -889,9 +903,9 @@ class Customizer extends AbstractHookProvider {
 				// @todo Right now we only handle the connected_fields key - make this more dynamic by adding the keys that are not returned by WP_Customize_Setting->json()
 				if ( ! empty( $customizer_settings[ $setting_id ] ) && ! empty( $option_config['connected_fields'] ) ) {
 					// Pass through all the connected fields and make sure the id is in the final format
-					$connected_fields = array();
+					$connected_fields = [];
 					foreach ( $option_config['connected_fields'] as $key => $connected_field_config ) {
-						$connected_field_data = array();
+						$connected_field_data = [];
 
 						if ( is_string( $connected_field_config ) ) {
 							$connected_field_id = $connected_field_config;
@@ -960,7 +974,7 @@ class Customizer extends AbstractHookProvider {
 		if ( ! empty( $customizer_config['remove_panels'] ) ) {
 			// Standardize it.
 			if ( is_string( $customizer_config['remove_panels'] ) ) {
-				$customizer_config['remove_panels'] = array( $customizer_config['remove_panels'] );
+				$customizer_config['remove_panels'] = [ $customizer_config['remove_panels'] ];
 			}
 
 			foreach ( $customizer_config['remove_panels'] as $panel_id ) {
@@ -996,7 +1010,7 @@ class Customizer extends AbstractHookProvider {
 		if ( ! empty( $customizer_config['remove_sections'] ) ) {
 			// Standardize it.
 			if ( is_string( $customizer_config['remove_sections'] ) ) {
-				$customizer_config['remove_sections'] = array( $customizer_config['remove_sections'] );
+				$customizer_config['remove_sections'] = [ $customizer_config['remove_sections'] ];
 			}
 
 			foreach ( $customizer_config['remove_sections'] as $section_id ) {
@@ -1042,7 +1056,7 @@ class Customizer extends AbstractHookProvider {
 		if ( ! empty( $customizer_config['remove_settings'] ) ) {
 			// Standardize it.
 			if ( is_string( $customizer_config['remove_settings'] ) ) {
-				$customizer_config['remove_settings'] = array( $customizer_config['remove_settings'] );
+				$customizer_config['remove_settings'] = [ $customizer_config['remove_settings'] ];
 			}
 
 			foreach ( $customizer_config['remove_settings'] as $setting_id ) {
@@ -1078,7 +1092,7 @@ class Customizer extends AbstractHookProvider {
 		if ( ! empty( $customizer_config['remove_controls'] ) ) {
 			// Standardize it.
 			if ( is_string( $customizer_config['remove_controls'] ) ) {
-				$customizer_config['remove_controls'] = array( $customizer_config['remove_controls'] );
+				$customizer_config['remove_controls'] = [ $customizer_config['remove_controls'] ];
 			}
 
 			foreach ( $customizer_config['remove_controls'] as $control_id ) {
@@ -1108,28 +1122,6 @@ class Customizer extends AbstractHookProvider {
 					$control->$prop_name = $prop_value;
 				}
 			}
-		}
-	}
-
-
-	public function get_fields_by_key( $fields_config, $key, $value, &$results, $input_key = 0 ) {
-		if ( ! is_array( $fields_config ) ) {
-			return;
-		}
-
-		if ( isset( $fields_config[ $key ] ) && $fields_config[ $key ] == $value ) {
-			$results[ $input_key ] = $fields_config;
-
-			$default = null;
-			if ( isset( $fields_config['default'] ) ) {
-				$default = $fields_config['default'];
-			}
-
-			$results[ $input_key ]['value'] = $this->options->get( $input_key, $default );
-		}
-
-		foreach ( $fields_config as $i => $subarray ) {
-			$this->get_fields_by_key( $subarray, $key, $value, $results, $i );
 		}
 	}
 

@@ -4,7 +4,7 @@
  *
  * @since   3.0.0
  * @license GPL-2.0-or-later
- * @package PixelgradeLT
+ * @package Pixelgrade Customify
  */
 
 declare ( strict_types=1 );
@@ -503,10 +503,10 @@ class Options extends AbstractHookProvider {
 
 		// The data isn't set, is expired or we were instructed to skip the cache; we need to regenerate the config.
 		if ( true === $skip_cache || false === $data || false === $expire_timestamp || $expire_timestamp < time() ) {
-			$options_minimal_details = array();
-			$options_extra_details   = array();
+			$options_minimal_details = [];
+			$options_extra_details   = [];
 
-			$minimal_detail_keys = array(
+			$minimal_detail_keys = [
 				'type',
 				'setting_type',
 				'setting_id',
@@ -517,7 +517,7 @@ class Options extends AbstractHookProvider {
 				'selector',
 				'callback',
 				'active_callback',
-			);
+			];
 
 			$customizer_config = $this->get_customizer_config();
 

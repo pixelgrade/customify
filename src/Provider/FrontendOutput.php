@@ -4,7 +4,7 @@
  *
  * @since   3.0.0
  * @license GPL-2.0-or-later
- * @package PixelgradeLT
+ * @package Pixelgrade Customify
  */
 
 declare ( strict_types=1 );
@@ -115,7 +115,7 @@ class FrontendOutput extends AbstractHookProvider {
 	 */
 	public function register_hooks() {
 		// We will initialize the Customizer logic after the plugin has finished with it's configuration (at priority 15).
-		add_action( 'init', array( $this, 'setup' ), 15 );
+		add_action( 'init', [ $this, 'setup' ], 15 );
 	}
 
 	/**
@@ -182,7 +182,7 @@ class FrontendOutput extends AbstractHookProvider {
 	 *
 	 * @return mixed|void|null
 	 */
-	protected function get_dynamic_style() {
+	public function get_dynamic_style() {
 		$custom_css = '';
 
 		foreach ( $this->options->get_details_all( true ) as $option_id => $option_details ) {
@@ -245,10 +245,10 @@ class FrontendOutput extends AbstractHookProvider {
 		foreach ( $option_details['css'] as $css_property ) {
 
 			if ( isset( $css_property['media'] ) && ! empty( $css_property['media'] ) ) {
-				$this->media_queries[ $css_property['media'] ][ $option_id ] = array(
+				$this->media_queries[ $css_property['media'] ][ $option_id ] = [
 					'property' => $css_property,
 					'value'    => $option_details['value'],
-				);
+				];
 				continue;
 			}
 
@@ -332,10 +332,10 @@ class FrontendOutput extends AbstractHookProvider {
 			$value = call_user_func( $filter );
 		} elseif ( is_array( $filter ) && ! empty( $filter['callback'] ) && is_callable( $filter['callback'] ) ) {
 			if ( empty( $filter['args'] ) ) {
-				$filter['args'] = array();
+				$filter['args'] = [];
 			}
 			// The value is always the first argument.
-			$filter['args'] = array( $value ) + $filter['args'];
+			$filter['args'] = [ $value ] + $filter['args'];
 
 			$value = call_user_func_array( $filter['callback'], $filter['args'] );
 		}

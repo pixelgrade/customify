@@ -16,192 +16,192 @@ if ( ! function_exists('add_customify_base_options') ) {
 
 		$config['opt-name'] = 'customify_defaults';
 
-		$config['sections'] = array(
+		$config['sections'] = [
 			/**
 			 * Presets - This section will handle other options
 			 */
-			'presets_section' => array(
+			'presets_section' => [
 				'title'    => esc_html__( 'Style Presets', '__plugin_txtd' ),
-				'options' => array(
-					'theme_style'   => array(
+				'options' => [
+					'theme_style'   => [
 						'type'      => 'preset',
 						'label'     => esc_html__( 'Select a style:', '__plugin_txtd' ),
 						'desc' => esc_html__( 'Conveniently change the design of your site with built-in style presets. Easy as pie.', '__plugin_txtd' ),
 						'default'   => 'royal',
 						'choices_type' => 'awesome',
-						'choices'  => array(
-							'royal' => array(
+						'choices'  => [
+							'royal' => [
 								'label' => esc_html__( 'Royal', '__plugin_txtd' ),
-								'preview' => array(
+								'preview' => [
 									'color-text' => '#ffffff',
 									'background-card' => '#615375',
 									'background-label' => '#46414c',
 									'font-main' => 'Abril Fatface',
 									'font-alt' => 'PT Serif',
-								),
-								'options' => array(
+								],
+								'options' => [
 									'links_color' => '#8eb2c5',
 									'headings_color' => '#725c92',
 									'body_color' => '#6f8089',
 									'page_background' => '#615375',
 									'headings_font' => 'Abril Fatface',
 									'body_font' => 'PT Serif',
-								)
-							),
-							'lovely' => array(
+								]
+							],
+							'lovely' => [
 								'label' => esc_html__( 'Lovely', '__plugin_txtd' ),
-								'preview' => array(
+								'preview' => [
 									'color-text' => '#ffffff',
 									'background-card' => '#d15c57',
 									'background-label' => '#5c374b',
 									'font-main' => 'Playfair Display',
 									'font-alt' => 'Playfair Display',
-								),
-								'options' => array(
+								],
+								'options' => [
 									'links_color' => '#cc3747',
 									'headings_color' => '#d15c57',
 									'body_color' => '#5c374b',
 									'page_background' => '#d15c57',
 									'headings_font' => 'Playfair Display',
 									'body_font' => 'Playfair Display',
-								)
-							),
-							'queen' => array(
+								]
+							],
+							'queen' => [
 								'label' => esc_html__( 'Queen', '__plugin_txtd' ),
-								'preview' => array(
+								'preview' => [
 									'color-text' => '#fbedec',
 									'background-card' => '#773347',
 									'background-label' => '#41212a',
 									'font-main' => 'Cinzel Decorative',
 									'font-alt' => 'Gentium Basic',
-								),
-								'options' => array(
+								],
+								'options' => [
 									'links_color' => '#cd8085',
 									'headings_color' => '#54323c',
 									'body_color' => '#cd8085',
 									'page_background' => '#fff',
 									'headings_font' => 'Cinzel Decorative',
 									'body_font' => 'Gentium Basic',
-								)
-							),
-							'carrot' => array(
+								]
+							],
+							'carrot' => [
 								'label' => esc_html__( 'Carrot', '__plugin_txtd' ),
-								'preview' => array(
+								'preview' => [
 									'color-text' => '#ffffff',
 									'background-card' => '#df421d',
 									'background-label' => '#85210a',
 									'font-main' => 'Oswald',
 									'font-alt' => 'PT Sans Narrow',
-								),
-								'options' => array(
+								],
+								'options' => [
 									'links_color' => '#df421d',
 									'headings_color' => '#df421d',
 									'body_color' => '#7e7e7e',
 									'page_background' => '#fff',
 									'headings_font' => 'Oswald',
 									'body_font' => 'PT Sans Narrow',
-								)
-							),
+								]
+							],
 
 
 
-							'adler' => array(
+							'adler' => [
 								'label' => esc_html__( 'Adler', '__plugin_txtd' ),
-								'preview' => array(
+								'preview' => [
 									'color-text' => '#fff',
 									'background-card' => '#0e364f',
 									'background-label' => '#000000',
 									'font-main' => 'Permanent Marker',
 									'font-alt' => 'Droid Sans Mono',
-								),
-								'options' => array(
+								],
+								'options' => [
 									'links_color' => '#68f3c8',
 									'headings_color' => '#0e364f',
 									'body_color' => '#45525a',
 									'page_background' => '#ffffff',
 									'headings_font' => 'Permanent Marker',
 									'body_font' => 'Droid Sans Mono'
-								)
-							),
-							'velvet' => array(
+								]
+							],
+							'velvet' => [
 								'label' => esc_html__( 'Velvet', '__plugin_txtd' ),
-								'preview' => array(
+								'preview' => [
 									'color-text' => '#ffffff',
 									'background-card' => '#282828',
 									'background-label' => '#000000',
 									'font-main' => 'Pinyon Script',
 									'font-alt' => 'Josefin Sans',
-								),
-								'options' => array(
+								],
+								'options' => [
 									'links_color' => '#000000',
 									'headings_color' => '#000000',
 									'body_color' => '#000000',
 									'page_background' => '#000000',
 									'headings_font' => 'Pinyon Script',
 									'body_font' => 'Josefin Sans',
-								)
-							),
+								]
+							],
 
-						)
-					),
-				)
-			),
+						]
+					],
+				]
+			],
 
 			/**
 			 * COLORS - This section will handle different elements colors (eg. links, headings)
 			 */
-			'colors_section' => array(
+			'colors_section' => [
 				'title'    => esc_html__( 'Colors', '__plugin_txtd' ),
-				'options' => array(
-					'links_color'   => array(
+				'options' => [
+					'links_color'   => [
 						'type'      => 'color',
 						'label'     => esc_html__( 'Links Color', '__plugin_txtd' ),
 						'live' => true,
 						'default'   => '#6c6e70',
-						'css'  => array(
-							array(
+						'css'  => [
+							[
 								'property'     => 'color',
 								'selector' => 'a, .entry-meta a',
-							),
-						)
-					),
-					'headings_color' => array(
+							],
+						]
+					],
+					'headings_color' => [
 						'type'      => 'color',
 						'label'     => esc_html__( 'Headings Color', '__plugin_txtd' ),
 						'live' => true,
 						'default'   => '#0aa0d9',
-						'css'  => array(
-							array(
+						'css'  => [
+							[
 								'property'     => 'color',
 								'selector' => '.site-title a, h1, h2, h3, h4, h5, h6,
 												h1 a, h2 a, h3 a, h4 a, h5 a, h6 a,
 												.widget-title,
 												a:hover, .entry-meta a:hover'
-							)
-						)
-					),
-					'body_color'     => array(
+							]
+						]
+					],
+					'body_color'     => [
 						'type'      => 'color',
 						'label'     => esc_html__( 'Body Color', '__plugin_txtd' ),
 						'live' => true,
 						'default'   => '#2d3033',
-						'css'  => array(
-							array(
+						'css'  => [
+							[
 								'selector' => 'body',
 								'property'     => 'color'
-							)
-						)
-					)
-				)
-			),
+							]
+						]
+					]
+				]
+			],
 
 			/**
 			 * FONTS - This section will handle different elements fonts (eg. headings, body)
 			 */
-			'typography_section' => array(
+			'typography_section' => [
 				'title'    => esc_html__( 'Fonts', '__plugin_txtd' ),
-				'options' => array(
-					'headings_font' => array(
+				'options' => [
+					'headings_font' => [
 						'type'     => 'font',
 						'label'    => esc_html__( 'Headings', '__plugin_txtd' ),
 						'default'  => 'Playfair Display',
@@ -209,7 +209,7 @@ if ( ! function_exists('add_customify_base_options') ) {
 										h1 a, h2 a, h3 a, h4 a, h5 a, h6 a,
 										.widget-title',
 						'font_weight' => true,
-						'recommended' => array(
+						'recommended' => [
 							'Playfair Display',
 							'Oswald',
 							'Lato',
@@ -229,14 +229,14 @@ if ( ! function_exists('add_customify_base_options') ) {
 							'Handlee',
 							'Satify',
 							'Pompiere'
-						)
-					),
-					'body_font'     => array(
+						]
+					],
+					'body_font'     => [
 						'type'    => 'font',
 						'label'   => esc_html__( 'Body Text', '__plugin_txtd' ),
 						'default' => 'Lato',
 						'selector' => 'html body',
-						'recommended' => array(
+						'recommended' => [
 							'Lato',
 							'Open Sans',
 							'PT Sans',
@@ -244,79 +244,79 @@ if ( ! function_exists('add_customify_base_options') ) {
 							'Gentium Book Basic',
 							'PT Serif',
 							'Droid Serif'
-						)
-					)
-				)
-			),
+						]
+					]
+				]
+			],
 
 			/**
 			 * BACKGROUNDS - This section will handle different elements colors (eg. links, headings)
 			 */
-			'backgrounds_section' => array(
+			'backgrounds_section' => [
 				'title'    => esc_html__( 'Backgrounds', '__plugin_txtd' ),
-				'options' => array(
-					'page_background'   => array(
+				'options' => [
+					'page_background'   => [
 						'type'      => 'color',
 						'label'     => esc_html__( 'Page Background', '__plugin_txtd' ),
 						'live' => true,
 						'default'   => '#ffffff',
-						'css'  => array(
-							array(
+						'css'  => [
+							[
 								'property'     => 'background',
 								'selector' => 'body, .site',
-							)
-						)
-					),
-				)
-			),
+							]
+						]
+					],
+				]
+			],
 			/**
 			 * LAYOUTS - This section will handle different elements colors (eg. links, headings)
 			 */
-			'layout_options' => array(
+			'layout_options' => [
 				'title'    => esc_html__( 'Layout', '__plugin_txtd' ),
-				'options' => array(
-					'site_title_size' => array(
+				'options' => [
+					'site_title_size' => [
 						'type'  => 'range',
 						'label' => esc_html__( 'Site Title Size', '__plugin_txtd' ),
 						'live' => true,
-						'input_attrs' => array(
+						'input_attrs' => [
 							'min'   => 24,
 							'max'   => 100,
 							'step'  => 1,
 							'data-preview' => true
-						),
+						],
 						'default' => 24,
-						'css' => array(
-							array(
+						'css' => [
+							[
 								'property' => 'font-size',
 								'selector' => '.site-title',
 								'media' => 'screen and (min-width: 1000px)',
 								'unit' => 'px',
-							)
-						)
-					),
-					'page_content_spacing' => array(
+							]
+						]
+					],
+					'page_content_spacing' => [
 						'type'  => 'range',
 						'label' => 'Page Content Spacing',
 						'live' => true,
-						'input_attrs' => array(
+						'input_attrs' => [
 							'min'   => 0,
 							'max'   => 100,
 							'step'  => 1,
-						),
+						],
 						'default' => 18,
-						'css' => array(
-							array(
+						'css' => [
+							[
 								'property' => 'padding',
 								'selector' => '.site-content',
 								'media' => 'screen and (min-width: 1000px)',
 								'unit' => 'px',
-							)
-						)
-					)
-				)
-			)
-		);
+							]
+						]
+					]
+				]
+			]
+		];
 
 		return $config;
 	}
@@ -525,20 +525,20 @@ function sm_get_color_select_dark_config( $label, $selector, $default, $properti
 
 	$callback = 'sm_color_select_dark_cb';
 
-	$choices = array(
+	$choices = [
 		'background' => esc_html__( 'Background', '__plugin_txtd' ),
 		'dark'       => esc_html__( 'Dark', '__plugin_txtd' ),
 		'accent'     => esc_html__( 'Accent', '__plugin_txtd' ),
-	);
+	];
 
 	if ( $isDarker ) {
 		$callback = 'sm_color_select_darker_cb';
 
-		$choices = array(
+		$choices = [
 			'background' => esc_html__( 'Background', '__plugin_txtd' ),
 			'darker'     => esc_html__( 'Dark', '__plugin_txtd' ),
 			'accent'     => esc_html__( 'Accent', '__plugin_txtd' ),
-		);
+		];
 	}
 
 	$css = [];
@@ -548,21 +548,21 @@ function sm_get_color_select_dark_config( $label, $selector, $default, $properti
 	}
 
 	foreach ( $properties as $property ) {
-		$css[] = array(
+		$css[] = [
 			'property'        => $property,
 			'selector'        => $selector,
 			'callback_filter' => $callback,
-		);
+		];
 	}
 
-	return array(
+	return [
 		'type'    => 'select_color',
 		'label'   => esc_html__( $label, '__plugin_txtd' ),
 		'live'    => true,
 		'default' => $default,
 		'css'     => $css,
 		'choices' => $choices,
-	);
+	];
 }
 
 function sm_color_select_dark_cb( $value, $selector, $property ) {
@@ -615,24 +615,24 @@ function sm_get_color_switch_dark_config( $label, $selector, $default, $properti
 	}
 
 	foreach ( $properties as $property ) {
-		$css[] = array(
+		$css[] = [
 			'property'        => $property,
 			'selector'        => $selector,
 			'callback_filter' => $callback,
-		);
+		];
 	}
 
-	return array(
+	return [
 		'type'    => 'sm_switch',
 		'label'   => esc_html__( $label, '__plugin_txtd' ),
 		'live'    => true,
 		'default' => $default,
 		'css'     => $css,
-		'choices' => array(
+		'choices' => [
 			'off' => esc_html__( 'Off', '__plugin_txtd' ),
 			'on'  => esc_html__( 'On', '__plugin_txtd' ),
-		),
-	);
+		],
+	];
 }
 function sm_color_switch_dark_cb( $value, $selector, $property ) {
 	$output = '';

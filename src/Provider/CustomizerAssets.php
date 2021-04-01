@@ -4,7 +4,7 @@
  *
  * @since   3.0.0
  * @license GPL-2.0-or-later
- * @package PixelgradeLT
+ * @package Pixelgrade Customify
  */
 
 declare ( strict_types=1 );
@@ -63,10 +63,10 @@ class CustomizerAssets extends AbstractHookProvider {
 				'customize-controls',
 			],
 			VERSION );
-		wp_localize_script( 'pixelgrade_customify-customizer', 'WP_API_Settings', array(
+		wp_localize_script( 'pixelgrade_customify-customizer', 'WP_API_Settings', [
 			'root'  => esc_url_raw( rest_url() ),
 			'nonce' => wp_create_nonce( 'wp_rest' ),
-		) );
+		] );
 
 		wp_register_style(
 			'pixelgrade_customify-customizer',

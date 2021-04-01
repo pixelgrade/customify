@@ -4,7 +4,7 @@
  *
  * @since   3.0.0
  * @license GPL-2.0-or-later
- * @package PixelgradeLT
+ * @package Pixelgrade Customify
  */
 
 declare ( strict_types=1 );
@@ -15,11 +15,11 @@ namespace Pixelgrade\Customify\Utils;
  * JSON cleaner class.
  *
  * @since   3.0.0
- * @package PixelgradeLT
+ * @package Pixelgrade Customify
  */
 class JSONCleaner {
-	private static $_objects;
-	private static $_depth;
+	private static array $_objects;
+	private static int $_depth;
 
 	/**
 	 * Cleans a variable for JSON encoding.

@@ -1,71 +1,64 @@
 <?php
 /**
- * This is the class that handles the communication with the cloud.
+ * This is the class that handles the communication with the Pixelgrade Cloud.
  *
- * @see         https://pixelgrade.com
- * @author      Pixelgrade
- * @since       1.7.4
+ * @since   3.0.0
+ * @license GPL-2.0-or-later
+ * @package Pixelgrade Customify
  */
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
-}
+declare ( strict_types=1 );
 
-if ( ! class_exists( 'Customify_Cloud_Api' ) ) {
+namespace Pixelgrade\Customify\Client;
 
-class Customify_Cloud_Api {
+use Pixelgrade\Customify\Vendor\Psr\Log\LoggerInterface;
+use const Pixelgrade\Customify\VERSION;
+
+/**
+ * Provides the interface to communicate with the Pixelgrade Cloud.
+ *
+ * @since 3.0.0
+ */
+class PixelgradeCloud implements CloudInterface {
 
 	/**
-	 * External REST API endpoints used for communicating with the Pixelgrade Cloud.
+	 * Endpoints configuration.
+	 *
 	 * @var array
-	 * @access public
-	 * @since    1.7.4
 	 */
-	public static $externalApiEndpoints;
+	protected array $endpoints;
+
+	/**
+	 * Logger.
+	 *
+	 * @var LoggerInterface
+	 */
+	protected LoggerInterface $logger;
 
 	/**
 	 * Constructor.
 	 *
-	 * @since 1.7.4
-	 */
-	public function __construct() {
-
-		$this->init();
-	}
-
-	/**
-	 * Initialize this module.
+	 * @since 3.0.0
 	 *
-	 * @since 1.7.4
+	 * @param LoggerInterface $logger Logger.
 	 */
-	public function init() {
-		// Make sure our constants are in place, if not already defined.
-		defined( 'PIXELGRADE_CLOUD__API_BASE' ) || define( 'PIXELGRADE_CLOUD__API_BASE', 'https://cloud.pixelgrade.com/' );
-
-		// Save the external API endpoints in a easy to get property.
-		self::$externalApiEndpoints = apply_filters( 'customify_style_manager_external_api_endpoints', array(
-			'cloud' => array(
-				'getDesignAssets' => array(
-					'method' => 'GET',
-					'url'    => PIXELGRADE_CLOUD__API_BASE . 'wp-json/pixcloud/v1/front/design_assets',
-				),
-				'stats'           => array(
-					'method' => 'POST',
-					'url'    => PIXELGRADE_CLOUD__API_BASE . 'wp-json/pixcloud/v1/front/stats',
-				),
-			),
-		) );
+	public function __construct(
+		array $endpoints,
+		LoggerInterface $logger
+	) {
+		$this->endpoints = $endpoints;
+		$this->logger = $logger;
 	}
 
 	/**
 	 * Fetch the design assets data from the Pixelgrade Cloud.
 	 *
-	 * @since 1.7.4
+	 * @since 3.0.0
 	 *
-	 * @return array|false
+	 * @return array
 	 */
-	public function fetch_design_assets() {
-		$request_data = array(
+	public function fetch_design_assets(): array {
+		$request_data = [
 			'site_url' => home_url('/'),
 			// We are only interested in data needed to identify the theme and eventually deliver only design assets suitable for it.
 			'theme_data' => $this->get_active_theme_data(),
@@ -73,7 +66,7 @@ class Customify_Cloud_Api {
 			'site_data' => $this->get_site_data(),
 			// Extra post statuses besides `publish`.
 			'post_status' => [],
-		);
+		];
 
 		// Handle development and testing constants.
 		if ( defined('SM_FETCH_DRAFT_ASSETS') && true === SM_FETCH_DRAFT_ASSETS ) {
@@ -89,25 +82,25 @@ class Customify_Cloud_Api {
 		// Allow others to filter the data we send.
 		$request_data = apply_filters( 'customify_pixelgrade_cloud_request_data', $request_data, $this );
 
-		$request_args = array(
-			'method' => self::$externalApiEndpoints['cloud']['getDesignAssets']['method'],
+		$request_args = [
+			'method' => $this->endpoints['cloud']['getDesignAssets']['method'],
 			'timeout'   => 5,
 			'blocking'  => true,
 			'body'      => $request_data,
 			'sslverify' => false,
-		);
+		];
 		// Get the design assets from the cloud.
-		$response = wp_remote_request( self::$externalApiEndpoints['cloud']['getDesignAssets']['url'], $request_args );
+		$response = wp_remote_request( $this->endpoints['cloud']['getDesignAssets']['url'], $request_args );
 		// Bail in case of decode error or failure to retrieve data.
 		// We will return the data already available.
 		if ( is_wp_error( $response ) ) {
-			return false;
+			return [];
 		}
 		$response_data = json_decode( wp_remote_retrieve_body( $response ), true );
 		// Bail in case of decode error or failure to retrieve data.
 		// We will return the data already available.
 		if ( null === $response_data || empty( $response_data['data'] ) || empty( $response_data['code'] ) || 'success' !== $response_data['code'] ) {
-			return false;
+			return [];
 		}
 
 		return apply_filters( 'customify_style_manager_fetch_design_assets', $response_data['data'] );
@@ -116,11 +109,11 @@ class Customify_Cloud_Api {
 	/**
 	 * Get the active theme data.
 	 *
-	 * @since 1.7.4
+	 * @since 3.0.0
 	 *
 	 * @return array
 	 */
-	public function get_active_theme_data() {
+	protected function get_active_theme_data(): array {
 		$theme_data = [];
 
 		$slug = basename( get_template_directory() );
@@ -148,23 +141,21 @@ class Customify_Cloud_Api {
 	/**
 	 * Get the site data.
 	 *
-	 * @since 1.7.4
+	 * @since 3.0.0
 	 *
 	 * @return array
 	 */
-	public function get_site_data() {
-		$site_data = array(
+	protected function get_site_data(): array {
+		$site_data = [
 			'url' => home_url('/'),
 			'is_ssl' => is_ssl(),
-		);
-
-		$site_data['wp'] = array(
-			'version' => get_bloginfo('version'),
-		);
-
-		$site_data['customify'] = array(
-			'version' => PixCustomifyPlugin()->get_version(),
-		);
+			'wp' => [
+				'version' => get_bloginfo('version'),
+			],
+			'customify' => [
+				'version' => VERSION,
+			],
+		];
 
 		return apply_filters( 'customify_style_manager_get_site_data', $site_data );
 	}
@@ -172,44 +163,42 @@ class Customify_Cloud_Api {
 	/**
 	 * Send stats to the Pixelgrade Cloud.
 	 *
-	 * @since 1.7.4
+	 * @since 3.0.0
 	 *
-	 * @param array $request_data The data to be sent.
-	 * @param bool $blocking Optional. Whether this should be a blocking request. Defaults to false.
+	 * @param array $data     The data to be sent.
+	 * @param bool  $blocking Optional. Whether this should be a blocking request. Defaults to false.
 	 *
-	 * @return array|false
+	 * @return array|\WP_Error
 	 */
-	public function send_stats( $request_data = [], $blocking = false ) {
-		if ( empty( $request_data ) ) {
+	public function send_stats( $data = [], $blocking = false ) {
+		if ( empty( $data ) ) {
 			// This is what we send by default.
-			$request_data = array(
+			$data = [
 				'site_url' => home_url('/'),
 				// We are only interested in data needed to identify the theme and eventually deliver only design assets suitable for it.
 				'theme_data' => $this->get_active_theme_data(),
 				// We are only interested in data needed to identify the plugin version and eventually deliver design assets suitable for it.
 				'site_data' => $this->get_site_data(),
-			);
+			];
 		}
 
 		/**
 		 * Filters request data sent to the cloud.
 		 *
-		 * @param array $request_data
+		 * @param array  $data
 		 * @param object $this @todo This argument is no longer needed and should be removed when Pixelgrade Care doesn't rely on it.
 		 */
-		$request_data = apply_filters( 'customify_pixelgrade_cloud_request_data', $request_data, $this );
+		$data = apply_filters( 'customify_pixelgrade_cloud_request_data', $data, $this );
 
-		$request_args = array(
-			'method' => self::$externalApiEndpoints['cloud']['stats']['method'],
+		$request_args = [
+			'method' => $this->endpoints['cloud']['stats']['method'],
 			'timeout'   => 5,
 			'blocking'  => $blocking,
-			'body'      => $request_data,
+			'body'      => $data,
 			'sslverify' => false,
-		);
+		];
 
 		// Make the request and return the response.
-		return wp_remote_request( self::$externalApiEndpoints['cloud']['stats']['url'], $request_args );
+		return wp_remote_request( $this->endpoints['cloud']['stats']['url'], $request_args );
 	}
-}
-
 }

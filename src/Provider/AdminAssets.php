@@ -4,7 +4,7 @@
  *
  * @since   3.0.0
  * @license GPL-2.0-or-later
- * @package PixelgradeLT
+ * @package Pixelgrade Customify
  */
 
 declare ( strict_types=1 );
@@ -56,16 +56,16 @@ class AdminAssets extends AbstractHookProvider {
 
 		wp_add_inline_script( 'pixelgrade_customify-settings',
 			ScriptsEnqueue::getlocalizeToWindowScript( 'customify',
-				array(
-					'config' => array(
+				[
+					'config' => [
 						'ajax_url' => admin_url( 'admin-ajax.php' ),
-						'wp_rest'  => array(
+						'wp_rest'  => [
 							'root'                     => esc_url_raw( rest_url() ),
 							'nonce'                    => wp_create_nonce( 'wp_rest' ),
 							'customify_settings_nonce' => wp_create_nonce( 'customify_settings_nonce' ),
-						),
-					),
-				)
+						],
+					],
+				]
 			) );
 
 		wp_register_style(

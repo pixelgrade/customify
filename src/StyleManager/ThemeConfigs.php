@@ -4,7 +4,7 @@
  *
  * @since   3.0.0
  * @license GPL-2.0-or-later
- * @package PixelgradeLT
+ * @package Pixelgrade Customify
  */
 
 declare ( strict_types=1 );
@@ -33,6 +33,13 @@ class ThemeConfigs extends AbstractHookProvider {
 	public array $external_theme_config = [];
 
 	/**
+	 * Design assets.
+	 *
+	 * @var DesignAssets
+	 */
+	protected DesignAssets $design_assets;
+
+	/**
 	 * Logger.
 	 *
 	 * @var LoggerInterface
@@ -44,11 +51,14 @@ class ThemeConfigs extends AbstractHookProvider {
 	 *
 	 * @since 3.0.0
 	 *
+	 * @param DesignAssets    $design_assets Design assets.
 	 * @param LoggerInterface $logger Logger.
 	 */
 	public function __construct(
+		DesignAssets $design_assets,
 		LoggerInterface $logger
 	) {
+		$this->design_assets = $design_assets;
 		$this->logger = $logger;
 	}
 
@@ -89,22 +99,16 @@ class ThemeConfigs extends AbstractHookProvider {
 	/**
 	 * Get the themes configuration.
 	 *
-	 * @since 1.7.4
+	 * @since 3.0.0
 	 *
 	 * @param bool $skip_cache Optional. Whether to use the cached config or fetch a new one.
 	 *
 	 * @return array
 	 */
 	protected function get_theme_configs( $skip_cache = false ): array {
-		$theme_configs = [];
-
-		// Make sure that the Design Assets class is loaded.
-		require_once 'lib/class-customify-design-assets.php';
-
-		// Get the design assets data.
-		$design_assets = Customify_Design_Assets::instance()->get( $skip_cache );
-		if ( false !== $design_assets && ! empty( $design_assets['theme_configs'] ) ) {
-			$theme_configs = $design_assets['theme_configs'];
+		$theme_configs = $this->design_assets->get_entry( 'theme_configs', $skip_cache );
+		if ( is_null( $theme_configs ) ) {
+			$theme_configs = [];
 		}
 
 		return apply_filters( 'customify_get_theme_configs', $theme_configs );
@@ -114,6 +118,8 @@ class ThemeConfigs extends AbstractHookProvider {
 	 * Maybe activate an external theme config.
 	 *
 	 * If the conditions are met, activate an external theme config by declaring support for the style manager and saving the config.
+	 *
+	 * @since 3.0.0
 	 *
 	 * @param array $config This holds required keys for the plugin config like 'opt-name', 'panels', 'settings'
 	 *
@@ -175,6 +181,7 @@ class ThemeConfigs extends AbstractHookProvider {
 		}
 
 		// Now we have a theme config to work with. Save it for later use.
+		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
 		$this->external_theme_config = $external_theme_config;
 
 		// Declare support for the Style Manager if there is such a section in the config
@@ -206,7 +213,7 @@ class ThemeConfigs extends AbstractHookProvider {
 		// If we are dealing with the Customify default config, we need a clean slate, sort of.
 		if ( 'customify_defaults' === $config['opt-name'] ) {
 			// We will save the Style Manager config so we can merge with it. But the rest goes away.
-			$style_manager_section = array();
+			$style_manager_section = [];
 			if ( isset( $config['sections']['style_manager_section'] ) ) {
 				$style_manager_section = $config['sections']['style_manager_section'];
 			}
@@ -216,9 +223,9 @@ class ThemeConfigs extends AbstractHookProvider {
 				$config['opt-name'] = $this->external_theme_config['config']['opt-name'];
 			}
 
-			$config['sections'] = array(
+			$config['sections'] = [
 				'style_manager_section' => $style_manager_section,
-			);
+			];
 		}
 
 		// Now merge things.
@@ -247,7 +254,7 @@ class ThemeConfigs extends AbstractHookProvider {
 		if ( ! empty( $this->external_theme_config['config']['remove_panels'] ) ) {
 			// Standardize it.
 			if ( is_string( $this->external_theme_config['config']['remove_panels'] ) ) {
-				$this->external_theme_config['config']['remove_panels'] = array( $this->external_theme_config['config']['remove_panels'] );
+				$this->external_theme_config['config']['remove_panels'] = [ $this->external_theme_config['config']['remove_panels'] ];
 			}
 
 			foreach ( $this->external_theme_config['config']['remove_panels'] as $panel_id ) {
@@ -259,7 +266,7 @@ class ThemeConfigs extends AbstractHookProvider {
 		if ( ! empty( $this->external_theme_config['config']['remove_sections'] ) ) {
 			// Standardize it.
 			if ( is_string( $this->external_theme_config['config']['remove_sections'] ) ) {
-				$this->external_theme_config['config']['remove_sections'] = array( $this->external_theme_config['config']['remove_sections'] );
+				$this->external_theme_config['config']['remove_sections'] = [ $this->external_theme_config['config']['remove_sections'] ];
 			}
 
 			foreach ( $this->external_theme_config['config']['remove_sections'] as $section_id ) {
@@ -281,7 +288,7 @@ class ThemeConfigs extends AbstractHookProvider {
 		if ( ! empty( $this->external_theme_config['config']['remove_settings'] ) ) {
 			// Standardize it.
 			if ( is_string( $this->external_theme_config['config']['remove_settings'] ) ) {
-				$this->external_theme_config['config']['remove_settings'] = array( $this->external_theme_config['config']['remove_settings'] );
+				$this->external_theme_config['config']['remove_settings'] = [ $this->external_theme_config['config']['remove_settings'] ];
 			}
 
 			foreach ( $this->external_theme_config['config']['remove_settings'] as $setting_id ) {
@@ -293,7 +300,7 @@ class ThemeConfigs extends AbstractHookProvider {
 		if ( ! empty( $this->external_theme_config['config']['remove_controls'] ) ) {
 			// Standardize it.
 			if ( is_string( $this->external_theme_config['config']['remove_controls'] ) ) {
-				$this->external_theme_config['config']['remove_controls'] = array( $this->external_theme_config['config']['remove_controls'] );
+				$this->external_theme_config['config']['remove_controls'] = [ $this->external_theme_config['config']['remove_controls'] ];
 			}
 
 			foreach ( $this->external_theme_config['config']['remove_controls'] as $control_id ) {
