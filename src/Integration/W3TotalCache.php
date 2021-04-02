@@ -41,7 +41,7 @@ class W3TotalCache extends AbstractHookProvider {
 	 */
 	protected function exclude_scripts_from_minify( $script_tags ) {
 		if ( ! empty( $script_tags ) && is_array( $script_tags ) ) {
-			$webfontloader_script_url = $this->plugin->get_url('js/vendor/webfontloader');
+			$webfontloader_script_url = $this->plugin->get_url('vendor_js/webfontloader');
 			$webfontloader_inline_script = 'customifyFontLoader = function()';
 			foreach ( $script_tags as $key => $tag ) {
 				if ( is_string( $tag ) &&

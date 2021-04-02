@@ -2,32 +2,33 @@
 /**
  * Helper functions
  *
- * @package Pixelgrade Customify
+ * @since   3.0.0
  * @license GPL-2.0-or-later
- * @since 0.1.0
+ * @package Pixelgrade Customify
  */
 
-declare ( strict_types = 1 );
+declare ( strict_types=1 );
 
 namespace Pixelgrade\Customify;
 
 /**
  * Retrieve the main plugin instance.
  *
- * @since 0.1.0
+ * @since 3.0.0
  *
  * @return Plugin
  */
 function plugin(): Plugin {
 	static $instance;
 	$instance = $instance ?: new Plugin();
+
 	return $instance;
 }
 
 /**
  * Autoload mapped classes.
  *
- * @since 0.1.0
+ * @since 3.0.0
  *
  * @param string $class Class name.
  */
@@ -44,7 +45,7 @@ function autoloader_classmap( string $class ) {
 /**
  * Generate a random string.
  *
- * @since 0.1.0
+ * @since 3.0.0
  *
  * @param int $length Length of the string to generate.
  *
@@ -56,7 +57,7 @@ function generate_random_string( int $length = 12 ): string {
 
 	$str = '';
 	$max = \strlen( $chars ) - 1;
-	for ( $i = 0; $i < $length; $i++ ) {
+	for ( $i = 0; $i < $length; $i ++ ) {
 		$str .= $chars[ random_int( 0, $max ) ];
 	}
 
@@ -71,24 +72,24 @@ function generate_random_string( int $length = 12 ): string {
  *
  * This doesn't validate whether or not the plugin actually exists.
  *
- * @since 0.1.0
+ * @since 3.0.0
  *
  * @param string $plugin_file Plugin slug or relative path to the main plugin file.
  *
  * @return bool
  */
 function is_plugin_file( string $plugin_file ): bool {
-	return '.php' === substr( $plugin_file, -4 );
+	return '.php' === substr( $plugin_file, - 4 );
 }
 
 /**
  * Display a notice about missing dependencies.
  *
- * @since 0.1.0
+ * @since 3.0.0
  */
 function display_missing_dependencies_notice() {
 	$message = sprintf(
-		/* translators: %s: documentation URL */
+	/* translators: %s: documentation URL */
 		__( 'Customify is missing required dependencies. <a href="%s" target="_blank" rel="noopener noreferer">Learn more.</a>', '__plugin_txtd' ),
 		'https://github.com/pixelgrade/customify'
 	);

@@ -41,7 +41,7 @@ class Autoptimize extends AbstractHookProvider {
 	 * @return array
 	 */
 	protected function js_dontmove( array $dontmove ): array {
-		$dontmove[] = 'js/vendor/webfontloader';
+		$dontmove[] = 'vendor_js/webfontloader';
 
 		return $dontmove;
 	}
@@ -57,9 +57,9 @@ class Autoptimize extends AbstractHookProvider {
 	 */
 	protected function js_exclude( $excludeJS ) {
 		if ( is_string( $excludeJS ) ) {
-			$excludeJS .= ',js/vendor/webfontloader';
+			$excludeJS .= ',vendor_js/webfontloader';
 		} elseif ( is_array( $excludeJS ) ) {
-			$excludeJS[] = 'js/vendor/webfontloader';
+			$excludeJS[] = 'vendor_js/webfontloader';
 		}
 
 		return $excludeJS;

@@ -60,6 +60,7 @@ class Plugin extends BasePlugin implements Composable {
 			$this
 				->register_hooks( $container->get( 'hooks.upgrade' ) )
 				->register_hooks( $container->get( 'hooks.admin_assets' ) )
+				->register_hooks( $container->get( 'screen.general_admin' ) )
 				->register_hooks( $container->get( 'screen.settings' ) );
 
 			if ( is_customizer() ) {

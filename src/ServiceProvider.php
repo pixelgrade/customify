@@ -195,6 +195,12 @@ class ServiceProvider implements ServiceProviderInterface {
 			);
 		};
 
+		$container['screen.general_admin'] = function( $container ) {
+			return new Screen\GeneralAdmin(
+				$container['logger']
+			);
+		};
+
 		$container['screen.settings'] = function( $container ) {
 			return new Screen\Settings(
 				$container['options'],

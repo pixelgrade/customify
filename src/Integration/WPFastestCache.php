@@ -40,7 +40,7 @@ class WPFastestCache extends AbstractHookProvider {
 	 * @return mixed
 	 */
 	protected function exclude_scripts_from_minify( $default ) {
-		$webfontloader_script_url = $this->plugin->get_url('js/vendor/webfontloader');
+		$webfontloader_script_url = $this->plugin->get_url('vendor_js/webfontloader');
 		if ( empty( $default ) ) {
 			$default = json_encode( [
 				[

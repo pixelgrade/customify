@@ -37,6 +37,12 @@ class Preview extends AbstractHookProvider {
 		$this->add_action( 'customize_preview_init', 'enqueue_assets', 99999 );
 
 		$this->add_action( 'wp_footer', 'output_color_palettes_preview_overlay' );
+
+		// Register hooks related to Style Manager controls callbacks in sm-functions.php
+		$this->add_action( 'customize_preview_init', 'sm_color_select_dark_cb_customizer_preview', 20 );
+		$this->add_action( 'customize_preview_init', 'sm_color_select_darker_cb_customizer_preview', 20 );
+		$this->add_action( 'customize_preview_init', 'sm_color_switch_dark_cb_customizer_preview', 20 );
+		$this->add_action( 'customize_preview_init', 'sm_color_switch_darker_cb_customizer_preview', 20 );
 	}
 
 	/**
@@ -57,5 +63,43 @@ class Preview extends AbstractHookProvider {
 		if ( is_customize_preview() ) {
 			echo '<div id="sm-color-palettes-preview"></div>';
 		}
+	}
+
+	protected function sm_color_select_dark_cb_customizer_preview() {
+		$js = "
+function sm_color_select_dark_cb(value, selector, property) {
+    return selector + ' {' + property + ': var(--sm-current-' + value + '-color);' + '}';
+}" . PHP_EOL;
+
+		wp_add_inline_script( 'customify-previewer-scripts', $js );
+	}
+
+	protected function sm_color_select_darker_cb_customizer_preview() {
+		$js = "
+function sm_color_select_darker_cb(value, selector, property) {
+    return selector + ' {' + property + ': var(--sm-current-' + value + '-color);' + '}';
+}" . PHP_EOL;
+
+		wp_add_inline_script( 'customify-previewer-scripts', $js );
+	}
+
+	protected function sm_color_switch_dark_cb_customizer_preview() {
+		$js = "
+function sm_color_switch_dark_cb(value, selector, property) {
+    var color = value === 'on' ? 'accent' : 'fg1';
+    return selector + ' { ' + property + ': var(--sm-current-' + color + '-color); }';
+}" . PHP_EOL;
+
+		wp_add_inline_script( 'customify-previewer-scripts', $js );
+	}
+
+	protected function sm_color_switch_darker_cb_customizer_preview() {
+		$js = "
+function sm_color_switch_darker_cb(value, selector, property) {
+	var color = value === 'on' ? 'accent' : 'fg2';
+	return selector + ' { ' + property + ': var(--sm-current-' + color + '-color); }';
+}" . PHP_EOL;
+
+		wp_add_inline_script( 'customify-previewer-scripts', $js );
 	}
 }

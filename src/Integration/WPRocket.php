@@ -45,7 +45,7 @@ class WPRocket extends AbstractHookProvider {
 	 */
 	protected function exclude_webfontloader_script( array $list ): array {
 		if ( \function_exists( 'rocket_clean_exclude_file' ) ) {
-			$list[] = \rocket_clean_exclude_file( $this->plugin->get_url( 'js/vendor/webfontloader-1-6-28.min.js' ) );
+			$list[] = \rocket_clean_exclude_file( $this->plugin->get_url( 'vendor_js/webfontloader-1-6-28.min.js' ) );
 		}
 
 		return $list;

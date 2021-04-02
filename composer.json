@@ -74,6 +74,10 @@
 		],
 		"files": [
 			"src/functions.php",
+			"src/sm-functions.php",
+			"src/cloud-filter-functions.php",
+			"src/deprecated.php",
+
 			"vendor_prefixed/symfony/polyfill-mbstring/bootstrap.php",
 			"vendor_prefixed/symfony/polyfill-php72/bootstrap.php"
 		]

@@ -129,7 +129,7 @@ class EditWithClassicEditor extends AbstractHookProvider {
 			wp_deregister_script( 'pixelgrade_customify-web-font-loader' );
 			wp_register_script(
 				'pixelgrade_customify-web-font-loader',
-				$this->plugin->get_url( 'js/vendor/webfontloader-1-6-28.min.js' ),
+				$this->plugin->get_url( 'vendor_js/webfontloader-1-6-28.min.js' ),
 				['jquery'],
 				null,
 				true );

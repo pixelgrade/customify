@@ -40,15 +40,15 @@ class CustomizerAssets extends AbstractHookProvider {
 		 * GENERAL CUSTOMIZER RELATED
 		 */
 		wp_register_script( 'pixelgrade_customify-select2',
-			$this->plugin->get_url( 'js/vendor/select2-4.0.13/dist/js/select2.full' . $scripts_suffix . '.js' ),
+			$this->plugin->get_url( 'vendor_js/select2-4.0.13/dist/js/select2.full' . $scripts_suffix . '.js' ),
 			[ 'jquery' ],
 			VERSION );
 		wp_register_script( 'jquery-react',
-			$this->plugin->get_url( 'js/vendor/jquery-react' . $scripts_suffix . '.js' ),
+			$this->plugin->get_url( 'vendor_js/jquery-react' . $scripts_suffix . '.js' ),
 			[ 'jquery' ],
 			VERSION );
 		wp_register_script( 'pixelgrade_customify-regression',
-			$this->plugin->get_url( 'js/vendor/regression' . $scripts_suffix . '.js' ),
+			$this->plugin->get_url( 'vendor_js/regression' . $scripts_suffix . '.js' ),
 			[],
 			VERSION );
 		wp_register_script( 'pixelgrade_customify-customizer',
@@ -79,7 +79,7 @@ class CustomizerAssets extends AbstractHookProvider {
 		 * CUSTOMIZER CONTROLS RELATED
 		 */
 		wp_register_script( 'pixelgrade_customify-ace-editor',
-			$this->plugin->get_url( '/js/vendor/ace/ace.js' ),
+			$this->plugin->get_url( 'vendor_js/ace/ace.js' ),
 			[ 'jquery' ],
 			VERSION,
 			true );
@@ -128,7 +128,7 @@ class CustomizerAssets extends AbstractHookProvider {
 		 * CONTROLS SEARCH FIELD RELATED
 		 */
 		wp_register_script( 'pixelgrade_customify-fuse',
-			$this->plugin->get_url( 'js/vendor/fuse-6.0.0/fuse.basic' . $scripts_suffix . '.js' ),
+			$this->plugin->get_url( 'vendor_js/fuse-6.0.0/fuse.basic' . $scripts_suffix . '.js' ),
 			[],
 			null );
 
