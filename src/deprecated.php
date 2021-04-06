@@ -7,6 +7,7 @@
  * @since 0.1.0
  */
 
+
 namespace { // global code
 
 	use function Pixelgrade\Customify\get_customizer_config;
@@ -16,6 +17,13 @@ namespace { // global code
 	use function Pixelgrade\Customify\has_option;
 	use function Pixelgrade\Customify\plugin;
 	use const Pixelgrade\Customify\VERSION;
+
+	/**
+	 * Alias the ArrayHelpers so the old Customify_Array could still work.
+	 *
+	 * @deprecated Use Pixelgrade\Customify\Utils\ArrayHelpers instead.
+	 */
+	class_alias('Pixelgrade\Customify\Utils\ArrayHelpers', 'Customify_Array');
 
 	/**
 	 * Returns the main instance of PixCustomifyPlugin to prevent the need to use globals.
@@ -47,112 +55,8 @@ namespace { // global code
 		 */
 		protected static $_instance = null;
 
-		/**
-		 * Settings class object.
-		 * @var Customify_Settings
-		 * @access  public
-		 * @since   2.4.0
-		 */
-		public $settings = null;
-
-		/**
-		 * Customizer class object to handle customizer controls and logic.
-		 * @var PixCustomify_Customizer
-		 * @access  public
-		 * @since   2.4.0
-		 */
-		public $customizer = null;
-
-		/**
-		 * Fonts class object to handle fonts global logic.
-		 * @var Customify_Fonts_Global
-		 * @access  public
-		 * @since   2.7.0
-		 */
-		public $fonts_global = null;
-
-		/**
-		 * Style Manager class object.
-		 * @var Customify_Style_Manager
-		 * @access  public
-		 * @since   1.0.0
-		 */
-		public $style_manager = null;
-
-		/**
-		 * Block Editor class object.
-		 * @var Customify_Block_Editor
-		 * @access  public
-		 * @since   2.7.0
-		 */
-		public $block_editor = null;
-
-		/**
-		 * Classic Editor class object.
-		 * @var Customify_Classic_Editor
-		 * @access  public
-		 * @since   2.7.0
-		 */
-		public $classic_editor = null;
-
-		/**
-		 * Customizer Search class object.
-		 * @var Customify_Customizer_Search
-		 * @access  public
-		 * @since   2.9.0
-		 */
-		public $customizer_search = null;
-
 		protected function __construct( $file = '', $version = '1.0.0' ) {
 
-		}
-
-		/**
-		 * Initialize plugin
-		 */
-		private function init() {
-
-			/* Initialize the plugin settings logic. */
-			require_once( $this->get_base_path() . 'includes/class-customify-settings.php' );
-			if ( is_null( $this->settings ) ) {
-				$this->settings = Customify_Settings::instance( $this->get_file(), $this->get_slug(), $this->get_version() );
-			}
-
-			/* Initialize the Customizer logic. */
-			require_once( $this->get_base_path() . 'includes/class-customify-customizer.php' );
-			if ( is_null( $this->customizer ) ) {
-				$this->customizer = PixCustomify_Customizer::instance();
-			}
-
-			/* Initialize the Fonts logic. */
-			require_once( $this->get_base_path() . 'includes/class-customify-fonts-global.php' );
-			if ( is_null( $this->fonts_global ) ) {
-				$this->fonts_global = Customify_Fonts_Global::instance();
-			}
-
-			/* Initialize the Style Manager logic. */
-			require_once( $this->get_base_path() . 'includes/class-customify-style-manager.php' );
-			if ( is_null( $this->style_manager ) ) {
-				$this->style_manager = Customify_Style_Manager::instance();
-			}
-
-			/* Initialize the Block Editor integration logic. */
-			require_once( $this->get_base_path() . 'includes/class-customify-block-editor.php' );
-			if ( is_null( $this->block_editor ) ) {
-				$this->block_editor = Customify_Block_Editor::instance();
-			}
-
-			/* Initialize the Classic Editor integration logic. */
-			require_once( $this->get_base_path() . 'includes/class-customify-classic-editor.php' );
-			if ( is_null( $this->classic_editor ) ) {
-				$this->classic_editor = Customify_Classic_Editor::instance();
-			}
-
-			/* Initialize the Customizer Search logic. */
-			require_once( $this->get_base_path() . 'includes/class-customify-customizer-search.php' );
-			if ( is_null( $this->customizer_search ) ) {
-				$this->customizer_search = Customify_Customizer_Search::instance();
-			}
 		}
 
 		/**

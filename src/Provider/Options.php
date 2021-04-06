@@ -11,10 +11,8 @@ declare ( strict_types=1 );
 
 namespace Pixelgrade\Customify\Provider;
 
-use Pixelgrade\Customify\StyleManager\Fonts;
 use Pixelgrade\Customify\Utils\ArrayHelpers;
 use Pixelgrade\Customify\Vendor\Cedaro\WP\Plugin\AbstractHookProvider;
-use Pixelgrade\Customify\Vendor\Psr\Log\LoggerInterface;
 
 /**
  * Class Options to handle all options management (including their configuration).
@@ -85,7 +83,7 @@ class Options extends AbstractHookProvider {
 	 * @param PluginSettings  $plugin_settings Plugin settings.
 	 */
 	public function __construct(
-		PluginSettings $plugin_settings,
+		PluginSettings $plugin_settings
 	) {
 		$this->plugin_settings = $plugin_settings;
 	}
@@ -160,7 +158,7 @@ class Options extends AbstractHookProvider {
 				// If we have a setting that directly declares it (not deduced like when registering fields in the Customizer)
 				// should be saved in the wp_options table, not in theme_mods, we will attempt to fetch it directly, first.
 				if ( isset( $option_details['setting_type'] ) && $option_details['setting_type'] === 'option' ) {
-					$value = get_option( $setting_id, null );
+					$value = \get_option( $setting_id, null );
 				}
 
 				// If we don't have a value, we will grab the setting value from the array of values stored in either
@@ -266,7 +264,7 @@ class Options extends AbstractHookProvider {
 			}
 		}
 
-		$values = get_option( $this->get_options_key() );
+		$values = \get_option( $this->get_options_key() );
 
 		if ( ! empty( $values ) && is_array( $values ) && isset( $values[ $option_id ] ) ) {
 			return $values[ $option_id ];
@@ -312,7 +310,7 @@ class Options extends AbstractHookProvider {
 			}
 		}
 
-		$values = get_theme_mod( $this->get_options_key() );
+		$values = \get_theme_mod( $this->get_options_key() );
 
 		if ( ! empty( $values ) && is_array( $values ) && isset( $values[ $option_id ] ) ) {
 			return $values[ $option_id ];
@@ -378,7 +376,7 @@ class Options extends AbstractHookProvider {
 		$this->invalidate_customizer_opt_name_cache();
 		$this->invalidate_details_cache();
 
-		do_action( 'customify_invalidate_all_caches' );
+		\do_action( 'customify_invalidate_all_caches' );
 	}
 
 	/**
@@ -418,13 +416,13 @@ class Options extends AbstractHookProvider {
 		}
 
 		// First try and get the cached data
-		$data             = get_option( self::CUSTOMIZER_OPT_NAME_CACHE_KEY );
+		$data             = \get_option( self::CUSTOMIZER_OPT_NAME_CACHE_KEY );
 		$expire_timestamp = false;
 
 		// Only try to get the expire timestamp if we really need to.
 		if ( true !== $skip_cache && false !== $data ) {
 			// Get the cache data expiration timestamp.
-			$expire_timestamp = get_option( self::CUSTOMIZER_OPT_NAME_CACHE_TIMESTAMP_KEY );
+			$expire_timestamp = \get_option( self::CUSTOMIZER_OPT_NAME_CACHE_TIMESTAMP_KEY );
 		}
 
 		// The data isn't set, is expired or we were instructed to skip the cache; we need to regenerate the config.
@@ -434,8 +432,8 @@ class Options extends AbstractHookProvider {
 
 			if ( true !== $skip_cache ) {
 				// Cache the data in an option for 24 hours, but only if we are not supposed to skip the cache entirely.
-				update_option( self::CUSTOMIZER_OPT_NAME_CACHE_KEY, $data, true );
-				update_option( self::CUSTOMIZER_OPT_NAME_CACHE_TIMESTAMP_KEY, time() + 24 * HOUR_IN_SECONDS, true );
+				\update_option( self::CUSTOMIZER_OPT_NAME_CACHE_KEY, $data, true );
+				\update_option( self::CUSTOMIZER_OPT_NAME_CACHE_TIMESTAMP_KEY, time() + 24 * HOUR_IN_SECONDS, true );
 			}
 		}
 
@@ -498,9 +496,11 @@ class Options extends AbstractHookProvider {
 
 		// We will first look for cached data
 
-		$data = $this->minimal_details = get_option( self::MINIMAL_DETAILS_CACHE_KEY );
+		$data = \get_option( self::MINIMAL_DETAILS_CACHE_KEY );
 		if ( false !== $data && false === $only_minimal_details ) {
-			$extra_details_data = get_option( self::EXTRA_DETAILS_CACHE_KEY );
+			$this->minimal_details = $data;
+
+			$extra_details_data = \get_option( self::EXTRA_DETAILS_CACHE_KEY );
 			if ( is_array( $extra_details_data ) ) {
 				$data = $this->details = ArrayHelpers::array_merge_recursive_distinct( $data, $extra_details_data );
 			} else {
@@ -520,7 +520,7 @@ class Options extends AbstractHookProvider {
 		// Only try to get the expire timestamp if we really need to.
 		if ( true !== $skip_cache && false !== $data ) {
 			// Get the cached data expiration timestamp.
-			$expire_timestamp = get_option( self::DETAILS_CACHE_TIMESTAMP_KEY );
+			$expire_timestamp = \get_option( self::DETAILS_CACHE_TIMESTAMP_KEY );
 		}
 
 		// The data isn't set, is expired or we were instructed to skip the cache; we need to regenerate the config.
@@ -589,9 +589,9 @@ class Options extends AbstractHookProvider {
 
 			if ( true !== $skip_cache ) {
 				// Cache the data for 24 hours, but only if we are not supposed to skip the cache entirely.
-				update_option( self::MINIMAL_DETAILS_CACHE_KEY, $options_minimal_details, true );
-				update_option( self::EXTRA_DETAILS_CACHE_KEY, $options_extra_details, false ); // we will not autoload extra details for performance reasons.
-				update_option( self::DETAILS_CACHE_TIMESTAMP_KEY, time() + 24 * HOUR_IN_SECONDS, true );
+				\update_option( self::MINIMAL_DETAILS_CACHE_KEY, $options_minimal_details, true );
+				\update_option( self::EXTRA_DETAILS_CACHE_KEY, $options_extra_details, false ); // we will not autoload extra details for performance reasons.
+				\update_option( self::DETAILS_CACHE_TIMESTAMP_KEY, time() + 24 * HOUR_IN_SECONDS, true );
 			}
 
 			$data          = $this->minimal_details = $options_minimal_details;
@@ -645,7 +645,7 @@ class Options extends AbstractHookProvider {
 	 * @since 3.0.0
 	 */
 	protected function invalidate_details_cache() {
-		update_option( self::DETAILS_CACHE_TIMESTAMP_KEY, time() - 24 * HOUR_IN_SECONDS, true );
+		\update_option( self::DETAILS_CACHE_TIMESTAMP_KEY, time() - 24 * HOUR_IN_SECONDS, true );
 
 		$this->clear_locally_cached_data();
 	}
@@ -707,7 +707,7 @@ class Options extends AbstractHookProvider {
 		}
 
 		// First try and get the cached data
-		$data = get_option( self::CUSTOMIZER_CONFIG_CACHE_KEY );
+		$data = \get_option( self::CUSTOMIZER_CONFIG_CACHE_KEY );
 
 		// For performance reasons, we will use the cached data (even if stale)
 		// when a user is not logged in or a user without administrative capabilities is logged in.
@@ -722,16 +722,16 @@ class Options extends AbstractHookProvider {
 		// Only try to get the expire timestamp if we really need to.
 		if ( true !== $skip_cache && false !== $data ) {
 			// Get the cache data expiration timestamp.
-			$expire_timestamp = get_option( self::CUSTOMIZER_CONFIG_CACHE_TIMESTAMP_KEY );
+			$expire_timestamp = \get_option( self::CUSTOMIZER_CONFIG_CACHE_TIMESTAMP_KEY );
 		}
 
 		// The data isn't set, is expired or we were instructed to skip the cache; we need to regenerate the config.
 		if ( true === $skip_cache || false === $data || false === $expire_timestamp || $expire_timestamp < time() ) {
 			// Allow themes or other plugins to filter the config.
-			$data = apply_filters( 'customify_filter_fields', [] );
+			$data = \apply_filters( 'customify_filter_fields', [] );
 			// Make sure that we have an array.
 			if ( ! is_array( $data ) ) {
-				_doing_it_wrong( __METHOD__, esc_html__( 'The Customify fields configuration should be an array. Please check the filters that are hooked into \'customify_filter_fields\'.', '__plugin_txtd' ), null );
+				\_doing_it_wrong( __METHOD__, esc_html__( 'The Customify fields configuration should be an array. Please check the filters that are hooked into \'customify_filter_fields\'.', '__plugin_txtd' ), null );
 
 				$data = [];
 			}
@@ -739,15 +739,15 @@ class Options extends AbstractHookProvider {
 			$data = apply_filters( 'customify_final_config', $data );
 			// Make sure that we have an array.
 			if ( ! is_array( $data ) ) {
-				_doing_it_wrong( __METHOD__, esc_html__( 'The Customify fields configuration should be an array. Please check the filters that are hooked into \'customify_final_config\'.', '__plugin_txtd' ), null );
+				\_doing_it_wrong( __METHOD__, esc_html__( 'The Customify fields configuration should be an array. Please check the filters that are hooked into \'customify_final_config\'.', '__plugin_txtd' ), null );
 
 				$data = [];
 			}
 
 			if ( true !== $skip_cache ) {
 				// Cache the data in an option for 24 hours, but only if we are not supposed to skip the cache entirely.
-				update_option( self::CUSTOMIZER_CONFIG_CACHE_KEY, $data, false );
-				update_option( self::CUSTOMIZER_CONFIG_CACHE_TIMESTAMP_KEY, time() + 24 * HOUR_IN_SECONDS, true );
+				\update_option( self::CUSTOMIZER_CONFIG_CACHE_KEY, $data, false );
+				\update_option( self::CUSTOMIZER_CONFIG_CACHE_TIMESTAMP_KEY, time() + 24 * HOUR_IN_SECONDS, true );
 			}
 		}
 
@@ -763,7 +763,7 @@ class Options extends AbstractHookProvider {
 	 * @since 3.0.0
 	 */
 	protected function invalidate_customizer_config_cache() {
-		update_option( self::CUSTOMIZER_CONFIG_CACHE_TIMESTAMP_KEY, time() - 24 * HOUR_IN_SECONDS, true );
+		\update_option( self::CUSTOMIZER_CONFIG_CACHE_TIMESTAMP_KEY, time() - 24 * HOUR_IN_SECONDS, true );
 
 		$this->clear_locally_cached_data();
 	}
