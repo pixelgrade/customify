@@ -126,3 +126,90 @@ function is_customizer(): bool {
 function is_sm_supported(): bool {
 	return apply_filters( 'customify_style_manager_is_supported', current_theme_supports( 'customizer_style_manager' ) );
 }
+
+/**
+ * Get a Customify option's value, if there is a value, and return it.
+ * Otherwise, try to get the default parameter or the default from config.
+ *
+ * @since 3.0.0
+ *
+ * @param string     $option_id
+ * @param mixed|null $default        Optional.
+ * @param array|null $option_details Optional.
+ *
+ * @return mixed
+ */
+function get_option( string $option_id, $default = null, $option_details = null ) {
+	return plugin()->get_container()->get('options')->get( $option_id, $default, $option_details );
+}
+
+/**
+ * Get the Customify configuration (and value, hence "details") of a certain option.
+ *
+ * @since 3.0.0
+ *
+ * @param string $option_id
+ * @param bool   $minimal_details Optional. Whether to return only the minimum amount of details (mainly what is needed on the frontend).
+ *                                The advantage is that these details are cached, thus skipping the customizer_config!
+ * @param bool   $skip_cache      Optional.
+ *
+ * @return array|false The option config or false on failure.
+ */
+function get_option_details( string $option_id, $minimal_details = false, $skip_cache = false ) {
+	return plugin()->get_container()->get('options')->get_details( $option_id, $minimal_details, $skip_cache );
+}
+
+/**
+ * Get all Customify options' details.
+ *
+ * @since 3.0.0
+ *
+ * @param bool $only_minimal_details Optional. Whether to return only the minimal details.
+ *                                   Defaults to returning all details.
+ * @param bool $skip_cache           Optional. Whether to skip the options cache and regenerate.
+ *                                   Defaults to using the cache.
+ * @return array
+ */
+function get_option_details_all( $only_minimal_details = false, $skip_cache = false ): array {
+	return plugin()->get_container()->get('options')->get_details_all( $only_minimal_details, $skip_cache );
+}
+
+/**
+ * Determine if a certain option exists.
+ *
+ * @since 3.0.0
+ *
+ * @param string $key The option key.
+ *
+ * @return bool
+ */
+function has_option( string $key ): bool {
+	return plugin()->get_container()->get('options')->has_option( $key );
+}
+
+/**
+ * Get the key under which all Customify options are saved.
+ *
+ * @since 3.0.0
+ *
+ * @param bool $skip_cache Optional. Whether to skip the options cache and regenerate.
+ *                         Defaults to using the cache.
+ *
+ * @return string
+ */
+function get_options_key( bool $skip_cache = false ): string {
+	return plugin()->get_container()->get('options')->get_options_key( $skip_cache );
+}
+
+/**
+ * Get the entire Customify Customizer fields config or a certain entry key.
+ *
+ * @since 3.0.0
+ *
+ * @param bool|string $key
+ *
+ * @return array|mixed|null
+ */
+function get_customizer_config( $key = false ) {
+	return plugin()->get_container()->get('options')->get_customizer_config( $key );
+}

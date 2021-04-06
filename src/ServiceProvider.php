@@ -148,8 +148,10 @@ class ServiceProvider implements ServiceProviderInterface {
 			return new Integration\WPRocket();
 		};
 
-		$container['options'] = function() {
-			return new Provider\Options();
+		$container['options'] = function( $container ) {
+			return new Provider\Options(
+				$container['plugin.settings']
+			);
 		};
 
 		$container['plugin.settings'] = function() {
@@ -165,6 +167,7 @@ class ServiceProvider implements ServiceProviderInterface {
 				$container['options'],
 				$container['plugin.settings'],
 				$container['sm.fonts'],
+				$container['sm.font_palettes'],
 				$container['logger']
 			);
 		};
@@ -236,7 +239,7 @@ class ServiceProvider implements ServiceProviderInterface {
 		$container['sm.fonts'] = function( $container ) {
 			return new StyleManager\Fonts(
 				$container['options'],
-				$container['sm.design_assets'],
+				$container['plugin.settings'],
 				$container['logger']
 			);
 		};

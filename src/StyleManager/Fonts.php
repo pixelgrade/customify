@@ -338,12 +338,12 @@ class Fonts extends AbstractHookProvider {
 	 *
 	 * @since 3.0.0
 	 *
-	 * @param array $value
+	 * @param mixed $value
 	 * @param array $fontConfig Optional.
 	 *
 	 * @return array
 	 */
-	public function standardizeFontValue( array $value, array $fontConfig = [] ): array {
+	public function standardizeFontValue( $value, array $fontConfig = [] ): array {
 		if ( empty( $value ) ) {
 			return [];
 		}

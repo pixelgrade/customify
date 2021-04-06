@@ -64,7 +64,7 @@ class Font extends BaseControl {
 	protected string $CSSID;
 
 	/**
-	 * Style Manager Fonts.
+	 * Style Manager Fonts service.
 	 *
 	 * @var Fonts
 	 */

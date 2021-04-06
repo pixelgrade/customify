@@ -11,6 +11,11 @@ declare ( strict_types=1 );
 
 namespace Pixelgrade\Customify\Screen\Customizer\Control;
 
+use Pixelgrade\Customify\StyleManager\FontPalettes;
+use function Pixelgrade\Customify\get_customizer_config;
+use function Pixelgrade\Customify\get_option_details;
+use function Pixelgrade\Customify\plugin;
+
 /**
  * Customizer preset control class.
  *
@@ -20,6 +25,31 @@ class Preset extends BaseControl {
 	public string $type = 'preset';
 	public string $choices_type = 'select';
 	public string $description = '';
+
+	/**
+	 * Style Manager Font Palettes service.
+	 *
+	 * @var FontPalettes
+	 */
+	protected FontPalettes $sm_font_palettes;
+
+	/**
+	 * Constructor.
+	 *
+	 * Supplied $args override class property defaults.
+	 *
+	 * If $args['settings'] is not defined, use the $id as the setting ID.
+	 *
+	 *
+	 * @param \WP_Customize_Manager $manager
+	 * @param string                $id
+	 * @param array                 $args
+	 */
+	public function __construct( $manager, $id, $args = [] ) {
+		parent::__construct( $manager, $id, $args );
+
+		$this->sm_font_palettes = $args['sm_font_palettes_service'];
+	}
 
 	/**
 	 * Render the control's content.
@@ -158,7 +188,7 @@ class Preset extends BaseControl {
 						// Make sure that the preview defaults are in place
 						$choice_config['preview'] = wp_parse_args( $choice_config['preview'], [
 							'sample_letter'        => 'A',
-							'background_image_url' => plugins_url( 'images/color_palette_image.jpg', PixCustomifyPlugin()->get_file() ),
+							'background_image_url' => plugin()->get_url( 'images/color_palette_image.jpg' ),
 						] );
 
 						// Determine a (primary) color with fallback for missing options
@@ -173,20 +203,6 @@ class Preset extends BaseControl {
 							$sm_color = $choice_config['options']['sm_color_quaternary'];
 						} elseif ( isset( $choice_config['options']['sm_color_quinary'] ) ) {
 							$sm_color = $choice_config['options']['sm_color_quinary'];
-						}
-
-						// Determine a (primary) dark color with fallback for missing options
-						$sm_dark = '#000000';
-						if ( isset( $choice_config['options']['sm_dark_primary'] ) ) {
-							$sm_dark = $choice_config['options']['sm_dark_primary'];
-						} elseif ( isset( $choice_config['options']['sm_dark_secondary'] ) ) {
-							$sm_dark = $choice_config['options']['sm_dark_secondary'];
-						} elseif ( isset( $choice_config['options']['sm_dark_tertiary'] ) ) {
-							$sm_dark = $choice_config['options']['sm_dark_tertiary'];
-						} elseif ( isset( $choice_config['options']['sm_dark_quaternary'] ) ) {
-							$sm_dark = $choice_config['options']['sm_dark_quaternary'];
-						} elseif ( isset( $choice_config['options']['sm_dark_quinary'] ) ) {
-							$sm_dark = $choice_config['options']['sm_dark_quinary'];
 						}
 
 						// Determine a (primary) light color with fallback for missing options
@@ -205,9 +221,7 @@ class Preset extends BaseControl {
 
 						$label   = $choice_config['label'];
 						$options = $this->convertChoiceOptionsIdsToSettingIds( $choice_config['options'] );
-						$data    = ' data-options=\'' . json_encode( $options ) . '\'';
-
-						$customizer_config = PixCustomifyPlugin()->get_customizer_config(); ?>
+						$data    = ' data-options=\'' . json_encode( $options ) . '\''; ?>
 
 						<span
 							class="customize-inside-control-row <?php echo( (string) $this->value() === (string) $choice_value ? 'current-color-palette' : '' ); ?>"
@@ -220,13 +234,12 @@ class Preset extends BaseControl {
                                     <i class="preview__letter"
                                        style="background: <?php echo $sm_color; ?>"><?php echo $choice_config['preview']['sample_letter']; ?></i>
                                     <i class="preview__letter--checked"
-                                       style="background-color: <?php echo $sm_color; ?>; background-image: url('<?php echo plugins_url( 'images/check.svg', PixCustomifyPlugin()->get_file() ); ?>')"></i>
+                                       style="background-color: <?php echo $sm_color; ?>; background-image: url('<?php echo plugin()->get_url( 'images/check.svg' ); ?>')"></i>
                                     <?php echo esc_html( $label ); ?>
                                 </span>
                             </label>
                             <div class="palette">
                                 <?php foreach ( $choice_config['options'] as $color_setting_id => $color_value ) {
-	                                $field_config = PixCustomifyPlugin()->get_option_details( $color_setting_id );
 	                                echo '<div class="palette__item ' . esc_attr( $color_setting_id ) . '" style="background: ' . esc_attr( $color_value ) . '"></div>' . "\n";
                                 } ?>
                             </div>
@@ -249,7 +262,7 @@ class Preset extends BaseControl {
 
 				<div class="js-customify-preset js-font-palette customize-control-font-palette">
 					<?php
-					$choices = Customify_Font_Palettes::instance()->preprocess_config( $this->choices );
+					$choices = $this->sm_font_palettes->preprocess_config( $this->choices );
 					foreach ( $choices as $choice_value => $choice_config ) {
 						if ( empty( $choice_config['options'] ) && empty( $choice_config['fonts_logic'] ) ) {
 							continue;
@@ -264,7 +277,7 @@ class Preset extends BaseControl {
 						// Make sure that the preview defaults are in place
 						$choice_config['preview'] = wp_parse_args( $choice_config['preview'], [
 							'sample_letter'        => 'A',
-							'background_image_url' => plugins_url( 'images/color_palette_image.jpg', PixCustomifyPlugin()->get_file() ),
+							'background_image_url' => plugin()->get_url( 'images/color_palette_image.jpg' ),
 						] );
 
 						$label = $choice_config['label'];
@@ -405,7 +418,7 @@ class Preset extends BaseControl {
 	 *
 	 * @return boolean
 	 */
-	public function isLight( $color = false ) {
+	protected function isLight( $color = false ): bool {
 		if ( false === $color ) {
 			return false;
 		}
@@ -435,7 +448,7 @@ class Preset extends BaseControl {
 	 *
 	 * @return string
 	 */
-	function lightOrDark( $color, $dark = '#000000', $light = '#FFFFFF' ) {
+	protected function lightOrDark( $color, $dark = '#000000', $light = '#FFFFFF' ): string {
 
 		// Make sure that the hex color string is free from whitespace and #
 		$color = trim( $color, ' \t\n\r #' );
@@ -456,15 +469,14 @@ class Preset extends BaseControl {
 	 *
 	 * @return array
 	 */
-	protected function convertChoiceOptionsIdsToSettingIds( $options ) {
+	protected function convertChoiceOptionsIdsToSettingIds( $options ): array {
 		$settings = [];
 
 		if ( empty( $options ) ) {
 			return $settings;
 		}
 
-		$localPlugin       = PixCustomifyPlugin();
-		$customizer_config = $localPlugin->get_customizer_config();
+		$customizer_config = get_customizer_config();
 
 		// first check the very needed options name
 		if ( empty( $customizer_config['opt-name'] ) ) {
@@ -474,11 +486,11 @@ class Preset extends BaseControl {
 
 		// Coerce a single string into an array and treat it as a field ID.
 		if ( is_string( $options ) ) {
-			$options = [ $options ];
+			$options = [ $options => '' ];
 		}
 
 		foreach ( $options as $option_id => $option_value ) {
-			$option_config = $localPlugin->get_option_details( $option_id );
+			$option_config = get_option_details( $option_id );
 			if ( empty( $option_config ) ) {
 				continue;
 			}

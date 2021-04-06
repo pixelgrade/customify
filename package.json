@@ -18,7 +18,8 @@
         "gulp": "node ./node_modules/gulp/bin/gulp.js",
         "dev": "cross-env webpack --mode=development --watch & gulp dev",
         "compile:production": "cross-env NODE_ENV=production webpack --mode=production && gulp compile:styles",
-        "zip": "cross-env NODE_ENV=production webpack --mode=production && gulp compile:styles && composer zip"
+        "zip": "cross-env NODE_ENV=production webpack --mode=production && gulp compile:styles && composer zip",
+        "preinstall": "node ./tasks/lock_node_version.js"
     },
     "devDependencies": {
         "@babel/core": "^7.13.10",
@@ -58,6 +59,7 @@
         "request": "^2.88.2",
         "sass": "^1.32.8",
         "sass-loader": "^11.0.1",
+        "semver": "^7.3.5",
         "style-loader": "^2.0.0",
         "terser": "^5.6.1",
         "terser-webpack-plugin": "^5.1.1",

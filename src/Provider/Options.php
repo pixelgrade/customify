@@ -11,8 +11,10 @@ declare ( strict_types=1 );
 
 namespace Pixelgrade\Customify\Provider;
 
+use Pixelgrade\Customify\StyleManager\Fonts;
 use Pixelgrade\Customify\Utils\ArrayHelpers;
 use Pixelgrade\Customify\Vendor\Cedaro\WP\Plugin\AbstractHookProvider;
+use Pixelgrade\Customify\Vendor\Psr\Log\LoggerInterface;
 
 /**
  * Class Options to handle all options management (including their configuration).
@@ -67,6 +69,26 @@ class Options extends AbstractHookProvider {
 	 * @var array
 	 */
 	private array $customizer_config = [];
+
+	/**
+	 * Plugin settings.
+	 *
+	 * @var PluginSettings
+	 */
+	protected PluginSettings $plugin_settings;
+
+	/**
+	 * Create the options provider.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @param PluginSettings  $plugin_settings Plugin settings.
+	 */
+	public function __construct(
+		PluginSettings $plugin_settings,
+	) {
+		$this->plugin_settings = $plugin_settings;
+	}
 
 	/**
 	 * Register hooks.
@@ -146,7 +168,7 @@ class Options extends AbstractHookProvider {
 				// The "save as array" behavior happens even in the case of 'option' setting type if
 				// the setting ID is of the form 'rosa_option[some_key]' (aka a multidimensional setting ID).
 				if ( null === $value ) {
-					if ( ! empty( PixCustomifyPlugin()->settings ) && PixCustomifyPlugin()->settings->get_plugin_setting( 'values_store_mod' ) === 'option' ) {
+					if ( $this->plugin_settings->get( 'values_store_mod' ) === 'option' ) {
 						// Get the value stored in a option.
 						$value = $this->get_wpoptions_value( $option_id, $setting_id );
 					} else {
@@ -648,7 +670,7 @@ class Options extends AbstractHookProvider {
 	 *
 	 * @since 3.0.0
 	 *
-	 * @param bool $key
+	 * @param bool|string $key
 	 *
 	 * @return array|mixed|null
 	 */

@@ -115,7 +115,7 @@ class FrontendOutput extends AbstractHookProvider {
 	 */
 	public function register_hooks() {
 		// We will initialize the Customizer logic after the plugin has finished with it's configuration (at priority 15).
-		add_action( 'init', [ $this, 'setup' ], 15 );
+		$this->add_action( 'init', 'setup', 15 );
 	}
 
 	/**

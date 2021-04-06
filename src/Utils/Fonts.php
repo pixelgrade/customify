@@ -325,12 +325,12 @@ class Fonts {
 	 * Given a value we will standardize it to an array with 'value' and 'unit'.
 	 *
 	 * @param mixed $value
-	 * @param string|false $field Optional. The subfield name (e.g. `font-size`).
-	 * @param array|false $font Optional. The entire font field config.
+	 * @param string $field Optional. The subfield name (e.g. `font-size`).
+	 * @param array $font Optional. The entire font field config.
 	 *
 	 * @return array
 	 */
-	public static function standardizeNumericalValue( $value, $field = false, $font = false ): array {
+	public static function standardizeNumericalValue( $value, $field = '', $font = [] ): array {
 		$standard_value = [
 			'value' => false,
 			'unit' => false,

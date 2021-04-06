@@ -148,17 +148,3 @@ $pixcustomify_plugin = plugin()
 	->register_hooks( $customify_container->get( 'hooks.deactivation' ) );
 
 add_action( 'plugins_loaded', [ $pixcustomify_plugin, 'compose' ], 5 );
-
-
-
-
-//require_once 'includes/lib/class-customify-array.php';
-//require_once 'includes/extras.php';
-//
-//
-//// Now get the party started.
-//// We will keep this global variable for legacy reasons.
-//$pixcustomify_plugin = PixCustomifyPlugin();
-//
-//// Load all third-party plugins integrations.
-//require_once 'includes/integrations.php';

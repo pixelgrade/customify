@@ -14,6 +14,7 @@ namespace Pixelgrade\Customify\Screen;
 use Pixelgrade\Customify\Provider\Options;
 use Pixelgrade\Customify\Provider\PluginSettings;
 use Pixelgrade\Customify\Screen\Customizer\Control\Button;
+use Pixelgrade\Customify\StyleManager\FontPalettes;
 use Pixelgrade\Customify\StyleManager\Fonts;
 use Pixelgrade\Customify\Utils\ScriptsEnqueue;
 use Pixelgrade\Customify\Vendor\Cedaro\WP\Plugin\AbstractHookProvider;
@@ -50,6 +51,14 @@ class Customizer extends AbstractHookProvider {
 	protected Fonts $sm_fonts;
 
 	/**
+	 * Style Manager Font Palettes.
+	 *
+	 * @var FontPalettes
+	 */
+	protected FontPalettes $sm_font_palettes;
+
+
+	/**
 	 * Logger.
 	 *
 	 * @var LoggerInterface
@@ -61,21 +70,24 @@ class Customizer extends AbstractHookProvider {
 	 *
 	 * @since 3.0.0
 	 *
-	 * @param Options         $options         Options.
-	 * @param PluginSettings  $plugin_settings Plugin settings.
-	 * @param Fonts           $sm_fonts        Style Manager Fonts.
-	 * @param LoggerInterface $logger          Logger.
+	 * @param Options         $options          Options.
+	 * @param PluginSettings  $plugin_settings  Plugin settings.
+	 * @param Fonts           $sm_fonts         Style Manager Fonts.
+	 * @param FontPalettes    $sm_font_palettes Style Manager Font Palettes.
+	 * @param LoggerInterface $logger           Logger.
 	 */
 	public function __construct(
 		Options $options,
 		PluginSettings $plugin_settings,
 		Fonts $sm_fonts,
+		FontPalettes $sm_font_palettes,
 		LoggerInterface $logger
 	) {
-		$this->options         = $options;
-		$this->plugin_settings = $plugin_settings;
-		$this->sm_fonts        = $sm_fonts;
-		$this->logger          = $logger;
+		$this->options          = $options;
+		$this->plugin_settings  = $plugin_settings;
+		$this->sm_fonts         = $sm_fonts;
+		$this->sm_font_palettes = $sm_font_palettes;
+		$this->logger           = $logger;
 	}
 
 	/**
@@ -85,7 +97,7 @@ class Customizer extends AbstractHookProvider {
 	 */
 	public function register_hooks() {
 		// We will initialize the Customizer logic after the plugin has finished with it's configuration (at priority 15).
-		add_action( 'init', [ $this, 'setup' ], 15 );
+		$this->add_action( 'init', 'setup', 15 );
 
 		$this->add_filter( 'customify_filter_fields', 'default_options', 5, 1 );
 	}
@@ -100,9 +112,9 @@ class Customizer extends AbstractHookProvider {
 		// This is a just-in-time filter, triggered as late as possible.
 		$this->localized = [
 			'config' => [
-				'options_name'           => $this->options->get_options_key(),
-				'ajax_url'               => admin_url( 'admin-ajax.php' ),
-				'webfontloader_url'      => $this->plugin->get_url( 'vendor_js/webfontloader-1-6-28.min.js' ),
+				'options_name'      => $this->options->get_options_key(),
+				'ajax_url'          => admin_url( 'admin-ajax.php' ),
+				'webfontloader_url' => $this->plugin->get_url( 'vendor_js/webfontloader-1-6-28.min.js' ),
 			],
 			// For localizing strings.
 			'l10n'   => [
@@ -764,6 +776,8 @@ class Customizer extends AbstractHookProvider {
 					$control_args['description'] = $field_config['desc'];
 				}
 
+				// We need to pass the Style Manager Fonts service to the control so it can fetch font details.
+				$control_args['sm_font_palettes_service'] = $this->sm_font_palettes;
 
 				$control_class_name = __NAMESPACE__ . '\Customizer\Control\Preset';
 				break;
@@ -1140,192 +1154,191 @@ class Customizer extends AbstractHookProvider {
 			/**
 			 * Presets - This section will handle other options
 			 */
-			'presets_section' => [
-				'title'    => esc_html__( 'Style Presets', '__plugin_txtd' ),
+			'presets_section'     => [
+				'title'   => esc_html__( 'Style Presets', '__plugin_txtd' ),
 				'options' => [
-					'theme_style'   => [
-						'type'      => 'preset',
-						'label'     => esc_html__( 'Select a style:', '__plugin_txtd' ),
-						'desc' => esc_html__( 'Conveniently change the design of your site with built-in style presets. Easy as pie.', '__plugin_txtd' ),
-						'default'   => 'royal',
+					'theme_style' => [
+						'type'         => 'preset',
+						'label'        => esc_html__( 'Select a style:', '__plugin_txtd' ),
+						'desc'         => esc_html__( 'Conveniently change the design of your site with built-in style presets. Easy as pie.', '__plugin_txtd' ),
+						'default'      => 'royal',
 						'choices_type' => 'awesome',
-						'choices'  => [
-							'royal' => [
-								'label' => esc_html__( 'Royal', '__plugin_txtd' ),
+						'choices'      => [
+							'royal'  => [
+								'label'   => esc_html__( 'Royal', '__plugin_txtd' ),
 								'preview' => [
-									'color-text' => '#ffffff',
-									'background-card' => '#615375',
+									'color-text'       => '#ffffff',
+									'background-card'  => '#615375',
 									'background-label' => '#46414c',
-									'font-main' => 'Abril Fatface',
-									'font-alt' => 'PT Serif',
+									'font-main'        => 'Abril Fatface',
+									'font-alt'         => 'PT Serif',
 								],
 								'options' => [
-									'links_color' => '#8eb2c5',
-									'headings_color' => '#725c92',
-									'body_color' => '#6f8089',
+									'links_color'     => '#8eb2c5',
+									'headings_color'  => '#725c92',
+									'body_color'      => '#6f8089',
 									'page_background' => '#615375',
-									'headings_font' => 'Abril Fatface',
-									'body_font' => 'PT Serif',
-								]
+									'headings_font'   => 'Abril Fatface',
+									'body_font'       => 'PT Serif',
+								],
 							],
 							'lovely' => [
-								'label' => esc_html__( 'Lovely', '__plugin_txtd' ),
+								'label'   => esc_html__( 'Lovely', '__plugin_txtd' ),
 								'preview' => [
-									'color-text' => '#ffffff',
-									'background-card' => '#d15c57',
+									'color-text'       => '#ffffff',
+									'background-card'  => '#d15c57',
 									'background-label' => '#5c374b',
-									'font-main' => 'Playfair Display',
-									'font-alt' => 'Playfair Display',
+									'font-main'        => 'Playfair Display',
+									'font-alt'         => 'Playfair Display',
 								],
 								'options' => [
-									'links_color' => '#cc3747',
-									'headings_color' => '#d15c57',
-									'body_color' => '#5c374b',
+									'links_color'     => '#cc3747',
+									'headings_color'  => '#d15c57',
+									'body_color'      => '#5c374b',
 									'page_background' => '#d15c57',
-									'headings_font' => 'Playfair Display',
-									'body_font' => 'Playfair Display',
-								]
+									'headings_font'   => 'Playfair Display',
+									'body_font'       => 'Playfair Display',
+								],
 							],
-							'queen' => [
-								'label' => esc_html__( 'Queen', '__plugin_txtd' ),
+							'queen'  => [
+								'label'   => esc_html__( 'Queen', '__plugin_txtd' ),
 								'preview' => [
-									'color-text' => '#fbedec',
-									'background-card' => '#773347',
+									'color-text'       => '#fbedec',
+									'background-card'  => '#773347',
 									'background-label' => '#41212a',
-									'font-main' => 'Cinzel Decorative',
-									'font-alt' => 'Gentium Basic',
+									'font-main'        => 'Cinzel Decorative',
+									'font-alt'         => 'Gentium Basic',
 								],
 								'options' => [
-									'links_color' => '#cd8085',
-									'headings_color' => '#54323c',
-									'body_color' => '#cd8085',
+									'links_color'     => '#cd8085',
+									'headings_color'  => '#54323c',
+									'body_color'      => '#cd8085',
 									'page_background' => '#fff',
-									'headings_font' => 'Cinzel Decorative',
-									'body_font' => 'Gentium Basic',
-								]
+									'headings_font'   => 'Cinzel Decorative',
+									'body_font'       => 'Gentium Basic',
+								],
 							],
 							'carrot' => [
-								'label' => esc_html__( 'Carrot', '__plugin_txtd' ),
+								'label'   => esc_html__( 'Carrot', '__plugin_txtd' ),
 								'preview' => [
-									'color-text' => '#ffffff',
-									'background-card' => '#df421d',
+									'color-text'       => '#ffffff',
+									'background-card'  => '#df421d',
 									'background-label' => '#85210a',
-									'font-main' => 'Oswald',
-									'font-alt' => 'PT Sans Narrow',
+									'font-main'        => 'Oswald',
+									'font-alt'         => 'PT Sans Narrow',
 								],
 								'options' => [
-									'links_color' => '#df421d',
-									'headings_color' => '#df421d',
-									'body_color' => '#7e7e7e',
+									'links_color'     => '#df421d',
+									'headings_color'  => '#df421d',
+									'body_color'      => '#7e7e7e',
 									'page_background' => '#fff',
-									'headings_font' => 'Oswald',
-									'body_font' => 'PT Sans Narrow',
-								]
+									'headings_font'   => 'Oswald',
+									'body_font'       => 'PT Sans Narrow',
+								],
 							],
 
 
-
-							'adler' => [
-								'label' => esc_html__( 'Adler', '__plugin_txtd' ),
+							'adler'  => [
+								'label'   => esc_html__( 'Adler', '__plugin_txtd' ),
 								'preview' => [
-									'color-text' => '#fff',
-									'background-card' => '#0e364f',
+									'color-text'       => '#fff',
+									'background-card'  => '#0e364f',
 									'background-label' => '#000000',
-									'font-main' => 'Permanent Marker',
-									'font-alt' => 'Droid Sans Mono',
+									'font-main'        => 'Permanent Marker',
+									'font-alt'         => 'Droid Sans Mono',
 								],
 								'options' => [
-									'links_color' => '#68f3c8',
-									'headings_color' => '#0e364f',
-									'body_color' => '#45525a',
+									'links_color'     => '#68f3c8',
+									'headings_color'  => '#0e364f',
+									'body_color'      => '#45525a',
 									'page_background' => '#ffffff',
-									'headings_font' => 'Permanent Marker',
-									'body_font' => 'Droid Sans Mono'
-								]
+									'headings_font'   => 'Permanent Marker',
+									'body_font'       => 'Droid Sans Mono',
+								],
 							],
 							'velvet' => [
-								'label' => esc_html__( 'Velvet', '__plugin_txtd' ),
+								'label'   => esc_html__( 'Velvet', '__plugin_txtd' ),
 								'preview' => [
-									'color-text' => '#ffffff',
-									'background-card' => '#282828',
+									'color-text'       => '#ffffff',
+									'background-card'  => '#282828',
 									'background-label' => '#000000',
-									'font-main' => 'Pinyon Script',
-									'font-alt' => 'Josefin Sans',
+									'font-main'        => 'Pinyon Script',
+									'font-alt'         => 'Josefin Sans',
 								],
 								'options' => [
-									'links_color' => '#000000',
-									'headings_color' => '#000000',
-									'body_color' => '#000000',
+									'links_color'     => '#000000',
+									'headings_color'  => '#000000',
+									'body_color'      => '#000000',
 									'page_background' => '#000000',
-									'headings_font' => 'Pinyon Script',
-									'body_font' => 'Josefin Sans',
-								]
+									'headings_font'   => 'Pinyon Script',
+									'body_font'       => 'Josefin Sans',
+								],
 							],
 
-						]
+						],
 					],
-				]
+				],
 			],
 
 			/**
 			 * COLORS - This section will handle different elements colors (eg. links, headings)
 			 */
-			'colors_section' => [
-				'title'    => esc_html__( 'Colors', '__plugin_txtd' ),
+			'colors_section'      => [
+				'title'   => esc_html__( 'Colors', '__plugin_txtd' ),
 				'options' => [
-					'links_color'   => [
-						'type'      => 'color',
-						'label'     => esc_html__( 'Links Color', '__plugin_txtd' ),
-						'live' => true,
-						'default'   => '#6c6e70',
-						'css'  => [
+					'links_color'    => [
+						'type'    => 'color',
+						'label'   => esc_html__( 'Links Color', '__plugin_txtd' ),
+						'live'    => true,
+						'default' => '#6c6e70',
+						'css'     => [
 							[
-								'property'     => 'color',
+								'property' => 'color',
 								'selector' => 'a, .entry-meta a',
 							],
-						]
+						],
 					],
 					'headings_color' => [
-						'type'      => 'color',
-						'label'     => esc_html__( 'Headings Color', '__plugin_txtd' ),
-						'live' => true,
-						'default'   => '#0aa0d9',
-						'css'  => [
+						'type'    => 'color',
+						'label'   => esc_html__( 'Headings Color', '__plugin_txtd' ),
+						'live'    => true,
+						'default' => '#0aa0d9',
+						'css'     => [
 							[
-								'property'     => 'color',
+								'property' => 'color',
 								'selector' => '.site-title a, h1, h2, h3, h4, h5, h6,
 												h1 a, h2 a, h3 a, h4 a, h5 a, h6 a,
 												.widget-title,
-												a:hover, .entry-meta a:hover'
-							]
-						]
+												a:hover, .entry-meta a:hover',
+							],
+						],
 					],
 					'body_color'     => [
-						'type'      => 'color',
-						'label'     => esc_html__( 'Body Color', '__plugin_txtd' ),
-						'live' => true,
-						'default'   => '#2d3033',
-						'css'  => [
+						'type'    => 'color',
+						'label'   => esc_html__( 'Body Color', '__plugin_txtd' ),
+						'live'    => true,
+						'default' => '#2d3033',
+						'css'     => [
 							[
 								'selector' => 'body',
-								'property'     => 'color'
-							]
-						]
-					]
-				]
+								'property' => 'color',
+							],
+						],
+					],
+				],
 			],
 
 			/**
 			 * FONTS - This section will handle different elements fonts (eg. headings, body)
 			 */
-			'typography_section' => [
-				'title'    => esc_html__( 'Fonts', '__plugin_txtd' ),
+			'typography_section'  => [
+				'title'   => esc_html__( 'Fonts', '__plugin_txtd' ),
 				'options' => [
 					'headings_font' => [
-						'type'     => 'font',
-						'label'    => esc_html__( 'Headings', '__plugin_txtd' ),
-						'default'  => 'Playfair Display',
-						'selector' => '.site-title a, h1, h2, h3, h4, h5, h6,
+						'type'        => 'font',
+						'label'       => esc_html__( 'Headings', '__plugin_txtd' ),
+						'default'     => 'Playfair Display',
+						'selector'    => '.site-title a, h1, h2, h3, h4, h5, h6,
 										h1 a, h2 a, h3 a, h4 a, h5 a, h6 a,
 										.widget-title',
 						'font_weight' => true,
@@ -1348,14 +1361,14 @@ class Customizer extends AbstractHookProvider {
 							'Pacifico',
 							'Handlee',
 							'Satify',
-							'Pompiere'
-						]
+							'Pompiere',
+						],
 					],
 					'body_font'     => [
-						'type'    => 'font',
-						'label'   => esc_html__( 'Body Text', '__plugin_txtd' ),
-						'default' => 'Lato',
-						'selector' => 'html body',
+						'type'        => 'font',
+						'label'       => esc_html__( 'Body Text', '__plugin_txtd' ),
+						'default'     => 'Lato',
+						'selector'    => 'html body',
 						'recommended' => [
 							'Lato',
 							'Open Sans',
@@ -1363,79 +1376,79 @@ class Customizer extends AbstractHookProvider {
 							'Cabin',
 							'Gentium Book Basic',
 							'PT Serif',
-							'Droid Serif'
-						]
-					]
-				]
+							'Droid Serif',
+						],
+					],
+				],
 			],
 
 			/**
 			 * BACKGROUNDS - This section will handle different elements colors (eg. links, headings)
 			 */
 			'backgrounds_section' => [
-				'title'    => esc_html__( 'Backgrounds', '__plugin_txtd' ),
+				'title'   => esc_html__( 'Backgrounds', '__plugin_txtd' ),
 				'options' => [
-					'page_background'   => [
-						'type'      => 'color',
-						'label'     => esc_html__( 'Page Background', '__plugin_txtd' ),
-						'live' => true,
-						'default'   => '#ffffff',
-						'css'  => [
+					'page_background' => [
+						'type'    => 'color',
+						'label'   => esc_html__( 'Page Background', '__plugin_txtd' ),
+						'live'    => true,
+						'default' => '#ffffff',
+						'css'     => [
 							[
-								'property'     => 'background',
+								'property' => 'background',
 								'selector' => 'body, .site',
-							]
-						]
+							],
+						],
 					],
-				]
+				],
 			],
 			/**
 			 * LAYOUTS - This section will handle different elements colors (eg. links, headings)
 			 */
-			'layout_options' => [
-				'title'    => esc_html__( 'Layout', '__plugin_txtd' ),
+			'layout_options'      => [
+				'title'   => esc_html__( 'Layout', '__plugin_txtd' ),
 				'options' => [
-					'site_title_size' => [
-						'type'  => 'range',
-						'label' => esc_html__( 'Site Title Size', '__plugin_txtd' ),
-						'live' => true,
+					'site_title_size'      => [
+						'type'        => 'range',
+						'label'       => esc_html__( 'Site Title Size', '__plugin_txtd' ),
+						'live'        => true,
 						'input_attrs' => [
-							'min'   => 24,
-							'max'   => 100,
-							'step'  => 1,
-							'data-preview' => true
+							'min'          => 24,
+							'max'          => 100,
+							'step'         => 1,
+							'data-preview' => true,
 						],
-						'default' => 24,
-						'css' => [
+						'default'     => 24,
+						'css'         => [
 							[
 								'property' => 'font-size',
 								'selector' => '.site-title',
-								'media' => 'screen and (min-width: 1000px)',
-								'unit' => 'px',
-							]
-						]
+								'media'    => 'screen and (min-width: 1000px)',
+								'unit'     => 'px',
+							],
+						],
 					],
 					'page_content_spacing' => [
-						'type'  => 'range',
-						'label' => 'Page Content Spacing',
-						'live' => true,
+						'type'        => 'range',
+						'label'       => 'Page Content Spacing',
+						'live'        => true,
 						'input_attrs' => [
-							'min'   => 0,
-							'max'   => 100,
-							'step'  => 1,
+							'min'  => 0,
+							'max'  => 100,
+							'step' => 1,
 						],
-						'default' => 18,
-						'css' => [
+						'default'     => 18,
+						'css'         => [
 							[
 								'property' => 'padding',
 								'selector' => '.site-content',
-								'media' => 'screen and (min-width: 1000px)',
-								'unit' => 'px',
-							]
-						]
-					]
-				]
-			]
+								'media'    => 'screen and (min-width: 1000px)',
+								'unit'     => 'px',
+							],
+						],
+					],
+				],
+			],
 		];
 
 		return $config;

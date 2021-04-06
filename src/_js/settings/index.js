@@ -1,7 +1,6 @@
 (function ($) {
 
   'use strict'
-  $(function () {
 
     $(document).ready(function () {
       $('#reset_customizer_settings').on('click', function () {
@@ -32,6 +31,5 @@
       });
 
     });
-  })
 
 }(jQuery))
