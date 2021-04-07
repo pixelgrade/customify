@@ -71,6 +71,9 @@ class ServiceProvider implements ServiceProviderInterface {
 		$container['hooks.customizer_assets'] = function() {
 			return new Provider\CustomizerAssets();
 		};
+		$container['hooks.customizer_preview_assets'] = function() {
+			return new Provider\CustomizerPreviewAssets();
+		};
 
 		$container['hooks.deactivation'] = function( $container ) {
 			return new Provider\Deactivation(

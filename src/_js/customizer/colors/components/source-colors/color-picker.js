@@ -1,5 +1,5 @@
 import React from "react";
-import { SketchPicker } from "react-color";
+import SketchPicker from "react-color/es/Sketch";
 
 const { useState } = wp.element;
 

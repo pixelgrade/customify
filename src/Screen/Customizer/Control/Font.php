@@ -17,16 +17,17 @@ use Pixelgrade\Customify\Utils\Fonts as FontsHelper;
 /**
  * Customizer font control class.
  *
+ * This handles the 'font' control type.
+ *
  * @since 3.0.0
  */
 class Font extends BaseControl {
-
 	/**
-	 * The field type.
+	 * Type.
 	 *
 	 * @var string
 	 */
-	public string $type = 'font';
+	public $type = 'font';
 
 	/**
 	 * The list of recommended fonts to show at the top of the list.

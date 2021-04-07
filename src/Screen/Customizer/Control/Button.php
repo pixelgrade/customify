@@ -14,10 +14,18 @@ namespace Pixelgrade\Customify\Screen\Customizer\Control;
 /**
  * Customizer button control class.
  *
+ * This handles the 'button' control type.
+ *
  * @since 3.0.0
  */
 class Button extends BaseControl {
-	public string $type = 'button';
+	/**
+	 * Type.
+	 *
+	 * @var string
+	 */
+	public $type = 'button';
+
 	public string $action = '';
 
 	/**

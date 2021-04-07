@@ -85,19 +85,6 @@ class CustomizerAssets extends AbstractHookProvider {
 			true );
 
 		/**
-		 * CUSTOMIZER PREVIEW RELATED
-		 */
-		wp_register_script( 'pixelgrade_customify-previewer',
-			$this->plugin->get_url( 'dist/js/customizer-preview' . $scripts_suffix . '.js' ),
-			[
-				'jquery',
-				'lodash',
-				'customize-preview',
-				'underscore',
-			],
-			VERSION, true );
-
-		/**
 		 * STYLE MANAGER RELATED
 		 */
 		wp_register_script(

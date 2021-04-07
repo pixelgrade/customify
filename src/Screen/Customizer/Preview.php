@@ -21,14 +21,6 @@ use Pixelgrade\Customify\Vendor\Cedaro\WP\Plugin\AbstractHookProvider;
 class Preview extends AbstractHookProvider {
 
 	/**
-	 * Create the Customizer screen preview.
-	 *
-	 * @since 3.0.0
-	 */
-	public function __construct() {
-	}
-
-	/**
 	 * Register hooks.
 	 *
 	 * @since 3.0.0

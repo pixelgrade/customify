@@ -14,10 +14,18 @@ namespace Pixelgrade\Customify\Screen\Customizer\Control;
 /**
  * Customizer text control class.
  *
+ * This handles the 'text' control type.
+ *
  * @since 3.0.0
  */
 class Text extends BaseControl {
-	public string $type = 'text';
+	/**
+	 * Type.
+	 *
+	 * @var string
+	 */
+	public $type = 'text';
+
 	public bool $live = false;
 
 	/**

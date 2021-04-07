@@ -573,11 +573,11 @@ class Fonts {
 	 * Will convert an array of CSS like variants into their FVD equivalents. Web Font Loader expects this format.
 	 * @link https://github.com/typekit/fvd
 	 *
-	 * @param array $variants
+	 * @param array|int|string $variants
 	 *
 	 * @return array
 	 */
-	public static function convertFontVariantsToFvds( array $variants ): array {
+	public static function convertFontVariantsToFvds( $variants ): array {
 		$fvds = [];
 		if ( ! is_array( $variants ) || empty( $variants ) ) {
 			return $fvds;

@@ -147,4 +147,5 @@ $pixcustomify_plugin = plugin()
 	->register_hooks( $customify_container->get( 'hooks.activation' ) )
 	->register_hooks( $customify_container->get( 'hooks.deactivation' ) );
 
-add_action( 'plugins_loaded', [ $pixcustomify_plugin, 'compose' ], 5 );
+// Composer before the theme is setup; this should give plenty of opportunities to hook.
+add_action( 'setup_theme', [ $pixcustomify_plugin, 'compose' ], 15 );

@@ -1,8 +1,8 @@
 import $ from 'jquery';
 
-import './colors';
-import './fonts';
-import './font-palettes';
+import { initializeColors } from './colors';
+import { initializeFonts } from './fonts';
+import { initializeFontPalettes } from './font-palettes'
 
 import * as globalService from "./global-service";
 
@@ -34,6 +34,10 @@ wp.customize.bind( 'ready', () => {
 
   // Initialize simple select2 fields.
   $( '.customify_select2' ).select2();
+
+  initializeColors();
+  initializeFonts();
+  initializeFontPalettes();
 
   scalePreview();
 

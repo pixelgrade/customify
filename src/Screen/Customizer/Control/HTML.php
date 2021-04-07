@@ -14,10 +14,18 @@ namespace Pixelgrade\Customify\Screen\Customizer\Control;
 /**
  * Customizer HTML pseudo-control class.
  *
+ * This handles the 'html' control type.
+ *
  * @since 3.0.0
  */
 class HTML extends BaseControl {
-	public string $type = 'html';
+	/**
+	 * Type.
+	 *
+	 * @var string
+	 */
+	public $type = 'html';
+
 	public string $action = '';
 	public string $html = '';
 

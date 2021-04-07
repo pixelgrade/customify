@@ -14,12 +14,19 @@ namespace Pixelgrade\Customify\Screen\Customizer\Control;
 /**
  * Customizer radio image control class.
  *
+ * This handles the 'radio_image' control type.
+ *
  * @since 3.0.0
  */
 class RadioImage extends BaseControl {
-	public string $type = 'radio_image';
+	/**
+	 * Type.
+	 *
+	 * @var string
+	 */
+	public $type = 'radio_image';
+
 	public string $choices_type = 'radio';
-	public string $description = '';
 
 	/**
 	 * Render the control's content.

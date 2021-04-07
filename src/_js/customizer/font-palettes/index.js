@@ -1,10 +1,6 @@
 import $ from 'jquery';
 
-wp.customize.bind( 'ready', () => {
-  initializeFontPalettes();
-} );
-
-const initializeFontPalettes = () => {
+export const initializeFontPalettes = () => {
 
   $( '.js-font-palette' ).each( function( i, obj ) {
     const $paletteSet = $( obj );

@@ -20,14 +20,7 @@ import { getCallback, getSetting, setCallback } from "../global-service";
 const wrapperSelector = '.font-options__wrapper';
 const fontVariantSelector = '.customify_font_weight';
 
-wp.customize.bind( 'ready', () => {
-  initializeFonts();
-  reloadConnectedFields();
-} );
-
 export const initializeFonts = function() {
-
-
   const $fontFields = $( wrapperSelector );
 
   $fontFields.each( ( i, obj ) => {
@@ -38,6 +31,8 @@ export const initializeFonts = function() {
   } );
 
   handleFontPopupToggle();
+
+  reloadConnectedFields();
 }
 
 const initializeFontFamilyField = ( $fontField ) => {

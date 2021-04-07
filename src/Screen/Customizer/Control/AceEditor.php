@@ -14,10 +14,17 @@ namespace Pixelgrade\Customify\Screen\Customizer\Control;
 /**
  * Customizer ACE Editor control class.
  *
+ * This handles the 'ace_editor' control type.
+ *
  * @since 3.0.0
  */
 class AceEditor extends BaseControl {
-	public string $type = 'ace_editor';
+	/**
+	 * Type.
+	 *
+	 * @var string
+	 */
+	public $type = 'ace_editor';
 
 	public string $editor_type = 'editor_type';
 

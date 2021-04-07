@@ -14,10 +14,17 @@ namespace Pixelgrade\Customify\Screen\Customizer\Control;
 /**
  * Customizer select2 control class.
  *
+ * This handles the 'select2' control type.
+ *
  * @since 3.0.0
  */
 class Select2 extends BaseControl {
-	public string $type = 'select2';
+	/**
+	 * Type.
+	 *
+	 * @var string
+	 */
+	public $type = 'select2';
 
 	/**
 	 * Render the control's content.

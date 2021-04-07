@@ -14,11 +14,17 @@ namespace Pixelgrade\Customify\Screen\Customizer\Control;
 /**
  * Customizer radio HTML control class.
  *
+ * This handles the 'radio_html' control type.
+ *
  * @since 3.0.0
  */
 class RadioHTML extends BaseControl {
-	public string $type = 'radio_html';
-	public string $description = '';
+	/**
+	 * Type.
+	 *
+	 * @var string
+	 */
+	public $type = 'radio_html';
 
 	/**
 	 * Render the control's content.

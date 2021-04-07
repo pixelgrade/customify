@@ -14,10 +14,17 @@ namespace Pixelgrade\Customify\Screen\Customizer\Control;
 /**
  * Customizer SM radio control class.
  *
+ * This handles the 'sm_radio' control type.
+ *
  * @since 3.0.0
  */
 class SMRadio extends BaseControl {
-	public string $type = 'sm_radio';
+	/**
+	 * Type.
+	 *
+	 * @var string
+	 */
+	public $type = 'sm_radio';
 
 	/**
 	 * Render the control's content.

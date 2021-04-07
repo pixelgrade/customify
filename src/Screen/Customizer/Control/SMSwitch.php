@@ -14,10 +14,17 @@ namespace Pixelgrade\Customify\Screen\Customizer\Control;
 /**
  * Customizer SM switch control class.
  *
+ * This handles the 'sm_switch' control type.
+ *
  * @since 3.0.0
  */
 class SMSwitch extends BaseControl {
-	public string $type = 'sm_switch';
+	/**
+	 * Type.
+	 *
+	 * @var string
+	 */
+	public $type = 'sm_switch';
 
 	/**
 	 * Render the control's content.

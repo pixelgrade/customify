@@ -4,11 +4,6 @@ import './color-palettes-preview';
 import * as globalService from "../global-service";
 import _ from "lodash";
 
-wp.customize.bind( 'ready', () => {
-  initializeColors();
-  reloadConnectedFields();
-} );
-
 const darkToColorSliderControls = [
   'sm_dark_color_switch_slider',
   'sm_dark_color_select_slider',
@@ -21,7 +16,7 @@ const masterSettingIDs = [
   'sm_accent_color_select_master',
 ];
 
-const initializeColors = () => {
+export const initializeColors = () => {
 
   initializePaletteBuilder( 'sm_advanced_palette_source', 'sm_advanced_palette_output' );
 
@@ -38,6 +33,7 @@ const initializeColors = () => {
     } )
   } )
 
+  reloadConnectedFields();
 }
 
 const applyMasterSettingsValues = () => {

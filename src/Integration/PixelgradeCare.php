@@ -49,7 +49,7 @@ class PixelgradeCare extends AbstractHookProvider {
 	 * @since 3.0.0
 	 */
 	public function register_hooks() {
-		add_filter( 'pre_set_theme_mod_pixcare_license', 'invalidate_all_caches', 10, 1 );
+		$this->add_filter( 'pre_set_theme_mod_pixcare_license', 'invalidate_all_caches', 10, 1 );
 	}
 
 	/**

@@ -14,10 +14,17 @@ namespace Pixelgrade\Customify\Screen\Customizer\Control;
 /**
  * Customizer select color control class.
  *
+ * This handles the 'select_color' control type.
+ *
  * @since 3.0.0
  */
 class SelectColor extends BaseControl {
-	public string $type = 'select_color';
+	/**
+	 * Type.
+	 *
+	 * @var string
+	 */
+	public $type = 'select_color';
 
 	/**
 	 * Render the control's content.

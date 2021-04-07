@@ -14,10 +14,18 @@ namespace Pixelgrade\Customify\Screen\Customizer\Control;
 /**
  * Customizer textarea control class.
  *
+ * This handles the 'textarea' control type.
+ *
  * @since 3.0.0
  */
 class Textarea extends BaseControl {
-	public string $type = 'textarea';
+	/**
+	 * Type.
+	 *
+	 * @var string
+	 */
+	public $type = 'textarea';
+
 	public bool $live = false;
 
 	/**

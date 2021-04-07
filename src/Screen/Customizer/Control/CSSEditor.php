@@ -14,10 +14,17 @@ namespace Pixelgrade\Customify\Screen\Customizer\Control;
 /**
  * Customizer CSS editor control class.
  *
+ * This handles the 'css_editor' control type.
+ *
  * @since 3.0.0
  */
 class CSSEditor extends BaseControl {
-	public string $type = 'css_editor';
+	/**
+	 * Type.
+	 *
+	 * @var string
+	 */
+	public $type = 'css_editor';
 
 	/**
 	 * Render the control's content.

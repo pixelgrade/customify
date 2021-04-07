@@ -14,10 +14,17 @@ namespace Pixelgrade\Customify\Screen\Customizer\Control;
 /**
  * Customizer background control class.
  *
+ * This handles the 'custom_background' control type.
+ *
  * @since 3.0.0
  */
 class Background extends BaseControl {
-	public string $type = 'custom_background';
+	/**
+	 * Type.
+	 *
+	 * @var string
+	 */
+	public $type = 'custom_background';
 
 	public array $value = [];
 

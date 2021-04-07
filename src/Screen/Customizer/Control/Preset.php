@@ -19,12 +19,19 @@ use function Pixelgrade\Customify\plugin;
 /**
  * Customizer preset control class.
  *
+ * This handles the 'preset' control type.
+ *
  * @since 3.0.0
  */
 class Preset extends BaseControl {
-	public string $type = 'preset';
+	/**
+	 * Type.
+	 *
+	 * @var string
+	 */
+	public $type = 'preset';
+
 	public string $choices_type = 'select';
-	public string $description = '';
 
 	/**
 	 * Style Manager Font Palettes service.
