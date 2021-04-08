@@ -1,4 +1,4 @@
-const { useEffect } = wp.element;
+import React, { useEffect } from 'react';
 
 /**
  * Hook that alerts clicks outside of the passed ref

@@ -1,7 +1,7 @@
 import './style.scss'
 
 import $ from 'jquery'
-import _ from 'lodash'
+import { debounce } from '../utils';
 
 import {
   getFontFieldCSSValue,
@@ -58,7 +58,7 @@ export default class CustomizerPreview {
     // so we can update their respective style tags in only one pass
     // and avoid multiple "recalculate styles" and all changes will appear
     // at the same time in the customizer preview
-    const onChange = _.debounce(() => {
+    const onChange = debounce(() => {
       const queue = Object.assign({}, updateQueue)
       updateQueue = {}
 

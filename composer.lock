@@ -1994,12 +1994,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/rectorphp/rector-prefixed.git",
-                "reference": "779738ed27b0ac6409554c1483d0d26621d23d85"
+                "reference": "947cb73e4db63fbd8c71f9fdbc4cb0a13a17784b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rectorphp/rector-prefixed/zipball/779738ed27b0ac6409554c1483d0d26621d23d85",
-                "reference": "779738ed27b0ac6409554c1483d0d26621d23d85",
+                "url": "https://api.github.com/repos/rectorphp/rector-prefixed/zipball/947cb73e4db63fbd8c71f9fdbc4cb0a13a17784b",
+                "reference": "947cb73e4db63fbd8c71f9fdbc4cb0a13a17784b",
                 "shasum": ""
             },
             "require": {
@@ -2024,7 +2024,7 @@
             "support": {
                 "source": "https://github.com/rectorphp/rector-prefixed/tree/main"
             },
-            "time": "2021-04-07T12:10:56+00:00"
+            "time": "2021-04-08T12:51:06+00:00"
         },
         {
             "name": "roave/security-advisories",
@@ -2032,12 +2032,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "f3d64e623a75abaababa97e02a31e3771dea481a"
+                "reference": "07d2f0c0e6553fd7433f2eb7d043260d3bfd351d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/f3d64e623a75abaababa97e02a31e3771dea481a",
-                "reference": "f3d64e623a75abaababa97e02a31e3771dea481a",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/07d2f0c0e6553fd7433f2eb7d043260d3bfd351d",
+                "reference": "07d2f0c0e6553fd7433f2eb7d043260d3bfd351d",
                 "shasum": ""
             },
             "conflict": {
@@ -2182,6 +2182,7 @@
                 "phpmyadmin/phpmyadmin": "<4.9.6|>=5,<5.0.3",
                 "phpoffice/phpexcel": "<1.8.2",
                 "phpoffice/phpspreadsheet": "<1.16",
+                "phpseclib/phpseclib": "<2.0.31|>=3,<3.0.7",
                 "phpunit/phpunit": ">=4.8.19,<4.8.28|>=5.0.10,<5.6.3",
                 "phpwhois/phpwhois": "<=4.2.5",
                 "phpxmlrpc/extras": "<0.6.1",
@@ -2362,7 +2363,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-04-06T18:11:53+00:00"
+            "time": "2021-04-07T21:01:39+00:00"
         },
         {
             "name": "sebastian/code-unit-reverse-lookup",

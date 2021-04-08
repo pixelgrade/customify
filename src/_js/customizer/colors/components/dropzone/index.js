@@ -1,7 +1,7 @@
 import Worker from "worker-loader!../../worker.js";
 import './style.scss';
 
-const { useState, useEffect, useRef } = wp.element;
+import React, { useState, useEffect, useRef } from 'react';
 
 export const myWorker = new Worker();
 

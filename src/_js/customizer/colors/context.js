@@ -1,4 +1,4 @@
-const { createContext } = wp.element;
+import React, { createContext } from 'react';
 
 const ConfigContext = createContext();
 

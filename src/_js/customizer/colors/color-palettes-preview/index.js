@@ -1,6 +1,7 @@
 import { Preview } from "../components/preview";
 
-const { useEffect, useState } = wp.element;
+import React, { useEffect, useState } from 'react';
+import ReactDOM from 'react-dom';
 
 export const initialize = () => {
 
@@ -16,7 +17,7 @@ export const initialize = () => {
         }
 
         wp.customize( 'sm_advanced_palette_output', setting => {
-          wp.element.render( <PalettesPreview section={ section } setting={ setting } />, container );
+          ReactDOM.render( <PalettesPreview section={ section } setting={ setting } />, container );
         } );
 
       } );

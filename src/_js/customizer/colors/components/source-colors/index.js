@@ -10,7 +10,7 @@ import {
   updateColor,
 } from "./utils";
 
-const { useContext, useEffect, useState, useRef } = wp.element;
+import React, { useContext, useEffect, useState, useRef } from 'react';
 
 import './style.scss';
 

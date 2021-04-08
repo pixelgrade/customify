@@ -2,7 +2,7 @@ import { initializePaletteBuilder } from './color-palette-builder';
 import { moveConnectedFields } from './utils';
 import './color-palettes-preview';
 import * as globalService from "../global-service";
-import _ from "lodash";
+import { debounce } from '../../utils';
 
 const darkToColorSliderControls = [
   'sm_dark_color_switch_slider',
@@ -26,7 +26,7 @@ export const initializeColors = () => {
 
   darkToColorSliderControls.forEach( settingID => {
     wp.customize( settingID, setting => {
-      setting.bind( _.debounce( newValue => {
+      setting.bind( debounce( newValue => {
         reloadConnectedFields();
         applyMasterSettingsValues();
       }, 30 ) )

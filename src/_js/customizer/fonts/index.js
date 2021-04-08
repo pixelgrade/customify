@@ -1,5 +1,5 @@
 import $ from "jquery";
-import _ from "lodash";
+import { debounce } from '../../utils';
 import * as globalService from "../global-service";
 
 import {
@@ -125,7 +125,7 @@ const bindFontFamilySettingChange = ( $fontFamilyField ) => {
 }
 
 
-const reloadConnectedFields = _.debounce( () => {
+const reloadConnectedFields = debounce( () => {
   const settingIDs = customify.fontPalettes.masterSettingIds;
 
   globalService.unbindConnectedFields( settingIDs );

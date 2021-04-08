@@ -1,4 +1,6 @@
 import { Builder } from '../components/builder';
+import React from 'react';
+import ReactDOM from 'react-dom';
 
 export const initializePaletteBuilder = ( sourceSettingID, outputSettingID ) => {
   const containerID = `customize-control-${ sourceSettingID }_control`;
@@ -15,5 +17,5 @@ export const initializePaletteBuilder = ( sourceSettingID, outputSettingID ) => 
 
   container.insertBefore( target, container.firstChild );
 
-  wp.element.render( <Builder sourceSettingID={ sourceSettingID } outputSettingID={ outputSettingID }/>, target );
+  ReactDOM.render( <Builder sourceSettingID={ sourceSettingID } outputSettingID={ outputSettingID } />, target );
 }

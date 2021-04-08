@@ -2,7 +2,8 @@
  * External dependencies
  */
 const TerserPlugin = require('terser-webpack-plugin');
-var LodashModuleReplacementPlugin = require('lodash-webpack-plugin');
+const LodashModuleReplacementPlugin = require('lodash-webpack-plugin');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const path = require( 'path' );
 
 const files = [
@@ -51,7 +52,6 @@ module.exports = {
         use: {
           loader: 'babel-loader',
           options: {
-            'plugins': ['lodash'],
             presets: [
               [
                 '@babel/preset-env',
@@ -81,12 +81,9 @@ module.exports = {
   },
   externals: {
     jquery: 'jQuery',
-    lodash: {
-      commonjs: 'lodash',
-      amd: 'lodash',
-      root: '_', // indicates global variable
-      var: '_', // indicates global variable
-    },
+    lodash: 'lodash',
+    react: 'React',
+    'react-dom': 'ReactDOM',
   },
   optimization: {
     minimize: true,
@@ -104,6 +101,6 @@ module.exports = {
     ],
   },
   'plugins': [
-    new LodashModuleReplacementPlugin,
+    new BundleAnalyzerPlugin,
   ]
 };

@@ -11,7 +11,7 @@ import {
 export { Builder }
 export * from './utils';
 
-const { useEffect, useState } = wp.element;
+import React, { useEffect, useState } from 'react';
 
 const Builder = ( props ) => {
   const { sourceSettingID, outputSettingID } = props;

@@ -1,7 +1,6 @@
-import React from "react";
-import SketchPicker from "react-color/es/Sketch";
-
-const { useState } = wp.element;
+import React, { useState } from 'react';
+import { useDebouncedCallback } from 'use-debounce';
+import { HexColorPicker } from "react-colorful";
 
 export const ColorPicker = ( props ) => {
 
@@ -13,19 +12,16 @@ export const ColorPicker = ( props ) => {
 
   const [ color, setColor ] = useState( hex );
 
+  const debouncedOnChange = useDebouncedCallback( onChange, 200 );
+
   return (
     <div className={ `c-palette-builder__source-item-color ${ isOpen ? 'c-palette-builder__source-item-color--active' : '' }` }>
-      <div className="c-palette-builder__source-item-preview" style={ { color: color } } ></div>
+      <div className="c-palette-builder__source-item-preview" style={ { color: hex } } />
       <div className="c-palette-builder__source-item-picker" onClick={ event => { event.stopPropagation() } }>
-        <SketchPicker
-          color={ color }
-          onChange={ newColor => {
-            setColor( newColor.hex );
-          } }
-          onChangeComplete={ newColor => {
-            onChange( newColor.hex );
-          } }
-        />
+        <HexColorPicker color={ color } onChange={ newColor => {
+          setColor( newColor );
+          debouncedOnChange( newColor );
+        } } />
       </div>
     </div>
   )

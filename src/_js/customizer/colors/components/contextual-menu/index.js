@@ -1,7 +1,7 @@
 import "./style.scss"
 import useOutsideClick from "../../../utils/use-outside-click";
 
-const { useEffect, useState, useRef } = wp.element;
+import React, { useEffect, useState, useRef } from 'react';
 
 const ContextualMenu = ( props ) => {
 

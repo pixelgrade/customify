@@ -2,6 +2,7 @@
     "name": "customify",
     "description": "Customify is a theme Customizer booster to easily customize Fonts, Colors, and other options for a certain WordPress theme..",
     "private": false,
+	"sideEffects": false,
     "repository": {
         "type": "git",
         "url": "git+https://github.com/pixelgrade/customify.git"
@@ -72,6 +73,9 @@
     },
     "dependencies": {
         "lodash-webpack-plugin": "^0.11.6",
-        "react-color": "^2.19.3"
+        "react-color": "^2.19.3",
+        "react-colorful": "^5.1.1",
+        "react-dom": "^17.0.2",
+        "use-debounce": "^6.0.1"
     }
 }
