@@ -195,3 +195,255 @@ function sm_color_switch_darker_cb( string $value, string $selector, string $pro
 
 	return $selector . ' {' . $property . ': var(--sm-current-' . $color . '-color); }' . PHP_EOL;
 }
+
+/**
+ * @since   3.0.0
+ *
+ * @param string $value
+ *
+ * @return string
+ */
+function sm_palette_output_cb( string $value ) {
+	$output = '';
+
+	$palettes = json_decode( $value );
+
+	if ( empty( $palettes ) ) {
+		$palettes = get_fallback_palettes();
+	}
+
+	$output .= palettes_output( $palettes );
+
+	return $output;
+}
+
+/**
+ * @since   3.0.0
+ *
+ * @param array $palettes
+ *
+ * @return string
+ */
+function palettes_output( array $palettes ) {
+	$output = '';
+	$variation = intval( get_option( 'sm_site_color_variation', 1 ) );
+
+	foreach ( $palettes as $palette_index => $palette ) {
+		$sourceIndex = $palette->sourceIndex;
+
+		$output .= 'html { ' . PHP_EOL;
+		$output .= get_initial_color_variables( $palette );
+		$output .= get_variables_css( $palette, $variation - 1 );
+		$output .= get_variables_css( $palette, $sourceIndex, false, true );
+		$output .= '}' . PHP_EOL;
+
+		$output .= '.is-dark { ' . PHP_EOL;
+		$output .= get_variables_css( $palette, $variation - 1, true );
+		$output .= get_variables_css( $palette, $sourceIndex, true, true );
+		$output .= '}' . PHP_EOL;
+	}
+
+	return $output;
+}
+
+/**
+ * @since   3.0.0
+ *
+ * @param object $palette
+ *
+ * @return string
+ */
+function get_initial_color_variables( object $palette ) {
+	$colors = $palette->colors;
+	$textColors = $palette->textColors;
+	$id = $palette->id;
+	$prefix = '--sm-color-palette-';
+
+	$output = '';
+
+	foreach ( $colors as $index => $color ) {
+		$output .= $prefix . $id . '-color-' . ( $index + 1 ) . ': ' . $color->value . ';' . PHP_EOL;
+	}
+
+	foreach ( $textColors as $index => $color ) {
+		$output .= $prefix . $id . '-text-color-' . ( $index + 1 ) . ': ' . $color->value . ';' . PHP_EOL;
+	}
+
+	return $output;
+}
+
+/**
+ * @since   3.0.0
+ *
+ * @param object $palette
+ * @param int    $offset
+ * @param bool   $isDark
+ * @param bool   $isShifted
+ *
+ * @return string
+ */
+function get_variables_css( object $palette, int $offset = 0, bool $isDark = false, bool $isShifted = false ) {
+	$colors = $palette->colors;
+	$count = count( $colors );
+
+	$output = '';
+
+	foreach ( $colors as $index => $color ) {
+		$oldColorIndex = ( $index + $offset ) % $count;
+
+		if ( $isDark ) {
+			if ( $oldColorIndex < $count / 2 ) {
+				$oldColorIndex = 11 - $oldColorIndex;
+			} else {
+				continue;
+			}
+		}
+
+		$output .= get_color_variables( $palette, $index, $oldColorIndex, $isShifted );
+	}
+
+	return $output;
+}
+
+/**
+ * @since   3.0.0
+ *
+ * @param object $palette
+ * @param int    $newColorIndex
+ * @param int    $oldColorIndex
+ * @param bool   $isShifted
+ *
+ * @return string
+ */
+function get_color_variables( object $palette, int $newColorIndex, int $oldColorIndex, bool $isShifted ) {
+	$colors = $palette->colors;
+	$id = $palette->id;
+	$count = count( $colors );
+	$lightColorsCount = isset( $palette->lightColorsCount ) ? $palette->lightColorsCount : $count / 2;
+
+	$accentColorIndex = ( $oldColorIndex + $count / 2 ) % $count;
+	$prefix = '--sm-color-palette-';
+	$suffix = $isShifted ? '-shifted' : '';
+
+	$output = '';
+
+	$output .= $prefix . $id . '-bg-color-' . ( $newColorIndex + 1 ) . $suffix . ': var(' . $prefix . $id . '-color-' . ( $oldColorIndex + 1 ) . ');' . PHP_EOL;
+	$output .= $prefix . $id . '-accent-color-' . ( $newColorIndex + 1 ) . $suffix . ': var(' . $prefix . $id . '-color-' . ( $accentColorIndex + 1 ) . ');' . PHP_EOL;
+
+	if ( $oldColorIndex < $lightColorsCount ) {
+		$output .= $prefix . $id . '-fg1-color-' . ( $newColorIndex + 1 ) . $suffix . ': var(' . $prefix . $id . '-text-color-1);' . PHP_EOL;
+		$output .= $prefix . $id . '-fg2-color-' . ( $newColorIndex + 1 ) . $suffix . ': var(' . $prefix . $id . '-text-color-2);' . PHP_EOL;
+	} else {
+		$output .= $prefix . $id . '-fg1-color-' . ( $newColorIndex + 1 ) . $suffix . ': var(' . $prefix . $id . '-color-1);' . PHP_EOL;
+		$output .= $prefix . $id . '-fg2-color-' . ( $newColorIndex + 1 ) . $suffix . ': var(' . $prefix . $id . '-color-1);' . PHP_EOL;
+	}
+
+	return $output;
+}
+
+/**
+ * @since   3.0.0
+ *
+ * @return array
+ */
+function get_fallback_palettes() {
+	$alphabet = range( 'A', 'Z' );
+
+	$options_details = PixCustomifyPlugin()->get_options_configs();
+	$color_control_ids = array(
+		'sm_color_primary',
+		'sm_color_secondary',
+		'sm_color_tertiary',
+	);
+
+	$lighter = PixCustomifyPlugin()->get_option( 'sm_light_primary_final' );
+	if ( empty( $lighter ) ) {
+		$lighter = PixCustomifyPlugin()->get_option( 'sm_light_primary' );
+	}
+
+	$light = PixCustomifyPlugin()->get_option( 'sm_light_tertiary_final' );
+	if ( empty( $light ) ) {
+		$light = PixCustomifyPlugin()->get_option( 'sm_light_tertiary' );
+	}
+
+	$text_color = PixCustomifyPlugin()->get_option( 'sm_dark_secondary_final' );
+	if ( empty( $text_color ) ) {
+		$text_color = PixCustomifyPlugin()->get_option( 'sm_dark_secondary' );
+	}
+
+	$dark = PixCustomifyPlugin()->get_option( 'sm_dark_primary_final' );
+	if ( empty( $dark ) ) {
+		$dark = PixCustomifyPlugin()->get_option( 'sm_dark_primary' );
+	}
+
+	$darker = PixCustomifyPlugin()->get_option( 'sm_dark_tertiary_final' );
+	if ( empty( $darker ) ) {
+		$darker = PixCustomifyPlugin()->get_option( 'sm_dark_tertiary' );
+	}
+
+	$palettes = array();
+
+	foreach ( $color_control_ids as $index => $control_id ) {
+
+		if ( empty( $options_details[ $control_id ] ) ) {
+			continue;
+		}
+
+		$value = get_option( $control_id . '_final' );
+
+		if ( empty( $value ) ) {
+			$value = $options_details[ $control_id ][ 'default' ];
+		}
+
+		$colors = array(
+			$lighter,
+			$light,
+			$light,
+			$light,
+			$value,
+			$value,
+			$value,
+			$dark,
+			$dark,
+			$dark,
+			$darker,
+			'#000000',
+		);
+
+		$color_objects = array();
+
+		foreach ( $colors as $color ) {
+			$obj = ( object ) array(
+				'value' => $color
+			);
+
+			$color_objects[] = $obj;
+		}
+
+		$textColors = array(
+			$text_color,
+			$text_color,
+		);
+
+		$textColor_objects = array();
+
+		foreach ( $textColors as $color ) {
+			$obj = ( object ) array(
+				'value' => $color
+			);
+
+			$textColor_objects[] = $obj;
+		}
+
+		$palettes[] = ( object ) array(
+			'colors'      => $color_objects,
+			'textColors'  => $textColor_objects,
+			'source'      => $value,
+			'sourceIndex' => 6,
+			'label'       => 'Color ' . $alphabet[ $index + 1 ],
+			'id'          => $index + 1
+		);
+	}
+
+	return $palettes;
+}

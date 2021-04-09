@@ -73,8 +73,7 @@ class Plugin extends BasePlugin implements Composable {
 
 		// Only in the Customizer Preview.
 		if ( ! is_admin() && is_customize_preview() ) {
-			$this
-				->register_hooks( $container->get( 'screen.customizer.preview' ) );
+			$this->register_hooks( $container->get( 'screen.customizer.preview' ) );
 		}
 
 		if ( \defined( 'AUTOPTIMIZE_PLUGIN_VERSION' ) ) {

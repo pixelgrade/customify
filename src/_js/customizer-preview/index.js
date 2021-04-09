@@ -16,41 +16,40 @@ window.customify = window?.customify || parent?.customify
 
 export default class CustomizerPreview {
 
-  constructor () {
+  constructor() {
     this.initialize()
   }
 
-  initialize () {
+  initialize() {
     this.bindEvents()
   }
 
-  bindEvents () {
-    $(window).on('load', this.onLoad.bind(this))
-
-    $(document).on('ready', this.onDocReady.bind(this))
+  bindEvents() {
+    $( window ).on( 'load', this.onLoad.bind( this ) );
+    $( document ).on( 'ready', this.onDocReady.bind( this ) );
   }
 
-  onLoad () {
+  onLoad() {
     // We need to do this on window.load because on document.ready might be too early.
     this.maybeLoadWebfontloaderScript()
   };
 
-  onDocReady () {
-    const settings = customify.config.settings
+  onDocReady() {
+    const settings = customify.config.settings;
     const getStyleTagID = (settingID => `dynamic_style_${settingID.replace(/\\W/g, '_')}`)
 
-    const properKeys = Object.keys(settings).filter(settingID => {
-      const setting = settings[settingID]
-      return setting.type === 'font' || (Array.isArray(setting.css) && setting.css.length)
-    })
+    const properKeys = Object.keys( settings ).filter( settingID => {
+      const setting = settings[settingID];
+      return setting.type === 'font' || ( Array.isArray( setting.css ) && setting.css.length );
+    } );
 
-    properKeys.forEach(settingID => {
-      const style = document.createElement('style')
-      const idAttr = getStyleTagID(settingID)
+    properKeys.forEach( settingID => {
+      const style = document.createElement( 'style' );
+      const idAttr = getStyleTagID( settingID );
 
-      style.setAttribute('id', idAttr)
-      document.body.appendChild(style)
-    })
+      style.setAttribute( 'id', idAttr );
+      document.body.appendChild( style );
+    } )
 
     // we create a queue of settingID => newValue pairs
     let updateQueue = {}
@@ -82,7 +81,7 @@ export default class CustomizerPreview {
     })
   };
 
-  maybeLoadWebfontloaderScript () {
+  maybeLoadWebfontloaderScript() {
     if (typeof WebFont === 'undefined') {
       let tk = document.createElement('script')
       tk.src = parent.customify.config.webfontloader_url
