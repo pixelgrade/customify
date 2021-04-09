@@ -1,3 +1,5 @@
+import React, { useContext, useEffect, useState, useRef } from 'react';
+
 import { ColorPicker } from './color-picker';
 import { ContextualMenu } from "../contextual-menu";
 import useOutsideClick from '../../../utils/use-outside-click';
@@ -9,8 +11,6 @@ import {
   deleteColor,
   updateColor,
 } from "./utils";
-
-import React, { useContext, useEffect, useState, useRef } from 'react';
 
 import './style.scss';
 

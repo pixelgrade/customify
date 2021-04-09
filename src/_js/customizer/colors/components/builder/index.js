@@ -1,5 +1,9 @@
+import React, { useEffect, useState } from 'react';
+
 import { SourceColors } from "../source-colors";
 import ConfigContext from "../../context";
+import DropZone, { myWorker } from "../dropzone";
+import PaletteList from '../palette-list';
 
 import {
   getColorsFromInputValue,
@@ -7,11 +11,10 @@ import {
   getCSSFromPalettes,
   getValueFromColors,
 } from "./utils";
+import chroma from "chroma-js";
 
 export { Builder }
 export * from './utils';
-
-import React, { useEffect, useState } from 'react';
 
 const Builder = ( props ) => {
   const { sourceSettingID, outputSettingID } = props;
@@ -51,6 +54,34 @@ const Builder = ( props ) => {
 
   }, [] );
 
+  const [ colors, setColors ] = useState( [] );
+
+  useEffect( () => {
+    myWorker.onmessage = function( event ) {
+      const type = event.data.type;
+
+      if ( 'palette' === type ) {
+        const colors = event.data.colors;
+        const hexColors = colors.map( rgb => chroma( rgb ).hex() );
+
+        hexColors.forEach( color1 => {
+          hexColors.forEach( ( color2, index ) => {
+            if ( color1 !== color2 && chroma.distance( color1, color2 ) < 30 ) {
+//              hexColors.splice( index, 1 );
+            }
+          } );
+        } );
+
+        setColors( hexColors );
+      }
+    };
+
+    return () => {
+      delete myWorker.onmessage;
+    };
+
+  }, [] );
+
   useEffect( () => {
     sourceSetting.set( getValueFromColors( config ) );
   }, [ config ] );
@@ -70,12 +101,32 @@ const Builder = ( props ) => {
   }, [ palettes ] );
 
   return (
-      <ConfigContext.Provider value={ { config, setConfig } }>
-        <Control label={ 'Brand Colors' }>
-          <SourceColors />
-        </Control>
-        <style>{ CSSOutput }</style>
-      </ConfigContext.Provider>
+    <ConfigContext.Provider value={ { config, setConfig } }>
+      <Control label={ 'Brand Colors' }>
+        <SourceColors />
+      </Control>
+      <style>{ CSSOutput }</style>
+      <Control label={ 'Explore colors' }>
+        <PaletteList />
+      </Control>
+      <Control label={ 'Extract from Image' }>
+        <DropZone />
+        <div className="c-palette-builder__source-list">
+          <div className="c-palette-builder__source-group">
+            { colors.map( color => {
+              return (
+                <div className="c-palette-builder__source-item">
+                  <div className="c-palette-builder__source-item-color">
+                    <div className="c-palette-builder__source-item-preview" style={ { color: color } } />
+                  </div>
+                  <div className="c-palette-builder__source-item-label">{ color }</div>
+                </div>
+              )
+            } ) }
+          </div>
+        </div>
+      </Control>
+    </ConfigContext.Provider>
   );
 }
 

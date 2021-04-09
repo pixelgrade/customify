@@ -1,7 +1,7 @@
-import Worker from "worker-loader!../../worker.js";
-import './style.scss';
-
 import React, { useState, useEffect, useRef } from 'react';
+import Worker from "worker-loader!./worker.js";
+
+import './style.scss';
 
 export const myWorker = new Worker();
 

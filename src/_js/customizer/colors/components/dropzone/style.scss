@@ -1,0 +1,35 @@
+.dropzone-container {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  height: 200px;
+  margin: 0;
+  padding: 20px;
+  background: #EEEEEE;
+
+  text-align: center;
+}
+
+.dropzone-image-source {
+  display: none;
+}
+
+.dropzone-canvas {
+  display: none;
+}
+
+img:not([src]) {
+  display: none;
+}
+
+.dropzone-image-preview {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}

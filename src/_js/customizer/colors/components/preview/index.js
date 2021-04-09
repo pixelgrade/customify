@@ -1,3 +1,5 @@
+import React, { useState } from 'react';
+
 export const Preview = ( props ) => {
 
   const {
@@ -13,35 +15,55 @@ export const Preview = ( props ) => {
 
 const PalettePreview = ( props ) => {
   const { palette } = props;
-  const { colors, id, description } = palette;
+  const { colors, id } = palette;
+
+  const [ current, setCurrent ] = useState( 2 );
 
   return (
-    <div className="palette-preview">
-      <div className="palette-preview-header">
-        <div className="palette-preview-source">
-          {
-            palette.source.map( ( source, index ) => {
-              return <div key={ index } className="palette-preview-source-color" style={ { color: source } }></div>
-            } )
-          }
-        </div>
-        <div className="palette-preview-title">
-          <h4>{ `${ palette.label } color palette` }</h4>
-        </div>
-      </div>
-      { description && <div className="palette-preview-description">
-        <p>{ description }</p>
-      </div> }
+    <div className={ `palette-preview sm-palette-${ id } sm-variation-${ current % 12 + 1 }` }>
       <div className={ `palette-preview-set` }>
-        { colors.map( ( color, colorIndex ) => (
-          <div key={ colorIndex } className={ `palette-preview-swatches sm-palette-${ id } sm-variation-${ colorIndex + 1 }`}>
-            <div style={ { color: `var(--sm-current-bg-color)` } }></div>
-            <div style={ { color: `var(--sm-current-accent-color)` } }></div>
-            <div style={ { color: `var(--sm-current-fg1-color)` } }></div>
-            <div style={ { color: `var(--sm-current-fg2-color)` } }></div>
-          </div>
-        ) ) }
-        <div className="palette-preview-accent" style={ { color: `var(--sm-color-palette-${ id }-accent-color-11)` } }></div>
+        { colors.map( ( color, index ) => {
+
+          let colorIndex = ( index + current + 10 ) % 12;
+          let cardContent = null;
+          let variation = colorIndex + 1;
+          let modifier = '';
+
+          if ( index === 2 ) {
+            cardContent = [
+              <h2 className="palette-preview-swatches__title">Text</h2>,
+              <div className="palette-preview-swatches__body">
+                <div className="palette-preview-swatches__row" />
+                <div className="palette-preview-swatches__row" />
+              </div>,
+              <div className={ `palette-preview-swatches__button sm-variation-${ ( colorIndex + 6 ) % 12 + 1 }` }>&rarr;</div>
+            ];
+            modifier = 'current';
+          }
+
+          if ( index === 8 ) {
+            modifier = 'accent';
+          }
+
+          if ( index === 10 ) {
+            modifier = 'text';
+            variation = ( current % 12 ) + 1;
+          }
+
+          let className = `palette-preview-swatches ${ ! modifier ? '' : `palette-preview-swatches--${ modifier }` } sm-variation-${ variation }`;
+
+          return (
+            <div key={ index } className={ className } onClick={ () => { setCurrent( colorIndex ) } }>
+              <div className={ `palette-preview-swatches__card` }>
+                <div className={ `palette-preview-swatches__card-top` } />
+                <div className={ `palette-preview-swatches__card-content` }>
+                  { cardContent }
+                </div>
+                <div className={ `palette-preview-swatches__card-bottom` } />
+              </div>
+            </div>
+          )
+        } ) }
       </div>
     </div>
   )
