@@ -1568,7 +1568,6 @@ body.feedback-modal-open #style-manager-user-feedback-modal .modal {
   #customize-controls[id] .description {
     color: inherit; }
   #customize-controls[id] .accordion-section-content {
-    overflow: visible;
     padding: 0;
     color: inherit; }
   #customize-controls[id] .control-panel-content:not(.control-panel-nav_menus) .control-section:nth-child(2),

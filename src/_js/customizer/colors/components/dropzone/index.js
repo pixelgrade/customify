@@ -43,9 +43,9 @@ const DropZone = () => {
         const hexColors = colors.map( rgb => chroma( rgb ).hex() );
         const config = hexColors.map( ( hex, index ) => {
           return {
-            uid: `color_group_${ new Date().getTime() }`,
+            uid: `color_group_${ index }`,
             sources: [ {
-              uid: `color_${ new Date().getTime() }`,
+              uid: `color_0`,
               label: `Color ${ index + 1 }`,
               value: hex
             } ],
