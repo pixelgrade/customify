@@ -41,9 +41,9 @@ const PaletteListItem = ( props ) => {
       <div className={ `sm-presets-preview ${ active ? 'sm-presets-preview--active' : '' }` } style={ { backgroundImage: `url(${ image })` } }>
         <div className="sm-presets-preview__quote">{ quote }</div>
         <div className="sm-presets-preview__stripes">
-          { stripes.map( stripe => {
+          { stripes.map( ( stripe, index ) => {
             return (
-              <div className={ `sm-presets-preview__stripe sm-presets-preview__stripe-w${ stripe.width } sm-presets-preview__stripe-p${ stripe.pos }` }>
+              <div key={ index } className={ `sm-presets-preview__stripe sm-presets-preview__stripe-w${ stripe.width } sm-presets-preview__stripe-p${ stripe.pos }` }>
                 <div className="sm-presets-preview__pixel" style={ { color: stripe.color } } />
               </div>
             );
