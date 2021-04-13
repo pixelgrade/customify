@@ -1,5 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
+import chroma from "chroma-js";
+
 import Worker from "worker-loader!./worker.js";
+import ConfigContext from "../../context";
 
 import './style.scss';
 
@@ -7,6 +10,7 @@ export const myWorker = new Worker();
 
 const DropZone = () => {
 
+  const { setConfig } = useContext( ConfigContext );
   const [ files, setFiles ] = useState( null );
   const imgSourceRef = useRef( null );
   const imgPreviewRef = useRef( null );
@@ -29,6 +33,34 @@ const DropZone = () => {
     const files = e.dataTransfer.files;
     setFiles( files );
   }
+
+  useEffect( () => {
+    myWorker.onmessage = function( event ) {
+      const type = event.data.type;
+
+      if ( 'palette' === type ) {
+        const colors = event.data.colors;
+        const hexColors = colors.map( rgb => chroma( rgb ).hex() );
+        const config = hexColors.map( ( hex, index ) => {
+          return {
+            uid: `color_group_${ new Date().getTime() }`,
+            sources: [ {
+              uid: `color_${ new Date().getTime() }`,
+              label: `Color ${ index + 1 }`,
+              value: hex
+            } ],
+          }
+        } );
+
+        setConfig( config );
+      }
+    };
+
+    return () => {
+      delete myWorker.onmessage;
+    };
+
+  }, [] );
 
   useEffect( () => {
     const imgSource = imgSourceRef.current;
@@ -67,14 +99,23 @@ const DropZone = () => {
 
   return (
     <div className="dropzone">
+      <div className="dropzone-description">
+        Extract colors from an image and generate a color palette for your design system.
+      </div>
       <div className="dropzone-container" onDragOver={dragOver}
            onDragEnter={dragEnter}
            onDragLeave={dragLeave}
            onDrop={fileDrop}>
+        <div className="dropzone-placeholder">
+          <div className="dropzone-info">
+            <div className="dropzone-info-title">Drag and drop your image</div>
+            <div className="dropzone-info-text">or <span className="dropzone-info-anchor">select a file</span> from your computer</div>
+          </div>
+        </div>
         <img alt="Preview" className="dropzone-image-preview" ref={ imgPreviewRef } />
       </div>
       <img alt="Source" className="dropzone-image-source" ref={ imgSourceRef } onLoad={ onImageLoad } />
-      <canvas className="dropzone-canvas" ref={ canvasRef }></canvas>
+      <canvas className="dropzone-canvas" ref={ canvasRef } />
     </div>
   )
 }

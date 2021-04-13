@@ -1,16 +1,50 @@
+.dropzone {
+
+  > :not(:first-child) {
+    margin-top: var(--customizer-spacing);
+  }
+}
+
 .dropzone-container {
   position: relative;
 
+  height: 200px;
+  margin: 0;
+
+  text-align: center;
+}
+
+.dropzone-placeholder {
   display: flex;
   align-items: center;
   justify-content: center;
 
-  height: 200px;
-  margin: 0;
-  padding: 20px;
-  background: #EEEEEE;
+  height: 100%;
+  border: 2px dashed var(--sm-color-palette-accent-color-4);
+  border-radius: 0.5em;
 
-  text-align: center;
+  background: var(--sm-color-palette-accent-color-2);
+}
+
+.dropzone-info {
+  padding: 1em;
+}
+
+.dropzone-info-title {
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 1.5;
+  letter-spacing: -0.03em;
+}
+
+.dropzone-info-anchor {
+  color: var(--sm-color-palette-accent-color-6);
+  text-decoration: underline;
+}
+
+.dropzone-description {
+  margin-top: 0;
+  margin-bottom: 1em;
 }
 
 .dropzone-image-source {

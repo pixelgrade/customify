@@ -1,19 +1,19 @@
-.sm-palette-list {
+.sm-presets-list {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   grid-gap: 10px;
 }
 
-.sm-palette-preview {
+.sm-presets-preview {
   position: relative;
 
   background-position: center center;
   background-size: cover;
 
-  &.palette-active,
+  &.sm-presets-preview--active,
   &:hover {
 
-    .sm-palette-preview__pixel {
+    .sm-presets-preview__pixel {
       top: 0;
       flex-grow: 1;
     }
@@ -26,7 +26,25 @@
   }
 }
 
-.sm-palette-preview__stripes {
+.sm-presets-preview__quote {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 10;
+
+  width: 100%;
+  height: 100%;
+  padding: 1.2em;
+
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.2;
+
+  opacity: 0;
+  transition: opacity .2s ease-out;
+}
+
+.sm-presets-preview__stripes {
   position: absolute;
   top: 0;
   left: 0;
@@ -38,13 +56,19 @@
   flex-direction: row-reverse;
 }
 
-.sm-palette-preview--active {
-  .sm-palette-preview__stripe:not(.sm-palette-preview__stripe-w4) {
+.sm-presets-preview--active {
+
+  .sm-presets-preview__quote {
+    opacity: 1;
+    transition-delay: .3s;
+  }
+
+  .sm-presets-preview__stripe:not(.sm-presets-preview__stripe-w4) {
     flex-grow: 0;
   }
 }
 
-.sm-palette-preview__stripe {
+.sm-presets-preview__stripe {
   display: flex;
   flex-direction: column;
   flex: 1 0 0;
@@ -52,14 +76,14 @@
 }
 
 @for $i from 1 through 9 {
-  .sm-palette-preview__stripe-p#{ $i } {
-    .sm-palette-preview__pixel {
+  .sm-presets-preview__stripe-p#{ $i } {
+    .sm-presets-preview__pixel {
       top: #{$i * 10%}
     }
   }
 }
 
-.sm-palette-preview__pixel {
+.sm-presets-preview__pixel {
   position: relative;
   padding-top: 100%;
   background: currentColor;
@@ -67,7 +91,7 @@
 }
 
 @each $w in 1, 2, 4 {
-  .sm-palette-preview__stripe-w#{ $w } {
+  .sm-presets-preview__stripe-w#{ $w } {
     flex-grow: $w;
   }
 }

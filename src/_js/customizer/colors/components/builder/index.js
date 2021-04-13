@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState, useRef } from 'react';
 
 import { SourceColors } from "../source-colors";
 import ConfigContext from "../../context";
-import DropZone, { myWorker } from "../dropzone";
-import PaletteList from '../palette-list';
+import DropZone from "../dropzone";
+import PresetsList from '../palette-list';
+import Blinds from '../blinds';
 
 import {
   getColorsFromInputValue,
@@ -11,12 +12,30 @@ import {
   getCSSFromPalettes,
   getValueFromColors,
 } from "./utils";
-import chroma from "chroma-js";
 
 export { Builder }
 export * from './utils';
 
+function useTraceUpdate(props) {
+  const prev = useRef(props);
+  useEffect(() => {
+    const changedProps = Object.entries(props).reduce((ps, [k, v]) => {
+      if (prev.current[k] !== v) {
+        ps[k] = [prev.current[k], v];
+      }
+      return ps;
+    }, {});
+    if (Object.keys(changedProps).length > 0) {
+      console.log('Changed props:', changedProps);
+    }
+    prev.current = props;
+  });
+}
+
+
 const Builder = ( props ) => {
+  useTraceUpdate( props );
+
   const { sourceSettingID, outputSettingID } = props;
 
   const sourceSetting = wp.customize( sourceSettingID );
@@ -26,16 +45,8 @@ const Builder = ( props ) => {
   const [ palettes, setPalettes ] = useState( [] );
   const [ CSSOutput, setCSSOutput ] = useState( '' );
 
-  const [ attributes, updateAttributes ] = useState( {
-    correctLightness: true,
-    useSources: true,
-    mode: 'lch',
-    bezierInterpolation: false,
-  } );
-
-  const setAttributes = ( newAttributes ) => {
-    updateAttributes( Object.assign( {}, attributes, newAttributes ) );
-  }
+  const [ activePreset, setActivePreset ] = useState( null );
+  const resetActivePreset = useCallback( () => { setActivePreset( null ) }, [] )
 
   const changeListener = () => {
     setConfig( getColorsFromInputValue( sourceSetting() ) );
@@ -54,41 +65,10 @@ const Builder = ( props ) => {
 
   }, [] );
 
-  const [ colors, setColors ] = useState( [] );
-
-  useEffect( () => {
-    myWorker.onmessage = function( event ) {
-      const type = event.data.type;
-
-      if ( 'palette' === type ) {
-        const colors = event.data.colors;
-        const hexColors = colors.map( rgb => chroma( rgb ).hex() );
-
-        hexColors.forEach( color1 => {
-          hexColors.forEach( ( color2, index ) => {
-            if ( color1 !== color2 && chroma.distance( color1, color2 ) < 30 ) {
-//              hexColors.splice( index, 1 );
-            }
-          } );
-        } );
-
-        setColors( hexColors );
-      }
-    };
-
-    return () => {
-      delete myWorker.onmessage;
-    };
-
-  }, [] );
-
   useEffect( () => {
     sourceSetting.set( getValueFromColors( config ) );
+    setPalettes( getPalettesFromColors( config ) );
   }, [ config ] );
-
-  useEffect( () => {
-    setPalettes( getPalettesFromColors( config, attributes ) );
-  }, [ config, attributes ] );
 
   useEffect( () => {
     wp.customize( outputSettingID, setting => {
@@ -101,31 +81,38 @@ const Builder = ( props ) => {
   }, [ palettes ] );
 
   return (
-    <ConfigContext.Provider value={ { config, setConfig } }>
-      <Control label={ 'Brand Colors' }>
-        <SourceColors />
-      </Control>
-      <style>{ CSSOutput }</style>
-      <Control label={ 'Explore colors' }>
-        <PaletteList />
-      </Control>
-      <Control label={ 'Extract from Image' }>
-        <DropZone />
-        <div className="c-palette-builder__source-list">
-          <div className="c-palette-builder__source-group">
-            { colors.map( color => {
-              return (
-                <div className="c-palette-builder__source-item">
-                  <div className="c-palette-builder__source-item-color">
-                    <div className="c-palette-builder__source-item-preview" style={ { color: color } } />
-                  </div>
-                  <div className="c-palette-builder__source-item-label">{ color }</div>
-                </div>
-              )
-            } ) }
-          </div>
+    <ConfigContext.Provider value={ { config, setConfig, resetActivePreset } }>
+      <div className="sm-group">
+        <div className="sm-panel-toggle">
+          Customize colors usage
         </div>
-      </Control>
+      </div>
+      <div className="sm-group">
+        <div className="sm-group__body">
+          <Control label={ 'Brand Colors' }>
+            <SourceColors onChange={ () => { setActivePreset( null ) } } />
+            <style>{ CSSOutput }</style>
+          </Control>
+        </div>
+        <div className="sm-panel-toggle">
+          Fine tune generated palette
+        </div>
+      </div>
+      <div className="sm-group">
+        <Blinds title={ 'Explore colors' }>
+          <PresetsList active={ activePreset } onChange={ ( preset ) => {
+            setConfig( preset.config );
+            setActivePreset( preset.uid );
+          } } />
+        </Blinds>
+        <Blinds title={ 'Extract from Image' }>
+          <DropZone />
+        </Blinds>
+        <div className="sm-panel-toggle">
+          My Palettes
+          <div className="sm-label">Coming Soon</div>
+        </div>
+      </div>
     </ConfigContext.Provider>
   );
 }

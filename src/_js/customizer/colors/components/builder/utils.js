@@ -3,7 +3,12 @@ import chroma from 'chroma-js';
 
 import contrastArray from './contrast-array';
 
-export const getPalettesFromColors = ( colorGroups, attributes = {} ) => {
+export const getPalettesFromColors = ( colorGroups, attributes = {
+  correctLightness: true,
+  useSources: true,
+  mode: 'lch',
+  bezierInterpolation: false,
+} ) => {
 //  const functionalColors = getFunctionalColors( colorGroups );
   let palettes = colorGroups.map( mapColorToPalette( attributes ) );
 //  let functionalPalettes = functionalColors.map( mapColorToPalette( attributes ) );

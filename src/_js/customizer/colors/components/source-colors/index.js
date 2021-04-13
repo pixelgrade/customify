@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState, useRef } from 'react';
+import React, { useContext, useEffect, useCallback, useState, useRef } from 'react';
 
 import { ColorPicker } from './color-picker';
 import { ContextualMenu } from "../contextual-menu";
@@ -14,7 +14,7 @@ import {
 
 import './style.scss';
 
-const SourceColors = () => {
+const SourceColors = ( props ) => {
   const { config, setConfig } = useContext( ConfigContext );
 
   useEffect( () => {
@@ -76,17 +76,36 @@ const SourceColorControl = ( props ) => {
   const [ editable, setEditable ] = useState( false );
   const [ showPicker, setShowPicker ] = useState();
 
-  const { config, setConfig } = useContext( ConfigContext );
+  const { config, setConfig, resetActivePreset } = useContext( ConfigContext );
 
-  const onChange = ( newValue ) => {
-    setConfig( updateColor( config, groupIndex, index, newValue ) )
-  };
+  const onChange = useCallback(( hex ) => {
+    const newConfig = updateColor( config, groupIndex, index, { value: hex } );
+    setConfig( newConfig );
+    resetActivePreset();
+  }, [config, groupIndex, index]);
+
+  const interpolateColor = useCallback( () => {
+    setConfig( addNewColorToGroup( config, groupIndex, index ) );
+    resetActivePreset();
+  }, [config, groupIndex, index] );
+
+  const addColor = useCallback( () => {
+    setConfig( addNewColorGroup( config, groupIndex ) );
+    resetActivePreset();
+  }, [config, groupIndex] );
+
+  const renameColor = useCallback( () => { setEditable( true ) }, [] );
+
+  const removeColor = useCallback( () => {
+    setConfig( deleteColor( config, groupIndex, index ) );
+    resetActivePreset();
+  }, [config, groupIndex, index] );
 
   const actions = [
-    { label: 'Interpolate Color', callback: () => { setConfig( addNewColorToGroup( config, groupIndex, index ) ) } },
-    { label: 'Add Color', callback: () => { setConfig( addNewColorGroup( config, groupIndex ) ) } },
-    { label: 'Rename Color', callback: () => { setEditable( true ) } },
-    { label: 'Remove Color', callback: () => { setConfig( deleteColor( config, groupIndex, index ) ) }, className: 'c-contextual-menu__list-item--danger' },
+    { label: 'Interpolate Color', callback: interpolateColor },
+    { label: 'Add Color', callback: addColor },
+    { label: 'Rename Color', callback: renameColor },
+    { label: 'Remove Color', callback: removeColor, className: 'c-contextual-menu__list-item--danger' },
   ];
 
   const inputRef = useRef( null );
@@ -124,7 +143,7 @@ const SourceColorControl = ( props ) => {
       onClick={ () => { setShowPicker( ! showPicker ) } }
       ref={ pickerRef }
       className={ `c-palette-builder__source-item ${ active ? 'c-palette-builder__source-item--active' : '' }` }>
-      <ColorPicker hex={ color.value } onChange={ hex => { onChange( { value: hex } ) } } isOpen={ showPicker } />
+      <ColorPicker hex={ color.value } onChange={ onChange } isOpen={ showPicker } />
       { ! editable && <div className="c-palette-builder__source-item-label">{ color.label }</div> }
       { editable &&
         <input type="text"

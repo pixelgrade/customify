@@ -1,8 +1,5 @@
 [id][id="customize-control-sm_advanced_palette_source_control"] {
-  padding-top: calc( 2 * var(--customize-control-spacing-y) );
-  padding-bottom: calc( 2 * var(--customize-control-spacing-y) );
-  border-bottom: var(--customizer-border-color);
-  background-color: var(--sm-color-palette-neutral-color-1);
+  padding: 0;
 }
 
 .c-palette-builder {
@@ -70,6 +67,13 @@
 
 [class][class] {
 
+  .c-palette-builder__source-group {
+
+    &:not(:last-child) {
+      margin-bottom: 0.6em;
+    }
+  }
+
   .c-palette-builder__source-item {
     display: flex;
     align-items: center;
@@ -78,7 +82,6 @@
     line-height: 1.5;
 
     padding: 0.6em;
-    margin-bottom: 0.6em;
 
     background: var(--sm-color-palette-neutral-color-2);
     transition: var(--sm-transition);
