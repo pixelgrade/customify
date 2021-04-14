@@ -1,21 +1,28 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import chroma from "chroma-js";
 
+import { PresetPreview } from '../palette-list';
 import uploadIcon from "../../../svg/upload.svg";
 import Worker from "worker-loader!./worker.js";
 import ConfigContext from "../../context";
 
 import './style.scss';
+import getRandomStripes from "../palette-list/get-random-stripes";
+import {getPalettesFromColors} from "../builder";
 
 export const myWorker = new Worker();
 
 const DropZone = () => {
 
   const { setConfig } = useContext( ConfigContext );
+
   const [ files, setFiles ] = useState( null );
+  const [ stripes, setStripes ] = useState( [] );
+
   const imgSourceRef = useRef( null );
   const imgPreviewRef = useRef( null );
   const canvasRef = useRef( null );
+  const previewRef = useRef( null );
 
   const dragOver = ( e ) => {
     e.preventDefault();
@@ -54,6 +61,10 @@ const DropZone = () => {
         } );
 
         setConfig( config );
+
+        const preset = {};
+        preset.palettes = getPalettesFromColors( config );
+        setStripes( getRandomStripes( preset ) );
       }
     };
 
@@ -114,6 +125,7 @@ const DropZone = () => {
             <div className="dropzone-info-text">or <span className="dropzone-info-anchor">select a file</span> from your computer</div>
           </div>
         </div>
+        <PresetPreview stripes={ stripes } />
         <img alt="Preview" className="dropzone-image-preview" ref={ imgPreviewRef } />
       </div>
       <img alt="Source" className="dropzone-image-source" ref={ imgSourceRef } onLoad={ onImageLoad } />

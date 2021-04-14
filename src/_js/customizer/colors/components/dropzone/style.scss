@@ -8,18 +8,38 @@
 .dropzone-container {
   position: relative;
 
-  height: 200px;
   margin: 0;
 
   text-align: center;
+
+  &:before {
+    content: "";
+    display: block;
+    padding-top: 100%;
+  }
+
+  .sm-presets-preview {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 10;
+
+    width: 100%;
+    height: 100%;
+  }
 }
 
 .dropzone-placeholder {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+
   display: flex;
   align-items: center;
   justify-content: center;
 
-  height: 100%;
   border: 2px dashed var(--sm-color-palette-accent-color-4);
   border-radius: 0.5em;
 

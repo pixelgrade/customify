@@ -17,7 +17,15 @@
 
     .sm-presets-preview__pixel {
       top: 0;
-      flex-grow: 1;
+    }
+  }
+
+  &:not(:hover):not(.sm-presets-preview--active) {
+
+    .sm-presets-preview__pixel {
+      --moveY: calc( 100% * var(--p) / 10 );
+      --scaleY: calc( var(--w) / 10 );
+      transform: translateY( var(--moveY) ) scaleY( var(--scaleY) ) scaleX(1.1);
     }
   }
 
@@ -65,35 +73,45 @@
     transition-delay: .3s;
   }
 
+  .sm-presets-preview__stripe-w4 {
+    width: 100%;
+  }
+
   .sm-presets-preview__stripe:not(.sm-presets-preview__stripe-w4) {
-    flex-grow: 0;
+    width: 0;
   }
 }
 
 .sm-presets-preview__stripe {
-  display: flex;
-  flex-direction: column;
-  flex: 1 0 0;
-  transition: all .5s cubic-bezier(0.540, -0.470, 0.100, 1.000);
-}
+  position: relative;
+  overflow: hidden;
 
-@for $i from 1 through 9 {
-  .sm-presets-preview__stripe-p#{ $i } {
-    .sm-presets-preview__pixel {
-      top: #{$i * 10%}
-    }
-  }
+  width: calc( 10% * var(--w) );
+  transition: all .5s cubic-bezier(0.540, -0.470, 0.100, 1.000);
 }
 
 .sm-presets-preview__pixel {
-  position: relative;
-  padding-top: 100%;
+  position: absolute;
+
+  width: 100%;
+  height: 100%;
+
   background: currentColor;
   transition: all .5s cubic-bezier(0.540, -0.470, 0.100, 1.000);
+  transform: scaleX(1.1);
+  transform-origin: 50% 0;
+
+  pointer-events: none;
+}
+
+@for $i from 0 through 9 {
+  .sm-presets-preview__stripe-p#{ $i } {
+    --p: #{ $i };
+  }
 }
 
 @each $w in 1, 2, 4 {
   .sm-presets-preview__stripe-w#{ $w } {
-    flex-grow: $w;
+    --w: #{ $w };
   }
 }
