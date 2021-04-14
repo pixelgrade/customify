@@ -30,6 +30,18 @@
   padding: 1em;
 }
 
+.dropzone-info-icon {
+  margin-bottom: 10px;
+
+  svg {
+    display: block;
+    width: 32px;
+    max-width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
 .dropzone-info-title {
   font-size: 18px;
   font-weight: 500;

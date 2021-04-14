@@ -59,6 +59,7 @@ class ColorPalettes extends AbstractHookProvider {
 		$this->add_filter( 'customify_filter_fields', 'maybe_enhance_dark_mode_control', 120, 1 );
 
 		$this->add_filter( 'customify_final_config', 'alter_master_controls_connected_fields', 100, 1 );
+		$this->add_filter( 'customify_final_config', 'add_color_usage_section', 110, 1 );
 
 		/**
 		 * Scripts enqueued in the Customizer.
@@ -218,6 +219,60 @@ class ColorPalettes extends AbstractHookProvider {
 		}
 
 		$config['panels']['style_manager_panel']['sections']['sm_color_palettes_section']['options'] = $options;
+
+		return $config;
+	}
+
+	/**
+	 *
+	 * @since 3.0.0
+	 *
+	 * @param array $config
+	 *
+	 * @return array
+	 */
+	protected function add_color_usage_section( array $config ): array {
+
+		$color_usage_fields = [
+			'sm_dark_color_switch_slider',
+			'sm_dark_color_select_slider',
+			'sm_text_color_switch_master',
+			'sm_text_color_select_master',
+			'sm_accent_color_switch_master',
+			'sm_accent_color_select_master',
+			'sm_site_color_variation',
+			'sm_coloration_level',
+			'sm_dark_mode',
+			'sm_dark_mode_advanced',
+		];
+
+		$color_usage_section = [
+			'title'      => esc_html__( 'Color Usage', '__plugin_txtd' ),
+			'section_id' => 'sm_color_usage_section',
+			'priority'   => 10,
+			'options'    => [],
+		];
+
+		if ( ! isset( $config['panels']['style_manager_panel']['sections']['sm_color_palettes_section']['options'] ) ) {
+			return $config;
+		}
+
+		$sm_colors_options = $config['panels']['style_manager_panel']['sections']['sm_color_palettes_section']['options'];
+
+		foreach ( $color_usage_fields as $field_id ) {
+
+			if ( ! isset( $sm_colors_options[ $field_id ] ) ) {
+				continue;
+			}
+
+			if ( empty( $color_usage_section['options'] ) ) {
+				$color_usage_section['options'] = [ $field_id => $sm_colors_options[ $field_id ] ];
+			} else {
+				$color_usage_section['options'] = array_merge( $color_usage_section['options'], [ $field_id => $sm_colors_options[ $field_id ] ] );
+			}
+		}
+
+		$config['panels']['theme_options_panel']['sections']['sm_color_usage_section'] = $color_usage_section;
 
 		return $config;
 	}
@@ -417,62 +472,18 @@ class ColorPalettes extends AbstractHookProvider {
 		// We need to split the fields in the Style Manager section into two: color palettes and fonts.
 		$color_palettes_fields = [
 			'sm_advanced_palette_source',
-
 			'sm_advanced_palette_output',
-			'sm_site_color_variation',
 
+			'sm_dark_color_switch_slider',
+			'sm_dark_color_select_slider',
 			'sm_text_color_switch_master',
 			'sm_text_color_select_master',
 			'sm_accent_color_switch_master',
 			'sm_accent_color_select_master',
-
-			'sm_current_color_palette',
-			'sm_palettes_description',
-			'sm_filters_description',
-			'sm_customize_description',
-			'sm_color_matrix',
-			'sm_palette_filter',
+			'sm_site_color_variation',
 			'sm_coloration_level',
-			'sm_color_diversity',
-			'sm_shuffle_colors',
 			'sm_dark_mode',
 			'sm_dark_mode_advanced',
-			'sm_dark_color_switch_slider',
-			'sm_dark_color_select_slider',
-			'sm_dark_color_primary_slider',
-			'sm_dark_color_secondary_slider',
-			'sm_dark_color_tertiary_slider',
-			'sm_colors_dispersion',
-			'sm_colors_focus_point',
-			'sm_color_palette',
-			'sm_color_palette_variation',
-
-			'sm_titles_color_master',
-			'sm_background_color_master',
-			'sm_color_primary',
-			'sm_color_primary_final',
-			'sm_color_secondary',
-			'sm_color_secondary_final',
-			'sm_color_tertiary',
-			'sm_color_tertiary_final',
-			'sm_dark_primary',
-			'sm_dark_primary_final',
-			'sm_dark_secondary',
-			'sm_dark_secondary_final',
-			'sm_dark_tertiary',
-			'sm_dark_tertiary_final',
-			'sm_light_primary',
-			'sm_light_primary_final',
-			'sm_light_secondary',
-			'sm_light_secondary_final',
-			'sm_light_tertiary',
-			'sm_light_tertiary_final',
-			'sm_swap_colors',
-			'sm_swap_dark_light',
-			'sm_swap_colors_dark',
-			'sm_swap_secondary_colors_dark',
-			'sm_advanced_toggle',
-			'sm_color_palettes_spacing_bottom',
 		];
 
 		$color_palettes_section_config = [
@@ -481,6 +492,7 @@ class ColorPalettes extends AbstractHookProvider {
 			'priority'   => 10,
 			'options'    => [],
 		];
+
 		foreach ( $color_palettes_fields as $field_id ) {
 			if ( ! isset( $sm_section_config['options'][ $field_id ] ) ) {
 				continue;

@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import chroma from "chroma-js";
 
+import uploadIcon from "../../../svg/upload.svg";
 import Worker from "worker-loader!./worker.js";
 import ConfigContext from "../../context";
 
@@ -108,6 +109,7 @@ const DropZone = () => {
            onDrop={fileDrop}>
         <div className="dropzone-placeholder">
           <div className="dropzone-info">
+            <div className="dropzone-info-icon" dangerouslySetInnerHTML={ { __html: uploadIcon } } />
             <div className="dropzone-info-title">Drag and drop your image</div>
             <div className="dropzone-info-text">or <span className="dropzone-info-anchor">select a file</span> from your computer</div>
           </div>

@@ -53,16 +53,29 @@ const Builder = ( props ) => {
   };
 
   useEffect(() => {
-    // Attach the listeners on component mount.
-    sourceSetting.bind( changeListener );
-    variationSetting.bind( changeListener );
 
-    // Detach the listeners on component unmount.
-    return () => {
-      sourceSetting.unbind( changeListener );
-      variationSetting.unbind( changeListener );
+    if ( ! sourceSetting ) {
+      return;
     }
 
+    sourceSetting.bind( changeListener );
+
+    return () => {
+      sourceSetting.unbind( changeListener );
+    }
+  }, [] );
+
+  useEffect(() => {
+
+    if ( ! variationSetting ) {
+      return;
+    }
+
+    variationSetting.bind( changeListener );
+
+    return () => {
+      variationSetting.unbind( changeListener );
+    }
   }, [] );
 
   useEffect( () => {
@@ -80,10 +93,43 @@ const Builder = ( props ) => {
     setCSSOutput( getCSSFromPalettes( palettes ) );
   }, [ palettes ] );
 
+  const [overrideBack, setOverrideBack] = useState( false );
+
+  useEffect( () => {
+
+    const callback = ( isExpanded ) => {
+
+      if ( ! isExpanded && overrideBack ) {
+        wp.customize.section( 'sm_color_palettes_section', ( colorPalettesSection ) => {
+          colorPalettesSection.focus();
+        } );
+        setOverrideBack( false );
+      }
+    }
+
+    const colorUsageSection = wp.customize.section( 'sm_color_usage_section' );
+
+    if ( ! colorUsageSection ) {
+      return;
+    }
+
+    colorUsageSection.expanded.bind( callback );
+
+    return () => {
+      colorUsageSection.expanded.unbind( callback );
+    }
+
+  }, [ overrideBack ] )
+
   return (
     <ConfigContext.Provider value={ { config, setConfig, resetActivePreset } }>
       <div className="sm-group">
-        <div className="sm-panel-toggle">
+        <div className="sm-panel-toggle" onClick={ () => {
+          wp.customize.section( 'sm_color_usage_section', ( colorUsageSection ) => {
+            setOverrideBack( true );
+            colorUsageSection.focus();
+          } );
+        } }>
           Customize colors usage
         </div>
       </div>
@@ -93,9 +139,6 @@ const Builder = ( props ) => {
             <SourceColors onChange={ () => { setActivePreset( null ) } } />
             <style>{ CSSOutput }</style>
           </Control>
-        </div>
-        <div className="sm-panel-toggle">
-          Fine tune generated palette
         </div>
       </div>
       <div className="sm-group">
@@ -108,10 +151,6 @@ const Builder = ( props ) => {
         <Blinds title={ 'Extract from Image' }>
           <DropZone />
         </Blinds>
-        <div className="sm-panel-toggle">
-          My Palettes
-          <div className="sm-label">Coming Soon</div>
-        </div>
       </div>
     </ConfigContext.Provider>
   );

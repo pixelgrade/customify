@@ -2,7 +2,7 @@
     "name": "customify",
     "description": "Customify is a theme Customizer booster to easily customize Fonts, Colors, and other options for a certain WordPress theme..",
     "private": false,
-	"sideEffects": false,
+    "sideEffects": false,
     "repository": {
         "type": "git",
         "url": "git+https://github.com/pixelgrade/customify.git"
@@ -64,6 +64,7 @@
         "sass-loader": "^11.0.1",
         "semver": "^7.3.5",
         "style-loader": "^2.0.0",
+        "svg-inline-loader": "^0.8.2",
         "terser": "^5.6.1",
         "terser-webpack-plugin": "^5.1.1",
         "webpack": "^5.27.2",

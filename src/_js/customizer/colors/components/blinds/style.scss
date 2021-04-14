@@ -1,5 +1,9 @@
-.sm-blinds {
-
+.sm-blinds,
+.sm-group__body,
+.sm-blinds__header,
+.sm-blinds__body,
+.sm-panel-toggle {
+  border: 0 solid var(--customizer-border-color);
 }
 
 .sm-group__body,
@@ -8,7 +12,6 @@
 .sm-panel-toggle {
   padding: var(--customize-control-spacing-y) var(--customize-control-spacing-x);
   background: var(--sm-color-palette-accent-color-1);
-  border: 0 solid var(--customizer-border-color);
   border-top-width: 1px;
 }
 
@@ -30,16 +33,8 @@
   font-size: 15px;
   line-height: 1.3;
   letter-spacing: -0.02em;
-}
 
-.sm-label {
-  padding: 0.25em 0.5em;
-
-  font-size: 12px;
-
-  background: var(--sm-color-palette-accent-color-4);
-  color: var(--sm-color-palette-accent-color-1);
-  border-radius: 9em;
+  cursor: pointer;
 }
 
 .sm-group {

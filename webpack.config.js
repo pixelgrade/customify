@@ -77,6 +77,10 @@ module.exports = {
         ],
         sideEffects: true
       },
+      {
+        test: /\.svg$/,
+        loader: 'svg-inline-loader'
+      }
     ],
   },
   externals: {

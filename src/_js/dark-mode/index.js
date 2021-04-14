@@ -4,8 +4,7 @@ const COLOR_SCHEME_BUTTON = '.is-color-scheme-switcher-button';
 const STORAGE_ITEM = 'color-scheme-dark';
 const TEMP_STORAGE_ITEM = 'color-scheme-dark-temp'
 const $html = $( 'html' );
-const api = window?.wp?.customize;
-const ignoreStorage = !! api;
+const ignoreStorage = !! wp.customize;
 
 export default class DarkMode {
 
@@ -44,31 +43,31 @@ export default class DarkMode {
 
   bindCustomizer() {
 
-    if ( ! api ) {
+    if ( ! wp.customize ) {
       return;
     }
 
-    api.bind( 'ready', () => {
-      const setting = api( 'sm_dark_mode_advanced' );
-
-      localStorage.removeItem( TEMP_STORAGE_ITEM );
-      this.darkModeSetting = setting();
-      this.update();
-
-      setting.bind( ( newValue, oldValue ) => {
+    wp.customize.bind( 'ready', () => {
+      wp.customize( 'sm_dark_mode_advanced', setting => {
         localStorage.removeItem( TEMP_STORAGE_ITEM );
-        this.darkModeSetting = newValue;
+        this.darkModeSetting = setting();
         this.update();
-      } );
 
-      const previewer = wp?.customize?.previewer;
-
-      if ( previewer ) {
-        previewer.bind( 'ready', () => {
-          const targetWindow = previewer.preview.targetWindow();
-          this.$html = this.$html.add( targetWindow.document.documentElement );
+        setting.bind( ( newValue, oldValue ) => {
+          localStorage.removeItem( TEMP_STORAGE_ITEM );
+          this.darkModeSetting = newValue;
+          this.update();
         } );
-      }
+
+        const previewer = wp?.customize?.previewer;
+
+        if ( previewer ) {
+          previewer.bind( 'ready', () => {
+            const targetWindow = previewer.preview.targetWindow();
+            this.$html = this.$html.add( targetWindow.document.documentElement );
+          } );
+        }
+      } );
     } );
   }
 
