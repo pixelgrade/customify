@@ -7,10 +7,10 @@
   align-items: center;
 
   width: auto;
-  margin-left: -1em;
+  margin-left: calc( -1 * var(--customize-control-spacing-x) );
 
   &[class][class] > * {
-    margin-left: 1em;
+    margin-left: var(--customize-control-spacing-x);
   }
 
   .customize-control-title,

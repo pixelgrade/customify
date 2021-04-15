@@ -499,6 +499,7 @@ input.font-options__checkbox {
   align-items: stretch;
   color: var(--sm-color-palette-neutral-color-9);
   border-radius: 999em;
+  font-size: var(--customizer-field-font-size);
   font-weight: 600;
   line-height: 1.142em;
   -webkit-font-smoothing: antialiased; }
@@ -609,9 +610,9 @@ input.font-options__checkbox {
   flex-wrap: wrap;
   align-items: center;
   width: auto;
-  margin-left: -1em; }
+  margin-left: calc( -1 * var(--customize-control-spacing-x)); }
   .customize-control-range[class][class] > * {
-    margin-left: 1em; }
+    margin-left: var(--customize-control-spacing-x); }
   .customize-control-range .customize-control-title,
   .customize-control-range .customize-control-notifications-container {
     width: 100%; }
@@ -745,6 +746,70 @@ input.font-options__checkbox {
   padding-right: 0; }
   [id="customize-control-sm_current_font_palette_control"] ~ .customize-control {
     background-color: var(--sm-color-palette-neutral-color-1); }
+
+[id]#sub-accordion-section-rosa2_options\[colors_section\] {
+  background: var(--sm-color-palette-accent-color-1); }
+  [id]#sub-accordion-section-rosa2_options\[colors_section\] .customize-control-html[id*="title"] {
+    padding-top: 0;
+    margin-top: calc( 11px + var(--customize-control-spacing-y));
+    box-shadow: var(--sm-color-palette-accent-color-3) 0 1px 0 inset, var(--sm-color-palette-accent-color-2) 0 -10px, var(--sm-color-palette-accent-color-3) 0 -11px; }
+    [id]#sub-accordion-section-rosa2_options\[colors_section\] .customize-control-html[id*="title"] .separator {
+      font-size: 15px;
+      line-height: 1.4;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      padding-bottom: 0;
+      padding-top: 20px; }
+
+.customize-control-sm_toggle + .customize-control-sm_toggle {
+  padding-top: 9px; }
+
+.sm-toggle__checkbox {
+  display: none !important; }
+
+.sm-toggle__label,
+.sm-toggle__switch,
+.sm-toggle__switch:before {
+  transition: all .2s ease-out; }
+
+.sm-toggle__label {
+  display: flex;
+  align-items: center;
+  padding: 8px 6px;
+  background: #f4f7fc;
+  border-radius: 9em;
+  transition-property: background-color; }
+  .sm-toggle__checkbox:checked + .sm-toggle__label {
+    background: #fcf8ef; }
+    .sm-toggle__checkbox:checked + .sm-toggle__label .sm-toggle__switch {
+      background: var(--sm-color-palette-accent-color-6); }
+      .sm-toggle__checkbox:checked + .sm-toggle__label .sm-toggle__switch:before {
+        transform: translate(20px, 0); }
+    .sm-toggle__checkbox:checked + .sm-toggle__label .sm-toggle__label-text {
+      color: #105f97; }
+
+.sm-toggle__switch {
+  position: relative;
+  width: 40px;
+  height: 20px;
+  border-radius: 9em;
+  background: #c6c9cd;
+  transition-property: background-color; }
+  .sm-toggle__switch:before {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    display: block;
+    width: 16px;
+    height: 16px;
+    background: var(--sm-color-palette-accent-color-1);
+    border-radius: 9em;
+    transition-property: background-color, transform; }
+
+.sm-toggle__label-text {
+  margin-left: 10px;
+  transition-property: color; }
 
 #accordion-section-customify-customizer-search {
   margin-bottom: 0;
@@ -1370,7 +1435,7 @@ body.feedback-modal-open #style-manager-user-feedback-modal .modal {
   font-weight: 500;
   letter-spacing: -0.01em; }
 
-.customize-control[id*="sm_advanced_palette_output"], .customize-control[id*="sm_text_color_switch_master"], .customize-control[id*="sm_accent_color_switch_master"], .customize-control[id*="sm_text_color_select_master"], .customize-control[id*="sm_accent_color_select_master"] {
+.customize-control[id*="sm_dark_color_switch_slider"], .customize-control[id*="sm_dark_color_select_slider"], .customize-control[id*="sm_advanced_palette_output"], .customize-control[id*="sm_text_color_switch_master"], .customize-control[id*="sm_accent_color_switch_master"], .customize-control[id*="sm_text_color_select_master"], .customize-control[id*="sm_accent_color_select_master"] {
   display: none; }
 
 #customize-theme-controls .control-section[class] .accordion-section-title {

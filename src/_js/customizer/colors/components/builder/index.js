@@ -1,5 +1,7 @@
 import React, { useCallback, useEffect, useState, useRef } from 'react';
 
+import { getOverrideCustomizerBack, setOverrideCustomizerBack } from "../../../global-service";
+
 import { SourceColors } from "../source-colors";
 import ConfigContext from "../../context";
 import DropZone from "../dropzone";
@@ -16,25 +18,7 @@ import {
 export { Builder }
 export * from './utils';
 
-function useTraceUpdate(props) {
-  const prev = useRef(props);
-  useEffect(() => {
-    const changedProps = Object.entries(props).reduce((ps, [k, v]) => {
-      if (prev.current[k] !== v) {
-        ps[k] = [prev.current[k], v];
-      }
-      return ps;
-    }, {});
-    if (Object.keys(changedProps).length > 0) {
-      console.log('Changed props:', changedProps);
-    }
-    prev.current = props;
-  });
-}
-
-
 const Builder = ( props ) => {
-  useTraceUpdate( props );
 
   const { sourceSettingID, outputSettingID } = props;
 
@@ -93,40 +77,37 @@ const Builder = ( props ) => {
     setCSSOutput( getCSSFromPalettes( palettes ) );
   }, [ palettes ] );
 
-  const [overrideBack, setOverrideBack] = useState( false );
-
   useEffect( () => {
 
     const callback = ( isExpanded ) => {
+      const targetSectionID = getOverrideCustomizerBack();
 
-      if ( ! isExpanded && overrideBack ) {
-        wp.customize.section( 'sm_color_palettes_section', ( colorPalettesSection ) => {
-          colorPalettesSection.focus();
+      if ( ! isExpanded && targetSectionID ) {
+        wp.customize.section( targetSectionID, ( targetSection ) => {
+          targetSection.focus();
         } );
-        setOverrideBack( false );
       }
     }
 
-    const colorUsageSection = wp.customize.section( 'sm_color_usage_section' );
+    const sourceSection = wp.customize.section( 'sm_color_usage_section' );
 
-    if ( ! colorUsageSection ) {
+    if ( ! sourceSection ) {
       return;
     }
 
-    colorUsageSection.expanded.bind( callback );
+    sourceSection.expanded.bind( callback );
 
     return () => {
-      colorUsageSection.expanded.unbind( callback );
+      sourceSection.expanded.unbind( callback );
     }
-
-  }, [ overrideBack ] )
+  }, [] );
 
   return (
     <ConfigContext.Provider value={ { config, setConfig, resetActivePreset } }>
       <div className="sm-group">
         <div className="sm-panel-toggle" onClick={ () => {
           wp.customize.section( 'sm_color_usage_section', ( colorUsageSection ) => {
-            setOverrideBack( true );
+            setOverrideCustomizerBack( 'sm_color_palettes_section' );
             colorUsageSection.focus();
           } );
         } }>

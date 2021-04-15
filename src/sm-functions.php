@@ -131,6 +131,7 @@ function sm_get_color_switch_dark_config( $label, $selector, $default, $properti
 
 	$css      = [];
 	$callback = 'sm_color_switch_dark_cb';
+
 	if ( $isDarker ) {
 		$callback = 'sm_color_switch_darker_cb';
 	}
@@ -148,15 +149,11 @@ function sm_get_color_switch_dark_config( $label, $selector, $default, $properti
 	}
 
 	return [
-		'type'    => 'sm_switch',
+		'type'    => 'sm_toggle',
 		'label'   => $label,
 		'live'    => true,
 		'default' => $default,
 		'css'     => $css,
-		'choices' => [
-			'off' => esc_html__( 'Off', '__plugin_txtd' ),
-			'on'  => esc_html__( 'On', '__plugin_txtd' ),
-		],
 	];
 }
 
@@ -171,7 +168,8 @@ function sm_get_color_switch_dark_config( $label, $selector, $default, $properti
  */
 function sm_color_switch_dark_cb( string $value, string $selector, string $property ): string {
 	$color = 'fg1';
-	if ( $value === 'on' ) {
+
+	if ( $value === true ) {
 		$color = 'accent';
 	}
 
@@ -189,7 +187,8 @@ function sm_color_switch_dark_cb( string $value, string $selector, string $prope
  */
 function sm_color_switch_darker_cb( string $value, string $selector, string $property ): string {
 	$color = 'fg2';
-	if ( $value === 'on' ) {
+
+	if ( $value === true ) {
 		$color = 'accent';
 	}
 

@@ -150,7 +150,7 @@ class ColorPalettes extends AbstractHookProvider {
 
 		foreach ( $config['panels']['theme_options_panel']['sections']['colors_section']['options'] as $id => $option_config ) {
 
-			if ( $option_config['type'] === 'sm_switch' ) {
+			if ( $option_config['type'] === 'sm_toggle' ) {
 				if ( $option_config['default'] === 'on' ) {
 					$switch_accent_connected_fields[] = $id;
 				} else {
@@ -242,6 +242,7 @@ class ColorPalettes extends AbstractHookProvider {
 			'sm_accent_color_select_master',
 			'sm_site_color_variation',
 			'sm_coloration_level',
+			'sm_colorize_elements_button',
 			'sm_dark_mode',
 			'sm_dark_mode_advanced',
 		];
@@ -347,20 +348,16 @@ class ColorPalettes extends AbstractHookProvider {
 					],
 				],
 				'sm_text_color_switch_master'   => [
-					'type'             => 'sm_switch',
+					'type'             => 'sm_toggle',
 					// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
 					'setting_type'     => 'option',
 					// We will force this setting id preventing prefixing and other regular processing.
 					'setting_id'       => 'sm_text_color_switch_master',
 					'label'            => esc_html__( 'Text Master', '__plugin_txtd' ),
 					'live'             => true,
-					'default'          => 'off',
+					'default'          => false,
 					'connected_fields' => [],
 					'css'              => [],
-					'choices'          => [
-						'off' => esc_html__( 'Off', '__plugin_txtd' ),
-						'on'  => esc_html__( 'On', '__plugin_txtd' ),
-					],
 				],
 				'sm_text_color_select_master'   => [
 					'type'             => 'select_color',
@@ -378,20 +375,16 @@ class ColorPalettes extends AbstractHookProvider {
 					],
 				],
 				'sm_accent_color_switch_master' => [
-					'type'             => 'sm_switch',
+					'type'             => 'sm_toggle',
 					// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
 					'setting_type'     => 'option',
 					// We will force this setting id preventing prefixing and other regular processing.
 					'setting_id'       => 'sm_accent_color_switch_master',
 					'label'            => esc_html__( 'Accent Master', '__plugin_txtd' ),
 					'live'             => true,
-					'default'          => 'on',
+					'default'          => true,
 					'connected_fields' => [],
 					'css'              => [],
-					'choices'          => [
-						'off' => esc_html__( 'Off', '__plugin_txtd' ),
-						'on'  => esc_html__( 'On', '__plugin_txtd' ),
-					],
 				],
 				'sm_accent_color_select_master' => [
 					'type'             => 'select_color',
@@ -482,6 +475,7 @@ class ColorPalettes extends AbstractHookProvider {
 			'sm_accent_color_select_master',
 			'sm_site_color_variation',
 			'sm_coloration_level',
+			'sm_colorize_elements_button',
 			'sm_dark_mode',
 			'sm_dark_mode_advanced',
 		];

@@ -761,6 +761,10 @@ class Customizer extends AbstractHookProvider {
 				$control_class_name = __NAMESPACE__ . '\Customizer\Control\SMSwitch';
 				break;
 
+			case 'sm_toggle' :
+				$control_class_name = __NAMESPACE__ . '\Customizer\Control\SMToggle';
+				break;
+
 			case 'preset' :
 				if ( ! isset( $field_config['choices'] ) || empty( $field_config['choices'] ) ) {
 					return;

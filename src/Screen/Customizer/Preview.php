@@ -101,7 +101,7 @@ function sm_color_select_darker_cb(value, selector, property) {
 	protected function sm_color_switch_dark_cb_customizer_preview() {
 		$js = "
 function sm_color_switch_dark_cb(value, selector, property) {
-    var color = value === 'on' ? 'accent' : 'fg1';
+    var color = value === true ? 'accent' : 'fg1';
     return selector + ' { ' + property + ': var(--sm-current-' + color + '-color); }';
 }" . PHP_EOL;
 
@@ -111,7 +111,7 @@ function sm_color_switch_dark_cb(value, selector, property) {
 	protected function sm_color_switch_darker_cb_customizer_preview() {
 		$js = "
 function sm_color_switch_darker_cb(value, selector, property) {
-	var color = value === 'on' ? 'accent' : 'fg2';
+	var color = value === true ? 'accent' : 'fg2';
 	return selector + ' { ' + property + ': var(--sm-current-' + color + '-color); }';
 }" . PHP_EOL;
 

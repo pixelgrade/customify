@@ -3,6 +3,9 @@ import { moveConnectedFields } from './utils';
 import './color-palettes-preview';
 import * as globalService from "../global-service";
 import { debounce } from '../../utils';
+import ReactDOM from "react-dom";
+import React, { useEffect } from "react";
+import { getOverrideCustomizerBack, setOverrideCustomizerBack } from "../global-service";
 
 const darkToColorSliderControls = [
   'sm_dark_color_switch_slider',
@@ -33,7 +36,66 @@ export const initializeColors = () => {
     } )
   } )
 
+  initializeColorizeElementsButton();
+
   reloadConnectedFields();
+}
+
+const ColorizeElementsButton = ( props ) => {
+
+  const targetSectionID = `${ customify.config.options_name }[colors_section]`;
+
+  useEffect( () => {
+
+    const callback = ( isExpanded ) => {
+      const targetSectionID = getOverrideCustomizerBack();
+
+      if ( ! isExpanded && targetSectionID ) {
+        wp.customize.section( targetSectionID, ( targetSection ) => {
+          targetSection.focus();
+        } );
+      }
+    }
+
+    const targetSection = wp.customize.section( targetSectionID );
+
+    if ( ! targetSection ) {
+      return;
+    }
+
+    targetSection.expanded.bind( callback );
+
+    return () => {
+      targetSection.expanded.unbind( callback );
+    }
+
+  }, [] );
+
+  return (
+    <div className="sm-group" style={ { marginTop: 0 } }>
+      <div className="sm-panel-toggle" id="sm-colorize-elements-button" style={ { borderTopWidth: 0 } } onClick={ () => {
+        wp.customize.section( targetSectionID, ( targetSection ) => {
+          getOverrideCustomizerBack();
+          targetSection.focus();
+          setOverrideCustomizerBack( 'sm_color_usage_section' );
+        } );
+      } }>
+        Colorize elements one by one
+      </div>
+    </div>
+  )
+}
+
+const initializeColorizeElementsButton = () => {
+  const target = document.getElementById( 'customize-control-sm_coloration_level_control' );
+  const button = document.createElement( 'li' );
+
+  button.setAttribute( 'class', 'customize-control' );
+  button.setAttribute( 'style', 'padding: 0' );
+
+  target.insertAdjacentElement( 'afterend', button );
+
+  ReactDOM.render( <ColorizeElementsButton />, button );
 }
 
 const applyMasterSettingsValues = () => {
