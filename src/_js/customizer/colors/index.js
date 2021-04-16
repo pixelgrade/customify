@@ -6,6 +6,7 @@ import { debounce } from '../../utils';
 import ReactDOM from "react-dom";
 import React, { useEffect } from "react";
 import { getBackArray, setBackArray, addToBackArray } from "../global-service";
+import colorizeElementsIcon from "../svg/colorize-elements.svg";
 
 const darkToColorSliderControls = [
   'sm_dark_color_switch_slider',
@@ -86,7 +87,15 @@ const ColorizeElementsButton = ( props ) => {
           addToBackArray( 'sm_color_usage_section' );
         } );
       } }>
-        Colorize elements one by one
+        <div className="sm-panel-toggle__icon" dangerouslySetInnerHTML={{
+          __html: `
+                <svg viewBox="${ colorizeElementsIcon.viewBox }">
+                  <use xlink:href="#${ colorizeElementsIcon.id }" />
+                </svg>`
+        } } />
+        <div className="sm-panel-toggle__label">
+          Colorize elements one by one
+        </div>
       </div>
     </div>
   )

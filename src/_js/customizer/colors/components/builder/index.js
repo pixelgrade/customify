@@ -15,6 +15,8 @@ import {
   getValueFromColors,
 } from "./utils";
 
+import customizeColorsUsageIcon from "../../../svg/customize-colors-usage.svg";
+
 export { Builder }
 export * from './utils';
 
@@ -118,7 +120,15 @@ const Builder = ( props ) => {
             addToBackArray( 'sm_color_palettes_section' );
           } );
         } }>
-          Customize colors usage
+          <div className="sm-panel-toggle__icon" dangerouslySetInnerHTML={{
+            __html: `
+                <svg viewBox="${ customizeColorsUsageIcon.viewBox }">
+                  <use xlink:href="#${ customizeColorsUsageIcon.id }" />
+                </svg>`
+          } } />
+          <div className="sm-panel-toggle__label">
+            Customize colors usage
+          </div>
         </div>
       </div>
       <div className="sm-group">
