@@ -91,6 +91,21 @@
   }
 }
 
+.customize-control-html[id*="sm-description"] {
+  margin-top: var(--customize-control-spacing-y);
+  padding-top: var(--customize-control-spacing-y);
+  padding-bottom: var(--customize-control-spacing-y);
+  border: solid var(--customizer-border-color);
+  border-width: 1px 0;
+  background: var(--sm-color-palette-accent-color-2);
+
+  &:first-child,
+  .customize-section-description-container:first-child + & {
+    border-top: 0;
+    margin-top: 0;
+  }
+}
+
 .sm-group {
   margin-top: var(--customize-control-spacing-y);
 }
