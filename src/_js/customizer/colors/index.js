@@ -5,7 +5,7 @@ import * as globalService from "../global-service";
 import { debounce } from '../../utils';
 import ReactDOM from "react-dom";
 import React, { useEffect } from "react";
-import { getOverrideCustomizerBack, setOverrideCustomizerBack } from "../global-service";
+import { getBackArray, setBackArray, addToBackArray } from "../global-service";
 
 const darkToColorSliderControls = [
   'sm_dark_color_switch_slider',
@@ -48,12 +48,16 @@ const ColorizeElementsButton = ( props ) => {
   useEffect( () => {
 
     const callback = ( isExpanded ) => {
-      const targetSectionID = getOverrideCustomizerBack();
 
-      if ( ! isExpanded && targetSectionID ) {
-        wp.customize.section( targetSectionID, ( targetSection ) => {
-          targetSection.focus();
-        } );
+      if ( ! isExpanded ) {
+        const backArray = getBackArray();
+        const targetSectionID = backArray.pop();
+
+        if ( targetSectionID ) {
+          wp.customize.section( targetSectionID, ( targetSection ) => {
+            targetSection.focus();
+          } );
+        }
       }
     }
 
@@ -75,9 +79,11 @@ const ColorizeElementsButton = ( props ) => {
     <div className="sm-group" style={ { marginTop: 0 } }>
       <div className="sm-panel-toggle" id="sm-colorize-elements-button" style={ { borderTopWidth: 0 } } onClick={ () => {
         wp.customize.section( targetSectionID, ( targetSection ) => {
-          getOverrideCustomizerBack();
+          const backArray = getBackArray();
+          setBackArray( [] );
           targetSection.focus();
-          setOverrideCustomizerBack( 'sm_color_usage_section' );
+          setBackArray( backArray );
+          addToBackArray( 'sm_color_usage_section' );
         } );
       } }>
         Colorize elements one by one

@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState, useRef } from 'react';
 
-import { getOverrideCustomizerBack, setOverrideCustomizerBack } from "../../../global-service";
+import {getBackArray, addToBackArray, setBackArray} from "../../../global-service";
 
 import { SourceColors } from "../source-colors";
 import ConfigContext from "../../context";
@@ -80,12 +80,16 @@ const Builder = ( props ) => {
   useEffect( () => {
 
     const callback = ( isExpanded ) => {
-      const targetSectionID = getOverrideCustomizerBack();
 
-      if ( ! isExpanded && targetSectionID ) {
-        wp.customize.section( targetSectionID, ( targetSection ) => {
-          targetSection.focus();
-        } );
+      if ( ! isExpanded ) {
+        const backArray = getBackArray();
+        const targetSectionID = backArray.pop();
+
+        if ( targetSectionID ) {
+          wp.customize.section( targetSectionID, ( targetSection ) => {
+            targetSection.focus();
+          } );
+        }
       }
     }
 
@@ -107,8 +111,11 @@ const Builder = ( props ) => {
       <div className="sm-group">
         <div className="sm-panel-toggle" onClick={ () => {
           wp.customize.section( 'sm_color_usage_section', ( colorUsageSection ) => {
-            setOverrideCustomizerBack( 'sm_color_palettes_section' );
+            const backArray = getBackArray();
+            setBackArray( [] );
             colorUsageSection.focus();
+            setBackArray( backArray );
+            addToBackArray( 'sm_color_palettes_section' );
           } );
         } }>
           Customize colors usage

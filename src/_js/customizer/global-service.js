@@ -3,7 +3,7 @@ import _ from "lodash";
 let callbacks = {};
 let settings = {};
 
-const overrideCustomizerBack = [];
+let overrideCustomizerBack = [];
 
 export const loadSettings = () => {
   settings = JSON.parse( JSON.stringify( wp.customize.settings.settings ) );
@@ -47,17 +47,16 @@ export const deleteCallbacks = ( settingIDs ) => {
   } );
 }
 
-export const getOverrideCustomizerBack = () => {
-
-  if ( ! overrideCustomizerBack.length ) {
-    return false;
-  }
-
-  return overrideCustomizerBack.pop();
+export const getBackArray = () => {
+  return overrideCustomizerBack;
 }
 
-export const setOverrideCustomizerBack = ( section ) => {
+export const addToBackArray = ( section ) => {
   overrideCustomizerBack.push( section );
+}
+
+export const setBackArray = ( newArray ) => {
+  overrideCustomizerBack = newArray.slice();
 }
 
 export const bindConnectedFields = function( settingIDs, filter = noop ) {
