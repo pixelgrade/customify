@@ -6,7 +6,7 @@ import { SourceColors } from "../source-colors";
 import ConfigContext from "../../context";
 import DropZone from "../dropzone";
 import PresetsList from '../palette-list';
-import Blinds from '../blinds';
+import { Accordion, AccordionSection } from '../accordion';
 
 import {
   getColorsFromInputValue,
@@ -140,15 +140,17 @@ const Builder = ( props ) => {
         </div>
       </div>
       <div className="sm-group">
-        <Blinds title={ 'Explore colors' }>
-          <PresetsList active={ activePreset } onChange={ ( preset ) => {
-            setConfig( preset.config );
-            setActivePreset( preset.uid );
-          } } />
-        </Blinds>
-        <Blinds title={ 'Extract from Image' }>
-          <DropZone />
-        </Blinds>
+        <Accordion>
+          <AccordionSection title={ 'Explore colors' }>
+            <PresetsList active={ activePreset } onChange={ ( preset ) => {
+              setConfig( preset.config );
+              setActivePreset( preset.uid );
+            } } />
+          </AccordionSection>
+          <AccordionSection title={ 'Extract from Image' }>
+            <DropZone />
+          </AccordionSection>
+        </Accordion>
       </div>
     </ConfigContext.Provider>
   );
