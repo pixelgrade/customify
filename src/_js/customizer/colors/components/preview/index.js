@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import classnames from 'classnames';
+import React, { Fragment, useState } from 'react';
 
-export const Preview = ( props ) => {
+const Preview = ( props ) => {
 
   const {
     palettes
@@ -15,52 +16,29 @@ export const Preview = ( props ) => {
 
 const PalettePreview = ( props ) => {
   const { palette } = props;
-  const { colors, id } = palette;
-
-  const [ current, setCurrent ] = useState( 2 );
+  const { id, colors, textColors, lightColorsCount } = palette;
+  const [ hover, setHover ] = useState(false );
 
   return (
-    <div className={ `palette-preview sm-palette-${ id } sm-variation-${ current % 12 + 1 }` }>
+    <div className={ `palette-preview sm-palette-${ id }` }>
       <div className={ `palette-preview-set` }>
         { colors.map( ( color, index ) => {
 
-          let colorIndex = ( index + current + 10 ) % 12;
-          let cardContent = null;
-          let variation = colorIndex + 1;
-          let modifier = '';
+          const variation = index + 1;
 
-          if ( index === 2 ) {
-            cardContent = [
-              <h2 className="palette-preview-swatches__title">Text</h2>,
-              <div className="palette-preview-swatches__body">
-                <div className="palette-preview-swatches__row" />
-                <div className="palette-preview-swatches__row" />
-              </div>,
-              <div className={ `palette-preview-swatches__button sm-variation-${ ( colorIndex + 6 ) % 12 + 1 }` }>&rarr;</div>
-            ];
-            modifier = 'current';
+          const passedProps = {
+            showCard: index === hover,
+            showAccent: ( hover !== false ) && ( index === ( hover + 6 ) % 12 ),
+            showForeground: ( hover !== false ) && ( hover > lightColorsCount ? index === 0 : index === 9 ),
+            textColor: index > lightColorsCount ? textColors[0].value : '#FFFFFF',
+            variation,
           }
-
-          if ( index === 8 ) {
-            modifier = 'accent';
-          }
-
-          if ( index === 10 ) {
-            modifier = 'text';
-            variation = ( current % 12 ) + 1;
-          }
-
-          let className = `palette-preview-swatches ${ ! modifier ? '' : `palette-preview-swatches--${ modifier }` } sm-variation-${ variation }`;
 
           return (
-            <div key={ index } className={ className } onClick={ () => { setCurrent( colorIndex ) } }>
-              <div className={ `palette-preview-swatches__card` }>
-                <div className={ `palette-preview-swatches__card-top` } />
-                <div className={ `palette-preview-swatches__card-content` }>
-                  { cardContent }
-                </div>
-                <div className={ `palette-preview-swatches__card-bottom` } />
-              </div>
+            <div key={ index } className={ `palette-preview-swatches sm-variation-${ variation }` }
+                 onMouseEnter={ () => { setHover( index ) } }
+                 onMouseLeave={ () => { setHover( false ) } }>
+              <PalettePreviewGrade { ...passedProps } />
             </div>
           )
         } ) }
@@ -68,3 +46,55 @@ const PalettePreview = ( props ) => {
     </div>
   )
 }
+
+const PalettePreviewGrade = ( props ) => {
+
+  const {
+    showCard,
+    showAccent,
+    showForeground,
+    textColor,
+    variation,
+  } = props;
+
+  const className = classnames(
+    'palette-preview-swatches__wrap',
+    {
+      'show-card': showCard,
+      'show-accent': showAccent,
+      'show-fg': showForeground,
+    }
+  )
+
+  return (
+    <div className={ className }>
+      <div className="palette-preview-swatches__wrap-surface">
+        <PalettePreviewGradeCard variation={ variation } />
+      </div>
+      <div className="palette-preview-swatches__wrap-background" style={ { color: 'var(--sm-current-bg-color)' } } />
+      <div className="palette-preview-swatches__wrap-accent" style={ { color: 'var(--sm-current-bg-color)' } } />
+      <div className="palette-preview-swatches__wrap-foreground"  style={ { color: textColor } } />
+    </div>
+  );
+}
+
+const PalettePreviewGradeCard = ( props ) => {
+
+  const { variation } = props;
+  const buttonVariation = ( variation - 1 + 6 ) % 12 + 1;
+
+  return (
+    <div className={ `palette-preview-swatches__card` }>
+      <div className={ `palette-preview-swatches__card-content` }>
+        <h2 className="palette-preview-swatches__title">Text</h2>
+        <div className="palette-preview-swatches__body">
+          <div className="palette-preview-swatches__row" />
+          <div className="palette-preview-swatches__row" />
+        </div>
+        <div className={ `palette-preview-swatches__button sm-variation-${ buttonVariation }` }>&rarr;</div>
+      </div>
+    </div>
+  )
+}
+
+export default Preview;

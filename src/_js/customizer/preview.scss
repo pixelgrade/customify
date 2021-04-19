@@ -1,0 +1,163 @@
+.sm-preview {
+  display: flex;
+  flex-direction: column;
+
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 10;
+
+  width: 100%;
+  height: 100%;
+}
+
+.sm-preview__header {
+  background: var(--sm-color-palette-accent-color-2);
+  display: flex;
+  justify-content: center;
+  padding: 0.75em 1em;
+}
+
+.sm-preview__tabs {
+  display: flex;
+
+  border: 2px solid var(--sm-color-palette-accent-color-6);
+  color: var(--sm-color-palette-accent-color-10);
+  border-radius: 4px;
+}
+
+.sm-preview__tab {
+  padding: 0.3em 1.2em 0.35em;
+  cursor: pointer;
+}
+
+.sm-preview__tab--active {
+  color: var(--sm-color-palette-accent-color-1);
+  background: var(--sm-color-palette-accent-color-6);
+}
+
+.sm-preview__content {
+  flex-grow: 1;
+  position: relative;
+}
+
+.palette-preview {
+  padding: 5em 0;
+  background: var(--sm-bg-color-2);
+}
+
+.palette-preview-set {
+  position: relative;
+
+  display: flex;
+  width: 100%;
+  margin: 0 auto;
+  max-width: 1300px;
+
+  --swatch-gap: 0.25em;
+
+
+  padding: 2em 0;
+}
+
+.palette-preview-swatches {
+  display: flex;
+  align-items: stretch;
+  flex-direction: column;
+  flex: 1 1 auto;
+  width: calc(100% / 12);
+}
+
+.palette-preview-swatches__wrap {
+  position: relative;
+  color: var(--sm-current-fg1-color);
+}
+
+.palette-preview-swatches__wrap-surface {
+  position: relative;
+  z-index: 10;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: -2em 0;
+
+  .palette-preview-swatches__wrap:not(.show-card) & {
+    opacity: 0;
+  }
+}
+
+.palette-preview-swatches__wrap:not(.show-fg) .palette-preview-swatches__wrap-foreground {
+  opacity: 0;
+}
+
+.palette-preview-swatches__wrap:not(.show-accent) .palette-preview-swatches__wrap-accent {
+  opacity: 0;
+}
+
+.palette-preview-swatches__wrap-background:before,
+.palette-preview-swatches__card:before,
+.palette-preview-swatches__card:after {
+  content: "";
+  display: block;
+  height: 1.5em;
+  background: var(--sm-current-accent-color);
+}
+
+.palette-preview-swatches__wrap-accent,
+.palette-preview-swatches__wrap-foreground,
+.palette-preview-swatches__wrap-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  background-color: currentColor;
+}
+
+.palette-preview-swatches__wrap-accent,
+.palette-preview-swatches__wrap-foreground {
+  top: -2em;
+  bottom: -2em;
+}
+
+.palette-preview-swatches__title {
+  font-size: 26px;
+  font-weight: 500;
+  margin: 0;
+  color: inherit;
+}
+
+.palette-preview-swatches__card-content {
+  min-width: 12em;
+  background-color: var(--sm-current-bg-color);
+  padding: 3em 1.5em;
+
+  > * + * {
+    margin-top: 21px;
+  }
+}
+
+.palette-preview-swatches__row {
+  height: 20px;
+  background-color: var(--sm-current-fg1-color);
+
+  &:last-child {
+    width: 70%;
+  }
+
+  & + & {
+    margin-top: 10px;
+  }
+}
+
+.palette-preview-swatches__button {
+  padding: 0.5em 1.25em;
+  border-radius: 0.25em;
+  font-size: 1.25em;
+  display: inline-block;
+  background: var(--sm-current-bg-color);
+  color: var(--sm-current-fg1-color);
+}

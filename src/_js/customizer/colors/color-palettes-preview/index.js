@@ -1,51 +1,63 @@
-import { Preview } from "../components/preview";
+import Preview from "../components/preview";
+import Overlay from "../components/overlay";
 
 import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 
-export const initialize = () => {
+const PreviewTabs = () => {
+
+  const [ active, setActive ] = useState( 'site' );
+
+  const setting = wp.customize( 'sm_advanced_palette_output' );
+  const tabs = [
+    { id: 'site', label: 'Live site' },
+    { id: 'colors', label: 'Color system' }
+  ];
+
+  return (
+    <div className={ `sm-preview` }>
+      <div className="sm-preview__header">
+        <div className="sm-preview__tabs">
+          { tabs.map( tab => {
+            const isActive = active === tab.id;
+
+            return (
+              <div className={ `sm-preview__tab ${ isActive ? 'sm-preview__tab--active' : '' }` } onClick={ () => { setActive( tab.id ) } }>{ tab.label }</div>
+            )
+          } ) }
+        </div>
+      </div>
+      <div className="sm-preview__content">
+        <ColorsOverlay show={ active === 'colors' } setting={ setting } />
+      </div>
+    </div>
+  );
+}
+
+const initializePreview = () => {
 
   wp.customize.bind( 'ready', function() {
     wp.customize.section( 'sm_color_palettes_section', function( section ) {
       wp.customize.previewer.bind( 'ready', () => {
-        const targetWindow = wp.customize.previewer.preview.targetWindow();
-        const containerID = `sm-color-palettes-preview`;
-        const container = targetWindow.document.getElementById( containerID );
 
-        if ( typeof container === "undefined" ) {
+        const iframe = document.querySelector( '#customize-preview iframe' );
+
+        if ( ! iframe ) {
           return;
         }
 
-        wp.customize( 'sm_advanced_palette_output', setting => {
-          ReactDOM.render( <PalettesPreview section={ section } setting={ setting } />, container );
-        } );
-
+        const smPreviewTabs = document.createElement( 'div' );
+        iframe.insertAdjacentElement( 'beforebegin', smPreviewTabs );
+        ReactDOM.render( <PreviewTabs />, smPreviewTabs );
       } );
     } );
   } );
 
 }
 
-initialize();
-
-const Overlay = ( props ) => {
-  const { show } = props;
-
-  return (
-    <div className={ `sm-overlay sm-overlay--${ show ? 'visible' : 'hidden' }` }>
-      { props.children }
-    </div>
-  )
-}
-
-const PalettesPreview = ( props ) => {
-  const { section, setting } = props;
-  const [ show, setShow ] = useState( false );
+const ColorsOverlay = ( props ) => {
+  const { setting, show } = props;
   const [ palettes, setPalettes ] = useState( JSON.parse( setting() ) );
-
-  const toggleSection = ( isExpanded ) => {
-    setShow( isExpanded );
-  };
 
   const changeListener = ( newValue ) => {
     setPalettes( JSON.parse( newValue ) );
@@ -53,12 +65,10 @@ const PalettesPreview = ( props ) => {
 
   useEffect( () => {
     // Attach the listeners on component mount.
-    section.expanded.bind( toggleSection );
     setting.bind( changeListener );
 
     // Detach the listeners on component unmount.
     return () => {
-      section.expanded.unbind( toggleSection );
       setting.unbind( changeListener );
     }
   }, [] );
@@ -69,3 +79,5 @@ const PalettesPreview = ( props ) => {
     </Overlay>
   )
 }
+
+export default initializePreview;

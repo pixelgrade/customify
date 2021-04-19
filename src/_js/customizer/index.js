@@ -1,3 +1,5 @@
+import './style.scss';
+
 import $ from 'jquery';
 
 import { initializeColors } from './colors';

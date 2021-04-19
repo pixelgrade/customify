@@ -1,12 +1,14 @@
-import { initializePaletteBuilder } from './color-palette-builder';
-import { moveConnectedFields } from './utils';
-import './color-palettes-preview';
-import * as globalService from "../global-service";
-import { debounce } from '../../utils';
 import ReactDOM from "react-dom";
 import React, { useEffect } from "react";
+
+import { debounce } from '../../utils';
+import * as globalService from "../global-service";
 import { getBackArray, setBackArray, addToBackArray } from "../global-service";
 import colorizeElementsIcon from "../svg/colorize-elements.svg";
+
+import { initializePaletteBuilder } from './color-palette-builder';
+import initializeColorPalettesPreview from './color-palettes-preview';
+import { moveConnectedFields } from './utils';
 
 const darkToColorSliderControls = [
   'sm_dark_color_switch_slider',
@@ -38,6 +40,7 @@ export const initializeColors = () => {
   } )
 
   initializeColorizeElementsButton();
+  initializeColorPalettesPreview();
 
   reloadConnectedFields();
 }
