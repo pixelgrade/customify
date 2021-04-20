@@ -1,7 +1,26 @@
 import classnames from 'classnames';
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 
 const Preview = ( props ) => {
+
+  return (
+    <Fragment>
+      <div className={ `palette-preview-header sm-palette-1 sm-palette--shifted sm-variation-1` }>
+        <div className={ `sm-overlay__wrap` }>
+          <div className={ `sm-overlay__container` }>
+            <div className={ `palette-preview-header-wrap` }>
+              <h1 className={ `palette-preview-title` }>The color system</h1>
+              <p className={ `palette-preview-description` }>The color system generated it’s based on your brands color and a set of underlying principles and guidelines, making color usage accessible and purposeful.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <PalettePreviewList { ...props } />
+    </Fragment>
+  )
+}
+
+const PalettePreviewList = ( props ) => {
 
   const {
     palettes
@@ -18,30 +37,41 @@ const PalettePreview = ( props ) => {
   const { palette } = props;
   const { id, colors, textColors, lightColorsCount } = palette;
   const [ hover, setHover ] = useState(false );
+  const [ lastHover, setLastHover ] = useState( false );
+
+  useEffect( () => {
+    if ( hover !== false ) {
+      setLastHover( hover );
+    }
+  }, [ hover ] );
 
   return (
-    <div className={ `palette-preview sm-palette-${ id }` }>
-      <div className={ `palette-preview-set` }>
-        { colors.map( ( color, index ) => {
+    <div className={ `palette-preview sm-palette-${ id } ${ lastHover !== false ? `sm-variation-${ lastHover + 1 }` : '' }` }>
+      <div className={ `sm-overlay__wrap` }>
+        <div className={ `sm-overlay__container` }>
+          <div className={ `palette-preview-set` }>
+            { colors.map( ( color, index ) => {
 
-          const variation = index + 1;
+              const variation = index + 1;
 
-          const passedProps = {
-            showCard: index === hover,
-            showAccent: ( hover !== false ) && ( index === ( hover + 6 ) % 12 ),
-            showForeground: ( hover !== false ) && ( hover > lightColorsCount ? index === 0 : index === 9 ),
-            textColor: index > lightColorsCount ? textColors[0].value : '#FFFFFF',
-            variation,
-          }
+              const passedProps = {
+                showCard: index === hover,
+                showAccent: ( hover !== false ) && ( index === ( hover + 6 ) % 12 ),
+                showForeground: ( hover !== false ) && ( hover > lightColorsCount ? index === 0 : index === 9 ),
+                textColor: index > lightColorsCount ? textColors[0].value : '#FFFFFF',
+                variation,
+              }
 
-          return (
-            <div key={ index } className={ `palette-preview-swatches sm-variation-${ variation }` }
-                 onMouseEnter={ () => { setHover( index ) } }
-                 onMouseLeave={ () => { setHover( false ) } }>
-              <PalettePreviewGrade { ...passedProps } />
-            </div>
-          )
-        } ) }
+              return (
+                <div key={ index } className={ `palette-preview-swatches sm-variation-${ variation }` }
+                     onMouseEnter={ () => { setHover( index ) } }
+                     onMouseLeave={ () => { setHover( false ) } }>
+                  <PalettePreviewGrade { ...passedProps } />
+                </div>
+              )
+            } ) }
+          </div>
+        </div>
       </div>
     </div>
   )
@@ -69,11 +99,16 @@ const PalettePreviewGrade = ( props ) => {
   return (
     <div className={ className }>
       <div className="palette-preview-swatches__wrap-surface">
+        <div className="palette-preview-swatches__text">Surface</div>
         <PalettePreviewGradeCard variation={ variation } />
       </div>
       <div className="palette-preview-swatches__wrap-background" style={ { color: 'var(--sm-current-bg-color)' } } />
-      <div className="palette-preview-swatches__wrap-accent" style={ { color: 'var(--sm-current-bg-color)' } } />
-      <div className="palette-preview-swatches__wrap-foreground"  style={ { color: textColor } } />
+      <div className="palette-preview-swatches__wrap-accent" style={ { color: 'var(--sm-current-bg-color)' } }>
+        <div className="palette-preview-swatches__text">Accent</div>
+      </div>
+      <div className="palette-preview-swatches__wrap-foreground"  style={ { color: textColor } }>
+        <div className="palette-preview-swatches__text">Text</div>
+      </div>
     </div>
   );
 }
