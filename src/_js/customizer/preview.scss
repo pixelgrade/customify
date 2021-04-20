@@ -43,7 +43,7 @@
 }
 
 .sm-overlay__container {
-  padding: 0 2em;
+  padding: 0 80px;
 }
 
 .sm-overlay__wrap {
@@ -61,10 +61,10 @@
   display: flex;
   align-items: center;
 
-  margin-left: -20px;
+  margin-left: -60px;
 
   > * {
-    margin-left: 20px;
+    margin-left: 60px;
   }
 }
 
