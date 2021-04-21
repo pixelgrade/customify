@@ -51,11 +51,18 @@ class CustomizerAssets extends AbstractHookProvider {
 			$this->plugin->get_url( 'vendor_js/regression' . $scripts_suffix . '.js' ),
 			[],
 			VERSION );
+		wp_register_script( 'pixelgrade_customify-previewer-resizer',
+			$this->plugin->get_url( 'dist/js/customizer-preview-resizer' . $scripts_suffix . '.js' ),
+			[
+				'customize-preview',
+			],
+			VERSION, true );
 		wp_register_script( 'pixelgrade_customify-customizer',
 			$this->plugin->get_url( 'dist/js/customizer' . $scripts_suffix . '.js' ),
 			[
 				'jquery',
 				'jquery-react',
+				'pixelgrade_customify-previewer-resizer',
 				'pixelgrade_customify-select2',
 				'pixelgrade_customify-regression',
 				'react',

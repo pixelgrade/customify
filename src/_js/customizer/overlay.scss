@@ -11,6 +11,9 @@
   transition: all .2s ease;
   transition-property: opacity;
 
+  overflow: auto;
+  pointer-events: auto;
+
   &:not(.sm-overlay--visible) {
     opacity: 0;
     pointer-events: none;
@@ -19,4 +22,13 @@
   &, * {
     font-family: system-ui;
   }
+}
+
+.sm-overlay__container {
+  padding: 0 80px;
+}
+
+.sm-overlay__wrap {
+  max-width: 920px;
+  margin: 0 auto;
 }

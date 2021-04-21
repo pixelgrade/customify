@@ -3,7 +3,6 @@ import $ from 'jquery';
 const COLOR_SCHEME_BUTTON = '.is-color-scheme-switcher-button';
 const STORAGE_ITEM = 'color-scheme-dark';
 const TEMP_STORAGE_ITEM = 'color-scheme-dark-temp'
-const $html = $( 'html' );
 const ignoreStorage = !! wp.customize;
 
 export default class DarkMode {
@@ -17,7 +16,7 @@ export default class DarkMode {
     this.$colorSchemeButtonsLink = this.$colorSchemeButtons.children( 'a' );
 
     this.matchMedia = window.matchMedia( '(prefers-color-scheme: dark)' );
-    this.darkModeSetting = $html.data( 'dark-mode-advanced' );
+    this.darkModeSetting = this.$html.data( 'dark-mode-advanced' );
 
     this.theme = null;
 

@@ -27,7 +27,7 @@ eval("/**\n * The logic for the Customizer controls search.\n *\n * Based on the
 /******/ 	// This entry module can't be inlined because the eval devtool is used.
 /******/ 	var __webpack_exports__ = {};
 /******/ 	__webpack_modules__["./src/_js/customizer-search/index.js"]();
-/******/ 	(this.sm = this.sm || {}).customizerSearch = __webpack_exports__;
+/******/ 	(window.sm = window.sm || {}).customizerSearch = __webpack_exports__;
 /******/ 	
 /******/ })()
 ;

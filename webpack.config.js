@@ -9,6 +9,7 @@ const path = require( 'path' );
 const files = [
   'customizer',
   'customizer-preview',
+  'customizer-preview-resizer',
   'customizer-search',
   'dark-mode',
   'settings',
@@ -41,8 +42,10 @@ module.exports = {
     filename: pathData => {
       return `${ kebabize( pathData.chunk.name ) }.js`;
     },
-    library: [ 'sm', '[name]' ],
-    libraryTarget: 'this',
+    library: {
+      name: [ 'sm', '[name]' ],
+      type: 'window'
+    },
   },
   module: {
     rules: [

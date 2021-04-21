@@ -13,7 +13,6 @@ import { handleRangeFields } from './fields/range';
 import { handleTabs } from './fields/tabs';
 
 import { handleFoldingFields } from './folding-fields';
-import { scalePreview } from './scale-preview';
 import { createResetButtons } from './create-reset-buttons';
 
 wp.customize.bind( 'ready', () => {
@@ -40,8 +39,6 @@ wp.customize.bind( 'ready', () => {
   initializeColors();
   initializeFonts();
   initializeFontPalettes();
-
-  scalePreview();
 
 } );
 
