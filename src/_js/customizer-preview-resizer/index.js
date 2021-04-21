@@ -1,9 +1,11 @@
-let offset = {
+const defaultOffset = {
   top: 0,
   right: 0,
   bottom: 0,
   left: 0,
 };
+
+let offset = defaultOffset;
 
 wp.customize.bind( 'ready', () => {
 
@@ -37,45 +39,56 @@ export const setOffset = ( newOffset ) => {
 }
 
 export const resize = () => {
-
+  const preview = document.querySelector( '.wp-full-overlay' );
   const iframe = document.querySelector( '#customize-preview iframe' );
+  const previewedDevice = wp.customize.previewedDevice.get();
 
-  if ( ! iframe ) {
+  if ( ! iframe || ! preview ) {
     return;
   }
 
   // remove CSS properties that may have been previously added
   iframe.style.removeProperty( 'width' );
   iframe.style.removeProperty( 'height' );
-  iframe.style.removeProperty( 'transformOrigin' );
+  iframe.style.removeProperty( 'transform-origin' );
   iframe.style.removeProperty( 'transform' );
+  iframe.style.removeProperty( 'margin-top' );
+  iframe.style.removeProperty( 'margin-left' );
 
-  iframe.style.removeProperty( 'marginTop' );
-  iframe.style.removeProperty( 'marginLeft' );
+  if ( ! iframe ) {
+    return;
+  }
 
   // scaling of the site preview should be done only in desktop preview mode
-  if ( wp.customize.previewedDevice.get() !== 'desktop' ) {
-    return
+  if ( previewedDevice !== 'desktop' ) {
+    return;
   }
 
   const windowWidth = window.innerWidth;
   const windowHeight = window.innerHeight;
 
-  const iframeWidth = iframe.offsetWidth - offset.left - offset.right;
-  const iframeHeight = windowHeight - offset.top - offset.bottom;
-
-  // get the ratio between the site preview and actual browser width
-  const scale = windowWidth / iframeWidth;
+  const previewWidth = preview.offsetWidth;
+  const previewHeight = preview.offsetHeight;
 
   // for an accurate preview at resolutions where media queries may intervene
-  // increase the width of the iframe and use CSS transforms to scale it back down
-  if ( iframeWidth > 720 && iframeWidth < 1100 ) {
-    iframe.style.width = `${ iframeWidth * scale }px`;
-    iframe.style.height = `${ iframeHeight * scale }px`;
-    iframe.style.transformOrigin = `left top`;
-    iframe.style.transform = `scale( ${ 1 / scale } )`;
+  // increase the width of the preview and use CSS transforms to scale it back down
+  const shouldScale = previewWidth > 720 && previewWidth < 1100;
 
-    iframe.style.marginTop = `${ offset.top }px`;
-    iframe.style.marginLeft = `${ offset.left }px`;
-  }
+  const initialHeight = previewHeight;
+  const finalHeight = previewHeight - offset.top - offset.bottom;
+
+  const initialWidth = shouldScale ? windowWidth : previewWidth;
+  const finalWidth = previewWidth - offset.left - offset.right;
+
+  const scaleX = initialWidth / finalWidth;
+  const scaleY = initialHeight / finalHeight;
+  const scale = Math.max( scaleX, scaleY );
+
+  iframe.style.width = `${ finalWidth * scale }px`;
+  iframe.style.height = `${ finalHeight * scale }px`;
+  iframe.style.transformOrigin = `left top`;
+  iframe.style.transform = `scale( ${ 1 / scale } )`;
+
+  iframe.style.marginTop = `${ offset.top }px`;
+  iframe.style.marginLeft = `${ offset.left }px`;
 }
