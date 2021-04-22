@@ -1,4 +1,5 @@
 import $ from 'jquery';
+import './style.scss';
 
 import { initializeColors } from './colors';
 import { initializeFonts } from './fonts';

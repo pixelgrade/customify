@@ -1,51 +1,3 @@
-@import 'customizer/variables';
-@import 'customizer/mixins';
-@import 'customizer/controls';
-@import 'customizer/search';
-@import 'customizer/select2';
-
-// theme
-@import 'customizer/feedback-modal';
-@import 'customizer/style-manager-panel';
-
-.wp-full-overlay-sidebar {
-
-  &, *, *:before, *:after {
-    box-sizing: border-box;
-  }
-}
-
-.sm-control {
-
-  & + & {
-    margin-top: calc( 2 * var(--customizer-spacing) );
-  }
-
-  &__header + &__body {
-    margin-top: var(--customizer-spacing);
-  }
-
-  &__label {
-    font-size: 16px;
-    font-weight: 500;
-    letter-spacing: -0.01em;
-  }
-}
-
-.customize-control {
-
-  // hide color master controls
-  &[id*="sm_dark_color_switch_slider"],
-  &[id*="sm_dark_color_select_slider"],
-  &[id*="sm_advanced_palette_output"],
-  &[id*="sm_text_color_switch_master"],
-  &[id*="sm_accent_color_switch_master"],
-  &[id*="sm_text_color_select_master"],
-  &[id*="sm_accent_color_select_master"] {
-    display: none;
-  }
-}
-
 @mixin apply-palette( $id, $isShifted: false ) {
 
   @for $i from 1 through 12 {
@@ -75,6 +27,12 @@ html {
   @include apply-variation(1);
 }
 
+html,
+[class*="sm-variation-"] {
+  background-color: var(--sm-current-bg-color);
+  color: var(--sm-current-fg1-color);
+}
+
 @for $i from 1 through 12 {
 
   .sm-variation-#{ $i } {
@@ -92,11 +50,3 @@ html {
     @include apply-palette( $id, true );
   }
 }
-
-html,
-[class*="sm-variation-"] {
-  background-color: var(--sm-current-bg-color);
-  color: var(--sm-current-fg1-color);
-}
-
-@import 'customizer/theme';

@@ -1,0 +1,49 @@
+@import 'scss/variables';
+@import 'scss/mixins';
+@import 'scss/controls';
+@import 'scss/search';
+@import 'scss/select2';
+
+// theme
+@import 'scss/feedback-modal';
+@import 'scss/style-manager-panel';
+
+.wp-full-overlay-sidebar {
+
+  &, *, *:before, *:after {
+    box-sizing: border-box;
+  }
+}
+
+.sm-control {
+
+  & + & {
+    margin-top: calc( 2 * var(--customizer-spacing) );
+  }
+
+  &__header + &__body {
+    margin-top: var(--customizer-spacing);
+  }
+
+  &__label {
+    font-size: 16px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+}
+
+.customize-control {
+
+  // hide color master controls
+  &[id*="sm_dark_color_switch_slider"],
+  &[id*="sm_dark_color_select_slider"],
+  &[id*="sm_advanced_palette_output"],
+  &[id*="sm_text_color_switch_master"],
+  &[id*="sm_accent_color_switch_master"],
+  &[id*="sm_text_color_select_master"],
+  &[id*="sm_accent_color_select_master"] {
+    display: none;
+  }
+}
+
+@import 'scss/theme';

@@ -3,6 +3,9 @@ import './style.scss';
 import React, { useEffect, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 
+import Overlay from '../components/overlay';
+import Preview from '../components/preview';
+
 const PreviewTabs = ( props ) => {
   const [ active, setActive ] = useState( 'site' );
   const previewdDevice = wp.customize.previewedDevice.get();

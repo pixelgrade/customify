@@ -134,6 +134,7 @@ class FrontendOutput extends AbstractHookProvider {
 	 * @since 3.0.0
 	 */
 	public function add_hooks() {
+
 		$this->add_action(
 			$this->plugin_settings->get( 'style_resources_location', 'wp_head' ),
 			'output_dynamic_style',
@@ -141,6 +142,8 @@ class FrontendOutput extends AbstractHookProvider {
 		);
 
 		$this->add_filter( 'customify_localized_js_settings', 'localize_pixel_dependent_css_props' );
+
+		$this->add_action( 'wp_enqueue_scripts', 'enqueue_assets', 15 );
 	}
 
 	/**
@@ -408,6 +411,15 @@ class FrontendOutput extends AbstractHookProvider {
 	 */
 	protected function css_cleanup_whitespace( string $string ): string {
 		return normalize_whitespace( $string );
+	}
+
+	/**
+	 * Enqueue assets.
+	 *
+	 * @since 3.0.0
+	 */
+	protected function enqueue_assets() {
+		wp_enqueue_style( 'pixelgrade_customify-sm-colors-custom-properties' );
 	}
 
 }

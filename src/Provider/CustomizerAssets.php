@@ -83,7 +83,7 @@ class CustomizerAssets extends AbstractHookProvider {
 
 		wp_register_style(
 			'pixelgrade_customify-customizer',
-			$this->plugin->get_url( 'dist/css/customizer' . $rtl_suffix . '.css' ),
+			$this->plugin->get_url( 'dist/js/customizer' . $rtl_suffix . '.css' ),
 			[],
 			VERSION
 		);

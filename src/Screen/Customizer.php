@@ -229,6 +229,7 @@ class Customizer extends AbstractHookProvider {
 				apply_filters( 'customify_localized_js_settings', $this->localized )
 			), 'before' );
 
+		wp_enqueue_style( 'pixelgrade_customify-sm-colors-custom-properties' );
 		wp_enqueue_style( 'pixelgrade_customify-customizer' );
 	}
 
