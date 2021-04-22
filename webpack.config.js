@@ -1,15 +1,14 @@
 /**
  * External dependencies
  */
-const TerserPlugin = require('terser-webpack-plugin');
-const LodashModuleReplacementPlugin = require('lodash-webpack-plugin');
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const TerserPlugin = require( 'terser-webpack-plugin' );
+const MiniCssExtractPlugin = require( "mini-css-extract-plugin" );
+const BundleAnalyzerPlugin = require( 'webpack-bundle-analyzer' ).BundleAnalyzerPlugin;
 const path = require( 'path' );
 
 const files = [
   'customizer',
   'customizer-preview',
-  'customizer-preview-resizer',
   'customizer-search',
   'dark-mode',
   'settings',
@@ -71,8 +70,7 @@ module.exports = {
       {
         test: /\.s[ac]ss$/i,
         use: [
-          // Creates `style` nodes from JS strings
-          "style-loader",
+          MiniCssExtractPlugin.loader,
           // Translates CSS into CommonJS
           "css-loader",
           // Compiles Sass to CSS
@@ -90,6 +88,7 @@ module.exports = {
     jquery: 'jQuery',
     lodash: 'lodash',
     react: 'React',
+    'chroma-js': 'chroma',
     'react-dom': 'ReactDOM',
   },
   optimization: {
@@ -99,9 +98,9 @@ module.exports = {
         include: /\.min\.js$/,
         extractComments: {
           condition: true,
-          filename: (fileData) => {
+          filename: ( fileData ) => {
             // The "fileData" argument contains object with "filename", "basename", "query" and "hash"
-            return `${fileData.filename}.LICENSE.txt${fileData.query}`;
+            return `${ fileData.filename }.LICENSE.txt${ fileData.query }`;
           },
         },
       } )
@@ -109,5 +108,11 @@ module.exports = {
   },
   'plugins': [
     new BundleAnalyzerPlugin,
+    new MiniCssExtractPlugin( {
+      // Options similar to the same options in webpackOptions.output
+      // both options are optional
+      filename: "[name].css",
+      chunkFilename: "[id].css",
+    } ),
   ]
 };

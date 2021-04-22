@@ -1,6 +1,8 @@
 import classnames from 'classnames';
 import React, { Fragment, useEffect, useState } from 'react';
 
+import './style.scss';
+
 const Preview = ( props ) => {
 
   return (

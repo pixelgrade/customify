@@ -1,5 +1,3 @@
-import './style.scss';
-
 import $ from 'jquery';
 
 import { initializeColors } from './colors';
@@ -7,6 +5,7 @@ import { initializeFonts } from './fonts';
 import { initializeFontPalettes } from './font-palettes'
 
 import * as globalService from "./global-service";
+import * as resizer from './resizer';
 
 import { handleColorSelectFields } from './fields/color-select';
 import { handleRangeFields } from './fields/range';
@@ -45,3 +44,4 @@ wp.customize.bind( 'ready', () => {
 // expose API on sm.customizer global object
 export { getFontDetails, determineFontType, convertFontVariantToFVD } from './fonts/utils';
 export { getCSSFromPalettes } from './colors/components/builder';
+export { resizer };

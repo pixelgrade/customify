@@ -2264,6 +2264,11 @@ html {
   --sm-fg1-color-12: var(--sm-color-palette-info-fg1-color-12-shifted);
   --sm-fg2-color-12: var(--sm-color-palette-info-fg2-color-12-shifted); }
 
+html,
+[class*="sm-variation-"] {
+  background-color: var(--sm-current-bg-color);
+  color: var(--sm-current-fg1-color); }
+
 #customize-theme-controls .control-section[class] .accordion-section-title {
   font-weight: normal;
   padding: calc( 0.5 * var(--customizer-spacing)) var(--customizer-spacing);

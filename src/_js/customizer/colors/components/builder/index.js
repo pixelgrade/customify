@@ -1,6 +1,6 @@
-import React, { useCallback, useEffect, useState, useRef } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
-import {getBackArray, addToBackArray, setBackArray} from "../../../global-service";
+import { getBackArray, addToBackArray, setBackArray } from "../../../global-service";
 
 import { SourceColors } from "../source-colors";
 import ConfigContext from "../../context";

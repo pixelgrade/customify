@@ -1,4 +1,4 @@
-import chroma from 'chroma-js';
+importScripts( '../../vendor_js/chroma.min.js' );
 
 /**
  * Converts an RGB color value to HSL. Conversion formula

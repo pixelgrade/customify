@@ -1,5 +1,4 @@
-import Preview from "../components/preview";
-import Overlay from "../components/overlay";
+import './style.scss';
 
 import React, { useEffect, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
@@ -25,9 +24,9 @@ const PreviewTabs = ( props ) => {
 
   useEffect( () => {
 
-    const customizerPreviewResizer = window?.sm?.customizerPreviewResizer;
+    const previewResizer = window?.sm?.customizer?.resizer;
 
-    if ( ! customizerPreviewResizer ) {
+    if ( ! previewResizer ) {
       return;
     }
 
@@ -37,14 +36,14 @@ const PreviewTabs = ( props ) => {
     const left = parseFloat( style.left.replace( "px", "" ) );
     const right = parseFloat( style.right.replace( "px", "" ) );
 
-    customizerPreviewResizer.setOffset( {
+    previewResizer.setOffset( {
       top,
       right,
       bottom: 0,
       left,
     } );
 
-    customizerPreviewResizer.resize();
+    previewResizer.resize();
 
   }, [] );
 

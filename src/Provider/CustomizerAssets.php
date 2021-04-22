@@ -51,6 +51,10 @@ class CustomizerAssets extends AbstractHookProvider {
 			$this->plugin->get_url( 'vendor_js/regression' . $scripts_suffix . '.js' ),
 			[],
 			VERSION );
+		wp_register_script( 'pixelgrade_customify-chroma',
+			$this->plugin->get_url( 'vendor_js/chroma' . $scripts_suffix . '.js' ),
+			[],
+			VERSION );
 		wp_register_script( 'pixelgrade_customify-previewer-resizer',
 			$this->plugin->get_url( 'dist/js/customizer-preview-resizer' . $scripts_suffix . '.js' ),
 			[
@@ -62,6 +66,7 @@ class CustomizerAssets extends AbstractHookProvider {
 			[
 				'jquery',
 				'jquery-react',
+				'pixelgrade_customify-chroma',
 				'pixelgrade_customify-previewer-resizer',
 				'pixelgrade_customify-select2',
 				'pixelgrade_customify-regression',
