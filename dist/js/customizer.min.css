@@ -864,18 +864,28 @@ input.font-options__checkbox {
 [id]#sub-accordion-section-rosa2_options\[colors_section\] {
   background: var(--sm-color-palette-accent-color-1);
 }
-[id]#sub-accordion-section-rosa2_options\[colors_section\] .customize-control-html[id*=title] {
-  padding-top: 0;
-  margin-top: calc( 11px + var(--customize-control-spacing-y) );
-  box-shadow: var(--sm-color-palette-accent-color-3) 0 1px 0 inset, var(--sm-color-palette-accent-color-2) 0 -10px, var(--sm-color-palette-accent-color-3) 0 -11px;
+[id]#sub-accordion-section-rosa2_options\[colors_section\] .customize-control-html[id*=sm-description] {
+  margin-top: var(--customize-control-spacing-y);
+  padding-bottom: var(--customize-control-spacing-y);
+  border: solid var(--customizer-border-color);
+  border-width: 1px 0;
+  background: var(--sm-color-palette-accent-color-2);
 }
-[id]#sub-accordion-section-rosa2_options\[colors_section\] .customize-control-html[id*=title] .separator {
+[id]#sub-accordion-section-rosa2_options\[colors_section\] .customize-section-description-container + [id*=sm-description] {
+  margin-top: 0;
+  border-top-width: 0;
+}
+[id]#sub-accordion-section-rosa2_options\[colors_section\] .customize-control-html[id*=sm-group-separator] {
+  margin-top: var(--customize-control-spacing-y);
+  border: solid var(--customizer-border-color);
+  border-width: 1px 0;
+  background: var(--sm-color-palette-accent-color-2);
+}
+[id]#sub-accordion-section-rosa2_options\[colors_section\] .sm-group__title {
   font-size: 15px;
   line-height: 1.4;
   font-weight: 700;
   letter-spacing: -0.01em;
-  padding-bottom: 0;
-  padding-top: 20px;
 }
 
 .customize-control-sm_toggle + .customize-control-sm_toggle {
@@ -2170,17 +2180,8 @@ body.feedback-modal-open #style-manager-user-feedback-modal .modal {
   width: 24px;
 }
 
-.customize-control-html[id*=sm-description] {
-  margin-top: var(--customize-control-spacing-y);
-  padding-top: var(--customize-control-spacing-y);
-  padding-bottom: var(--customize-control-spacing-y);
-  border: solid var(--customizer-border-color);
-  border-width: 1px 0;
+.customize-control-html[id=sm-group__separator] {
   background: var(--sm-color-palette-accent-color-2);
-}
-.customize-control-html[id*=sm-description]:first-child, .customize-section-description-container:first-child + .customize-control-html[id*=sm-description] {
-  border-top: 0;
-  margin-top: 0;
 }
 
 .sm-group {
