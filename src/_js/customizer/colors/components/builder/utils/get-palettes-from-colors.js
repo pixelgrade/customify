@@ -10,6 +10,7 @@ export const getPalettesFromColors = ( colorGroups, attributes = {
   bezierInterpolation: false,
 } ) => {
 //  const functionalColors = getFunctionalColors( colorGroups );
+  console.log( colorGroups );
   let palettes = colorGroups.map( mapColorToPalette( attributes ) );
 //  let functionalPalettes = functionalColors.map( mapColorToPalette( attributes ) );
 

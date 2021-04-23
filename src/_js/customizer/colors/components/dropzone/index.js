@@ -8,9 +8,40 @@ import ConfigContext from "../../context";
 
 import './style.scss';
 import getRandomStripes from "../palette-list/get-random-stripes";
-import {getPalettesFromColors} from "../builder";
+import { getPalettesFromColors } from "../builder";
 
 export const myWorker = new Worker();
+
+const canInterpolate = ( color1, color2 ) => {
+  const luminance1 = chroma( color1 ).luminance();
+  const luminance2 = chroma( color2 ).luminance();
+
+  return Math.abs( luminance1 - luminance2 ) > 0.3;
+}
+
+const maybeInterpolateColors = ( colors ) => {
+
+  if ( colors.length >= 3 &&
+       canInterpolate( colors[0], colors[1] ) &&
+       canInterpolate( colors[0], colors[2] ) &&
+       canInterpolate( colors[1], colors[2] ) ) {
+    return [ colors ];
+  }
+
+  if ( colors.length >= 2 && canInterpolate( colors[0], colors[1] ) ) {
+    return [ [ colors[0], colors[1] ], [ colors[2] ] ];
+  }
+
+  if ( colors.length >= 3 && canInterpolate( colors[0], colors[2] ) ) {
+    return [ [ colors[0], colors[2] ], [ colors[1] ] ];
+  }
+
+  if ( colors.length >= 3 && canInterpolate( colors[0], colors[2] ) ) {
+    return [ [ colors[0] ], [ colors[1], colors[2] ] ];
+  }
+
+  return [ [ colors[0] ], [ colors[1] ], [ colors[2] ] ];
+}
 
 const DropZone = () => {
 
@@ -47,18 +78,22 @@ const DropZone = () => {
       const type = event.data.type;
 
       if ( 'palette' === type ) {
-        const colors = event.data.colors;
-        const hexColors = colors.map( rgb => chroma( rgb ).hex() );
-        const config = hexColors.map( ( hex, index ) => {
+        const groups = maybeInterpolateColors( event.data.colors );
+
+        const config = groups.map( ( colors, groupIndex ) => {
           return {
-            uid: `color_group_${ index }`,
-            sources: [ {
-              uid: `color_0`,
-              label: `Color ${ index + 1 }`,
-              value: hex
-            } ],
+            uid: `color_group_${ groupIndex }`,
+            sources: colors.map( ( color, colorIndex ) => {
+              return {
+                uid: `color_${ colorIndex }`,
+                label: `Color ${ colorIndex + 1 }`,
+                value: chroma( color ).hex()
+              }
+            } )
           }
         } );
+
+        console.log( JSON.stringify( config ) );
 
         setConfig( config );
 
@@ -95,7 +130,7 @@ const DropZone = () => {
     const canvas = canvasRef.current;
     const context = canvas.getContext( '2d' );
 
-    canvas.width = Math.min( imgSource.width, 200 );
+    canvas.width = Math.min( imgSource.width, 100 );
     canvas.height = canvas.width * imgSource.height / imgSource.width;
     context.drawImage( imgSource, 0, 0, canvas.width, canvas.height );
 

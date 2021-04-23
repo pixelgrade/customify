@@ -46,11 +46,14 @@ const getRandomStripes = ( preset => {
     stripe.pos = position;
   } );
 
-  const colors = palette.colors.map( color => color.value );
+  const mainColor = palette.colors[ sourceIndex ].value;
+  const colors = palettes.reduce( ( acc, palette ) => {
+    return acc.concat( palette.colors.map( color => color.value ) );
+  }, [] );
 
   stripes.forEach( stripe => {
-    const colorIndex = stripe.width === 4 ? sourceIndex : getRandomBetween( 1, colors.length );
-    const color = colors[ colorIndex ];
+    const colorIndex = getRandomBetween( 1, colors.length );
+    const color = stripe.width === 4 ? mainColor : colors[ colorIndex ];
     colors.splice( colorIndex, 1 );
     stripe.color = color;
   } );

@@ -1,41 +1,32 @@
 importScripts( '../../vendor_js/chroma.min.js' );
 
-/**
- * Converts an RGB color value to HSL. Conversion formula
- * adapted from http://en.wikipedia.org/wiki/HSL_color_space.
- * Assumes r, g, and b are contained in the set [0, 255] and
- * returns h, s, and l in the set [0, 1].
- *
- * @param   Number  r       The red color value
- * @param   Number  g       The green color value
- * @param   Number  b       The blue color value
- * @return  Array           The HSL representation
- */
-function rgbToHsl(r, g, b){
-  r /= 255;
-  g /= 255;
-  b /= 255;
-  var max = Math.max(r, g, b), min = Math.min(r, g, b);
-  var h, s, l = (max + min) / 2;
-
-  if(max === min){
-    h = s = 0; // achromatic
-  }else{
-    var d = max - min;
-    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-    switch(max){
-      case r: h = (g - b) / d + (g < b ? 6 : 0); break;
-      case g: h = (b - r) / d + 2; break;
-      case b: h = (r - g) / d + 4; break;
-      default: break;
-    }
-    h /= 6;
-  }
-  return [h, s, l];
+function sendPalette( label, colors ) {
+  self.postMessage({ // eslint-disable-line no-restricted-globals
+    type: 'palette',
+    label: label,
+    colors: colors
+  });
 }
 
+addEventListener( 'message', function( event ) {  // eslint-disable-line no-restricted-globals
+  const points = getDataArrayFromImage( event.data.imageData );
+  const clusters = getClusters( points, 5, 10 );
+  clusters.sort( ( cluster1, cluster2 ) => cluster1.points.length > cluster2.points.length ? -1 : 1 );
+  clusters.splice( 3 );
 
-function getRgbArrayFromImageData( imageData, width, height ) {
+  const palette = clusters.map( cluster => chroma( cluster.centroid, 'lab' ).rgb() );
+
+  sendPalette( 'Palette', palette );
+} );
+
+
+const getLuminance = ( rgb )  =>{
+  return Number( (
+    0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2]
+  ).toFixed( 3 ) );
+}
+
+function getDataArrayFromImage( imageData, width, height ) {
   var rgbArray = [];
 
   var i, j, temparray,
@@ -47,7 +38,12 @@ function getRgbArrayFromImageData( imageData, width, height ) {
     temparray = imageData.slice( i, i + chunk );
 
     if ( temparray[3] !== 0 ) {
-      rgbArray.push( [temparray[0], temparray[1], temparray[2]] );
+      const color = chroma( [ temparray[0], temparray[1], temparray[2] ] );
+      const point = color.lab();
+
+      if ( color.luminance() > 0.05 ) {
+        rgbArray.push( point );
+      }
     }
 
     if ( col < width - 1 ) {
@@ -70,28 +66,6 @@ function getClusters( array, k = 10, iterations = 10 ) {
   // get clusters
   return clusterMaker.clusters();
 }
-
-function sendPalette( label, colors ) {
-  self.postMessage({ // eslint-disable-line no-restricted-globals
-    type: 'palette',
-    label: label,
-    colors: colors
-  });
-}
-
-function getLuminance( rgb ) {
-  return Number((0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2]).toFixed(3));
-}
-
-addEventListener( 'message', function( event ) {  // eslint-disable-line no-restricted-globals
-  const rgbArray = getRgbArrayFromImageData( event.data.imageData );
-  const labArray = rgbArray.map( rgb => chroma( rgb ).lab() );
-  const clusters = getClusters( labArray, 3, 10 );
-  clusters.sort( ( cluster1, cluster2 ) => cluster1.points.length > cluster2.points.length ? -1 : 1 );
-  const palette = clusters.map( cluster => chroma( cluster.centroid, 'lab' ).rgb() );
-
-  sendPalette( 'Palette', palette );
-} );
 
 const clusterMaker = {
 
