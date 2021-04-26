@@ -14,7 +14,9 @@ const runningNodeVersion = process.version;
 
 // set .nvmrc and .node_version to have the same version
 fs.writeFileSync(path.join(__dirname, '../.node-version'), requiredNodeVersion, 'UTF8');
-fs.writeFileSync(path.join(__dirname, '../.nvmrc'), requiredNodeVersion, 'UTF8');
+// This way we could have a bash or zsh script that would automatically use the latest installed version of node from this major release.
+// Not ideal, but since nvm doesn't support ranges... :|
+fs.writeFileSync(path.join(__dirname, '../.nvmrc'), semver.minVersion(requiredNodeVersion).major.toString(), 'UTF8');
 
 // check that the required version of Node is running
 if (!semver.satisfies(runningNodeVersion, requiredNodeVersion)) {
