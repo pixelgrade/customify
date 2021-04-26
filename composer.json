@@ -122,6 +122,7 @@
 		],
 
 		"dev-install": [
+			"npm install",
 			"@create-vendor-prefix-folder",
 			"@composer install --prefer-dist --no-scripts",
 			"@prefix-dependencies",
@@ -129,6 +130,7 @@
 		],
 
 		"pre-build": [
+			"npm install",
 			"npm run gulp composer:delete_lock_and_vendor",
 			"@composer install --prefer-dist --no-scripts",
 			"@prefix-dependencies",
