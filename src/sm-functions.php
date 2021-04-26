@@ -202,7 +202,11 @@ function sm_color_switch_darker_cb( string $value, string $selector, string $pro
  *
  * @return string
  */
-function sm_palette_output_cb( string $value ) {
+function sm_advanced_palette_output_cb( string $value ) {
+	return '';
+}
+
+function sm_get_palette_output_from_color_config( string $value ) {
 	$output = '';
 
 	$palettes = json_decode( $value );

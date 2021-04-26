@@ -48,9 +48,9 @@ class GeneralAdmin extends AbstractHookProvider {
 	 */
 	public function register_hooks() {
 		$this->add_action( 'after_switch_theme', 'maybe_show_notice_to_migrate_when_child_theme', 100, 2 );
-
 		$this->add_action( 'wp_ajax_customify_migrate_customizations_from_parent_to_child_theme', 'migrate_customizations_from_parent_to_child_theme' );
 		$this->add_action( 'admin_init', 'migrate_to_advanced_dark_mode_control' );
+		$this->add_action( 'admin_enqueue_scripts', 'enqueue_assets' );
 	}
 
 	/**
@@ -259,5 +259,14 @@ class GeneralAdmin extends AbstractHookProvider {
 		} else {
 			update_option( 'sm_dark_mode_advanced', 'off' );
 		}
+	}
+
+	/**
+	 * Enqueue assets.
+	 *
+	 * @since 3.0.0
+	 */
+	protected function enqueue_assets() {
+		wp_enqueue_style( 'pixelgrade_customify-sm-colors-custom-properties' );
 	}
 }

@@ -34,11 +34,17 @@ class GeneralAssets extends AbstractHookProvider {
 	 * @since 3.0.0
 	 */
 	public function register_assets() {
+
 		wp_register_style(
 			'pixelgrade_customify-sm-colors-custom-properties',
 			$this->plugin->get_url( 'dist/css/sm-colors-custom-properties.css' ),
 			[],
 			VERSION
 		);
+
+		$option = get_option( 'sm_advanced_palette_output' );
+		$css = sm_get_palette_output_from_color_config( $option );
+
+		wp_add_inline_style( 'pixelgrade_customify-sm-colors-custom-properties', $css );
 	}
 }
