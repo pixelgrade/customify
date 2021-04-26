@@ -12,6 +12,4 @@ build
 *-ck.js
 npm-debug.log
 
-/vendor/
-/php-scoper/vendor/
 /dist/js/stats.json
