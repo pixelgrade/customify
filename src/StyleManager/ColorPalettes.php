@@ -321,7 +321,7 @@ class ColorPalettes extends AbstractHookProvider {
 						[
 							'selector'        => ':root',
 							'property'        => 'dummy-property',
-							'callback_filter' => 'sm_palette_output_cb',
+							'callback_filter' => 'sm_advanced_palette_output_cb',
 						],
 					],
 				],
