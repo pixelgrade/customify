@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "22987f078fe09fc302250fba26b065ee",
+    "content-hash": "cec9022af64026d8e66652d7bec56217",
     "packages": [
         {
             "name": "cedaro/wp-plugin",
@@ -1990,23 +1990,26 @@
         },
         {
             "name": "rector/rector-prefixed",
-            "version": "dev-main",
+            "version": "0.10.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/rectorphp/rector-prefixed.git",
-                "reference": "947cb73e4db63fbd8c71f9fdbc4cb0a13a17784b"
+                "reference": "b52a938d682300a5c27c624d78f6c34d4ccf466d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rectorphp/rector-prefixed/zipball/947cb73e4db63fbd8c71f9fdbc4cb0a13a17784b",
-                "reference": "947cb73e4db63fbd8c71f9fdbc4cb0a13a17784b",
+                "url": "https://api.github.com/repos/rectorphp/rector-prefixed/zipball/b52a938d682300a5c27c624d78f6c34d4ccf466d",
+                "reference": "b52a938d682300a5c27c624d78f6c34d4ccf466d",
                 "shasum": ""
             },
             "require": {
                 "php": "^7.1|^8.0",
-                "phpstan/phpstan": "^0.12.82"
+                "phpstan/phpstan": "^0.12.83"
             },
-            "default-branch": true,
+            "conflict": {
+                "phpstan/phpdoc-parser": "<=0.5.3",
+                "phpstan/phpstan": "<=0.12.82"
+            },
             "bin": [
                 "bin/rector"
             ],
@@ -2016,15 +2019,20 @@
                     "dev-main": "0.10-dev"
                 }
             },
+            "autoload": {
+                "files": [
+                    "bootstrap.php"
+                ]
+            },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
-            "description": "Prefixed and PHP 7.1 downgraded version of rector/rector",
+            "description": "Prefixed and PHP 7.0 downgraded version of rector/rector",
             "support": {
-                "source": "https://github.com/rectorphp/rector-prefixed/tree/main"
+                "source": "https://github.com/rectorphp/rector-prefixed/tree/0.10.11"
             },
-            "time": "2021-04-08T12:51:06+00:00"
+            "time": "2021-04-24T12:44:58+00:00"
         },
         {
             "name": "roave/security-advisories",
@@ -3561,7 +3569,6 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "rector/rector-prefixed": 20,
         "roave/security-advisories": 20
     },
     "prefer-stable": true,

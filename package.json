@@ -20,7 +20,7 @@
         "dev": "cross-env webpack --mode=development --watch && gulp dev",
         "compile:production": "cross-env NODE_ENV=production webpack --mode=production && gulp compile:styles",
         "zip": "cross-env NODE_ENV=production webpack --mode=production && gulp compile:styles && composer zip",
-        "preinstall": "node ./tasks/lock_node_version.js",
+        "preinstall": "cd ./node-tasks/ && npm install && node ./lock_node_version.js",
         "webpack:analyzer": "webpack --profile --json > dist/js/stats.json && ./node_modules/.bin/webpack-bundle-analyzer dist/js/stats.json"
     },
     "devDependencies": {
@@ -64,7 +64,6 @@
         "request": "^2.88.2",
         "sass": "^1.32.8",
         "sass-loader": "^11.0.1",
-        "semver": "^7.3.5",
         "style-loader": "^2.0.0",
         "svg-inline-loader": "^0.8.2",
         "svg-sprite-loader": "^6.0.5",

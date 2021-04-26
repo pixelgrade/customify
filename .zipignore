@@ -4,6 +4,7 @@ node_modules
 config.rb
 gulp-tasks
 tasks
+node-tasks
 gulpfile.js
 gulpconfig.json
 gulpconfig.example.json

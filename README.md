@@ -38,8 +38,6 @@ Before you can get developing, you need to have `node` and `composer` installed 
 Once you clone the Git repo, to get started open a shell/terminal in the cloned directory and run these from the command line (in this order):
 
 ```shell
-npm install
-
 composer run dev-install
 
 npm run dev
