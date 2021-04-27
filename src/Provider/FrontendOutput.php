@@ -144,6 +144,8 @@ class FrontendOutput extends AbstractHookProvider {
 		$this->add_filter( 'customify_localized_js_settings', 'localize_pixel_dependent_css_props' );
 
 		$this->add_action( 'wp_enqueue_scripts', 'enqueue_assets', 15 );
+		$this->add_action( 'wp_head', 'create_globals' );
+
 	}
 
 	/**
@@ -420,6 +422,14 @@ class FrontendOutput extends AbstractHookProvider {
 	 */
 	protected function enqueue_assets() {
 		wp_enqueue_style( 'pixelgrade_customify-sm-colors-custom-properties' );
+	}
+
+	protected function create_globals() { ?>
+		<script type="text/javascript">
+			window.sm = {
+				colorsConfig: <?php echo pixelgrade_option('sm_advanced_palette_output' ); ?>
+			}
+		</script><?php
 	}
 
 }
