@@ -93,8 +93,6 @@ const DropZone = () => {
           }
         } );
 
-        console.log( JSON.stringify( config ) );
-
         setConfig( config );
 
         const preset = {};

@@ -340,9 +340,8 @@ class ColorPalettes extends AbstractHookProvider {
 					],
 					'css'          => [
 						[
-							'property'        => '--sm-property',
 							'selector'        => ':root',
-							'unit'            => '',
+							'property'        => 'dummy-property',
 							'callback_filter' => 'sm_variation_range_cb',
 						],
 					],
