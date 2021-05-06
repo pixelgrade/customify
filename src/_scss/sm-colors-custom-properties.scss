@@ -40,7 +40,7 @@ html,
   }
 }
 
-@each $id in 1, 2, 3, success, error, warning, info {
+@each $id in 1, 2, 3, _success, _error, _warning, _info {
 
   .sm-palette-#{ $id } {
     @include apply-palette( $id );

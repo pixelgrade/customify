@@ -9,12 +9,12 @@ export const getPalettesFromColors = ( colorGroups, attributes = {
   mode: 'lch',
   bezierInterpolation: false,
 } ) => {
-//  const functionalColors = getFunctionalColors( colorGroups );
+  const functionalColors = getFunctionalColors( colorGroups );
   let palettes = colorGroups.map( mapColorToPalette( attributes ) );
-//  let functionalPalettes = functionalColors.map( mapColorToPalette( attributes ) );
+  let functionalPalettes = functionalColors.map( mapColorToPalette( attributes ) );
+  let allPalettes = palettes.concat( functionalPalettes );
 
-//  return mapSanitizePalettes( palettes.concat( functionalPalettes ), attributes );
-  return mapSanitizePalettes( palettes, attributes );
+  return mapSanitizePalettes( allPalettes, attributes );
 }
 
 const noop = palette => palette;
@@ -189,23 +189,23 @@ const createAutoPalette = ( colors, attributes = {} ) => {
   }
 }
 
-export const getFunctionalColors = ( colors ) => {
+export const getFunctionalColors = ( colorGroups ) => {
 
-  if ( ! colors || ! colors.length ) {
+  if ( ! colorGroups?.length || ! colorGroups[0]?.sources?.length ) {
     return [];
   }
 
-  const color = colors[0].value;
+  const color = colorGroups[0].sources[0].value;
   const red = chroma( color ).set( 'hsl.h', 0 ).hex();
   const blue = chroma( color ).set( 'hsl.h', 180 ).hex();
   const yellow = chroma( color ).set( 'hsl.h', 60 ).hex();
   const green = chroma( color ).set( 'hsl.h', 120 ).hex();
 
   return [
-    { label: '_info', value: blue, id: 'info' },
-    { label: '_error', value: red, id: 'error' },
-    { label: '_warning', value: yellow, id: 'warning' },
-    { label: '_success',  value: green, id: 'success' },
+    { sources: [ { value: blue, label: 'Info', id: '_info' } ] },
+    { sources: [ { value: red, label: 'Error', id: '_error' } ] },
+    { sources: [ { value: yellow, label: 'Warning', id: '_warning' } ] },
+    { sources: [ { value: green, label: 'Success', id: '_success' } ] },
   ];
 }
 
