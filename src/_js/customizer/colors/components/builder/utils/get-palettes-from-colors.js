@@ -189,6 +189,14 @@ const createAutoPalette = ( colors, attributes = {} ) => {
   }
 }
 
+const blend = ( functionalColor, brandColor, ratio = 1 ) => {
+  const l1 = chroma( functionalColor ).get( 'hsl.s' );
+  const l2 = chroma( brandColor ).get( 'hsl.s' );
+  const l3 = l1 * ( 1 - 0.4 * ratio ) + l2 * 0.4 * ratio;
+
+  return chroma( functionalColor ).mix( brandColor, 0.1 * ratio ).set( 'hsl.s', l3 ).hex();
+}
+
 export const getFunctionalColors = ( colorGroups ) => {
 
   if ( ! colorGroups?.length || ! colorGroups[0]?.sources?.length ) {
@@ -196,10 +204,10 @@ export const getFunctionalColors = ( colorGroups ) => {
   }
 
   const color = colorGroups[0].sources[0].value;
-  const red = chroma( color ).set( 'hsl.h', 0 ).hex();
-  const blue = chroma( color ).set( 'hsl.h', 180 ).hex();
-  const yellow = chroma( color ).set( 'hsl.h', 60 ).hex();
-  const green = chroma( color ).set( 'hsl.h', 120 ).hex();
+  const blue = blend( '#2E72D2', color );
+  const red = blend( '#D82C0D', color );
+  const yellow = blend( '#FFCC00', color, 0.5 );
+  const green = blend( '#00703c', color, 0.75 );
 
   return [
     { sources: [ { value: blue, label: 'Info', id: '_info' } ] },
