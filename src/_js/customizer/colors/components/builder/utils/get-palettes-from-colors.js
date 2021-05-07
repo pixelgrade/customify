@@ -192,7 +192,7 @@ const createAutoPalette = ( colors, attributes = {} ) => {
 const blend = ( functionalColor, brandColor, ratio = 1 ) => {
   const l1 = chroma( functionalColor ).get( 'hsl.s' );
   const l2 = chroma( brandColor ).get( 'hsl.s' );
-  const l3 = l1 * ( 1 - 0.4 * ratio ) + l2 * 0.4 * ratio;
+  const l3 = l1 * ( 1 - 0.8 * ratio ) + l2 * 0.8 * ratio;
 
   return chroma( functionalColor ).mix( brandColor, 0.1 * ratio ).set( 'hsl.s', l3 ).hex();
 }

@@ -48,7 +48,10 @@ const getRandomStripes = ( preset => {
 
   const mainColor = palette.colors[ sourceIndex ].value;
   const colors = palettes.reduce( ( acc, palette ) => {
-    return acc.concat( palette.colors.map( color => color.value ) );
+    const id = palette.id + '';
+    const colorsToAdd = id.charAt(0) === '_' ? [] : palette.colors.map( color => color.value );
+
+    return acc.concat( colorsToAdd );
   }, [] );
 
   stripes.forEach( stripe => {
