@@ -166,7 +166,7 @@ function sm_get_color_switch_dark_config( $label, $selector, $default, $properti
  *
  * @return string
  */
-function sm_color_switch_dark_cb( string $value, string $selector, string $property ): string {
+function sm_color_switch_dark_cb( bool $value, string $selector, string $property ): string {
 	$color = 'fg1';
 
 	if ( $value === true ) {
@@ -185,7 +185,7 @@ function sm_color_switch_dark_cb( string $value, string $selector, string $prope
  *
  * @return string
  */
-function sm_color_switch_darker_cb( string $value, string $selector, string $property ): string {
+function sm_color_switch_darker_cb( bool $value, string $selector, string $property ): string {
 	$color = 'fg2';
 
 	if ( $value === true ) {
@@ -364,36 +364,18 @@ function get_fallback_palettes() {
 	$alphabet = range( 'A', 'Z' );
 
 	$options_details = PixCustomifyPlugin()->get_options_configs();
+
 	$color_control_ids = array(
 		'sm_color_primary',
 		'sm_color_secondary',
 		'sm_color_tertiary',
 	);
 
-	$lighter = PixCustomifyPlugin()->get_option( 'sm_light_primary_final' );
-	if ( empty( $lighter ) ) {
-		$lighter = PixCustomifyPlugin()->get_option( 'sm_light_primary' );
-	}
-
-	$light = PixCustomifyPlugin()->get_option( 'sm_light_tertiary_final' );
-	if ( empty( $light ) ) {
-		$light = PixCustomifyPlugin()->get_option( 'sm_light_tertiary' );
-	}
-
-	$text_color = PixCustomifyPlugin()->get_option( 'sm_dark_secondary_final' );
-	if ( empty( $text_color ) ) {
-		$text_color = PixCustomifyPlugin()->get_option( 'sm_dark_secondary' );
-	}
-
-	$dark = PixCustomifyPlugin()->get_option( 'sm_dark_primary_final' );
-	if ( empty( $dark ) ) {
-		$dark = PixCustomifyPlugin()->get_option( 'sm_dark_primary' );
-	}
-
-	$darker = PixCustomifyPlugin()->get_option( 'sm_dark_tertiary_final' );
-	if ( empty( $darker ) ) {
-		$darker = PixCustomifyPlugin()->get_option( 'sm_dark_tertiary' );
-	}
+	$lighter = get_fallback_color_value( 'sm_light_primary' );
+	$light = get_fallback_color_value( 'sm_light_tertiary' );
+	$text_color = get_fallback_color_value( 'sm_dark_secondary' );
+	$dark = get_fallback_color_value( 'sm_dark_primary' );
+	$darker = get_fallback_color_value( 'sm_dark_tertiary' );
 
 	$palettes = array();
 
@@ -403,20 +385,16 @@ function get_fallback_palettes() {
 			continue;
 		}
 
-		$value = get_option( $control_id . '_final' );
-
-		if ( empty( $value ) ) {
-			$value = $options_details[ $control_id ][ 'default' ];
-		}
+		$color = get_fallback_color_value( $control_id );
 
 		$colors = array(
 			$lighter,
 			$light,
 			$light,
 			$light,
-			$value,
-			$value,
-			$value,
+			$color,
+			$color,
+			$color,
 			$dark,
 			$dark,
 			$dark,
@@ -452,7 +430,7 @@ function get_fallback_palettes() {
 		$palettes[] = ( object ) array(
 			'colors'      => $color_objects,
 			'textColors'  => $textColor_objects,
-			'source'      => $value,
+			'source'      => $color,
 			'sourceIndex' => 6,
 			'label'       => 'Color ' . $alphabet[ $index + 1 ],
 			'id'          => $index + 1
@@ -460,4 +438,23 @@ function get_fallback_palettes() {
 	}
 
 	return $palettes;
+}
+
+function get_fallback_color_value( $id ) {
+
+	$color = PixCustomifyPlugin()->get_option( $id . '_final' );
+
+	if ( empty( $color ) ) {
+		$color = PixCustomifyPlugin()->get_option( $id );
+	}
+
+	if ( empty( $color ) ) {
+		$config = PixCustomifyPlugin()->get_option_details( $id );
+
+		if ( isset( $config['default'] ) ) {
+			$color = $config['default'];
+		}
+	}
+
+	return $color;
 }

@@ -2031,6 +2031,28 @@ body.feedback-modal-open #style-manager-user-feedback-modal .modal {
 [class][class] .c-palette-builder__source-item > * + * {
   margin-left: 5px;
 }
+
+.c-palette-builder__source-item-picker {
+  padding: 10px;
+  background: var(--sm-color-palette-neutral-color-1);
+  box-shadow: var(--sm-customizer-box-shadow-2);
+  border-radius: 0.25em;
+}
+.c-palette-builder__source-item-picker .react-colorful__saturation,
+.c-palette-builder__source-item-picker .react-colorful__hue {
+  border-radius: 0;
+  margin-bottom: 10px;
+}
+.c-palette-builder__source-item-picker .react-colorful__saturation {
+  border-bottom: 0;
+}
+.c-palette-builder__source-item-picker .react-colorful__hue {
+  height: 0.5em;
+}
+.c-palette-builder__source-item-picker .react-colorful__pointer {
+  height: 1.2em;
+  width: 1.2em;
+}
 .c-contextual-menu {
   position: relative;
 }
@@ -2072,6 +2094,7 @@ body.feedback-modal-open #style-manager-user-feedback-modal .modal {
   width: 15em;
   margin-top: 0.66em;
   padding: 0.75em 0;
+  border-radius: 0.25em;
   background: var(--sm-color-palette-neutral-color-1);
   box-shadow: var(--sm-customizer-box-shadow-2);
   transition: var(--sm-transition);

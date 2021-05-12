@@ -125,3 +125,29 @@
     }
   }
 }
+
+.c-palette-builder__source-item-picker {
+  padding: 10px;
+  background: var(--sm-color-palette-neutral-color-1);
+  box-shadow: var(--sm-customizer-box-shadow-2);
+  border-radius: 0.25em;
+
+  .react-colorful__saturation,
+  .react-colorful__hue {
+    border-radius: 0;
+    margin-bottom: 10px;
+  }
+
+  .react-colorful__saturation {
+    border-bottom: 0;
+  }
+
+  .react-colorful__hue {
+    height: 0.5em;
+  }
+
+  .react-colorful__pointer {
+    height: 1.2em;
+    width: 1.2em;
+  }
+}

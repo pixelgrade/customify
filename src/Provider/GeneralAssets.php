@@ -42,7 +42,7 @@ class GeneralAssets extends AbstractHookProvider {
 			VERSION
 		);
 
-		$option = get_option( 'sm_advanced_palette_output' );
+		$option = get_option( 'sm_advanced_palette_output', '[]' );
 		$css = sm_get_palette_output_from_color_config( $option );
 
 		wp_add_inline_style( 'pixelgrade_customify-sm-colors-custom-properties', $css );
