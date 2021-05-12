@@ -34,7 +34,7 @@ export const ColorPicker = ( props ) => {
           setHexValue( value );
 
           if ( chroma.valid( value ) && chroma( value ).alpha() === 1 ) {
-            setColor( value );
+            setColor( chroma( value ).hex() );
           }
         } } />
       </div>

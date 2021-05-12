@@ -302,16 +302,133 @@ class ColorPalettes extends AbstractHookProvider {
 				'sm_advanced_palette_source'    => [
 					'type'         => 'text',
 					'live'         => true,
+					'default'      => '[
+					{
+						"uid": "color_group_1",
+						"sources": [
+							{ 
+								"uid": "color_11", 
+								"showPicker": true,
+								"label": "Color",
+								"value": "#ddaa61"
+							}
+						]
+					},
+					{
+						"uid": "color_group_2",
+						"sources": [
+							{ 
+								"uid": "color_21", 
+								"showPicker": true,
+								"label": "Color",
+								"value": "#39497C"
+							}
+						]
+					},
+					{
+						"uid": "color_group_3",
+						"sources": [
+							{ 
+								"uid": "color_31", 
+								"showPicker": true,
+								"label": "Color",
+								"value": "#B12C4A"
+							}
+						]
+					}
+					]',
 					// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
 					'setting_type' => 'option',
 					// We will force this setting id preventing prefixing and other regular processing.
 					'setting_id'   => 'sm_advanced_palette_source',
 					'label'        => esc_html__( 'Palette Source', '__plugin_txtd' ),
 				],
-				'sm_advanced_palette_output'    => [
-					'type'         => 'text',
-					'live'         => true,
-					'default'      => '[]',
+				'sm_advanced_palette_output' => [
+					'type'    => 'text',
+					'live'    => true,
+					'default' => '[
+					  {
+					    "sourceIndex": 5,
+					    "id": 1,
+					    "lightColorsCount": 5,
+					    "label": "Color",
+					    "source": {
+					      "0": "#DDAB5D"
+					    },
+					    "colors": [
+					      { "value": "#FFFFFF" },
+					      { "value": "#EEEFF2" },
+					      { "value": "#EEEFF2" },
+					      { "value": "#EEEFF2" },
+					      { "value": "#EEEFF2" },
+					      { "value": "#DDAB5D", "isSource": true },
+					      { "value": "#DDAB5D" },
+					      { "value": "#212B49" },
+					      { "value": "#212B49" },
+					      { "value": "#212B49" },
+					      { "value": "#141928" },
+					      { "value": "#000000" }
+					    ],
+					    "textColors": [
+					      { "value": "#34394B" },
+					      { "value": "#34394B" }
+					    ]
+					  },
+					  {
+					    "sourceIndex": 5,
+					    "id": 2,
+					    "lightColorsCount": 5,
+					    "label": "Color",
+					    "source": {
+					      "0": "#39497C"
+					    },
+					    "colors": [
+					      { "value": "#FFFFFF" },
+					      { "value": "#EEEFF2" },
+					      { "value": "#EEEFF2" },
+					      { "value": "#EEEFF2" },
+					      { "value": "#EEEFF2" },
+					      { "value": "#39497C", "isSource": true },
+					      { "value": "#39497C" },
+					      { "value": "#212B49" },
+					      { "value": "#212B49" },
+					      { "value": "#212B49" },
+					      { "value": "#141928" },
+					      { "value": "#000000" }
+					    ],
+					    "textColors": [
+					      { "value": "#34394B" },
+					      { "value": "#34394B" }
+					    ]
+					  },
+					  {
+					    "sourceIndex": 5,
+					    "id": 3,
+					    "lightColorsCount": 5,
+					    "label": "Color",
+					    "source": {
+					      "0": "#B12C4A"
+					    },
+					    "colors": [
+					      { "value": "#FFFFFF" },
+					      { "value": "#EEEFF2" },
+					      { "value": "#EEEFF2" },
+					      { "value": "#EEEFF2" },
+					      { "value": "#EEEFF2" },
+					      { "value": "#B12C4A", "isSource": true },
+					      { "value": "#B12C4A" },
+					      { "value": "#212B49" },
+					      { "value": "#212B49" },
+					      { "value": "#212B49" },
+					      { "value": "#141928" },
+					      { "value": "#000000" }
+					    ],
+					    "textColors": [
+					      { "value": "#34394B" },
+					      { "value": "#34394B" }
+					    ]
+					  }
+					]',
 					// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
 					'setting_type' => 'option',
 					// We will force this setting id preventing prefixing and other regular processing.

@@ -25,6 +25,7 @@ const Builder = ( props ) => {
   const { sourceSettingID, outputSettingID } = props;
 
   const sourceSetting = wp.customize( sourceSettingID );
+  const outputSetting = wp.customize( outputSettingID );
   const variationSetting = wp.customize( 'sm_site_color_variation' );
 
   const [ config, setConfig ] = useState( getColorsFromInputValue( sourceSetting() ) );
@@ -36,6 +37,13 @@ const Builder = ( props ) => {
 
   const changeListener = () => {
     setConfig( getColorsFromInputValue( sourceSetting() ) );
+
+    const cfg = getColorsFromInputValue( sourceSetting() );
+    const plts = getPalettesFromColors( cfg );
+
+    wp.customize( outputSettingID, setting => {
+      setting.set( JSON.stringify( plts ) );
+    } );
   };
 
   useEffect(() => {
@@ -65,15 +73,15 @@ const Builder = ( props ) => {
   }, [] );
 
   useEffect( () => {
-    sourceSetting.set( getValueFromColors( config ) );
-    setPalettes( getPalettesFromColors( config ) );
+//    sourceSetting.set( getValueFromColors( config ) );
+//    setPalettes( getPalettesFromColors( config ) );
   }, [ config ] );
 
-  useEffect( () => {
-    wp.customize( outputSettingID, setting => {
-      setting.set( JSON.stringify( palettes ) );
-    } );
-  }, [ palettes ] );
+//  useEffect( () => {
+//    wp.customize( outputSettingID, setting => {
+//      setting.set( JSON.stringify( palettes ) );
+//    } );
+//  }, [ palettes ] );
 
   useEffect( () => {
     setCSSOutput( getCSSFromPalettes( palettes ) );

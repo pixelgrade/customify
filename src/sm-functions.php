@@ -444,17 +444,17 @@ function get_fallback_color_value( $id ) {
 
 	$color = PixCustomifyPlugin()->get_option( $id . '_final' );
 
-	if ( empty( $color ) ) {
-		$color = PixCustomifyPlugin()->get_option( $id );
-	}
-
-	if ( empty( $color ) ) {
-		$config = PixCustomifyPlugin()->get_option_details( $id );
-
-		if ( isset( $config['default'] ) ) {
-			$color = $config['default'];
-		}
-	}
+//	if ( empty( $color ) ) {
+//		$color = PixCustomifyPlugin()->get_option( $id );
+//	}
+//
+//	if ( empty( $color ) ) {
+//		$config = PixCustomifyPlugin()->get_option_details( $id );
+//
+//		if ( isset( $config['default'] ) ) {
+//			$color = $config['default'];
+//		}
+//	}
 
 	return $color;
 }
