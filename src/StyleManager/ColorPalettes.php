@@ -363,11 +363,11 @@ class ColorPalettes extends AbstractHookProvider {
 					      { "value": "#EEEFF2" },
 					      { "value": "#DDAB5D", "isSource": true },
 					      { "value": "#DDAB5D" },
+					      { "value": "#DDAB5D" },
 					      { "value": "#212B49" },
 					      { "value": "#212B49" },
 					      { "value": "#212B49" },
-					      { "value": "#141928" },
-					      { "value": "#000000" }
+					      { "value": "#212B49" }
 					    ],
 					    "textColors": [
 					      { "value": "#34394B" },
@@ -390,11 +390,11 @@ class ColorPalettes extends AbstractHookProvider {
 					      { "value": "#EEEFF2" },
 					      { "value": "#39497C", "isSource": true },
 					      { "value": "#39497C" },
+					      { "value": "#39497C" },
 					      { "value": "#212B49" },
 					      { "value": "#212B49" },
 					      { "value": "#212B49" },
-					      { "value": "#141928" },
-					      { "value": "#000000" }
+					      { "value": "#212B49" }
 					    ],
 					    "textColors": [
 					      { "value": "#34394B" },
@@ -417,11 +417,11 @@ class ColorPalettes extends AbstractHookProvider {
 					      { "value": "#EEEFF2" },
 					      { "value": "#B12C4A", "isSource": true },
 					      { "value": "#B12C4A" },
+					      { "value": "#B12C4A" },
 					      { "value": "#212B49" },
 					      { "value": "#212B49" },
 					      { "value": "#212B49" },
-					      { "value": "#141928" },
-					      { "value": "#000000" }
+					      { "value": "#212B49" }
 					    ],
 					    "textColors": [
 					      { "value": "#34394B" },
