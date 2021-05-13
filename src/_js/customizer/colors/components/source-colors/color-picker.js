@@ -1,7 +1,9 @@
 import chroma from 'chroma-js';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import { HexColorPicker } from "react-colorful";
+import { useDidUpdateEffect } from "../../../utils";
+
 
 export const ColorPicker = ( props ) => {
 
@@ -16,7 +18,7 @@ export const ColorPicker = ( props ) => {
 
   const debouncedOnChange = useDebouncedCallback( onChange, 200 );
 
-  useEffect( () => {
+  useDidUpdateEffect( () => {
     debouncedOnChange( color );
   }, [ color ] );
 

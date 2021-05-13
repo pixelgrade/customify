@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { getBackArray, addToBackArray, setBackArray } from "../../../global-service";
+import { useCustomizeSettingCallback, useDidUpdateEffect, useTraceUpdate } from "../../../utils";
 
 import { SourceColors } from "../source-colors";
 import ConfigContext from "../../context";
@@ -21,61 +22,64 @@ export { Builder }
 export * from './utils';
 
 const Builder = ( props ) => {
+  useTraceUpdate( props );
+
+  console.log( 'render' );
 
   const { sourceSettingID, outputSettingID } = props;
 
   const sourceSetting = wp.customize( sourceSettingID );
   const outputSetting = wp.customize( outputSettingID );
-  const variationSetting = wp.customize( 'sm_site_color_variation' );
+  const variationSettingID = 'sm_site_color_variation';
+  const variationSetting = wp.customize( variationSettingID );
 
   const [ config, setConfig ] = useState( getColorsFromInputValue( sourceSetting() ) );
   const [ palettes, setPalettes ] = useState( [] );
   const [ CSSOutput, setCSSOutput ] = useState( '' );
 
   const [ activePreset, setActivePreset ] = useState( null );
-  const resetActivePreset = useCallback( () => { setActivePreset( null ) }, [] )
+  const resetActivePreset = useCallback( () => { setActivePreset( null ) }, [] );
 
-  const changeListener = () => {
-    setConfig( getColorsFromInputValue( sourceSetting() ) );
+  const updateSource = ( newValue ) => {
+    wp.customize( sourceSettingID, setting => {
+      setting.set( getValueFromColors( newValue ) );
+    } );
+  }
 
-    const cfg = getColorsFromInputValue( sourceSetting() );
-    const plts = getPalettesFromColors( cfg );
+//  const changeListener = () => {
+//    setConfig( getColorsFromInputValue( sourceSetting() ) );
+//
+//    const cfg = getColorsFromInputValue( sourceSetting() );
+//    const plts = getPalettesFromColors( cfg );
+//
+//    wp.customize( outputSettingID, setting => {
+//      setting.set( JSON.stringify( plts ) );
+//    } );
+//  };
+
+  const onSourceChange = ( newValue ) => {
+    const newConfig = getColorsFromInputValue( newValue );
+    const newPalettes = getPalettesFromColors( newConfig );
 
     wp.customize( outputSettingID, setting => {
-      setting.set( JSON.stringify( plts ) );
+      setting.set( JSON.stringify( newPalettes ) );
     } );
-  };
+  }
 
-  useEffect(() => {
+  const onOutputChange = ( value ) => {
+    const palettes = JSON.parse( value );
 
-    if ( ! sourceSetting ) {
-      return;
-    }
+    setCSSOutput( getCSSFromPalettes( palettes ) );
+  }
 
-    sourceSetting.bind( changeListener );
+//  useCustomizeSettingCallback( variationSettingID, changeListener );
+  useCustomizeSettingCallback( sourceSettingID, onSourceChange );
+  useCustomizeSettingCallback( outputSettingID, onOutputChange );
 
-    return () => {
-      sourceSetting.unbind( changeListener );
-    }
-  }, [] );
-
-  useEffect(() => {
-
-    if ( ! variationSetting ) {
-      return;
-    }
-
-    variationSetting.bind( changeListener );
-
-    return () => {
-      variationSetting.unbind( changeListener );
-    }
-  }, [] );
-
-  useEffect( () => {
+//  useDidUpdateEffect( () => {
 //    sourceSetting.set( getValueFromColors( config ) );
 //    setPalettes( getPalettesFromColors( config ) );
-  }, [ config ] );
+//  }, [ config ] );
 
 //  useEffect( () => {
 //    wp.customize( outputSettingID, setting => {
@@ -83,9 +87,9 @@ const Builder = ( props ) => {
 //    } );
 //  }, [ palettes ] );
 
-  useEffect( () => {
-    setCSSOutput( getCSSFromPalettes( palettes ) );
-  }, [ palettes ] );
+//  useEffect( () => {
+//    setCSSOutput( getCSSFromPalettes( palettes ) );
+//  }, [ palettes ] );
 
   useEffect( () => {
 
@@ -117,7 +121,7 @@ const Builder = ( props ) => {
   }, [] );
 
   return (
-    <ConfigContext.Provider value={ { config, setConfig, resetActivePreset } }>
+    <ConfigContext.Provider value={ { config: JSON.parse( sourceSetting() ), setConfig: updateSource, resetActivePreset } }>
       <div className="sm-group">
         <div className="sm-panel-toggle" onClick={ () => {
           wp.customize.section( 'sm_color_usage_section', ( colorUsageSection ) => {
@@ -142,7 +146,11 @@ const Builder = ( props ) => {
       <div className="sm-group">
         <div className="sm-group__body">
           <Control label={ 'Brand Colors' }>
-            <SourceColors onChange={ () => { setActivePreset( null ) } } />
+            <SourceColors
+              sourceSetting={ sourceSetting }
+              onChange={ () => {
+                setActivePreset( null );
+              } } />
             <style>{ CSSOutput }</style>
           </Control>
         </div>
@@ -151,7 +159,7 @@ const Builder = ( props ) => {
         <Accordion>
           <AccordionSection title={ 'Explore colors' }>
             <PresetsList active={ activePreset } onChange={ ( preset ) => {
-              setConfig( preset.config );
+              updateSource( preset.config );
               setActivePreset( preset.uid );
             } } />
           </AccordionSection>

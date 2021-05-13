@@ -366,8 +366,8 @@ class ColorPalettes extends AbstractHookProvider {
 					      { "value": "#DDAB5D" },
 					      { "value": "#212B49" },
 					      { "value": "#212B49" },
-					      { "value": "#212B49" },
-					      { "value": "#212B49" }
+					      { "value": "#141928" },
+					      { "value": "#141928" }
 					    ],
 					    "textColors": [
 					      { "value": "#34394B" },
@@ -393,8 +393,8 @@ class ColorPalettes extends AbstractHookProvider {
 					      { "value": "#39497C" },
 					      { "value": "#212B49" },
 					      { "value": "#212B49" },
-					      { "value": "#212B49" },
-					      { "value": "#212B49" }
+					      { "value": "#141928" },
+					      { "value": "#141928" }
 					    ],
 					    "textColors": [
 					      { "value": "#34394B" },
@@ -420,8 +420,8 @@ class ColorPalettes extends AbstractHookProvider {
 					      { "value": "#B12C4A" },
 					      { "value": "#212B49" },
 					      { "value": "#212B49" },
-					      { "value": "#212B49" },
-					      { "value": "#212B49" }
+					      { "value": "#141928" },
+					      { "value": "#141928" }
 					    ],
 					    "textColors": [
 					      { "value": "#34394B" },
