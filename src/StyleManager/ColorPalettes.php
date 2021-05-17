@@ -61,6 +61,8 @@ class ColorPalettes extends AbstractHookProvider {
 		$this->add_filter( 'customify_final_config', 'alter_master_controls_connected_fields', 100, 1 );
 		$this->add_filter( 'customify_final_config', 'add_color_usage_section', 110, 1 );
 
+		$this->add_filter( 'novablocks_block_editor_settings', 'add_color_palettes_to_novablocks_settings' );
+
 		/**
 		 * Scripts enqueued in the Customizer.
 		 */
@@ -276,6 +278,18 @@ class ColorPalettes extends AbstractHookProvider {
 		$config['panels']['theme_options_panel']['sections']['sm_color_usage_section'] = $color_usage_section;
 
 		return $config;
+	}
+
+	protected function add_color_palettes_to_novablocks_settings( array $settings ): array {
+		$palette_output_value = PixCustomifyPlugin()->get_option( 'sm_advanced_palette_output' );
+		$palettes = [];
+
+		if ( ! empty( $palette_output_value ) ) {
+			$palettes = json_decode( $palette_output_value );
+		}
+
+		$settings[ 'palettes' ] = $palettes;
+		return $settings;
 	}
 
 	/**
