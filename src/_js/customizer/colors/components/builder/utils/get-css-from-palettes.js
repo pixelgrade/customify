@@ -1,4 +1,4 @@
-export const getCSSFromPalettes = ( palettesArray ) => {
+export const getCSSFromPalettes = ( palettesArray, variation = 1 ) => {
 
   const palettes = palettesArray.slice();
 
@@ -12,9 +12,6 @@ export const getCSSFromPalettes = ( palettesArray ) => {
   while ( palettes.length < 3 ) {
     palettes.push( palettes[0] );
   }
-
-  const variationSetting = wp.customize( 'sm_site_color_variation' );
-  const variation = !! variationSetting ? parseInt( variationSetting(), 10 ) : 1;
 
   return palettes.reduce( ( palettesAcc, palette, paletteIndex, palettes ) => {
 

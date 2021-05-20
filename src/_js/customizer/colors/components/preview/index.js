@@ -39,13 +39,34 @@ const PalettePreview = ( props ) => {
   const { palette } = props;
   const { id, colors, textColors, lightColorsCount } = palette;
   const [ hover, setHover ] = useState(false );
-  const [ lastHover, setLastHover ] = useState( false );
+  const [ lastHover, setLastHover ] = useState( 0 );
+
+  const siteVariationSetting = wp.customize( 'sm_site_color_variation' );
+  const [ siteVariation, setSiteVariation ] = useState( parseInt( siteVariationSetting(), 10 ) );
+
+  const onSiteVariationChange = ( newValue ) => {
+    setSiteVariation( parseInt( newValue, 10 ) );
+  }
 
   useEffect( () => {
     if ( hover !== false ) {
       setLastHover( hover );
     }
   }, [ hover ] );
+
+  useEffect( () => {
+    // Attach the listeners on component mount.
+    siteVariationSetting.bind( onSiteVariationChange );
+
+    // Detach the listeners on component unmount.
+    return () => {
+      siteVariationSetting.unbind( onSiteVariationChange );
+    }
+  }, [] );
+
+  const normalize = index => {
+    return ( index + siteVariation - 1 + 12 ) % 12;
+  }
 
   return (
     <div className={ `palette-preview sm-palette-${ id } ${ lastHover !== false ? `sm-variation-${ lastHover + 1 }` : '' }` }>
@@ -55,12 +76,15 @@ const PalettePreview = ( props ) => {
             { colors.map( ( color, index ) => {
 
               const variation = index + 1;
+              const showLightForeground = normalize( index ) === 0;
+              const showDarkForeground = normalize( index ) === 9;
+              const foregroundToShow = normalize( hover ) >= lightColorsCount ? showLightForeground : showDarkForeground;
 
               const passedProps = {
                 showCard: index === hover,
                 showAccent: ( hover !== false ) && ( index === ( hover + 6 ) % 12 ),
-                showForeground: ( hover !== false ) && ( hover > lightColorsCount ? index === 0 : index === 9 ),
-                textColor: index > lightColorsCount ? textColors[0].value : '#FFFFFF',
+                showForeground: ( hover !== false ) && foregroundToShow,
+                textColor: normalize( index ) >= lightColorsCount ? textColors[0].value : '#FFFFFF',
                 variation,
               }
 

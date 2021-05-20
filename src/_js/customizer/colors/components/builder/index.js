@@ -1,7 +1,7 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState, Fragment } from 'react';
 
 import { getBackArray, addToBackArray, setBackArray } from "../../../global-service";
-import { useCustomizeSettingCallback, useDidUpdateEffect, useTraceUpdate } from "../../../utils";
+import { useCustomizeSettingCallback } from "../../../utils";
 
 import { SourceColors } from "../source-colors";
 import ConfigContext from "../../context";
@@ -22,21 +22,9 @@ export { Builder }
 export * from './utils';
 
 const Builder = ( props ) => {
-  useTraceUpdate( props );
-
-  console.log( 'render' );
-
   const { sourceSettingID, outputSettingID } = props;
-
   const sourceSetting = wp.customize( sourceSettingID );
-  const outputSetting = wp.customize( outputSettingID );
-  const variationSettingID = 'sm_site_color_variation';
-  const variationSetting = wp.customize( variationSettingID );
-
-  const [ config, setConfig ] = useState( getColorsFromInputValue( sourceSetting() ) );
-  const [ palettes, setPalettes ] = useState( [] );
   const [ CSSOutput, setCSSOutput ] = useState( '' );
-
   const [ activePreset, setActivePreset ] = useState( null );
   const resetActivePreset = useCallback( () => { setActivePreset( null ) }, [] );
 
@@ -45,17 +33,6 @@ const Builder = ( props ) => {
       setting.set( getValueFromColors( newValue ) );
     } );
   }
-
-//  const changeListener = () => {
-//    setConfig( getColorsFromInputValue( sourceSetting() ) );
-//
-//    const cfg = getColorsFromInputValue( sourceSetting() );
-//    const plts = getPalettesFromColors( cfg );
-//
-//    wp.customize( outputSettingID, setting => {
-//      setting.set( JSON.stringify( plts ) );
-//    } );
-//  };
 
   const onSourceChange = ( newValue ) => {
     const newConfig = getColorsFromInputValue( newValue );
@@ -69,27 +46,23 @@ const Builder = ( props ) => {
   const onOutputChange = ( value ) => {
     const palettes = JSON.parse( value );
 
-    setCSSOutput( getCSSFromPalettes( palettes ) );
+    wp.customize( 'sm_site_color_variation', setting => {
+      const variation = setting();
+      setCSSOutput( getCSSFromPalettes( palettes, variation ) );
+    } );
   }
 
-//  useCustomizeSettingCallback( variationSettingID, changeListener );
+  const onSiteVariationChange = ( newVariation ) => {
+    wp.customize( outputSettingID, setting => {
+      const output = setting();
+      const palettes = JSON.parse( output );
+      setCSSOutput( getCSSFromPalettes( palettes, newVariation ) );
+    } );
+  }
+
   useCustomizeSettingCallback( sourceSettingID, onSourceChange );
   useCustomizeSettingCallback( outputSettingID, onOutputChange );
-
-//  useDidUpdateEffect( () => {
-//    sourceSetting.set( getValueFromColors( config ) );
-//    setPalettes( getPalettesFromColors( config ) );
-//  }, [ config ] );
-
-//  useEffect( () => {
-//    wp.customize( outputSettingID, setting => {
-//      setting.set( JSON.stringify( palettes ) );
-//    } );
-//  }, [ palettes ] );
-
-//  useEffect( () => {
-//    setCSSOutput( getCSSFromPalettes( palettes ) );
-//  }, [ palettes ] );
+  useCustomizeSettingCallback( 'sm_site_color_variation', onSiteVariationChange );
 
   useEffect( () => {
 

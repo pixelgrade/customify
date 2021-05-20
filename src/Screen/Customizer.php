@@ -160,60 +160,7 @@ class Customizer extends AbstractHookProvider {
 			// Add a JS to display a notification
 			$this->add_action( 'customize_controls_print_footer_scripts', 'prevent_changeset_save_in_devmode_notification', 100 );
 		}
-
-		// add_filter( 'template_include', array( $this, 'wpse50455_template_include' ) );
 	}
-
-	//	@todo Figure out if this is used anymore or if it should be something related only to development.
-	//	function maybe_create_colors_page() {
-	//
-	//		$args = array(
-	//			'post_type'   => 'sm_custom_page',
-	//			'post_status' => 'publish',
-	//			//				'meta_query'  => array(
-	//			//					array(
-	//			//						'key'   => '_wp_page_template',
-	//			//						'value' => 'sm-colors.php',
-	//			//					)
-	//			//				)
-	//		);
-	//
-	//		$posts = get_posts( $args );
-	//
-	//		if ( count( $posts ) < 1 ) {
-	//			$this->create_colors_page();
-	//		}
-	//	}
-	//
-	//	function create_colors_page() {
-	//		$post_details = array(
-	//			'post_title'   => 'Colors',
-	//			'post_content' => '',
-	//			'post_status'  => 'publish',
-	//			'post_author'  => 1,
-	//			'post_type'    => 'sm_custom_page',
-	//			//				'meta_input'   => array(
-	//			//					'_wp_page_template' => 'sm-colors.php',
-	//			//				),
-	//		);
-	//
-	//		wp_insert_post( $post_details );
-	//	}
-	//
-	//	function wpse50455_template_include( $template ) {
-	//
-	//		$post_type = get_post_type();
-	//
-	//		if ( $post_type === 'sm_custom_page' ) {
-	//			$path = trailingslashit( PixCustomifyPlugin()->get_base_path() ) . 'templates/sm-colors.php';
-	//
-	//			if ( file_exists( $path ) ) {
-	//				return $path;
-	//			}
-	//		}
-	//
-	//		return $template;
-	//	}
 
 	/**
 	 * Enqueue Customizer scripts and styles.
