@@ -201,6 +201,7 @@ class Fonts extends AbstractHookProvider {
 		wp_register_script( 'pixelgrade_customify-web-font-loader',
 			$this->plugin->get_url( 'vendor_js/webfontloader-1-6-28.min.js' ), [], null, ! ( 'wp_head' === $load_location ) );
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_frontend_scripts_styles' ], 0 );
+		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_frontend_scripts_styles' ], 0 );
 		add_action( $load_location, [ $this, 'outputFontsDynamicStyle' ], 100 );
 
 		// Add data to be passed to JS.

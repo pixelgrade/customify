@@ -30,7 +30,7 @@ class EditWithBlocks extends AbstractHookProvider {
 	/**
 	 * Selectors that we will use to constrain CSS rules to certain scopes.
 	 */
-	public static string $editor_namespace_selector = '.edit-post-visual-editor.editor-styles-wrapper';
+	public static string $editor_namespace_selector = '.editor-styles-wrapper';
 	public static string $title_namespace_selector = '.editor-styles-wrapper .editor-post-title__block';
 	public static string $title_input_namespace_selector = '.editor-styles-wrapper .editor-post-title__block .editor-post-title__input';
 
@@ -47,10 +47,10 @@ class EditWithBlocks extends AbstractHookProvider {
 		$is_old_wp_version = version_compare( $wp_version, '5.4', '<' );
 
 		if ( $is_old_wp_version ) {
-			return '.edit-post-visual-editor.editor-styles-wrapper .editor-block-list__block';
+			return '.editor-styles-wrapper .editor-block-list__block';
 		}
 
-		return '.edit-post-visual-editor.editor-styles-wrapper .block-editor-block-list__block';
+		return '.editor-styles-wrapper .block-editor-block-list__block';
 	}
 
 	/**
@@ -69,49 +69,49 @@ class EditWithBlocks extends AbstractHookProvider {
 		'/^\s*#/',    // ignore all ids
 		'/^\s*div#/', // ignore all ids
 
-		'/\.u-/',
-		'/\.c-/',
-		'/\.o-/',
-		'/\.site-/',
-		'/\.card/',
-
-		'/^\s*\.archive/',
-		'/^\s*\.search/',
-		'/^\s*\.no-results/',
-		'/^\s*\.home/',
-		'/^\s*\.blog/',
-		'/^\s*\.site-/',
-		'/\.search/',
-		'/\.page/',
-		'/\.mce-content-body/',
-		'/\.attachment/',
-		'/\.mobile/',
-
-		'/\.sticky/',
-		'/\.custom-logo-link/',
-
-		'/\.entry-meta/',
-		'/\.entry-footer/',
-		'/\.header-meta/',
-		'/\.nav/',
-		'/\.main-navigation/',
-		'/navbar/',
-		'/comment/',
-		'/\.dummy/',
-		'/\.back-to-top/',
-		'/\.page-numbers/',
-		'/\.featured/',
-		'/\.widget/',
-		'/\.edit-link/',
-		'/\.posted-on/',
-		'/\.cat-links/',
-		'/\.posted-by/',
-		'/\.more-link/',
-
-		'/jetpack/',
-		'/wpforms/',
-		'/contact-form/',
-		'/sharedaddy/',
+//		'/\.u-/',
+//		'/\.c-/',
+//		'/\.o-/',
+//		'/\.site-/',
+//		'/\.card/',
+//
+//		'/^\s*\.archive/',
+//		'/^\s*\.search/',
+//		'/^\s*\.no-results/',
+//		'/^\s*\.home/',
+//		'/^\s*\.blog/',
+//		'/^\s*\.site-/',
+//		'/\.search/',
+//		'/\.page/',
+//		'/\.mce-content-body/',
+//		'/\.attachment/',
+//		'/\.mobile/',
+//
+//		'/\.sticky/',
+//		'/\.custom-logo-link/',
+//
+//		'/\.entry-meta/',
+//		'/\.entry-footer/',
+//		'/\.header-meta/',
+//		'/\.nav/',
+//		'/\.main-navigation/',
+//		'/navbar/',
+//		'/comment/',
+//		'/\.dummy/',
+//		'/\.back-to-top/',
+//		'/\.page-numbers/',
+//		'/\.featured/',
+//		'/\.widget/',
+//		'/\.edit-link/',
+//		'/\.posted-on/',
+//		'/\.cat-links/',
+//		'/\.posted-by/',
+//		'/\.more-link/',
+//
+//		'/jetpack/',
+//		'/wpforms/',
+//		'/contact-form/',
+//		'/sharedaddy/',
 	];
 
 	/**
