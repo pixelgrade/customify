@@ -171,15 +171,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 				<li class="font-options__option customize-control">
 					<select id="select_font_font_family_<?php echo esc_attr( $this->CSSID ); ?>" class="customify_font_family"<?php echo $select_data; ?> data-value_entry="font_family">
 
-						<?php
-						// Allow others to add options here. This is mostly for backwards compatibility purposes.
-						do_action( 'customify_font_family_before_options', $current_font_family, $current_value, $this->id );
-
-						do_action( 'customify_font_family_select_options', $current_font_family, $current_value, $this->id );
-
-						// Allow others to add options here. This is mostly for backwards compatibility purposes.
-						do_action( 'customify_font_family_after_options', $current_font_family, $current_value, $this->id ); ?>
-
+						<?php do_action( 'customify_font_family_select_options', $current_font_family, $current_value, $this->id ); ?>
 					</select>
 				</li>
 				<?php
