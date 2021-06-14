@@ -414,7 +414,8 @@ class Customify_Fonts_Global {
 		do_action( 'customify_font_family_before_third_party_fonts_options', $active_font_family, $current_value );
 
 		if ( ! empty( $this->third_party_fonts ) ) {
-			echo '<optgroup label="' . esc_html__( 'Third-Party Fonts', 'customify' ) . '">';
+			$group_label = apply_filters( 'customify_third_party_font_group_label', esc_html__( 'Third-Party Fonts', '__plugin_txtd' ), $active_font_family, $current_value );
+			echo '<optgroup label="' . esc_attr( $group_label ) . '">';
 			foreach ( $this->get_third_party_fonts() as $font ) {
 				if ( ! empty( $font['family'] ) ) {
 					// Display the select option's HTML.
