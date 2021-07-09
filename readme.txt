@@ -32,6 +32,7 @@ This plugin is **primarily intended** to be used together with [Pixelgrade theme
 
 = 2.10.4 =
 * Tested with the latest WordPress version.
+* Better handling of third-party provided fonts.
 * Provide the pixelgrade_option() getter for better compatibility.
 
 = 2.10.3 =
