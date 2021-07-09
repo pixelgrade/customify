@@ -183,6 +183,7 @@ function removeUnneededFiles() {
 	files_to_remove = [
 		'**/codekit-config.json',
 		'node_modules',
+    'node-tasks',
 		'config.rb',
 		'gulpfile.js',
 		'package.json',
