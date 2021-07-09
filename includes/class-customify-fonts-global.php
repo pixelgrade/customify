@@ -38,6 +38,16 @@ class Customify_Fonts_Global {
 	protected $cloud_fonts = [];
 
 	/**
+	 * The third-party fonts list.
+	 *
+	 * These are fonts that can be populated by other plugins (like Fonto).
+	 *
+	 * @since    2.11.0
+	 * @var      array
+	 */
+	protected $third_party_fonts = [];
+
+	/**
 	 * The font categories list.
 	 * @since    2.8.0
 	 * @var      array
@@ -93,6 +103,16 @@ class Customify_Fonts_Global {
 		/*
 		 * Gather all fonts, by type.
 		 */
+
+		$this->third_party_fonts = self::standardizeFontsList( apply_filters( 'customify_third_party_fonts', [] ) );
+		// Add the fonts to selects of the Customizer controls.
+		// Since these are quite advanced fonts, we will put them first since the user went through all that trouble for a reason.
+		if ( ! empty( $this->third_party_fonts ) ) {
+			add_action( 'customify_font_family_select_options', array(
+				$this,
+				'output_third_party_fonts_select_options_group'
+			), 15, 2 );
+		}
 
 		if ( PixCustomifyPlugin()->settings->get_plugin_setting( 'typography_cloud_fonts', 1 ) ) {
 			$this->cloud_fonts = self::standardizeFontsList( apply_filters( 'customify_cloud_fonts', [] ) );
@@ -339,6 +359,14 @@ class Customify_Fonts_Global {
 		return $this->cloud_fonts;
 	}
 
+	public function get_third_party_fonts() {
+		if ( empty( $this->third_party_fonts ) ) {
+			return [];
+		}
+
+		return $this->third_party_fonts;
+	}
+
 	public function get_categories() {
 		if ( empty( $this->categories ) ) {
 			return [];
@@ -368,12 +396,37 @@ class Customify_Fonts_Global {
 					return $this->system_fonts[ $font_family ];
 				}
 				break;
+			case 'third_party_font':
+				if ( isset( $this->third_party_fonts[ $font_family ] ) ) {
+					return $this->third_party_fonts[ $font_family ];
+				}
+				break;
 			default:
 				return false;
 				break;
 		}
 
 		return false;
+	}
+
+	function output_third_party_fonts_select_options_group( $active_font_family, $current_value ) {
+		// Allow others to add options here
+		do_action( 'customify_font_family_before_third_party_fonts_options', $active_font_family, $current_value );
+
+		if ( ! empty( $this->third_party_fonts ) ) {
+			$group_label = apply_filters( 'customify_third_party_font_group_label', esc_html__( 'Third-Party Fonts', '__plugin_txtd' ), $active_font_family, $current_value );
+			echo '<optgroup label="' . esc_attr( $group_label ) . '">';
+			foreach ( $this->get_third_party_fonts() as $font ) {
+				if ( ! empty( $font['family'] ) ) {
+					// Display the select option's HTML.
+					Pix_Customize_Font_Control::output_font_family_option( $font['family'], $active_font_family );
+				}
+			}
+			echo "</optgroup>";
+		}
+
+		// Allow others to add options here
+		do_action( 'customify_font_family_after_third_party_fonts_options', $active_font_family, $current_value );
 	}
 
 	function output_cloud_fonts_select_options_group( $active_font_family, $current_value ) {
@@ -713,6 +766,9 @@ class Customify_Fonts_Global {
 		}
 
 		if ( ! empty( $google_fonts ) ) {
+			// Avoid duplicate entries.
+			$google_fonts = array_unique( $google_fonts );
+
 			$google_url = 'https://fonts.googleapis.com/css2';
 			// Add `family=` to each font family.
 			$google_fonts = array_map( function( $font_family ) {
@@ -1326,6 +1382,7 @@ if (typeof WebFont !== 'undefined') {
 
 		$localized['fonts']['floatPrecision'] =self::$floatPrecision;
 
+		$localized['fonts']['third_party_fonts'] = $this->get_third_party_fonts();
 		$localized['fonts']['theme_fonts'] = $this->get_theme_fonts();
 		$localized['fonts']['cloud_fonts'] = $this->get_cloud_fonts();
 		$localized['fonts']['google_fonts'] = $this->get_google_fonts();
@@ -2000,17 +2057,19 @@ if (typeof WebFont !== 'undefined') {
 	/**
 	 * Determine a font type based on its font family.
 	 *
-	 * We will follow a stack in the following order: cloud fonts, theme fonts, Google fonts, system fonts.
+	 * We will follow a stack in the following order: third-party fonts, cloud fonts, theme fonts, Google fonts, system fonts.
 	 *
 	 * @param string $fontFamily
 	 *
-	 * @return string The font type: google_font, theme_font, cloud_font, or system_font.
+	 * @return string The font type: third_party_font, google_font, theme_font, cloud_font, or system_font.
 	 */
 	public function determineFontType( $fontFamily ) {
 		// The default is a standard font (aka no special loading or processing).
 		$fontType = 'system_font';
 
-		if ( ! empty( $this->cloud_fonts[ $fontFamily ] ) ) {
+		if ( ! empty( $this->third_party_fonts[ $fontFamily ] ) ) {
+			$fontType = 'third_party_font';
+		} elseif ( ! empty( $this->cloud_fonts[ $fontFamily ] ) ) {
 			$fontType = 'cloud_font';
 		} elseif ( ! empty( $this->theme_fonts[ $fontFamily ] ) ) {
 			$fontType = 'theme_font';

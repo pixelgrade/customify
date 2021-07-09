@@ -481,8 +481,10 @@ window.customify = window.customify || parent.customify || {};
       // The default is a standard font (aka no special loading or processing).
       let fontType = 'system_font'
 
-      // We will follow a stack in the following order: cloud fonts, theme fonts, Google fonts, standard fonts.
-      if (typeof customify.fonts.cloud_fonts[fontFamily] !== 'undefined') {
+      // We will follow a stack in the following order: third-party fonts, cloud fonts, theme fonts, Google fonts, standard fonts.
+      if (typeof customify.fonts.third_party_fonts[fontFamily] !== 'undefined') {
+        fontType = 'third_party_font'
+      } else if (typeof customify.fonts.cloud_fonts[fontFamily] !== 'undefined') {
         fontType = 'cloud_font'
       } else if (typeof customify.fonts.theme_fonts[fontFamily] !== 'undefined') {
         fontType = 'theme_font'
@@ -512,6 +514,11 @@ window.customify = window.customify || parent.customify || {};
         case 'system_font':
           if (typeof customify.fonts.system_fonts[fontFamily] !== 'undefined') {
             return customify.fonts.system_fonts[fontFamily]
+          }
+          break
+        case 'third_party_font':
+          if (typeof customify.fonts.third_party_fonts[fontFamily] !== 'undefined') {
+            return customify.fonts.third_party_fonts[fontFamily]
           }
           break
         default:
