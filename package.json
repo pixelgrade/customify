@@ -19,6 +19,6 @@
         "gulp-sass": "^4.1.0",
         "gulp-terser": "^1.2.0",
         "request": "^2.88.2",
-        "terser": "^4.8.0"
+        "terser": "^4.8.1"
     }
 }
