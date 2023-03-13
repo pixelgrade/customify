@@ -12,12 +12,13 @@
  * @copyright 2013 Pixel Grade Media
  */
 
-$config = Customify_Settings::get_plugin_config();
-
-// invoke processor
-$processor = pixcustomify::processor( $config );
-$status    = $processor->status();
-$errors    = $processor->errors(); ?>
+/**
+ * @var $config
+ * @var $processor
+ * @var $status
+ * @var $errors
+ */
+ ?>
 
 <div class="wrap" id="pixcustomify_form">
 
@@ -49,6 +50,7 @@ $errors    = $processor->errors(); ?>
 		echo $f->field( 'output' )->render();
 		echo $f->field( 'typography' )->render();
 		echo $f->field( 'tools' )->render(); ?>
+		<?php wp_nonce_field( 'customify_settings_save', '_wpnonce-customify-settings' ); ?>
 		<button type="submit" class="button button-primary">
 			<?php esc_html_e( 'Save Changes', 'customify' ); ?>
 		</button>

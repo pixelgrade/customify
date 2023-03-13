@@ -91,6 +91,22 @@ class Customify_Settings {
 	 * Render the settings page for this plugin.
 	 */
 	function display_plugin_admin_page() {
+		// Check the nonce, in case the form was submitted.
+		if ( $_SERVER['REQUEST_METHOD'] === 'POST' ) {
+			check_admin_referer( 'customify_settings_save', '_wpnonce-customify-settings' );
+		}
+
+		$config = Customify_Settings::get_plugin_config();
+
+		// Invoke the processor.
+		/**
+		 * @var PixCustomifyProcessorImpl $processor
+		 */
+		$processor = pixcustomify::processor( $config );
+		$status    = $processor->status();
+		$errors    = $processor->errors();
+
+		// Do the saving and display the form.
 		include_once plugin_dir_path( $this->file ) . 'includes/admin-settings/views/admin.php';
 	}
 
