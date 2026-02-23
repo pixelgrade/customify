@@ -1216,22 +1216,24 @@ class Customify_Fonts_Global {
 				// Now we need to output the JavaScript logic for detecting the fonts loaded event, just like WebFontLoader does.
 				add_action( 'wp_footer', function() { ?>
 					<script>
-						let customifyTriggerFontsLoadedEvents = function() {
-							// Trigger the 'wf-active' event, just like Web Font Loader would do.
-							window.dispatchEvent(new Event('wf-active'));
-							// Add the 'wf-active' class on the html element, just like Web Font Loader would do.
-							document.getElementsByTagName('html')[0].classList.add('wf-active');
-						}
+						(function() {
+							var customifyTriggerFontsLoadedEvents = function() {
+								// Trigger the 'wf-active' event, just like Web Font Loader would do.
+								window.dispatchEvent(new Event('wf-active'));
+								// Add the 'wf-active' class on the html element, just like Web Font Loader would do.
+								document.getElementsByTagName('html')[0].classList.add('wf-active');
+							}
 
-						// Try to use the modern FontFaceSet browser APIs.
-						if ( typeof document.fonts !== 'undefined' && typeof document.fonts.ready !== 'undefined' ) {
-							document.fonts.ready.then(customifyTriggerFontsLoadedEvents);
-						} else {
-							// Fallback to just waiting a little bit and then triggering the events for older browsers.
-							window.addEventListener('load', function() {
-								setTimeout( customifyTriggerFontsLoadedEvents, 300 );
-							});
-						}
+							// Try to use the modern FontFaceSet browser APIs.
+							if ( typeof document.fonts !== 'undefined' && typeof document.fonts.ready !== 'undefined' ) {
+								document.fonts.ready.then(customifyTriggerFontsLoadedEvents);
+							} else {
+								// Fallback to just waiting a little bit and then triggering the events for older browsers.
+								window.addEventListener('load', function() {
+									setTimeout( customifyTriggerFontsLoadedEvents, 300 );
+								});
+							}
+						})();
 					</script>
 					<?php
 				});
