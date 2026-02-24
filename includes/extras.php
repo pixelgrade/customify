@@ -454,8 +454,10 @@ function customify_migrate_customizations_from_parent_to_child_theme() {
 		'pixcare_new_theme_version',
 		'pixcare_install_notice_dismissed',
 	];
-	foreach ( $excluded as $exclude ) {
-		unset( $parent_theme_mods[ $exclude ] );
+	if ( is_array( $parent_theme_mods ) ) {
+		foreach ( $excluded as $exclude ) {
+			unset( $parent_theme_mods[ $exclude ] );
+		}
 	}
 	// Finally, write the new theme mods for the active child theme.
 	if ( ! update_option( "theme_mods_" . get_option( 'stylesheet' ), $parent_theme_mods ) ) {

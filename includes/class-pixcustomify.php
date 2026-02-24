@@ -114,7 +114,7 @@ class PixCustomifyPlugin {
 	 * @access  private
 	 * @since   1.5.0
 	 */
-	private $minimalRequiredPhpVersion = '5.4';
+	private $minimalRequiredPhpVersion = '7.4';
 
 	protected function __construct( $file, $version = '1.0.0' ) {
 		// The main plugin file (the one that loads all this).

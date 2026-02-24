@@ -517,7 +517,11 @@ if ( ! class_exists( 'Customify_Block_Editor' ) ) {
 		}
 
 		public static function to_kebab_case( $string ) {
-			return implode( '-', array_map( '\strtolower', preg_split( "/[\n\r\t -_]+/", preg_replace( "/['\x{2019}]/u", '', $string ), - 1, PREG_SPLIT_NO_EMPTY ) ) );
+			$parts = preg_split( "/[\n\r\t -_]+/", preg_replace( "/['\x{2019}]/u", '', $string ), - 1, PREG_SPLIT_NO_EMPTY );
+			if ( ! is_array( $parts ) ) {
+				return '';
+			}
+			return implode( '-', array_map( '\strtolower', $parts ) );
 		}
 
 		/**

@@ -1,10 +1,10 @@
 === Customify - Intuitive Website Styling ===
 Contributors: pixelgrade, vlad.olaru, babbardel, razvanonofrei, gorby31
 Tags: design, customizer, fonts, colors, gutenberg, font palettes, color palettes
-Requires at least: 4.9.14
-Tested up to: 5.9.5
+Requires at least: 5.9.0
+Tested up to: 6.9
 Stable tag: 2.10.6
-Requires PHP: 5.6.40
+Requires PHP: 7.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
