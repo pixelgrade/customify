@@ -441,6 +441,10 @@ function customify_migrate_customizations_from_parent_to_child_theme() {
 	// Check nonce.
 	check_ajax_referer( 'customify_migrate_customizations_from_parent_to_child_theme', 'nonce_migrate' );
 
+	if ( ! current_user_can( 'manage_options' ) ) {
+		wp_send_json_error( esc_html__( 'You do not have permission to perform this action.', 'customify' ) );
+	}
+
 	$parent_theme = wp_get_theme( get_template() );
 	if ( ! $parent_theme->exists() ) {
 		wp_send_json_error();

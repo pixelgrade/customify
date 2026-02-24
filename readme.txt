@@ -31,7 +31,12 @@ This plugin is **primarily intended** to be used together with [Pixelgrade theme
 == Changelog ==
 
 = 2.10.6 =
+* Security: added capability checks to AJAX handlers for defense-in-depth.
 * Fix inline font script breaking AJAX-based theme navigation.
+* PHP 8.x compatibility: added null safety guards for array operations.
+* Updated minimum PHP requirement to 7.4.
+* Updated minimum WordPress requirement to 5.9.
+* Tested with WordPress 6.9.
 
 = 2.10.5 =
 * Security fixes.

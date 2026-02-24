@@ -869,6 +869,10 @@ if ( ! class_exists( 'Customify_Style_Manager' ) ) {
 		public function user_feedback_callback() {
 			check_ajax_referer( 'customify_style_manager_user_feedback', 'nonce' );
 
+			if ( ! current_user_can( 'manage_options' ) ) {
+				wp_send_json_error( esc_html__( 'You do not have permission to perform this action.', 'customify' ) );
+			}
+
 			if ( empty( $_POST['type'] ) ) {
 				wp_send_json_error( esc_html__( 'No type provided', 'customify' ) );
 			}
