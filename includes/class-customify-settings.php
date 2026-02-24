@@ -37,7 +37,7 @@ class Customify_Settings {
 	public $slug;
 	public $version;
 
-	private $plugin_config = array();
+	private $plugin_config = null;
 
 	protected function __construct( $file, $slug, $version = '1.0.0' ) {
 		$this->file = $file;
@@ -46,13 +46,27 @@ class Customify_Settings {
 
 		require plugin_dir_path( $this->file ) . 'includes/admin-settings/core/bootstrap.php';
 
-		// Load the config file
-		$this->plugin_config = self::get_plugin_config();
-		// Load the plugin's settings from the DB
-		$this->plugin_settings = get_option( $this->plugin_config['settings-key'] );
+		// Load the plugin's settings from the DB.
+		// We use the settings key directly to avoid loading the full config (which has translation calls) too early.
+		$this->plugin_settings = get_option( 'pixcustomify_settings' );
 
 		// Register all the needed hooks
 		$this->register_hooks();
+	}
+
+	/**
+	 * Get the plugin config, loading it on first access.
+	 *
+	 * This lazy-loads the config to avoid calling translation functions before the textdomain is loaded.
+	 *
+	 * @return array
+	 */
+	private function get_lazy_plugin_config() {
+		if ( null === $this->plugin_config ) {
+			$this->plugin_config = self::get_plugin_config();
+		}
+
+		return $this->plugin_config;
 	}
 
 	/**
@@ -409,9 +423,10 @@ class Customify_Settings {
 	 * @return bool|null
 	 */
 	public function get_config_option( $option, $default = null ) {
+		$config = $this->get_lazy_plugin_config();
 
-		if ( isset( $this->plugin_config[ $option ] ) ) {
-			return $this->plugin_config[ $option ];
+		if ( isset( $config[ $option ] ) ) {
+			return $config[ $option ];
 		} elseif ( $default !== null ) {
 			return $default;
 		}

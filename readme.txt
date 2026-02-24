@@ -3,7 +3,7 @@ Contributors: pixelgrade, vlad.olaru, babbardel, razvanonofrei, gorby31
 Tags: design, customizer, fonts, colors, gutenberg, font palettes, color palettes
 Requires at least: 5.9.0
 Tested up to: 6.9
-Stable tag: 2.10.6
+Stable tag: 2.10.7
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -29,6 +29,10 @@ This plugin is **primarily intended** to be used together with [Pixelgrade theme
 * Default [image](https://unsplash.com/photos/OgM4RKdr2kY) for Style Manager Color Palette control - License: [Unsplash](https://unsplash.com/license)
 
 == Changelog ==
+
+= 2.10.7 =
+* Fixed early translation loading notice on WordPress 6.7+ by deferring plugin config initialization.
+* Fixed Customizer menu items reordering and nesting by removing conflicting CSS overrides.
 
 = 2.10.6 =
 * Security: added capability checks to AJAX handlers for defense-in-depth.
