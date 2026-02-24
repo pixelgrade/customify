@@ -201,6 +201,7 @@ function removeUnneededFiles() {
 		'+development.rb',
 		'+production.rb',
 		'README.md',
+		'CLAUDE.md',
 		'.labels',
     '.csscomb',
     '.csscomb.json',
