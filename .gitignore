@@ -1,5 +1,6 @@
 .DS_Store
 .test.path
+.claude
 nbproject
 .sass-cache
 *.map

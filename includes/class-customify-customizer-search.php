@@ -72,13 +72,19 @@ class Customify_Customizer_Search {
 	public function register_admin_customizer_scripts() {
 		$suffix = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min';
 
-		wp_register_script( PixCustomifyPlugin()->get_slug() . '-fuse',
+		wp_register_script(
+			PixCustomifyPlugin()->get_slug() . '-fuse',
 			plugins_url( 'js/vendor/fuse-6.0.0/fuse.basic' . $suffix . '.js', PixCustomifyPlugin()->get_file() ),
-			[], null );
+			array(),
+			PixCustomifyPlugin()->get_version(),
+			false
+		);
 
 		wp_register_script( PixCustomifyPlugin()->get_slug() . '-customizer-search',
 			plugins_url( 'js/customizer/search' . $suffix . '.js', PixCustomifyPlugin()->get_file() ),
-			[ 'jquery', PixCustomifyPlugin()->get_slug() . '-fuse', ], PixCustomifyPlugin()->get_version() );
+			array( 'jquery', PixCustomifyPlugin()->get_slug() . '-fuse' ),
+			PixCustomifyPlugin()->get_version(),
+			false );
 	}
 
 	/**

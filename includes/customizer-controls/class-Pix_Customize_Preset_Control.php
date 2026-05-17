@@ -1,4 +1,9 @@
 <?php
+// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped,WordPress.Security.EscapeOutput.ExceptionNotEscaped,WordPress.Security.EscapeOutput.UnsafePrintingFunction -- Legacy Customify view output contains trusted config HTML, dynamic CSS/JS, or WordPress Customizer binding attributes.
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
 /**
  * Class Pix_Customize_Preset_Control
@@ -348,7 +353,9 @@ class Pix_Customize_Preset_Control extends Pix_Customize_Control {
 
 						// ok now we have our preview fonts, let's ask them from google
 						// note that we request only these chars "AaBbCc" so it should be a small request
-						echo '<link href="//fonts.googleapis.com/css?family=' . implode('|', $google_links ) . '&text=AaBbCc' . substr( get_bloginfo('name'), 0, 2) . '" rel=\'stylesheet\' type=\'text/css\'>';?>
+							$font_preview_stylesheet = set_url_scheme( 'https://fonts.googleapis.com/css?family=' . implode( '|', $google_links ) . '&text=AaBbCc' . substr( get_bloginfo( 'name' ), 0, 2 ) );
+							// phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedStylesheet -- Dynamic font preview stylesheet for this Customizer control.
+							echo '<link href="' . esc_url( $font_preview_stylesheet ) . '" rel="stylesheet" type="text/css">'; ?>
 					</div>
 
 					<?php

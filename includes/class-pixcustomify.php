@@ -8,6 +8,10 @@
  * @copyright 2014-2020 Pixelgrade
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * Main plugin class.
  * @package   PixCustomify
@@ -456,17 +460,19 @@ class PixCustomifyPlugin {
 			return true;
 		}
 
-		// If we are in the Customizer and the request has a $_POST['customized'] parameter, we will skip the cache
-		// since this means that the preview is being reloaded with temporary settings values.
-		if ( ! empty( $_POST['customized'] ) ) {
-			return true;
-		}
+			// If we are in the Customizer and the request has a $_POST['customized'] parameter, we will skip the cache
+			// since this means that the preview is being reloaded with temporary settings values.
+			// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Read-only Customizer request flag used only to bypass the config cache.
+			if ( ! empty( $_POST['customized'] ) ) {
+				return true;
+			}
 
 		// If we are currently previewing a theme without being actually active, we should not use cached data.
 
-		if ( ! empty( $_REQUEST['theme'] ) || ! empty( $_REQUEST['customize_theme'] ) ) {
-			return true;
-		}
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only theme preview flags used only to bypass the config cache.
+			if ( ! empty( $_REQUEST['theme'] ) || ! empty( $_REQUEST['customize_theme'] ) ) {
+				return true;
+			}
 
 		/** @var WP_Customize_Manager $wp_customize */
 		global $wp_customize;
@@ -868,6 +874,7 @@ class PixCustomifyPlugin {
 	 */
 	function load_plugin_textdomain() {
 		$domain = $this->plugin_slug;
+		// phpcs:ignore PluginCheck.CodeAnalysis.DiscouragedFunctions.load_plugin_textdomainFound -- Keep translations working when Customify is installed outside WordPress.org.
 		load_plugin_textdomain( $domain, false, basename( dirname( $this->file ) ) . '/languages/' );
 	}
 
@@ -942,12 +949,15 @@ class PixCustomifyPlugin {
 			'p'      => array(),
 			'br'     => array(),
 			'strong' => array(),
-		);
-		$html = '<div class="updated fade">' .
-		        sprintf( esc_html__( 'Error: plugin "%s" requires a newer version of PHP to be running.', 'customify' ), 'Customify' ) .
-		        '<br/>' . sprintf( esc_html__( 'Minimal version of PHP required: %s', 'customify' ), '<strong>' . $this->minimalRequiredPhpVersion . '</strong>' ) .
-		        '<br/>' . sprintf( esc_html__( 'Your server\'s PHP version: %s', 'customify' ), '<strong>' . phpversion() . '</strong>' ) .
-		        '</div>';
+			);
+			$html = '<div class="updated fade">' .
+			        /* translators: %s: plugin name. */
+			        sprintf( esc_html__( 'Error: plugin "%s" requires a newer version of PHP to be running.', 'customify' ), 'Customify' ) .
+			        /* translators: %s: minimum PHP version. */
+			        '<br/>' . sprintf( esc_html__( 'Minimal version of PHP required: %s', 'customify' ), '<strong>' . $this->minimalRequiredPhpVersion . '</strong>' ) .
+			        /* translators: %s: current server PHP version. */
+			        '<br/>' . sprintf( esc_html__( 'Your server\'s PHP version: %s', 'customify' ), '<strong>' . phpversion() . '</strong>' ) .
+			        '</div>';
 		echo wp_kses( $html, $allowed );
 	}
 

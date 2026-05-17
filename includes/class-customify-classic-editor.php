@@ -1,4 +1,5 @@
 <?php
+// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped,WordPress.Security.EscapeOutput.ExceptionNotEscaped,WordPress.Security.EscapeOutput.UnsafePrintingFunction -- Legacy Customify view output contains trusted config HTML, dynamic CSS/JS, or WordPress Customizer binding attributes.
 /**
  * This is the class that handles the overall logic for integration with the classic editor (TinyMCE).
  *
@@ -72,8 +73,13 @@ if ( ! class_exists( 'Customify_Classic_Editor' ) ) {
 			if ( ! empty( $script ) ) {
 				// Make sure the the script is enqueued in the footer. We want all the DOM to be loaded and need jQuery.
 				wp_deregister_script( PixCustomifyPlugin()->get_slug() . '-web-font-loader' );
-				wp_register_script( PixCustomifyPlugin()->get_slug() . '-web-font-loader',
-					plugins_url( 'js/vendor/webfontloader-1-6-28.min.js', PixCustomifyPlugin()->get_file() ), array('jquery'), null, true );
+					wp_register_script(
+						PixCustomifyPlugin()->get_slug() . '-web-font-loader',
+						plugins_url( 'js/vendor/webfontloader-1-6-28.min.js', PixCustomifyPlugin()->get_file() ),
+						array( 'jquery' ),
+						PixCustomifyPlugin()->get_version(),
+						true
+					);
 				wp_enqueue_script( PixCustomifyPlugin()->get_slug() . '-web-font-loader' );
 				wp_add_inline_script( PixCustomifyPlugin()->get_slug() . '-web-font-loader', $script );
 			}

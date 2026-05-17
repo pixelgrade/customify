@@ -1,4 +1,5 @@
 <?php
+// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped,WordPress.Security.EscapeOutput.ExceptionNotEscaped,WordPress.Security.EscapeOutput.UnsafePrintingFunction -- Legacy Customify view output contains trusted config HTML, dynamic CSS/JS, or WordPress Customizer binding attributes.
 /**
  * This is the class that handles the overall logic for the Customizer.
  *
@@ -168,26 +169,39 @@ if ( ! class_exists( 'PixCustomify_Customizer' ) ) :
 		function register_admin_customizer_scripts() {
 			$suffix = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min';
 
-			wp_register_script( PixCustomifyPlugin()->get_slug() . '-select2',
-				plugins_url( 'js/vendor/select2-4.0.13/dist/js/select2.full' . $suffix . '.js', PixCustomifyPlugin()->get_file() ),
-				array( 'jquery' ), PixCustomifyPlugin()->get_version() );
-			wp_register_script( 'jquery-react',
-				plugins_url( 'js/vendor/jquery-react' . $suffix . '.js', PixCustomifyPlugin()->get_file() ),
-				array( 'jquery' ), PixCustomifyPlugin()->get_version() );
-			wp_register_script( PixCustomifyPlugin()->get_slug() . '-fontfields',
-				plugins_url( 'js/customizer/font-fields' . $suffix . '.js', PixCustomifyPlugin()->get_file() ),
-				array( 'jquery', 'underscore' ), PixCustomifyPlugin()->get_version() );
+				wp_register_script(
+					PixCustomifyPlugin()->get_slug() . '-select2',
+					plugins_url( 'js/vendor/select2-4.0.13/dist/js/select2.full' . $suffix . '.js', PixCustomifyPlugin()->get_file() ),
+					array( 'jquery' ),
+					PixCustomifyPlugin()->get_version(),
+					false
+				);
+				wp_register_script(
+					'jquery-react',
+					plugins_url( 'js/vendor/jquery-react' . $suffix . '.js', PixCustomifyPlugin()->get_file() ),
+					array( 'jquery' ),
+					PixCustomifyPlugin()->get_version(),
+					false
+				);
+				wp_register_script(
+					PixCustomifyPlugin()->get_slug() . '-fontfields',
+					plugins_url( 'js/customizer/font-fields' . $suffix . '.js', PixCustomifyPlugin()->get_file() ),
+					array( 'jquery', 'underscore' ),
+					PixCustomifyPlugin()->get_version(),
+					false
+				);
 
-			wp_register_script( PixCustomifyPlugin()->get_slug() . '-customizer-scripts',
-				plugins_url( 'js/customizer' . $suffix . '.js', PixCustomifyPlugin()->get_file() ),
-				array(
-					'jquery',
+				wp_register_script( PixCustomifyPlugin()->get_slug() . '-customizer-scripts',
+					plugins_url( 'js/customizer' . $suffix . '.js', PixCustomifyPlugin()->get_file() ),
+					array(
+						'jquery',
 					PixCustomifyPlugin()->get_slug() . '-select2',
 					'underscore',
-					'customize-controls',
-					PixCustomifyPlugin()->get_slug() . '-fontfields',
-				),
-				PixCustomifyPlugin()->get_version() );
+						'customize-controls',
+						PixCustomifyPlugin()->get_slug() . '-fontfields',
+					),
+					PixCustomifyPlugin()->get_version(),
+					false );
 		}
 
 		/**

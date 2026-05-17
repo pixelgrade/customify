@@ -106,7 +106,7 @@ class Customify_Settings {
 	 */
 	function display_plugin_admin_page() {
 		// Check the nonce, in case the form was submitted.
-		if ( $_SERVER['REQUEST_METHOD'] === 'POST' ) {
+		if ( isset( $_SERVER['REQUEST_METHOD'] ) && 'POST' === sanitize_text_field( wp_unslash( $_SERVER['REQUEST_METHOD'] ) ) ) {
 			check_admin_referer( 'customify_settings_save', '_wpnonce-customify-settings' );
 		}
 
@@ -153,9 +153,11 @@ class Customify_Settings {
 		if ( $screen->id == $this->plugin_screen_hook_suffix ) {
 			$suffix = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min';
 
-			wp_enqueue_script( $this->slug . '-settings-page-script',
-				plugins_url( 'js/settings-page' . $suffix . '.js', $this->file ),
-				array( 'jquery' ), $this->version );
+				wp_enqueue_script( $this->slug . '-settings-page-script',
+					plugins_url( 'js/settings-page' . $suffix . '.js', $this->file ),
+					array( 'jquery' ),
+					$this->version,
+					false );
 
 			wp_add_inline_script( $this->slug . '-settings-page-script',
 				PixCustomify_Customizer::getlocalizeToWindowScript( 'customify',
@@ -218,10 +220,16 @@ class Customify_Settings {
 	private function get_nonce() {
 		$nonce = null;
 
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- This helper reads the nonce value that permission_nonce_callback() verifies.
 		if ( isset( $_REQUEST['customify_settings_nonce'] ) ) {
-			$nonce = wp_unslash( $_REQUEST['customify_settings_nonce'] );
-		} elseif ( isset( $_POST['customify_settings_nonce'] ) ) {
-			$nonce = wp_unslash( $_POST['customify_settings_nonce'] );
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- This helper reads the nonce value that permission_nonce_callback() verifies.
+			$nonce = sanitize_text_field( wp_unslash( $_REQUEST['customify_settings_nonce'] ) );
+		}
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- This helper reads the nonce value that permission_nonce_callback() verifies.
+		if ( null === $nonce && isset( $_POST['customify_settings_nonce'] ) ) {
+			// phpcs:ignore WordPress.Security.NonceVerification.Missing -- This helper reads the nonce value that permission_nonce_callback() verifies.
+			$nonce = sanitize_text_field( wp_unslash( $_POST['customify_settings_nonce'] ) );
 		}
 
 		return $nonce;
@@ -230,7 +238,8 @@ class Customify_Settings {
 	static public function get_plugin_config() {
 
 		$debug = false;
-		if ( isset( $_GET['debug'] ) && $_GET['debug'] === 'true' ) {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only debug flag for rendering the settings config.
+		if ( isset( $_GET['debug'] ) && 'true' === sanitize_text_field( wp_unslash( $_GET['debug'] ) ) ) {
 			$debug = true;
 		}
 

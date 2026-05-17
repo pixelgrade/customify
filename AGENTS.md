@@ -3,7 +3,7 @@
 ## Repository
 - **GitHub:** https://github.com/pixelgrade/customify
 - **WordPress.org:** https://wordpress.org/plugins/customify/
-- **Current version:** 2.10.6
+- **Current version:** 2.10.8
 - **Branch:** `dev` (main development branch)
 
 ## Prerequisites

@@ -20,8 +20,8 @@ add_action( 'admin_enqueue_scripts', function () {
 	}
 
 	wp_deregister_script( 'tribe-select2' );
-	wp_register_script( 'tribe-select2', '' );
+	wp_register_script( 'tribe-select2', '', array(), PixCustomifyPlugin()->get_version(), false );
 
 	wp_deregister_style( 'tribe-select2-css' );
-	wp_register_style( 'tribe-select2-css', '' );
+	wp_register_style( 'tribe-select2-css', '', array(), PixCustomifyPlugin()->get_version() );
 }, 99 );

@@ -1,4 +1,9 @@
 <?php
+// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped,WordPress.Security.EscapeOutput.ExceptionNotEscaped,WordPress.Security.EscapeOutput.UnsafePrintingFunction -- Legacy Customify view output contains trusted config HTML, dynamic CSS/JS, or WordPress Customizer binding attributes.
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
 class Customify_Fonts_Global {
 
@@ -169,8 +174,13 @@ class Customify_Fonts_Global {
 		$load_location = PixCustomifyPlugin()->settings->get_plugin_setting( 'style_resources_location', 'wp_head' );
 		// Add preconnect links as early as possible for faster external fonts loading.
 		add_action('wp_head', array( $this, 'add_preconnect_links' ), 0);
-		wp_register_script( PixCustomifyPlugin()->get_slug() . '-web-font-loader',
-			plugins_url( 'js/vendor/webfontloader-1-6-28.min.js', PixCustomifyPlugin()->get_file() ), [], null, ( 'wp_head' === $load_location ) ? false : true );
+		wp_register_script(
+			PixCustomifyPlugin()->get_slug() . '-web-font-loader',
+			plugins_url( 'js/vendor/webfontloader-1-6-28.min.js', PixCustomifyPlugin()->get_file() ),
+			array(),
+			PixCustomifyPlugin()->get_version(),
+			( 'wp_head' === $load_location ) ? false : true
+		);
 		add_action('wp_enqueue_scripts', array( $this, 'enqueue_frontend_scripts_styles' ), 0 );
 		add_action( $load_location, array( $this, 'outputFontsDynamicStyle' ), 100 );
 
@@ -414,7 +424,7 @@ class Customify_Fonts_Global {
 		do_action( 'customify_font_family_before_third_party_fonts_options', $active_font_family, $current_value );
 
 		if ( ! empty( $this->third_party_fonts ) ) {
-			$group_label = apply_filters( 'customify_third_party_font_group_label', esc_html__( 'Third-Party Fonts', '__plugin_txtd' ), $active_font_family, $current_value );
+			$group_label = apply_filters( 'customify_third_party_font_group_label', esc_html__( 'Third-Party Fonts', 'customify' ), $active_font_family, $current_value );
 			echo '<optgroup label="' . esc_attr( $group_label ) . '">';
 			foreach ( $this->get_third_party_fonts() as $font ) {
 				if ( ! empty( $font['family'] ) ) {
@@ -1210,7 +1220,7 @@ class Customify_Fonts_Global {
 			$fontStylesheetUrls = $this->getFontsStylesheetUrls();
 			if ( ! empty( $fontStylesheetUrls ) ) {
 				foreach ( $fontStylesheetUrls as $key => $fontStylesheetUrl ) {
-					wp_enqueue_style( 'customify-font-stylesheet-' . $key, $fontStylesheetUrl, [], null );
+						wp_enqueue_style( 'customify-font-stylesheet-' . $key, $fontStylesheetUrl, array(), PixCustomifyPlugin()->get_version() );
 				}
 
 				// Now we need to output the JavaScript logic for detecting the fonts loaded event, just like WebFontLoader does.

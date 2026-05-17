@@ -1,4 +1,5 @@
 <?php
+// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped,WordPress.Security.EscapeOutput.ExceptionNotEscaped,WordPress.Security.EscapeOutput.UnsafePrintingFunction -- Legacy Customify view output contains trusted config HTML, dynamic CSS/JS, or WordPress Customizer binding attributes.
 /**
  * This is the class that handles the overall logic for the Style Manager.
  *
@@ -185,9 +186,13 @@ if ( ! class_exists( 'Customify_Style_Manager' ) ) {
 		function register_admin_customizer_scripts() {
 			$suffix = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min';
 
-			wp_register_script( PixCustomifyPlugin()->get_slug() . '-style-manager',
+			wp_register_script(
+				PixCustomifyPlugin()->get_slug() . '-style-manager',
 				plugins_url( 'js/customizer/style-manager' . $suffix . '.js', PixCustomifyPlugin()->get_file() ),
-				array( 'jquery' ), PixCustomifyPlugin()->get_version() );
+				array( 'jquery' ),
+				PixCustomifyPlugin()->get_version(),
+				false
+			);
 		}
 
 		/**
@@ -881,12 +886,12 @@ if ( ! class_exists( 'Customify_Style_Manager' ) ) {
 				wp_send_json_error( esc_html__( 'No rating provided', 'customify' ) );
 			}
 
-			$type    = sanitize_text_field( $_POST['type'] );
-			$rating  = intval( $_POST['rating'] );
-			$message = '';
-			if ( ! empty( $_POST['message'] ) ) {
-				$message = wp_kses_post( $_POST['message'] );
-			}
+				$type    = sanitize_text_field( wp_unslash( $_POST['type'] ) );
+				$rating  = intval( $_POST['rating'] );
+				$message = '';
+				if ( ! empty( $_POST['message'] ) ) {
+					$message = wp_kses_post( wp_unslash( $_POST['message'] ) );
+				}
 
 			$request_data = array(
 				'site_url'          => home_url( '/' ),

@@ -87,9 +87,13 @@ class Customify_Color_Palettes {
 	public function register_admin_customizer_scripts() {
 		$suffix = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min';
 
-		wp_register_script( PixCustomifyPlugin()->get_slug() . '-color-palettes',
+		wp_register_script(
+			PixCustomifyPlugin()->get_slug() . '-color-palettes',
 			plugins_url( 'js/customizer/color-palettes' . $suffix . '.js', PixCustomifyPlugin()->get_file() ),
-			array( 'jquery', ), PixCustomifyPlugin()->get_version() );
+			array( 'jquery' ),
+			PixCustomifyPlugin()->get_version(),
+			false
+		);
 	}
 
 	/**
@@ -695,7 +699,7 @@ class Customify_Color_Palettes {
 					'label'        => esc_html__( 'Appearance', 'customify' ),
 					'live'         => true,
 					'default'      => 'off',
-					'desc'         => wp_kses( __( "<strong>Auto</strong> activates dark mode automatically, according to the visitor's system-wide setting", '__plugin_txtd' ), array( 'strong' => array() ) ),
+					'desc'         => wp_kses( __( "<strong>Auto</strong> activates dark mode automatically, according to the visitor's system-wide setting", 'customify' ), array( 'strong' => array() ) ),
 					'choices'      => array(
 						'off'  => esc_html__( 'Light', 'customify' ),
 						'on'   => esc_html__( 'Dark', 'customify' ),

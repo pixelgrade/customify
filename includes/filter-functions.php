@@ -5,6 +5,10 @@
  * Think modifying colors, etc.
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 if ( ! function_exists( 'pixcloud_adjust_color_brightness' ) ) {
 	/**
 	 * Adjust a hex color brightness

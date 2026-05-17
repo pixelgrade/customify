@@ -7,6 +7,10 @@
  * Keep the name of this file like you've received it from Pixelgrade Cloud.
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 // This is where the final config should reside.
 // Start with some sane default. We expect to have a sections entry.
 $config = [
@@ -247,7 +251,7 @@ $config['sections'] = [
 			'main_content_heading_1_font' => [
 				'type'     			=> 'font',
 				'label'            => esc_html__( 'Heading 1', 'customify' ),
-				'desc'             => esc_html__( '', 'customify' ),
+				'desc'             => '',
 				'selector'         => '.alpha, h1',
 
 				'default' => array(
@@ -278,7 +282,7 @@ $config['sections'] = [
 			'main_content_heading_2_font' => [
 				'type'     			=> 'font',
 				'label'            => esc_html__( 'Heading 2', 'customify' ),
-				'desc'             => esc_html__( '', 'customify' ),
+				'desc'             => '',
 				'selector'         => '.beta, h2',
 
 				'default' => array(
@@ -309,7 +313,7 @@ $config['sections'] = [
 			'main_content_heading_4_font' => [
 				'type'     			=> 'font',
 				'label'            => esc_html__( 'Heading 4', 'customify' ),
-				'desc'             => esc_html__( '', 'customify' ),
+				'desc'             => '',
 				'selector'         => '.delta, h4',
 
 				'default' => array(
@@ -340,7 +344,7 @@ $config['sections'] = [
 			'main_content_heading_5_font' => [
 				'type'     			=> 'font',
 				'label'            => esc_html__( 'Heading 5', 'customify' ),
-				'desc'             => esc_html__( '', 'customify' ),
+				'desc'             => '',
 				'selector'         => 'h5',
 
 				'default' => array(
@@ -371,7 +375,7 @@ $config['sections'] = [
 			'main_content_heading_6_font' => [
 				'type'     			=> 'font',
 				'label'            => esc_html__( 'Heading 6', 'customify' ),
-				'desc'             => esc_html__( '', 'customify' ),
+				'desc'             => '',
 				'selector'         => 'h6',
 
 				'default' => array(
@@ -402,7 +406,7 @@ $config['sections'] = [
 			'main_content_heading_3_font' => [
 				'type'     			=> 'font',
 				'label'            => esc_html__( 'Heading 3', 'customify' ),
-				'desc'             => esc_html__( '', 'customify' ),
+				'desc'             => '',
 				'selector'         => '.gamma, h3',
 
 				'default' => array(
@@ -440,7 +444,7 @@ $config['sections'] = [
 			'buttons_font' => [
 				'type'     			=> 'font',
 				'label'            => esc_html__( 'Buttons', 'customify' ),
-				'desc'             => esc_html__( '', 'customify' ),
+				'desc'             => '',
 				'selector'         => '.added_to_cart, .button, button, input[type=button], input[type=reset], input[type=submit]',
 
 				'default' => array(
@@ -480,7 +484,7 @@ $config['sections'] = [
 			'cards_price_font' => [
 				'type'     			=> 'font',
 				'label'            => esc_html__( 'Price', 'customify' ),
-				'desc'             => esc_html__( '', 'customify' ),
+				'desc'             => '',
 				'selector'         => 'ul.products li.product .price',
 
 				'default' => array(
@@ -523,7 +527,7 @@ $config['sections'] = [
 			 */
 			'header_section'                               => [
 				'type' => 'html',
-				'html' => '<span id="section-title-blog-fonts" class="separator section label large">' . esc_html__( 'Header', 'storefront' ) . '</span>',
+				'html' => '<span id="section-title-blog-fonts" class="separator section label large">' . esc_html__( 'Header', 'customify' ) . '</span>',
 			],
 			'header_navigation_text_color'                 => [
 				'type'    => 'color',
@@ -680,7 +684,7 @@ $config['sections'] = [
 			 */
 			'main_content_section'                         => [
 				'type' => 'html',
-				'html' => '<span id="section-title-blog-fonts" class="separator section label large">' . esc_html__( 'Main Content', 'storefront' ) . '</span>',
+				'html' => '<span id="section-title-blog-fonts" class="separator section label large">' . esc_html__( 'Main Content', 'customify' ) . '</span>',
 			],
 			'page_title_color'                             => [
 				'type'    => 'color',
@@ -818,11 +822,11 @@ $config['sections'] = [
 			// [Sub Section] Headings Colors
 			'main_content_title_headings_color_section'    => [
 				'type' => 'html',
-				'html' => '<span class="separator sub-section label">' . esc_html__( 'Headings Color', 'patch' ) . '</span>',
+				'html' => '<span class="separator sub-section label">' . esc_html__( 'Headings Color', 'customify' ) . '</span>',
 			],
 			'main_content_heading_1_color'                 => [
 				'type'    => 'color',
-				'label'   => esc_html__( 'Heading 1', 'patch' ),
+				'label'   => esc_html__( 'Heading 1', 'customify' ),
 				'live'    => true,
 				'default' => '#131315',
 				'css'     => [
@@ -834,7 +838,7 @@ $config['sections'] = [
 			],
 			'main_content_heading_2_color'                 => [
 				'type'    => 'color',
-				'label'   => esc_html__( 'Heading 2', 'patch' ),
+				'label'   => esc_html__( 'Heading 2', 'customify' ),
 				'live'    => true,
 				'default' => '#131315',
 				'css'     => [
@@ -846,7 +850,7 @@ $config['sections'] = [
 			],
 			'main_content_heading_3_color'                 => [
 				'type'    => 'color',
-				'label'   => esc_html__( 'Heading 3', 'patch' ),
+				'label'   => esc_html__( 'Heading 3', 'customify' ),
 				'live'    => true,
 				'default' => '#131315',
 				'css'     => [
@@ -858,7 +862,7 @@ $config['sections'] = [
 			],
 			'main_content_heading_4_color'                 => [
 				'type'    => 'color',
-				'label'   => esc_html__( 'Heading 4', 'patch' ),
+				'label'   => esc_html__( 'Heading 4', 'customify' ),
 				'live'    => true,
 				'default' => '#131315',
 				'css'     => [
@@ -870,7 +874,7 @@ $config['sections'] = [
 			],
 			'main_content_heading_5_color'                 => [
 				'type'    => 'color',
-				'label'   => esc_html__( 'Heading 5', 'patch' ),
+				'label'   => esc_html__( 'Heading 5', 'customify' ),
 				'live'    => true,
 				'default' => '#131315',
 				'css'     => [
@@ -882,7 +886,7 @@ $config['sections'] = [
 			],
 			'main_content_heading_6_color'                 => [
 				'type'    => 'color',
-				'label'   => esc_html__( 'Heading 6', 'patch' ),
+				'label'   => esc_html__( 'Heading 6', 'customify' ),
 				'live'    => true,
 				'default' => '#131315',
 				'css'     => [
@@ -896,12 +900,12 @@ $config['sections'] = [
 			// [Sub Section] Backgrounds
 			'main_content_title_backgrounds_color_section' => [
 				'type' => 'html',
-				'html' => '<span class="separator sub-section label">' . esc_html__( 'Backgrounds', 'patch' ) . '</span>',
+				'html' => '<span class="separator sub-section label">' . esc_html__( 'Backgrounds', 'customify' ) . '</span>',
 			],
 
 			'main_content_content_background_color' => [
 				'type'    => 'color',
-				'label'   => esc_html__( 'Content Background Color', 'patch' ),
+				'label'   => esc_html__( 'Content Background Color', 'customify' ),
 				'live'    => true,
 				'default' => '#ffffff',
 				'css'     => [
@@ -1026,7 +1030,7 @@ $config['sections'] = [
 			 */
 			'buttons_section'                       => [
 				'type' => 'html',
-				'html' => '<span id="section-title-blog-fonts" class="separator section label large">' . esc_html__( 'Buttons', 'storefront' ) . '</span>',
+				'html' => '<span id="section-title-blog-fonts" class="separator section label large">' . esc_html__( 'Buttons', 'customify' ) . '</span>',
 			],
 			'buttons_text_color'                    => [
 				'type'    => 'color',
@@ -1147,7 +1151,7 @@ $config['sections'] = [
 			 */
 			'footer_section'                        => [
 				'type' => 'html',
-				'html' => '<span id="section-title-blog-fonts" class="separator section label large">' . esc_html__( 'Footer', 'storefront' ) . '</span>',
+				'html' => '<span id="section-title-blog-fonts" class="separator section label large">' . esc_html__( 'Footer', 'customify' ) . '</span>',
 			],
 			'footer_text_color'                     => [
 				'type'    => 'color',
@@ -1203,7 +1207,7 @@ $config['sections'] = [
 			 */
 			'misc_section'                          => [
 				'type' => 'html',
-				'html' => '<span id="section-title-blog-fonts" class="separator section label large">' . esc_html__( 'Miscellaneous', 'storefront' ) . '</span>',
+				'html' => '<span id="section-title-blog-fonts" class="separator section label large">' . esc_html__( 'Miscellaneous', 'customify' ) . '</span>',
 			],
 
 			'woocommerce_info_background_color' => [

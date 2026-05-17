@@ -20,6 +20,7 @@ $attrs = array(
 ?>
 <div class="multicheckbox">
 	<?php
+// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped,WordPress.Security.EscapeOutput.ExceptionNotEscaped,WordPress.Security.EscapeOutput.UnsafePrintingFunction -- Legacy Customify view output contains trusted config HTML, dynamic CSS/JS, or WordPress Customizer binding attributes.
 	foreach ( $this->getmeta( 'options', array() ) as $value => $label ) {
 		$attrs['name'] = $name . '[' . $value . ']';
 

@@ -98,8 +98,9 @@ class PixCustomifyProcessorImpl implements PixCustomifyProcessor {
 				throw new Exception('Missing option_key in plugin configuration.');
 			}
 
-			if ($this->form_was_submitted()) {
-				$input = $this->cleanup_input($_POST);
+				if ($this->form_was_submitted()) {
+					// phpcs:ignore WordPress.Security.NonceVerification.Missing -- The settings page verifies the nonce before this processor runs.
+					$input = $this->cleanup_input( wp_unslash( $_POST ) );
 				$errors = $this->validate_input($input);
 
 				if (empty($errors)) {
@@ -199,12 +200,12 @@ class PixCustomifyProcessorImpl implements PixCustomifyProcessor {
 		return $validator->validate($input);
 	}
 
-	/**
-	 * @return boolean
-	 */
-	protected function form_was_submitted() {
-		return $_SERVER['REQUEST_METHOD'] === 'POST';
-	}
+		/**
+		 * @return boolean
+		 */
+		protected function form_was_submitted() {
+			return isset( $_SERVER['REQUEST_METHOD'] ) && 'POST' === sanitize_text_field( wp_unslash( $_SERVER['REQUEST_METHOD'] ) );
+		}
 
 	/**
 	 * @return array

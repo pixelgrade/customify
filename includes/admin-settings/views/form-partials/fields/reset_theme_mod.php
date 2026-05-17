@@ -28,4 +28,4 @@ $attrs = array(
 	<div class="button" id="reset_theme_mods"><?php esc_html_e( 'Reset Customizer Settings', 'customify' ); ?></div>
 </div>
 <br>
-<div class="field-desc"><?php esc_html_e('Resets all the Customizer settings introduced by this plugin. It will NOT reset core Customizer settings or plugin settings.'); ?></div>
+<div class="field-desc"><?php esc_html_e( 'Resets all the Customizer settings introduced by this plugin. It will NOT reset core Customizer settings or plugin settings.', 'customify' ); ?></div>

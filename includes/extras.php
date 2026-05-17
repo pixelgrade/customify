@@ -1,7 +1,12 @@
 <?php
+// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped,WordPress.Security.EscapeOutput.ExceptionNotEscaped,WordPress.Security.EscapeOutput.UnsafePrintingFunction -- Legacy Customify view output contains trusted config HTML, dynamic CSS/JS, or WordPress Customizer binding attributes.
 /**
  * Extra functionality.
  */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
 if ( ! function_exists( 'add_customify_base_options' ) ) {
 	/**
@@ -355,7 +360,12 @@ function customify_child_theme_migrate_theme_mods_notice() {
 
 	ob_start(); ?>
 	<div class="customify-notice__container updated notice fade is-dismissible">
-		<h3><?php echo sprintf( __( 'You have activated a child theme for "%s". Good for you!', 'customify' ), $parent_theme->get( 'Name' ) ); ?></h3>
+		<h3>
+			<?php
+			/* translators: %s: parent theme name. */
+			printf( esc_html__( 'You have activated a child theme for "%s". Good for you!', 'customify' ), esc_html( $parent_theme->get( 'Name' ) ) );
+			?>
+		</h3>
 		<p>
 			<?php echo wp_kses_post( __( 'If you have already <strong>set up things in the Customizer,</strong> you may want to <strong>keep those customizations</strong> so you don\'t start over.', 'customify' ) ); ?>
 		</p>

@@ -49,6 +49,10 @@ function updatePhpGoogleFontsList(done) {
     let php = ['<?php'];
 
     php.push( '// Returns an associative array with fonts.' );
+    php.push( 'if ( ! defined( \'ABSPATH\' ) ) {' );
+    php.push( '\texit;' );
+    php.push( '}' );
+    php.push( '' );
     php.push( 'return json_decode( \'' + JSON.stringify( fontsList ) + '\', true );' );
 
     require('fs').writeFileSync('includes/resources/google.fonts.php', php.join( '\r\n' ));
@@ -202,17 +206,27 @@ function removeUnneededFiles() {
 		'+production.rb',
 		'README.md',
 		'CLAUDE.md',
+		'AGENTS.md',
+		'.claude',
 		'.labels',
-    '.csscomb',
-    '.csscomb.json',
-    '.codeclimate.yml',
-    'tests',
-    'circle.yml',
-    '.circleci',
-    '.labels',
-    '.jscsrc',
-    '.jshintignore',
-    'browserslist',
+		'.csscomb',
+		'.csscomb.json',
+		'.csslintrc',
+		'.codeclimate.yml',
+		'.editorconfig',
+		'.eslintignore',
+		'.eslintrc',
+		'.nvmrc',
+		'.travis.yml',
+		'tests',
+		'**/tests',
+		'**/tests/**',
+		'circle.yml',
+		'.circleci',
+		'.labels',
+		'.jscsrc',
+		'.jshintignore',
+		'browserslist',
 		'palettes.md',
     'scss',
 	];

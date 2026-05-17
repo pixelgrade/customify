@@ -3,7 +3,7 @@
  * Plugin Name: Customify
  * Plugin URI:  https://wordpress.org/plugins/customify/
  * Description: A Theme Customizer Booster to easily and consistently customize Fonts, Colors, and other options for your site.
- * Version: 2.10.7
+ * Version: 2.10.8
  * Author: Pixelgrade
  * Author URI: https://pixelgrade.com
  * Author Email: contact@pixelgrade.com
@@ -12,7 +12,7 @@
  * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
  * Domain Path: /languages/
  * Requires at least: 5.9.0
- * Tested up to: 6.9
+ * Tested up to: 7.0
  * Requires PHP: 7.4
  */
 
@@ -21,24 +21,28 @@ if ( ! defined( 'ABSPATH' ) ) {
 	die;
 }
 
-require_once 'includes/lib/class-customify-array.php';
-require_once 'includes/extras.php';
+// Style Manager ships a deprecated Customify compatibility layer that owns this
+// legacy global API when both plugins are active. Avoid redeclaring it.
+if ( ! function_exists( 'PixCustomifyPlugin' ) && ! class_exists( 'PixCustomifyPlugin', false ) ) {
+	require_once 'includes/lib/class-customify-array.php';
+	require_once 'includes/extras.php';
 
-/**
- * Returns the main instance of PixCustomifyPlugin to prevent the need to use globals.
- *
- * @since  1.5.0
- * @return PixCustomifyPlugin
- */
-function PixCustomifyPlugin() {
-	require_once plugin_dir_path( __FILE__ ) . 'includes/class-pixcustomify.php';
+	/**
+	 * Returns the main instance of PixCustomifyPlugin to prevent the need to use globals.
+	 *
+	 * @since  1.5.0
+	 * @return PixCustomifyPlugin
+	 */
+	function PixCustomifyPlugin() {
+		require_once plugin_dir_path( __FILE__ ) . 'includes/class-pixcustomify.php';
 
-	return PixCustomifyPlugin::instance( __FILE__, '2.10.7' );
+		return PixCustomifyPlugin::instance( __FILE__, '2.10.8' );
+	}
+
+	// Now get the party started.
+	// We will keep this global variable for legacy reasons.
+	$pixcustomify_plugin = PixCustomifyPlugin();
+
+	// Load all third-party plugins integrations.
+	require_once 'includes/integrations.php';
 }
-
-// Now get the party started.
-// We will keep this global variable for legacy reasons.
-$pixcustomify_plugin = PixCustomifyPlugin();
-
-// Load all third-party plugins integrations.
-require_once 'includes/integrations.php';
