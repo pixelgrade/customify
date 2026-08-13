@@ -3,7 +3,7 @@ Contributors: pixelgrade, vlad.olaru, babbardel, razvanonofrei, gorby31
 Tags: design, customizer, fonts, colors, gutenberg
 Requires at least: 5.9.0
 Tested up to: 7.1
-Stable tag: 2.10.8
+Stable tag: 2.10.9
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -29,6 +29,11 @@ This plugin is **primarily intended** to be used together with [Pixelgrade theme
 * Default [image](https://unsplash.com/photos/OgM4RKdr2kY) for Style Manager Color Palette control - License: [Unsplash](https://unsplash.com/license)
 
 == Changelog ==
+
+= 2.10.9 =
+* Fixed dynamic editor styles in WordPress 7.1's iframed editor.
+* Fixed admin warnings when a theme provides no legacy Customify configuration.
+* Updated WordPress compatibility metadata for WordPress 7.1.
 
 = 2.10.8 =
 * Fixed activation alongside Style Manager's deprecated Customify compatibility layer.
