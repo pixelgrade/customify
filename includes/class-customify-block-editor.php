@@ -26,25 +26,25 @@ if ( ! class_exists( 'Customify_Block_Editor' ) ) {
 		/*
 		 * Selectors that we will use to constrain CSS rules to certain scopes.
 		 */
-		public static $editor_namespace_selector = '.edit-post-visual-editor.editor-styles-wrapper';
-		public static $title_namespace_selector = '.editor-styles-wrapper .editor-post-title__block';
-		public static $title_input_namespace_selector = '.editor-styles-wrapper .editor-post-title__block .editor-post-title__input';
+		public static $editor_namespace_selector = '.editor-styles-wrapper';
+		public static $title_namespace_selector = '.editor-styles-wrapper .editor-post-title';
+		public static $title_input_namespace_selector = '.editor-styles-wrapper .editor-post-title';
 		public static function get_block_namespace_selector() {
 			global $wp_version;
 
 			$is_old_wp_version = version_compare($wp_version, '5.4', '<');
 
 			if( $is_old_wp_version ) {
-				return '.edit-post-visual-editor.editor-styles-wrapper .editor-block-list__block';
+				return '.editor-styles-wrapper .editor-block-list__block';
 			}
 
-			return '.edit-post-visual-editor.editor-styles-wrapper .block-editor-block-list__block';
+			return '.editor-styles-wrapper .block-editor-block-list__block';
 		}
 
 		/**
 		 * Regexes
 		 */
-		public static $gutenbergy_selector_regex = '/^(\.edit-post-visual-editor|\.editor-block-list__block).*$/';
+		public static $gutenbergy_selector_regex = '/^(\.edit-post-visual-editor|\.editor-visual-editor|\.editor-styles-wrapper|\.editor-block-list__block).*$/';
 		public static $root_regex = '/^(body|html).*$/';
 		public static $title_regex = '/^(h1|h1\s+.*|\.single\s*\.entry-title.*|\.entry-title.*|\.page-title.*|\.article__?title.*)$/';
 		/* Regexes based on which we will ignore selectors = do not include them in the selector list for a certain rule. */
@@ -130,7 +130,7 @@ if ( ! class_exists( 'Customify_Block_Editor' ) ) {
 		public function add_hooks() {
 
 			// Styles and scripts when editing.
-			add_action( 'enqueue_block_editor_assets', array( $this, 'dynamic_styles_scripts' ), 999 );
+			add_action( 'enqueue_block_assets', array( $this, 'dynamic_styles_scripts' ), 999 );
 
 			// Styles on the front end.
 			add_action( 'enqueue_block_assets', array( $this, 'frontend_styles' ), 999 );
@@ -232,24 +232,27 @@ if ( ! class_exists( 'Customify_Block_Editor' ) ) {
 		 * @since 2.2.0
 		 */
 		public function dynamic_styles_scripts() {
+			if ( ! $this->is_admin_block_editor_screen() ) {
+				return;
+			}
+
 			if ( ! PixCustomifyPlugin()->settings->get_plugin_setting( 'enable_editor_style', true ) ) {
 				return;
 			}
 
 			require_once( PixCustomifyPlugin()->get_base_path() . 'includes/class-customify-fonts-global.php' );
 
-			$enqueue_parent_handle = $this->get_editor_style_handle();
-			if ( empty( $enqueue_parent_handle ) ) {
-				return;
-			}
+			$enqueue_parent_handle = PixCustomifyPlugin()->get_slug() . '-editor-dynamic';
+			wp_register_style( $enqueue_parent_handle, false, array(), PixCustomifyPlugin()->get_version() );
+			wp_enqueue_style( $enqueue_parent_handle );
 
-				wp_register_script(
-					PixCustomifyPlugin()->get_slug() . '-web-font-loader',
-					plugins_url( 'js/vendor/webfontloader-1-6-28.min.js', PixCustomifyPlugin()->get_file() ),
-					array( 'wp-editor' ),
-					PixCustomifyPlugin()->get_version(),
-					false
-				);
+			wp_register_script(
+				PixCustomifyPlugin()->get_slug() . '-web-font-loader',
+				plugins_url( 'js/vendor/webfontloader-1-6-28.min.js', PixCustomifyPlugin()->get_file() ),
+				array( 'wp-block-editor' ),
+				PixCustomifyPlugin()->get_version(),
+				false
+			);
 
 			add_filter( 'customify_font_css_selector', array( $this, 'gutenbergify_font_css_selectors' ), 10, 2 );
 			Customify_Fonts_Global::instance()->enqueue_frontend_scripts_styles();
@@ -262,6 +265,28 @@ if ( ! class_exists( 'Customify_Block_Editor' ) ) {
 
 			// Add color palettes classes.
 			wp_add_inline_style( $enqueue_parent_handle, $this->editor_color_palettes_css_classes() );
+		}
+
+		/**
+		 * Determine whether the current request is for an admin block editor canvas.
+		 *
+		 * @return bool
+		 */
+		protected function is_admin_block_editor_screen() {
+			if ( ! is_admin() || ! function_exists( 'get_current_screen' ) ) {
+				return false;
+			}
+
+			$current_screen = get_current_screen();
+			if ( ! $current_screen ) {
+				return false;
+			}
+
+			if ( method_exists( $current_screen, 'is_block_editor' ) && $current_screen->is_block_editor() ) {
+				return true;
+			}
+
+			return in_array( $current_screen->id, array( 'site-editor', 'site-editor-v2' ), true );
 		}
 
 		public function frontend_styles() {
