@@ -284,7 +284,7 @@ if ( ! class_exists( 'Customify_Style_Manager' ) ) {
 			}
 
 			// All the other sections.
-			$other_theme_sections_config = $config['sections'];
+			$other_theme_sections_config = ! empty( $config['sections'] ) && is_array( $config['sections'] ) ? $config['sections'] : array();
 			unset( $config['sections'] );
 
 			// The Style Manager panel.

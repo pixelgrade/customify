@@ -616,6 +616,10 @@ class Customify_Font_Palettes {
 			return $config;
 		}
 
+		if ( empty( $config['sections']['style_manager_section']['options'] ) || ! is_array( $config['sections']['style_manager_section']['options'] ) ) {
+			return $config;
+		}
+
 		$style_manager_options = $config['sections']['style_manager_section']['options'];
 		$master_font_controls_ids = $this->get_all_master_font_controls_ids( $style_manager_options );
 		if ( empty( $master_font_controls_ids ) ) {
