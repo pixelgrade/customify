@@ -2,7 +2,7 @@
 Contributors: pixelgrade, vlad.olaru, babbardel, razvanonofrei, gorby31
 Tags: design, customizer, fonts, colors, gutenberg
 Requires at least: 5.9.0
-Tested up to: 7.0
+Tested up to: 7.1
 Stable tag: 2.10.8
 Requires PHP: 7.4
 License: GPLv2 or later
