@@ -1220,7 +1220,8 @@ class Customify_Fonts_Global {
 			$fontStylesheetUrls = $this->getFontsStylesheetUrls();
 			if ( ! empty( $fontStylesheetUrls ) ) {
 				foreach ( $fontStylesheetUrls as $key => $fontStylesheetUrl ) {
-						wp_enqueue_style( 'customify-font-stylesheet-' . $key, $fontStylesheetUrl, array(), PixCustomifyPlugin()->get_version() );
+					// Adding a version makes WordPress reparse provider URLs and discard repeated family parameters.
+					wp_enqueue_style( 'customify-font-stylesheet-' . $key, $fontStylesheetUrl, array(), null );
 				}
 
 				// Now we need to output the JavaScript logic for detecting the fonts loaded event, just like WebFontLoader does.

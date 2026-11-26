@@ -218,6 +218,7 @@ function removeUnneededFiles() {
 		'.eslintrc',
 		'.nvmrc',
 		'.travis.yml',
+		'docs',
 		'tests',
 		'**/tests',
 		'**/tests/**',
